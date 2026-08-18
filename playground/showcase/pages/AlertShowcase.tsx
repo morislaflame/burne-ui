@@ -20,6 +20,30 @@ import { AlertMotionPerPartDemo } from "../demos/alert/AlertMotionPerPart.demo";
 import alertMotionPerPartSource from "../demos/alert/AlertMotionPerPart.demo.tsx?raw";
 import { AlertMotionTimelineDemo } from "../demos/alert/AlertMotionTimeline.demo";
 import alertMotionTimelineSource from "../demos/alert/AlertMotionTimeline.demo.tsx?raw";
+import { AlertMotionControllerDemo } from "../demos/alert/AlertMotionController.demo";
+import alertMotionControllerSource from "../demos/alert/AlertMotionController.demo.tsx?raw";
+import { AlertMotionControllerPlayVsSlotDemo } from "../demos/alert/AlertMotionControllerPlayVsSlot.demo";
+import alertMotionControllerPlayVsSlotSource from "../demos/alert/AlertMotionControllerPlayVsSlot.demo.tsx?raw";
+import { AlertMotionControllerInsideDemo } from "../demos/alert/AlertMotionControllerInside.demo";
+import alertMotionControllerInsideSource from "../demos/alert/AlertMotionControllerInside.demo.tsx?raw";
+import { AlertMotionControllerStaggerDemo } from "../demos/alert/AlertMotionControllerStagger.demo";
+import alertMotionControllerStaggerSource from "../demos/alert/AlertMotionControllerStagger.demo.tsx?raw";
+import { AlertMotionControllerExcludeDemo } from "../demos/alert/AlertMotionControllerExclude.demo";
+import alertMotionControllerExcludeSource from "../demos/alert/AlertMotionControllerExclude.demo.tsx?raw";
+import { AlertMotionControllerCancelDemo } from "../demos/alert/AlertMotionControllerCancel.demo";
+import alertMotionControllerCancelSource from "../demos/alert/AlertMotionControllerCancel.demo.tsx?raw";
+import { AlertMotionControllerSignalDemo } from "../demos/alert/AlertMotionControllerSignal.demo";
+import alertMotionControllerSignalSource from "../demos/alert/AlertMotionControllerSignal.demo.tsx?raw";
+import { AlertMotionEventsPingDemo } from "../demos/alert/AlertMotionEventsPing.demo";
+import alertMotionEventsPingSource from "../demos/alert/AlertMotionEventsPing.demo.tsx?raw";
+import { AlertMotionEventsSaveDemo } from "../demos/alert/AlertMotionEventsSave.demo";
+import alertMotionEventsSaveSource from "../demos/alert/AlertMotionEventsSave.demo.tsx?raw";
+import { AlertMotionEventsFinishedDemo } from "../demos/alert/AlertMotionEventsFinished.demo";
+import alertMotionEventsFinishedSource from "../demos/alert/AlertMotionEventsFinished.demo.tsx?raw";
+import { AlertMotionEventsTargetsDemo } from "../demos/alert/AlertMotionEventsTargets.demo";
+import alertMotionEventsTargetsSource from "../demos/alert/AlertMotionEventsTargets.demo.tsx?raw";
+import { AlertMotionEventsOffDemo } from "../demos/alert/AlertMotionEventsOff.demo";
+import alertMotionEventsOffSource from "../demos/alert/AlertMotionEventsOff.demo.tsx?raw";
 import { AlertMotionTitleColorDemo } from "../demos/alert/AlertMotionTitleColor.demo";
 import alertMotionTitleColorSource from "../demos/alert/AlertMotionTitleColor.demo.tsx?raw";
 import { AlertMotionTitleLiftDemo } from "../demos/alert/AlertMotionTitleLift.demo";
@@ -59,6 +83,30 @@ export function AlertShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionTitleColorDemo} source={alertMotionTitleColorSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionPerPartDemo} source={alertMotionPerPartSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionTimelineDemo} source={alertMotionTimelineSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="Imperative play / playSlot / playAll / set / cancel / signal — handle from outside, or useMotionController() inside."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerDemo} source={alertMotionControllerSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerPlayVsSlotDemo} source={alertMotionControllerPlayVsSlotSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerInsideDemo} source={alertMotionControllerInsideSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerStaggerDemo} source={alertMotionControllerStaggerSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerExcludeDemo} source={alertMotionControllerExcludeSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerCancelDemo} source={alertMotionControllerCancelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionControllerSignalDemo} source={alertMotionControllerSignalSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="motion.events"
+        description="Namespaced app commands (notify:ping, save:saving) — not hoverIn and not MOTION_PHASE_NAMES."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionEventsPingDemo} source={alertMotionEventsPingSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionEventsSaveDemo} source={alertMotionEventsSaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionEventsFinishedDemo} source={alertMotionEventsFinishedSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionEventsTargetsDemo} source={alertMotionEventsTargetsSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionEventsOffDemo} source={alertMotionEventsOffSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

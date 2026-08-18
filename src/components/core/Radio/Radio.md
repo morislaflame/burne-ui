@@ -51,7 +51,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 | `danger` | `false` | Красный label text |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` (`check` / `uncheck`) |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`) |
 
 Повторный клик по выбранному radio **снимает выбор** (если не `required` и не required-группа).
 
@@ -113,7 +113,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 
 `Radio.Indicator` → `SelectionIndicator` с `dot` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Radio прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Radio.Indicator` / `.Fill` / `.Mark`.
 
-**Где в коде:** карта слотов — `radioAnimations.ts` (`RADIO_MOTION_SLOT_MAP`, `resolveRadioIndicatorMotion`); тонкий context — `radioContext.tsx`; host — `selectionIndicatorAnimations.ts`.
+**Где в коде:** карта слотов — `radioAnimations.ts` (`RADIO_MOTION_SLOT_MAP`, `resolveRadioIndicatorMotion`); scope chrome — `radioContext.tsx` (`label` / `hint` / `error`); host fill/mark — `selectionIndicatorAnimations.ts`.
 
 ```tsx
 <Radio
@@ -123,8 +123,24 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
   motion={{
     indicatorFill: {
       check: (ctx) =>
-        gsap.fromTo(ctx.el, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4 }),
-      uncheck: (ctx) => gsap.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.22 }),
+        ctx.fromTo({ scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4 }),
+      uncheck: (ctx) => ctx.to({ scale: 0, autoAlpha: 0, duration: 0.22 }),
+    },
+    label: {
+      check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+      uncheck: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-foreground)", {
+          duration: 0.22,
+          clearOnComplete: true,
+        }),
+    },
+    hint: {
+      check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+      uncheck: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-muted-foreground)", {
+          duration: 0.22,
+          clearOnComplete: true,
+        }),
     },
   }}
 />
@@ -256,7 +272,7 @@ Radio/
 ├── index.ts
 ├── radioTypes.ts
 ├── radioStyles.ts
-├── radioContext.tsx         # тонкий motion context (embedder)
+├── radioContext.tsx         # createMotionScope("Radio") + label; indicator embed
 ├── radioAnimations.ts       # RADIO_MOTION_SLOT_MAP + track/label motion
 ├── radioParts.tsx
 ├── useRadioRootState.ts

@@ -24,6 +24,10 @@ import { CalendarMotionNavWaveDemo } from "../demos/calendar/CalendarMotionNavWa
 import calendarMotionNavWaveSource from "../demos/calendar/CalendarMotionNavWave.demo.tsx?raw";
 import { CalendarMotionNavTintDemo } from "../demos/calendar/CalendarMotionNavTint.demo";
 import calendarMotionNavTintSource from "../demos/calendar/CalendarMotionNavTint.demo.tsx?raw";
+import { CalendarMotionChromeDemo } from "../demos/calendar/CalendarMotionChrome.demo";
+import calendarMotionChromeSource from "../demos/calendar/CalendarMotionChrome.demo.tsx?raw";
+import { CalendarMotionFooterActionsDemo } from "../demos/calendar/CalendarMotionFooterActions.demo";
+import calendarMotionFooterActionsSource from "../demos/calendar/CalendarMotionFooterActions.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -102,10 +106,12 @@ export function CalendarShowcase() {
         <ShowcaseDemoFromFile align="start" Demo={CalendarInlineWidgetDemo} source={calendarInlineWidgetSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant skip, navPrev→navNext timeline, compound NavPrev/NavNext.">
+      <ShowcaseSection title="Slot motion" description="Instant skip, navPrev→navNext timeline, compound NavPrev/NavNext, footer Today/Clear.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarMotionInstantHoverDemo} source={calendarMotionInstantHoverSource} />
         <ShowcaseDemoFromFile align="start" Demo={CalendarMotionNavWaveDemo} source={calendarMotionNavWaveSource} />
         <ShowcaseDemoFromFile align="start" Demo={CalendarMotionNavTintDemo} source={calendarMotionNavTintSource} />
+        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionChromeDemo} source={calendarMotionChromeSource} />
+        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionFooterActionsDemo} source={calendarMotionFooterActionsSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

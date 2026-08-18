@@ -73,6 +73,12 @@ export type ButtonPartMotion = {
 
 export type ButtonMotion = {
   root?: ButtonPartMotion;
+  label?: ButtonPartMotion;
+  icon?: ButtonPartMotion;
+  text?: ButtonPartMotion;
+  loader?: ButtonPartMotion;
+  success?: ButtonPartMotion;
+  error?: ButtonPartMotion;
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -91,7 +97,8 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   iconPosition?: IconPosition;
   classNames?: Prettify<ButtonClassNames>;
   /**
-   * Per-slot motion (`root` = the button, or the inner content span in a ButtonGroup segment).
+   * Per-slot motion (`root` = the button, or the inner content span in a ButtonGroup segment;
+   * `label` / `icon` / `text`; async `loader` / `success` / `error` without replacing kit crossfade).
    * Hover/press defaults: `hoverLiftFirstLevel` / `pressSqueeze` (gloss → `hoverLiftGloss` / `pressSqueezeGloss`).
    */
   motion?: Prettify<ButtonMotion>;
@@ -104,21 +111,31 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export type ButtonContentProps = HTMLAttributes<HTMLSpanElement>;
 
-export type ButtonLabelProps = HTMLAttributes<HTMLSpanElement>;
+export type ButtonLabelProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ButtonPartMotion>;
+};
 
 export type ButtonIconProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<ButtonPartMotion>;
 };
 
 export type ButtonTextProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<ButtonPartMotion>;
 };
 
-export type ButtonLoaderProps = HTMLAttributes<HTMLSpanElement>;
+export type ButtonLoaderProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ButtonPartMotion>;
+};
 
-export type ButtonSuccessProps = HTMLAttributes<HTMLSpanElement>;
+export type ButtonSuccessProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ButtonPartMotion>;
+};
 
-export type ButtonErrorProps = HTMLAttributes<HTMLSpanElement>;
+export type ButtonErrorProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ButtonPartMotion>;
+};
 
 export type ButtonSimpleContentProps = {
   icon?: ReactNode;

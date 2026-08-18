@@ -55,6 +55,7 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 | `formatValue` | — | Текст value / `aria-valuetext` |
 | `showValue` | simple | Header value |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | Карта слотов (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`). Fill: `progressFill` / `progressIndeterminate`. Chrome — Root scope; Track — nested fill host |
 
 ### `ProgressBarClassNames`
 
@@ -76,7 +77,7 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 | role | `meter` | `progressbar` |
 | Семантика | Текущий уровень | Прогресс к цели |
 | Indeterminate | нет | да |
-| Fill motion | `motionInteractive` | `motionProgressFill` |
+| Fill motion | `progressFill` | `progressFill` / `progressIndeterminate` |
 
 ## Анимации
 
@@ -84,14 +85,17 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `track`, `fill`, `header`, `value` | `enter` (opt-in); `change` on `track` (`identity` = percent or `"indeterminate"`) | empty |
+| `track`, `header`, `value` | `enter` (opt-in); `change` on `track` (`identity` = percent or `"indeterminate"`) | empty |
+| `fill` | `change`; `enter` opt-in | `progressFill` (determinate) / `progressIndeterminate` |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Track) |
 
-Scale fill / indeterminate travel остаются kit-internal. Не играйте публичный `change` на `fill`.
+Хост fill = nested `ProgressBar.Track` (как Switch.Track): Root передаёт карту `motion`, Track — defaults + `params.getProgressScale` / `isHorizontal`. Chrome (`label` / `hint` / `error`) регистрируется на Root scope.
 
-`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+`fill.change: false` — без tween; хост ставит целевой scale мгновенно. Opt-in `fill.enter: "progressFill"` или factory (`ctx.params.getProgressScale()`) — first paint 0, затем заливка до значения.
 
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform / `scaleX`/`scaleY`, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Без `fill.enter` первый кадр — мгновенный scale (как раньше).
 
-`progressBarAnimations.ts` → `useProgressBarFillAnimation`.
+`progressBarAnimations.ts` → `progressFill` / `progressIndeterminate`.
 
 **DOM (determinate):**
 
@@ -111,17 +115,32 @@ Scale fill / indeterminate travel остаются kit-internal. Не играй
 
 ### 1. Determinate fill
 
-При изменении `value`:
+При изменении `value` слот `fill` играет `change` → `progressFill`:
 
 - fill на весь track (`width/height: 100%`); прогресс = `scaleX` (horizontal, origin left) / `scaleY` (vertical, origin bottom)
-- **First layout / reduced / `enableProgressFill: false`:** instant `gsap.set`
-- Иначе: `gsap.to(fill, { scaleX|scaleY, ...motionProgressFill() })`
+- **First layout / reduced / `enableProgressFill: false` / `change: false`:** instant `gsap.set`
+- Иначе: рецепт `progressFill` (`progressFillDuration`, `progressFillEase`)
 
-`motionProgressFill()` — `progressFillDuration`, `progressFillEase`.
+```tsx
+<ProgressBar
+  value={72}
+  motion={{
+    fill: {
+      enter: (ctx) => {
+        const scale = ctx.params.getProgressScale?.() ?? 0;
+        return ctx.fromTo(
+          { scaleX: 0, scaleY: 1 },
+          { scaleX: scale, scaleY: 1, duration: 0.7, ease: "power3.out" },
+        );
+      },
+    },
+  }}
+/>
+```
 
 ### 2. Indeterminate slide
 
-`indeterminate={true}`:
+`indeterminate={true}` → `fill.change` = `progressIndeterminate`:
 
 ```ts
 gsap.fromTo(fill,
@@ -132,7 +151,7 @@ gsap.fromTo(fill,
 
 Константы вынесены в `configureMotion`: `progressIndeterminateDuration` (1500), `progressIndeterminateEase` (`expo.inOut`).
 
-ResizeObserver на track/fill — перезапуск при resize.
+ResizeObserver на track/fill — `play("fill", "change")` при resize.
 
 Reduced motion / `enableProgressFill: false` / `enableAnimations: false`: без translate loop.
 
@@ -246,7 +265,7 @@ ProgressBar/
 ├── index.ts
 ├── progressBarTypes.ts
 ├── progressBarStyles.ts
-├── progressBarAnimations.ts    # determinate + indeterminate
+├── progressBarAnimations.ts    # Track nested host, fill recipes
 ├── progressBarParts.tsx
 ├── useProgressBarRootState.ts
 ├── useProgressBarTrackState.ts

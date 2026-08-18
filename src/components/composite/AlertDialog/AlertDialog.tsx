@@ -4,6 +4,7 @@ import { AlertDialogClassNamesProvider, AlertDialogMotionProvider, AlertDialogPr
 import { AlertDialogBody, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogPanel, AlertDialogTitle, AlertDialogTrigger } from "./alertDialogParts";
 import type { AlertDialogProps } from "./alertDialogTypes";
 import { useAlertDialogRootState } from "./useAlertDialogRootState";
+import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
 
 export type {
   AlertDialogProps,
@@ -52,8 +53,8 @@ export function AlertDialogRoot({
   return (
     <AlertDialogClassNamesProvider classNames={classNames}>
       <AlertDialogProvider value={state.contextValue}>
-        {/* Root has no DOM. Defaults + host play wrap AlertDialog.Panel. */}
-        <AlertDialogMotionProvider motion={motion}>
+        {/* Root has no DOM. Trigger defaults live here (Trigger is outside Panel). */}
+        <AlertDialogMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
         {children}
         </AlertDialogMotionProvider>
       </AlertDialogProvider>

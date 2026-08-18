@@ -4,7 +4,7 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { focusKeyboard } from "@/components/core/utils/focusElement";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { motionContentFadeFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
@@ -31,6 +31,7 @@ import {
 } from "./calendarAPI";
 import {
   resolveCalendarCellMotionDefaults,
+  useCalendarSlotMotion,
 } from "./calendarAnimations";
 import {
   CalendarMotionProvider,
@@ -38,7 +39,7 @@ import {
   useCalendarClassNames,
   useOptionalCalendarMotionScope,
 } from "./calendarContext";
-import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
+import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_NAV_ICON_WRAP_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
 import type {
   CalendarDayProps,
   CalendarFooterProps,
@@ -109,6 +110,7 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
     const { navPrevIcon, navNextIcon } = useCalendar();
     const slotClassNames = useCalendarClassNames();
     const navSlotName = direction === "prev" ? "navPrev" : "navNext";
+    const iconSlotName = direction === "prev" ? "navPrevIcon" : "navNextIcon";
     const scope = useOptionalCalendarMotionScope();
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope,
@@ -118,6 +120,13 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
       pressPhases: !disabled,
       forwardedRef: ref,
     });
+    const { setRef: setIconRef, pointerHandlers: iconPointerHandlers, targetRef: iconTargetRef } = useMotionPart<HTMLSpanElement>({
+      scope,
+      slot: iconSlotName,
+      pointerPhases: !disabled,
+      pressPhases: !disabled,
+    });
+    useOptionalEnterOnMount(scope, iconSlotName, iconTargetRef);
     const label = direction === "prev" ? calendarNavBackLabel() : calendarNavForwardLabel();
     const navSlot =
       direction === "prev" ? slotClassNames.navPrev : slotClassNames.navNext;
@@ -152,7 +161,15 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
           scope.play(navSlotName, "pressIn", { partMotion: motion, el: e.currentTarget });
         }}
       >
-        {children ?? (contextIcon !== undefined ? contextIcon : defaultIcon)}
+        {children ?? (
+          <span
+            ref={setIconRef}
+            className={CALENDAR_NAV_ICON_WRAP_CLASS}
+            {...iconPointerHandlers}
+          >
+            {contextIcon !== undefined ? contextIcon : defaultIcon}
+          </span>
+        )}
       </button>
     );
   },
@@ -253,6 +270,13 @@ function CalendarInteractiveCellSurface({
     pressPhases: !disabled,
     forwardedRef,
   });
+  const { setRef: setTextRef, pointerHandlers: textPointerHandlers, targetRef: textTargetRef } = useMotionPart<HTMLElement>({
+    scope,
+    slot: "cellText",
+    pointerPhases: !disabled,
+    pressPhases: !disabled,
+  });
+  useOptionalEnterOnMount(scope, "cellText", textTargetRef);
   const slotClassNames = useCalendarClassNames();
 
   const kindSlot =
@@ -307,10 +331,12 @@ function CalendarInteractiveCellSurface({
         className={cn(CALENDAR_CELL_FILL_CLASS, slotClassNames.cellFill)}
       />
       <Text
+        ref={setTextRef}
         variant={textVariant}
         as="span"
         inheritColor
         className={cn(CALENDAR_CELL_TEXT_CLASS, slotClassNames.cellText)}
+        {...textPointerHandlers}
       >
         {children}
       </Text>
@@ -722,14 +748,30 @@ function CalendarYearsView() {
 }
 
 export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
-  function CalendarTitle({ className = "", children, onClick, ...rest }, ref) {
+  function CalendarTitle(
+    { className = "", children, onClick, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const slotClassNames = useCalendarClassNames();
     const { view, setView, size } = useCalendar();
     const title = useCalendarHeaderTitle();
+    const scope = useOptionalCalendarMotionScope();
+    const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.headerTitle);
+    const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLButtonElement>({
+      scope,
+      slot: "headerTitle",
+      motion,
+      pointerPhases: pointer,
+      pressPhases: pointer,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+    });
+    useOptionalEnterOnMount(scope, "headerTitle", targetRef);
 
     return (
       <button
-        ref={ref}
+        ref={setRef}
         type="button"
         disabled={view === "years"}
         onClick={(e) => {
@@ -744,6 +786,7 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
           className,
         )}
         {...rest}
+        {...pointerHandlers}
       >
         {children ?? title}
       </button>
@@ -754,14 +797,31 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
 CalendarTitle.displayName = "Calendar.Title";
 
 export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
-  function CalendarHeader({ className = "", children, ...rest }, ref) {
+  function CalendarHeader(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const slotClassNames = useCalendarClassNames();
+    const scope = useOptionalCalendarMotionScope();
+    const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.header);
+    const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLDivElement>({
+      scope,
+      slot: "header",
+      motion,
+      pointerPhases: pointer,
+      pressPhases: pointer,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+    });
+    useOptionalEnterOnMount(scope, "header", targetRef);
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={cn(CALENDAR_HEADER_CLASS, slotClassNames.header, className)}
         {...rest}
+        {...pointerHandlers}
       >
         {children ?? (
           <>
@@ -776,15 +836,29 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
 );
 
 export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
-  function CalendarGrid({ className = "", ...rest }, ref) {
+  function CalendarGrid({ className = "", motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
     const { view } = useCalendar();
+    const scope = useOptionalCalendarMotionScope();
+    const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.grid);
+    const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLDivElement>({
+      scope,
+      slot: "grid",
+      motion,
+      pointerPhases: pointer,
+      pressPhases: pointer,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+    });
+    useOptionalEnterOnMount(scope, "grid", targetRef);
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={cn(CALENDAR_GRID_CLASS, slotClassNames.grid, className)}
         {...rest}
+        {...pointerHandlers}
       >
         {view === "days" && <CalendarDaysView />}
         {view === "months" && <CalendarMonthsView />}
@@ -795,17 +869,34 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
 );
 
 export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
-  function CalendarFooter({ className = "", ...rest }, ref) {
+  function CalendarFooter({ className = "", motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
     const { onClear, onToday, locale } = useCalendar();
+    const scope = useOptionalCalendarMotionScope();
+    const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.footer);
+    const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLDivElement>({
+      scope,
+      slot: "footer",
+      motion,
+      pointerPhases: pointer,
+      pressPhases: pointer,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+    });
+    useOptionalEnterOnMount(scope, "footer", targetRef);
+    const todayPart = useCalendarSlotMotion<HTMLButtonElement>("footerToday");
+    const clearPart = useCalendarSlotMotion<HTMLButtonElement>("footerClear");
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={cn(CALENDAR_FOOTER_CLASS, slotClassNames.footer, className)}
         {...rest}
+        {...pointerHandlers}
       >
         <Button
+          ref={todayPart.setRef}
           variant="ghost"
           size="small"
           className={cn(
@@ -813,15 +904,18 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
             slotClassNames.footerToday,
           )}
           onClick={onToday}
+          {...todayPart.pointerHandlers}
         >
           {locale.today}
         </Button>
         <Button
+          ref={clearPart.setRef}
           variant="ghost"
           size="small"
           status="danger"
           className={slotClassNames.footerClear}
           onClick={onClear}
+          {...clearPart.pointerHandlers}
         >
           {locale.clear}
         </Button>

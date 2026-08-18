@@ -1,6 +1,8 @@
 import { ColorPickerMotionInstantEnterDemo } from "./ColorPickerMotionInstantEnter.demo";
 import { ColorPickerMotionPanelWaveDemo } from "./ColorPickerMotionPanelWave.demo";
+import { ColorPickerMotionAlphaInputDemo } from "./ColorPickerMotionAlphaInput.demo";
 import { ColorPickerMotionAreaChangeDemo } from "./ColorPickerMotionAreaChange.demo";
+import { ColorPickerMotionPreviewSwatchDemo } from "./ColorPickerMotionPreviewSwatch.demo";
 
 export function ColorPickerMotionDemo() {
   return (
@@ -8,6 +10,8 @@ export function ColorPickerMotionDemo() {
       <ColorPickerMotionInstantEnterDemo />
       <ColorPickerMotionPanelWaveDemo />
       <ColorPickerMotionAreaChangeDemo />
+      <ColorPickerMotionAlphaInputDemo />
+      <ColorPickerMotionPreviewSwatchDemo />
     </div>
   );
 }

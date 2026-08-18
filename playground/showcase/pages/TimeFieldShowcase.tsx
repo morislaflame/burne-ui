@@ -24,6 +24,8 @@ import { TimeFieldMotionAffixWaveDemo } from "../demos/time-field/TimeFieldMotio
 import timeFieldMotionAffixWaveSource from "../demos/time-field/TimeFieldMotionAffixWave.demo.tsx?raw";
 import { TimeFieldMotionPrefixTintDemo } from "../demos/time-field/TimeFieldMotionPrefixTint.demo";
 import timeFieldMotionPrefixTintSource from "../demos/time-field/TimeFieldMotionPrefixTint.demo.tsx?raw";
+import { TimeFieldMotionHintEnterDemo } from "../demos/time-field/TimeFieldMotionHintEnter.demo";
+import timeFieldMotionHintEnterSource from "../demos/time-field/TimeFieldMotionHintEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -77,10 +79,11 @@ export function TimeFieldShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldSegmentedRowDemo} source={timeFieldSegmentedRowSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound Control press.">
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound Control press, chrome enter on label / hint / error.">
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionInstantHoverDemo} source={timeFieldMotionInstantHoverSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionAffixWaveDemo} source={timeFieldMotionAffixWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionPrefixTintDemo} source={timeFieldMotionPrefixTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionHintEnterDemo} source={timeFieldMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

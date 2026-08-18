@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, type ForwardedRef, type RefObject } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
@@ -76,10 +76,10 @@ export function useMotionPart<T extends HTMLElement>({
   /** When true, pressIn/pressOut on pointer down/up (trigger = this part). */
   pressPhases?: boolean;
   skipHover?: () => boolean;
-  onPointerOver?: (e: ReactPointerEvent<T>) => void;
-  onPointerOut?: (e: ReactPointerEvent<T>) => void;
-  onPointerDown?: (e: ReactPointerEvent<T>) => void;
-  onPointerUp?: (e: ReactPointerEvent<T>) => void;
+  onPointerOver?: PointerEventHandler<T>;
+  onPointerOut?: PointerEventHandler<T>;
+  onPointerDown?: PointerEventHandler<T>;
+  onPointerUp?: PointerEventHandler<T>;
 }): {
   setRef: (node: T | null) => void;
   targetRef: RefObject<T | null>;

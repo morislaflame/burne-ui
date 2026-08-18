@@ -1,8 +1,17 @@
+/**
+ * Kit-internal FLIP for the Pagination pages list (`usePaginationFlip`).
+ * Public slots: `control` (Previous / Next / Page nested unique scopes),
+ * `previousIcon` / `nextIcon` (nested in the same control scope), `summary`
+ * (`change` on the root scope when `page` moves), `ellipsis` (root scope).
+ * FLIP on `<ol>` stays kit-internal (`usePaginationFlip`).
+ * Not slots: `content` / `item` / `page`.
+ */
 import {
   useCallback,
   useLayoutEffect,
   useRef,
   type ForwardedRef,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -12,8 +21,13 @@ import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { isMotionFeatureEnabledFor, motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { hasPointerPhases, useMotionPart, useOptionalEnterOnMount, useSlotPhaseOnChange } from "@/components/core/utils/slotMotion";
 
-import type { PaginationMotion } from "./paginationTypes";
+import {
+  useOptionalPagination,
+  useOptionalPaginationMotionScope,
+} from "./paginationContext";
+import type { PaginationMotion, PaginationPartMotion, PaginationSummaryPartMotion } from "./paginationTypes";
 
 export type PaginationFlipIdentity = {
   /** Current page — primary trigger for FLIP when using `Pagination.Pages`. */
@@ -138,4 +152,58 @@ export function resolvePaginationControlMotionDefaults(): PaginationMotion {
       pressOut: false,
     },
   };
+}
+
+export function usePaginationSummarySlot(
+  motion?: PaginationSummaryPartMotion,
+  forwardedRef?: ForwardedRef<HTMLDivElement>,
+) {
+  const ctx = useOptionalPagination();
+  const scope = useOptionalPaginationMotionScope();
+  const part = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "summary",
+    motion,
+    forwardedRef,
+  });
+  useSlotPhaseOnChange(scope, "summary", ctx?.page, {
+    skipFirst: true,
+    target: part.targetRef,
+  });
+  return part;
+}
+
+export function usePaginationEllipsisSlot(
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: PaginationPartMotion;
+    forwardedRef?: ForwardedRef<HTMLSpanElement>;
+    onPointerOver?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
+    onPointerOut?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
+    onPointerDown?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
+    onPointerUp?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
+  } = {},
+) {
+  const scope = useOptionalPaginationMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.ellipsis);
+  const part = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "ellipsis",
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, "ellipsis", part.targetRef);
+  return part;
 }

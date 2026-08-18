@@ -45,6 +45,7 @@ import type {
   ColorPickerContentProps,
   ColorPickerHexInputProps,
   ColorPickerPresetsProps,
+  ColorPickerPreviewProps,
   ColorPickerTriggerProps,
 } from "./colorPickerTypes";
 
@@ -257,20 +258,40 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
 ColorPickerHexInput.displayName = "ColorPicker.HexInput";
 
 export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlphaInputProps>(
-  function ColorPickerAlphaInput({ className, ...rest }, ref) {
+  function ColorPickerAlphaInput(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const labels = useBurneLabels();
     const { hsva, setHsva } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
+    const part = useColorPickerSlotMotion<HTMLDivElement>("alphaInput", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         className={cn(
           COLOR_PICKER_ALPHA_INPUT_CLASS,
           slotClassNames.alphaInput,
           className,
         )}
         {...rest}
+        {...part.pointerHandlers}
       >
         <input
           type="text"
@@ -358,6 +379,53 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
 
 ColorPickerPresets.displayName = "ColorPicker.Presets";
 
+export const ColorPickerPreview = forwardRef<HTMLSpanElement, ColorPickerPreviewProps>(
+  function ColorPickerPreview(
+    {
+      className,
+      color,
+      size = "mid",
+      shape = "circle",
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const { hex } = useColorPicker();
+    const slotClassNames = useColorPickerClassNames();
+    const part = useColorPickerSlotMotion<HTMLSpanElement>("previewSwatch", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+
+    return (
+      <span
+        ref={part.setRef}
+        className={cn("inline-flex shrink-0", className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        <ColorSwatch
+          color={color ?? hex}
+          size={size}
+          shape={shape}
+          className={cn("shrink-0", slotClassNames.previewSwatch)}
+        />
+      </span>
+    );
+  },
+);
+
+ColorPickerPreview.displayName = "ColorPicker.Preview";
+
 function ColorPickerDefaultLayout({
   showAlpha,
   presets,
@@ -365,7 +433,7 @@ function ColorPickerDefaultLayout({
   showAlpha: boolean;
   presets?: string[];
 }) {
-  const { hsva, setHsva, hex, size } = useColorPicker();
+  const { hsva, setHsva, size } = useColorPicker();
   const slotClassNames = useColorPickerClassNames();
   const sliderSize = COLOR_PICKER_SLIDER_SIZE_MAP[size];
   const pickerMotion = useOptionalColorPickerMotionScope()?.getRootMotion();
@@ -380,12 +448,7 @@ function ColorPickerDefaultLayout({
           slotClassNames.slidersRow,
         )}
       >
-        <ColorSwatch
-          color={hex}
-          size="mid"
-          shape="circle"
-          className={cn("shrink-0", slotClassNames.previewSwatch)}
-        />
+        <ColorPickerPreview />
 
         <div
           className={cn(
@@ -436,7 +499,7 @@ function ColorPickerDefaultLayout({
 
 export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger(
-    { swatchSize, className, children, asChild, ...rest },
+    { swatchSize, className, children, asChild, motion, ...rest },
     ref,
   ) {
     const labels = useBurneLabels();
@@ -447,6 +510,7 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
       <Popover.Trigger
         ref={ref}
         asChild={asChild}
+        motion={motion}
         className={cn(slotClassNames.trigger, className)}
         {...rest}
       >

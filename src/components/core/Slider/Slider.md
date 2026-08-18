@@ -78,7 +78,7 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | `disabled` | `false` | |
 | `showValue` | simple | Показать value в header |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Карта слотов. Compound: `motion` на `Slider.Thumb` — part motion этого thumb |
+| `motion` | — | Карта слотов. Chrome `label` / `hint` / `error` — Root scope. Compound: `motion` на `Slider.Thumb` — part motion этого thumb |
 
 ### `SliderClassNames`
 
@@ -88,7 +88,7 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 
 ## Анимации
 
-Публичный slot motion. Defaults на Root. Thumb press — `pressSqueeze` (`pressOut: false`). Fill `left` / `width` / `bottom` / `height` — kit-internal (`applySliderFillStyle`), не публичные MotionVars. Disabled opacity на `thumbShell` — внутренний GSAP.
+Публичный slot motion. Defaults на Root. Thumb press — `pressSqueeze` (`pressOut: false`). Chrome (`label` / `hint` / `error`) регистрируется на Root scope (соседи Track). Fill `left` / `width` / `bottom` / `height` — kit-internal (`applySliderFillStyle`), не публичные MotionVars. Disabled opacity на `thumbShell` — внутренний GSAP.
 
 ### Slot motion
 
@@ -97,8 +97,9 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | `thumb` | `pressIn` / `pressOut` | `pressSqueeze` (`pressOut: false`); `disabled` → `false` |
 | `track` | `enter` (opt-in); `change` при value / range identity; hover/press | нет |
 | `rail` / `fill` / `icon` / `header` / `value` | hover/press; `change` если задан (broadcast с track, `fill` исключён) | нет |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Track) |
 
-`false` на `thumb.pressIn` — squeeze не играет. Compound: `motion` на `Slider.Thumb` — part motion этого thumb (range start/end независимо).
+`false` на `thumb.pressIn` — squeeze не играет. Compound: `motion` на `Slider.Thumb` — part motion этого thumb (range start/end независимо). На `Slider.Label` / `Hint` / `Error` — chrome Root scope.
 
 `change` на track — дискретный тик значения (pulse / tint), не follow за пальцем. Пузырь с инерцией над thumb — playground demo `SliderMotionThumbInertia` (`gsap.quickTo` на `x`), не kit Tooltip.
 

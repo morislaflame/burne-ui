@@ -52,6 +52,24 @@ describe("killMotion will-change cleanup", () => {
   });
 });
 
+describe("killMotion vs enter", () => {
+  afterEach(() => {
+    gsap.globalTimeline.clear();
+  });
+
+  it("stops an in-flight opacity enter (unsafe on pointer-handler unmount)", () => {
+    const el = { opacity: 1, y: 0, style: { willChange: "" } };
+    gsap.ticker.lagSmoothing(0);
+    gsap.fromTo(el, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 10 });
+    expect(el.opacity).toBe(0);
+
+    killMotion(el);
+
+    expect(el.opacity).toBe(0);
+    expect(gsap.getTweensOf(el).length).toBe(0);
+  });
+});
+
 describe("killMotionGeometry", () => {
   afterEach(() => {
     gsap.globalTimeline.clear();

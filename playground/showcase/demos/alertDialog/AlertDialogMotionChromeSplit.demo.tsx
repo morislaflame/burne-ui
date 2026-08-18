@@ -1,10 +1,7 @@
 import { useState } from "react";
-import gsap from "gsap";
 
 import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Button } from "@/components/core/Button";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function AlertDialogMotionChromeSplitDemo() {
   const [open, setOpen] = useState(false);
@@ -16,21 +13,19 @@ export function AlertDialogMotionChromeSplitDemo() {
       motion={{
         header: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: -18, autoAlpha: 0 },
-              { y: 0, autoAlpha: 1, duration: 0.34, delay: 0.04, ease: "power3.out", ...TL },
+              { y: 0, autoAlpha: 1, duration: 0.34, delay: 0.04, ease: "power3.out" },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { y: -10, autoAlpha: 0, duration: 0.14, ...TL }),
+          leave: { y: -10, autoAlpha: 0, duration: 0.14 },
         },
         footer: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 20, autoAlpha: 0 },
-              { y: 0, autoAlpha: 1, duration: 0.36, delay: 0.1, ease: "power3.out", ...TL },
+              { y: 0, autoAlpha: 1, duration: 0.36, delay: 0.1, ease: "power3.out" },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { y: 12, autoAlpha: 0, duration: 0.14, ...TL }),
+          leave: { y: 12, autoAlpha: 0, duration: 0.14 },
         },
       }}
     >

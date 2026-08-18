@@ -1,77 +1,143 @@
-import { Field } from "@/components/core/Field";
-import type { LabelProps } from "@/components/core/Label";
+import { forwardRef } from "react";
 
+import { Field } from "@/components/core/Field";
+
+import { useInputChromeSlot } from "./inputAnimations";
 import { useInputClassNames, useInputFieldContext } from "./inputContext";
-import type { InputErrorProps, InputHintProps } from "./inputTypes";
+import type { InputErrorProps, InputHintProps, InputLabelProps } from "./inputTypes";
 
 import { cn } from "@/utils/cn";
 
-export function InputLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useInputClassNames();
+export const InputLabel = forwardRef<HTMLElement, InputLabelProps>(
+  function InputLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useInputClassNames();
+    const part = useInputChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Field.Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 InputLabel.displayName = "InputLabel";
 
-export function InputHint({
-  children,
-  status,
-  className,
-  id: idProp,
-  ...rest
-}: InputHintProps) {
-  const field = useInputFieldContext();
-  const slotClassNames = useInputClassNames();
-  const hintStatus =
-    status ??
-    (field.status === "danger"
-      ? "default"
-      : field.status === "default"
+export const InputHint = forwardRef<HTMLElement, InputHintProps>(
+  function InputHint(
+    {
+      children,
+      status,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useInputFieldContext();
+    const slotClassNames = useInputClassNames();
+    const hintStatus =
+      status ??
+      (field.status === "danger"
         ? "default"
-        : field.status);
+        : field.status === "default"
+          ? "default"
+          : field.status);
+    const part = useInputChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? field.hintId}
-      status={hintStatus}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? field.hintId}
+        status={hintStatus}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 InputHint.displayName = "InputHint";
 
-export function InputError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: InputErrorProps) {
-  const field = useInputFieldContext();
-  const slotClassNames = useInputClassNames();
+export const InputError = forwardRef<HTMLElement, InputErrorProps>(
+  function InputError(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useInputFieldContext();
+    const slotClassNames = useInputClassNames();
+    const part = useInputChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? field.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? field.errorId}
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
 
 InputError.displayName = "InputError";

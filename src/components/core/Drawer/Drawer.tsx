@@ -4,6 +4,7 @@ import { DrawerClassNamesProvider, DrawerMotionProvider, DrawerProvider } from "
 import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerTitle, DrawerTrigger } from "./drawerParts";
 import type { DrawerProps } from "./drawerTypes";
 import { useDrawerRootState } from "./useDrawerRootState";
+import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
 
 export type {
   DrawerProps,
@@ -52,7 +53,7 @@ export function DrawerRoot({
   return (
     <DrawerProvider value={state.contextValue}>
       <DrawerClassNamesProvider classNames={classNames}>
-        <DrawerMotionProvider motion={motion}>
+        <DrawerMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
         {children}
         </DrawerMotionProvider>
       </DrawerClassNamesProvider>

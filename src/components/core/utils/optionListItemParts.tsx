@@ -54,12 +54,15 @@ export function OptionListItemLabel({
   );
 }
 
-export type OptionListItemHintProps = HTMLAttributes<HTMLSpanElement>;
+export type OptionListItemHintProps = HTMLAttributes<HTMLSpanElement> & {
+  ref?: Ref<HTMLElement>;
+};
 
-export function OptionListItemHint({ className, children, ...rest }: OptionListItemHintProps) {
+export function OptionListItemHint({ className, children, ref, ...rest }: OptionListItemHintProps) {
   const ctx = useOptionListItemContext("ItemHint");
   return (
     <Text
+      ref={ref}
       as="span"
       variant="xsmall"
       inheritColor

@@ -94,7 +94,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 
 ## Анимации
 
-`switchAnimations.ts` → slot motion (`SWITCH_MOTION_DEFAULTS`). Root передаёт карту `motion`; хост — `Switch.Track` (defaults + `params.getTravelPx`). Squeeze `thumbShell` и opacity disabled track — внутренний GSAP, не публичные фазы.
+`switchAnimations.ts` → slot motion (`SWITCH_MOTION_DEFAULTS`). Root передаёт карту `motion`. Track — nested host (defaults + `params.getTravelPx`) для `fill` / `thumb` / `iconOn` / `iconOff`. Chrome `label` / `hint` / `error` регистрируются на **Root** scope — Track их не наследует. Squeeze `thumbShell` и opacity disabled track — внутренний GSAP, не публичные фазы.
 
 **DOM:**
 
@@ -107,6 +107,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
       <span thumb>                       ← слот `thumb` (translateX)
         SelectionThumb (thumbShell)      ← press squeeze, не слот
         Switch.Icon off/on               ← слоты `iconOff` / `iconOn`
+  Switch.Label / Hint / Error          ← Root scope: `label` / `hint` / `error`
 ```
 
 ### Slot motion
@@ -117,6 +118,8 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 | `fill` | `check` / `uncheck` | `switchFill` |
 | `iconOn` | `check` / `uncheck` | `switchIconOn` |
 | `iconOff` | `check` / `uncheck` | `switchIconOff` |
+| `track` | `check` / `uncheck` (+ `enter` / pointer если задать) | нет; Track host, как Meter `track` |
+| `label` / `hint` / `error` | `check` / `uncheck` (+ `enter` / pointer если задать) | нет; Root scope, не Track |
 
 Travel thumb — `measureSwitchTravel(track, thumbShell)` (+ ResizeObserver). Factory на `thumb` читает `ctx.params.getTravelPx()`. `false` на фазе **не** ставит состояние — хост сам делает instant (`applySwitchThumbInstant` / fill / icon). First layout / reduced / `enableSwitchThumb: false` — тоже instant.
 
@@ -130,9 +133,24 @@ Travel thumb — `measureSwitchTravel(track, thumbShell)` (+ ResizeObserver). Fa
     thumb: {
       check: (ctx) => {
         const travel = ctx.params.getTravelPx?.() ?? 0;
-        return gsap.to(ctx.el, { x: travel, duration: 0.45, ease: "back.out(1.6)", force3D: false });
+        return ctx.to({ x: travel, duration: 0.45, ease: "back.out(1.6)" });
       },
-      uncheck: (ctx) => gsap.to(ctx.el, { x: 0, duration: 0.22, force3D: false }),
+      uncheck: (ctx) => ctx.to({ x: 0, duration: 0.22 }),
+    },
+  }}
+/>
+
+<Switch
+  label="Accent"
+  hint="Hint follows check."
+  motion={{
+    label: {
+      check: (ctx) => ctx.to({ y: -1, duration: 0.18 }),
+      uncheck: (ctx) => ctx.to({ y: 0, duration: 0.16 }),
+    },
+    hint: {
+      check: (ctx) => ctx.to({ opacity: 1, duration: 0.2 }),
+      uncheck: (ctx) => ctx.to({ opacity: 0.72, duration: 0.16 }),
     },
   }}
 />
@@ -156,6 +174,7 @@ Track opacity `0.48` instant на `trackRef`.
 |----------|-------------------|------|
 | Thumb slide | `switchThumbDuration`, `switchThumbEase`, `enableSwitchThumb` | `motion.thumb` |
 | Track fill / icons | `interactiveDuration`, `interactiveEase`, `enableSwitchThumb` | `motion.fill` / `iconOn` / `iconOff` |
+| Label / hint / error | — | `motion.label` / `hint` / `error` (Root scope) |
 | Press squeeze | `pressSqueezeScale`, `enablePressSqueeze` | внутренний `thumbShell` |
 
 ## Стилизация и кастомизация

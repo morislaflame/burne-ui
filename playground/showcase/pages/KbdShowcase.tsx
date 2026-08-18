@@ -6,6 +6,8 @@ import { KbdMotionInstantHoverDemo } from "../demos/kbd/KbdMotionInstantHover.de
 import kbdMotionInstantHoverSource from "../demos/kbd/KbdMotionInstantHover.demo.tsx?raw";
 import { KbdMotionKeyBounceDemo } from "../demos/kbd/KbdMotionKeyBounce.demo";
 import kbdMotionKeyBounceSource from "../demos/kbd/KbdMotionKeyBounce.demo.tsx?raw";
+import { KbdMotionGroupDemo } from "../demos/kbd/KbdMotionGroup.demo";
+import kbdMotionGroupSource from "../demos/kbd/KbdMotionGroup.demo.tsx?raw";
 import { KbdMotionRootTiltDemo } from "../demos/kbd/KbdMotionRootTilt.demo";
 import kbdMotionRootTiltSource from "../demos/kbd/KbdMotionRootTilt.demo.tsx?raw";
 import { KbdMotionTextPopDemo } from "../demos/kbd/KbdMotionTextPop.demo";
@@ -45,12 +47,13 @@ export function KbdShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — instant hover, root tilt, text pop, key bounce."
+        description="Each card is a separate copyable example — instant hover, root tilt, text pop, key bounce, Group enter."
       >
         <ShowcaseDemoFromFile Demo={KbdMotionInstantHoverDemo} source={kbdMotionInstantHoverSource} />
         <ShowcaseDemoFromFile Demo={KbdMotionRootTiltDemo} source={kbdMotionRootTiltSource} />
         <ShowcaseDemoFromFile Demo={KbdMotionTextPopDemo} source={kbdMotionTextPopSource} />
         <ShowcaseDemoFromFile Demo={KbdMotionKeyBounceDemo} source={kbdMotionKeyBounceSource} />
+        <ShowcaseDemoFromFile Demo={KbdMotionGroupDemo} source={kbdMotionGroupSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Kbd.Group" description="Multiple keys with separator «+».">

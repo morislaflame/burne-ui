@@ -1,3 +1,4 @@
+import { KbdMotionGroupDemo } from "./KbdMotionGroup.demo";
 import { KbdMotionInstantHoverDemo } from "./KbdMotionInstantHover.demo";
 import { KbdMotionKeyBounceDemo } from "./KbdMotionKeyBounce.demo";
 import { KbdMotionRootTiltDemo } from "./KbdMotionRootTilt.demo";
@@ -10,6 +11,7 @@ export function KbdMotionDemo() {
       <KbdMotionRootTiltDemo />
       <KbdMotionTextPopDemo />
       <KbdMotionKeyBounceDemo />
+      <KbdMotionGroupDemo />
     </div>
   );
 }

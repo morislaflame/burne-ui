@@ -1,4 +1,4 @@
-import { TableBody, TableCell, TableColumn, TableContent, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRoot, TableRow, TableScrollContainer } from "./Table";
+import { TableBody, TableCell, TableColumn, TableContent, TableEmpty, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRoot, TableRow, TableScrollContainer } from "./Table";
 
 export const Table = Object.assign(TableRoot, {
   ScrollContainer: TableScrollContainer,
@@ -8,6 +8,7 @@ export const Table = Object.assign(TableRoot, {
   Column: TableColumn,
   Label: TableLabel,
   Body: TableBody,
+  Empty: TableEmpty,
   Row: TableRow,
   Cell: TableCell,
   Footer: TableFooter,
@@ -28,6 +29,7 @@ export type {
   TableColumnSortIconRenderProps,
   TableLabelProps,
   TableBodyProps,
+  TableEmptyProps,
   TableRowProps,
   TableCellProps,
   TableFooterProps,

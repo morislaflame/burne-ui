@@ -15,6 +15,7 @@ export type {
   TextAreaVariant,
   TextAreaProps,
   TextAreaHintProps,
+  TextAreaLabelProps,
   TextAreaErrorProps,
   TextAreaSimpleProps,
   TextAreaMotion,

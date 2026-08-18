@@ -1,9 +1,9 @@
 import type {
-  CSSProperties,
   HTMLAttributes,
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { LabelProps } from "@/components/core/Label";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type MeterSize = "small" | "base" | "mid" | "large";
@@ -36,7 +36,11 @@ export type MeterPartMotion = {
   pressOut?: MotionValue;
   enter?: MotionValue;
   leave?: MotionValue;
-  /** Plays when `value` changes. Fill width/height stays kit-internal. */
+  /**
+   * `track`: value identity.
+   * `fill`: `progressFill` (scale). Opt-in `fill.enter` — first paint at 0,
+   * then fill to `getProgressScale()`.
+   */
   change?: MotionValue;
 };
 
@@ -45,6 +49,9 @@ export type MeterMotion = {
   fill?: MeterPartMotion;
   header?: MeterPartMotion;
   value?: MeterPartMotion;
+  label?: MeterPartMotion;
+  hint?: MeterPartMotion;
+  error?: MeterPartMotion;
 };
 
 export type MeterDisplayState = {
@@ -91,9 +98,10 @@ export type MeterProps = HTMLAttributes<HTMLDivElement> &
     error?: ReactNode;
     classNames?: Prettify<MeterClassNames>;
     /**
-     * Per-slot motion (`track`, `fill`, `header`, `value`).
-     * Fill geometry (`width`/`height`) is kit-internal. Phase `change` plays on `track`
-     * when value updates (not on `fill`, so the kit tween is not killed).
+     * Per-slot motion (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`).
+     * Fill `change` defaults to `progressFill`. `fill.enter` is opt-in
+     * (`"progressFill"` or a factory with `ctx.params.getProgressScale`).
+     * Chrome registers on the Root scope (siblings of Track). Track is the nested fill host.
      */
     motion?: Prettify<MeterMotion>;
   };
@@ -113,12 +121,18 @@ export type MeterValueProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<MeterPartMotion>;
 };
 
+export type MeterLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<MeterPartMotion>;
+};
+
 export type MeterHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<MeterPartMotion>;
 };
 
 export type MeterErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<MeterPartMotion>;
 };
 
 export type UseMeterRootStateProps = Omit<
@@ -148,11 +162,6 @@ export type MeterTrackAriaProps = {
   labelConnected: boolean;
   labelId?: string;
   ariaDescribedBy?: string;
-};
-
-export type UseMeterFillAnimationProps = {
-  fillTargetStyle: CSSProperties;
-  isHorizontal: boolean;
 };
 
 export type MeterSimpleBodyProps = {

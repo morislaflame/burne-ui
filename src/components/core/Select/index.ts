@@ -16,6 +16,7 @@ export type {
   SelectProps,
   SelectSimpleProps,
   SelectHintProps,
+  SelectLabelProps,
   SelectErrorProps,
   SelectTriggerGroupProps,
   SelectValueProps,

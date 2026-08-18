@@ -102,7 +102,7 @@ const [open, setOpen] = useState(false);
 </Dialog>
 ```
 
-Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы подавить собственную анимацию `Button`, затем `runOpenAfterSqueeze` открывает диалог после squeeze.
+Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы подавить собственную анимацию `Button`, затем `runOpenAfterSqueeze` открывает диалог после `motion.trigger.pressIn` (дефолт `pressSqueeze`; другой рецепт или factory — на карте `trigger`).
 
 ## variant
 
@@ -131,7 +131,10 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 | `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
 | `panel` | `enter` / `leave` | `modalPanelEnter` / `modalPanelLeave` |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
-| `close`, `header`, `footer`, `content` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+| `close`, `header`, `headingBlock`, `footer`, `content`, `body` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+| `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
+
+`body` — `Dialog.Body` (скролл), не слот `content`.
 
 Nested `enter` — следующий кадр после host, без layout flush на overlay. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
 
@@ -146,13 +149,12 @@ Nested `enter` — следующий кадр после host, без layout fl
   motion={{
     panel: {
       enter: (ctx) =>
-        gsap.fromTo(
-          ctx.el,
+        ctx.fromTo(
           { y: 28, scale: 0.92, autoAlpha: 0 },
           { y: 0, scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(1.4)" },
         ),
       leave: (ctx) =>
-        gsap.to(ctx.el, {
+        ctx.to({
           y: 24,
           scale: 0.94,
           autoAlpha: 0,
@@ -167,7 +169,6 @@ Nested `enter` — следующий кадр после host, без layout fl
 **Где в коде:** типы — `dialogTypes.ts`; scope — `dialogContext.tsx`; defaults + host play — `dialogAnimations.ts` (`DIALOG_MOTION_DEFAULTS`, `useDialogModalMotion`); слоты и Panel-provider — `dialogParts.tsx`; карта `motion` на корне — `Dialog.tsx`.
 
 ```tsx
-import gsap from "gsap";
 import { Dialog, tweenCssColor } from "burne-ui";
 
 <Dialog
@@ -176,8 +177,8 @@ import { Dialog, tweenCssColor } from "burne-ui";
   motion={{
     title: {
       enter: (ctx) =>
-        gsap.fromTo(ctx.el, { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35 }),
-      leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
+        ctx.fromTo({ y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35 }),
+      leave: (ctx) => ctx.to({ y: -8, autoAlpha: 0, duration: 0.2 }),
     },
   }}
 >
@@ -204,7 +205,7 @@ import { Dialog, tweenCssColor } from "burne-ui";
   motion={{
     panel: {
       leave: (ctx) => {
-        const tl = gsap.timeline();
+        const tl = ctx.timeline();
         if (ctx.targets.title) tl.to(ctx.targets.title, { x: -12, autoAlpha: 0, duration: 0.16 }, 0);
         tl.to(ctx.el, { scale: 0.94, autoAlpha: 0, duration: 0.22 }, 0.08);
         return tl;
@@ -276,15 +277,21 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 
 ### 4. Dialog.Trigger — open после squeeze
 
-`runOpenAfterSqueeze({ triggerRef, openingRef, setOpen })`:
+`runOpenAfterSqueeze({ triggerRef, openingRef, setOpen })` ждёт `motion.trigger.pressIn` (Root scope):
 
 1. `pointerdown` на Trigger → `e.preventDefault()` **до** child Button (подавляет дублирующий squeeze)
-2. `animateInteractivePressSqueeze(triggerEl)` → Promise
+2. `scope.play("trigger", "pressIn")` — дефолт `pressSqueeze`; другой рецепт / factory на `motion.trigger.pressIn`; `false` — без squeeze
 3. `setOpen(true)` после complete
 
 При reduced motion — `setOpen(true)` сразу. Keyboard click (без pointerdown) — open немедленно в `handleClick`.
 
-Использует те же `pressSqueezeScale` / `interactiveDuration`, что Button.
+```tsx
+<Dialog motion={{ trigger: { pressIn: (ctx) => ctx.to({ scale: 0.9, duration: 0.16, yoyo: true, repeat: 1 }) } }}>
+  <Dialog.Trigger asChild>
+    <Button>Открыть</Button>
+  </Dialog.Trigger>
+</Dialog>
+```
 
 ### 5. Gloss panel
 
@@ -297,7 +304,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 | Open overlay | `animateModalOpen` | `modalDuration`, `interactiveEase`, `enableModalMotion` | opacity fade |
 | Open panel | `animateModalOpen` | те же | scale 0.97→1 |
 | Close | `animateModalClose` | те же | autoAlpha + scale out |
-| Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | Dialog.Trigger |
+| Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale`, `enablePressSqueeze` | `motion.trigger.pressIn` |
 | Reduced motion | `isReducedModalMotion` | `enableModalMotion` / `enableAnimations` | системная настройка + флаги |
 | Scale from | `MODAL_PANEL_SCALE_FROM` | — | константа 0.97 |
 

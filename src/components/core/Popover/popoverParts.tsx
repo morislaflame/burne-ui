@@ -6,8 +6,7 @@ import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 
@@ -30,31 +29,50 @@ import { cn } from "@/utils/cn";
 
 export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
   function PopoverTrigger(
-    { className = "", children, asChild = true, onClick, onPointerDown, onKeyDown, ...rest },
+    {
+      className = "",
+      children,
+      asChild = true,
+      motion,
+      onClick,
+      onPointerDown,
+      onPointerOver,
+      onPointerOut,
+      onPointerUp,
+      onKeyDown,
+      ...rest
+    },
     ref,
   ) {
     const { open, setOpen, triggerRef, popoverId } =
       usePopoverContext("Popover.Trigger");
     const slotClassNames = usePopoverClassNames();
-    const openingRef = useOpeningRef();
-    const config = useMotionConfig();
+    const { part, openingRef, openAfterSqueeze } = useOverlayTriggerSlot<HTMLButtonElement>({
+      scope: useOptionalPopoverMotionScope(),
+      slot: "trigger",
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     const mergedRef = useCallback(
       (node: HTMLButtonElement | null) => {
+        part.setRef(node);
         triggerRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
       },
-      [ref, triggerRef],
+      [part.setRef, triggerRef],
     );
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
+        openAfterSqueeze(() => setOpen(true));
       },
-      [open, openingRef, triggerRef, setOpen, config],
+      [open, openingRef, openAfterSqueeze, setOpen],
     );
 
     const handleClick = useCallback(
@@ -74,11 +92,11 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
           event.preventDefault();
           if (open) setOpen(false);
           else {
-            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
+            openAfterSqueeze(() => setOpen(true));
           }
         }
       },
-      [onKeyDown, open, openingRef, setOpen, triggerRef, config],
+      [onKeyDown, open, openAfterSqueeze, setOpen],
     );
 
     const onlyChild =
@@ -101,8 +119,11 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
             ),
             onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
               handlePointerDown(e);
-              onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+              part.pointerHandlers.onPointerDown(e as ReactPointerEvent<HTMLButtonElement>);
             },
+            onPointerOver: part.pointerHandlers.onPointerOver,
+            onPointerOut: part.pointerHandlers.onPointerOut,
+            onPointerUp: part.pointerHandlers.onPointerUp,
             onClick: handleClick,
             onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
               handleKeyDown(event as ReactKeyboardEvent<HTMLButtonElement>);
@@ -127,13 +148,14 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
           className,
         })}
         {...triggerA11y}
-        onPointerDown={(e) => {
-          onPointerDown?.(e);
-          handlePointerDown(e);
-        }}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         {...rest}
+        {...part.pointerHandlers}
+        onPointerDown={(e) => {
+          part.pointerHandlers.onPointerDown(e);
+          handlePointerDown(e);
+        }}
       >
         {children}
       </button>
@@ -144,15 +166,27 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
 PopoverTrigger.displayName = "PopoverTrigger";
 
 export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
-  function PopoverArrow({ className, ...rest }, ref) {
+  function PopoverArrow(
+    { className, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const resolvedSide = usePopoverResolvedSide();
     const { variant } = usePopoverContext("Popover.Arrow");
     const slotClassNames = usePopoverClassNames();
     const isGloss = variant === "gloss";
+    const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalPopoverMotionScope(),
+      slot: "arrow",
+      motion,
+      pointerPhases: true,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+    });
 
     return (
       <span
-        ref={ref}
+        ref={setRef}
         aria-hidden
         className={popoverArrowClass({
           isGloss,
@@ -162,6 +196,7 @@ export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
           className,
         })}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -170,14 +205,20 @@ export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
 PopoverArrow.displayName = POPOVER_ARROW_DISPLAY_NAME;
 
 export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
-  function PopoverHeader({ className, children, ...rest }, ref) {
+  function PopoverHeader({ className, children, motion, ...rest }, ref) {
     const { size } = usePopoverContext("Popover.Header");
     const { unstyled } = usePopoverContentChrome();
     const slotClassNames = usePopoverClassNames();
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalPopoverMotionScope(),
+      slot: "header",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={popoverHeaderClass({
           size,
           unstyled,

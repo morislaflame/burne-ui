@@ -7,7 +7,7 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
+import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownMenuSlotMotion, useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
 import { DropdownMotionProvider, useDropdown, useDropdownClassNames, useDropdownMotionScope, useDropdownSub, useOptionalDropdownMotionScope, DropdownSubProvider } from "./dropdownContext";
 import {
   DROPDOWN_SUB_CLASS,
@@ -62,8 +62,13 @@ export const DropdownSubTrigger = forwardRef<
     children,
     asChild,
     icon,
+    motion,
     onPointerEnter,
     onPointerLeave,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
     onClick,
     onKeyDown,
     ...rest
@@ -73,6 +78,22 @@ export const DropdownSubTrigger = forwardRef<
   const { open, setOpen, triggerRef, scheduleClose, cancelClose } =
     useDropdownSub();
   const slotClassNames = useDropdownClassNames();
+  const part = useDropdownMenuSlotMotion<HTMLDivElement>("subTrigger", {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+
+  const setRowRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      part.setRef(node);
+      mergeForwardedRef(triggerRef, node);
+    },
+    [part.setRef, triggerRef],
+  );
 
   const handleEnter = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
@@ -133,11 +154,7 @@ export const DropdownSubTrigger = forwardRef<
     return cloneElement(child, {
       ...rest,
       ref: ((node: HTMLElement | null) => {
-        mergeForwardedRef<HTMLDivElement>(
-          forwardedRef,
-          node as HTMLDivElement | null,
-        );
-        mergeForwardedRef<HTMLDivElement>(triggerRef, node as HTMLDivElement | null);
+        setRowRef(node as HTMLDivElement | null);
         if (child.props.ref) mergeForwardedRef(child.props.ref, node);
       }) as Ref<HTMLElement>,
       className: cn(child.props.className, rowClass),
@@ -157,6 +174,7 @@ export const DropdownSubTrigger = forwardRef<
         (child.props as HTMLAttributes<HTMLElement>).onKeyDown?.(e);
         handleKeyDown(e as unknown as React.KeyboardEvent<HTMLDivElement>);
       },
+      ...part.pointerHandlers,
       role: "menuitem",
       "aria-expanded": open,
       "aria-haspopup": "menu",
@@ -165,10 +183,7 @@ export const DropdownSubTrigger = forwardRef<
 
   return (
     <div
-      ref={(node) => {
-        mergeForwardedRef(forwardedRef, node);
-        mergeForwardedRef(triggerRef, node);
-      }}
+      ref={setRowRef}
       role="menuitem"
       tabIndex={-1}
       aria-expanded={open}
@@ -179,6 +194,7 @@ export const DropdownSubTrigger = forwardRef<
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       {...rest}
+      {...part.pointerHandlers}
     >
       <span
         className={cn(

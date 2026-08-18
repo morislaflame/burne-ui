@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useRef, type ReactNode } from "react";
+import { createContext, useContext, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
 
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
@@ -14,6 +14,14 @@ import { resolveSlotPhase } from "./resolveMotionValue";
 import { killStoredMotion, runMotionPhase } from "./runMotionPhase";
 import { enterHidesFirstPaint } from "./enterHidesFirstPaint";
 import {
+  attachMotionController,
+  createMotionControllerFromScope,
+  MotionControllerProvider,
+} from "./motionController";
+import type { MotionController } from "./motionControllerTypes";
+import { splitMotionRootMap, type MotionEvents, type MotionRootInput } from "./motionEvents";
+import {
+  isMotionPhaseName,
   type MotionPartPhases,
   type MotionPhaseName,
   type MotionRecipeParams,
@@ -42,6 +50,7 @@ export type PlayBroadcastOptions = {
 
 export type MotionScopeValue = {
   getRootMotion: () => MotionSlotMap | undefined;
+  getEvents: () => MotionEvents | undefined;
   getDefaults: () => MotionSlotMap | undefined;
   getParams: () => MotionRecipeParams;
   /** Unique / first live instance of a slot. Repeated slots: `getTargets(slot)`. */
@@ -61,12 +70,14 @@ export type MotionScopeValue = {
     phase: MotionPhaseName,
     partMotion?: MotionPartPhases,
   ) => MotionValue | undefined;
-  play: (slot: string, phase: MotionPhaseName, options?: PlaySlotPhaseOptions) => MotionRun;
+  play: (slot: string, name: string, options?: PlaySlotPhaseOptions) => MotionRun;
   playBroadcast: (phase: MotionPhaseName, options?: PlayBroadcastOptions) => Promise<void>;
+  /** Bound controller for this scope (`createMotionControllerFromScope`). */
+  controller: MotionController;
 };
 
 export type CreateMotionScopeControllerOptions = {
-  getRootMotion: () => MotionSlotMap | undefined;
+  getRootMotion: () => MotionRootInput | undefined;
   getDefaults: () => MotionSlotMap | undefined;
   getParams: () => MotionRecipeParams;
   getConfig?: () => Readonly<MotionConfig>;
@@ -84,6 +95,8 @@ export function createMotionScopeController({
   registry = createMotionRegistry(),
 }: CreateMotionScopeControllerOptions): MotionScopeValue {
   const hostIds = new Map<string, symbol>();
+  const getSlots = () => splitMotionRootMap(getRootMotion()).slots;
+  const getEvents = () => splitMotionRootMap(getRootMotion()).events;
 
   const register = (input: MotionRegisterInput) => registry.register(input);
 
@@ -97,21 +110,27 @@ export function createMotionScopeController({
   };
 
   const resolve = (slot: string, phase: MotionPhaseName, partMotion?: MotionPartPhases) =>
-    resolveSlotPhase(slot, phase, partMotion, getRootMotion(), getDefaults());
+    resolveSlotPhase(slot, phase, partMotion, getSlots(), getDefaults());
 
   const play = (
     slot: string,
-    phase: MotionPhaseName,
+    name: string,
     options?: PlaySlotPhaseOptions,
   ): MotionRun => {
     const el = options?.el ?? registry.getTarget(slot);
     const reg = registry.find(slot, el);
     const partMotion = options?.partMotion ?? reg?.motion;
-    const value = resolveSlotPhase(slot, phase, partMotion, getRootMotion(), getDefaults());
-    const resolvedValue = options?.partValue !== undefined ? options.partValue : value;
+    let resolvedValue: MotionValue | undefined;
+    if (options?.partValue !== undefined) {
+      resolvedValue = options.partValue;
+    } else if (isMotionPhaseName(name)) {
+      resolvedValue = resolveSlotPhase(slot, name, partMotion, getSlots(), getDefaults());
+    } else {
+      resolvedValue = getEvents()?.[name];
+    }
     return runMotionPhase({
       el,
-      phase,
+      phase: name,
       value: resolvedValue,
       targets: registry.snapshotTargets(),
       getTarget: registry.getTarget,
@@ -143,10 +162,11 @@ export function createMotionScopeController({
         chosen.slot,
         phase,
         partMotion,
-        getRootMotion(),
+        getSlots(),
         getDefaults(),
       );
       if (value === undefined || value === false) continue;
+      if (!registry.find(chosen.slot, chosen.node)) continue;
       results.push(
         play(chosen.slot, phase, {
           partMotion,
@@ -161,8 +181,9 @@ export function createMotionScopeController({
     options?.complete?.();
   };
 
-  return {
-    getRootMotion,
+  const scope: MotionScopeValue = {
+    getRootMotion: getSlots,
+    getEvents,
     getDefaults,
     getParams,
     getTarget: registry.getTarget,
@@ -173,7 +194,10 @@ export function createMotionScopeController({
     resolve,
     play,
     playBroadcast,
+    controller: null as unknown as MotionController,
   };
+  scope.controller = createMotionControllerFromScope(scope);
+  return scope;
 }
 
 export function createMotionScope(debugName: string) {
@@ -183,11 +207,14 @@ export function createMotionScope(debugName: string) {
     motion,
     defaults,
     params,
+    controller: appController,
     children,
   }: {
-    motion?: MotionSlotMap;
+    motion?: MotionRootInput;
     defaults?: MotionSlotMap;
     params?: MotionRecipeParams;
+    /** Deferred handle from `createMotionController()` — attach for the Provider lifetime. */
+    controller?: MotionController;
     children: ReactNode;
   }) {
     const motionRef = useRef(motion);
@@ -201,7 +228,7 @@ export function createMotionScope(debugName: string) {
     const configRef = useRef(config);
     configRef.current = config;
 
-    const controller = useMemo(
+    const scope = useMemo(
       () =>
         createMotionScopeController({
           getRootMotion: () => motionRef.current,
@@ -212,8 +239,18 @@ export function createMotionScope(debugName: string) {
       [],
     );
 
+    useLayoutEffect(() => {
+      if (!appController) return;
+      attachMotionController(appController, scope);
+      return () => attachMotionController(appController, null);
+    }, [appController, scope]);
+
     return (
-      <MotionScopeContext.Provider value={controller}>{children}</MotionScopeContext.Provider>
+      <MotionScopeContext.Provider value={scope}>
+        <MotionControllerProvider controller={appController ?? scope.controller}>
+          {children}
+        </MotionControllerProvider>
+      </MotionScopeContext.Provider>
     );
   }
 

@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Checkbox } from "@/components/core/Checkbox";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function CheckboxGroupMotionRootWaveDemo() {
   return (
@@ -11,10 +7,10 @@ export function CheckboxGroupMotionRootWaveDemo() {
       motion={{
         root: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3 }),
         },
         list: {
-          enter: (ctx) => gsap.fromTo(ctx.el, { x: -6 }, { x: 0, duration: 0.22, ...TL }),
+          enter: (ctx) => ctx.fromTo({ x: -6 }, { x: 0, duration: 0.22 }),
         },
       }}
     >

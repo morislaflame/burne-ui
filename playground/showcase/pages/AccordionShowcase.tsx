@@ -8,6 +8,8 @@ import { AccordionMotionBounceHeightDemo } from "../demos/accordion/AccordionMot
 import accordionMotionBounceHeightSource from "../demos/accordion/AccordionMotionBounceHeight.demo.tsx?raw";
 import { AccordionMotionChevronDemo } from "../demos/accordion/AccordionMotionChevron.demo";
 import accordionMotionChevronSource from "../demos/accordion/AccordionMotionChevron.demo.tsx?raw";
+import { AccordionMotionBodyDemo } from "../demos/accordion/AccordionMotionBody.demo";
+import accordionMotionBodySource from "../demos/accordion/AccordionMotionBody.demo.tsx?raw";
 import { AccordionMotionInstantPanelDemo } from "../demos/accordion/AccordionMotionInstantPanel.demo";
 import accordionMotionInstantPanelSource from "../demos/accordion/AccordionMotionInstantPanel.demo.tsx?raw";
 import { AccordionSizesDemo } from "../demos/accordion/AccordionSizes.demo";
@@ -39,10 +41,11 @@ export function AccordionShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — instant panel, custom chevron, bounce height."
+        description="Each card is a separate copyable example — instant panel, custom chevron + title/icon, Accordion.Body, bounce height."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionInstantPanelDemo} source={accordionMotionInstantPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionChevronDemo} source={accordionMotionChevronSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionBodyDemo} source={accordionMotionBodySource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionBounceHeightDemo} source={accordionMotionBounceHeightSource} />
       </ShowcaseSection>
 

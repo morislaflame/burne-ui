@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Card } from "@/components/core/Card";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function CardMotionTitlePopDemo() {
   return (
@@ -10,10 +6,8 @@ export function CardMotionTitlePopDemo() {
       <Card.Header>
         <Card.Title
           motion={{
-            hoverIn: (ctx) =>
-              gsap.to(ctx.el, { scale: 1.06, y: -2, duration: 0.22, ease: "back.out(2)", ...TL }),
-            hoverOut: (ctx) =>
-              gsap.to(ctx.el, { scale: 1, y: 0, duration: 0.16, ease: "power2.out", ...TL }),
+            hoverIn: { scale: 1.06, y: -2, duration: 0.22, ease: "back.out(2)" },
+            hoverOut: { scale: 1, y: 0, duration: 0.16, ease: "power2.out" },
           }}
         >
           Title pop

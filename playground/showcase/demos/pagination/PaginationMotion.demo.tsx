@@ -1,3 +1,4 @@
+import { PaginationMotionEllipsisDemo } from "./PaginationMotionEllipsis.demo";
 import { PaginationMotionControlWaveDemo } from "./PaginationMotionControlWave.demo";
 import { PaginationMotionInstantPressDemo } from "./PaginationMotionInstantPress.demo";
 import { PaginationMotionNavTintDemo } from "./PaginationMotionNavTint.demo";
@@ -7,6 +8,7 @@ export function PaginationMotionDemo() {
     <div className="flex w-full flex-col gap-large">
       <PaginationMotionInstantPressDemo />
       <PaginationMotionControlWaveDemo />
+      <PaginationMotionEllipsisDemo />
       <PaginationMotionNavTintDemo />
     </div>
   );

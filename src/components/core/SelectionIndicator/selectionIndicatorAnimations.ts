@@ -67,6 +67,8 @@ export function useSelectionIndicatorAnimation(
     const phase = active ? "check" : "uncheck";
 
     if (scope) {
+      const root = scope.getTarget("root");
+      if (root) scope.play("root", phase, { el: root });
       if (fill) scope.play("fill", phase, { el: fill });
       if (icon) scope.play("mark", phase, { el: icon });
       return;

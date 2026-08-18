@@ -10,21 +10,28 @@ import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/cor
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { isContainedPortal } from "@/components/core/utils/portalContainer";
 import type { PopoverMotion } from "@/components/core/Popover";
+import { useOptionalPopoverMotionScope } from "@/components/core/Popover/popoverContext";
 import {
+  hasPointerPhases,
   killMotionScope,
   killStoredMotion,
   mergeMotionSlotMaps,
+  useMotionPart,
+  useOptionalEnterOnMount,
   waitForLeaveGeneration,
 } from "@/components/core/utils/slotMotion";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ForwardedRef } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 import {
   dropdownMenuItemTypeaheadLabel,
   focusDropdownMenuItem,
   getFocusableDropdownMenuItems,
 } from "./dropdownA11y";
+import { useOptionalDropdownMotionScope } from "./dropdownContext";
 import type {
   DropdownMotion,
+  DropdownPartMotion,
   DropdownPopoverMotion,
   UseDropdownPopoverMenuProps,
   UseDropdownSubContentPortalProps,
@@ -34,12 +41,14 @@ import type {
 /**
  * Slot motion for Dropdown — look here first.
  *
- * Main menu is an embedder: `content` / `title` / `description` / `body` are
- * forwarded to Popover (`resolveDropdownPopoverMotion`). Host play lives in
- * `popoverAnimations.ts`. Trigger squeeze stays `runOpenAfterSqueeze`.
+ * Main menu is an embedder: `content` / `title` / `description` / `body` /
+ * `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator`
+ * are forwarded to Popover (`resolveDropdownPopoverMotion`). Host play lives
+ * in `popoverAnimations.ts`. Trigger press is a Dropdown Root slot (`pressSqueeze`).
  *
  * Submenu is a portal host: `subContent` (`useDropdownSubContentPortal` +
- * `DROPDOWN_SUB_MOTION_DEFAULTS` on `Dropdown.SubContent`).
+ * `DROPDOWN_SUB_MOTION_DEFAULTS` on `Dropdown.SubContent`). Nested `subTrigger`
+ * falls back to the Dropdown scope (Popover context does not reach the portal).
  */
 export const DROPDOWN_SUB_MOTION_DEFAULTS: DropdownMotion = {
   subContent: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
@@ -57,8 +66,55 @@ export function resolveDropdownPopoverMotion({
   if (rootMotion?.title) fromRoot.title = rootMotion.title;
   if (rootMotion?.description) fromRoot.description = rootMotion.description;
   if (rootMotion?.body) fromRoot.body = rootMotion.body;
+  if (rootMotion?.item) fromRoot.item = rootMotion.item;
+  if (rootMotion?.itemLabel) fromRoot.itemLabel = rootMotion.itemLabel;
+  if (rootMotion?.itemHint) fromRoot.itemHint = rootMotion.itemHint;
+  if (rootMotion?.itemIcon) fromRoot.itemIcon = rootMotion.itemIcon;
+  if (rootMotion?.label) fromRoot.label = rootMotion.label;
+  if (rootMotion?.subTrigger) fromRoot.subTrigger = rootMotion.subTrigger;
+  if (rootMotion?.separator) fromRoot.separator = rootMotion.separator;
   const pickedRoot = Object.keys(fromRoot).length ? fromRoot : undefined;
   return mergeMotionSlotMaps(pickedRoot, popoverMotion) as PopoverMotion | undefined;
+}
+
+export type DropdownMenuChromeSlot = "label" | "subTrigger" | "separator";
+
+export function useDropdownMenuSlotMotion<T extends HTMLElement>(
+  slot: DropdownMenuChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: DropdownPartMotion;
+    forwardedRef?: ForwardedRef<T>;
+    onPointerOver?: (e: ReactPointerEvent<T>) => void;
+    onPointerOut?: (e: ReactPointerEvent<T>) => void;
+    onPointerDown?: (e: ReactPointerEvent<T>) => void;
+    onPointerUp?: (e: ReactPointerEvent<T>) => void;
+  } = {},
+) {
+  const popoverScope = useOptionalPopoverMotionScope();
+  const dropdownScope = useOptionalDropdownMotionScope();
+  const scope = popoverScope ?? dropdownScope;
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<T>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(popoverScope ? null : scope, slot, part.targetRef);
+  return part;
 }
 
 function handleDropdownTypeaheadKey(

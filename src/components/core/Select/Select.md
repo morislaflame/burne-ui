@@ -91,6 +91,7 @@ const options = [
 |------|------|------------------|
 | `triggerGroup` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
 | `value` / `trigger` / `triggerIcon` | hover/press | нет |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope |
 
 `false` на `triggerGroup.hoverIn/Out` — rest-тень остаётся, lift не играет. `false` на `pressIn` — open без squeeze. Не анимируйте layout в публичных MotionVars.
 
@@ -106,7 +107,7 @@ const options = [
 />
 ```
 
-Compound: `motion` на `Select.TriggerGroup` — part motion слота `triggerGroup`; на `Select.Value` / `Select.Trigger` — свои слоты.
+Compound: `motion` на `Select.TriggerGroup` — part motion слота `triggerGroup`; на `Select.Value` / `Select.Trigger` — свои слоты. На `Select.Label` / `Hint` / `Error` — chrome Root scope.
 
 **ButtonGroup:** при `groupSegment` shell hover/press выключены.
 

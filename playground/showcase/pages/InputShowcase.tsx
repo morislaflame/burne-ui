@@ -26,6 +26,8 @@ import { InputMotionInstantHoverDemo } from "../demos/input/InputMotionInstantHo
 import inputMotionInstantHoverSource from "../demos/input/InputMotionInstantHover.demo.tsx?raw";
 import { InputMotionPasswordRevealDemo } from "../demos/input/InputMotionPasswordReveal.demo";
 import inputMotionPasswordRevealSource from "../demos/input/InputMotionPasswordReveal.demo.tsx?raw";
+import { InputMotionHintErrorDemo } from "../demos/input/InputMotionHintError.demo";
+import inputMotionHintErrorSource from "../demos/input/InputMotionHintError.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -76,6 +78,7 @@ export function InputShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={InputMotionAffixOrbitDemo} source={inputMotionAffixOrbitSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={InputMotionFileRowExitDemo} source={inputMotionFileRowExitSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={InputMotionPasswordRevealDemo} source={inputMotionPasswordRevealSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={InputMotionHintErrorDemo} source={inputMotionHintErrorSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

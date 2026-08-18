@@ -14,6 +14,7 @@ import { breadcrumbListItemKey } from "./breadcrumbsAPI";
 import {
   resolveBreadcrumbsEllipsisMotionDefaults,
   resolveBreadcrumbsItemMotionDefaults,
+  useBreadcrumbsSlotMotion,
 } from "./breadcrumbsAnimations";
 import {
   BreadcrumbsClassNamesProvider,
@@ -44,7 +45,20 @@ export function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
 BreadcrumbsItem.displayName = "Breadcrumbs.Item";
 
 export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps>(
-  function BreadcrumbsList({ className, classNames, children, ...rest }, ref) {
+  function BreadcrumbsList(
+    {
+      className,
+      classNames,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const { pieces } = useBreadcrumbsListState(children);
 
     return (
@@ -53,6 +67,11 @@ export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps
           ref={ref}
           pieces={pieces}
           className={className}
+          motion={motion}
+          onPointerOver={onPointerOver}
+          onPointerOut={onPointerOut}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
           {...rest}
         />
       </BreadcrumbsClassNamesProvider>
@@ -63,14 +82,35 @@ export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps
 BreadcrumbsList.displayName = "Breadcrumbs.List";
 
 export const BreadcrumbsPiecesList = forwardRef<HTMLOListElement, BreadcrumbsPiecesListProps>(
-function BreadcrumbsPiecesList({ pieces, className, ...rest }, ref) {
+function BreadcrumbsPiecesList(
+  {
+    pieces,
+    className,
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
+  ref,
+) {
   const slotClassNames = useBreadcrumbsClassNames();
+  const part = useBreadcrumbsSlotMotion<HTMLOListElement>("list", {
+    motion,
+    forwardedRef: ref,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <ol
-      ref={ref}
+      ref={part.setRef}
       className={breadcrumbsListClass(cn("", slotClassNames.list, className))}
       {...rest}
+      {...part.pointerHandlers}
     >
       {pieces.map((piece, idx) => (
         <BreadcrumbListItem
@@ -106,16 +146,30 @@ function BreadcrumbListItem({
 export function BreadcrumbsSeparator({
   className,
   iconClassName,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
 }: BreadcrumbsSeparatorProps) {
   const slotClassNames = useBreadcrumbsClassNames();
+  const part = useBreadcrumbsSlotMotion<HTMLSpanElement>("separator", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <span
+      ref={part.setRef}
       className={breadcrumbsSeparatorClass(
         cn("", slotClassNames.separatorWrapper, className),
       )}
       {...rest}
+      {...part.pointerHandlers}
     >
       <IoChevronForward
         className={breadcrumbChevronClass(
@@ -177,12 +231,20 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
 
 function BreadcrumbChevronSeparator() {
   const slotClassNames = useBreadcrumbsClassNames();
+  const part = useBreadcrumbsSlotMotion<HTMLSpanElement>("separator");
 
   return (
-    <IoChevronForward
-      className={breadcrumbChevronClass(slotClassNames.separator)}
+    <span
+      ref={part.setRef}
+      className={breadcrumbsSeparatorClass(slotClassNames.separatorWrapper)}
       aria-hidden
-    />
+      {...part.pointerHandlers}
+    >
+      <IoChevronForward
+        className={breadcrumbChevronClass(slotClassNames.separator)}
+        aria-hidden
+      />
+    </span>
   );
 }
 

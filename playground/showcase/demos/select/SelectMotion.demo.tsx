@@ -1,3 +1,4 @@
+import { SelectMotionHintEnterDemo } from "./SelectMotionHintEnter.demo";
 import { SelectMotionInstantHoverDemo } from "./SelectMotionInstantHover.demo";
 import { SelectMotionTriggerWaveDemo } from "./SelectMotionTriggerWave.demo";
 import { SelectMotionValueTintDemo } from "./SelectMotionValueTint.demo";
@@ -8,6 +9,7 @@ export function SelectMotionDemo() {
       <SelectMotionInstantHoverDemo />
       <SelectMotionTriggerWaveDemo />
       <SelectMotionValueTintDemo />
+      <SelectMotionHintEnterDemo />
     </div>
   );
 }

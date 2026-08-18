@@ -47,10 +47,19 @@ export type PaginationPartMotion = {
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  enter?: MotionValue;
+};
+
+export type PaginationSummaryPartMotion = {
+  change?: MotionValue;
 };
 
 export type PaginationMotion = {
   control?: PaginationPartMotion;
+  previousIcon?: PaginationPartMotion;
+  nextIcon?: PaginationPartMotion;
+  summary?: PaginationSummaryPartMotion;
+  ellipsis?: PaginationPartMotion;
 };
 
 export type PaginationContextValue = {
@@ -68,6 +77,10 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   onPageChange?: (page: number) => void;
   siblingCount?: number;
   classNames?: Prettify<PaginationClassNames>;
+  /**
+   * Per-slot motion (`control`, `previousIcon`, `nextIcon`, `summary`, `ellipsis`).
+   * `Pagination.Content` / `Item` / `Page` are not separate slots (`control` covers buttons).
+   */
   motion?: Prettify<PaginationMotion>;
 };
 
@@ -81,7 +94,9 @@ export type UsePaginationRootStateProps = Omit<
   "className" | "classNames" | "children"
 >;
 
-export type PaginationSummaryProps = HTMLAttributes<HTMLDivElement>;
+export type PaginationSummaryProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<PaginationSummaryPartMotion>;
+};
 
 export type PaginationContentProps = OlHTMLAttributes<HTMLOListElement>;
 
@@ -101,7 +116,9 @@ export type PaginationPageProps = Omit<
   motion?: Prettify<PaginationPartMotion>;
 };
 
-export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
+export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<PaginationPartMotion>;
+};
 
 export type PaginationPagesProps = Record<string, never>;
 
@@ -110,4 +127,6 @@ export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement>
   motion?: Prettify<PaginationPartMotion>;
 };
 
-export type PaginationIconProps = IconBaseProps;
+export type PaginationIconProps = IconBaseProps & {
+  motion?: Prettify<PaginationPartMotion>;
+};

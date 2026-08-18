@@ -3,10 +3,10 @@ import { forwardRef } from "react";
 
 import "@/components/core/utils/glossPanel.css";
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import { Label } from "@/components/core/Label";
 import { renderSliderSimpleLayout, SliderScaleFieldHeader, SliderScaleFieldValue } from "./sliderScaleField";
 
-import { resolveSliderMotionDefaults, useSliderTrackSlotMotion } from "./sliderAnimations";
+import { resolveSliderMotionDefaults, useSliderChromeSlot, useSliderTrackSlotMotion } from "./sliderAnimations";
 import {
   SliderMotionProvider,
   SliderTrackProvider,
@@ -21,6 +21,7 @@ import type {
   SliderErrorProps,
   SliderHeaderProps,
   SliderHintProps,
+  SliderLabelProps,
   SliderTrackProps,
   SliderValueProps,
 } from "./sliderTypes";
@@ -41,8 +42,6 @@ export function SliderSimpleBody({
   valueText,
   hint,
   error,
-  hintId,
-  errorId,
   trackProps,
 }: {
   label?: React.ReactNode;
@@ -54,37 +53,57 @@ export function SliderSimpleBody({
   errorId?: string;
   trackProps: SliderTrackProps;
 }) {
-  const slotClassNames = useSliderClassNames();
-
   return renderSliderSimpleLayout({
     label,
-    labelClassName: slotClassNames.label,
+    labelNode: label != null ? <SliderLabel>{label}</SliderLabel> : null,
     showValue,
     valueText,
-    hint,
-    hintId,
-    error,
-    errorId,
+    hintNode: hint != null ? <SliderHint>{hint}</SliderHint> : null,
+    errorNode: error != null ? <SliderError>{error}</SliderError> : null,
     Header: SliderHeader,
     Value: SliderValue,
     track: <SliderTrack {...trackProps} />,
   });
 }
 
-export function SliderLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useSliderClassNames();
+export const SliderLabel = forwardRef<HTMLElement, SliderLabelProps>(
+  function SliderLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useSliderClassNames();
+    const part = useSliderChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 SliderLabel.displayName = "SliderLabel";
 
@@ -136,47 +155,87 @@ export function SliderValue({ children, className, ...rest }: SliderValueProps) 
 
 SliderValue.displayName = "Slider.Value";
 
-export function SliderHint({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: SliderHintProps) {
-  const ctx = useSliderFieldContext();
-  const slotClassNames = useSliderClassNames();
+export const SliderHint = forwardRef<HTMLElement, SliderHintProps>(
+  function SliderHint(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useSliderFieldContext();
+    const slotClassNames = useSliderClassNames();
+    const part = useSliderChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? ctx.hintId}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? ctx.hintId}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 SliderHint.displayName = "Slider.Hint";
 
-export function SliderError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: SliderErrorProps) {
-  const ctx = useSliderFieldContext();
-  const slotClassNames = useSliderClassNames();
+export const SliderError = forwardRef<HTMLElement, SliderErrorProps>(
+  function SliderError(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useSliderFieldContext();
+    const slotClassNames = useSliderClassNames();
+    const part = useSliderChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? ctx.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? ctx.errorId}
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
 
 SliderError.displayName = "Slider.Error";
 

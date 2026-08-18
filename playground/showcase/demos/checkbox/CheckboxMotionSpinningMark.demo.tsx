@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Checkbox } from "@/components/core/Checkbox";
 
 export function CheckboxMotionSpinningMarkDemo() {
@@ -11,8 +9,7 @@ export function CheckboxMotionSpinningMarkDemo() {
           <Checkbox.Indicator.Mark
             motion={{
               check: (ctx) =>
-                gsap.fromTo(
-                  ctx.el,
+                ctx.fromTo(
                   { rotate: -90, scale: 0.4, autoAlpha: 0 },
                   {
                     rotate: 0,
@@ -20,18 +17,14 @@ export function CheckboxMotionSpinningMarkDemo() {
                     autoAlpha: 1,
                     duration: 0.4,
                     ease: "back.out(2.2)",
-                    overwrite: "auto",
-                    force3D: false,
                   },
                 ),
               uncheck: (ctx) =>
-                gsap.to(ctx.el, {
+                ctx.to({
                   rotate: 45,
                   scale: 0.5,
                   autoAlpha: 0,
                   duration: 0.18,
-                  overwrite: "auto",
-                  force3D: false,
                 }),
             }}
           />

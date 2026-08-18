@@ -50,23 +50,44 @@ export type DropdownLifecycleMotion = {
 export type DropdownPartMotion = DropdownLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 /**
  * Main menu slots (`content` / `title` / `description` / `body`) are forwarded
- * to the inner Popover. `subContent` is the submenu portal host.
+ * to the inner Popover. `subContent` is the submenu portal host. `trigger` lives
+ * on the Dropdown Root scope.
  */
 export type DropdownMotion = {
   content?: DropdownLifecycleMotion;
   title?: DropdownPartMotion;
   description?: DropdownPartMotion;
   body?: DropdownLifecycleMotion;
+  item?: DropdownLifecycleMotion;
+  itemLabel?: DropdownPartMotion;
+  itemHint?: DropdownPartMotion;
+  itemIcon?: DropdownPartMotion;
+  label?: DropdownPartMotion;
+  subTrigger?: DropdownPartMotion;
+  separator?: DropdownPartMotion;
   subContent?: DropdownLifecycleMotion;
+  trigger?: DropdownPartMotion;
 };
 
 export type DropdownPopoverMotion = Pick<
   DropdownMotion,
-  "content" | "title" | "description" | "body"
+  | "content"
+  | "title"
+  | "description"
+  | "body"
+  | "item"
+  | "itemLabel"
+  | "itemHint"
+  | "itemIcon"
+  | "label"
+  | "subTrigger"
+  | "separator"
 >;
 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
@@ -85,8 +106,8 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DropdownClassNames>;
   /**
-   * Per-slot motion. Main menu: Popover slots (`content`, `title`, `description`, `body`).
-   * Submenu portal: `subContent`. Trigger squeeze is not a slot.
+   * Per-slot motion. Main menu: Popover slots (`content`, `title`, `description`, `body`, `item`, `itemLabel`, `itemHint`, `itemIcon`, `label`, `subTrigger`, `separator`).
+   * Submenu portal: `subContent`. Trigger press: `trigger` on Root (default `pressSqueeze`).
    */
   motion?: Prettify<DropdownMotion>;
 };
@@ -123,6 +144,7 @@ export type DropdownClassNamesProviderProps = {
 
 export type DropdownTriggerProps = HTMLAttributes<HTMLElement> & {
   asChild?: boolean;
+  motion?: Prettify<DropdownPartMotion>;
 };
 
 export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
@@ -143,14 +165,19 @@ export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
   selectionIndicator?: boolean;
 };
 
-export type DropdownLabelProps = HTMLAttributes<HTMLDivElement>;
-export type DropdownSeparatorProps = HTMLAttributes<HTMLDivElement>;
+export type DropdownLabelProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DropdownPartMotion>;
+};
+export type DropdownSeparatorProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DropdownPartMotion>;
+};
 export type DropdownSubProps = HTMLAttributes<HTMLDivElement>;
 
 export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
   asChild?: boolean;
   /** Replaces the default submenu chevron. Pass `null` to hide. */
   icon?: ReactNode;
+  motion?: Prettify<DropdownPartMotion>;
 };
 
 export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -159,9 +186,15 @@ export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DropdownLifecycleMotion>;
 };
 
-export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement>;
-export type DropdownItemHintProps = HTMLAttributes<HTMLSpanElement>;
-export type DropdownItemIconProps = HTMLAttributes<HTMLSpanElement>;
+export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<DropdownPartMotion>;
+};
+export type DropdownItemHintProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<DropdownPartMotion>;
+};
+export type DropdownItemIconProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<DropdownPartMotion>;
+};
 
 export type DropdownItemIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<
@@ -190,6 +223,7 @@ export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
   status?: DropdownItemStatus;
   /** Render selection indicator (same as `<Dropdown.ItemIndicator />`). */
   indicator?: boolean;
+  motion?: Prettify<DropdownLifecycleMotion>;
 };
 
 export type UseDropdownRootStateProps = Pick<

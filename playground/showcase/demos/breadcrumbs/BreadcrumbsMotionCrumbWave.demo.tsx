@@ -1,10 +1,6 @@
-import gsap from "gsap";
-
 import { Breadcrumbs } from "@/components/core/Breadcrumbs";
 
 import { preventNav } from "../../shared/utils";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function BreadcrumbsMotionCrumbWaveDemo() {
   return (
@@ -12,7 +8,7 @@ export function BreadcrumbsMotionCrumbWaveDemo() {
       motion={{
         itemLink: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: -2, duration: 0.18 }, 0);
             if (ctx.targets.itemLinkText) {
               tl.to(ctx.targets.itemLinkText, { x: 4, duration: 0.18 }, 0.04);
@@ -20,7 +16,7 @@ export function BreadcrumbsMotionCrumbWaveDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: 0, duration: 0.16 }, 0);
             if (ctx.targets.itemLinkText) {
               tl.to(ctx.targets.itemLinkText, { x: 0, duration: 0.16 }, 0);

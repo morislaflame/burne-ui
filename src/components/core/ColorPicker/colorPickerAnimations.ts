@@ -1,14 +1,16 @@
 /**
  * Slot motion for ColorPicker — look here first.
  *
- * DOM slots: `contentPanel`, `area`, `areaThumb`, `hexInput`, `presets`
- * (`hueSlider` / `alphaSlider` are passed through to ColorSlider).
+ * DOM slots: `contentPanel`, `area`, `areaThumb`, `hexInput`, `alphaInput`, `presets`, `previewSwatch`
+ * (`hueSlider` / `alphaSlider` / `trigger` are passed through to ColorSlider / Popover).
  *
  * Not slots: area thumb `left`/`top` drag geometry (kit-internal).
  * Root is a portal-host map. Host `ColorPicker.Content` plays optional `enter`
- * on `contentPanel`; `change` plays on `area` when hex updates (excludes `areaThumb`).
- * Area / areaThumb: user pointer → motion press → drag (`useColorPickerAreaDrag`)
- * unless `defaultPrevented`. Defaults: empty.
+ * on `contentPanel` (also `hexInput` / `alphaInput` / `presets`). `change` plays on `area` when
+ * hex updates (excludes `areaThumb`). Area / areaThumb skip mount `enter` — they
+ * are the drag surface (`playEnter: false`); thumb `left`/`top` is kit-internal.
+ * Pointer → motion press → drag (`useColorPickerAreaDrag`) unless `defaultPrevented`.
+ * Defaults: empty.
  */
 import { useCallback, useEffect, useRef } from "react";
 import type { ForwardedRef } from "react";

@@ -41,13 +41,18 @@ export type RadioClassNames = {
 export type RadioCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
 };
 
-/** Root map. Keys → SelectionIndicator slots in `radioAnimations.ts`. */
+/** Root map. Indicator keys → SelectionIndicator; chrome (`label` / `hint` / `error`) is Radio's own scope. */
 export type RadioMotion = {
   indicator?: RadioCheckMotion;
   indicatorFill?: RadioCheckMotion;
   indicatorMark?: RadioCheckMotion;
+  label?: RadioCheckMotion;
+  hint?: RadioCheckMotion;
+  error?: RadioCheckMotion;
 };
 
 export type RadioProps = Omit<
@@ -85,11 +90,17 @@ export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-export type RadioLabelProps = Omit<LabelProps, "htmlFor">;
+export type RadioLabelProps = Omit<LabelProps, "htmlFor"> & {
+  motion?: Prettify<RadioCheckMotion>;
+};
 
-export type RadioHintProps = Omit<FieldHintProps, "id" | "as">;
+export type RadioHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<RadioCheckMotion>;
+};
 
-export type RadioErrorProps = Omit<FieldErrorProps, "id" | "as">;
+export type RadioErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<RadioCheckMotion>;
+};
 
 export type RadioFieldContextValue = {
   inputId: string;

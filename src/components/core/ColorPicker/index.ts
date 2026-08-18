@@ -4,6 +4,7 @@ import {
   ColorPickerContent,
   ColorPickerHexInput,
   ColorPickerPresets,
+  ColorPickerPreview,
   ColorPickerRoot,
   ColorPickerTrigger,
 } from "./ColorPicker";
@@ -13,6 +14,7 @@ export const ColorPicker = Object.assign(ColorPickerRoot, {
   Trigger: ColorPickerTrigger,
   Content: ColorPickerContent,
   Area: ColorPickerArea,
+  Preview: ColorPickerPreview,
   HexInput: ColorPickerHexInput,
   AlphaInput: ColorPickerAlphaInput,
   Presets: ColorPickerPresets,
@@ -32,6 +34,7 @@ export type {
   ColorPickerHexInputProps,
   ColorPickerAlphaInputProps,
   ColorPickerPresetsProps,
+  ColorPickerPreviewProps,
   ColorPickerSize,
   ColorPickerVariant,
   ColorPickerClassNames,

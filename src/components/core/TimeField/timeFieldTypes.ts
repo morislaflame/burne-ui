@@ -8,6 +8,7 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 
+import type { FieldLabelProps } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
@@ -54,6 +55,9 @@ export type TimeFieldMotion = {
   prefix?: TimeFieldPartMotion;
   suffix?: TimeFieldPartMotion;
   segments?: TimeFieldPartMotion;
+  label?: TimeFieldPartMotion;
+  hint?: TimeFieldPartMotion;
+  error?: TimeFieldPartMotion;
 };
 
 export type TimeFieldFieldContextValue = {
@@ -120,7 +124,8 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
   segmentSeparator?: ReactNode;
   classNames?: Prettify<TimeFieldClassNames>;
   /**
-   * Per-slot motion (`shell`, `prefix`, `suffix`, `segments`).
+   * Per-slot motion (`shell`, `prefix`, `suffix`, `segments`, `label`, `hint`, `error`).
+   * Chrome registers on the Root scope (siblings of Control).
    * Segment spinbuttons are not individual slots.
    */
   motion?: Prettify<TimeFieldMotion>;
@@ -135,12 +140,18 @@ export type UseTimeFieldShellAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLFieldSetElement>) => void;
 };
 
+export type TimeFieldLabelProps = Omit<FieldLabelProps, "motion"> & {
+  motion?: Prettify<TimeFieldPartMotion>;
+};
+
 export type TimeFieldHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<TimeFieldPartMotion>;
 };
 
 export type TimeFieldErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<TimeFieldPartMotion>;
 };
 
 export type TimeFieldSimpleBodyProps = {

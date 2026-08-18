@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, useRef, type ButtonHTMLAttributes } from "react";
+import { forwardRef, useMemo, useRef, type ButtonHTMLAttributes, type Ref } from "react";
 
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
@@ -69,6 +69,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
     if (!isInteractive && !hasExplicitName) {
       return (
         <span
+          ref={ref as Ref<HTMLSpanElement>}
           aria-hidden
           className={cn(
             "relative shrink-0 overflow-hidden",

@@ -4,6 +4,7 @@ import { DialogClassNamesProvider, DialogMotionProvider, DialogProvider } from "
 import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogTitle, DialogTrigger } from "./dialogParts";
 import type { DialogProps } from "./dialogTypes";
 import { useDialogRootState } from "./useDialogRootState";
+import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
 
 export type {
   DialogProps,
@@ -46,8 +47,8 @@ export function DialogRoot({
   return (
     <DialogProvider value={state.contextValue}>
       <DialogClassNamesProvider classNames={classNames}>
-        {/* Root has no DOM. Defaults + host play wrap Dialog.Panel in dialogAnimations/dialogParts. */}
-        <DialogMotionProvider motion={motion}>
+        {/* Root has no portal DOM. Trigger defaults live here (Trigger is outside Panel). */}
+        <DialogMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
         {children}
         </DialogMotionProvider>
       </DialogClassNamesProvider>

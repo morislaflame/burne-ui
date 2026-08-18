@@ -32,12 +32,62 @@ export const KIT_MOTION_RECIPES = [
   "searchExpand",
   "searchIconShift",
   "fileRowExit",
+  "progressFill",
+  "progressIndeterminate",
 ] as const;
 
 export type KitRecipeName = (typeof KIT_MOTION_RECIPES)[number];
 
 /** Autocomplete kit names; custom registered strings still type-check. */
 export type MotionRecipeName = KitRecipeName | (string & {});
+
+/**
+ * `MotionConfig` duration key a recipe reads by default (`ctx.config[token]`).
+ * Host params (`ctx.params.duration`) may still override.
+ */
+export type MotionDurationToken =
+  | "interactiveDuration"
+  | "tooltipDuration"
+  | "modalDuration"
+  | "switchThumbDuration"
+  | "selectionFillDuration"
+  | "expandDuration"
+  | "toastDismissDuration"
+  | "progressFillDuration"
+  | "progressIndeterminateDuration";
+
+/** Reduced-motion / `enable*` off: snap to the end state, or skip the effect. */
+export type MotionReducedStrategy = "instant" | "skip";
+
+/**
+ * Passport for a named recipe. Kit recipes fill every field (`KIT_MOTION_RECIPE_META`).
+ * App `registerMotionRecipe(name, fn, { hidesFirstPaint: true })` overlays these.
+ */
+export type MotionRecipeMetadata = {
+  /** Nested enter: `gsap.set(autoAlpha: 0)` before play. Portal host recipes stay `false`. */
+  hidesFirstPaint: boolean;
+  /** Recipe has a reduced / flag-off branch (`ctx.reduced` or `enable*`). */
+  supportsReducedMotion: boolean;
+  /** How that branch behaves. Pointer recipes typically `skip`; lifecycle `instant`. */
+  reducedStrategy: MotionReducedStrategy;
+  /** Measures or writes layout (`height` / `width` / `left`). Not for hover. */
+  usesLayout: boolean;
+  /** Leave returns a tween / calls `complete` so the host can unmount after. */
+  supportsLeaveCompletion: boolean;
+  /** Pointer phases (hover / press), not open / close / check. */
+  interactive: boolean;
+  defaultDurationToken: MotionDurationToken;
+};
+
+export const MOTION_RECIPE_METADATA_DEFAULTS: MotionRecipeMetadata = {
+  hidesFirstPaint: false,
+  supportsReducedMotion: true,
+  reducedStrategy: "instant",
+  usesLayout: false,
+  supportsLeaveCompletion: false,
+  interactive: false,
+  defaultDurationToken: "interactiveDuration",
+};
 
 /** Canonical lifecycle phases. App events are a separate W3 API — do not add them here. */
 export const MOTION_PHASE_NAMES = [
@@ -54,11 +104,15 @@ export const MOTION_PHASE_NAMES = [
 
 export type MotionPhaseName = (typeof MOTION_PHASE_NAMES)[number];
 
+export function isMotionPhaseName(value: string): value is MotionPhaseName {
+  return (MOTION_PHASE_NAMES as readonly string[]).includes(value);
+}
+
 /**
- * Kit-author compositor vars. Layout (`width` / `height` / `top` / `left` / `margin`)
- * is forbidden — no index signature. App `motion` maps stay on `MotionVars`;
- * `rotation` / `scaleX` / `opacity` in app code belong in a factory.
- * Re-exported from `burne-ui/internal`, not the public `burne-ui` entry.
+ * Compositor vars for `MotionController.set` and kit recipes.
+ * Layout (`width` / `height` / `top` / `left` / `margin`) is forbidden — no index signature.
+ * Declarative `motion` maps stay on `MotionVars`; `rotation` / `scaleX` / `opacity` in a
+ * factory belong in `ctx.fromRest` / `ctx.to` or `gsap.to`, not in `MotionVars`.
  */
 export type MotionTransformVars = {
   x?: number;
@@ -75,10 +129,17 @@ export type MotionTransformVars = {
 };
 
 /**
+ * Where a declarative tween starts. `"current"` continues from the live pose
+ * (hover / press). `"rest"` restarts from identity (`x`/`y` `0`, `scale` `1`, …)
+ * so a retriggered ping does not freeze at the peak.
+ */
+export type MotionReplay = "rest" | "current";
+
+/**
  * Transform / opacity vars for the public motion API (safe subset of compositor props).
  * Duration is seconds (GSAP). Do not pass layout props (`width`, `height`, `top`, `left`).
- * `rotation` / `scaleX` / `scaleY` / `opacity` are not public — use a factory, or
- * `MotionTransformVars` from `burne-ui/internal` in kit recipes.
+ * `rotation` / `scaleX` / `scaleY` / `opacity` are not in `MotionVars` — use a factory
+ * (`ctx.fromRest` / `ctx.to`) or `MotionController.set` with `MotionTransformVars`.
  */
 export type MotionVars = {
   x?: number;
@@ -87,12 +148,59 @@ export type MotionVars = {
   autoAlpha?: number;
   duration?: number;
   ease?: string;
+  yoyo?: boolean;
+  repeat?: number;
+  delay?: number;
+  /**
+   * Start pose. Default: `"current"` for lifecycle phases; app events with
+   * `yoyo: true` replay from `"rest"`. Set explicitly to override.
+   */
+  replay?: MotionReplay;
   /**
    * Nested enter first-paint: `"hidden"` → `gsap.set(autoAlpha: 0)` before play
    * (`hideNestedEnterSlots`). `"visible"` skips even if `autoAlpha` is set.
-   * Raw factories cannot be inspected — wrap as `{ recipe: "name", firstPaint: "hidden" }`.
+   * Named recipes also hide when `getMotionRecipeMetadata(name).hidesFirstPaint`.
+   * Raw factories cannot be inspected — wrap as `{ recipe: "name", firstPaint: "hidden" }`
+   * or pass `{ hidesFirstPaint: true }` to `registerMotionRecipe`.
    */
   firstPaint?: "hidden" | "visible";
+};
+
+/** Compositor tween vars for `ctx.to` / `ctx.fromRest` (includes `rotation` / `scaleX`). */
+export type MotionTweenVars = MotionTransformVars & {
+  yoyo?: boolean;
+  repeat?: number;
+  delay?: number;
+};
+
+/** GSAP timeline position (`0`, `"+=0.05"`, `"<"`). */
+export type MotionTimelinePosition = number | string;
+
+/**
+ * Kit timeline: `overwrite` / `force3D` are already in defaults.
+ * `fromRest` restarts listed transform keys from identity.
+ */
+export type MotionTimeline = MotionAnimation & {
+  to: (
+    el: HTMLElement | null | undefined,
+    vars: MotionTweenVars,
+    position?: MotionTimelinePosition,
+  ) => MotionTimeline;
+  fromTo: (
+    el: HTMLElement | null | undefined,
+    from: MotionTweenVars,
+    vars: MotionTweenVars,
+    position?: MotionTimelinePosition,
+  ) => MotionTimeline;
+  fromRest: (
+    el: HTMLElement | null | undefined,
+    vars: MotionTweenVars,
+    position?: MotionTimelinePosition,
+  ) => MotionTimeline;
+  add: (
+    child: Pick<MotionAnimation, "kill"> | undefined,
+    position?: MotionTimelinePosition,
+  ) => MotionTimeline;
 };
 
 /**
@@ -118,6 +226,12 @@ export type MotionRecipeParams = {
   isTop?: boolean;
   getTravelPx?: () => number;
   travelPx?: number;
+  /** Live 0…1 fill amount for Meter / ProgressBar (`progressFill`). */
+  getProgressScale?: () => number;
+  /** Meter / ProgressBar orientation. `false` → vertical (origin bottom). */
+  isHorizontal?: boolean;
+  /** ProgressBar indeterminate translate loop (`progressIndeterminate`). */
+  indeterminate?: boolean;
   placement?: "left" | "right" | "top" | "bottom";
   targetW?: number;
   collapsedDim?: number;
@@ -155,7 +269,7 @@ export type MotionRun = {
 
 export type MotionContext = {
   el: HTMLElement;
-  phase: MotionPhaseName;
+  phase: MotionPhaseName | (string & {});
   /**
    * Unique / first live node per slot at play time.
    * Repeated slots: use `ctx.el` (this instance) or `getTargets(slot)`.
@@ -178,6 +292,32 @@ export type MotionContext = {
   signal: AbortSignal;
   /** Register timer/RAF teardown; runs on cancel and when the run settles. */
   onCleanup: (fn: () => void) => void;
+  /**
+   * Tween from the current pose. Kit sets `overwrite` (`"auto"` on phases, `true`
+   * on app events) and `force3D: false` — do not copy those flags in app code.
+   */
+  to: {
+    (vars: MotionTweenVars): MotionAnimation | undefined;
+    (el: HTMLElement | null | undefined, vars: MotionTweenVars): MotionAnimation | undefined;
+  };
+  /**
+   * Retriggerable one-shot from rest. Prefer this (or a declarative map with
+   * `yoyo` / `replay: "rest"`) over raw `gsap.fromTo` + `overwrite`.
+   */
+  fromRest: {
+    (vars: MotionTweenVars): MotionAnimation | undefined;
+    (el: HTMLElement | null | undefined, vars: MotionTweenVars): MotionAnimation | undefined;
+  };
+  fromTo: {
+    (from: MotionTweenVars, vars: MotionTweenVars): MotionAnimation | undefined;
+    (
+      el: HTMLElement | null | undefined,
+      from: MotionTweenVars,
+      vars: MotionTweenVars,
+    ): MotionAnimation | undefined;
+  };
+  /** Multi-slot sequence; children inherit kit tween defaults. */
+  timeline: () => MotionTimeline;
 };
 
 /**

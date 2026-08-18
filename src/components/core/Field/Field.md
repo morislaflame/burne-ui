@@ -81,7 +81,7 @@ Compound через `Object.assign`:
 
 ## Анимации
 
-`Field` / `Field.Set` **не содержат GSAP** — это layout + a11y. Motion делегируется дочерним контролам.
+`Field` / `Field.Set` — layout + a11y и **opt-in** slot motion (пустые defaults). Shell hover живёт на дочерних контролах (`Input`, `Select`, …).
 
 **DOM-структура:**
 
@@ -96,11 +96,35 @@ Field.Set (fieldset)
   Field.Set.Group → Field × N
 ```
 
-### 1. В самом Field — нет анимаций
+### Slot motion
 
-Нет `useLayoutEffect` с GSAP, нет hover handlers на `Field`. Появление `Field.Error` — мгновенное (без built-in transition).
+Публичный slot motion с **пустыми** defaults — не перехватывает motion дочернего Input. `enter` на слоте играет при mount, если задан.
 
-### 2. Shell hover у дочерних контролов (2-й уровень)
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| Field `root` / `label` / `hint` / `error` | `enter` / hover/press | нет |
+| Field.Set `root` / `stack` / `legend` / `legendHeader` / `group` / `actions` | `enter` / hover/press | нет |
+
+**Где в коде:** типы — `fieldTypes.ts`; scope — `fieldContext.tsx`; defaults — `fieldAnimations.ts`; слоты — `fieldParts.tsx`.
+
+```tsx
+<Field
+  motion={{
+    label: {
+      enter: (ctx) => ctx.fromTo({ y: 6, opacity: 0 }, { y: 0, opacity: 1, duration: 0.26 }),
+    },
+    hint: {
+      enter: (ctx) => ctx.fromTo({ y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28, delay: 0.06 }),
+    },
+  }}
+>
+  <Field.Label>Name</Field.Label>
+  <Input><Input.Control /></Input>
+  <Field.Hint>Visible under the control.</Field.Hint>
+</Field>
+```
+
+### Shell hover у дочерних контролов (2-й уровень)
 
 `Input`, `TextArea`, `Select`, `ComboBox`, `TimeField` — публичный slot motion на shell (`hoverLiftSecondLevel` / `pressSqueeze`); rest-тень — `useSecondLevelShadow`. Gloss hover/press — `useGlossFieldShellMotion`. CSS-классы оболочки по-прежнему из `useFieldShellHoverLift.ts`.
 
@@ -127,7 +151,7 @@ configureMotion({
 
 **Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень sm без lift.
 
-### 3. Другие контролы внутри Field.Set
+### Другие контролы внутри Field.Set
 
 | Контрол | Анимация | Где настраивать |
 |---------|----------|-----------------|
@@ -137,14 +161,20 @@ configureMotion({
 
 `Field.Set` передаёт только `size` через context — не motion.
 
-### 4. Кастомная анимация hint/error
+### Кастомная анимация hint/error
 
-Встроенной нет. Пример через Tailwind:
+Публичный slot motion на `hint` / `error` (`enter` при mount, hover/press если задать). Tailwind-классы на `Field.Error` тоже работают:
 
 ```tsx
-<Field.Error className="animate-in fade-in duration-200">
-  Обязательное поле
-</Field.Error>
+<Field
+  motion={{
+    error: {
+      enter: (ctx) => ctx.fromTo({ y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28 }),
+    },
+  }}
+>
+  <Field.Error>Обязательное поле</Field.Error>
+</Field>
 ```
 
 ### Сводка: что настраивается где
@@ -155,7 +185,7 @@ configureMotion({
 | Shell hover bg | `fieldShellHoverClass` | — | CSS, status tint |
 | Checkbox/Radio fill | контрол | `selectionFillEase` | child в Field |
 | Switch thumb | Switch | `switchThumbDuration` | child в Field |
-| Hint/Error appear | — | — | только CSS вручную |
+| Hint/Error appear | Field slot motion (`hint` / `error`) | — | opt-in `motion.hint` / `motion.error` |
 
 ## Размеры (`Field` / `Field.Set`)
 

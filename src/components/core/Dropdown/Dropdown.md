@@ -78,7 +78,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `closeOnSelect` | `!multiple` | Закрывать после выбора |
 | `popoverVariant` | `default` | `default` \| `gloss` для panel |
 | `classNames` | — | Слоты |
-| `motion` | — | Главное меню: `content` / `title` / `description` / `body` (в Popover). Submenu: `subContent` |
+| `motion` | — | Главное меню: `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` (в Popover). Submenu: `subContent`. Trigger: `trigger` на Root (`pressSqueeze`). |
 
 ### `DropdownClassNames`
 
@@ -126,7 +126,15 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 
 ## Анимации
 
-Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popover` (main panel) + `runOpenAfterSqueeze` (trigger).
+Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popover` (main panel) + слот `trigger` на Root (`runOpenAfterSqueeze` ждёт `pressIn`).
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` | `enter` / `leave` | прокидка в Popover; `content` → `portalSurface*` |
+| `subContent` | `enter` / `leave` | `portalSurfaceEnter` / `Leave` (submenu host) |
+| `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope |
 
 **DOM (open menu):**
 
@@ -150,7 +158,7 @@ Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popov
 `Dropdown.Trigger` на `pointerdown` (если меню закрыто):
 
 1. `e.preventDefault()` — блокирует собственный squeeze дочернего `Button`
-2. `runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: true })` — squeeze trigger, затем open
+2. `runOpenAfterSqueeze` — `motion.trigger.pressIn` (дефолт `pressSqueeze`; другой рецепт / factory; `false` — без squeeze), затем open
 
 **Close:** `click` при `open=true` → `setOpen(false)` сразу, без squeeze.
 
@@ -183,7 +191,26 @@ configureMotion({
 - `contentRole={undefined}` — dialog semantics отключены; `role="menu"` на `Popover.Body`
 - `shouldDismiss` — игнорирует клики внутри `subPanelRootsRef`
 
-Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). Карта с Root / `Dropdown.Popover`.
+Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). Карта с Root / `Dropdown.Popover`. Repeated `item` / `itemLabel` / `itemHint` / `itemIcon` и chrome `label` / `subTrigger` / `separator` регистрируются в scope Popover (`ctx.getTargets("item")` / `"itemIcon"` из factory `body`). Open squeeze — слот `trigger` на Root (`pressSqueeze`; другой рецепт через `motion.trigger.pressIn`).
+
+```tsx
+<Dropdown motion={{ content: { leave: false } }}>…</Dropdown>
+
+<Dropdown
+  motion={{
+    body: {
+      enter: (ctx) => {
+        const items = ctx.getTargets("item");
+        const tl = ctx.timeline();
+        items.forEach((item, i) => {
+          tl.fromTo(item, { x: -10, opacity: 0 }, { x: 0, opacity: 1, duration: 0.22 }, i * 0.045);
+        });
+        return tl;
+      },
+    },
+  }}
+>
+```
 
 ```tsx
 <Dropdown motion={{ content: { leave: false } }}>…</Dropdown>
@@ -259,7 +286,7 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | — |
+| Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `motion.trigger.pressIn` |
 | Main panel portal | `content` → Popover `portalSurface*` | `tooltipDuration`, `interactiveEase` | `motion` на Root / Popover |
 | Item squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | `disabled` |
 | Submenu portal | `subContent` → `portalSurface*` | `tooltipDuration` | `motion` на SubContent |

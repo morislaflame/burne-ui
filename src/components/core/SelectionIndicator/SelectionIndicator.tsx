@@ -1,17 +1,40 @@
 import "../utils/glossPanel.css";
 
+import type { HTMLAttributes } from "react";
+
+import { useMotionPart } from "@/components/core/utils/slotMotion";
+
 import { selectionIndicatorDecorativeProps } from "./selectionIndicatorA11y";
 import {
   SelectionIndicatorMotionProvider,
   SelectionIndicatorProvider,
+  useOptionalSelectionIndicatorMotionScope,
 } from "./selectionIndicatorContext";
 import {
   SELECTION_INDICATOR_MOTION_DEFAULTS,
   SelectionIndicatorMotionSync,
 } from "./selectionIndicatorAnimations";
 import { SelectionIndicatorFill, SelectionIndicatorMark } from "./selectionIndicatorParts";
-import type { SelectionIndicatorProps } from "./selectionIndicatorTypes";
+import type { SelectionIndicatorCheckMotion, SelectionIndicatorProps } from "./selectionIndicatorTypes";
 import { useSelectionIndicatorRootState } from "./useSelectionIndicatorRootState";
+
+function SelectionIndicatorRootSlot({
+  className,
+  motion,
+  children,
+  ...rest
+}: HTMLAttributes<HTMLSpanElement> & { motion?: SelectionIndicatorCheckMotion }) {
+  const { setRef } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalSelectionIndicatorMotionScope(),
+    slot: "root",
+    motion,
+  });
+  return (
+    <span ref={setRef} className={className} {...selectionIndicatorDecorativeProps()} {...rest}>
+      {children}
+    </span>
+  );
+}
 
 export function SelectionIndicator({
   size = "base",
@@ -54,9 +77,9 @@ export function SelectionIndicator({
   return (
     <SelectionIndicatorProvider value={contextValue}>
       <SelectionIndicatorMotionProvider motion={motion} defaults={SELECTION_INDICATOR_MOTION_DEFAULTS}>
-        <span className={shellClassName} {...selectionIndicatorDecorativeProps()} {...rest}>
+        <SelectionIndicatorRootSlot className={shellClassName} motion={motion?.root} {...rest}>
           {body}
-        </span>
+        </SelectionIndicatorRootSlot>
         <SelectionIndicatorMotionSync
           selected={selected}
           showsFill={showsFill}

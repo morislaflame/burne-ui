@@ -1,4 +1,4 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   getMotionConfig,
   isMotionEnabledFor,
@@ -7,6 +7,8 @@ import {
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 import { getMotionRecipe } from "./motionRecipeRegistry";
+import { createMotionTweenApi, playDeclarativeMotion } from "./motionTween";
+import { registerKitMotionRecipes } from "./recipes";
 import {
   isMotionFactory,
   isMotionVarsObject,
@@ -49,35 +51,14 @@ function isSilentDisable(value: MotionValue): boolean {
   return isMotionVarsObject(value) && value.recipe === false && !varsHaveTransform(value);
 }
 
-function pickVars(vars: MotionVars): Partial<MotionVars> {
-  const out: Partial<MotionVars> = {};
-  for (const key of VARS_KEYS) {
-    if (vars[key] !== undefined) out[key] = vars[key];
-  }
-  return out;
-}
-
 function applyMotionVars(
   el: HTMLElement,
   vars: MotionVars,
+  phase: MotionPhaseName | (string & {}),
   reduced: boolean,
   cfg: Readonly<MotionConfig>,
 ): MotionAnimation | undefined {
-  const props = pickVars(vars);
-  if (Object.keys(props).length === 0) return undefined;
-
-  if (reduced) {
-    gsap.set(el, { ...props, force3D: false });
-    return undefined;
-  }
-
-  return gsap.to(el, {
-    ...props,
-    duration: vars.duration ?? cfg.interactiveDuration / 1000,
-    ease: vars.ease ?? cfg.interactiveEase,
-    overwrite: "auto",
-    force3D: false,
-  }) as unknown as MotionAnimation;
+  return playDeclarativeMotion(el, vars, { phase, reduced, config: cfg });
 }
 
 type PhaseRun = {
@@ -195,7 +176,7 @@ function hookAnimationComplete(animation: MotionAnimation, onComplete: () => voi
 
 export type RunMotionPhaseOptions = {
   el: HTMLElement | null | undefined;
-  phase: MotionPhaseName;
+  phase: MotionPhaseName | (string & {});
   value: MotionValue | undefined;
   targets: Record<string, HTMLElement | null>;
   getTarget?: (slot: string) => HTMLElement | null;
@@ -218,7 +199,7 @@ function warnLeaveFallback(slot: string | undefined): void {
 function warnUnknownRecipe(
   name: string,
   slot: string | undefined,
-  phase: MotionPhaseName,
+  phase: MotionPhaseName | (string & {}),
 ): void {
   if (process.env.NODE_ENV === "production") return;
   const where = slot ? `slot "${slot}", phase "${phase}"` : `phase "${phase}"`;
@@ -230,7 +211,7 @@ function warnMotionProducerError(
   meta: {
     recipe?: string;
     slot?: string;
-    phase: MotionPhaseName;
+    phase: MotionPhaseName | (string & {});
     kind: "threw" | "rejected";
   },
 ): void {
@@ -291,7 +272,7 @@ export function runMotionPhase({
   const cfg = config ?? getMotionConfig();
   const reduced = prefersReducedMotion() || !isMotionEnabledFor(cfg);
 
-  const ctx: MotionContext = {
+  const ctx = {
     el,
     phase,
     targets,
@@ -311,9 +292,18 @@ export function runMotionPhase({
     isCurrent: run.isCurrent,
     signal,
     onCleanup: addCleanup,
-  };
+    ...createMotionTweenApi({
+      el,
+      phase,
+      reduced,
+      config: cfg,
+      onCleanup: addCleanup,
+      setAnimation,
+    }),
+  } satisfies MotionContext;
 
   const runRecipe = (name: string, extraParams?: MotionRecipeParams) => {
+    registerKitMotionRecipes();
     const recipe = getMotionRecipe(name);
     if (!recipe) {
       warnUnknownRecipe(name, slot, phase);
@@ -360,7 +350,7 @@ export function runMotionPhase({
           animation = result as MotionAnimation;
         }
       } else {
-        animation = applyMotionVars(el, value, reduced, cfg);
+        animation = applyMotionVars(el, value, phase, reduced, cfg);
       }
     }
   } catch (error) {
@@ -379,18 +369,17 @@ export function runMotionPhase({
     return run;
   }
 
-  setAnimation(animation);
-  if (animation) {
-    if (waitForComplete) {
-      hookAnimationComplete(animation, finishSuccess);
-    }
+  if (animation) setAnimation(animation);
+  const liveAnimation = animation ?? run.animation;
+  if (waitForComplete && liveAnimation) {
+    hookAnimationComplete(liveAnimation, finishSuccess);
   }
 
   if (
     waitForComplete &&
-    animation &&
-    typeof animation.repeat === "function" &&
-    animation.repeat() === -1 &&
+    liveAnimation &&
+    typeof liveAnimation.repeat === "function" &&
+    liveAnimation.repeat() === -1 &&
     process.env.NODE_ENV !== "production"
   ) {
     const label = slot ? `slot "${slot}"` : "motion";
@@ -421,7 +410,7 @@ export function runMotionPhase({
   }
 
   if (waitForComplete) {
-    if (animation) {
+    if (liveAnimation) {
       // onComplete hooked above
     } else if (isMotionFactory(value)) {
       warnLeaveFallback(slot);

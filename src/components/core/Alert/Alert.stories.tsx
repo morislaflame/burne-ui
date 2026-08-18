@@ -11,6 +11,7 @@ import { killMotion } from "@/components/core/utils/gsapMotion";
 
 import { Alert, type AlertSize, type AlertStatus, type AlertVariant } from ".";
 import { AlertMotionDemo } from "../../../../playground/showcase/demos/alert/AlertMotion.demo";
+import { AlertMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/alert/AlertMotionControllerGallery.demo";
 
 const ALERT_VARIANTS: AlertVariant[] = ["default", "outline", "secondary", "gloss"];
 
@@ -93,6 +94,13 @@ const meta = {
       control: "boolean",
       description: "Hover lift + stronger shadow; rest elevation stays when false.",
       table: { defaultValue: { summary: "true" } },
+    },
+    motion: {
+      control: false,
+    },
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
     },
     shadow: {
       control: "select",
@@ -598,4 +606,17 @@ export const SlotMotionOrchestration: Story = {
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (color, parts, timeline)",
   render: () => <AlertMotionDemo />,
+};
+
+export const SlotMotionController: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` / `useMotionController()` — play, playSlot, playAll, exclude, set, cancel, AbortSignal, and namespaced `motion.events`.",
+      },
+    },
+  },
+  render: () => <AlertMotionControllerGalleryDemo />,
 };

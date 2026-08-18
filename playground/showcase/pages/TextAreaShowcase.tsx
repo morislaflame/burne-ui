@@ -22,6 +22,8 @@ import { TextAreaWithErrorDemo } from "../demos/textarea/TextAreaWithError.demo"
 import textAreaWithErrorSource from "../demos/textarea/TextAreaWithError.demo.tsx?raw";
 import { TextAreaMotionControlTintDemo } from "../demos/textarea/TextAreaMotionControlTint.demo";
 import textAreaMotionControlTintSource from "../demos/textarea/TextAreaMotionControlTint.demo.tsx?raw";
+import { TextAreaMotionHintEnterDemo } from "../demos/textarea/TextAreaMotionHintEnter.demo";
+import textAreaMotionHintEnterSource from "../demos/textarea/TextAreaMotionHintEnter.demo.tsx?raw";
 import { TextAreaMotionInstantHoverDemo } from "../demos/textarea/TextAreaMotionInstantHover.demo";
 import textAreaMotionInstantHoverSource from "../demos/textarea/TextAreaMotionInstantHover.demo.tsx?raw";
 import { TextAreaMotionResizePulseDemo } from "../demos/textarea/TextAreaMotionResizePulse.demo";
@@ -79,6 +81,7 @@ export function TextAreaShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionShellWaveDemo} source={textAreaMotionShellWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionResizePulseDemo} source={textAreaMotionResizePulseSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionControlTintDemo} source={textAreaMotionControlTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionHintEnterDemo} source={textAreaMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

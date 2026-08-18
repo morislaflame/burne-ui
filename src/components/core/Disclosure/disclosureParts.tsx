@@ -14,11 +14,11 @@ import { IoChevronDown } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
-import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { hasPointerPhases, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
 import { resolveDisclosureTriggerBody } from "./disclosureAPI";
-import { useDisclosureClassNames, useDisclosureContext, useDisclosureMotionScope } from "./disclosureContext";
+import { useDisclosureClassNames, useDisclosureContext, useDisclosureMotionScope, useOptionalDisclosureMotionScope } from "./disclosureContext";
 import {
   DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
   DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS,
@@ -38,14 +38,25 @@ import type {
 
 import { cn } from "@/utils/cn";
 
-export function DisclosureIcon({ className, children, ...props }: DisclosureIconProps) {
+export function DisclosureIcon({
+  className,
+  children,
+  motion,
+  ...props
+}: DisclosureIconProps) {
   const { size } = useDisclosureContext();
   const slotClassNames = useDisclosureClassNames();
+  const { setRef } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalDisclosureMotionScope(),
+    slot: "icon",
+    motion,
+  });
 
   if (children == null) return null;
 
   return (
     <span
+      ref={setRef}
       aria-hidden
       className={disclosureTriggerIconClass({
         size,
@@ -155,6 +166,15 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       onPointerDown,
     });
 
+    const titleScope = useDisclosureMotionScope();
+    const titlePointer = hasPointerPhases(titleScope.getRootMotion()?.title);
+    const titlePart = useMotionPart<HTMLElement>({
+      scope: titleScope,
+      slot: "title",
+      pointerPhases: titlePointer,
+      pressPhases: titlePointer,
+    });
+
     const resolvedIcon =
       icon != null ? (
         <DisclosureIcon>{icon}</DisclosureIcon>
@@ -240,6 +260,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         >
           <Text
             as="span"
+            ref={titlePart.setRef}
             variant={triggerShell.text}
             className={cn(
               DISCLOSURE_TRIGGER_TITLE_CLASS,
@@ -247,6 +268,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
               open ? "text-primary" : "text-foreground",
               slotClassNames.title,
             )}
+            {...titlePart.pointerHandlers}
           >
             {titleNode}
           </Text>

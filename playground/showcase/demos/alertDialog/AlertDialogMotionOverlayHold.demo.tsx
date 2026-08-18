@@ -1,5 +1,4 @@
 import { useState } from "react";
-import gsap from "gsap";
 
 import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Button } from "@/components/core/Button";
@@ -14,18 +13,16 @@ export function AlertDialogMotionOverlayHoldDemo() {
       motion={{
         overlay: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { opacity: 0 },
-              { opacity: 1, duration: 0.55, ease: "power1.out", overwrite: "auto" },
+              { opacity: 1, duration: 0.55, ease: "power1.out" },
             ),
           leave: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               opacity: 0,
               duration: 0.42,
               delay: 0.06,
               ease: "power1.in",
-              overwrite: "auto",
             }),
         },
       }}

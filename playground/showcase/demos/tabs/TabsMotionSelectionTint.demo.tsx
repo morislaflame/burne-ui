@@ -1,10 +1,6 @@
-import gsap from "gsap";
-
 import { Tabs } from "@/components/core/Tabs";
 import { Text } from "@/components/core/Text";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TabsMotionSelectionTintDemo() {
   return (
@@ -13,7 +9,7 @@ export function TabsMotionSelectionTintDemo() {
       motion={{
         tab: {
           check: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { scale: 1.04, duration: 0.16 }, 0);
             tl.to(ctx.el, { scale: 1, duration: 0.18 }, 0.16);
             if (ctx.targets.tabText) tweenCssColor(ctx.targets.tabText, "var(--color-primary)");

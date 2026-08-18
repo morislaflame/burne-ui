@@ -28,6 +28,7 @@ export type FieldPartMotion = {
 
 export type FieldMotion = {
   root?: FieldPartMotion;
+  label?: FieldPartMotion;
   hint?: FieldPartMotion;
   error?: FieldPartMotion;
 };
@@ -60,7 +61,7 @@ export type FieldProps = HTMLAttributes<HTMLDivElement> & {
    */
   size?: FieldSize;
   /**
-   * Per-slot motion (`root`, `hint`, `error`). Does not steal child Input motion.
+   * Per-slot motion (`root`, `label`, `hint`, `error`). Does not steal child Input motion.
    * Defaults are empty.
    */
   motion?: Prettify<FieldMotion>;
@@ -84,7 +85,9 @@ export type FieldHintProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<FieldPartMotion>;
 };
 
-export type FieldLabelProps = LabelProps;
+export type FieldLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<FieldPartMotion>;
+};
 export type FieldErrorProps = Omit<FieldHintProps, "status">;
 
 export type FieldLegendProps = HTMLAttributes<HTMLLegendElement> & {

@@ -14,10 +14,14 @@ import { ProgressVerticalMetersDemo } from "../demos/progress-bar/ProgressVertic
 import progressVerticalMetersSource from "../demos/progress-bar/ProgressVerticalMeters.demo.tsx?raw";
 import { ProgressBarMotionInstantEnterDemo } from "../demos/progressBar/ProgressBarMotionInstantEnter.demo";
 import progressBarMotionInstantEnterSource from "../demos/progressBar/ProgressBarMotionInstantEnter.demo.tsx?raw";
+import { ProgressBarMotionFillEnterDemo } from "../demos/progressBar/ProgressBarMotionFillEnter.demo";
+import progressBarMotionFillEnterSource from "../demos/progressBar/ProgressBarMotionFillEnter.demo.tsx?raw";
 import { ProgressBarMotionTrackWaveDemo } from "../demos/progressBar/ProgressBarMotionTrackWave.demo";
 import progressBarMotionTrackWaveSource from "../demos/progressBar/ProgressBarMotionTrackWave.demo.tsx?raw";
 import { ProgressBarMotionChangeTintDemo } from "../demos/progressBar/ProgressBarMotionChangeTint.demo";
 import progressBarMotionChangeTintSource from "../demos/progressBar/ProgressBarMotionChangeTint.demo.tsx?raw";
+import { ProgressBarMotionHintEnterDemo } from "../demos/progressBar/ProgressBarMotionHintEnter.demo";
+import progressBarMotionHintEnterSource from "../demos/progressBar/ProgressBarMotionHintEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -59,10 +63,12 @@ export function ProgressBarShowcase() {
         <ShowcaseDemoFromFile Demo={ProgressVerticalMetersDemo} source={progressVerticalMetersSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, track timeline, change-phase tint. Fill geometry stays kit-internal.">
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, fill enter (recipe or custom factory), track timeline, change-phase tint, chrome enter on label / hint / error.">
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionInstantEnterDemo} source={progressBarMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionFillEnterDemo} source={progressBarMotionFillEnterSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionTrackWaveDemo} source={progressBarMotionTrackWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionChangeTintDemo} source={progressBarMotionChangeTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionHintEnterDemo} source={progressBarMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>
@@ -78,8 +84,9 @@ export function ProgressBarShowcase() {
         <ShowcaseDoc.Customization>
           <p>
             <code>color</code> — semantic key or CSS-fill color. <code>indeterminate</code> — animation
-            without value. Smooth filling — <code>configureMotion()</code> (<code>enableProgressFill</code>,{" "}
-            <code>progressFillDuration</code>).
+            without value. Smooth filling — <code>motion.fill.change</code> (<code>progressFill</code> /{" "}
+            <code>progressIndeterminate</code>), <code>configureMotion()</code> (<code>enableProgressFill</code>,{" "}
+            <code>progressFillDuration</code>). Opt-in <code>motion.fill.enter</code> fills from 0 to the value.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

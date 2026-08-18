@@ -12,6 +12,12 @@ import { DialogMotionTitleHoverColorDemo } from "../demos/dialog/DialogMotionTit
 import dialogMotionTitleHoverColorSource from "../demos/dialog/DialogMotionTitleHoverColor.demo.tsx?raw";
 import { DialogMotionTitleStaggerDemo } from "../demos/dialog/DialogMotionTitleStagger.demo";
 import dialogMotionTitleStaggerSource from "../demos/dialog/DialogMotionTitleStagger.demo.tsx?raw";
+import { DialogMotionBodyStaggerDemo } from "../demos/dialog/DialogMotionBodyStagger.demo";
+import dialogMotionBodyStaggerSource from "../demos/dialog/DialogMotionBodyStagger.demo.tsx?raw";
+import { DialogMotionHeadingBlockDemo } from "../demos/dialog/DialogMotionHeadingBlock.demo";
+import dialogMotionHeadingBlockSource from "../demos/dialog/DialogMotionHeadingBlock.demo.tsx?raw";
+import { DialogMotionTriggerPressDemo } from "../demos/dialog/DialogMotionTriggerPress.demo";
+import dialogMotionTriggerPressSource from "../demos/dialog/DialogMotionTriggerPress.demo.tsx?raw";
 import { DialogAsChildMergedPropsDemo } from "../demos/dialog/DialogAsChildMergedProps.demo";
 import dialogAsChildMergedPropsSource from "../demos/dialog/DialogAsChildMergedProps.demo.tsx?raw";
 import { DialogBasicDemo } from "../demos/dialog/DialogBasic.demo";
@@ -69,11 +75,14 @@ export function DialogShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — instant panel, bounce factory, title stagger, per-part enter/leave, hover color, panel timeline."
+        description="Each card is a separate copyable example — custom trigger press, instant panel, bounce factory, title stagger, headingBlock, per-part enter/leave, hover color, panel timeline."
       >
+        <ShowcaseDemoFromFile Demo={DialogMotionTriggerPressDemo} source={dialogMotionTriggerPressSource} />
         <ShowcaseDemoFromFile Demo={DialogMotionInstantPanelDemo} source={dialogMotionInstantPanelSource} />
         <ShowcaseDemoFromFile Demo={DialogMotionBouncePanelDemo} source={dialogMotionBouncePanelSource} />
         <ShowcaseDemoFromFile Demo={DialogMotionTitleStaggerDemo} source={dialogMotionTitleStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionBodyStaggerDemo} source={dialogMotionBodyStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionHeadingBlockDemo} source={dialogMotionHeadingBlockSource} />
         <ShowcaseDemoFromFile Demo={DialogMotionPerPartDemo} source={dialogMotionPerPartSource} />
         <ShowcaseDemoFromFile Demo={DialogMotionTitleHoverColorDemo} source={dialogMotionTitleHoverColorSource} />
         <ShowcaseDemoFromFile Demo={DialogMotionPanelTimelineDemo} source={dialogMotionPanelTimelineSource} />

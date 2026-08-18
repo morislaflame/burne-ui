@@ -7,7 +7,7 @@ import { useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
 import { expandableTriggerHasActionSlot, hasExpandableMessage, mergeExpandableRefs, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
-import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableMotionScope, useExpandableTriggerGrid, useOptionalExpandableTriggerGrid } from "./expandableContext";
+import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableMotionScope, useExpandableTriggerGrid, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "./expandableContext";
 import { EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_GLOSS_CONTENT_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableDescriptionVariant, expandableIconClass, expandablePanelClass, expandableTitleClassName, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
 import type {
   ExpandableChevronProps,
@@ -223,15 +223,26 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
 
 ExpandableTrigger.displayName = "ExpandableTrigger";
 
-export function ExpandableIcon({ className, children, ...props }: ExpandableIconProps) {
+export function ExpandableIcon({
+  className,
+  children,
+  motion,
+  ...props
+}: ExpandableIconProps) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
+  const { setRef } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalExpandableMotionScope(),
+    slot: "icon",
+    motion,
+  });
 
   if (children == null) return null;
 
   return (
     <span
+      ref={setRef}
       aria-hidden
       className={cn(
         expandableIconClass({
@@ -267,14 +278,20 @@ export function ExpandableContent({ className, ...props }: ExpandableContentProp
 
 ExpandableContent.displayName = "ExpandableContent";
 
-export function ExpandableTitle({ className, ...props }: ExpandableTitleProps) {
+export function ExpandableTitle({ className, motion, ...props }: ExpandableTitleProps) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
+  const { setRef } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalExpandableMotionScope(),
+    slot: "title",
+    motion,
+  });
 
   return (
     <Text
       as="div"
+      ref={setRef}
       variant={expandableTitleVariant(size)}
       className={cn(
         EXPANDABLE_TITLE_CLASS,
@@ -292,15 +309,22 @@ ExpandableTitle.displayName = "ExpandableTitle";
 
 export function ExpandableDescription({
   className,
+  motion,
   ...props
 }: ExpandableDescriptionProps) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
+  const { setRef } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalExpandableMotionScope(),
+    slot: "description",
+    motion,
+  });
 
   return (
     <Text
       as="div"
+      ref={setRef}
       variant={expandableDescriptionVariant(size)}
       className={cn(
         EXPANDABLE_DESCRIPTION_CLASS,

@@ -1,4 +1,5 @@
 import { SliderMotionChangeTintDemo } from "./SliderMotionChangeTint.demo";
+import { SliderMotionHintEnterDemo } from "./SliderMotionHintEnter.demo";
 import { SliderMotionInstantPressDemo } from "./SliderMotionInstantPress.demo";
 import { SliderMotionRangeSplitDemo } from "./SliderMotionRangeSplit.demo";
 import { SliderMotionThumbInertiaDemo } from "./SliderMotionThumbInertia.demo";
@@ -14,6 +15,7 @@ export function SliderMotionDemo() {
       <SliderMotionValuePopDemo />
       <SliderMotionRangeSplitDemo />
       <SliderMotionTrackGlowDemo />
+      <SliderMotionHintEnterDemo />
     </div>
   );
 }

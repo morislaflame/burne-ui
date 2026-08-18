@@ -148,6 +148,7 @@ export const CALENDAR_CELL_TODAY_DOT_CLASS =
   "absolute bottom-[length:calc(var(--border-width)*3)] left-1/2 z-[1] h-[length:calc(var(--border-width)*3)] w-[length:calc(var(--border-width)*3)] -translate-x-1/2 rounded-full bg-primary";
 
 export const CALENDAR_NAV_ICON_CLASS = "icon-xsmall";
+export const CALENDAR_NAV_ICON_WRAP_CLASS = "inline-flex items-center justify-center";
 
 export const CALENDAR_CELL_SELECTED_CLASS =
   "bg-transparent font-w-mid text-primary-foreground";

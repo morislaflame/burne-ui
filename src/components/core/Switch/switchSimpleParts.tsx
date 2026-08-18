@@ -1,6 +1,8 @@
 import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 
+import { useSwitchChromeSlot } from "./switchAnimations";
 import { SwitchControl } from "./switchControlParts";
 import { useSwitchClassNames } from "./switchContext";
 import {
@@ -51,6 +53,9 @@ export function SwitchSimpleBody({
 }) {
   const slotClassNames = useSwitchClassNames();
   const sz = SWITCH_LAYOUT[size];
+  const { setRef: setLabelMotionRef } = useSwitchChromeSlot("label");
+  const { setRef: setHintMotionRef } = useSwitchChromeSlot("hint");
+  const { setRef: setErrorMotionRef } = useSwitchChromeSlot("error");
 
   return (
     <>
@@ -63,7 +68,7 @@ export function SwitchSimpleBody({
       {hasTextColumn ? (
         <>
           <span
-            ref={textColRef}
+            ref={mergeRefs(textColRef, setLabelMotionRef)}
             className={cn(
               switchLabelCellClass(labelPosition),
               !secondaryLines && SWITCH_SIMPLE_LABEL_WRAP_CLASS,
@@ -87,6 +92,7 @@ export function SwitchSimpleBody({
           </span>
           {hasHint ? (
             <Field.Hint
+              ref={setHintMotionRef}
               as="span"
               id={hintId}
               variant={sz.desc}
@@ -101,6 +107,7 @@ export function SwitchSimpleBody({
           ) : null}
           {hasError ? (
             <Field.Error
+              ref={setErrorMotionRef}
               as="span"
               id={errorId}
               variant={sz.desc}

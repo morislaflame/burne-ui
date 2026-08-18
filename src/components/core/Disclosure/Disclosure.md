@@ -144,8 +144,10 @@ Simple API нет.
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `titleLift` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel` (gloss — `hoverLiftGloss`); `pressSqueeze` / `pressSqueezeGloss`; `pressOut: false` |
+| `title` | `enter` / `leave` | нет; Trigger **рассылает** при open |
 | `chevron` | `enter` / `leave` | `chevronRotate` |
 | `contentShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target) |
+| `icon` | `enter` / `leave` | нет; Trigger **рассылает** при open |
 
 ```tsx
 <Disclosure motion={{ contentShell: { enter: false, leave: false } }}>
@@ -154,8 +156,8 @@ Simple API нет.
 
 <Disclosure.Chevron
   motion={{
-    enter: (ctx) => gsap.to(ctx.el, { rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
-    leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.28 }),
+    enter: (ctx) => ctx.to({ rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => ctx.to({ rotation: 0, duration: 0.28 }),
   }}
 />
 ```
@@ -170,7 +172,7 @@ Simple API нет.
 <div class=root>
   <button class=trigger>
     <span class=titleLift>           ← slot titleLift
-      <Text class=title />
+      <Text class=title />           ← slot `title`
     <span class=chevron />           ← slot chevron
   <div class=contentShell>           ← slot contentShell / collapsibleHeight
     <div class=contentWrap>          ← internal panelInner

@@ -6,6 +6,23 @@ export type FormatShowcaseSourceOptions = {
   usageOnly?: boolean;
 };
 
+const INTERACTION_ENTER_HOST =
+  /\b(?:AlertDialog|Dialog|Drawer|Popover|Tooltip|Dropdown|Expandable|Disclosure|Accordion)\b/;
+const TOAST_ENTER_HOST = /\b(?:useToast|toast\.show)\b/;
+
+/**
+ * True when remounting the demo will replay a playable `enter`
+ * (not `enter: false`). Overlay / collapsible / toast enter runs on open/show.
+ */
+export function showcaseSourcePlaysEnter(source: string): boolean {
+  if (!/enter:\s*(?!false\b)\S/.test(source)) return false;
+  if (TOAST_ENTER_HOST.test(source)) return false;
+  if (INTERACTION_ENTER_HOST.test(source) && !/\bdefaultOpen(?:Index)?\b/.test(source)) {
+    return false;
+  }
+  return true;
+}
+
 /**
  * Normalizes the source demo-file for the “Show Code” panel».
  */

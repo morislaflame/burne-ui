@@ -93,6 +93,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 |------|------|------------------|
 | `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
 | `control` / `prefix` / `suffix` / `passwordToggle` / `fileRemove` | hover/press | нет |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
 | `fileRow` | `leave` | `fileRowExit` |
 
 `false` на `fileRow.leave` — строка снимается сразу, без tween. `false` на `shell.hoverIn/Out` — rest-тень остаётся, lift не играет. Не анимируйте layout в публичных MotionVars.
@@ -108,7 +109,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 />
 ```
 
-Compound: `motion` на `Input.Control` — part motion слота `shell`.
+Compound: `motion` на `Input.Control` — part motion слота `shell`. На `Input.Label` / `Hint` / `Error` — chrome Root scope (не scope Control).
 
 **ButtonGroup:** при `groupSegment` shell hover/press выключены.
 

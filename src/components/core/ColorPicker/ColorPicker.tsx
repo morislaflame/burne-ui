@@ -9,6 +9,7 @@ import {
   ColorPickerContent,
   ColorPickerHexInput,
   ColorPickerPresets,
+  ColorPickerPreview,
   ColorPickerTrigger,
 } from "./colorPickerParts";
 import type { ColorPickerProps } from "./colorPickerTypes";
@@ -22,6 +23,7 @@ export type {
   ColorPickerHexInputProps,
   ColorPickerAlphaInputProps,
   ColorPickerPresetsProps,
+  ColorPickerPreviewProps,
   ColorPickerSize,
   ColorPickerVariant,
   ColorPickerClassNames,
@@ -66,6 +68,7 @@ export function ColorPickerRoot({
             size={size}
             side={side}
             variant={variant === "gloss" ? "gloss" : "default"}
+            motion={{ trigger: motion?.trigger }}
           >
             {children}
           </Popover>
@@ -84,4 +87,5 @@ export {
   ColorPickerHexInput,
   ColorPickerAlphaInput,
   ColorPickerPresets,
+  ColorPickerPreview,
 };

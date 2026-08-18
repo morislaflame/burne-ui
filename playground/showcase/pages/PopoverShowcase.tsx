@@ -16,6 +16,8 @@ import { PopoverMotionSlideYDemo } from "../demos/popover/PopoverMotionSlideY.de
 import popoverMotionSlideYSource from "../demos/popover/PopoverMotionSlideY.demo.tsx?raw";
 import { PopoverMotionTitleStaggerDemo } from "../demos/popover/PopoverMotionTitleStagger.demo";
 import popoverMotionTitleStaggerSource from "../demos/popover/PopoverMotionTitleStagger.demo.tsx?raw";
+import { PopoverMotionHeaderDemo } from "../demos/popover/PopoverMotionHeader.demo";
+import popoverMotionHeaderSource from "../demos/popover/PopoverMotionHeader.demo.tsx?raw";
 import { PopoverProfileCardDemo } from "../demos/popover/PopoverProfileCard.demo";
 import popoverProfileCardSource from "../demos/popover/PopoverProfileCard.demo.tsx?raw";
 import { PopoverShareMenuDemo } from "../demos/popover/PopoverShareMenu.demo";
@@ -59,12 +61,13 @@ export function PopoverShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, title stagger."
+        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, title stagger, header enter."
       >
         <ShowcaseDemoFromFile Demo={PopoverMotionDefaultDemo} source={popoverMotionDefaultSource} />
         <ShowcaseDemoFromFile Demo={PopoverMotionInstantLeaveDemo} source={popoverMotionInstantLeaveSource} />
         <ShowcaseDemoFromFile Demo={PopoverMotionSlideYDemo} source={popoverMotionSlideYSource} />
         <ShowcaseDemoFromFile Demo={PopoverMotionTitleStaggerDemo} source={popoverMotionTitleStaggerSource} />
+        <ShowcaseDemoFromFile Demo={PopoverMotionHeaderDemo} source={popoverMotionHeaderSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">

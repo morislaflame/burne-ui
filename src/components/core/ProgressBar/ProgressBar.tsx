@@ -1,8 +1,6 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
-import { useMemo } from "react";
 
-import { resolveProgressBarMotionDefaults } from "./progressBarAnimations";
 import { ProgressBarClassNamesProvider, ProgressBarFieldProvider, ProgressBarMotionProvider } from "./progressBarContext";
 import { ProgressBarSimpleBody } from "./progressBarParts";
 import { progressBarRootClass } from "./progressBarStyles";
@@ -14,6 +12,7 @@ export type {
   ProgressBarErrorProps,
   ProgressBarHeaderProps,
   ProgressBarHintProps,
+  ProgressBarLabelProps,
   ProgressBarOrientation,
   ProgressBarProps,
   ProgressBarSize,
@@ -92,12 +91,10 @@ export function ProgressBarRoot({
     />
   );
 
-  const motionDefaults = useMemo(() => resolveProgressBarMotionDefaults(), []);
-
   return (
     <ProgressBarFieldProvider value={state.fieldCtx}>
       <ProgressBarClassNamesProvider classNames={classNames}>
-        <ProgressBarMotionProvider motion={motion} defaults={motionDefaults}>
+        <ProgressBarMotionProvider motion={motion}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               id={state.progressId}

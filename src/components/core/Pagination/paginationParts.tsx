@@ -1,6 +1,6 @@
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import type { IconBaseProps } from "react-icons";
-import { forwardRef, useCallback, useMemo, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
+import { forwardRef, useCallback, useMemo, type ForwardedRef, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
 
 import { Text } from "@/components/core/Text";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
@@ -10,7 +10,7 @@ import { cn } from "@/utils/cn";
 
 import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, resolvePaginationPageAriaLabel } from "./paginationA11y";
 import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
-import { resolvePaginationControlMotionDefaults, usePaginationContentRef } from "./paginationAnimations";
+import { resolvePaginationControlMotionDefaults, usePaginationContentRef, usePaginationEllipsisSlot, usePaginationSummarySlot } from "./paginationAnimations";
 import {
   PaginationMotionProvider,
   useOptionalPagination,
@@ -73,6 +73,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       className,
       disabled,
       onPointerDown,
+      onPointerUp,
       onKeyDown,
       motion,
       ...rest
@@ -93,6 +94,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
           className={className}
           disabled={disabled}
           onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
           onKeyDown={onKeyDown}
           itemPartMotion={motion}
           rest={rest}
@@ -109,6 +111,7 @@ function PaginationInteractiveSurface({
   className,
   disabled,
   onPointerDown,
+  onPointerUp,
   onKeyDown,
   itemPartMotion,
   forwardedRef,
@@ -118,23 +121,50 @@ function PaginationInteractiveSurface({
   className?: string;
   disabled?: boolean;
   onPointerDown?: PaginationInteractiveProps["onPointerDown"];
+  onPointerUp?: PaginationInteractiveProps["onPointerUp"];
   onKeyDown?: PaginationInteractiveProps["onKeyDown"];
   itemPartMotion?: PaginationPartMotion;
-  forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  forwardedRef: ForwardedRef<HTMLButtonElement>;
   rest: Omit<
     PaginationInteractiveProps,
-    "children" | "className" | "disabled" | "onPointerDown" | "onKeyDown" | "motion"
+    | "children"
+    | "className"
+    | "disabled"
+    | "onPointerDown"
+    | "onPointerUp"
+    | "onKeyDown"
+    | "motion"
   >;
 }) {
   const scope = useOptionalPaginationMotionScope();
+  const playControl = useCallback(
+    (phase: "pressIn" | "pressOut", el: HTMLElement) => {
+      if (!scope) return;
+      const value = scope.resolve("control", phase, itemPartMotion);
+      if (value !== undefined) {
+        scope.play("control", phase, { partMotion: itemPartMotion, el });
+      }
+      void scope.playBroadcast(phase, { exclude: ["control"] });
+    },
+    [itemPartMotion, scope],
+  );
   const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
     scope,
     slot: "control",
     motion: itemPartMotion,
-    pressPhases: !disabled,
+    pressPhases: false,
     pointerPhases: !disabled,
     forwardedRef,
-    onPointerDown,
+    onPointerDown: (e) => {
+      onPointerDown?.(e);
+      if (disabled || e.defaultPrevented) return;
+      playControl("pressIn", e.currentTarget);
+    },
+    onPointerUp: (e) => {
+      onPointerUp?.(e);
+      if (disabled || e.defaultPrevented) return;
+      playControl("pressOut", e.currentTarget);
+    },
   });
 
   return (
@@ -149,10 +179,8 @@ function PaginationInteractiveSurface({
       {...pointerHandlers}
       onKeyDown={(e) => {
         onKeyDown?.(e);
-        if (disabled || e.defaultPrevented || !isInteractivePressKey(e) || !scope) return;
-        const value = scope.resolve("control", "pressIn", itemPartMotion);
-        if (value === false || value === undefined) return;
-        scope.play("control", "pressIn", { partMotion: itemPartMotion, el: e.currentTarget });
+        if (disabled || e.defaultPrevented || !isInteractivePressKey(e)) return;
+        playControl("pressIn", e.currentTarget);
       }}
     >
       {children}
@@ -163,12 +191,13 @@ function PaginationInteractiveSurface({
 PaginationInteractive.displayName = "PaginationInteractive";
 
 export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryProps>(
-  function PaginationSummary({ className, children, ...rest }, ref) {
+  function PaginationSummary({ className, children, motion, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
+    const { setRef } = usePaginationSummarySlot(motion, ref);
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={paginationSummaryClass({
           slotClass: slotClassNames.summary,
           className,
@@ -364,12 +393,18 @@ const PaginationBackIcon = IoChevronBack as PaginationChevronIcon;
 const PaginationForwardIcon = IoChevronForward as PaginationChevronIcon;
 
 export const PaginationPreviousIcon = forwardRef<SVGSVGElement, PaginationIconProps>(
-  function PaginationPreviousIcon({ className, ...rest }, ref) {
+  function PaginationPreviousIcon({ className, motion, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
+    const { setRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalPaginationMotionScope(),
+      slot: "previousIcon",
+      motion,
+      forwardedRef: ref as ForwardedRef<HTMLElement>,
+    });
 
     return (
       <PaginationBackIcon
-        ref={ref}
+        ref={setRef as Ref<SVGSVGElement>}
         aria-hidden={PAGINATION_ICON_ARIA_HIDDEN}
         className={paginationPreviousIconClass({
           slotClass: slotClassNames.previousIcon,
@@ -384,12 +419,18 @@ export const PaginationPreviousIcon = forwardRef<SVGSVGElement, PaginationIconPr
 PaginationPreviousIcon.displayName = "Pagination.PreviousIcon";
 
 export const PaginationNextIcon = forwardRef<SVGSVGElement, PaginationIconProps>(
-  function PaginationNextIcon({ className, ...rest }, ref) {
+  function PaginationNextIcon({ className, motion, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
+    const { setRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalPaginationMotionScope(),
+      slot: "nextIcon",
+      motion,
+      forwardedRef: ref as ForwardedRef<HTMLElement>,
+    });
 
     return (
       <PaginationForwardIcon
-        ref={ref}
+        ref={setRef as Ref<SVGSVGElement>}
         aria-hidden={PAGINATION_ICON_ARIA_HIDDEN}
         className={paginationNextIconClass({
           slotClass: slotClassNames.nextIcon,
@@ -487,12 +528,32 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
 PaginationPage.displayName = "Pagination.Page";
 
 export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
-  function PaginationEllipsis({ className, children, ...rest }, ref) {
+  function PaginationEllipsis(
+    {
+      className,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = usePaginationClassNames();
+    const part = usePaginationEllipsisSlot({
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <Text
-        ref={ref}
+        ref={part.setRef}
         as="span"
         variant="small"
         aria-hidden={PAGINATION_ELLIPSIS_ARIA_HIDDEN}
@@ -501,6 +562,7 @@ export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsis
           className,
         })}
         {...rest}
+        {...part.pointerHandlers}
       >
         {children ?? "…"}
       </Text>

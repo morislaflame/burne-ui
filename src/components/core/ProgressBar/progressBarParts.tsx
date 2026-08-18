@@ -1,12 +1,18 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
-import { useMotionPart } from "@/components/core/utils/slotMotion";
-
-import { useProgressBarFillAnimation, useProgressBarTrackSlotMotion } from "./progressBarAnimations";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import {
+  progressScaleFromPercent,
+  resolveProgressBarMotionDefaults,
+  useProgressBarChromeSlot,
+  useProgressBarFillMotion,
+  useProgressBarTrackSlotMotion,
+} from "./progressBarAnimations";
+import {
+  ProgressBarMotionProvider,
   useOptionalProgressBarMotionScope,
   useProgressBarClassNames,
   useProgressBarFieldContext,
@@ -16,6 +22,7 @@ import type {
   ProgressBarErrorProps,
   ProgressBarHeaderProps,
   ProgressBarHintProps,
+  ProgressBarLabelProps,
   ProgressBarSimpleBodyProps,
   ProgressBarTrackProps,
   ProgressBarValueProps,
@@ -32,7 +39,6 @@ export function ProgressBarSimpleBody({
   error,
   trackProps,
 }: ProgressBarSimpleBodyProps) {
-  const slotClassNames = useProgressBarClassNames();
   const showHeader = label != null || showValue || valueText != null;
 
   return (
@@ -40,7 +46,7 @@ export function ProgressBarSimpleBody({
       {showHeader ? (
         <ProgressBarHeader>
           {label != null ? (
-            <Label classNames={{ root: slotClassNames.label }}>{label}</Label>
+            <ProgressBarLabel>{label}</ProgressBarLabel>
           ) : null}
           {valueText != null ? (
             <ProgressBarValue>{valueText}</ProgressBarValue>
@@ -56,20 +62,44 @@ export function ProgressBarSimpleBody({
   );
 }
 
-export function ProgressBarLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useProgressBarClassNames();
+export const ProgressBarLabel = forwardRef<HTMLElement, ProgressBarLabelProps>(
+  function ProgressBarLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useProgressBarClassNames();
+    const part = useProgressBarChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 ProgressBarLabel.displayName = "ProgressBarLabel";
 
@@ -141,47 +171,87 @@ export function ProgressBarValue({
 
 ProgressBarValue.displayName = "ProgressBar.Value";
 
-export function ProgressBarHint({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: ProgressBarHintProps) {
-  const ctx = useProgressBarFieldContext();
-  const slotClassNames = useProgressBarClassNames();
+export const ProgressBarHint = forwardRef<HTMLElement, ProgressBarHintProps>(
+  function ProgressBarHint(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useProgressBarFieldContext();
+    const slotClassNames = useProgressBarClassNames();
+    const part = useProgressBarChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? ctx.hintId}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? ctx.hintId}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 ProgressBarHint.displayName = "ProgressBar.Hint";
 
-export function ProgressBarError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: ProgressBarErrorProps) {
-  const ctx = useProgressBarFieldContext();
-  const slotClassNames = useProgressBarClassNames();
+export const ProgressBarError = forwardRef<HTMLElement, ProgressBarErrorProps>(
+  function ProgressBarError(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useProgressBarFieldContext();
+    const slotClassNames = useProgressBarClassNames();
+    const part = useProgressBarChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? ctx.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? ctx.errorId}
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
 
 ProgressBarError.displayName = "ProgressBar.Error";
 
@@ -204,16 +274,12 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     },
     ref,
   ) {
-    const slotClassNames = useProgressBarClassNames();
-    const {
-      size: resolvedSize,
-      indeterminate: isIndeterminate,
-      isHorizontal,
-      aria,
-      trackCrossStyle,
-      fillColorStyle,
-      percent,
-    } = useProgressBarTrackState({
+    const parent = useOptionalProgressBarMotionScope();
+    const merged = mergeMotionSlotMaps(
+      parent?.getRootMotion(),
+      motion ? { track: motion } : undefined,
+    );
+    const state = useProgressBarTrackState({
       value,
       indeterminate,
       min,
@@ -225,86 +291,140 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       orientation,
       "aria-describedby": ariaDescribedByProp,
     });
-
-    const scope = useOptionalProgressBarMotionScope();
-    const trackPart = useMotionPart<HTMLDivElement>({
-      scope,
-      slot: "track",
-      motion,
-      forwardedRef: ref,
-      pointerPhases: false,
-    });
-    const fillPart = useMotionPart<HTMLSpanElement>({
-      scope,
-      slot: "fill",
-      pointerPhases: false,
-    });
-    const { fillRef, reduceMotion } = useProgressBarFillAnimation({
-      indeterminate: isIndeterminate,
-      percent,
-      isHorizontal,
-    });
-    useProgressBarTrackSlotMotion(
-      scope,
-      isIndeterminate ? "indeterminate" : String(percent),
+    const defaults = useMemo(
+      () => resolveProgressBarMotionDefaults({ indeterminate: state.indeterminate }),
+      [state.indeterminate],
     );
-    const setFillRef = (node: HTMLSpanElement | null) => {
-      fillRef.current = node;
-      fillPart.setRef(node);
-    };
+    const percent = state.percent;
+    const isHorizontal = state.isHorizontal;
+    const isIndeterminate = state.indeterminate;
+    const params = useMemo(
+      () => ({
+        getProgressScale: () => progressScaleFromPercent(percent),
+        isHorizontal,
+        indeterminate: isIndeterminate,
+      }),
+      [isHorizontal, isIndeterminate, percent],
+    );
 
     return (
-      <div
-        ref={trackPart.setRef}
-        role="progressbar"
-        aria-valuenow={aria["aria-valuenow"]}
-        aria-valuemin={aria["aria-valuemin"]}
-        aria-valuemax={aria["aria-valuemax"]}
-        aria-valuetext={aria["aria-valuetext"]}
-        aria-busy={aria["aria-busy"]}
-        aria-labelledby={aria["aria-labelledby"]}
-        aria-describedby={aria["aria-describedby"]}
-        aria-label={aria["aria-label"]}
-        className={progressBarTrackClass({
-          isHorizontal,
-          size: resolvedSize ?? "base",
-          thickness,
-          slotClass: slotClassNames.track,
-          className,
-        })}
-        style={trackCrossStyle}
-        {...rest}
-      >
-        {isIndeterminate ? (
-          <span
-            ref={setFillRef}
-            aria-hidden
-            className={progressBarIndeterminateFillClass({
-              isHorizontal,
-              hasCustomColor: Boolean(color),
-              reduceMotion,
-              slotClass: slotClassNames.indeterminateFill,
-            })}
-            style={fillColorStyle}
-          />
-        ) : (
-          <span
-            ref={setFillRef}
-            aria-hidden
-            className={progressBarFillClass({
-              isHorizontal,
-              hasCustomColor: Boolean(color),
-              slotClass: slotClassNames.fill,
-            })}
-            style={progressBarDeterminateFillStyle({
-              isHorizontal,
-              fillColorStyle,
-            })}
-          />
-        )}
-      </div>
+      <ProgressBarMotionProvider motion={merged} defaults={defaults} params={params}>
+        <ProgressBarTrackHost
+          ref={ref}
+          className={className}
+          state={state}
+          {...rest}
+        />
+      </ProgressBarMotionProvider>
     );
   },
 );
 
 ProgressBarTrack.displayName = "ProgressBar.Track";
+
+const ProgressBarTrackHost = forwardRef<
+  HTMLDivElement,
+  Omit<
+    ProgressBarTrackProps,
+    | "motion"
+    | "value"
+    | "indeterminate"
+    | "min"
+    | "max"
+    | "size"
+    | "thickness"
+    | "color"
+    | "formatValue"
+    | "orientation"
+  > & {
+    state: ReturnType<typeof useProgressBarTrackState>;
+  }
+>(function ProgressBarTrackHost({ className, state, ...rest }, ref) {
+  const slotClassNames = useProgressBarClassNames();
+  const {
+    size: resolvedSize,
+    thickness,
+    color,
+    indeterminate: isIndeterminate,
+    isHorizontal,
+    aria,
+    trackCrossStyle,
+    fillColorStyle,
+    percent,
+  } = state;
+  const scope = useOptionalProgressBarMotionScope();
+  const trackPart = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "track",
+    forwardedRef: ref,
+    pointerPhases: false,
+  });
+  const fillPart = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "fill",
+    pointerPhases: false,
+  });
+  const { reduceMotion } = useProgressBarFillMotion({
+    scope,
+    percent,
+    isHorizontal,
+    indeterminate: isIndeterminate,
+    fillRef: fillPart.targetRef,
+  });
+  useProgressBarTrackSlotMotion(
+    scope,
+    isIndeterminate ? "indeterminate" : String(percent),
+  );
+
+  return (
+    <div
+      ref={trackPart.setRef}
+      role="progressbar"
+      aria-valuenow={aria["aria-valuenow"]}
+      aria-valuemin={aria["aria-valuemin"]}
+      aria-valuemax={aria["aria-valuemax"]}
+      aria-valuetext={aria["aria-valuetext"]}
+      aria-busy={aria["aria-busy"]}
+      aria-labelledby={aria["aria-labelledby"]}
+      aria-describedby={aria["aria-describedby"]}
+      aria-label={aria["aria-label"]}
+      className={progressBarTrackClass({
+        isHorizontal,
+        size: resolvedSize ?? "base",
+        thickness,
+        slotClass: slotClassNames.track,
+        className,
+      })}
+      style={trackCrossStyle}
+      {...rest}
+    >
+      {isIndeterminate ? (
+        <span
+          ref={fillPart.setRef}
+          aria-hidden
+          className={progressBarIndeterminateFillClass({
+            isHorizontal,
+            hasCustomColor: Boolean(color),
+            reduceMotion,
+            slotClass: slotClassNames.indeterminateFill,
+          })}
+          style={fillColorStyle}
+        />
+      ) : (
+        <span
+          ref={fillPart.setRef}
+          aria-hidden
+          className={progressBarFillClass({
+            isHorizontal,
+            hasCustomColor: Boolean(color),
+            slotClass: slotClassNames.fill,
+          })}
+          style={progressBarDeterminateFillStyle({
+            isHorizontal,
+            fillColorStyle,
+          })}
+        />
+      )}
+    </div>
+  );
+});

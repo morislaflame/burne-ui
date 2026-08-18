@@ -45,10 +45,8 @@ export type TablePartMotion = {
   pressIn?: MotionValue;
   pressOut?: MotionValue;
   enter?: MotionValue;
-  leave?: MotionValue;
   check?: MotionValue;
   uncheck?: MotionValue;
-  change?: MotionValue;
 };
 
 export type TableMotion = {
@@ -56,18 +54,22 @@ export type TableMotion = {
   scrollContainer?: TablePartMotion;
   content?: TablePartMotion;
   header?: TablePartMotion;
+  headerRow?: TablePartMotion;
+  body?: TablePartMotion;
   footer?: TablePartMotion;
   row?: TablePartMotion;
   column?: TablePartMotion;
   cell?: TablePartMotion;
+  label?: TablePartMotion;
+  empty?: TablePartMotion;
 };
 
 export type TableProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TableVariant;
   classNames?: Prettify<TableClassNames>;
   /**
-   * Per-slot motion (`root`, `scrollContainer`, `content`, `header`, `footer`, `row`, `column`, `cell`).
-   * `glossContent` is not a slot. Sort chevron rotation is kit-internal. Defaults are empty.
+   * Per-slot motion (`root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`, `row`, `column`, `cell`, `label`, `empty`).
+   * `glossContent` is not a slot. `emptyCell` is CSS for `Table.Empty`. Sort chevron rotation is kit-internal. Defaults are empty.
    */
   motion?: Prettify<TableMotion>;
 };
@@ -98,7 +100,9 @@ export type TableHeaderProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "ch
   motion?: Prettify<TablePartMotion>;
 };
 
-export type TableHeaderRowProps = HTMLAttributes<HTMLTableRowElement>;
+export type TableHeaderRowProps = HTMLAttributes<HTMLTableRowElement> & {
+  motion?: Prettify<TablePartMotion>;
+};
 
 export type TableColumnRenderProps = {
   sortDirection?: SortDirection;
@@ -108,7 +112,9 @@ export type TableColumnSortIconRenderProps = {
   sortDirection?: SortDirection;
 };
 
-export type TableLabelProps = HTMLAttributes<HTMLSpanElement>;
+export type TableLabelProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<TablePartMotion>;
+};
 
 export type TableColumnProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "children"> & {
   id?: string;
@@ -131,6 +137,11 @@ export type TableBodyProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "chil
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children?: ReactNode | ((item: any) => ReactNode);
   renderEmptyState?: () => ReactNode;
+  motion?: Prettify<TablePartMotion>;
+};
+
+export type TableEmptyProps = TdHTMLAttributes<HTMLTableCellElement> & {
+  motion?: Prettify<TablePartMotion>;
 };
 
 export type TableRowProps = Omit<HTMLAttributes<HTMLTableRowElement>, "id"> & {

@@ -5,10 +5,11 @@ import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 
 import { radioInputAriaLabel } from "./radioA11y";
 import { radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
-import { resolveRadioIndicatorMotion, useRadioControlTrackAnimation } from "./radioAnimations";
+import { resolveRadioIndicatorMotion, useRadioChromeSlot, useRadioControlTrackAnimation, useRadioLabelSlot } from "./radioAnimations";
 import { useRadioClassNames, useRadioFieldContext, useRadioMotion } from "./radioContext";
 import { RADIO_CONTENT_COMPOUND_CLASS, RADIO_CONTENT_PASS_THROUGH_CLASS, RADIO_CONTROL_TRACK_CLASS, RADIO_ERROR_DISABLED_CLASS, RADIO_HINT_DISABLED_CLASS, RADIO_INPUT_VISUALLY_HIDDEN_CLASS, RADIO_LABEL_CLASS, RADIO_LABEL_COMPOUND_SECONDARY_CLASS, RADIO_LABEL_MOTION_CLASS, RADIO_LABEL_TEXT_DANGER_CLASS, RADIO_LABEL_TEXT_DISABLED_CLASS, RADIO_REQUIRED_MARK_CLASS, RADIO_SIMPLE_LABEL_TEXT_CLASS, RADIO_SIMPLE_LABEL_WRAP_CLASS, RADIO_SIZE_LAYOUT, radioControlCellClass, radioControlClass, radioErrorRow, radioLabelCellClass, radioSecondaryCellClass } from "./radioStyles";
 import type {
@@ -147,6 +148,7 @@ export function RadioLabel({
   children,
   className,
   required: requiredProp,
+  motion,
   ...rest
 }: RadioLabelProps) {
   const field = useRadioFieldContext();
@@ -154,14 +156,15 @@ export function RadioLabel({
   const labelCtx = useOptionalFieldLabelContext();
   const required = requiredProp ?? labelCtx?.required ?? false;
   const sz = RADIO_SIZE_LAYOUT[field.size];
+  const { setRef } = useRadioLabelSlot(motion);
 
   return (
     <span
-      ref={(node) => {
+      ref={mergeRefs(setRef, (node) => {
         if (field.isCompound && field.useInlineCompoundMotion) {
           field.textMotionRef.current = node;
         }
-      }}
+      })}
       className={cn(
         RADIO_LABEL_CLASS,
         field.isCompound && radioLabelCellClass(),
@@ -203,12 +206,14 @@ export function RadioLabel({
 
 RadioLabel.displayName = "RadioLabel";
 
-export function RadioHint({ children, className, variant, ...rest }: RadioHintProps) {
+export function RadioHint({ children, className, variant, motion, ...rest }: RadioHintProps) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
+  const { setRef } = useRadioChromeSlot("hint", motion);
 
   return (
     <Field.Hint
+      ref={setRef}
       as="span"
       id={ctx.hintId}
       variant={variant ?? RADIO_SIZE_LAYOUT[ctx.size].desc}
@@ -227,12 +232,14 @@ export function RadioHint({ children, className, variant, ...rest }: RadioHintPr
 
 RadioHint.displayName = "RadioHint";
 
-export function RadioError({ children, className, ...rest }: RadioErrorProps) {
+export function RadioError({ children, className, motion, ...rest }: RadioErrorProps) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
+  const { setRef } = useRadioChromeSlot("error", motion);
 
   return (
     <Field.Error
+      ref={setRef}
       as="span"
       id={ctx.errorId}
       variant={RADIO_SIZE_LAYOUT[ctx.size].desc}
@@ -280,12 +287,15 @@ export function RadioSimpleBody({
 }) {
   const slotClassNames = useRadioClassNames();
   const sz = RADIO_SIZE_LAYOUT[size];
+  const { setRef: setLabelMotionRef } = useRadioLabelSlot();
+  const { setRef: setHintMotionRef } = useRadioChromeSlot("hint");
+  const { setRef: setErrorMotionRef } = useRadioChromeSlot("error");
 
   return (
     <>
       <RadioControl />
       <span
-        ref={textColRef}
+        ref={mergeRefs(textColRef, setLabelMotionRef)}
         className={cn(
           radioLabelCellClass(),
           !secondaryLines && RADIO_SIMPLE_LABEL_WRAP_CLASS,
@@ -310,6 +320,7 @@ export function RadioSimpleBody({
       </span>
       {hasHint ? (
         <Field.Hint
+          ref={setHintMotionRef}
           as="span"
           id={hintId}
           variant={sz.desc}
@@ -324,6 +335,7 @@ export function RadioSimpleBody({
       ) : null}
       {hasError ? (
         <Field.Error
+          ref={setErrorMotionRef}
           as="span"
           id={errorId}
           variant={sz.desc}

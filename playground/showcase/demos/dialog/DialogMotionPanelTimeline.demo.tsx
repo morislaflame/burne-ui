@@ -55,9 +55,7 @@ export function DialogMotionPanelTimelineDemo() {
       motion={{
         panel: {
           enter: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
+            const tl = ctx.timeline();
             tl.fromTo(
               ctx.el,
               { scale: 0.9, y: 24, opacity: 0 },
@@ -73,9 +71,7 @@ export function DialogMotionPanelTimelineDemo() {
             return tl;
           },
           leave: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
+            const tl = ctx.timeline();
             if (ctx.targets.close) {
               tl.to(ctx.targets.close, { scale: 0.7, autoAlpha: 0, duration: 0.12 }, 0);
             }
@@ -103,12 +99,11 @@ export function DialogMotionPanelTimelineDemo() {
           enter: (ctx) => {
             const primary = resolveCssColor(ctx.el, "var(--color-primary)");
             const foreground = resolveCssColor(ctx.el, "var(--color-foreground)");
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
+            const tl = ctx.timeline();
+            gsap.set(ctx.el, { color: primary });
             tl.fromTo(
               ctx.el,
-              { x: -16, opacity: 0, color: primary },
+              { x: -16, opacity: 0 },
               {
                 x: 0,
                 opacity: 1,
@@ -117,15 +112,14 @@ export function DialogMotionPanelTimelineDemo() {
               },
               0,
             );
-            tl.to(ctx.el, { color: foreground, duration: 0.22 }, 0.18);
+            tl.add(gsap.to(ctx.el, { color: foreground, duration: 0.22, paused: true }), 0.18);
             return tl;
           },
           leave: false,
         },
         description: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { x: -12, opacity: 0 },
               {
                 x: 0,
@@ -133,8 +127,6 @@ export function DialogMotionPanelTimelineDemo() {
                 duration: 0.34,
                 delay: 0.12,
                 ease: "power3.out",
-                overwrite: "auto",
-                force3D: false,
               },
             ),
           leave: false,

@@ -1,6 +1,10 @@
 import type { ComponentType } from "react";
 
-import { formatShowcaseSource, type FormatShowcaseSourceOptions } from "../utils/formatShowcaseSource";
+import {
+  formatShowcaseSource,
+  showcaseSourcePlaysEnter,
+  type FormatShowcaseSourceOptions,
+} from "../utils/formatShowcaseSource";
 
 import { ShowcaseDemo } from "./ShowcaseDemo";
 import type { SurfacePadding } from "@/components/core/Surface";
@@ -13,6 +17,11 @@ export type ShowcaseDemoFromFileProps = {
   className?: string;
   align?: "start" | "center" | "stretch";
   padding?: SurfacePadding;
+  /**
+   * Remount chrome for mount `enter`. Default: on when source plays `enter`
+   * (not `enter: false`). Pass `true` to remount skip-enter demos too.
+   */
+  replay?: boolean;
 };
 
 /**
@@ -22,10 +31,15 @@ export function ShowcaseDemoFromFile({
   Demo,
   source,
   format,
+  replay,
   ...rest
 }: ShowcaseDemoFromFileProps) {
   return (
-    <ShowcaseDemo code={formatShowcaseSource(source, format)} {...rest}>
+    <ShowcaseDemo
+      code={formatShowcaseSource(source, format)}
+      replay={replay ?? showcaseSourcePlaysEnter(source)}
+      {...rest}
+    >
       <Demo />
     </ShowcaseDemo>
   );

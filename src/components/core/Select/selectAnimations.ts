@@ -1,16 +1,16 @@
 /**
  * Slot motion for Select — look here first.
  *
- * DOM slots: `triggerGroup` (host), `value`, `trigger`, `triggerIcon`
+ * DOM slots: `triggerGroup` (host), `value`, `trigger`, `triggerIcon`, `label`, `hint`, `error`
  *
  * Root passes the `motion` map. Host is `Select.TriggerGroup` (defaults + `play`).
+ * Chrome (`label` / `hint` / `error`) registers on the Root scope.
  * Gloss hover/press stay on `useGlossFieldShellMotion`.
  * Open-after-squeeze uses slot `pressIn` (non-gloss) or kit gloss squeeze.
  *
- * Not slots: Field `root` / `label` / `hint` / `error`; Popover / ListBox
- * (menu enter lives on Popover).
+ * Not slots: Field's own scope; Popover / ListBox (menu enter lives on Popover).
  */
-import { useCallback, useMemo, useRef, type MutableRefObject, type RefObject } from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler, type RefObject } from "react";
 
 import {
   animateGlossInteractivePressSqueeze,
@@ -22,14 +22,17 @@ import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import {
+  hasPointerPhases,
   mergeMotionPointerHandlers,
+  useMotionPart,
   useMotionPointerPhases,
+  useOptionalEnterOnMount,
   type MotionScopeValue,
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { useSelectMotionScope } from "./selectContext";
+import { useOptionalSelectMotionScope, useSelectMotionScope } from "./selectContext";
 import type {
   SelectMotion,
   SelectPartMotion,
@@ -276,4 +279,42 @@ export function useSelectShellAnimations({
       : standardShellHover.motionClass,
     glossDisabledAttr: disabled && isGloss ? { "data-gloss-disabled": "" } : {},
   };
+}
+
+export type SelectChromeSlot = "label" | "hint" | "error";
+
+export function useSelectChromeSlot(
+  slot: SelectChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: SelectPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalSelectMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }

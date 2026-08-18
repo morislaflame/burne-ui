@@ -1,11 +1,22 @@
-import gsap from "gsap";
-
 import { Checkbox } from "@/components/core/Checkbox";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 
-function hostText(el: HTMLElement): HTMLElement | null {
-  const host = el.closest("label, fieldset");
-  return host instanceof HTMLElement ? host : null;
+function hoverTextColor(el: HTMLElement, color: string, duration = 0.25) {
+  if (!el.dataset.motionColorRest) {
+    el.dataset.motionColorRest = getComputedStyle(el).color;
+  }
+  return tweenCssColor(el, color, { duration });
+}
+
+function restoreTextColor(el: HTMLElement, duration = 0.2) {
+  const rest = el.dataset.motionColorRest || "var(--color-foreground)";
+  return tweenCssColor(el, rest, {
+    duration,
+    clearOnComplete: true,
+    onComplete: () => {
+      delete el.dataset.motionColorRest;
+    },
+  });
 }
 
 export function CheckboxMotionLabelColorDemo() {
@@ -13,52 +24,29 @@ export function CheckboxMotionLabelColorDemo() {
     <Checkbox
       defaultChecked
       label="Accent label"
-      hint="Checked label uses --color-primary."
+      hint="Hint tints with the label."
+      error="Error slot follows check / uncheck."
       motion={{
         indicatorFill: {
-          check: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
-            tl.fromTo(
-              ctx.el,
+          check: (ctx) =>
+            ctx.fromTo(
               { scale: 0, autoAlpha: 0 },
               { scale: 1, autoAlpha: 1, duration: 0.32, ease: "power2.out" },
-              0,
-            );
-            const text = hostText(ctx.el);
-            if (text) {
-              if (!text.dataset.motionColorRest) {
-                text.dataset.motionColorRest = getComputedStyle(text).color;
-              }
-              tl.add(
-                tweenCssColor(text, "var(--color-primary)", { duration: 0.28 }),
-                0,
-              );
-            }
-            return tl;
-          },
-          uncheck: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
-            tl.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.2 }, 0);
-            const text = hostText(ctx.el);
-            if (text) {
-              const rest = text.dataset.motionColorRest || "var(--color-foreground)";
-              tl.add(
-                tweenCssColor(text, rest, {
-                  duration: 0.22,
-                  clearOnComplete: true,
-                  onComplete: () => {
-                    delete text.dataset.motionColorRest;
-                  },
-                }),
-                0,
-              );
-            }
-            return tl;
-          },
+            ),
+          uncheck: (ctx) => ctx.to({ scale: 0, autoAlpha: 0, duration: 0.2 }),
+        },
+        label: {
+          check: (ctx) => hoverTextColor(ctx.el, "var(--color-primary)", 0.28),
+          uncheck: (ctx) => restoreTextColor(ctx.el, 0.22),
+        },
+        hint: {
+          check: (ctx) => hoverTextColor(ctx.el, "var(--color-primary)", 0.28),
+          uncheck: (ctx) => restoreTextColor(ctx.el, 0.22),
+        },
+        error: {
+          check: (ctx) => ctx.to({ y: 0, duration: 0.18 }),
+          uncheck: (ctx) =>
+            ctx.fromTo({ y: -3 }, { y: 0, duration: 0.2, ease: "power2.out" }),
         },
       }}
     />

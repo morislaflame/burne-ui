@@ -25,4 +25,5 @@ export type {
   PaginationPagesProps,
   PaginationMotion,
   PaginationPartMotion,
+  PaginationSummaryPartMotion,
 } from "./Pagination";

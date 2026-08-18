@@ -1,17 +1,25 @@
 import type { Selection, SelectionMode, SortDescriptor } from "./tableTypes";
-import { Children, isValidElement, type ReactNode } from "react";
+import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 
 export const EMPTY_TABLE_SELECTION = new Set<string | number>();
 
 export const TONED_ROW_DEFAULT_TONE = "secondary" as const;
 
 export const TABLE_LABEL_DISPLAY_NAME = "Table.Label";
+export const TABLE_EMPTY_DISPLAY_NAME = "Table.Empty";
 
 export function hasTableLabel(children: ReactNode): boolean {
   return Children.toArray(children).some(
     (child) =>
       isValidElement(child) &&
       (child.type as { displayName?: string }).displayName === TABLE_LABEL_DISPLAY_NAME,
+  );
+}
+
+export function isTableEmptyElement(node: ReactNode): node is ReactElement {
+  return (
+    isValidElement(node) &&
+    (node.type as { displayName?: string }).displayName === TABLE_EMPTY_DISPLAY_NAME
   );
 }
 

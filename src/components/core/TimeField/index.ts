@@ -13,6 +13,7 @@ export type {
   TimeFieldControlProps,
   TimeFieldHintProps,
   TimeFieldErrorProps,
+  TimeFieldLabelProps,
   TimeFieldSize,
   TimeFieldStatus,
   TimeFieldVariant,

@@ -30,6 +30,7 @@ export type {
   SliderProps,
   SliderHeaderProps,
   SliderValueProps,
+  SliderLabelProps,
   SliderHintProps,
   SliderErrorProps,
   SliderClassNames,

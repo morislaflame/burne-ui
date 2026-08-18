@@ -124,12 +124,13 @@ configureMotion({
 
 | Слот | Фазы | Дефолт |
 |------|------|--------|
-| `root` / `list` | `enter` / hover / press; `change` on `root` when the selected tab updates | empty |
-| `tab` | `enter`; `check` / `uncheck` на selection | empty |
-| `tabText` | hover / press | неактивный: `hoverLiftFirstLevel` + `pressSqueeze` (`pressOut: false`); selected / disabled → эти фазы `false` |
+| `root` | `enter`; `change` when the selected tab updates; hover / press if set | empty |
+| `list` | `enter` | empty |
+| `tab` | `enter` (opt-in mount); `check` / `uncheck` на selection (`skipFirst`) | empty |
+| `tabText` | hover / press; `check` / `uncheck` на selection (`skipFirst`) | неактивный: `hoverLiftFirstLevel` + `pressSqueeze` (`pressOut: false`); selected / disabled → эти фазы `false` |
 | `panel` | `enter` / `leave` | empty (opt-in) |
 
-Каждый Tab / Panel — nested Provider. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in. Смена вкладки во время `panel.leave` отменяет run (`cancelled`) и не оставляет панель в leaving.
+Каждый Tab / Panel — nested Provider. `tab` / `tabText` `enter` — opt-in mount; selection — `check` / `uncheck` (`skipFirst`). `panel` `enter` / `leave` — видимость панели, не selection вкладки. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in. Смена вкладки во время `panel.leave` отменяет run (`cancelled`) и не оставляет панель в leaving.
 
 `asChild` на Tab — нет внутреннего `tabText` слота.
 

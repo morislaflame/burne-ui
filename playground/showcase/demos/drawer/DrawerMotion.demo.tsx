@@ -1,3 +1,5 @@
+import { DrawerMotionHeadingBlockDemo } from "./DrawerMotionHeadingBlock.demo";
+import { DrawerMotionBodyStaggerDemo } from "./DrawerMotionBodyStagger.demo";
 import { DrawerMotionBounceSlideDemo } from "./DrawerMotionBounceSlide.demo";
 import { DrawerMotionDefaultDemo } from "./DrawerMotionDefault.demo";
 import { DrawerMotionInstantPanelDemo } from "./DrawerMotionInstantPanel.demo";
@@ -9,6 +11,8 @@ export function DrawerMotionDemo() {
       <DrawerMotionDefaultDemo />
       <DrawerMotionInstantPanelDemo />
       <DrawerMotionTitleStaggerDemo />
+      <DrawerMotionBodyStaggerDemo />
+      <DrawerMotionHeadingBlockDemo />
       <DrawerMotionBounceSlideDemo />
     </div>
   );

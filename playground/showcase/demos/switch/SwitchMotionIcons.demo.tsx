@@ -1,4 +1,3 @@
-import gsap from "gsap";
 import { IoMoon, IoSunny } from "react-icons/io5";
 
 import { Switch } from "@/components/core/Switch";
@@ -14,8 +13,7 @@ export function SwitchMotionIconsDemo() {
       motion={{
         iconOn: {
           check: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { autoAlpha: 0, rotation: -40, scale: 0.8 },
               {
                 autoAlpha: 1,
@@ -23,18 +21,14 @@ export function SwitchMotionIconsDemo() {
                 scale: 1,
                 duration: 0.35,
                 ease: "back.out(1.6)",
-                force3D: false,
               },
             ),
-          uncheck: (ctx) =>
-            gsap.to(ctx.el, { autoAlpha: 0, rotation: 30, duration: 0.18, force3D: false }),
+          uncheck: (ctx) => ctx.to({ autoAlpha: 0, rotation: 30, duration: 0.18 }),
         },
         iconOff: {
-          check: (ctx) =>
-            gsap.to(ctx.el, { autoAlpha: 0, rotation: 30, duration: 0.18, force3D: false }),
+          check: (ctx) => ctx.to({ autoAlpha: 0, rotation: 30, duration: 0.18 }),
           uncheck: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { autoAlpha: 0, rotation: 40, scale: 0.8 },
               {
                 autoAlpha: 1,
@@ -42,7 +36,6 @@ export function SwitchMotionIconsDemo() {
                 scale: 1,
                 duration: 0.35,
                 ease: "back.out(1.6)",
-                force3D: false,
               },
             ),
         },

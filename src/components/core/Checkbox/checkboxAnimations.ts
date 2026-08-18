@@ -1,9 +1,10 @@
 /**
  * Slot motion for Checkbox — look here first.
  *
- * Checkbox is an embedder: it has no `createMotionScope`. Root `motion` keys
- * map onto SelectionIndicator slots (`CHECKBOX_MOTION_SLOT_MAP`).
- * Host play and kit defaults live in `selectionIndicatorAnimations.ts`.
+ * Hybrid: own `createMotionScope` for chrome (`label` / `hint` / `error`);
+ * indicator keys still map onto SelectionIndicator (`CHECKBOX_MOTION_SLOT_MAP`).
+ * Host play for fill/mark lives in `selectionIndicatorAnimations.ts`. Chrome
+ * `check` / `uncheck` plays from `useCheckboxChromeSlot` (`useSlotPhaseOnChange`).
  *
  * Also: track opacity (`useCheckboxControlTrackAnimation`) and label squeeze
  * (`useCheckboxTextMotion`).
@@ -14,12 +15,17 @@ import { useLayoutEffect, useRef } from "react";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import {
+  useMotionPart,
+  useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
+} from "@/components/core/utils/slotMotion";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
 import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
 
-import { useCheckboxFieldContext } from "./checkboxContext";
-import type { CheckboxMotion, UseCheckboxAnimationsProps } from "./checkboxTypes";
+import { useCheckboxFieldContext, useOptionalCheckboxMotionScope } from "./checkboxContext";
+import type { CheckboxCheckMotion, CheckboxMotion, UseCheckboxAnimationsProps } from "./checkboxTypes";
 
 /** Root Checkbox `motion` keys → SelectionIndicator slots. */
 export const CHECKBOX_MOTION_SLOT_MAP = {
@@ -103,4 +109,30 @@ export function useCheckboxTextMotion({
     onPointerDown,
     onKeyDown,
   });
+}
+
+export type CheckboxChromeSlot = "label" | "hint" | "error";
+
+export function useCheckboxChromeSlot(
+  slot: CheckboxChromeSlot,
+  motion?: CheckboxCheckMotion,
+) {
+  const ctx = useCheckboxFieldContext();
+  const scope = useOptionalCheckboxMotionScope();
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+  });
+  useSlotPhaseOnChange(scope, slot, ctx.mergedChecked, {
+    phase: ctx.mergedChecked ? "check" : "uncheck",
+    skipFirst: true,
+    target: part.targetRef,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
+}
+
+export function useCheckboxLabelSlot(motion?: CheckboxCheckMotion) {
+  return useCheckboxChromeSlot("label", motion);
 }

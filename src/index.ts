@@ -111,6 +111,8 @@ export {
   type FormFieldProps,
   type FormClassNames,
   type FormSize,
+  type FormMotion,
+  type FormPartMotion,
   useFormField,
   type FormValues,
   type FormFieldRules,
@@ -128,10 +130,13 @@ export {
   type CheckboxGroupClassNames,
   type CheckboxGroupHintProps,
   type CheckboxGroupErrorProps,
+  type CheckboxGroupActionsProps,
   type CheckboxGroupLabelProps,
   type CheckboxGroupLegendProps,
   type CheckboxGroupListProps,
   type CheckboxGroupContextValue,
+  type CheckboxGroupMotion,
+  type CheckboxGroupPartMotion,
 } from "@/components/composite/CheckboxGroup";
 export {
   RadioGroup,
@@ -140,10 +145,13 @@ export {
   type RadioGroupClassNames,
   type RadioGroupHintProps,
   type RadioGroupErrorProps,
+  type RadioGroupActionsProps,
   type RadioGroupLabelProps,
   type RadioGroupLegendProps,
   type RadioGroupListProps,
   type RadioGroupContextValue,
+  type RadioGroupMotion,
+  type RadioGroupPartMotion,
 } from "@/components/composite/RadioGroup";
 export {
   ButtonGroup,
@@ -152,6 +160,8 @@ export {
   type ButtonGroupOrientation,
   type ButtonGroupSegment,
   type ButtonGroupClassNames,
+  type ButtonGroupMotion,
+  type ButtonGroupPartMotion,
 } from "@/components/composite/ButtonGroup";
 export {
   ToggleButtonGroup,
@@ -160,6 +170,8 @@ export {
   type ToggleButtonGroupOrientation,
   type ToggleButtonGroupClassNames,
   type ToggleButtonGroupContextValue,
+  type ToggleButtonGroupMotion,
+  type ToggleButtonGroupPartMotion,
 } from "@/components/composite/ToggleButtonGroup";
 export {
   AlertDialog,
@@ -237,6 +249,7 @@ export {
   type DrawerProps,
   type DrawerPanelProps,
   type DrawerTriggerProps,
+  type DrawerSize,
   type DrawerPlacement,
   type DrawerExtent,
   type DrawerVariant,
@@ -276,11 +289,16 @@ export {
   type FieldSize,
   type FieldClassNames,
   type FieldSetClassNames,
+  type FieldMotion,
+  type FieldPartMotion,
+  type FieldSetMotion,
 } from "@/components/core/Field";
 export {
   Label,
   type LabelProps,
   type LabelClassNames,
+  type LabelMotion,
+  type LabelPartMotion,
   type LabelComponent,
   type FieldLabelContextValue,
 } from "@/components/core/Label";
@@ -302,6 +320,8 @@ export {
   type LoadingColor,
   type LoadingType,
   type LoadingClassNames,
+  type LoadingMotion,
+  type LoadingPartMotion,
 } from "@/components/core/Loading";
 export {
   Input,
@@ -312,6 +332,7 @@ export {
   type InputStatus,
   type InputProps,
   type InputHintProps,
+  type InputLabelProps,
   type InputErrorProps,
   type InputClassNames,
   type InputMotion,
@@ -326,6 +347,7 @@ export {
   type TextAreaStatus,
   type TextAreaProps,
   type TextAreaHintProps,
+  type TextAreaLabelProps,
   type TextAreaErrorProps,
   type TextAreaClassNames,
   type TextAreaMotion,
@@ -337,6 +359,7 @@ export {
   type ComboBoxProps,
   type ComboBoxSimpleProps,
   type ComboBoxHintProps,
+  type ComboBoxLabelProps,
   type ComboBoxErrorProps,
   type ComboBoxInputGroupProps,
   type ComboBoxInputProps,
@@ -353,6 +376,7 @@ export {
   type SelectProps,
   type SelectSimpleProps,
   type SelectHintProps,
+  type SelectLabelProps,
   type SelectErrorProps,
   type SelectTriggerGroupProps,
   type SelectValueProps,
@@ -414,6 +438,8 @@ export {
   type SelectionThumbIconProps,
   type SelectionThumbClassNames,
   type SelectionThumbIconClassNames,
+  type SelectionThumbMotion,
+  type SelectionThumbPartMotion,
 } from "@/components/core/SelectionThumb";
 export {
   Radio,
@@ -461,6 +487,8 @@ export {
   type TabsOrientation,
   type TabsVariant,
   type TabsClassNames,
+  type TabsMotion,
+  type TabsPartMotion,
 } from "@/components/core/Tabs";
 export {
   ToggleButton,
@@ -476,6 +504,8 @@ export {
   type ToggleButtonTextProps,
   type ToggleButtonMotion,
   type ToggleButtonPartMotion,
+  type ToggleButtonPointerMotion,
+  type ToggleButtonCheckMotion,
 } from "@/components/core/ToggleButton";
 export {
   Slider,
@@ -494,6 +524,7 @@ export {
   type SliderProps,
   type SliderHeaderProps,
   type SliderValueProps,
+  type SliderLabelProps,
   type SliderHintProps,
   type SliderErrorProps,
   type SliderClassNames,
@@ -510,9 +541,12 @@ export {
   type MeterValueProps,
   type MeterHintProps,
   type MeterErrorProps,
+  type MeterLabelProps,
   type MeterClassNames,
   type MeterDisplayState,
   type MeterFieldContextValue,
+  type MeterMotion,
+  type MeterPartMotion,
 } from "@/components/core/Meter";
 export {
   ProgressBar,
@@ -525,8 +559,11 @@ export {
   type ProgressBarValueProps,
   type ProgressBarHintProps,
   type ProgressBarErrorProps,
+  type ProgressBarLabelProps,
   type ProgressBarDisplayState,
   type ProgressBarFieldContextValue,
+  type ProgressBarMotion,
+  type ProgressBarPartMotion,
 } from "@/components/core/ProgressBar";
 export {
   SearchInput,
@@ -537,7 +574,7 @@ export {
   type SearchInputMotion,
   type SearchInputPartMotion,
 } from "@/components/core/SearchInput";
-export { Text, type TextProps, type TextVariant } from "@/components/core/Text";
+export { Text, type TextProps, type TextVariant, type TextMotion, type TextPartMotion } from "@/components/core/Text";
 export {
   Card,
   type CardPressEvent,
@@ -584,6 +621,7 @@ export {
   type TooltipClassNames,
   type TooltipMotion,
   type TooltipLifecycleMotion,
+  type TooltipPartMotion,
 } from "@/components/core/Tooltip";
 export {
   Popover,
@@ -629,11 +667,14 @@ export {
   type PaginationPagesProps,
   type PaginationMotion,
   type PaginationPartMotion,
+  type PaginationSummaryPartMotion,
 } from "@/components/core/Pagination";
 export {
   Separator,
   type SeparatorProps,
   type SeparatorOrientation,
+  type SeparatorMotion,
+  type SeparatorPartMotion,
 } from "@/components/core/Separator";
 export {
   Surface,
@@ -643,6 +684,8 @@ export {
   type SurfacePadding,
   type SurfaceRadius,
   type SurfaceClassNames,
+  type SurfaceMotion,
+  type SurfacePartMotion,
 } from "@/components/core/Surface";
 export {
   Dropdown,
@@ -688,6 +731,7 @@ export {
   type KbdSize,
   type KbdClassNames,
   type KbdGroupProps,
+  type KbdTextProps,
   type KbdMotion,
   type KbdPartMotion,
 } from "@/components/core/Kbd";
@@ -715,26 +759,49 @@ export {
 } from "@/components/core/utils/gsapMotion";
 export {
   KIT_MOTION_RECIPES,
+  KIT_MOTION_RECIPE_META,
   MOTION_PHASE_NAMES,
+  MOTION_RECIPE_METADATA_DEFAULTS,
   registerMotionRecipe,
   unregisterMotionRecipe,
   hasMotionRecipe,
   listMotionRecipes,
   isKitMotionRecipe,
+  getMotionRecipeMetadata,
+  createMotionController,
+  useMotionController,
+  useMotionControllerHandle,
+  useOptionalMotionController,
+  isMotionPhaseName,
+  createMotionEvents,
   type RegisterMotionRecipeOptions,
   type KitRecipeName,
   type MotionAnimation,
+  type MotionBroadcastOptions,
   type MotionCancelReason,
   type MotionContext,
+  type MotionController,
+  type MotionDurationToken,
+  type MotionEvents,
   type MotionFactory,
+  type MotionMapWithEvents,
   type MotionPartPhases,
   type MotionPhaseName,
+  type MotionPlayEvent,
+  type MotionPlayOptions,
   type MotionRecipe,
+  type MotionRecipeMetadata,
   type MotionRecipeName,
   type MotionRecipeParams,
+  type MotionReducedStrategy,
   type MotionRun,
+  type MotionRunResult,
   type MotionRunStatus,
   type MotionSlotMap,
+  type MotionTransformVars,
+  type MotionTweenVars,
+  type MotionTimeline,
+  type MotionReplay,
   type MotionValue,
   type MotionVars,
   isMotionRunActive,
@@ -785,11 +852,16 @@ export {
   type TableHeaderRowProps,
   type TableColumnProps,
   type TableColumnRenderProps,
+  type TableColumnSortIconRenderProps,
   type TableBodyProps,
+  type TableEmptyProps,
   type TableRowProps,
   type TableCellProps,
   type TableFooterProps,
   type TableClassNames,
+  type TableMotion,
+  type TablePartMotion,
+  type TableLabelProps,
   type SortDescriptor,
   type SortDirection,
   type SelectionMode,
@@ -803,6 +875,12 @@ export {
   type CalendarHeaderProps,
   type CalendarGridProps,
   type CalendarFooterProps,
+  type CalendarNavPrevProps,
+  type CalendarNavNextProps,
+  type CalendarTitleProps,
+  type CalendarDayProps,
+  type CalendarDayRenderState,
+  type CalendarRenderDay,
   type CalendarMode,
   type CalendarView,
   type CalendarVariant,
@@ -830,14 +908,23 @@ export {
   type ColorPickerProps,
   type ColorPickerTriggerProps,
   type ColorPickerContentProps,
+  type ColorPickerPreviewProps,
+  type ColorPickerAreaProps,
+  type ColorPickerHexInputProps,
+  type ColorPickerAlphaInputProps,
+  type ColorPickerPresetsProps,
   type ColorPickerSize,
   type ColorPickerVariant,
   type ColorPickerClassNames,
+  type ColorPickerMotion,
+  type ColorPickerPartMotion,
   type ColorSliderTrackProps,
   type ColorSliderProps,
   type ColorChannel,
   type ColorSliderSize,
   type ColorSliderOrientation,
+  type ColorSliderMotion,
+  type ColorSliderPartMotion,
   type ColorSwatchProps,
   type ColorSwatchSize,
   type ColorSwatchShape,
@@ -853,6 +940,7 @@ export {
   type TimeFieldControlProps,
   type TimeFieldHintProps,
   type TimeFieldErrorProps,
+  type TimeFieldLabelProps,
   type TimeFieldSize,
   type TimeFieldStatus,
   type TimeFieldVariant,
@@ -876,6 +964,8 @@ export {
   type SkeletonTextClassNames,
   type SkeletonBlockClassNames,
   type SkeletonRegionClassNames,
+  type SkeletonMotion,
+  type SkeletonPartMotion,
 } from "@/components/core/Skeleton";
 
 export {

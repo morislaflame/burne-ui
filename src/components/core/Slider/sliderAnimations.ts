@@ -1,7 +1,8 @@
 /**
  * Slot motion for Slider — look here first.
  *
- * DOM slots: `track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`
+ * DOM slots: `track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`,
+ * `label`, `hint`, `error` (Root scope — siblings of Track).
  *
  * Host: Root (`SliderMotionProvider` + defaults). Thumb press via `useMotionPart` `pressPhases`.
  * Track plays opt-in `enter` and `change` when value / range identity updates
@@ -11,14 +12,17 @@
  * Marks are not a motion slot (many nodes, last-register-wins).
  */
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, type ForwardedRef, type PointerEventHandler } from "react";
 import {
+  hasPointerPhases,
+  useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
 
-import type { SliderMotion } from "./sliderTypes";
+import { useOptionalSliderMotionScope } from "./sliderContext";
+import type { SliderMotion, SliderPartMotion } from "./sliderTypes";
 
 export const SLIDER_MOTION_DEFAULTS: SliderMotion = {
   thumb: {
@@ -51,6 +55,44 @@ export function useSliderTrackSlotMotion(
     broadcast: true,
     exclude: ["fill"],
   });
+}
+
+export type SliderChromeSlot = "label" | "hint" | "error";
+
+export function useSliderChromeSlot(
+  slot: SliderChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: SliderPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalSliderMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }
 
 export function useSliderThumbShellAnimation(disabled?: boolean) {

@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { ToggleButtonGroup } from "@/components/composite/ToggleButtonGroup";
 import { ToggleButton } from "@/components/core/ToggleButton";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ToggleButtonGroupMotionRootWaveDemo() {
   return (
@@ -13,7 +9,7 @@ export function ToggleButtonGroupMotionRootWaveDemo() {
       motion={{
         root: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3 }),
         },
       }}
     >

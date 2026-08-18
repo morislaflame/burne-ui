@@ -1,9 +1,6 @@
-import gsap from "gsap";
 import { IoAlarmOutline, IoTimeOutline } from "react-icons/io5";
 
 import { TimeField } from "@/components/core/TimeField";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TimeFieldMotionAffixWaveDemo() {
   return (
@@ -17,7 +14,7 @@ export function TimeFieldMotionAffixWaveDemo() {
       motion={{
         shell: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: -2, rotate: -0.8, duration: 0.22 }, 0);
             if (ctx.targets.prefix) {
               tl.to(ctx.targets.prefix, { rotate: -12, duration: 0.2 }, 0);
@@ -31,7 +28,7 @@ export function TimeFieldMotionAffixWaveDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: 0, rotate: 0, duration: 0.18 }, 0);
             if (ctx.targets.prefix) {
               tl.to(ctx.targets.prefix, { rotate: 0, duration: 0.16 }, 0);

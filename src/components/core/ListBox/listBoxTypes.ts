@@ -46,12 +46,19 @@ export type ListBoxPartMotion = {
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
 };
 
 export type ListBoxMotion = {
   item?: ListBoxPartMotion;
   label?: ListBoxPartMotion;
+  hint?: ListBoxPartMotion;
   icon?: ListBoxPartMotion;
+  section?: ListBoxPartMotion;
+  header?: ListBoxPartMotion;
+  empty?: ListBoxPartMotion;
+  separator?: ListBoxPartMotion;
 };
 
 export type ListBoxContextValue = {
@@ -99,16 +106,23 @@ export type UseListBoxRootStateProps = Omit<
   "classNames" | "className"
 >;
 
-export type ListBoxSectionProps = HTMLAttributes<HTMLDivElement>;
+export type ListBoxSectionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ListBoxPartMotion>;
+};
 
 export type ListBoxHeaderProps = HTMLAttributes<HTMLDivElement> & {
   /** Classes for the inner `Text` in the header (per-instance; merges after `classNames.headerText`). */
   textClassName?: string;
+  motion?: Prettify<ListBoxPartMotion>;
 };
 
-export type ListBoxSeparatorProps = HTMLAttributes<HTMLDivElement>;
+export type ListBoxSeparatorProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ListBoxPartMotion>;
+};
 
-export type ListBoxEmptyProps = HTMLAttributes<HTMLParagraphElement>;
+export type ListBoxEmptyProps = HTMLAttributes<HTMLElement> & {
+  motion?: Prettify<ListBoxPartMotion>;
+};
 
 export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
@@ -125,7 +139,9 @@ export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
 
-export type ListBoxHintProps = HTMLAttributes<HTMLSpanElement>;
+export type ListBoxHintProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ListBoxPartMotion>;
+};
 
 export type ListBoxIconProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ListBoxPartMotion>;

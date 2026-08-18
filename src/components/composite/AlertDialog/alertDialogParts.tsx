@@ -1,16 +1,15 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
+import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
@@ -299,42 +298,71 @@ AlertDialogDescription.displayName = "AlertDialogDescription";
 
 export function AlertDialogHeadingBlock({
   className,
+  motion,
+  onPointerOver,
+  onPointerOut,
   ...rest
 }: AlertDialogHeadingBlockProps) {
   const slotClassNames = useAlertDialogClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalAlertDialogMotionScope(),
+    slot: "headingBlock",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <div
+      ref={setRef}
       className={cn(
         ALERT_DIALOG_HEADING_BLOCK_CLASS,
         slotClassNames.headingBlock,
         className,
       )}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
 
 AlertDialogHeadingBlock.displayName = "AlertDialogHeadingBlock";
 
-export function AlertDialogBody({ className, children, ...rest }: AlertDialogBodyProps) {
-  const { sizePreset } = useAlertDialog();
-  const slotClassNames = useAlertDialogClassNames();
+export const AlertDialogBody = forwardRef<HTMLDivElement, AlertDialogBodyProps>(
+  function AlertDialogBody(
+    { className, children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
+    const { sizePreset } = useAlertDialog();
+    const slotClassNames = useAlertDialogClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalAlertDialogMotionScope(),
+      slot: "body",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
-  return (
-    <div
-      className={alertDialogBodyClass(
-        sizePreset.bodyPadding,
-        cn(slotClassNames.body, className),
-      )}
-      {...rest}
-    >
-      <Text variant={sizePreset.bodyVariant} as="div">
-        {children}
-      </Text>
-    </div>
-  );
-}
+    return (
+      <div
+        ref={setRef}
+        className={alertDialogBodyClass(
+          sizePreset.bodyPadding,
+          cn(slotClassNames.body, className),
+        )}
+        {...rest}
+        {...pointerHandlers}
+      >
+        <Text variant={sizePreset.bodyVariant} as="div">
+          {children}
+        </Text>
+      </div>
+    );
+  },
+);
 
 AlertDialogBody.displayName = "AlertDialogBody";
 
@@ -376,31 +404,42 @@ AlertDialogFooter.displayName = "AlertDialogFooter";
 
 export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTriggerProps>(
   function AlertDialogTrigger(
-    { children, asChild, className, onClick, onPointerDown, onKeyDown, ...rest },
+    {
+      children,
+      asChild,
+      className,
+      motion,
+      onClick,
+      onPointerDown,
+      onPointerOver,
+      onPointerOut,
+      onPointerUp,
+      onKeyDown,
+      ...rest
+    },
     forwardedRef,
   ) {
     const { open, onOpenChange } = useAlertDialog();
     const slotClassNames = useAlertDialogClassNames();
-    const triggerRef = useRef<HTMLElement | null>(null);
-    const openingRef = useOpeningRef();
-    const config = useMotionConfig();
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        triggerRef.current = node;
-        mergeForwardedRef(forwardedRef, node);
-      },
-      [forwardedRef],
-    );
+    const { part, openingRef, openAfterSqueeze } = useOverlayTriggerSlot<HTMLButtonElement>({
+      scope: useOptionalAlertDialogMotionScope(),
+      slot: "trigger",
+      motion,
+      forwardedRef,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
-        focusElement(triggerRef.current);
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
+        focusElement(part.targetRef.current);
+        openAfterSqueeze(() => onOpenChange(true));
       },
-      [open, openingRef, onOpenChange, config],
+      [open, openingRef, openAfterSqueeze, onOpenChange, part.targetRef],
     );
 
     const handleKeyDown = useCallback(
@@ -409,9 +448,9 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
         if (e.defaultPrevented || open || openingRef.current) return;
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
+        openAfterSqueeze(() => onOpenChange(true));
       },
-      [onKeyDown, open, openingRef, onOpenChange, config],
+      [onKeyDown, open, openingRef, openAfterSqueeze, onOpenChange],
     );
 
     const handleClick = useCallback(
@@ -438,15 +477,16 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
               className: cn(ALERT_DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className),
               onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
                 handlePointerDown(e);
-                onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+                part.pointerHandlers.onPointerDown(e as ReactPointerEvent<HTMLButtonElement>);
               },
+              onPointerOver: part.pointerHandlers.onPointerOver,
+              onPointerOut: part.pointerHandlers.onPointerOut,
+              onPointerUp: part.pointerHandlers.onPointerUp,
               onKeyDown: handleKeyDown,
               onClick: handleClick,
               ...alertDialogTriggerA11y(open),
             },
-            mergeRefs((node: HTMLElement | null) => {
-              triggerRef.current = node;
-            }, forwardedRef),
+            part.setRef,
             { runBeforeChild: ["onPointerDown", "onKeyDown"] },
           ),
         );
@@ -458,16 +498,17 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
     return (
       <button
         type="button"
-        ref={setRefs}
+        ref={part.setRef}
         {...triggerA11y}
         className={cn(ALERT_DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
-        onPointerDown={(e) => {
-          onPointerDown?.(e);
-          handlePointerDown(e);
-        }}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
         {...rest}
+        {...part.pointerHandlers}
+        onPointerDown={(e) => {
+          part.pointerHandlers.onPointerDown(e);
+          handlePointerDown(e);
+        }}
       >
         {children}
       </button>

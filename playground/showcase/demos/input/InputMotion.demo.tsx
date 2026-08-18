@@ -1,5 +1,6 @@
 import { InputMotionAffixOrbitDemo } from "./InputMotionAffixOrbit.demo";
 import { InputMotionFileRowExitDemo } from "./InputMotionFileRowExit.demo";
+import { InputMotionHintErrorDemo } from "./InputMotionHintError.demo";
 import { InputMotionInstantHoverDemo } from "./InputMotionInstantHover.demo";
 import { InputMotionPasswordRevealDemo } from "./InputMotionPasswordReveal.demo";
 
@@ -10,6 +11,7 @@ export function InputMotionDemo() {
       <InputMotionAffixOrbitDemo />
       <InputMotionFileRowExitDemo />
       <InputMotionPasswordRevealDemo />
+      <InputMotionHintErrorDemo />
     </div>
   );
 }

@@ -2,11 +2,13 @@
  * Slot motion for Drawer — look here first.
  *
  * DOM slots: `overlay`, `panel`, `title`, `description`, `close`, `header`,
- * `footer`, `content`, `handle`
+ * `headingBlock`, `footer`, `content`, `body`, `handle`, plus `trigger` on Root.
  * Host: `Drawer.Panel` (`useDrawerModalMotion`) plays `enter` / `leave` and
- * broadcasts nested slots. Root has no portal DOM — it only passes the `motion`
- * map through context. Defaults wrap the portal host (`DRAWER_MOTION_DEFAULTS`
- * on the Panel provider). `params.placement` feeds `drawerSlide*` recipes.
+ * broadcasts nested slots (`scheduleNestedEnterBroadcast`, exclude overlay/panel).
+ * Nested parts do not call `useOptionalEnterOnMount`. Root has no portal DOM — it
+ * passes the `motion` map and trigger defaults. Overlay/panel defaults wrap the portal host
+ * (`DRAWER_MOTION_DEFAULTS` on the Panel provider). `params.placement` feeds
+ * `drawerSlide*` recipes.
  */
 import { useCallback } from "react";
 

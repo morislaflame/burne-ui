@@ -1,15 +1,14 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useDialogModalMotion, DIALOG_MOTION_DEFAULTS } from "./dialogAnimations";
@@ -173,13 +172,25 @@ DialogDescription.displayName = "DialogDescription";
 
 export function DialogHeadingBlock({
   className,
+  motion,
+  onPointerOver,
+  onPointerOut,
   ...rest
 }: DialogHeadingBlockProps) {
   const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalDialogMotionScope(),
+    slot: "headingBlock",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <div
+      ref={setRef}
       className={cn(
         DIALOG_HEADING_BLOCK_CLASS,
         sizePreset.headingGap,
@@ -187,6 +198,7 @@ export function DialogHeadingBlock({
         className,
       )}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
@@ -238,18 +250,28 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 DialogClose.displayName = "DialogClose";
 
 export const DialogBody = forwardRef<HTMLDivElement, DialogBodyProps>(
-  function DialogBody({ className, ...rest }, ref) {
+  function DialogBody({ className, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { sizePreset } = useDialog();
     const slotClassNames = useDialogClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalDialogMotionScope(),
+      slot: "body",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={dialogBodyClass(
           sizePreset.bodyPadding,
           cn(slotClassNames.body, className),
         )}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -291,20 +313,34 @@ DialogFooter.displayName = "DialogFooter";
 // ─── Dialog.Trigger ──────────────────────────────────────────────────────────
 
 export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
-  function DialogTrigger({ children, asChild, className, onClick, onPointerDown, onKeyDown, ...rest }, forwardedRef) {
+  function DialogTrigger(
+    {
+      children,
+      asChild,
+      className,
+      motion,
+      onClick,
+      onPointerDown,
+      onPointerOver,
+      onPointerOut,
+      onPointerUp,
+      onKeyDown,
+      ...rest
+    },
+    forwardedRef,
+  ) {
     const { open, onOpenChange } = useDialog();
     const slotClassNames = useDialogClassNames();
-    const triggerRef = useRef<HTMLElement | null>(null);
-    const openingRef = useOpeningRef();
-    const config = useMotionConfig();
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        triggerRef.current = node;
-        mergeForwardedRef(forwardedRef, node);
-      },
-      [forwardedRef],
-    );
+    const { part, openingRef, openAfterSqueeze } = useOverlayTriggerSlot<HTMLButtonElement>({
+      scope: useOptionalDialogMotionScope(),
+      slot: "trigger",
+      motion,
+      forwardedRef,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
@@ -313,10 +349,10 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         // Button's useFirstLevelInteractiveMotion sees defaultPrevented = true
         // and skips its own animation (we drive it from here instead).
         e.preventDefault();
-        focusElement(triggerRef.current);
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
+        focusElement(part.targetRef.current);
+        openAfterSqueeze(() => onOpenChange(true));
       },
-      [open, openingRef, triggerRef, onOpenChange, config],
+      [open, openingRef, openAfterSqueeze, onOpenChange, part.targetRef],
     );
 
     const handleKeyDown = useCallback(
@@ -326,9 +362,9 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         if (e.key !== "Enter" && e.key !== " ") return;
         // Suppress native click + child Button keyboard squeeze — Trigger drives open.
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
+        openAfterSqueeze(() => onOpenChange(true));
       },
-      [onKeyDown, open, openingRef, onOpenChange, triggerRef, config],
+      [onKeyDown, open, openingRef, openAfterSqueeze, onOpenChange],
     );
 
     const handleClick = useCallback(
@@ -358,16 +394,17 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
               // Host runs before child so e.preventDefault() suppresses Button animation
               onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
                 handlePointerDown(e);
-                onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+                part.pointerHandlers.onPointerDown(e as ReactPointerEvent<HTMLButtonElement>);
               },
+              onPointerOver: part.pointerHandlers.onPointerOver,
+              onPointerOut: part.pointerHandlers.onPointerOut,
+              onPointerUp: part.pointerHandlers.onPointerUp,
               onKeyDown: handleKeyDown,
               onClick: handleClick,
               "aria-haspopup": "dialog",
               "aria-expanded": open,
             },
-            mergeRefs((node: HTMLElement | null) => {
-              triggerRef.current = node;
-            }, forwardedRef),
+            part.setRef,
             { runBeforeChild: ["onPointerDown", "onKeyDown"] },
           ),
         );
@@ -377,17 +414,18 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
     return (
       <button
         type="button"
-        ref={setRefs}
+        ref={part.setRef}
         aria-haspopup="dialog"
         aria-expanded={open}
         className={cn(DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
-        onPointerDown={(e) => {
-          onPointerDown?.(e);
-          handlePointerDown(e);
-        }}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
         {...rest}
+        {...part.pointerHandlers}
+        onPointerDown={(e) => {
+          part.pointerHandlers.onPointerDown(e);
+          handlePointerDown(e);
+        }}
       >
         {children}
       </button>

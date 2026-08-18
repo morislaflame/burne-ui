@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import gsap from "gsap";
 
 import { ColorSlider } from "@/components/core/ColorPicker";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ColorSliderMotionChangeTintDemo() {
   const [value, setValue] = useState(40);
@@ -25,7 +22,7 @@ export function ColorSliderMotionChangeTintDemo() {
       motion={{
         track: {
           change: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: -2, duration: 0.1 }, 0);
             tl.to(ctx.el, { y: 0, duration: 0.14 }, 0.1);
             tweenCssColor(ctx.el, "var(--color-primary)");

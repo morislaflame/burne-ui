@@ -55,7 +55,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `label` / `hint` / `error` | — | Simple API |
 | `name` / `value` | — | Form / CheckboxGroup |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` (`check` / `uncheck`) |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`) |
 
 ### `CheckboxClassNames`
 
@@ -126,7 +126,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 
 `Checkbox.Indicator` → `SelectionIndicator` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Checkbox прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Checkbox.Indicator` / `.Fill` / `.Mark`.
 
-**Где в коде:** карта слотов — `checkboxAnimations.ts` (`CHECKBOX_MOTION_SLOT_MAP`, `resolveCheckboxIndicatorMotion`); тонкий context — `checkboxContext.tsx`; host — `selectionIndicatorAnimations.ts`.
+**Где в коде:** карта слотов — `checkboxAnimations.ts` (`CHECKBOX_MOTION_SLOT_MAP`, `resolveCheckboxIndicatorMotion`); scope chrome — `checkboxContext.tsx` (`label` / `hint` / `error`); host fill/mark — `selectionIndicatorAnimations.ts`.
 
 ```tsx
 import gsap from "gsap";
@@ -157,29 +157,27 @@ import { Checkbox, tweenCssColor } from "burne-ui";
   motion={{
     indicatorFill: {
       check: (ctx) => {
-        const tl = gsap.timeline();
+        const tl = ctx.timeline();
         tl.fromTo(ctx.el, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.32 }, 0);
-        const text = ctx.el.closest("label, fieldset");
-        if (text instanceof HTMLElement) {
-          tl.add(tweenCssColor(text, "var(--color-primary)", { duration: 0.28 }), 0);
-        }
         return tl;
       },
-      uncheck: (ctx) => {
-        const tl = gsap.timeline();
-        tl.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.2 }, 0);
-        const text = ctx.el.closest("label, fieldset");
-        if (text instanceof HTMLElement) {
-          tl.add(
-            tweenCssColor(text, "var(--color-foreground)", {
-              duration: 0.22,
-              clearOnComplete: true,
-            }),
-            0,
-          );
-        }
-        return tl;
-      },
+      uncheck: (ctx) => ctx.to({ scale: 0, autoAlpha: 0, duration: 0.2 }),
+    },
+    label: {
+      check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+      uncheck: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-foreground)", {
+          duration: 0.22,
+          clearOnComplete: true,
+        }),
+    },
+    hint: {
+      check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+      uncheck: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-muted-foreground)", {
+          duration: 0.22,
+          clearOnComplete: true,
+        }),
     },
   }}
 />
@@ -187,17 +185,16 @@ import { Checkbox, tweenCssColor } from "burne-ui";
 <Checkbox.Indicator.Mark
   motion={{
     check: (ctx) =>
-      gsap.fromTo(
-        ctx.el,
+      ctx.fromTo(
         { rotate: -90, scale: 0.4, autoAlpha: 0 },
         { rotate: 0, scale: 1, autoAlpha: 1, duration: 0.4, ease: "back.out(2.2)" },
       ),
-    uncheck: (ctx) => gsap.to(ctx.el, { rotate: 45, autoAlpha: 0, duration: 0.18 }),
+    uncheck: (ctx) => ctx.to({ rotate: 45, autoAlpha: 0, duration: 0.18 }),
   }}
 />
 ```
 
-ListBox в этом срезе публичный `motion` не получает, но идёт через тот же хук SelectionIndicator — дефолт совпадает. Radio — тот же embedder, что Checkbox (`indicator` / `indicatorFill` / `indicatorMark`).
+ListBox в этом срезе публичный `motion` не получает, но идёт через тот же хук SelectionIndicator — дефолт совпадает. Radio — тот же embedder, что Checkbox (`indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error`).
 
 См. [Motion](/docs/motion) и `SelectionIndicator`.
 
@@ -312,7 +309,7 @@ Checkbox/
 ├── index.ts
 ├── checkboxTypes.ts             # CheckboxMotion
 ├── checkboxStyles.ts
-├── checkboxContext.tsx          # тонкий motion context (embedder, без createMotionScope)
+├── checkboxContext.tsx          # createMotionScope("Checkbox") + label; indicator embed
 ├── checkboxAnimations.ts        # CHECKBOX_MOTION_SLOT_MAP + track/label motion
 ├── checkboxParts.tsx
 ├── useCheckboxRootState.ts

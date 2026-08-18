@@ -118,8 +118,9 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` (`motionTooltip()`) |
+| `title` / `description` / `indicator` / `arrow` / `panel` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 
-`leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`.
+`leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Nested `enter` — следующий кадр после host (`scheduleNestedEnterBroadcast`).
 
 **Где в коде:** типы — `tooltipTypes.ts`; scope — `tooltipContext.tsx`; defaults + host — `tooltipAnimations.ts`; Content-provider — `tooltipParts.tsx`; карта на корне — `Tooltip.tsx`.
 
@@ -129,14 +130,14 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 <Tooltip
   motion={{
     content: {
-      enter: (ctx) => gsap.fromTo(ctx.el, { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.22 }),
-      leave: (ctx) => gsap.to(ctx.el, { y: 8, autoAlpha: 0, duration: 0.16 }),
+      enter: (ctx) => ctx.fromTo({ y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.22 }),
+      leave: (ctx) => ctx.to({ y: 8, autoAlpha: 0, duration: 0.16 }),
     },
   }}
 >
 ```
 
-`classNames` / `className` на `title` / `description` / `indicator` сочетаются с factory на `content`. Вложенные части не отдельные motion-слоты — доставайте их из `ctx.el` (`data-part`). `leave` factory должна вернуть tween.
+`classNames` / `className` на `title` / `description` / `indicator` сочетаются с factory на `content`. Вложенные части — слоты: `ctx.getTarget("title")` (или `motion.title.enter`). `leave` factory должна вернуть tween.
 
 ```tsx
 <Tooltip
@@ -151,19 +152,19 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
   motion={{
     content: {
       enter: (ctx) => {
-        const tl = gsap.timeline();
-        const title = ctx.el.querySelector("[data-part=title]");
+        const tl = ctx.timeline();
+        const title = ctx.getTarget("title");
         tl.fromTo(ctx.el, { y: 12, autoAlpha: 0, scale: 0.96 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.24 }, 0);
         if (title) tl.fromTo(title, { y: 8 }, { y: 0, duration: 0.26 }, 0.08);
         return tl;
       },
-      leave: (ctx) => gsap.to(ctx.el, { y: 8, autoAlpha: 0, duration: 0.16 }),
+      leave: (ctx) => ctx.to({ y: 8, autoAlpha: 0, duration: 0.16 }),
     },
   }}
 >
   <Tooltip.Trigger asChild><Button>Hint</Button></Tooltip.Trigger>
   <Tooltip.Content>
-    <Tooltip.Title data-part="title" className="font-w-strong">Stagger</Tooltip.Title>
+    <Tooltip.Title className="font-w-strong">Stagger</Tooltip.Title>
     <Tooltip.Description className="text-muted">…</Tooltip.Description>
   </Tooltip.Content>
 </Tooltip>

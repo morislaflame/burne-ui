@@ -3,7 +3,6 @@ import { forwardRef, useId, useMemo, useRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import type { LabelProps } from "@/components/core/Label";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import "@/components/core/utils/glossInteractive.css";
@@ -15,6 +14,7 @@ import { textAreaResizeHandleAriaLabel } from "./textAreaA11y";
 import {
   resolveTextAreaMotionDefaults,
   resolveTextAreaMotionParams,
+  useTextAreaChromeSlot,
   useTextAreaShellAnimations,
 } from "./textAreaAnimations";
 import {
@@ -28,6 +28,7 @@ import { TEXTAREA_RESIZE_GRIP_STROKE, TEXTAREA_RESIZE_GRIP_WRAP_CLASS, textareaC
 import type {
   TextAreaErrorProps,
   TextAreaHintProps,
+  TextAreaLabelProps,
   TextAreaControlProps,
   TextAreaPartMotion,
   TextAreaSimpleBodyProps,
@@ -309,73 +310,137 @@ function TextAreaControlSurface({
   );
 }
 
-export function TextAreaLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useTextAreaClassNames();
+export const TextAreaLabel = forwardRef<HTMLElement, TextAreaLabelProps>(
+  function TextAreaLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useTextAreaClassNames();
+    const part = useTextAreaChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Field.Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 TextAreaLabel.displayName = "TextAreaLabel";
 
-export function TextAreaHint({
-  children,
-  status,
-  className,
-  id: idProp,
-  ...rest
-}: TextAreaHintProps) {
-  const field = useTextAreaFieldContext();
-  const slotClassNames = useTextAreaClassNames();
-  const hintStatus =
-    status ??
-    (field.status === "danger"
-      ? "default"
-      : field.status === "default"
+export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
+  function TextAreaHint(
+    {
+      children,
+      status,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useTextAreaFieldContext();
+    const slotClassNames = useTextAreaClassNames();
+    const hintStatus =
+      status ??
+      (field.status === "danger"
         ? "default"
-        : field.status);
+        : field.status === "default"
+          ? "default"
+          : field.status);
+    const part = useTextAreaChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? field.hintId}
-      status={hintStatus}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? field.hintId}
+        status={hintStatus}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 TextAreaHint.displayName = "TextAreaHint";
 
-export function TextAreaError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: TextAreaErrorProps) {
-  const field = useTextAreaFieldContext();
-  const slotClassNames = useTextAreaClassNames();
+export const TextAreaError = forwardRef<HTMLElement, TextAreaErrorProps>(
+  function TextAreaError(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useTextAreaFieldContext();
+    const slotClassNames = useTextAreaClassNames();
+    const part = useTextAreaChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? field.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? field.errorId}
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
 
 TextAreaError.displayName = "TextAreaError";
 
@@ -394,9 +459,9 @@ export function TextAreaSimpleBody({
   return (
     <>
       {label != null ? (
-        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <TextAreaLabel id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Field.Label>
+        </TextAreaLabel>
       ) : null}
       <TextAreaControl id={textareaId} size={size} status={status} {...controlProps} />
       {hint != null ? <TextAreaHint>{hint}</TextAreaHint> : null}

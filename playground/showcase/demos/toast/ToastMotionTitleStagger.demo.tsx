@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Button } from "@/components/core/Button";
 import { useToast } from "@/components/core/Toast";
 
@@ -18,12 +16,11 @@ export function ToastMotionTitleStaggerDemo() {
           motion: {
             title: {
               enter: (ctx) =>
-                gsap.fromTo(
-                  ctx.el,
+                ctx.fromTo(
                   { y: 12, autoAlpha: 0 },
                   { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.08 },
                 ),
-              leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.16 }),
+              leave: { y: -8, autoAlpha: 0, duration: 0.16 },
             },
           },
         })

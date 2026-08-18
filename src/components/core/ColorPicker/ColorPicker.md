@@ -56,6 +56,8 @@ import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexTo
 | `presets` | — | Массив hex для quick pick |
 | `className` | — | На content wrapper |
 
+Compound внутри Content: `ColorPicker.Area`, `ColorPicker.Preview` (слот `previewSwatch`), `HexInput`, `AlphaInput`, `Presets`.
+
 ### `ColorPickerClassNames`
 
 `content`, `contentPanel`, `trigger`, `area`, `areaThumb`, `slidersRow`, `previewSwatch`, `hueSlider`, `alphaSlider`, `inputsRow`, `hexInput`, `hexPrefix`, `hexInputField`, `alphaInput`, `alphaInputField`, `alphaSuffix`, `presets`, `presetSwatch`.
@@ -103,11 +105,13 @@ Channels: `hue`, `saturation`, `value`, `alpha`, `red`, `green`, `blue`.
 | Слот | Фазы | Дефолт |
 |------|------|--------|
 | `contentPanel` | `enter` (opt-in) | empty |
-| `area` | `enter`; `change` при HSVA; hover/press если заданы | empty |
-| `areaThumb`, `hexInput`, `presets` | `enter` / hover / press | empty |
+| `area` | `change` при hex; hover/press если заданы. Mount `enter` выключен (drag surface) | empty |
+| `areaThumb` | hover/press если заданы. Mount `enter` выключен (drag geometry) | empty |
+| `hexInput`, `alphaInput`, `presets`, `previewSwatch` | `enter` / hover / press | empty |
 | `hueSlider` / `alphaSlider` | прокидываются в ColorSlider | empty |
+| `trigger` | прокидывается в `Popover.Trigger` | `pressSqueeze` на Popover |
 
-Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не публичный layout-tween. Drag на `Area` / `areaThumb` **мержится** с slot pointer phases через `useMotionPart` (`onPointerDown` пользователя → motion press → drag, если не `defaultPrevented`). ColorSwatch в presets сохраняет свой scope.
+Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не публичный layout-tween. `previewSwatch` — `ColorPicker.Preview`. Drag на `Area` / `areaThumb` **мержится** с slot pointer phases через `useMotionPart` (`onPointerDown` пользователя → motion press → drag, если не `defaultPrevented`). ColorSwatch в presets сохраняет свой scope.
 
 **ColorSlider** — свой scope; Track — nested host.
 
@@ -130,6 +134,7 @@ Motion разбит: pointer drag (без GSAP) + Popover portal + optional swat
   <Content>
     <div class=area>                   ← pointer drag 2D (sat × val)
       <div class=areaThumb />
+    <ColorPicker.Preview />            ← слот `previewSwatch`
     <ColorSlider channel=hue />
     <ColorSlider channel=alpha />      ← if showAlpha
     <input hex /> <input alpha />
@@ -138,7 +143,7 @@ Motion разбит: pointer drag (без GSAP) + Popover portal + optional swat
 
 ### 1. Popover open/close
 
-`ColorPicker` обёрнут в `Popover` — portal `motionTooltip()`, trigger squeeze. См. `Popover.md`.
+`ColorPicker` обёрнут в `Popover` — portal `motionTooltip()`, слот `trigger` прокидывается в `Popover.Trigger`. См. `Popover.md`.
 
 ### 2. 2D area drag (`useColorPickerAreaDrag`)
 
@@ -249,7 +254,7 @@ Pointer + keyboard на `SliderThumbButton` (shared Slider patterns).
 
 | Компонент | Сценарий |
 |-----------|----------|
-| `Popover` | Portal + trigger squeeze |
+| `Popover` | Portal + слот `trigger` |
 | `Slider` | `ColorSlider` track/thumb |
 | `Input` | Hex field styling patterns |
 

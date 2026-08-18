@@ -22,11 +22,13 @@ export type KbdClassNames = {
 export type KbdPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+  enter?: MotionValue;
 };
 
 export type KbdMotion = {
   root?: KbdPartMotion;
   text?: KbdPartMotion;
+  group?: KbdPartMotion;
 };
 
 export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
@@ -41,7 +43,7 @@ export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
    */
   hoverLift?: boolean;
   /**
-   * Per-slot motion (`root`, `text`).
+   * Per-slot motion (`root`, `text`, `group`).
    */
   motion?: Prettify<KbdMotion>;
 };
@@ -54,6 +56,11 @@ export type KbdGroupProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & 
    */
   separator?: ReactNode | null;
   children?: ReactNode;
+  /**
+   * Part motion for the wrapping `<span>` (`group` slot).
+   * Standalone Group (no Kbd ancestor) creates its own scope when this is set.
+   */
+  motion?: Prettify<KbdPartMotion>;
 };
 
 export type KbdClassNamesProviderProps = {

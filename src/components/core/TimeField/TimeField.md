@@ -53,7 +53,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `id` | auto | Связь label/control |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
-| `motion` | — | per-slot motion (`shell`, `prefix`, `suffix`, `segments`) |
+| `motion` | — | per-slot motion (`shell`, `prefix`, `suffix`, `segments`, `label`, `hint`, `error`) |
 
 ### `TimeFieldClassNames`
 
@@ -84,7 +84,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `TimeField.Control` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Фокус сегмента — CSS, без GSAP.
+Публичный slot motion. Root передаёт карту `motion`; хост — `TimeField.Control` (defaults + `play`). Chrome (`label` / `hint` / `error`) регистрируется на Root scope (соседи Control). Gloss hover/press остаются на `useGlossFieldShellMotion`. Фокус сегмента — CSS, без GSAP.
 
 ### Slot motion
 
@@ -92,6 +92,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 |------|------|------------------|
 | `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
 | `prefix` / `suffix` / `segments` | hover/press | нет |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
 
 `false` на `shell.hoverIn/Out` — rest-тень остаётся, lift не играет. Не анимируйте layout в публичных MotionVars.
 
@@ -107,7 +108,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 />
 ```
 
-Compound: `motion` на `TimeField.Control` — part motion слота `shell`.
+Compound: `motion` на `TimeField.Control` — part motion слота `shell`. На `TimeField.Label` / `Hint` / `Error` — chrome Root scope.
 
 ## Токены и CSS
 

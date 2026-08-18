@@ -1,17 +1,23 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   CheckboxClassNames,
   CheckboxClassNamesProviderProps,
   CheckboxFieldContextValue,
   CheckboxMotion,
-  CheckboxMotionProviderProps,
 } from "./checkboxTypes";
 
 const CheckboxFieldContext = createContext<CheckboxFieldContextValue | null>(null);
 const CheckboxClassNamesContext = createContext<CheckboxClassNames>({});
-/** Embedder: no createMotionScope. Mapping lives in `checkboxAnimations.ts`. */
-const CheckboxMotionContext = createContext<CheckboxMotion | undefined>(undefined);
+
+/** Own scope for chrome (`label` / `hint` / `error`). Indicator keys still embed into SelectionIndicator. */
+export const {
+  MotionScopeProvider: CheckboxMotionProvider,
+  useMotionScope: useCheckboxMotionScope,
+  useOptionalMotionScope: useOptionalCheckboxMotionScope,
+} = createMotionScope("Checkbox");
 
 export function CheckboxFieldProvider({
   value,
@@ -54,15 +60,6 @@ export function useCheckboxClassNames(): CheckboxClassNames {
   return useContext(CheckboxClassNamesContext);
 }
 
-export function CheckboxMotionProvider({
-  motion,
-  children,
-}: CheckboxMotionProviderProps) {
-  return (
-    <CheckboxMotionContext.Provider value={motion}>{children}</CheckboxMotionContext.Provider>
-  );
-}
-
 export function useCheckboxMotion(): CheckboxMotion | undefined {
-  return useContext(CheckboxMotionContext);
+  return useOptionalCheckboxMotionScope()?.getRootMotion() as CheckboxMotion | undefined;
 }

@@ -1,3 +1,4 @@
+import { ComboBoxMotionHintEnterDemo } from "./ComboBoxMotionHintEnter.demo";
 import { ComboBoxMotionInputTintDemo } from "./ComboBoxMotionInputTint.demo";
 import { ComboBoxMotionInputWaveDemo } from "./ComboBoxMotionInputWave.demo";
 import { ComboBoxMotionInstantHoverDemo } from "./ComboBoxMotionInstantHover.demo";
@@ -8,6 +9,7 @@ export function ComboBoxMotionDemo() {
       <ComboBoxMotionInstantHoverDemo />
       <ComboBoxMotionInputWaveDemo />
       <ComboBoxMotionInputTintDemo />
+      <ComboBoxMotionHintEnterDemo />
     </div>
   );
 }

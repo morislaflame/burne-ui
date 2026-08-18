@@ -1,21 +1,30 @@
 /**
  * Slot motion for ListBox — look here first.
  *
- * DOM slots: `item` (option button), `label`, `icon`
+ * DOM slots: `item` (option button), `label`, `hint`, `icon`, `section`, `header`, `empty`, `separator`
  *
  * Root Provider carries defaults so keyboard `play("item", "pressIn", { el })`
- * works from `ListBoxRootShell`. Each Item nests its own Provider + `useMotionPart`.
+ * works from `ListBoxRootShell`. Each Item nests its own unique Provider +
+ * `useMotionPart` (not shared-scope repeated). `section` / `header` / `empty` / `separator`
+ * register on the root scope (repeated `header` / `section` / `separator` when several groups).
  *
- * Not slots: `root` / `section` / `header` / `empty` / `separator` (layout).
- * Gloss panel ref stays kit-internal.
+ * Not slots: `root` / `headerText` (layout). Gloss panel ref stays kit-internal.
  */
+import { useLayoutEffect, type ForwardedRef, type RefObject } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
+
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
+import {
+  hasPointerPhases,
+  useMotionPart,
+  useOptionalEnterOnMount,
+  type MotionScopeValue,
+} from "@/components/core/utils/slotMotion";
 
 import { listBoxOptionId } from "./listBoxA11y";
-import type { ListBoxMotion } from "./listBoxTypes";
-import { useLayoutEffect, type RefObject } from "react";
+import { useOptionalListBoxMotionScope } from "./listBoxContext";
+import type { ListBoxMotion, ListBoxPartMotion } from "./listBoxTypes";
 
 export function useListBoxRootGlossRef(isGloss: boolean) {
   return useMergedGlossPanelRef(undefined, isGloss);
@@ -28,6 +37,44 @@ export function resolveListBoxMotionDefaults(): ListBoxMotion {
       pressOut: false,
     },
   };
+}
+
+export type ListBoxMotionSlot = keyof ListBoxMotion;
+
+export function useListBoxSlotMotion<T extends HTMLElement>(
+  slot: Exclude<ListBoxMotionSlot, "item">,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: ListBoxPartMotion;
+    forwardedRef?: ForwardedRef<T>;
+    onPointerOver?: (e: ReactPointerEvent<T>) => void;
+    onPointerOut?: (e: ReactPointerEvent<T>) => void;
+    onPointerDown?: (e: ReactPointerEvent<T>) => void;
+    onPointerUp?: (e: ReactPointerEvent<T>) => void;
+  } = {},
+) {
+  const scope = useOptionalListBoxMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<T>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }
 
 export function playListBoxItemPress(scope: MotionScopeValue, el: HTMLElement | null) {

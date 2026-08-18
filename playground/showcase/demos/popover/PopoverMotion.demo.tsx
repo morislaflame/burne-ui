@@ -2,6 +2,7 @@ import { PopoverMotionDefaultDemo } from "./PopoverMotionDefault.demo";
 import { PopoverMotionInstantLeaveDemo } from "./PopoverMotionInstantLeave.demo";
 import { PopoverMotionSlideYDemo } from "./PopoverMotionSlideY.demo";
 import { PopoverMotionTitleStaggerDemo } from "./PopoverMotionTitleStagger.demo";
+import { PopoverMotionHeaderDemo } from "./PopoverMotionHeader.demo";
 
 export function PopoverMotionDemo() {
   return (
@@ -11,6 +12,7 @@ export function PopoverMotionDemo() {
         <PopoverMotionInstantLeaveDemo />
         <PopoverMotionSlideYDemo />
         <PopoverMotionTitleStaggerDemo />
+        <PopoverMotionHeaderDemo />
       </div>
     </div>
   );

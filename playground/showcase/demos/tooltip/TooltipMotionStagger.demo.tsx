@@ -1,15 +1,7 @@
-import gsap from "gsap";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button";
 import { Tooltip } from "@/components/core/Tooltip";
-
-function part(root: ParentNode, name: string): HTMLElement | null {
-  const node = root.querySelector(`[data-part="${name}"]`);
-  return node instanceof HTMLElement ? node : null;
-}
-
-const TL_DEFAULTS = { overwrite: "auto" as const, force3D: false };
 
 export function TooltipMotionStaggerDemo() {
   return (
@@ -27,10 +19,10 @@ export function TooltipMotionStaggerDemo() {
       motion={{
         content: {
           enter: (ctx) => {
-            const tl = gsap.timeline({ defaults: TL_DEFAULTS });
-            const indicator = part(ctx.el, "indicator");
-            const title = part(ctx.el, "title");
-            const description = part(ctx.el, "description");
+            const tl = ctx.timeline();
+            const indicator = ctx.getTarget("indicator");
+            const title = ctx.getTarget("title");
+            const description = ctx.getTarget("description");
             tl.fromTo(
               ctx.el,
               { y: 12, opacity: 0, scale: 0.96 },
@@ -52,14 +44,14 @@ export function TooltipMotionStaggerDemo() {
             return tl;
           },
           leave: (ctx) => {
-            const tl = gsap.timeline({ defaults: { ...TL_DEFAULTS, duration: 0.16 } });
-            const indicator = part(ctx.el, "indicator");
-            const title = part(ctx.el, "title");
-            const description = part(ctx.el, "description");
-            tl.to(ctx.el, { y: 8, autoAlpha: 0, scale: 0.97, ease: "power2.in" }, 0);
-            if (indicator) tl.to(indicator, { rotate: 12, scale: 0.85 }, 0);
-            if (title) tl.to(title, { y: -4 }, 0);
-            if (description) tl.to(description, { y: -6 }, 0);
+            const tl = ctx.timeline();
+            const indicator = ctx.getTarget("indicator");
+            const title = ctx.getTarget("title");
+            const description = ctx.getTarget("description");
+            tl.to(ctx.el, { y: 8, autoAlpha: 0, scale: 0.97, duration: 0.16, ease: "power2.in" }, 0);
+            if (indicator) tl.to(indicator, { rotate: 12, scale: 0.85, duration: 0.16 }, 0);
+            if (title) tl.to(title, { y: -4, duration: 0.16 }, 0);
+            if (description) tl.to(description, { y: -6, duration: 0.16 }, 0);
             return tl;
           },
         },
@@ -72,9 +64,9 @@ export function TooltipMotionStaggerDemo() {
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
-        <Tooltip.Indicator data-part="indicator" />
-        <Tooltip.Title data-part="title">Staggered slots</Tooltip.Title>
-        <Tooltip.Description data-part="description">
+        <Tooltip.Indicator />
+        <Tooltip.Title>Staggered slots</Tooltip.Title>
+        <Tooltip.Description>
           Indicator pops, then title, then description.
         </Tooltip.Description>
       </Tooltip.Content>

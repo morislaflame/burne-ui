@@ -20,6 +20,10 @@ import { SwitchMotionFillFadeDemo } from "../demos/switch/SwitchMotionFillFade.d
 import switchMotionFillFadeSource from "../demos/switch/SwitchMotionFillFade.demo.tsx?raw";
 import { SwitchMotionIconsDemo } from "../demos/switch/SwitchMotionIcons.demo";
 import switchMotionIconsSource from "../demos/switch/SwitchMotionIcons.demo.tsx?raw";
+import { SwitchMotionLabelColorDemo } from "../demos/switch/SwitchMotionLabelColor.demo";
+import switchMotionLabelColorSource from "../demos/switch/SwitchMotionLabelColor.demo.tsx?raw";
+import { SwitchMotionTrackDemo } from "../demos/switch/SwitchMotionTrack.demo";
+import switchMotionTrackSource from "../demos/switch/SwitchMotionTrack.demo.tsx?raw";
 import { SwitchNotificationsDemo } from "../demos/switch/SwitchNotifications.demo";
 import switchNotificationsSource from "../demos/switch/SwitchNotifications.demo.tsx?raw";
 import { SwitchSizesDemo } from "../demos/switch/SwitchSizes.demo";
@@ -57,13 +61,15 @@ export function SwitchShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — default thumb, instant snap, bounce factory, fill fade, icon spin."
+        description="Each card is a separate copyable example — default thumb, instant snap, bounce factory, fill fade, icon spin, track pulse."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionDefaultDemo} source={switchMotionDefaultSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionInstantThumbDemo} source={switchMotionInstantThumbSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionBounceThumbDemo} source={switchMotionBounceThumbSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionFillFadeDemo} source={switchMotionFillFadeSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionIconsDemo} source={switchMotionIconsSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionLabelColorDemo} source={switchMotionLabelColorSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionTrackDemo} source={switchMotionTrackSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

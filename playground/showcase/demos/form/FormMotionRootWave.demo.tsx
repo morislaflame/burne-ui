@@ -1,10 +1,6 @@
-import gsap from "gsap";
-
 import { Form } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function FormMotionRootWaveDemo() {
   return (
@@ -14,10 +10,10 @@ export function FormMotionRootWaveDemo() {
       motion={{
         root: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.32, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.32 }),
         },
         title: {
-          enter: (ctx) => gsap.fromTo(ctx.el, { x: -8 }, { x: 0, duration: 0.24, ...TL }),
+          enter: (ctx) => ctx.fromTo({ x: -8 }, { x: 0, duration: 0.24 }),
         },
       }}
     >

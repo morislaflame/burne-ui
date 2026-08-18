@@ -40,6 +40,12 @@ export type SwitchClassNames = {
 export type SwitchCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 export type SwitchMotion = {
@@ -47,6 +53,10 @@ export type SwitchMotion = {
   thumb?: SwitchCheckMotion;
   iconOff?: SwitchCheckMotion;
   iconOn?: SwitchCheckMotion;
+  track?: SwitchCheckMotion;
+  label?: SwitchCheckMotion;
+  hint?: SwitchCheckMotion;
+  error?: SwitchCheckMotion;
 };
 
 export type SwitchFieldContextValue = {
@@ -65,6 +75,9 @@ export type SwitchFieldContextValue = {
   useInlineCompoundMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
   setSqueezeToken: (fn: (t: number) => number) => void;
+  /** `null` until `Switch.Control` syncs (compound). Chrome `check`/`uncheck` wait for this. */
+  mergedChecked: boolean | null;
+  setMergedChecked: (next: boolean) => void;
 };
 
 export type SwitchTrackContextValue = {
@@ -157,11 +170,17 @@ export type SwitchContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-export type SwitchLabelProps = Omit<LabelProps, "htmlFor">;
+export type SwitchLabelProps = Omit<LabelProps, "htmlFor" | "motion"> & {
+  motion?: Prettify<SwitchCheckMotion>;
+};
 
-export type SwitchHintProps = Omit<FieldHintProps, "id" | "as">;
+export type SwitchHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<SwitchCheckMotion>;
+};
 
-export type SwitchErrorProps = Omit<FieldErrorProps, "id" | "as">;
+export type SwitchErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<SwitchCheckMotion>;
+};
 
 export type SwitchClassNamesProviderProps = {
   classNames?: Prettify<SwitchClassNames>;

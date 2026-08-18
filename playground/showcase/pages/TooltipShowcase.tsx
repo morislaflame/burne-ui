@@ -16,6 +16,8 @@ import { TooltipMotionSideSlideDemo } from "../demos/tooltip/TooltipMotionSideSl
 import tooltipMotionSideSlideSource from "../demos/tooltip/TooltipMotionSideSlide.demo.tsx?raw";
 import { TooltipMotionSlideYDemo } from "../demos/tooltip/TooltipMotionSlideY.demo";
 import tooltipMotionSlideYSource from "../demos/tooltip/TooltipMotionSlideY.demo.tsx?raw";
+import { TooltipMotionPanelDemo } from "../demos/tooltip/TooltipMotionPanel.demo";
+import tooltipMotionPanelSource from "../demos/tooltip/TooltipMotionPanel.demo.tsx?raw";
 import { TooltipMotionStaggerDemo } from "../demos/tooltip/TooltipMotionStagger.demo";
 import tooltipMotionStaggerSource from "../demos/tooltip/TooltipMotionStagger.demo.tsx?raw";
 import { TooltipIconToolbarDemo } from "../demos/tooltip/TooltipIconToolbar.demo";
@@ -55,11 +57,12 @@ export function TooltipShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, stagger + classNames."
+        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, panel slot, stagger + classNames."
       >
         <ShowcaseDemoFromFile Demo={TooltipMotionDefaultDemo} source={tooltipMotionDefaultSource} />
         <ShowcaseDemoFromFile Demo={TooltipMotionInstantLeaveDemo} source={tooltipMotionInstantLeaveSource} />
         <ShowcaseDemoFromFile Demo={TooltipMotionSlideYDemo} source={tooltipMotionSlideYSource} />
+        <ShowcaseDemoFromFile Demo={TooltipMotionPanelDemo} source={tooltipMotionPanelSource} />
         <ShowcaseDemoFromFile Demo={TooltipMotionStaggerDemo} source={tooltipMotionStaggerSource} />
         <ShowcaseDemoFromFile Demo={TooltipMotionSideSlideDemo} source={tooltipMotionSideSlideSource} />
       </ShowcaseSection>

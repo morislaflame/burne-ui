@@ -11,6 +11,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { LabelProps } from "@/components/core/Label";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
@@ -53,6 +54,9 @@ export type InputMotion = {
   passwordToggle?: InputPartMotion;
   fileRow?: Pick<InputPartMotion, "leave" | "hoverIn" | "hoverOut">;
   fileRemove?: InputPartMotion;
+  label?: InputPartMotion;
+  hint?: InputPartMotion;
+  error?: InputPartMotion;
 };
 
 export type InputControlProps = Omit<
@@ -100,7 +104,8 @@ export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
   size?: InputSize;
   classNames?: Prettify<InputClassNames>;
   /**
-   * Per-slot motion (`shell`, `control`, `prefix`, `suffix`, `passwordToggle`, `fileRow`, `fileRemove`).
+   * Per-slot motion (`shell`, `control`, `prefix`, `suffix`, `passwordToggle`,
+   * `fileRow`, `fileRemove`, `label`, `hint`, `error`).
    * File remove leave: `fileRow.leave` (`fileRowExit`).
    */
   motion?: Prettify<InputMotion>;
@@ -118,13 +123,19 @@ export type UseInputShellAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
 };
 
+export type InputLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<InputPartMotion>;
+};
+
 export type InputHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   status?: Exclude<InputStatus, "danger"> | "default";
+  motion?: Prettify<InputPartMotion>;
 };
 
 export type InputErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<InputPartMotion>;
 };
 
 export type UseInputRootStateProps = InputSimpleProps;

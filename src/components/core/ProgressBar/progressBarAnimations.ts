@@ -1,33 +1,40 @@
 /**
  * Slot motion for ProgressBar — look here first.
  *
- * DOM slots: `track`, `fill`, `header`, `value`
+ * DOM slots: `track`, `fill` (Track nested host); `header`, `value`,
+ * `label`, `hint`, `error` (Root scope — siblings of Track).
  *
- * Host: Track plays opt-in `enter` and `change` when value / indeterminate flips.
- * Fill scale and indeterminate travel stay kit-internal.
- * Defaults: empty.
+ * Root passes the `motion` map. Track wraps defaults + `params.getProgressScale`.
+ * Fill: `change` → `progressFill` / `progressIndeterminate`. `enter` on fill is
+ * opt-in and played by `useBarFillMotion` (layout cleanup replays in Strict Mode).
  */
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
 
-import { clearWillChangeOnComplete, gsap, killMotion, killMotionGeometry, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
-import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
-  isMotionFeatureEnabledFor,
-  motionProgressFillFor,
-  motionProgressIndeterminateFor,
-} from "@/components/core/utils/motionConfig";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-import {
+  hasPointerPhases,
+  useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
   type MotionScopeValue,
-  type MotionTransformVars,
 } from "@/components/core/utils/slotMotion";
+import { useBarFillMotion } from "@/components/core/utils/slotMotion/useBarFillMotion";
+import { progressScaleFromPercent } from "@/components/core/utils/slotMotion/recipes/progressFill";
 
-import type { ProgressBarMotion, UseProgressBarFillAnimationProps } from "./progressBarTypes";
+import { useOptionalProgressBarMotionScope } from "./progressBarContext";
+import type { ProgressBarMotion, ProgressBarPartMotion } from "./progressBarTypes";
 
-export function resolveProgressBarMotionDefaults(): ProgressBarMotion {
-  return {};
+export { progressScaleFromPercent };
+
+export function resolveProgressBarMotionDefaults({
+  indeterminate = false,
+}: {
+  indeterminate?: boolean;
+} = {}): ProgressBarMotion {
+  return {
+    fill: {
+      change: indeterminate ? "progressIndeterminate" : "progressFill",
+    },
+  };
 }
 
 export function useProgressBarTrackSlotMotion(
@@ -39,117 +46,59 @@ export function useProgressBarTrackSlotMotion(
     phase: "change",
     skipFirst: true,
     broadcast: true,
-    exclude: ["fill"],
   });
 }
 
-function clampUnit(value: number) {
-  if (Number.isNaN(value)) return 0;
-  return Math.min(1, Math.max(0, value));
-}
-
-export function useProgressBarFillAnimation({
-  indeterminate,
+export function useProgressBarFillMotion({
+  scope,
   percent,
   isHorizontal,
-}: UseProgressBarFillAnimationProps) {
-  const config = useMotionConfig();
-  const fillRef = useRef<HTMLSpanElement>(null);
-  const firstLayoutRef = useRef(true);
-  const reduceMotion = usePrefersReducedMotion();
+  indeterminate,
+  fillRef,
+}: {
+  scope: MotionScopeValue | null;
+  percent: number;
+  isHorizontal: boolean;
+  indeterminate: boolean;
+  fillRef: RefObject<HTMLSpanElement | null>;
+}) {
+  return useBarFillMotion({ scope, percent, isHorizontal, indeterminate, fillRef });
+}
 
-  useLayoutEffect(() => {
-    if (indeterminate) return;
-    const fill = fillRef.current;
-    if (!fill) return;
+export type ProgressBarChromeSlot = "label" | "hint" | "error";
 
-    const targetScale = clampUnit(percent / 100);
-    const origin = isHorizontal ? "left center" : "bottom center";
-    const scaleVars: MotionTransformVars = isHorizontal
-      ? { scaleX: targetScale, scaleY: 1, x: 0, y: 0 }
-      : { scaleX: 1, scaleY: targetScale, x: 0, y: 0 };
-
-    // Full track box; progress is compositor scale only.
-    fill.style.width = "100%";
-    fill.style.height = "100%";
-
-    const applyInstant = () => {
-      killMotionGeometry(fill);
-      gsap.set(fill, { ...scaleVars, transformOrigin: origin });
-    };
-
-    if (
-      reduceMotion ||
-      !isMotionFeatureEnabledFor(config, "enableProgressFill") ||
-      firstLayoutRef.current
-    ) {
-      firstLayoutRef.current = false;
-      applyInstant();
-      return;
-    }
-
-    firstLayoutRef.current = false;
-    killMotionGeometry(fill);
-    setWillChangeTransform(fill, true);
-    void gsap.to(fill, {
-      ...scaleVars,
-      transformOrigin: origin,
-      ...motionProgressFillFor(config),
-      overwrite: "auto",
-      onComplete: clearWillChangeOnComplete(fill),
-    });
-  }, [config, indeterminate, isHorizontal, percent, reduceMotion]);
-
-  useLayoutEffect(() => {
-    if (!indeterminate) return;
-    const fill = fillRef.current;
-    const track = fill?.parentElement;
-    if (!fill || !track) return;
-
-    killMotionGeometry(fill);
-
-    if (reduceMotion || !isMotionFeatureEnabledFor(config, "enableProgressFill")) {
-      gsap.set(fill, { clearProps: "transform" });
-      return;
-    }
-
-    const runIndeterminateMotion = () => {
-      const trackSize = isHorizontal ? track.offsetWidth : track.offsetHeight;
-      const fillSize = isHorizontal ? fill.offsetWidth : fill.offsetHeight;
-      if (trackSize <= 0 || fillSize <= 0) return;
-
-      killMotionGeometry(fill);
-      setWillChangeTransform(fill, true);
-
-      void gsap.fromTo(
-        fill,
-        isHorizontal ? { x: -fillSize } : { y: fillSize },
-        {
-          ...(isHorizontal ? { x: trackSize } : { y: -trackSize }),
-          ...motionProgressIndeterminateFor(config),
-          repeat: -1,
-          overwrite: "auto",
-        },
-      );
-    };
-
-    runIndeterminateMotion();
-
-    if (typeof ResizeObserver === "undefined") return;
-
-    const ro = new ResizeObserver(() => runIndeterminateMotion());
-    ro.observe(track);
-    ro.observe(fill);
-
-    return () => ro.disconnect();
-  }, [config, indeterminate, isHorizontal, reduceMotion]);
-
-  useEffect(() => {
-    const fill = fillRef.current;
-    return () => {
-      if (fill) killMotion(fill);
-    };
-  }, []);
-
-  return { fillRef, reduceMotion };
+export function useProgressBarChromeSlot(
+  slot: ProgressBarChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: ProgressBarPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalProgressBarMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }

@@ -26,6 +26,11 @@ export function useSwitchRootState(
   const hintId = switchHintId(switchId);
   const errorId = switchErrorId(switchId);
   const [, setSqueezeToken] = useState(0);
+  const [mergedChecked, setMergedChecked] = useState<boolean | null>(() => {
+    if (typeof controlRest.checked === "boolean") return controlRest.checked;
+    if (controlRest.defaultChecked != null) return Boolean(controlRest.defaultChecked);
+    return null;
+  });
 
   const { isCompound, hasCompoundHint, hasCompoundError, hasCompoundLabel } = useMemo(() => {
     const compound = hasCompoundChildren(children);
@@ -71,6 +76,8 @@ export function useSwitchRootState(
       useInlineCompoundMotion,
       textMotionRef: textColRef,
       setSqueezeToken,
+      mergedChecked,
+      setMergedChecked,
     }),
     [
       disabled,
@@ -83,6 +90,7 @@ export function useSwitchRootState(
       errorId,
       isCompound,
       labelPosition,
+      mergedChecked,
       size,
       switchId,
       useInlineCompoundMotion,

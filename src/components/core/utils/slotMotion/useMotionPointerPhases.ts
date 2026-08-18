@@ -26,6 +26,10 @@ export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement
     targetRef,
     skipHover,
     pointerInsideRef,
+    // Slot enter (`opacity` / `y` fromTo) lives on this same node. Hover-handler
+    // unmount `killMotion` (React Strict Mode setup→cleanup→setup) would freeze
+    // the from-pose — parts stay in the tree and clickable, but invisible.
+    killMotionOnUnmount: false,
     onEnter: (el, e) => onHoverIn?.(el, e),
     onLeave: (el, e) => onHoverOut?.(el, e),
   });

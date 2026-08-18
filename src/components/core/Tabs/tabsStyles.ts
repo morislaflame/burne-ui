@@ -20,12 +20,12 @@ const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
 
 /**
  * Inner radius = list radius − frame thickness, so the indicator seats flush in corners.
- * Gloss uses `--_bw` from `.gloss-panel` (inherits to the indicator).
+ * Gloss uses `--gloss-bw` from `.gloss-panel` (inherits to the indicator).
  */
 const SURFACE_INNER_RADIUS_CLASS: Record<"outline" | "secondary" | "gloss", string> = {
   outline: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--border-width-outline)))]",
   secondary: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--border-width)))]",
-  gloss: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--_bw,1px)))]",
+  gloss: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--gloss-bw,1px)))]",
 };
 
 function tabsSurfaceRadiusClass(variant: TabsVariant): string {

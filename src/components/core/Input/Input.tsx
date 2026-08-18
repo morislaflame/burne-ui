@@ -15,6 +15,7 @@ export type {
   InputClassNames,
   InputErrorProps,
   InputHintProps,
+  InputLabelProps,
   InputControlProps,
   InputProps,
   InputSimpleProps,

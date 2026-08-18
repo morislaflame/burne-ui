@@ -10,9 +10,10 @@ import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { animateInteractivePressSqueeze, isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { useOptionalPopoverMotionScope } from "@/components/core/Popover/popoverContext";
 
 import { useDropdownClassNames } from "./dropdownContext";
 import { dropdownItemRowClass, resolveDropdownItemIndicatorClassNames } from "./dropdownStyles";
@@ -29,27 +30,56 @@ import { cn } from "@/utils/cn";
 
 export function DropdownItemLabel({
   className,
+  motion,
+  onPointerOver,
+  onPointerOut,
   ...props
 }: DropdownItemLabelProps) {
   const slotClassNames = useDropdownClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalPopoverMotionScope(),
+    slot: "itemLabel",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <OptionListItemLabel
+      ref={setRef}
       className={cn(slotClassNames.itemLabel, className)}
       {...props}
+      {...pointerHandlers}
     />
   );
 }
 
 DropdownItemLabel.displayName = "DropdownItemLabel";
 
-export function DropdownItemHint({ className, ...props }: DropdownItemHintProps) {
+export function DropdownItemHint({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...props
+}: DropdownItemHintProps) {
   const slotClassNames = useDropdownClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLElement>({
+    scope: useOptionalPopoverMotionScope(),
+    slot: "itemHint",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <OptionListItemHint
+      ref={setRef}
       className={cn(slotClassNames.itemHint, className)}
       {...props}
+      {...pointerHandlers}
     />
   );
 }
@@ -58,14 +88,27 @@ DropdownItemHint.displayName = "DropdownItemHint";
 
 export function DropdownItemIcon({
   className,
+  motion,
+  onPointerOver,
+  onPointerOut,
   ...props
 }: DropdownItemIconProps) {
   const slotClassNames = useDropdownClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalPopoverMotionScope(),
+    slot: "itemIcon",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <OptionListItemIcon
+      ref={setRef}
       className={cn(slotClassNames.itemIcon, className)}
       {...props}
+      {...pointerHandlers}
     />
   );
 }
@@ -126,6 +169,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       selection: selectionProp,
       status = "default",
       indicator = false,
+      motion,
       onClick,
       onPointerDown,
       onKeyDown,
@@ -135,6 +179,12 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
   ) {
     const config = useMotionConfig();
     const slotClassNames = useDropdownClassNames();
+    const { setRef: setItemMotionRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalPopoverMotionScope(),
+      slot: "item",
+      motion,
+      forwardedRef: ref,
+    });
     const {
       parts,
       selectItem,
@@ -160,9 +210,9 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
 
     const setRefs = useCallback(
       (node: HTMLElement | null) => {
-        mergeForwardedRef(ref, node);
+        setItemMotionRef(node);
       },
-      [ref],
+      [setItemMotionRef],
     );
 
     const rowClass = dropdownItemRowClass({

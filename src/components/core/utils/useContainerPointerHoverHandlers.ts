@@ -21,7 +21,11 @@ export type UseContainerPointerHoverHandlersOptions<
    * Pass `shouldSkipInteractiveHoverLift` from hover-lift utils.
    */
   skipHover?: () => boolean;
-  /** Kill GSAP on the target when the hook unmounts (default true). */
+  /**
+   * Kill GSAP on the target when the hook unmounts (default true).
+   * Slot motion must pass `false`: this node also plays `enter`, and Strict Mode
+   * re-runs effect cleanup immediately — `killMotion` leaves `opacity: 0`.
+   */
   killMotionOnUnmount?: boolean;
   onEnter: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
   onLeave: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;

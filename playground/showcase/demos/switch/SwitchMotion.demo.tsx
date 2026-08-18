@@ -3,6 +3,8 @@ import { SwitchMotionDefaultDemo } from "./SwitchMotionDefault.demo";
 import { SwitchMotionFillFadeDemo } from "./SwitchMotionFillFade.demo";
 import { SwitchMotionIconsDemo } from "./SwitchMotionIcons.demo";
 import { SwitchMotionInstantThumbDemo } from "./SwitchMotionInstantThumb.demo";
+import { SwitchMotionLabelColorDemo } from "./SwitchMotionLabelColor.demo";
+import { SwitchMotionTrackDemo } from "./SwitchMotionTrack.demo";
 
 export function SwitchMotionDemo() {
   return (
@@ -12,6 +14,8 @@ export function SwitchMotionDemo() {
       <SwitchMotionBounceThumbDemo />
       <SwitchMotionFillFadeDemo />
       <SwitchMotionIconsDemo />
+      <SwitchMotionLabelColorDemo />
+      <SwitchMotionTrackDemo />
     </div>
   );
 }

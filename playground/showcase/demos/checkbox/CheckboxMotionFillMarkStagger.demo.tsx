@@ -45,9 +45,7 @@ export function CheckboxMotionFillMarkStaggerDemo() {
             return tl;
           },
           uncheck: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
+            const tl = ctx.timeline();
             if (ctx.targets.mark) {
               tl.to(ctx.targets.mark, { y: 4, autoAlpha: 0, duration: 0.14 }, 0);
             }

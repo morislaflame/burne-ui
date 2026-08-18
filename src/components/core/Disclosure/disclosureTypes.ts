@@ -51,14 +51,16 @@ export type DisclosureTitleLiftMotion = {
 };
 
 /**
- * Per-slot motion. DOM slots: `titleLift` (`classNames.titleLift`), `chevron`,
- * `contentShell`. `panelInner` is an internal height-recipe target, not a public slot.
+ * Per-slot motion. DOM slots: `titleLift` (`classNames.titleLift`), `title`, `chevron`,
+ * `contentShell`, `icon`. `panelInner` is an internal height-recipe target, not a public slot.
  * Handle-drag is kit-internal (not a slot).
  */
 export type DisclosureMotion = {
   titleLift?: DisclosureTitleLiftMotion;
+  title?: DisclosureLifecycleMotion;
   chevron?: DisclosureLifecycleMotion;
   contentShell?: DisclosureLifecycleMotion;
+  icon?: DisclosureLifecycleMotion;
 };
 
 export type DisclosureGroupContextValue = {
@@ -105,8 +107,8 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   dragHandle?: boolean;
   classNames?: Prettify<DisclosureClassNames>;
   /**
-   * Per-slot motion: `titleLift` (hover/press), `chevron` (enter/leave rotate),
-   * `contentShell` (height). Group `motion` is merged into each item.
+   * Per-slot motion: `titleLift` (hover/press), `title` (enter/leave broadcast), `chevron` (enter/leave rotate),
+   * `contentShell` (height), `icon` (broadcast on open). Group `motion` is merged into each item.
    */
   motion?: Prettify<DisclosureMotion>;
 };
@@ -135,7 +137,9 @@ export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<DisclosureTitleLiftMotion>;
 };
 
-export type DisclosureIconProps = HTMLAttributes<HTMLSpanElement>;
+export type DisclosureIconProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<DisclosureLifecycleMotion>;
+};
 export type DisclosureChevronProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<DisclosureLifecycleMotion>;
 };

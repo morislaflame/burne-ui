@@ -1,10 +1,6 @@
 import { useState } from "react";
 
-import gsap from "gsap";
-
 import { Pagination } from "@/components/core/Pagination";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function PaginationMotionControlWaveDemo() {
   const [page, setPage] = useState(4);
@@ -16,24 +12,20 @@ export function PaginationMotionControlWaveDemo() {
       onPageChange={setPage}
       motion={{
         control: {
-          pressIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
-            tl.to(ctx.el, { y: 2, scale: 0.94, duration: 0.1 }, 0);
-            const kids = ctx.el.querySelectorAll("svg, span");
-            if (kids.length) {
-              tl.to(kids, { y: -3, stagger: 0.04, duration: 0.14 }, 0.04);
-            }
-            return tl;
-          },
-          pressOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
-            tl.to(ctx.el, { y: 0, scale: 1, duration: 0.16 }, 0);
-            const kids = ctx.el.querySelectorAll("svg, span");
-            if (kids.length) {
-              tl.to(kids, { y: 0, duration: 0.14 }, 0);
-            }
-            return tl;
-          },
+          pressIn: (ctx) => ctx.to({ y: 2, scale: 0.94, duration: 0.1 }),
+          pressOut: (ctx) => ctx.to({ y: 0, scale: 1, duration: 0.16 }),
+        },
+        previousIcon: {
+          pressIn: { y: -3, duration: 0.14 },
+          pressOut: { y: 0, duration: 0.14 },
+        },
+        nextIcon: {
+          pressIn: { y: -3, duration: 0.14 },
+          pressOut: { y: 0, duration: 0.14 },
+        },
+        summary: {
+          change: (ctx) =>
+            ctx.to({ y: -4, duration: 0.14, yoyo: true, repeat: 1 }),
         },
       }}
     >

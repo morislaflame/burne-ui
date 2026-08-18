@@ -22,6 +22,8 @@ import { SelectMotionTriggerWaveDemo } from "../demos/select/SelectMotionTrigger
 import selectMotionTriggerWaveSource from "../demos/select/SelectMotionTriggerWave.demo.tsx?raw";
 import { SelectMotionValueTintDemo } from "../demos/select/SelectMotionValueTint.demo";
 import selectMotionValueTintSource from "../demos/select/SelectMotionValueTint.demo.tsx?raw";
+import { SelectMotionHintEnterDemo } from "../demos/select/SelectMotionHintEnter.demo";
+import selectMotionHintEnterSource from "../demos/select/SelectMotionHintEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -92,6 +94,7 @@ export function SelectShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionInstantHoverDemo} source={selectMotionInstantHoverSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionTriggerWaveDemo} source={selectMotionTriggerWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionValueTintDemo} source={selectMotionValueTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionHintEnterDemo} source={selectMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

@@ -60,7 +60,7 @@ export function useProgressBarClassNames(): ProgressBarClassNames {
   return useContext(ProgressBarClassNamesContext);
 }
 
-/** Scope only. Defaults and host play live in `progressBarAnimations.ts`. */
+/** Scope only. Defaults + params + fill play live on Track (nested provider). */
 export const {
   MotionScopeProvider: ProgressBarMotionProvider,
   useMotionScope: useProgressBarMotionScope,

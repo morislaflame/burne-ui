@@ -74,6 +74,7 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 |------|------|------------------|
 | `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` |
 | `control` / `resizeHandle` | hover/press | нет |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
 
 Press на shell не стартует, если target внутри `[data-textarea-resize-handle]`. `false` на `shell.hoverIn/Out` — rest-тень остаётся.
 
@@ -88,7 +89,7 @@ Press на shell не стартует, если target внутри `[data-text
 />
 ```
 
-Compound: `motion` на `TextArea.Control` — part motion слота `shell`.
+Compound: `motion` на `TextArea.Control` — part motion слота `shell`. На `TextArea.Label` / `Hint` / `Error` — chrome Root scope.
 
 ### Кастомизация
 

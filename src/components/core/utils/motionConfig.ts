@@ -217,16 +217,16 @@ export interface MotionConfig {
   /** Async button success/error expand ring. @default true */
   enableFeedbackExpand: boolean;
 
-  /** Duration (ms) for ProgressBar fill when `value` changes. @default 600 */
+  /** Duration (ms) for Meter / ProgressBar fill when `value` changes. @default 600 */
   progressFillDuration: number;
 
   /**
-   * GSAP easing for ProgressBar fill animation.
+   * GSAP easing for Meter / ProgressBar fill animation.
    * @default "power2.out"
    */
   progressFillEase: string;
 
-  /** Animate ProgressBar fill on value change. @default true */
+  /** Animate Meter / ProgressBar fill on value change. @default true */
   enableProgressFill: boolean;
 
   /**
@@ -584,7 +584,7 @@ export function motionProgressFillFor(config: Readonly<MotionConfig>) {
   } as const;
 }
 
-/** Smooth ProgressBar fill when `value` changes. */
+/** Smooth Meter / ProgressBar fill when `value` changes. */
 export function motionProgressFill() {
   return motionProgressFillFor(_config);
 }

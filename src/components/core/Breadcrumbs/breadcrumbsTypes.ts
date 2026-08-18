@@ -40,9 +40,12 @@ export type BreadcrumbsPartMotion = {
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  enter?: MotionValue;
 };
 
 export type BreadcrumbsMotion = {
+  list?: BreadcrumbsPartMotion;
+  separator?: BreadcrumbsPartMotion;
   itemLink?: BreadcrumbsPartMotion;
   itemLinkText?: BreadcrumbsPartMotion;
   ellipsisLiftWrapper?: BreadcrumbsPartMotion;
@@ -71,12 +74,14 @@ export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   /** Simple API: chain items. Ignored in compound mode (`Breadcrumbs.List`). */
   items?: BreadcrumbItem[];
   children?: ReactNode;
+  /** Per-slot motion (`list`, `separator`, `itemLink`, `itemLinkText`, `ellipsisLiftWrapper`). `Breadcrumbs.Item` is data-only (not a slot). */
   motion?: Prettify<BreadcrumbsMotion>;
 };
 
 export type BreadcrumbsListProps = OlHTMLAttributes<HTMLOListElement> & {
   classNames?: Prettify<BreadcrumbsClassNames>;
   children?: ReactNode;
+  motion?: Prettify<BreadcrumbsPartMotion>;
 };
 
 export type BreadcrumbsItemProps = {
@@ -110,6 +115,7 @@ export type BreadcrumbsSimpleContentProps = Omit<
 
 export type BreadcrumbsPiecesListProps = OlHTMLAttributes<HTMLOListElement> & {
   pieces: DisplayPiece[];
+  motion?: Prettify<BreadcrumbsPartMotion>;
 };
 
 export type BreadcrumbListItemProps = {
@@ -119,6 +125,7 @@ export type BreadcrumbListItemProps = {
 
 export type BreadcrumbsSeparatorProps = HTMLAttributes<HTMLSpanElement> & {
   iconClassName?: string;
+  motion?: Prettify<BreadcrumbsPartMotion>;
 };
 
 export type BreadcrumbSegmentProps = {

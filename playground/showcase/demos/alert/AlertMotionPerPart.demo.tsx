@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Alert } from "@/components/core/Alert";
 import { Button } from "@/components/core/Button";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
@@ -29,21 +27,17 @@ export function AlertMotionPerPartDemo() {
         <Alert.Indicator
           motion={{
             hoverIn: (ctx) =>
-              gsap.to(ctx.el, {
+              ctx.to({
                 rotate: 15,
                 scale: 1.12,
                 duration: 0.28,
                 ease: "back.out(2)",
-                overwrite: "auto",
-                force3D: false,
               }),
             hoverOut: (ctx) =>
-              gsap.to(ctx.el, {
+              ctx.to({
                 rotate: 0,
                 scale: 1,
                 duration: 0.2,
-                overwrite: "auto",
-                force3D: false,
               }),
           }}
         />

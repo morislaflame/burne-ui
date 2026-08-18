@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function FieldMotionRootWaveDemo() {
   return (
@@ -11,10 +7,10 @@ export function FieldMotionRootWaveDemo() {
       motion={{
         root: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3 }),
         },
         hint: {
-          enter: (ctx) => gsap.fromTo(ctx.el, { x: -6 }, { x: 0, duration: 0.22, ...TL }),
+          enter: (ctx) => ctx.fromTo({ x: -6 }, { x: 0, duration: 0.22 }),
         },
       }}
     >

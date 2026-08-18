@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Table } from "@/components/core/Table";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TableMotionRowCheckDemo() {
   return (
@@ -11,7 +7,7 @@ export function TableMotionRowCheckDemo() {
       motion={{
         row: {
           check: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: -2, duration: 0.12 }, 0);
             tl.to(ctx.el, { y: 0, duration: 0.14 }, 0.12);
             tweenCssColor(ctx.el, "var(--color-primary)");

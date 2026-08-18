@@ -47,7 +47,7 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 | `asChild` | `boolean` | `false` | Стили/поведение на единственный child (`<a>`, Next.js `<Link>`) |
 | `className` | `string` | — | Доп. классы на корневой `<button>` (или child при `asChild`) |
 | `classNames` | `ButtonClassNames` | — | Слоты подчастей |
-| `motion` | `ButtonMotion` | — | Карта слотов (`root`: `hoverIn` / `hoverOut` / `pressIn` / `pressOut`) |
+| `motion` | `ButtonMotion` | — | Карта слотов (`root`, `label`, `icon`, `text`, `loader`, `success`, `error`) |
 | `type` | `button` \| `submit` \| `reset` | `button` | Нативный type (не передаётся при `asChild`) |
 | … | `ButtonHTMLAttributes` | — | Остальные атрибуты кнопки |
 
@@ -136,16 +136,18 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 ### Slot motion
 
-Слот: `root` (кнопка; в `ButtonGroup` сегменте — внутренний content span).
+Слот: `root` (кнопка; в `ButtonGroup` сегменте — внутренний content span). Вложенные `label` / `icon` / `text` регистрируются через `useMotionPart`; хост рассылает hover/press (`exclude` `root` + async-слои). `loader` / `success` / `error` — публичные слоты поверх kit-crossfade, не подменяют autoAlpha.
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
 | `root` | `pressIn` | `pressSqueeze` или `pressSqueezeGloss` (полный in+release; `pressOut` по умолчанию `false`) |
+| `label` / `icon` / `text` | hover / press | нет; хост **рассылает** |
+| `loader` / `success` / `error` | hover / press | нет; kit владеет autoAlpha |
 
 `pressOut: false` — kit squeeze сам отпускает. Клавиатура `Enter`/`Space` играет `pressIn`.
 
-**Где в коде:** типы — `buttonTypes.ts`; scope — `buttonContext.tsx`; defaults + host — `buttonAnimations.ts` (`resolveButtonMotionDefaults`, `useButtonAnimations`); Provider — `Button.tsx`.
+**Где в коде:** типы — `buttonTypes.ts`; scope — `buttonContext.tsx`; defaults + host — `buttonAnimations.ts` (`resolveButtonMotionDefaults`, `useButtonAnimations`); слоты — `buttonParts.tsx`; Provider — `Button.tsx`.
 
 ```tsx
 <Button motion={{ root: { pressIn: false } }}>Без squeeze</Button>
@@ -162,7 +164,7 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 </Button>
 ```
 
-`classNames` / `className` на частях можно сочетать с factory: слот только `root`, внутренние узлы — через `querySelector` / `data-part`. Цвет — `tweenCssColor`, не сырой `gsap.to({ color })`.
+Цвет — `tweenCssColor`, не сырой `gsap.to({ color })`. Иконка и текст — отдельные слоты (хост рассылает hover с кнопки):
 
 ```tsx
 <Button
@@ -173,28 +175,37 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
   motion={{
     root: {
       hoverIn: (ctx) => {
-        const tl = gsap.timeline();
-        const svg = ctx.el.querySelector("svg");
-        if (svg) tl.to(svg, { rotate: 16, scale: 1.14, duration: 0.32, ease: "back.out(2)" }, 0);
+        const tl = ctx.timeline();
+        tl.to(ctx.el, { y: -2, duration: 0.2 }, 0);
         tl.add(tweenCssColor(ctx.el, "var(--color-success)"), 0);
         return tl;
       },
       hoverOut: (ctx) => {
-        const svg = ctx.el.querySelector("svg");
-        const tl = gsap.timeline();
-        if (svg) tl.to(svg, { rotate: 0, scale: 1, duration: 0.2 }, 0);
+        const tl = ctx.timeline();
+        tl.to(ctx.el, { y: 0, duration: 0.2 }, 0);
         tl.add(tweenCssColor(ctx.el, "var(--color-foreground)", { clearOnComplete: true }), 0);
         return tl;
       },
+    },
+    icon: {
+      hoverIn: (ctx) =>
+        ctx.to({ rotation: 16, scale: 1.14, duration: 0.32, ease: "back.out(2)" }),
+      hoverOut: (ctx) => ctx.to({ rotation: 0, scale: 1, duration: 0.2 }),
     },
   }}
 >
   Confirm
 </Button>
 
-<Button classNames={{ label: "gap-small" }} motion={{ root: { hoverIn: (ctx) => gsap.to(ctx.el.querySelector("[data-part=icon]"), { rotate: -12 }) } }}>
+<Button
+  classNames={{ label: "gap-small" }}
+  motion={{
+    icon: { hoverIn: { rotate: -12, duration: 0.28 } },
+    text: { hoverIn: { x: 4, duration: 0.22 } },
+  }}
+>
   <Button.Label>
-    <Button.Icon data-part="icon" className="text-primary"><IoRocketOutline /></Button.Icon>
+    <Button.Icon className="text-primary"><IoRocketOutline /></Button.Icon>
     <Button.Text className="font-w-strong">Launch</Button.Text>
   </Button.Label>
 </Button>

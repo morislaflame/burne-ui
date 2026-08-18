@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Avatar } from "@/components/core/Avatar";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function AvatarMotionGroupRotateDemo() {
   return (
@@ -11,22 +7,20 @@ export function AvatarMotionGroupRotateDemo() {
       motion={{
         groupItem: {
           hoverIn: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               y: -14,
               rotation: -8,
               scale: 1.12,
               duration: 0.28,
               ease: "back.out(1.6)",
-              ...TL,
             }),
           hoverOut: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               y: 0,
               rotation: 0,
               scale: 1,
               duration: 0.2,
               ease: "power2.out",
-              ...TL,
             }),
         },
       }}

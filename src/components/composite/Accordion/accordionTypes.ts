@@ -29,9 +29,12 @@ export type AccordionClassNames = {
   panelShell?: string;
   panel?: string;
   glossContent?: string;
+  body?: string;
 };
 
-export type AccordionMotion = ExpandableMotion;
+export type AccordionMotion = ExpandableMotion & {
+  body?: ExpandableLifecycleMotion;
+};
 export type AccordionLifecycleMotion = ExpandableLifecycleMotion;
 export type AccordionTriggerLiftMotion = ExpandableTriggerLiftMotion;
 
@@ -46,8 +49,8 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "
   size?: ExpandableSize;
   classNames?: Prettify<AccordionClassNames>;
   /**
-   * Per-slot motion forwarded to each Item's Expandable.
-   * Item `motion` overrides the same slots.
+   * Per-slot motion forwarded to each Item's Expandable, plus Accordion-only `body`.
+   * Item `motion` overrides the same slots. `Accordion.Heading` is not a slot.
    */
   motion?: Prettify<AccordionMotion>;
   children?: ReactNode;
@@ -87,7 +90,9 @@ export type AccordionPanelProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AccordionLifecycleMotion>;
 };
 
-export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
+export type AccordionBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AccordionLifecycleMotion>;
+};
 
 export type AccordionContextValue = {
   value: string | null;

@@ -1,7 +1,7 @@
 /**
  * Slot motion for Disclosure — look here first.
  *
- * DOM slots: `titleLift`, `chevron`, `contentShell`
+ * DOM slots: `titleLift`, `title`, `chevron`, `contentShell`, `icon`
  * (`panelInner` is an internal target for the height recipe, not a public slot)
  *
  * Hosts:
@@ -45,12 +45,20 @@ export function resolveDisclosureMotionDefaults(variant: DisclosureVariant): Dis
   };
 }
 
+const DISCLOSURE_TRIGGER_BROADCAST_EXCLUDE = [
+  "titleLift",
+  "chevron",
+  "contentShell",
+  "panelInner",
+] as const;
+
 function useDisclosureOpenPhasePlay(
   scope: MotionScopeValue,
   slot: string,
   open: boolean,
   skipContentAnimRef: RefObject<boolean>,
   onSkip?: (open: boolean) => void,
+  broadcastExclude?: readonly string[],
 ) {
   const prevOpenRef = useRef<boolean | undefined>(undefined);
   useLayoutEffect(() => {
@@ -71,10 +79,13 @@ function useDisclosureOpenPhasePlay(
     const value = scope.resolve(slot, phase);
     if (value === false || value === undefined) {
       onSkip?.(open);
-      return;
+    } else {
+      scope.play(slot, phase);
     }
-    scope.play(slot, phase);
-  }, [onSkip, open, scope, skipContentAnimRef, slot]);
+    if (broadcastExclude) {
+      void scope.playBroadcast(phase, { exclude: [...broadcastExclude] });
+    }
+  }, [broadcastExclude, onSkip, open, scope, skipContentAnimRef, slot]);
 }
 
 export function useDisclosureTriggerMotion({
@@ -134,7 +145,14 @@ export function useDisclosureTriggerMotion({
     [scope],
   );
 
-  useDisclosureOpenPhasePlay(scope, "chevron", open, skipContentAnimRef, skipChevron);
+  useDisclosureOpenPhasePlay(
+    scope,
+    "chevron",
+    open,
+    skipContentAnimRef,
+    skipChevron,
+    DISCLOSURE_TRIGGER_BROADCAST_EXCLUDE,
+  );
 
   useEffect(() => {
     const el = titleLiftRef.current;

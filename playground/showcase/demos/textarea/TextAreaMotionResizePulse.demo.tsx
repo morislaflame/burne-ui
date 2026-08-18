@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { TextArea } from "@/components/core/TextArea";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TextAreaMotionResizePulseDemo() {
   return (
@@ -15,14 +11,13 @@ export function TextAreaMotionResizePulseDemo() {
       motion={{
         resizeHandle: {
           hoverIn: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               scale: 1.35,
               rotate: 8,
               duration: 0.16,
               yoyo: true,
               repeat: 1,
               ease: "power2.inOut",
-              ...TL,
             }),
         },
       }}

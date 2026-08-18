@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Text } from "@/components/core/Text";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TextMotionEnterTintDemo() {
   return (
@@ -12,7 +8,7 @@ export function TextMotionEnterTintDemo() {
       motion={{
         root: {
           enter: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.fromTo(ctx.el, { y: 10 }, { y: 0, duration: 0.28 }, 0);
             tweenCssColor(ctx.el, "var(--color-primary)");
             return tl;

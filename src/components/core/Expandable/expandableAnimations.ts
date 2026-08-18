@@ -1,13 +1,16 @@
 /**
  * Slot motion for Expandable — look here first.
  *
- * DOM slots: `triggerLift`, `chevron`, `panelShell`
- * (`panelInner` is an internal target for the height recipe, not a public slot)
+ * DOM slots: `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`
+ * (`panelInner` is an internal target for the height recipe, not a public slot;
+ * `message` / `content` are `display: contents`)
  *
  * Hosts:
  * - Trigger (`useExpandableTriggerMotion`) plays `pressIn` on `triggerLift` and
- *   `enter`/`leave` on `chevron` when `open` changes.
- * - Panel (`useExpandablePanelMotion`) plays `enter`/`leave` on `panelShell`.
+ *   `enter`/`leave` on `chevron` when `open` changes (`skipFirst` — mount is instant
+ *   via refs, not a second enter).
+ * - Panel (`useExpandablePanelMotion`) plays `enter`/`leave` on `panelShell`
+ *   the same way. Accordion embeds this host.
  *
  * Defaults: `EXPANDABLE_MOTION_DEFAULTS`.
  */
@@ -32,11 +35,19 @@ export const EXPANDABLE_MOTION_DEFAULTS: ExpandableMotion = {
   panelShell: { enter: "collapsibleHeight", leave: "collapsibleHeight" },
 };
 
+const EXPANDABLE_TRIGGER_BROADCAST_EXCLUDE = [
+  "triggerLift",
+  "chevron",
+  "panelShell",
+  "panelInner",
+] as const;
+
 function useOpenPhasePlay(
   scope: MotionScopeValue,
   slot: string,
   open: boolean,
   onSkip?: (open: boolean) => void,
+  broadcastExclude?: readonly string[],
 ) {
   const prevOpenRef = useRef<boolean | undefined>(undefined);
   useLayoutEffect(() => {
@@ -50,10 +61,13 @@ function useOpenPhasePlay(
     const value = scope.resolve(slot, phase);
     if (value === false || value === undefined) {
       onSkip?.(open);
-      return;
+    } else {
+      scope.play(slot, phase);
     }
-    scope.play(slot, phase);
-  }, [onSkip, open, scope, slot]);
+    if (broadcastExclude) {
+      void scope.playBroadcast(phase, { exclude: [...broadcastExclude] });
+    }
+  }, [broadcastExclude, onSkip, open, scope, slot]);
 }
 
 export function useExpandableTriggerMotion({
@@ -106,7 +120,7 @@ export function useExpandableTriggerMotion({
     if (el) applyChevronRotationInstant(el, nextOpen);
   }, [scope]);
 
-  useOpenPhasePlay(scope, "chevron", open, skipChevron);
+  useOpenPhasePlay(scope, "chevron", open, skipChevron, EXPANDABLE_TRIGGER_BROADCAST_EXCLUDE);
 
   useEffect(() => {
     const el = liftSpanRef.current;

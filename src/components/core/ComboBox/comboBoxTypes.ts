@@ -3,6 +3,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { LabelProps } from "@/components/core/Label";
 import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
@@ -52,6 +53,9 @@ export type ComboBoxMotion = {
   input?: ComboBoxPartMotion;
   trigger?: ComboBoxPartMotion;
   triggerIcon?: ComboBoxPartMotion;
+  label?: ComboBoxPartMotion;
+  hint?: ComboBoxPartMotion;
+  error?: ComboBoxPartMotion;
 };
 
 export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
@@ -77,7 +81,7 @@ export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   menuMaxHeight?: string;
   classNames?: Prettify<ComboBoxClassNames>;
   /**
-   * Per-slot motion (`inputGroup`, `input`, `trigger`, `triggerIcon`).
+   * Per-slot motion (`inputGroup`, `input`, `trigger`, `triggerIcon`, `label`, `hint`, `error`).
    * Menu enter lives on Popover — not duplicated here.
    */
   motion?: Prettify<ComboBoxMotion>;
@@ -174,13 +178,19 @@ export type ComboBoxPopoverProps = HTMLAttributes<HTMLDivElement> & {
   >;
 };
 
+export type ComboBoxLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<ComboBoxPartMotion>;
+};
+
 export type ComboBoxHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   status?: Exclude<InputStatus, "danger"> | "default";
+  motion?: Prettify<ComboBoxPartMotion>;
 };
 
 export type ComboBoxErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<ComboBoxPartMotion>;
 };
 
 export type UseComboBoxRootStateProps = ComboBoxProps;

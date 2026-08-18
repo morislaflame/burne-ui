@@ -2,6 +2,7 @@ import { TooltipMotionDefaultDemo } from "./TooltipMotionDefault.demo";
 import { TooltipMotionInstantLeaveDemo } from "./TooltipMotionInstantLeave.demo";
 import { TooltipMotionSideSlideDemo } from "./TooltipMotionSideSlide.demo";
 import { TooltipMotionSlideYDemo } from "./TooltipMotionSlideY.demo";
+import { TooltipMotionPanelDemo } from "./TooltipMotionPanel.demo";
 import { TooltipMotionStaggerDemo } from "./TooltipMotionStagger.demo";
 
 export function TooltipMotionDemo() {
@@ -12,6 +13,7 @@ export function TooltipMotionDemo() {
         <TooltipMotionInstantLeaveDemo />
         <TooltipMotionSlideYDemo />
       </div>
+      <TooltipMotionPanelDemo />
       <TooltipMotionStaggerDemo />
       <TooltipMotionSideSlideDemo />
     </div>

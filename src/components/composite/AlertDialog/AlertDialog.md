@@ -137,7 +137,10 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 | `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
 | `panel` | `enter` / `leave` | `modalPanelEnter` / `modalPanelLeave` |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
-| `close`, `header`, `footer`, `content`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+| `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+| `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
+
+`body` — `AlertDialog.Body` (скролл), не слот `content`.
 
 `leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется. Promise: `ctx.signal` / `isMotionRunActive(ctx)` до delayed DOM. Прерывание leave (повторный open) отменяет `MotionRun` без `complete`. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0`) — иначе после твина `dialog.close()` выглядит как рывок.
 
@@ -170,7 +173,7 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 
 **Где в коде:** типы — `alertDialogTypes.ts`; scope — `alertDialogContext.tsx`; defaults + host play — `alertDialogAnimations.ts` (`ALERT_DIALOG_MOTION_DEFAULTS`, `useAlertDialogModalMotion`); слоты и Panel-provider — `alertDialogParts.tsx`; карта `motion` на корне — `AlertDialog.tsx`.
 
-Trigger squeeze остаётся `runOpenAfterSqueeze` (не слот).
+Open squeeze — слот `trigger` на Root (дефолт `pressSqueeze`; другой рецепт через `motion.trigger.pressIn`).
 
 ### Чего нет
 
@@ -183,7 +186,7 @@ Trigger squeeze остаётся `runOpenAfterSqueeze` (не слот).
 |----------|---------------|---------------------------|----------------|
 | Overlay fade | `overlay` → `modalOverlay*` | `modalDuration`, `enableModalMotion` | `motion` на Root / Panel |
 | Panel scale | `panel` → `modalPanel*` | `modalDuration`, `enableModalMotion` | `motion` на Root / Panel |
-| Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | `asChild` |
+| Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale` | `motion.trigger.pressIn` |
 | Gloss ref | gloss utils | gloss tokens | `variant="gloss"` |
 
 ## Токены и CSS
@@ -289,7 +292,7 @@ Trigger squeeze остаётся `runOpenAfterSqueeze` (не слот).
 | `Button` / `CloseButton` | Footer actions |
 | `Text` | Title, Description, Body |
 | `modalSurfaceMotion` | GSAP open/close |
-| `runOpenAfterSqueeze` | Trigger |
+| слот `trigger` | Open squeeze (`pressIn`) |
 | `burneLightThemePortalProps` | Portal theme |
 
 ## Доступность

@@ -1,6 +1,7 @@
 import gsap from "gsap";
 
 import { Radio } from "@/components/core/Radio";
+import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 
 export function RadioMotionFillMarkStaggerDemo() {
   return (
@@ -9,9 +10,25 @@ export function RadioMotionFillMarkStaggerDemo() {
       value="a"
       defaultChecked
       label="Staggered fill → mark"
-      hint="indicatorMark check/uncheck is false; fill factory drives both."
+      hint="Label color is its own slot; fill factory drives mark."
       motion={{
         indicatorMark: { check: false, uncheck: false },
+        label: {
+          check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+          uncheck: (ctx) =>
+            tweenCssColor(ctx.el, "var(--color-foreground)", {
+              duration: 0.22,
+              clearOnComplete: true,
+            }),
+        },
+        hint: {
+          check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+          uncheck: (ctx) =>
+            tweenCssColor(ctx.el, "var(--color-muted-foreground)", {
+              duration: 0.22,
+              clearOnComplete: true,
+            }),
+        },
         indicatorFill: {
           check: (ctx) => {
             const tl = gsap.timeline({
@@ -47,9 +64,7 @@ export function RadioMotionFillMarkStaggerDemo() {
             return tl;
           },
           uncheck: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
+            const tl = ctx.timeline();
             if (ctx.targets.mark) {
               tl.to(ctx.targets.mark, { y: 4, autoAlpha: 0, duration: 0.14 }, 0);
             }

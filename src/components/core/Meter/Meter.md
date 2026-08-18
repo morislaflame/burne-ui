@@ -51,6 +51,7 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 | `showValue` | simple | Показать formatted value в header |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | Карта слотов (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`). Fill: `progressFill`. Chrome — Root scope; Track — nested fill host |
 
 ### `MeterClassNames`
 
@@ -69,7 +70,7 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 ## Поведение
 
 - Значение clamp в `[min, max]`
-- Fill width/height = percent от диапазона
+- Fill — 100% box + `scaleX` / `scaleY` (percent от диапазона)
 - **Read-only** — нет user interaction на track
 - `Meter.Value` читает `display` из field context (auto sync при value change)
 
@@ -79,14 +80,17 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `track`, `fill`, `header`, `value` | `enter` (opt-in); `change` on `track` when value updates | empty |
+| `track`, `header`, `value` | `enter` (opt-in); `change` on `track` when value updates | empty |
+| `fill` | `change`; `enter` opt-in | `progressFill` |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Track) |
 
-Хост = Track. Root — Field, не слот Meter. Геометрия fill (`width`/`height`) остаётся kit-internal (`useMeterFillAnimation`). Не играйте `change` на `fill` — это убьёт fill-tween. Кастомные factory могут твинить цвет / opacity / `y` на `track` / `value`.
+Хост fill = nested `Meter.Track` (как Switch.Track): Root передаёт карту `motion`, Track — defaults + `params.getProgressScale` / `isHorizontal`. Chrome (`label` / `hint` / `error`) регистрируется на Root scope. Root DOM — Field, не слот Meter.
 
-`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform, не `autoAlpha` (`visibility: hidden` прячет и fill). Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+`fill.change: false` — без tween; хост ставит целевой scale мгновенно. Opt-in `fill.enter: "progressFill"` или factory (`ctx.params.getProgressScale()`). Кастомные factory на `track.change` могут твинить цвет через `ctx.targets.fill` (scale идёт отдельным рецептом на `fill`).
 
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform / `scaleX`/`scaleY`, не `autoAlpha` (`visibility: hidden` прячет и fill). Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Без `fill.enter` первый кадр — мгновенный scale.
 
-`meterAnimations.ts` → `useMeterFillAnimation`.
+`meterAnimations.ts` → `progressFill`.
 
 **DOM:**
 
@@ -94,17 +98,34 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 Field
   Meter.Header (optional)
   <div role=meter track style=thickness>
-    <span fill ref=fillRef style=initial %>   ← GSAP width/height
+    <span fill ref=fillRef>   ← 100% box + GSAP scaleX/scaleY
   </div>
 ```
 
-### Fill resize (value change)
+### Fill (value change)
 
-При изменении `value`:
+При изменении `value` слот `fill` играет `change` → `progressFill`:
 
-1. `fillTargetStyle` — target `width` (horizontal) или `height` (vertical)
-2. **First layout / reduced motion:** instant inline style
-3. Иначе: `gsap.to(fill, { width|height: target, ...motionInteractive() })`
+1. fill на весь track (`width/height: 100%`); прогресс = `scaleX` (horizontal, origin left) / `scaleY` (vertical, origin bottom)
+2. **First layout / reduced / `enableProgressFill: false` / `change: false`:** instant `gsap.set`
+3. Иначе: рецепт `progressFill` (`progressFillDuration`, `progressFillEase`)
+
+```tsx
+<Meter
+  value={64}
+  motion={{
+    fill: {
+      enter: (ctx) => {
+        const scale = ctx.params.getProgressScale?.() ?? 0;
+        return ctx.fromTo(
+          { scaleX: 0, scaleY: 1 },
+          { scaleX: scale, scaleY: 1, duration: 0.7, ease: "power3.out" },
+        );
+      },
+    },
+  }}
+/>
+```
 
 Нет indeterminate mode. Нет thumb/drag.
 
@@ -114,8 +135,9 @@ Field
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 320,
-  interactiveEase: "power2.out",
+  progressFillDuration: 400,
+  progressFillEase: "power2.out",
+  enableProgressFill: true,
 });
 ```
 
@@ -123,7 +145,7 @@ configureMotion({
 
 | Анимация | GSAP | `configureMotion` |
 |----------|------|-------------------|
-| Fill resize | Да | `interactiveDuration`, `interactiveEase` |
+| Fill scale | Да | `progressFillDuration`, `progressFillEase`, `enableProgressFill` |
 | Track | CSS | — |
 
 ## Стилизация и кастомизация
@@ -212,7 +234,7 @@ Meter/
 ├── index.ts
 ├── meterTypes.ts
 ├── meterStyles.ts
-├── meterAnimations.ts       # useMeterFillAnimation
+├── meterAnimations.ts       # Track nested host, progressFill
 ├── meterParts.tsx
 ├── useMeterRootState.ts
 ├── useMeterTrackState.ts

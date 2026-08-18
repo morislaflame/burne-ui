@@ -1,4 +1,4 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useId, useMemo, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useId, useLayoutEffect, useMemo, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
@@ -62,6 +62,10 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       defaultValue: Boolean(defaultChecked),
     });
     const [squeezeToken, setSqueezeToken] = useState(0);
+
+    useLayoutEffect(() => {
+      fieldCtx?.setMergedChecked(mergedChecked);
+    }, [fieldCtx, mergedChecked]);
 
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {

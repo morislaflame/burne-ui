@@ -1,12 +1,16 @@
 /**
  * Slot motion for Kbd — look here first.
  *
- * DOM slots: `root` (`<kbd>`), `text` (`Kbd.Text`)
+ * DOM slots: `root` (`<kbd>`), `text` (`Kbd.Text`), `group` (`Kbd.Group` wrap).
+ * Separator between keys is layout-only (`classNames.separator`).
  *
  * Host: root (`useKbdAnimations`) plays pointer `hoverIn` / `hoverOut`.
+ * `Kbd.Group` registers `group` on an ancestor Kbd scope, or creates its own
+ * scope when used standalone with `motion`.
  * Defaults: `resolveKbdMotionDefaults` (second-level lift / gloss).
  */
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 import {
   createGlossInteractiveRefCallback,
@@ -14,11 +18,11 @@ import {
 } from "@/components/core/utils/glossInteractiveMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
+import { mergeMotionPointerHandlers, useMotionPointerPhases, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { useKbdMotionScope } from "./kbdContext";
-import type { KbdMotion, KbdVariant, UseKbdAnimationsProps } from "./kbdTypes";
+import { useKbdMotionScope, useOptionalKbdMotionScope } from "./kbdContext";
+import type { KbdMotion, KbdPartMotion, KbdVariant, UseKbdAnimationsProps } from "./kbdTypes";
 
 import "../utils/glossInteractive.css";
 
@@ -106,4 +110,32 @@ export function useKbdAnimations({
     motionClass,
     pointerHandlers,
   };
+}
+
+export function useKbdGroupSlotMotion(
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+  }: {
+    motion?: KbdPartMotion;
+    forwardedRef?: ForwardedRef<HTMLSpanElement>;
+    onPointerOver?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
+    onPointerOut?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
+  } = {},
+) {
+  const scope = useOptionalKbdMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.group);
+  const part = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "group",
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+  });
+  useOptionalEnterOnMount(scope, "group", part.targetRef);
+  return part;
 }

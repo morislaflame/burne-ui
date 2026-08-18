@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Button } from "@/components/core/Button";
 import { Popover } from "@/components/core/Popover";
 import { Text } from "@/components/core/Text";
@@ -10,21 +8,27 @@ export function PopoverMotionTitleStaggerDemo() {
       motion={{
         title: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 8, autoAlpha: 0 },
-              { y: 0, autoAlpha: 1, duration: 0.28, delay: 0.06, force3D: false },
+              { y: 0, autoAlpha: 1, duration: 0.28, delay: 0.06 },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { y: -6, autoAlpha: 0, duration: 0.16, force3D: false }),
+          leave: { y: -6, autoAlpha: 0, duration: 0.16 },
         },
         description: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 8, autoAlpha: 0 },
-              { y: 0, autoAlpha: 1, duration: 0.28, delay: 0.12, force3D: false },
+              { y: 0, autoAlpha: 1, duration: 0.28, delay: 0.12 },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { autoAlpha: 0, duration: 0.14 }),
+          leave: { autoAlpha: 0, duration: 0.14 },
+        },
+        arrow: {
+          enter: (ctx) =>
+            ctx.fromTo(
+              { scale: 0.6, autoAlpha: 0 },
+              { scale: 1, autoAlpha: 1, duration: 0.22, delay: 0.04 },
+            ),
+          leave: { scale: 0.8, autoAlpha: 0, duration: 0.12 },
         },
       }}
     >
@@ -33,7 +37,7 @@ export function PopoverMotionTitleStaggerDemo() {
           Stagger title
         </Button>
       </Popover.Trigger>
-      <Popover.Content>
+      <Popover.Content showArrow>
         <Popover.Header>
           <Popover.Title>Filters</Popover.Title>
           <Popover.Description>Title and description enter after the panel.</Popover.Description>

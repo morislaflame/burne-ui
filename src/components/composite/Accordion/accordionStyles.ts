@@ -46,8 +46,14 @@ export function accordionChevronClass({
   );
 }
 
-export function accordionBodyClass(className?: string): string {
-  return cn("text-muted", className);
+export function accordionBodyClass({
+  className,
+  slotClass,
+}: {
+  className?: string;
+  slotClass?: string;
+}): string {
+  return cn("text-muted", slotClass, className);
 }
 
 export const ACCORDION_CHEVRON_CLASS = "shrink-0";

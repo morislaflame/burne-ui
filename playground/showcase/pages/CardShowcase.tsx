@@ -12,6 +12,24 @@ import { CardMotionPressBounceDemo } from "../demos/card/CardMotionPressBounce.d
 import cardMotionPressBounceSource from "../demos/card/CardMotionPressBounce.demo.tsx?raw";
 import { CardMotionTitlePopDemo } from "../demos/card/CardMotionTitlePop.demo";
 import cardMotionTitlePopSource from "../demos/card/CardMotionTitlePop.demo.tsx?raw";
+import { CardMotionControllerHighlightDemo } from "../demos/card/CardMotionControllerHighlight.demo";
+import cardMotionControllerHighlightSource from "../demos/card/CardMotionControllerHighlight.demo.tsx?raw";
+import { CardMotionControllerSetDemo } from "../demos/card/CardMotionControllerSet.demo";
+import cardMotionControllerSetSource from "../demos/card/CardMotionControllerSet.demo.tsx?raw";
+import { CardMotionControllerInsideDemo } from "../demos/card/CardMotionControllerInside.demo";
+import cardMotionControllerInsideSource from "../demos/card/CardMotionControllerInside.demo.tsx?raw";
+import { CardMotionControllerStaggerDemo } from "../demos/card/CardMotionControllerStagger.demo";
+import cardMotionControllerStaggerSource from "../demos/card/CardMotionControllerStagger.demo.tsx?raw";
+import { CardMotionControllerExcludeDemo } from "../demos/card/CardMotionControllerExclude.demo";
+import cardMotionControllerExcludeSource from "../demos/card/CardMotionControllerExclude.demo.tsx?raw";
+import { CardMotionEventsCheckoutDemo } from "../demos/card/CardMotionEventsCheckout.demo";
+import cardMotionEventsCheckoutSource from "../demos/card/CardMotionEventsCheckout.demo.tsx?raw";
+import { CardMotionEventsFinishedDemo } from "../demos/card/CardMotionEventsFinished.demo";
+import cardMotionEventsFinishedSource from "../demos/card/CardMotionEventsFinished.demo.tsx?raw";
+import { CardMotionEventsCancelDemo } from "../demos/card/CardMotionEventsCancel.demo";
+import cardMotionEventsCancelSource from "../demos/card/CardMotionEventsCancel.demo.tsx?raw";
+import { CardMotionEventsPressableDemo } from "../demos/card/CardMotionEventsPressable.demo";
+import cardMotionEventsPressableSource from "../demos/card/CardMotionEventsPressable.demo.tsx?raw";
 import { CardMetricTilesDemo } from "../demos/card/CardMetricTiles.demo";
 import cardMetricTilesSource from "../demos/card/CardMetricTiles.demo.tsx?raw";
 import { CardPressableDemo } from "../demos/card/CardPressable.demo";
@@ -64,6 +82,27 @@ export function CardShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={CardMotionPressBounceDemo} source={cardMotionPressBounceSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CardMotionTitlePopDemo} source={cardMotionTitlePopSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CardMotionChromeSplitDemo} source={cardMotionChromeSplitSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="Handle from outside the Card: playSlot, playAll, stagger, exclude, set()."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionControllerInsideDemo} source={cardMotionControllerInsideSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionControllerHighlightDemo} source={cardMotionControllerHighlightSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionControllerStaggerDemo} source={cardMotionControllerStaggerSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionControllerExcludeDemo} source={cardMotionControllerExcludeSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionControllerSetDemo} source={cardMotionControllerSetSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="motion.events"
+        description="Namespaced checkout commands — play() choreography, finished chain, cancel, pressable + event."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionEventsCheckoutDemo} source={cardMotionEventsCheckoutSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionEventsFinishedDemo} source={cardMotionEventsFinishedSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionEventsCancelDemo} source={cardMotionEventsCancelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionEventsPressableDemo} source={cardMotionEventsPressableSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

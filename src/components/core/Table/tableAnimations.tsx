@@ -1,14 +1,17 @@
 /**
  * Slot motion for Table — look here first.
  *
- * DOM slots: `root`, `scrollContainer`, `content`, `header`, `footer`,
- * `row` / `column` / `cell` (nested scopes).
+ * DOM slots: `root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`,
+ * `footer`, nested `row` (one scope per row); `column` (repeated on table scope),
+ * `cell` (repeated on the row scope), `label` (`Table.Label`, repeated on table scope),
+ * `empty` (`Table.Empty`).
  *
  * Not slots: `glossContent`, sort chevron (`useChevronRotation` kit-internal).
- * Host: root plays optional `enter`. Row plays `check`/`uncheck` on selection.
- * Defaults: empty.
+ * `emptyCell` is CSS for `Table.Empty`, not a motion key.
+ * Host: unique slots play optional `enter` via `useOptionalEnterOnMount` + `targetRef`.
+ * Row selection is `check` / `uncheck` (`skipFirst` — not a second `enter`).
  */
-import { useLayoutEffect, useRef, type ForwardedRef, type ReactNode } from "react";
+import { useRef, type ForwardedRef, type ReactNode, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { IoChevronUp } from "react-icons/io5";
 
@@ -17,6 +20,7 @@ import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
 
@@ -66,32 +70,16 @@ export function useTableSlotMotion<T extends HTMLElement>(
   return part;
 }
 
-export function useTableRowSelectionMotion(scope: MotionScopeValue | null, selected: boolean) {
-  const prevRef = useRef<boolean | undefined>(undefined);
-
-  useLayoutEffect(() => {
-    if (!scope) return;
-    if (prevRef.current === undefined) {
-      prevRef.current = selected;
-      if (selected) {
-        const el = scope.getTarget("row");
-        if (!el) return;
-        const value = scope.resolve("row", "enter");
-        if (value !== undefined && value !== false) {
-          scope.play("row", "enter", { el });
-        }
-      }
-      return;
-    }
-    if (prevRef.current === selected) return;
-    prevRef.current = selected;
-    const el = scope.getTarget("row");
-    if (!el) return;
-    const phase = selected ? "check" : "uncheck";
-    const value = scope.resolve("row", phase);
-    if (value === undefined || value === false) return;
-    scope.play("row", phase, { el });
-  }, [scope, selected]);
+export function useTableRowSelectionMotion(
+  scope: MotionScopeValue | null,
+  selected: boolean,
+  target?: RefObject<HTMLElement | null>,
+) {
+  useSlotPhaseOnChange(scope, "row", selected, {
+    phase: selected ? "check" : "uncheck",
+    skipFirst: true,
+    target,
+  });
 }
 
 export function TableSortChevron({

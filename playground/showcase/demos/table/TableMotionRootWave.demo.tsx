@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Table } from "@/components/core/Table";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TableMotionRootWaveDemo() {
   return (
@@ -10,10 +6,10 @@ export function TableMotionRootWaveDemo() {
       motion={{
         root: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.32, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.32 }),
         },
         content: {
-          enter: (ctx) => gsap.fromTo(ctx.el, { y: 6 }, { y: 0, duration: 0.24, ...TL }),
+          enter: (ctx) => ctx.fromTo({ y: 6 }, { y: 0, duration: 0.24 }),
         },
       }}
     >

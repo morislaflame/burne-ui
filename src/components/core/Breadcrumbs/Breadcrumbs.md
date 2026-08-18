@@ -101,8 +101,10 @@ type BreadcrumbItem = {
 | `itemLink` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
 | `itemLinkText` | hover/press | нет |
 | `ellipsisLiftWrapper` | press | `pressSqueeze` (`pressOut: false`) |
+| `list` | `enter` / hover (opt-in) | empty; `<ol>` на root scope |
+| `separator` | `enter` / hover (opt-in) | empty; repeated на root scope |
 
-`false` на `itemLink.pressIn` — skip без kill. Current/static сегменты не анимируются.
+`false` на `itemLink.pressIn` — skip без kill. Current/static сегменты не анимируются. `Breadcrumbs.Item` — data-only (`return null`), не motion-слот.
 
 **Где в коде:** типы — `breadcrumbsTypes.ts`; scope — `breadcrumbsContext.tsx`; defaults — `breadcrumbsAnimations.ts`; слоты — `breadcrumbsParts.tsx`; карта на Root — `Breadcrumbs.tsx`.
 

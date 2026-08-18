@@ -5,7 +5,7 @@ import { clampNumber } from "@/components/core/utils/clampNumber";
 import { defaultMeterFormatValue, meterValueToPercent } from "./meterAPI";
 import { meterLabelId, resolveMeterDescribedBy, resolveMeterTrackAria } from "./meterA11y";
 import { useOptionalMeterFieldContext } from "./meterContext";
-import { meterFillColorStyle, meterFillInitialStyle, meterFillTargetStyle, meterTrackCrossStyle } from "./meterStyles";
+import { meterFillColorStyle, meterTrackCrossStyle } from "./meterStyles";
 import type { UseMeterTrackStateProps } from "./meterTypes";
 
 export function useMeterTrackState({
@@ -67,21 +67,6 @@ export function useMeterTrackState({
 
   const fillColorStyle = useMemo(() => meterFillColorStyle(color), [color]);
 
-  const fillTargetStyle = useMemo(
-    () => meterFillTargetStyle({ isHorizontal, percent }),
-    [isHorizontal, percent],
-  );
-
-  const fillInitialStyle = useMemo(
-    () =>
-      meterFillInitialStyle({
-        isHorizontal,
-        percent,
-        fillColorStyle,
-      }),
-    [fillColorStyle, isHorizontal, percent],
-  );
-
   const setDisplay = fieldCtx?.setDisplay;
 
   useLayoutEffect(() => {
@@ -97,7 +82,5 @@ export function useMeterTrackState({
     aria,
     trackCrossStyle,
     fillColorStyle,
-    fillTargetStyle,
-    fillInitialStyle,
   };
 }

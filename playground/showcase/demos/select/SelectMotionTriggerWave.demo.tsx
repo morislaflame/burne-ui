@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Select } from "@/components/core/Select";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 const options = [
   { value: "react", label: "React" },
@@ -21,7 +17,7 @@ export function SelectMotionTriggerWaveDemo() {
       motion={{
         triggerGroup: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: -1.2, y: -2, duration: 0.22 }, 0);
             if (ctx.targets.value) {
               tl.to(ctx.targets.value, { x: 5, duration: 0.2 }, 0.04);
@@ -32,7 +28,7 @@ export function SelectMotionTriggerWaveDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: 0, y: 0, duration: 0.18 }, 0);
             if (ctx.targets.value) {
               tl.to(ctx.targets.value, { x: 0, duration: 0.16 }, 0);

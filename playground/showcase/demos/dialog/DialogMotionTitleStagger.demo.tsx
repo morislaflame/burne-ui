@@ -1,5 +1,4 @@
 import { useState } from "react";
-import gsap from "gsap";
 
 import { Button } from "@/components/core/Button";
 import { Dialog } from "@/components/core/Dialog";
@@ -54,12 +53,11 @@ export function DialogMotionTitleStaggerDemo() {
       motion={{
         title: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 12, opacity: 0 },
               { y: 0, opacity: 1, duration: 0.35, delay: 0.08 },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
+          leave: { y: -8, autoAlpha: 0, duration: 0.2 },
         },
       }}
     />

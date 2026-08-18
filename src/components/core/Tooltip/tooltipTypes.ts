@@ -38,8 +38,18 @@ export type TooltipLifecycleMotion = {
   leave?: MotionValue;
 };
 
+export type TooltipPartMotion = TooltipLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
 export type TooltipMotion = {
   content?: TooltipLifecycleMotion;
+  title?: TooltipPartMotion;
+  description?: TooltipPartMotion;
+  indicator?: TooltipPartMotion;
+  arrow?: TooltipPartMotion;
+  panel?: TooltipPartMotion;
 };
 
 export type TooltipProps = {
@@ -57,6 +67,7 @@ export type TooltipProps = {
   /**
    * Per-slot motion. Root has no portal DOM — the host is `Tooltip.Content`.
    * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`.
+   * Nested `title` / `description` / `indicator` / `arrow` / `panel` are broadcast on enter/leave.
    */
   motion?: Prettify<TooltipMotion>;
 };
@@ -74,7 +85,9 @@ export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<TooltipMotion>;
 };
 
-export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement>;
+export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<TooltipPartMotion>;
+};
 
 export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TooltipVariant;
@@ -85,18 +98,24 @@ export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   title?: ReactNode;
   description?: ReactNode;
   glossPanelRef?: Ref<HTMLDivElement>;
+  motion?: Prettify<TooltipPartMotion>;
 };
 
 export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   showIcon?: boolean;
+  motion?: Prettify<TooltipPartMotion>;
 };
 
 export type TooltipIconProps = TooltipIndicatorProps;
 
 export type TooltipMessageProps = HTMLAttributes<HTMLDivElement>;
 
-export type TooltipTitleProps = HTMLAttributes<HTMLDivElement>;
-export type TooltipDescriptionProps = HTMLAttributes<HTMLDivElement>;
+export type TooltipTitleProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<TooltipPartMotion>;
+};
+export type TooltipDescriptionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<TooltipPartMotion>;
+};
 
 export type TooltipContextValue = {
   open: boolean;

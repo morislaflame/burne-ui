@@ -1,5 +1,4 @@
 import { useState } from "react";
-import gsap from "gsap";
 
 import { Button } from "@/components/core/Button";
 import { Dialog } from "@/components/core/Dialog";
@@ -54,26 +53,23 @@ export function DialogMotionPerPartDemo() {
       motion={{
         title: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 10, opacity: 0 },
               { y: 0, opacity: 1, duration: 0.32, delay: 0.06 },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { y: -6, autoAlpha: 0, duration: 0.16 }),
+          leave: { y: -6, autoAlpha: 0, duration: 0.16 },
         },
         description: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 14, opacity: 0 },
               { y: 0, opacity: 1, duration: 0.36, delay: 0.16 },
             ),
-          leave: (ctx) => gsap.to(ctx.el, { y: -4, autoAlpha: 0, duration: 0.14 }),
+          leave: { y: -4, autoAlpha: 0, duration: 0.14 },
         },
         close: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { scale: 0.6, rotate: -20, opacity: 0 },
               {
                 scale: 1,
@@ -82,18 +78,13 @@ export function DialogMotionPerPartDemo() {
                 duration: 0.35,
                 delay: 0.12,
                 ease: "back.out(2)",
-                overwrite: "auto",
-                force3D: false,
               },
             ),
-          leave: (ctx) =>
-            gsap.to(ctx.el, {
-              scale: 0.7,
-              autoAlpha: 0,
-              duration: 0.14,
-              overwrite: "auto",
-              force3D: false,
-            }),
+          leave: {
+            scale: 0.7,
+            autoAlpha: 0,
+            duration: 0.14,
+          },
         },
       }}
     />

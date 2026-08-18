@@ -1,10 +1,7 @@
 import { useState } from "react";
-import gsap from "gsap";
 
 import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Button } from "@/components/core/Button";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function AlertDialogMotionIndicatorPopDemo() {
   const [open, setOpen] = useState(false);
@@ -17,8 +14,7 @@ export function AlertDialogMotionIndicatorPopDemo() {
       motion={{
         indicator: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { scale: 0.45, rotation: -28, autoAlpha: 0 },
               {
                 scale: 1,
@@ -27,16 +23,14 @@ export function AlertDialogMotionIndicatorPopDemo() {
                 duration: 0.42,
                 delay: 0.08,
                 ease: "back.out(2.2)",
-                ...TL,
               },
             ),
           leave: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               scale: 0.7,
               rotation: 12,
               autoAlpha: 0,
               duration: 0.16,
-              ...TL,
             }),
         },
       }}

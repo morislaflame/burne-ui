@@ -1,10 +1,15 @@
 /**
  * Slot motion for Button — look here first.
  *
- * DOM slots: `root` (the `<button>`, or the inner content span when `groupSegment`)
- * Host: root (`useButtonAnimations`) plays `hoverIn` / `hoverOut` / `pressIn` / `pressOut`.
+ * DOM slots: `root` (the `<button>`, or the inner content span when `groupSegment`),
+ * `label`, `icon`, `text`, `loader`, `success`, `error`
+ * (`content` is layout — not a slot, except it carries `root` when `groupSegment`)
+ *
+ * Host: root (`useButtonAnimations`) plays `hoverIn` / `hoverOut` / `pressIn` / `pressOut`
+ * and broadcasts those phases to nested slots (`exclude` root + async layers).
  * Defaults: `resolveButtonMotionDefaults` (first-level lift + squeeze; gloss recipes when gloss).
- * Async label/loader/success/error crossfade stays internal GSAP — not public phases.
+ * Async label/loader/success/error crossfade stays internal GSAP — public slots may add
+ * hover/extra on top, not replace kit autoAlpha.
  */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent, type KeyboardEvent, type PointerEvent } from "react";
@@ -39,6 +44,9 @@ import type {
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
 
 const BUTTON_ASYNC_LAYER_INIT_ATTR = "data-button-async-layer-init";
+
+/** Nested pointer broadcast skips kit-owned async layers (autoAlpha crossfade). */
+const BUTTON_POINTER_BROADCAST_EXCLUDE = ["root", "loader", "success", "error"] as const;
 
 /** Async layer enter/exit scales — intentional feel constants (not in `configureMotion`). */
 const BUTTON_ASYNC_LAYER_SCALE: Record<
@@ -211,10 +219,13 @@ export function useButtonAnimations({
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       if (!enabled) return;
       const el = motionTarget();
-      if (!el) return;
-      const value = scope.resolve("root", phase, rootMotionRef.current);
-      if (value === undefined) return;
-      scope.play("root", phase, { partMotion: rootMotionRef.current, el });
+      if (el) {
+        const value = scope.resolve("root", phase, rootMotionRef.current);
+        if (value !== undefined) {
+          scope.play("root", phase, { partMotion: rootMotionRef.current, el });
+        }
+      }
+      void scope.playBroadcast(phase, { exclude: [...BUTTON_POINTER_BROADCAST_EXCLUDE] });
     },
     [enabled, motionTarget, scope],
   );

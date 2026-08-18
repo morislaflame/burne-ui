@@ -13,7 +13,7 @@ import {
   tableIsSelectableGrid,
   tableRowRole,
 } from "./tableA11y";
-import { hasTableLabel, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
+import { hasTableLabel, isTableEmptyElement, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
 import { TableSortChevron, useTableRowSelectionMotion, useTableSlotMotion } from "./tableAnimations";
 import {
   TableContentProvider,
@@ -35,6 +35,7 @@ import type {
   TableColumnProps,
   TableColumnRenderProps,
   TableContentProps,
+  TableEmptyProps,
   TableFooterProps,
   TableHeaderProps,
   TableHeaderRowProps,
@@ -162,15 +163,34 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
 TableContent.displayName = "TableContent";
 
 export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProps>(
-  function TableHeaderRow({ className, ...rest }, ref) {
+  function TableHeaderRow(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const variant = useTableVariant();
     const slotClassNames = useTableClassNames();
     const { selectionMode } = useTableContent();
     const isGrid = tableIsSelectableGrid(selectionMode);
+    const part = useTableSlotMotion<HTMLTableRowElement>("headerRow", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <tr
-        ref={ref}
+        ref={part.setRef}
         role={tableRowRole(isGrid)}
         className={cn(
           TABLE_HEADER_ROW_VARIANT_CLASS[variant],
@@ -178,6 +198,7 @@ export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProp
           className,
         )}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -237,17 +258,37 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
 TableHeader.displayName = "TableHeader";
 
 export const TableLabel = forwardRef<HTMLSpanElement, TableLabelProps>(
-  function TableLabel({ className, ...rest }, ref) {
+  function TableLabel(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = useTableClassNames();
+    const part = useTableSlotMotion<HTMLSpanElement>("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <span
-        ref={ref}
+        ref={part.setRef}
         className={tableColumnLabelClass({
           slotClass: slotClassNames.columnLabel,
           className,
         })}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -397,10 +438,32 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
 TableColumn.displayName = "TableColumn";
 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
-  function TableBody({ items, children, renderEmptyState, className, ...rest }, ref) {
+  function TableBody(
+    {
+      items,
+      children,
+      renderEmptyState,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = useTableClassNames();
     const { selectionMode } = useTableContent();
     const isGrid = tableIsSelectableGrid(selectionMode);
+    const part = useTableSlotMotion<HTMLTableSectionElement>("body", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
     let content: ReactNode;
 
     if (items !== undefined) {
@@ -408,16 +471,20 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
         const emptyState = renderEmptyState();
         content = (
           <tr role={tableRowRole(isGrid)}>
-            <td
-              role={tableCellRole(isGrid)}
-              colSpan={9999}
-              className={cn(
-                TABLE_BODY_EMPTY_CELL_CLASS,
-                slotClassNames.emptyCell,
-              )}
-            >
-              {emptyState}
-            </td>
+            {isTableEmptyElement(emptyState) ? (
+              emptyState
+            ) : (
+              <td
+                role={tableCellRole(isGrid)}
+                colSpan={9999}
+                className={cn(
+                  TABLE_BODY_EMPTY_CELL_CLASS,
+                  slotClassNames.emptyCell,
+                )}
+              >
+                {emptyState}
+              </td>
+            )}
           </tr>
         );
       } else if (typeof children === "function") {
@@ -429,9 +496,10 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
     return (
       <tbody
-        ref={ref}
+        ref={part.setRef}
         className={cn(slotClassNames.body, className)}
         {...rest}
+        {...part.pointerHandlers}
       >
         {content}
       </tbody>
@@ -440,6 +508,51 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 );
 
 TableBody.displayName = "TableBody";
+
+export const TableEmpty = forwardRef<HTMLTableCellElement, TableEmptyProps>(
+  function TableEmpty(
+    {
+      className,
+      motion,
+      colSpan = 9999,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useTableClassNames();
+    const { selectionMode } = useTableContent();
+    const isGrid = tableIsSelectableGrid(selectionMode);
+    const part = useTableSlotMotion<HTMLTableCellElement>("empty", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+
+    return (
+      <td
+        ref={part.setRef}
+        role={tableCellRole(isGrid)}
+        colSpan={colSpan}
+        className={cn(
+          TABLE_BODY_EMPTY_CELL_CLASS,
+          slotClassNames.emptyCell,
+          className,
+        )}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
+
+TableEmpty.displayName = "Table.Empty";
 
 const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
   { id, tone, children, className, onClick, onKeyDown, motion, ...rest },
@@ -521,7 +634,7 @@ function TableRowSurface({
   const isGrid = tableIsSelectableGrid(selectionMode);
   const isToned = variant === "toned";
   const resolvedTone = tone ?? (isToned ? TONED_ROW_DEFAULT_TONE : undefined);
-  useTableRowSelectionMotion(scope, isSelected);
+  useTableRowSelectionMotion(scope, isSelected, part.targetRef);
 
   useLayoutEffect(() => {
     if (!isSelectable || id === undefined) return;

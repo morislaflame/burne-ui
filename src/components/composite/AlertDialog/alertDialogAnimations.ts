@@ -2,10 +2,10 @@
  * Slot motion for AlertDialog — look here first.
  *
  * DOM slots: `overlay`, `panel`, `title`, `description`, `close`, `header`,
- * `footer`, `content`, `indicator`
+ * `headingBlock`, `footer`, `content`, `body`, `indicator`, plus `trigger` on Root.
  * Host: `AlertDialog.Panel` (`useAlertDialogModalMotion`) plays `enter` / `leave`
- * and broadcasts nested slots. Root has no DOM — it only passes the `motion` map
- * through context. Defaults wrap the portal host (`ALERT_DIALOG_MOTION_DEFAULTS`
+ * and broadcasts nested slots. Root has no portal DOM — it passes the `motion` map
+ * and trigger defaults. Overlay/panel defaults wrap the portal host (`ALERT_DIALOG_MOTION_DEFAULTS`
  * on the Panel provider).
  *
  * Backdrop does not dismiss (APG). Escape is handled on `<dialog cancel>`.

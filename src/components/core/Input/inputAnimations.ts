@@ -2,30 +2,35 @@
  * Slot motion for Input — look here first.
  *
  * DOM slots: `shell` (host), `control`, `prefix`, `suffix`, `passwordToggle`,
- * `fileRow`, `fileRemove`
+ * `fileRow`, `fileRemove`, `label`, `hint`, `error`
  *
  * Root passes the `motion` map. Host is `Input.Control` (defaults + `play`).
+ * Chrome (`label` / `hint` / `error`) registers on the Root scope (siblings of Control).
  * Gloss hover/press stay on `useGlossFieldShellMotion`.
  * File row leave: `scope.play("fileRow", "leave", { el })` — `false` unmounts instantly.
  *
- * Not slots: Field `root` / `label` / `hint` / `error`; `fileArea` / `fileEmpty` /
+ * Not slots: Field's own scope; `fileArea` / `fileEmpty` /
  * `fileGlyph` / `filePreview` (layout).
  */
-import { useCallback, useMemo, useRef, type MutableRefObject, type PointerEvent } from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEvent, type PointerEventHandler } from "react";
 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
+  hasPointerPhases,
   mergeMotionPointerHandlers,
+  useMotionPart,
   useMotionPointerPhases,
+  useOptionalEnterOnMount,
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { useInputMotionScope } from "./inputContext";
+import { useInputMotionScope, useOptionalInputMotionScope } from "./inputContext";
 import type {
   InputMotion,
+  InputPartMotion,
   InputVariant,
   UseInputShellAnimationsProps,
 } from "./inputTypes";
@@ -217,3 +222,41 @@ export function useInputShellAnimations({
 }
 
 export type { InputVariant };
+
+export type InputChromeSlot = "label" | "hint" | "error";
+
+export function useInputChromeSlot(
+  slot: InputChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: InputPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalInputMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
+}

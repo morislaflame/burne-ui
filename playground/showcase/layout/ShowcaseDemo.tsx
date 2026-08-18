@@ -1,5 +1,5 @@
 import { useCallback, useState, type ReactNode } from "react";
-import { IoCheckmark, IoCopyOutline } from "react-icons/io5";
+import { IoCheckmark, IoCopyOutline, IoRefreshOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button";
 import { Disclosure } from "@/components/core/Disclosure";
@@ -67,6 +67,7 @@ export function ShowcaseDemo({
   className,
   align = "start",
   padding = "mid",
+  replay = false,
 }: {
   children: ReactNode;
   /** JSX/TSX-snippet corresponding to the demo above. */
@@ -74,7 +75,10 @@ export function ShowcaseDemo({
   className?: string;
   align?: "start" | "center" | "stretch";
   padding?: SurfacePadding;
+  /** Remount the demo to replay mount `enter` animations. */
+  replay?: boolean;
 }) {
+  const [play, setPlay] = useState(0);
   const alignClass =
     align === "center"
       ? "flex flex-col items-center"
@@ -93,11 +97,36 @@ export function ShowcaseDemo({
         variant="default"
         padding={padding}
         className={cn(
-          "rounded-none border-0 shadow-none bg-transparent flex items-center justify-center min-h-72 p-large",
-          alignClass,
+          "rounded-none border-0 shadow-none bg-transparent min-h-72 p-large",
+          replay
+            ? "flex flex-col gap-mid"
+            : cn("flex items-center justify-center", alignClass),
         )}
       >
-        {children}
+        {replay ? (
+          <div className="flex w-full shrink-0 justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              size="small"
+              className="h-8 shrink-0 gap-xsmall px-small text-muted hover:text-foreground"
+              icon={<IoRefreshOutline aria-hidden />}
+              onClick={() => setPlay((n) => n + 1)}
+            >
+              Replay
+            </Button>
+          </div>
+        ) : null}
+        {replay ? (
+          <div
+            key={play}
+            className={cn("flex w-full flex-1 items-center justify-center", alignClass)}
+          >
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </Surface>
       {code ? <ShowcaseCodePanel code={code} /> : null}
     </div>

@@ -1,15 +1,14 @@
 /**
  * Slot motion for TextArea — look here first.
  *
- * DOM slots: `shell` (host), `control`, `resizeHandle`
+ * DOM slots: `shell` (host), `control`, `resizeHandle`, `label`, `hint`, `error`
  *
  * Root passes the `motion` map. Host is `TextArea.Control` (defaults + `play`).
+ * Chrome (`label` / `hint` / `error`) registers on the Root scope (siblings of Control).
  * Gloss hover/press stay on `useGlossFieldShellMotion`.
  * Resize drag height is kit-internal (`useTextAreaResize`), not public MotionVars.
- *
- * Not slots: Field `root` / `label` / `hint` / `error`.
  */
-import { useCallback, useMemo, useRef, type MutableRefObject, type PointerEvent } from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEvent, type PointerEventHandler } from "react";
 
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
@@ -19,13 +18,16 @@ import {
 } from "@/components/core/utils/glossInteractiveMotion";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
+  hasPointerPhases,
   mergeMotionPointerHandlers,
+  useMotionPart,
   useMotionPointerPhases,
+  useOptionalEnterOnMount,
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { useTextAreaMotionScope } from "./textAreaContext";
+import { useOptionalTextAreaMotionScope, useTextAreaMotionScope } from "./textAreaContext";
 import type {
   TextAreaMotion,
   TextAreaPartMotion,
@@ -187,3 +189,41 @@ export function useTextAreaShellAnimations({
 }
 
 export type { TextAreaPartMotion };
+
+export type TextAreaChromeSlot = "label" | "hint" | "error";
+
+export function useTextAreaChromeSlot(
+  slot: TextAreaChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: TextAreaPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalTextAreaMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
+}

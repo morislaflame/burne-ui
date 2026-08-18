@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupClassNames, type CheckboxGroupHintProps, type CheckboxGroupLabelProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps } from "burne-ui";
+import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupClassNames, type CheckboxGroupHintProps, type CheckboxGroupLabelProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps, type CheckboxGroupMotion, type CheckboxGroupPartMotion } from "burne-ui";
 import { Checkbox } from "burne-ui";
 ```
 
@@ -62,6 +62,7 @@ Simple API нет.
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
 | `className` | — | На `<fieldset>` |
 | `classNames` | — | Слоты `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` |
+| `motion` | — | Слоты `root`, `list`, `legend`, `hint`, `error`, `actions` |
 
 `variant` на root **нет**.
 
@@ -86,6 +87,7 @@ Simple API нет.
 |------|--------------|----------|
 | `orientation` | `vertical` | `vertical` \| `horizontal` |
 | `className` | — | На list container |
+| `motion` | — | Part motion слота `list` |
 
 ## selection и orientation
 
@@ -107,14 +109,14 @@ Simple API нет.
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `root` (fieldset), `list` | `enter` (opt-in); `change` on `root` when `selection="single"` | empty |
+| `root` (fieldset), `list`, `legend`, `hint`, `error`, `actions` | `enter` (opt-in); `change` on `root` when `selection="single"` | empty |
 
-Motion item Checkbox остаётся на пункте. `OptionGroupFieldset` / Field.Set — отдельный scope.
+`Group` не слот. Motion item Checkbox остаётся на пункте. `OptionGroupFieldset` / Field.Set — отдельный scope; chrome группы регистрируется в scope CheckboxGroup (`ref` на `Field.Hint` / `Field.Legend` / `Field.Error` / `Field.Set.Actions`), без прокидывания group `motion` в Field.
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
 
-`checkboxGroupAnimations.ts` играет `enter` / `change` на `root` группы. Motion item остаётся на вложенном `Checkbox`:
+`checkboxGroupAnimations.ts` играет `enter` / `change` на `root` группы и `enter` на chrome. Motion item остаётся на вложенном `Checkbox`:
 
 **DOM:**
 
@@ -154,9 +156,8 @@ configureMotion({
 
 ### Чего нет
 
-- Group-level animation при смене `selection`
 - Portal / popover
-- Hover lift на fieldset
+- Hover lift на fieldset по умолчанию (`hoverIn` — opt-in)
 
 ### Сводка: что настраивается где
 
@@ -337,6 +338,7 @@ CheckboxGroup/
 ├── checkboxGroupTypes.ts
 ├── checkboxGroupParts.tsx
 ├── checkboxGroupContext.tsx
+├── checkboxGroupAnimations.ts
 ├── useCheckboxGroupRootState.ts
 └── CheckboxGroup.stories.tsx
 
@@ -351,4 +353,4 @@ composite/utils/
 
 ## Storybook
 
-`Composite Components/CheckboxGroup` — playground, single selection, required, without hint, horizontal, sizes, `classNames` customization.
+`Composite Components/CheckboxGroup` — playground, single selection, required, without hint, horizontal, sizes, `classNames` customization, slot motion gallery.

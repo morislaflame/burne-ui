@@ -1,16 +1,29 @@
 /**
  * Slot motion for Tooltip — look here first.
  *
- * DOM slots: `content` (portal surface)
- * Host: `Tooltip.Content` (`useTooltipPortalMotion`) plays `enter` / `leave`.
+ * DOM slots: `content` (portal surface), `panel`, `title`, `description`, `indicator`, `arrow`
+ * (`message` is `display: contents`; `gloss*` are layout)
+
+ *
+ * Host: `Tooltip.Content` (`useTooltipPortalMotion`) plays `enter` / `leave` on
+ * `content` and broadcasts nested slots (`scheduleNestedEnterBroadcast`).
  * Root has no portal DOM — it only passes the `motion` map through context.
  * Defaults wrap the portal host (`TOOLTIP_MOTION_DEFAULTS` on the Content provider).
  */
-import { useLayoutEffect, type RefObject } from "react";
+import { useLayoutEffect, useRef, type RefObject } from "react";
 
-import { killStoredMotion, waitForLeaveGeneration, type MotionScopeValue } from "@/components/core/utils/slotMotion";
+import {
+  hideNestedEnterSlots,
+  invalidateEnterFrame,
+  killStoredMotion,
+  scheduleNestedEnterBroadcast,
+  waitForLeaveGeneration,
+  type MotionScopeValue,
+} from "@/components/core/utils/slotMotion";
 
 import type { TooltipMotion } from "./tooltipTypes";
+
+export const TOOLTIP_MOTION_HOST_SLOTS = ["content"] as const;
 
 export const TOOLTIP_MOTION_DEFAULTS: TooltipMotion = {
   content: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
@@ -29,22 +42,46 @@ export function useTooltipPortalMotion({
   tipRef: RefObject<HTMLDivElement | null>;
   scope: MotionScopeValue;
 }) {
+  const enterFrameRef = useRef(0);
+  const enterGenRef = useRef(0);
+
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;
     const el = tipRef.current;
     if (!el) return undefined;
 
+    const cancelEnterFrame = () => invalidateEnterFrame(enterFrameRef, enterGenRef);
+
     if (open) {
+      const gen = ++enterGenRef.current;
       scope.play("content", "enter", { el });
-      return undefined;
+      hideNestedEnterSlots(scope, [...TOOLTIP_MOTION_HOST_SLOTS]);
+      enterFrameRef.current = scheduleNestedEnterBroadcast(
+        scope,
+        TOOLTIP_MOTION_HOST_SLOTS,
+        () => {
+          if (gen !== enterGenRef.current) return false;
+          enterFrameRef.current = 0;
+          return true;
+        },
+      );
+      return () => {
+        cancelEnterFrame();
+      };
     }
 
-    const run = scope.play("content", "leave", {
+    cancelEnterFrame();
+    const contentRun = scope.play("content", "leave", {
       el,
       waitForComplete: true,
     });
+    const extra = scope.playBroadcast("leave", {
+      exclude: [...TOOLTIP_MOTION_HOST_SLOTS],
+      waitForComplete: true,
+    });
     const leaveWait = waitForLeaveGeneration({
-      runs: [run],
+      runs: [contentRun],
+      extra,
       onComplete: () => setPortalMounted(false),
       onKill: () => killStoredMotion(el),
     });

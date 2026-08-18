@@ -62,7 +62,8 @@ Simple API (props `title` на root) нет — только compound children.
 | `onClick` / `onKeyDown` / `onPointerDown` | — | Низкоуровневые handlers |
 | `className` | — | Root / gloss panel |
 | `classNames` | — | Слоты |
-| `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer` |
+| `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
 
 ### `CardClassNames`
 
@@ -129,6 +130,31 @@ Simple API (props `title` на root) нет — только compound children.
 | `title` / `description` / `header` / `headingBlock` / `body` / `footer` | `hoverIn` / `hoverOut` | нет |
 
 `content` / `glossContent` — layout-обёртки, не публичные motion-слоты.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`checkout:saving`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent` (фазы и namespaced events без дженерика). См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Card, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "checkout:saving": { y: -4, duration: 0.3, yoyo: true, repeat: -1 },
+  "checkout:success": { y: 0, duration: 0.25 },
+});
+
+function Pay() {
+  const controller = useMotionControllerHandle();
+  return (
+    <Card motionController={controller} motion={{ events }}>
+      <Card.Title>Checkout</Card.Title>
+      <Card.Footer>
+        <Button size="small" onClick={() => controller.play("checkout:saving")}>
+          Pay
+        </Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+```
 
 **Где в коде:** типы — `cardTypes.ts`; scope — `cardContext.tsx`; defaults + host — `cardAnimations.ts`; слоты — `cardParts.tsx`; Provider — `Card.tsx`.
 

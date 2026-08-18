@@ -1,7 +1,8 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
-import type { FieldErrorProps } from "@/components/core/Field";
+import type { FieldErrorProps, FieldSetActionsProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type {
@@ -28,6 +29,25 @@ export type RadioGroupContextValue = {
   claimRequiredAnchor: () => boolean;
 };
 
+export type RadioGroupPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  change?: MotionValue;
+};
+
+export type RadioGroupMotion = {
+  root?: RadioGroupPartMotion;
+  list?: RadioGroupPartMotion;
+  legend?: RadioGroupPartMotion;
+  hint?: RadioGroupPartMotion;
+  error?: RadioGroupPartMotion;
+  actions?: RadioGroupPartMotion;
+};
+
 export type RadioGroupProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children" | "onChange"
@@ -43,12 +63,29 @@ export type RadioGroupProps = Omit<
   size?: ComponentSize;
   children?: ReactNode;
   classNames?: Prettify<RadioGroupClassNames>;
+  /**
+   * Per-slot motion (`root`, `list`, `legend`, `hint`, `error`, `actions`).
+   * Items keep Radio motion. `change` plays on `root` when value updates.
+   * `Group` is not a slot. Defaults are empty.
+   */
+  motion?: Prettify<RadioGroupMotion>;
 };
 
 export type UseRadioGroupRootStateProps = RadioGroupProps;
 
-export type RadioGroupHintProps = OptionGroupHintProps;
-export type RadioGroupLegendProps = OptionGroupLegendProps;
-export type RadioGroupListProps = OptionGroupListProps;
-export type RadioGroupErrorProps = FieldErrorProps;
+export type RadioGroupHintProps = OptionGroupHintProps & {
+  motion?: Prettify<RadioGroupPartMotion>;
+};
+export type RadioGroupLegendProps = OptionGroupLegendProps & {
+  motion?: Prettify<RadioGroupPartMotion>;
+};
+export type RadioGroupListProps = OptionGroupListProps & {
+  motion?: Prettify<RadioGroupPartMotion>;
+};
+export type RadioGroupErrorProps = Omit<FieldErrorProps, "motion"> & {
+  motion?: Prettify<RadioGroupPartMotion>;
+};
+export type RadioGroupActionsProps = Omit<FieldSetActionsProps, "motion"> & {
+  motion?: Prettify<RadioGroupPartMotion>;
+};
 export type RadioGroupLabelProps = LabelProps;

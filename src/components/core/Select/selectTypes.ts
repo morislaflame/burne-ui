@@ -3,6 +3,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { LabelProps } from "@/components/core/Label";
 import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
@@ -51,6 +52,9 @@ export type SelectMotion = {
   value?: SelectPartMotion;
   trigger?: SelectPartMotion;
   triggerIcon?: SelectPartMotion;
+  label?: SelectPartMotion;
+  hint?: SelectPartMotion;
+  error?: SelectPartMotion;
 };
 
 export type SelectProps = HTMLAttributes<HTMLDivElement> & {
@@ -76,7 +80,7 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   menuMaxHeight?: string;
   classNames?: Prettify<SelectClassNames>;
   /**
-   * Per-slot motion (`triggerGroup`, `value`, `trigger`, `triggerIcon`).
+   * Per-slot motion (`triggerGroup`, `value`, `trigger`, `triggerIcon`, `label`, `hint`, `error`).
    * Menu enter lives on Popover — not duplicated here.
    */
   motion?: Prettify<SelectMotion>;
@@ -169,13 +173,19 @@ export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   >;
 };
 
+export type SelectLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<SelectPartMotion>;
+};
+
 export type SelectHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   status?: Exclude<InputStatus, "danger"> | "default";
+  motion?: Prettify<SelectPartMotion>;
 };
 
 export type SelectErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<SelectPartMotion>;
 };
 
 export type UseSelectRootStateProps = SelectProps;

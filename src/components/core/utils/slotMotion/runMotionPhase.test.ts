@@ -4,7 +4,7 @@ import { gsap } from "@/components/core/utils/gsapMotion";
 import { MOTION_CONFIG_DEFAULTS } from "@/components/core/utils/motionConfig";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
-import { registerMotionRecipe } from "./motionRecipeRegistry";
+import { hasMotionRecipe, registerMotionRecipe } from "./motionRecipeRegistry";
 import { killStoredMotion, runMotionPhase } from "./runMotionPhase";
 import {
   isMotionRunActive,
@@ -196,6 +196,18 @@ describe("runMotionPhase", () => {
     expect(recipe.mock.calls[0]?.[0]).toHaveProperty("phase", "check");
     expect(recipe.mock.calls[0]?.[0]).toHaveProperty("runId");
     expect(typeof (recipe.mock.calls[0]?.[0] as MotionContext).isCurrent).toBe("function");
+  });
+
+  it("resolves kit recipe names on the play path", () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    runMotionPhase({
+      el: fakeEl(),
+      phase: "uncheck",
+      value: "switchThumb",
+      targets: {},
+    });
+    expect(hasMotionRecipe("switchThumb")).toBe(true);
+    expect(error).not.toHaveBeenCalled();
   });
 
   it("settles immediately and errors in dev when the recipe name is unknown", async () => {

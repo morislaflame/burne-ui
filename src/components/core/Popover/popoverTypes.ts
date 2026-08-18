@@ -37,13 +37,28 @@ export type PopoverLifecycleMotion = {
 export type PopoverPartMotion = PopoverLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 export type PopoverMotion = {
   content?: PopoverLifecycleMotion;
+  header?: PopoverLifecycleMotion;
   title?: PopoverPartMotion;
   description?: PopoverPartMotion;
   body?: PopoverLifecycleMotion;
+  /** Repeated menu rows when Popover hosts Dropdown (or similar). */
+  item?: PopoverLifecycleMotion;
+  itemLabel?: PopoverPartMotion;
+  itemHint?: PopoverPartMotion;
+  itemIcon?: PopoverPartMotion;
+  /** Dropdown.Label / Dropdown.SubTrigger / Dropdown.Separator when Popover hosts the menu. */
+  label?: PopoverPartMotion;
+  subTrigger?: PopoverPartMotion;
+  separator?: PopoverPartMotion;
+  arrow?: PopoverPartMotion;
+  /** Open squeeze on `Popover.Trigger` (Root scope — outside Content). */
+  trigger?: PopoverPartMotion;
 };
 
 export type PopoverContextValue = {
@@ -78,8 +93,9 @@ export type PopoverProps = {
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<PopoverClassNames>;
   /**
-   * Per-slot motion. Root has no portal DOM — the host is `Popover.Content`.
-   * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`.
+   * Per-slot motion (`content`, `header`, `title`, `description`, `body`, `arrow`, `trigger`, plus Dropdown pass-through).
+   * Root has no portal DOM — the host is `Popover.Content`. Trigger lives on Root.
+   * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`; `trigger.pressIn` → `pressSqueeze`.
    */
   motion?: Prettify<PopoverMotion>;
 };
@@ -94,11 +110,16 @@ export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames" | "motion
 export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   /** Merge props onto the single child (Button, etc.) instead of rendering a `<button>` wrapper. */
   asChild?: boolean;
+  motion?: Prettify<PopoverPartMotion>;
 };
 
-export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
+export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<PopoverPartMotion>;
+};
 
-export type PopoverHeaderProps = HTMLAttributes<HTMLDivElement>;
+export type PopoverHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<PopoverLifecycleMotion>;
+};
 
 export type PopoverTitleProps = HTMLAttributes<HTMLHeadingElement> & {
   motion?: Prettify<PopoverPartMotion>;

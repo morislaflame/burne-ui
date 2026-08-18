@@ -4,7 +4,7 @@ import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractive
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { TableBody, TableCell, TableColumn, TableContent, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRow, TableScrollContainer } from "./tableParts";
+import { TableBody, TableCell, TableColumn, TableContent, TableEmpty, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRow, TableScrollContainer } from "./tableParts";
 import { resolveTableMotionDefaults, useTableSlotMotion } from "./tableAnimations";
 import { TableClassNamesProvider, TableMotionProvider, TableVariantProvider } from "./tableContext";
 import { TABLE_GLOSS_CONTENT_CLASS, tableRootClass } from "./tableStyles";
@@ -26,6 +26,7 @@ export type {
   TableColumnSortIconRenderProps,
   TableLabelProps,
   TableBodyProps,
+  TableEmptyProps,
   TableRowProps,
   TableCellProps,
   TableFooterProps,
@@ -141,6 +142,7 @@ export {
   TableColumn,
   TableLabel,
   TableBody,
+  TableEmpty,
   TableRow,
   TableCell,
   TableFooter,

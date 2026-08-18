@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Slider } from "@/components/core/Slider";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function SliderMotionChangeTintDemo() {
   return (
@@ -17,7 +13,7 @@ export function SliderMotionChangeTintDemo() {
       motion={{
         track: {
           change: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { scale: 1.015, duration: 0.1 }, 0);
             tl.to(ctx.el, { scale: 1, duration: 0.14 }, 0.1);
             if (ctx.targets.fill) tweenCssColor(ctx.targets.fill, "var(--color-primary)");

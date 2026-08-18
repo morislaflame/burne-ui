@@ -28,6 +28,7 @@ export type {
   MeterValueProps,
   MeterHintProps,
   MeterErrorProps,
+  MeterLabelProps,
 } from "./Meter";
 
 export {

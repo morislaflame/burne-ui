@@ -139,6 +139,56 @@ describe("createMotionScopeController", () => {
     expect(played).toEqual([b]);
   });
 
+  it("playBroadcast skips an instance disposed after the snapshot", async () => {
+    const played: string[] = [];
+    let disposeB = () => {};
+    const scope = createMotionScopeController({
+      getRootMotion: () => ({
+        cell: {
+          enter: (ctx: MotionContext) => {
+            played.push(ctx.el.id);
+            if (ctx.el.id === "a") disposeB();
+          },
+        },
+      }),
+      getDefaults: () => undefined,
+      getParams: () => ({}),
+    });
+    const a = fakeEl("a");
+    const b = fakeEl("b");
+    scope.register({ id: Symbol("a"), slot: "cell", node: a });
+    disposeB = scope.register({ id: Symbol("b"), slot: "cell", node: b });
+
+    await scope.playBroadcast("enter");
+
+    expect(played).toEqual(["a"]);
+  });
+
+  it("playBroadcast plays repeated slots in registration order", async () => {
+    const played: string[] = [];
+    const scope = createMotionScopeController({
+      getRootMotion: () => ({
+        cell: {
+          enter: (ctx: MotionContext) => {
+            played.push(ctx.el.id);
+          },
+        },
+      }),
+      getDefaults: () => undefined,
+      getParams: () => ({}),
+    });
+    const first = fakeEl("first");
+    const second = fakeEl("second");
+    const third = fakeEl("third");
+    scope.register({ id: Symbol("2"), slot: "cell", node: second });
+    scope.register({ id: Symbol("1"), slot: "cell", node: first });
+    scope.register({ id: Symbol("3"), slot: "cell", node: third });
+
+    await scope.playBroadcast("enter");
+
+    expect(played).toEqual(["second", "first", "third"]);
+  });
+
   it("local play uses the given el, not the first registration", () => {
     const played: HTMLElement[] = [];
     const scope = createMotionScopeController({

@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
 
@@ -9,26 +7,20 @@ export function DropdownMotionSlideYDemo() {
       motion={{
         content: {
           enter: (ctx) =>
-            gsap.fromTo(
-              ctx.el,
+            ctx.fromTo(
               { y: 10, opacity: 0 },
               {
                 y: 0,
                 opacity: 1,
                 duration: 0.24,
                 ease: "power2.out",
-                overwrite: "auto",
-                force3D: false,
               },
             ),
-          leave: (ctx) =>
-            gsap.to(ctx.el, {
-              y: 8,
-              autoAlpha: 0,
-              duration: 0.16,
-              overwrite: "auto",
-              force3D: false,
-            }),
+          leave: {
+            y: 8,
+            autoAlpha: 0,
+            duration: 0.16,
+          },
         },
       }}
     >

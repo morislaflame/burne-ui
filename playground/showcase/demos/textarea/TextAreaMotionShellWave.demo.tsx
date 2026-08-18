@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { TextArea } from "@/components/core/TextArea";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TextAreaMotionShellWaveDemo() {
   return (
@@ -15,7 +11,7 @@ export function TextAreaMotionShellWaveDemo() {
       motion={{
         shell: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: 0.8, y: -3, duration: 0.24 }, 0);
             if (ctx.targets.control) {
               tl.to(ctx.targets.control, { x: 8, duration: 0.24 }, 0);
@@ -26,7 +22,7 @@ export function TextAreaMotionShellWaveDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: 0, y: 0, duration: 0.18 }, 0);
             if (ctx.targets.control) {
               tl.to(ctx.targets.control, { x: 0, duration: 0.18 }, 0);

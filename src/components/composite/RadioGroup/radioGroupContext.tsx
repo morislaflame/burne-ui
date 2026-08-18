@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
 import { createOptionGroupClassNamesContext } from "@/components/composite/utils/optionGroupClassNames";
 
 import type { RadioGroupClassNames, RadioGroupContextValue } from "./radioGroupTypes";
@@ -36,5 +37,12 @@ export function useRadioGroupContext() {
 export function useOptionalRadioGroupContext() {
   return useContext(RadioGroupContext);
 }
+
+/** Scope only. Defaults and host play live in `radioGroupAnimations.ts`. */
+export const {
+  MotionScopeProvider: RadioGroupMotionProvider,
+  useMotionScope: useRadioGroupMotionScope,
+  useOptionalMotionScope: useOptionalRadioGroupMotionScope,
+} = createMotionScope("RadioGroup");
 
 export { RadioGroupContext };

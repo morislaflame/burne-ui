@@ -1,88 +1,98 @@
 /**
  * Slot motion for Meter — look here first.
  *
- * DOM slots: `track`, `fill`, `header`, `value`
+ * DOM slots: `track`, `fill` (Track nested host); `header`, `value`,
+ * `label`, `hint`, `error` (Root scope — siblings of Track).
  *
- * Host: `Meter.Track` plays `enter` (opt-in) and `change` when value updates.
- * Fill width/height stays kit-internal (`useMeterFillAnimation`) — `change` is
- * not auto-played on `fill` so a custom factory can tween color via `ctx.targets.fill`.
- * Defaults: empty.
+ * Root passes the `motion` map. Track wraps defaults + `params.getProgressScale`.
+ * Fill: `change` → `progressFill`. `enter` on fill is opt-in and played by
+ * `useBarFillMotion` (layout cleanup replays in Strict Mode).
  */
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
 
-import { gsap, killMotion, killMotionGeometry } from "@/components/core/utils/gsapMotion";
-import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
+  hasPointerPhases,
+  useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
+import { useBarFillMotion } from "@/components/core/utils/slotMotion/useBarFillMotion";
+import { progressScaleFromPercent } from "@/components/core/utils/slotMotion/recipes/progressFill";
 
-import type { MeterMotion, UseMeterFillAnimationProps } from "./meterTypes";
+import { useOptionalMeterMotionScope } from "./meterContext";
+import type { MeterMotion, MeterPartMotion } from "./meterTypes";
+
+export { progressScaleFromPercent };
 
 export function resolveMeterMotionDefaults(): MeterMotion {
-  return {};
+  return {
+    fill: {
+      change: "progressFill",
+    },
+  };
 }
 
 export function useMeterTrackSlotMotion(
   scope: MotionScopeValue | null,
-  value: number,
+  identity: string,
 ) {
   useOptionalEnterOnMount(scope, "track");
-  useSlotPhaseOnChange(scope, "track", value, {
+  useSlotPhaseOnChange(scope, "track", identity, {
     phase: "change",
     skipFirst: true,
     broadcast: true,
-    exclude: ["fill"],
   });
 }
 
-export function useMeterFillAnimation({
-  fillTargetStyle,
+export function useMeterFillMotion({
+  scope,
+  percent,
   isHorizontal,
-}: UseMeterFillAnimationProps) {
-  const config = useMotionConfig();
-  const fillRef = useRef<HTMLSpanElement>(null);
-  const firstLayoutRef = useRef(true);
-  const geometryKeyRef = useRef<string | null>(null);
-  const reduceMotion = usePrefersReducedMotion();
+  fillRef,
+}: {
+  scope: MotionScopeValue | null;
+  percent: number;
+  isHorizontal: boolean;
+  fillRef: RefObject<HTMLSpanElement | null>;
+}) {
+  return useBarFillMotion({ scope, percent, isHorizontal, fillRef });
+}
 
-  useLayoutEffect(() => {
-    const fill = fillRef.current;
-    if (!fill) return;
+export type MeterChromeSlot = "label" | "hint" | "error";
 
-    const width = fillTargetStyle.width != null ? String(fillTargetStyle.width) : "";
-    const height = fillTargetStyle.height != null ? String(fillTargetStyle.height) : "";
-    const geometryKey = `${width}\0${height}`;
-
-    const applyInstant = () => {
-      fill.style.width = width;
-      fill.style.height = height;
-    };
-
-    if (reduceMotion || firstLayoutRef.current) {
-      firstLayoutRef.current = false;
-      geometryKeyRef.current = geometryKey;
-      applyInstant();
-      return;
-    }
-
-    killMotionGeometry(fill);
-    void gsap.to(fill, {
-      ...(isHorizontal ? { width } : { height }),
-      ...motionInteractiveFor(config),
-      overwrite: "auto",
-    });
-  }, [config, fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
-
-  useEffect(() => {
-    const fill = fillRef.current;
-    return () => {
-      if (fill) killMotion(fill);
-    };
-  }, []);
-
-  return { fillRef };
+export function useMeterChromeSlot(
+  slot: MeterChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: MeterPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalMeterMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }

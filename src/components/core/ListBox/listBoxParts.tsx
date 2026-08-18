@@ -26,6 +26,7 @@ import {
   resolveListBoxMotionDefaults,
   useListBoxActiveOptionHighlight,
   useListBoxRootGlossRef,
+  useListBoxSlotMotion,
 } from "./listBoxAnimations";
 import {
   useListBox,
@@ -234,9 +235,25 @@ export function ListBoxRootShell({
 
 ListBoxRootShell.displayName = "ListBox";
 
-export function ListBoxSection({ className, children, ...rest }: ListBoxSectionProps) {
+export function ListBoxSection({
+  className,
+  children,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...rest
+}: ListBoxSectionProps) {
   const slotClassNames = useListBoxClassNames();
   const [labelId, setLabelId] = useState<string | undefined>();
+  const part = useListBoxSlotMotion<HTMLDivElement>("section", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   const registerLabel = useCallback((id: string | undefined) => {
     setLabelId(id);
@@ -245,6 +262,7 @@ export function ListBoxSection({ className, children, ...rest }: ListBoxSectionP
   return (
     <ListBoxSectionLabelProvider value={registerLabel}>
       <div
+        ref={part.setRef}
         role="group"
         aria-labelledby={labelId}
         className={listBoxSectionClass({
@@ -252,6 +270,7 @@ export function ListBoxSection({ className, children, ...rest }: ListBoxSectionP
           className,
         })}
         {...rest}
+        {...part.pointerHandlers}
       >
         {children}
       </div>
@@ -266,12 +285,24 @@ export function ListBoxHeader({
   textClassName,
   children,
   id: idProp,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
 }: ListBoxHeaderProps) {
   const autoId = useId();
   const id = idProp ?? autoId;
   const slotClassNames = useListBoxClassNames();
   const registerLabel = useListBoxSectionLabelRegister();
+  const part = useListBoxSlotMotion<HTMLDivElement>("header", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   useEffect(() => {
     registerLabel?.(id);
@@ -280,12 +311,14 @@ export function ListBoxHeader({
 
   return (
     <div
+      ref={part.setRef}
       id={id}
       className={listBoxHeaderClass({
         slotClass: slotClassNames.header,
         className,
       })}
       {...rest}
+      {...part.pointerHandlers}
     >
       <Text
         as="span"
@@ -303,11 +336,27 @@ export function ListBoxHeader({
 
 ListBoxHeader.displayName = "ListBoxHeader";
 
-export function ListBoxSeparator({ className, ...rest }: ListBoxSeparatorProps) {
+export function ListBoxSeparator({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...rest
+}: ListBoxSeparatorProps) {
   const slotClassNames = useListBoxClassNames();
+  const part = useListBoxSlotMotion<HTMLDivElement>("separator", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <div
+      ref={part.setRef}
       role="presentation"
       aria-hidden
       className={listBoxSeparatorClass({
@@ -315,6 +364,7 @@ export function ListBoxSeparator({ className, ...rest }: ListBoxSeparatorProps) 
         className,
       })}
       {...rest}
+      {...part.pointerHandlers}
     />
   );
 }
@@ -324,12 +374,25 @@ ListBoxSeparator.displayName = "ListBoxSeparator";
 export function ListBoxEmpty({
   className,
   children,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
 }: ListBoxEmptyProps) {
   const slotClassNames = useListBoxClassNames();
+  const part = useListBoxSlotMotion<HTMLElement>("empty", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <Text
+      ref={part.setRef}
       as="p"
       variant="base"
       className={listBoxEmptyClass({
@@ -337,6 +400,7 @@ export function ListBoxEmpty({
         className,
       })}
       {...rest}
+      {...part.pointerHandlers}
     >
       {children ?? LISTBOX_EMPTY_DEFAULT_CHILDREN}
     </Text>
@@ -582,15 +646,23 @@ export const ListBoxItem = memo(ListBoxItemInner);
 
 ListBoxItem.displayName = "ListBoxItem";
 
-export function ListBoxLabel({ className, motion, ...props }: ListBoxLabelProps) {
+export function ListBoxLabel({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...props
+}: ListBoxLabelProps) {
   const { size } = useListBox("ListBox.Label");
   const slotClassNames = useListBoxClassNames();
-  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
-    scope: useOptionalListBoxMotionScope(),
-    slot: "label",
+  const { setRef, pointerHandlers } = useListBoxSlotMotion<HTMLSpanElement>("label", {
     motion,
-    pointerPhases: true,
-    pressPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   return (
@@ -598,36 +670,61 @@ export function ListBoxLabel({ className, motion, ...props }: ListBoxLabelProps)
       ref={setRef}
       textVariant={CONTROL_SIZE_LAYOUT[size].controlText}
       className={cn(slotClassNames.label, className)}
-      {...pointerHandlers}
       {...props}
+      {...pointerHandlers}
     />
   );
 }
 
 ListBoxLabel.displayName = "ListBoxLabel";
 
-export function ListBoxHint({ className, ...props }: ListBoxHintProps) {
+export function ListBoxHint({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...props
+}: ListBoxHintProps) {
   const slotClassNames = useListBoxClassNames();
+  const { setRef, pointerHandlers } = useListBoxSlotMotion<HTMLSpanElement>("hint", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <OptionListItemHint
+      ref={setRef}
       className={cn(slotClassNames.hint, className)}
       {...props}
+      {...pointerHandlers}
     />
   );
 }
 
 ListBoxHint.displayName = "ListBoxHint";
 
-export function ListBoxIcon({ className, motion, ...props }: ListBoxIconProps) {
+export function ListBoxIcon({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...props
+}: ListBoxIconProps) {
   const { size } = useListBox("ListBox.Icon");
   const slotClassNames = useListBoxClassNames();
-  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
-    scope: useOptionalListBoxMotionScope(),
-    slot: "icon",
+  const { setRef, pointerHandlers } = useListBoxSlotMotion<HTMLSpanElement>("icon", {
     motion,
-    pointerPhases: true,
-    pressPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   return (
@@ -638,8 +735,8 @@ export function ListBoxIcon({ className, motion, ...props }: ListBoxIconProps) {
         slotClassNames.icon,
         className,
       )}
-      {...pointerHandlers}
       {...props}
+      {...pointerHandlers}
     />
   );
 }

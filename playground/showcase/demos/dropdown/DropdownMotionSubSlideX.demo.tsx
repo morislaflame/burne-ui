@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function DropdownMotionSubSlideXDemo() {
   return (
@@ -20,19 +16,16 @@ export function DropdownMotionSubSlideXDemo() {
             <Dropdown.SubContent
               motion={{
                 enter: (ctx) =>
-                  gsap.fromTo(
-                    ctx.el,
+                  ctx.fromTo(
                     { x: 18, opacity: 0 },
-                    { x: 0, opacity: 1, duration: 0.24, ease: "power3.out", ...TL },
+                    { x: 0, opacity: 1, duration: 0.24, ease: "power3.out" },
                   ),
-                leave: (ctx) =>
-                  gsap.to(ctx.el, {
+                leave: {
                     x: 14,
                     autoAlpha: 0,
                     duration: 0.16,
                     ease: "power2.in",
-                    ...TL,
-                  }),
+                  },
               }}
             >
               <Dropdown.Item value="email" selection={false}>

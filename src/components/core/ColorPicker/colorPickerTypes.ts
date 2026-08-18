@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
-import type { ColorSwatchSize } from "./ColorSwatch";
+import type { ColorSwatchShape, ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
 
 export type ColorPickerSize = "small" | "base" | "mid" | "large";
@@ -38,7 +38,6 @@ export type ColorPickerPartMotion = {
   pressIn?: MotionValue;
   pressOut?: MotionValue;
   enter?: MotionValue;
-  leave?: MotionValue;
   change?: MotionValue;
 };
 
@@ -47,9 +46,13 @@ export type ColorPickerMotion = {
   area?: ColorPickerPartMotion;
   areaThumb?: ColorPickerPartMotion;
   hexInput?: ColorPickerPartMotion;
+  alphaInput?: ColorPickerPartMotion;
   presets?: ColorPickerPartMotion;
   hueSlider?: ColorPickerPartMotion;
   alphaSlider?: ColorPickerPartMotion;
+  previewSwatch?: ColorPickerPartMotion;
+  /** Pass-through to `Popover.Trigger` (nested Popover scope). */
+  trigger?: ColorPickerPartMotion;
 };
 
 export type ColorPickerProps = {
@@ -66,9 +69,10 @@ export type ColorPickerProps = {
   disabled?: boolean;
   classNames?: Prettify<ColorPickerClassNames>;
   /**
-   * Per-slot motion (`contentPanel`, `area`, `areaThumb`, `hexInput`, `presets`, `hueSlider`, `alphaSlider`).
-   * Root is a portal-host map (like Dropdown). Thumb drag `left`/`top` is kit-internal.
-   * Defaults are empty. Pass `hueSlider` / `alphaSlider` through to ColorSlider (nested scope does not inherit).
+   * Per-slot motion (`contentPanel`, `area`, `areaThumb`, `hexInput`, `alphaInput`, `presets`, `hueSlider`, `alphaSlider`, `previewSwatch`).
+   * Root is a portal-host map (like Dropdown). `contentPanel` / `hexInput` / `alphaInput` / `presets` / `previewSwatch` play opt-in `enter`.
+   * `area` plays `change` on hex (not mount `enter` — drag surface). Thumb `left`/`top` is kit-internal.
+   * `trigger` is pass-through to Popover. Defaults are empty. Pass `hueSlider` / `alphaSlider` through to ColorSlider (nested scope does not inherit).
    */
   motion?: Prettify<ColorPickerMotion>;
 };
@@ -81,6 +85,17 @@ export type ColorPickerTriggerProps = Omit<
   /** Pass-through to `Popover.Trigger` (default `true` there). */
   asChild?: boolean;
   children?: ReactNode;
+  motion?: Prettify<ColorPickerPartMotion>;
+};
+
+export type ColorPickerPreviewProps = Omit<
+  HTMLAttributes<HTMLSpanElement>,
+  "color"
+> & {
+  color?: string;
+  size?: ColorSwatchSize;
+  shape?: ColorSwatchShape;
+  motion?: Prettify<ColorPickerPartMotion>;
 };
 
 export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
@@ -88,7 +103,7 @@ export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "colo
   presets?: string[];
   /**
    * Custom panel body. Default layout: Area, sliders, hex/alpha inputs, presets.
-   * Compose with `ColorPicker.Area` / `HexInput` / `AlphaInput` / `Presets`.
+   * Compose with `ColorPicker.Area` / `Preview` / `HexInput` / `AlphaInput` / `Presets`.
    */
   children?: ReactNode;
   motion?: Prettify<ColorPickerPartMotion>;
@@ -102,7 +117,9 @@ export type ColorPickerHexInputProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ColorPickerPartMotion>;
 };
 
-export type ColorPickerAlphaInputProps = HTMLAttributes<HTMLDivElement>;
+export type ColorPickerAlphaInputProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ColorPickerPartMotion>;
+};
 
 export type ColorPickerPresetsProps = HTMLAttributes<HTMLDivElement> & {
   presets: string[];

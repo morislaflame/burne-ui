@@ -30,6 +30,8 @@ import { SliderMotionTrackGlowDemo } from "../demos/slider/SliderMotionTrackGlow
 import sliderMotionTrackGlowSource from "../demos/slider/SliderMotionTrackGlow.demo.tsx?raw";
 import { SliderMotionValuePopDemo } from "../demos/slider/SliderMotionValuePop.demo";
 import sliderMotionValuePopSource from "../demos/slider/SliderMotionValuePop.demo.tsx?raw";
+import { SliderMotionHintEnterDemo } from "../demos/slider/SliderMotionHintEnter.demo";
+import sliderMotionHintEnterSource from "../demos/slider/SliderMotionHintEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -65,7 +67,7 @@ export function SliderShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Instant thumb press, change-phase pulse, inertia bubble (quickTo, not change), value pop timeline, range thumbs with different part motion, track hover glow."
+        description="Instant thumb press, change-phase pulse, inertia bubble (quickTo, not change), value pop timeline, range thumbs with different part motion, track hover glow, chrome enter on label / hint / error."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionInstantPressDemo} source={sliderMotionInstantPressSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionChangeTintDemo} source={sliderMotionChangeTintSource} />
@@ -73,6 +75,7 @@ export function SliderShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionValuePopDemo} source={sliderMotionValuePopSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionRangeSplitDemo} source={sliderMotionRangeSplitSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionTrackGlowDemo} source={sliderMotionTrackGlowSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionHintEnterDemo} source={sliderMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

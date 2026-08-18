@@ -1,8 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
 
-import { Field } from "@/components/core/Field";
-import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -71,26 +69,22 @@ export type SliderSimpleLayoutParts = {
 
 export type SliderSimpleLayoutProps = SliderSimpleLayoutParts & {
   label?: ReactNode;
-  labelClassName?: string;
+  labelNode?: ReactNode;
   showValue?: boolean;
   valueText?: ReactNode;
-  hint?: ReactNode;
-  hintId?: string;
-  error?: ReactNode;
-  errorId?: string;
+  hintNode?: ReactNode;
+  errorNode?: ReactNode;
   track: ReactNode;
 };
 
 /** Simple mode layout for Slider. */
 export function renderSliderSimpleLayout({
   label,
-  labelClassName,
+  labelNode,
   showValue,
   valueText,
-  hint,
-  hintId,
-  error,
-  errorId,
+  hintNode,
+  errorNode,
   Header,
   Value,
   track,
@@ -101,11 +95,7 @@ export function renderSliderSimpleLayout({
     <>
       {showHeader ? (
         <Header>
-          {label != null ? (
-            <Label classNames={labelClassName ? { root: labelClassName } : undefined}>
-              {label}
-            </Label>
-          ) : null}
+          {labelNode}
           {valueText != null ? (
             <Value>{valueText}</Value>
           ) : showValue ? (
@@ -114,8 +104,8 @@ export function renderSliderSimpleLayout({
         </Header>
       ) : null}
       {track}
-      {hint != null ? <Field.Hint id={hintId}>{hint}</Field.Hint> : null}
-      {error != null ? <Field.Error id={errorId}>{error}</Field.Error> : null}
+      {hintNode}
+      {errorNode}
     </>
   );
 }

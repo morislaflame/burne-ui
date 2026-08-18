@@ -1,8 +1,6 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
-import { useMemo } from "react";
 
-import { resolveMeterMotionDefaults } from "./meterAnimations";
 import { MeterClassNamesProvider, MeterFieldProvider, MeterMotionProvider } from "./meterContext";
 import { MeterSimpleBody } from "./meterParts";
 import { meterRootClass } from "./meterStyles";
@@ -14,6 +12,7 @@ export type {
   MeterErrorProps,
   MeterHeaderProps,
   MeterHintProps,
+  MeterLabelProps,
   MeterOrientation,
   MeterProps,
   MeterSize,
@@ -90,12 +89,10 @@ export function MeterRoot({
     />
   );
 
-  const motionDefaults = useMemo(() => resolveMeterMotionDefaults(), []);
-
   return (
     <MeterFieldProvider value={state.fieldCtx}>
       <MeterClassNamesProvider classNames={classNames}>
-        <MeterMotionProvider motion={motion} defaults={motionDefaults}>
+        <MeterMotionProvider motion={motion}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               id={state.meterId}

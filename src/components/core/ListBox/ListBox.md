@@ -113,7 +113,8 @@ Option-grid (indicator | label | icon) включается только ког�
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `item` | `pressIn` / `pressOut` (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
-| `label` / `icon` | hover/press | нет |
+| `label` / `hint` / `icon` | hover/press; `enter` (opt-in) | нет |
+| `section` / `header` / `empty` / `separator` | `enter` (opt-in); hover/press если задать | нет |
 
 `false` на `item.pressIn` — skip без kill.
 
@@ -125,7 +126,7 @@ Option-grid (indicator | label | icon) включается только ког�
 </ListBox>
 ```
 
-Compound: `motion` на `ListBox.Item` — part motion слота `item`; на `ListBox.Label` / `ListBox.Icon` — свои слоты.
+Compound: `motion` на `ListBox.Item` — part motion слота `item`; на `ListBox.Label` / `ListBox.Hint` / `ListBox.Icon` / `ListBox.Section` / `ListBox.Header` / `ListBox.Empty` / `ListBox.Separator` — свои слоты. `headerText` не слот.
 
 ## Стилизация и кастомизация
 
@@ -226,7 +227,7 @@ ListBox/
 ├── index.ts
 ├── listBoxTypes.ts
 ├── listBoxStyles.ts
-├── listBoxAnimations.ts       # gloss ref + item squeeze
+├── listBoxAnimations.ts       # slot defaults + keyboard press + gloss ref
 ├── listBoxParts.tsx
 ├── useListBoxRootState.ts
 ├── useListBoxItemState.ts
@@ -237,4 +238,4 @@ ListBox/
 
 ## Storybook
 
-`Core Components/ListBox` — single/multiple, sections, gloss, indicator, `classNames`.
+`Core Components/ListBox` — single/multiple, sections, gloss, indicator, `classNames`, slot motion gallery.

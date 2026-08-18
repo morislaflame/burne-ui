@@ -81,8 +81,9 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `Table.Header` | `<thead>` |
 | `Table.HeaderRow` | `<tr>` в header (`className` / `ref`); если не передан — Header оборачивает колонки сам |
 | `Table.Column` | `<th>` + sort UI |
-| `Table.Label` | Текст заголовка колонки (`className` / `ref`); simple children Column оборачиваются автоматически. Слот `classNames.columnLabel` |
+| `Table.Label` | Текст заголовка колонки (`className` / `ref` / `motion`); simple children Column оборачиваются автоматически. Слот `classNames.columnLabel`; motion-слот `label` |
 | `Table.Body` | `<tbody>` + empty state |
+| `Table.Empty` | `<td>` empty placeholder; motion-слот `empty`, CSS `classNames.emptyCell` |
 | `Table.Row` | `<tr>` + tone/selection |
 | `Table.Cell` | `<td>` |
 | `Table.Footer` | Footer bar под table |
@@ -115,9 +116,11 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `root`, `scrollContainer`, `content`, `header`, `footer`; nested `row`; `column` / `cell` (repeated slots, multi-instance) | `enter` (opt-in); row `check` / `uncheck` on selection; `change` (opt-in, без дефолта кита) | empty |
+| `root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`; nested `row`; `column` / `cell` / `label` / `empty` (repeated slots, multi-instance) | `enter` (opt-in); row `check` / `uncheck` on selection | empty |
 
-`glossContent` не слот. Поворот sort chevron — kit-internal.
+`glossContent` не слот motion. `emptyCell` — CSS для `Table.Empty` (слот `empty`). Поворот sort chevron — kit-internal.
+
+`enter` — mount (`useOptionalEnterOnMount`, в том числе у изначально выбранной строки). Selection после mount — `check` / `uncheck` (`skipFirst`, не второй `enter`). `column` / `label` — repeated на scope таблицы; `cell` — repeated на nested row scope (`part.targetRef`).
 
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет таблицу видимой). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется. Пользовательские `onPointerOver` / `Out` / `Down` / `Up` **мержатся** с motion (не заменяют).
 
@@ -320,7 +323,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 - **`Table.ScrollContainer`** — для horizontal overflow; не ставьте `tabIndex={0}` по умолчанию (перехватывает Tab). Нужен keyboard-scroll без интерактива внутри — передайте `tabIndex={0}` явно.
 - **Sort:** `allowsSorting` + `sortDescriptor` / `defaultSortDescriptor` / `onSortChange`; без `allowsSorting` chevron decorative.
 - **`isRowHeader`** на первой колонке — screen reader row headers.
-- **`renderEmptyState` на `Table.Body`** — кастом empty UI (`emptyCell` слот).
+- **`renderEmptyState` на `Table.Body`** — кастом empty UI. Для motion слота `empty` верните `<Table.Empty>` (CSS — `classNames.emptyCell`).
 - **Gloss:** children table внутри `glossContent` автоматически; не дублируйте `gloss-panel` в `classNames.root`.
 - **Не задавайте `transform` на `columnSortIcon`** — конфликт с GSAP rotate.
 - **Порядок мержа:** variant styles → `classNames.slot` → `className` подчасти.
@@ -362,4 +365,4 @@ Table/
 
 ## Storybook
 
-`Core Components/Table` — variants, sort, selection, tones, gloss, empty state, `classNames`.
+`Core Components/Table` — variants, sort, selection, tones, gloss, empty state, `classNames`, slot motion gallery.

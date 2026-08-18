@@ -71,12 +71,23 @@ export type CalendarPartMotion = {
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
 };
 
 export type CalendarMotion = {
   navPrev?: CalendarPartMotion;
   navNext?: CalendarPartMotion;
+  navPrevIcon?: CalendarPartMotion;
+  navNextIcon?: CalendarPartMotion;
+  header?: CalendarPartMotion;
+  headerTitle?: CalendarPartMotion;
+  grid?: CalendarPartMotion;
   cell?: CalendarPartMotion;
+  cellText?: CalendarPartMotion;
+  footer?: CalendarPartMotion;
+  footerToday?: CalendarPartMotion;
+  footerClear?: CalendarPartMotion;
 };
 
 type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
@@ -120,12 +131,20 @@ export type CalendarProps =
       onValueChange?: (dates: Date[]) => void;
     });
 
-export type CalendarHeaderProps = HTMLAttributes<HTMLDivElement>;
-export type CalendarGridProps = HTMLAttributes<HTMLDivElement>;
-export type CalendarFooterProps = HTMLAttributes<HTMLDivElement>;
+export type CalendarHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CalendarPartMotion>;
+};
+export type CalendarGridProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CalendarPartMotion>;
+};
+export type CalendarFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CalendarPartMotion>;
+};
 
 /** Header month/year drill-up control. `children` replace the default formatted title. */
-export type CalendarTitleProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export type CalendarTitleProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  motion?: Prettify<CalendarPartMotion>;
+};
 
 export type CalendarContextValue = {
   mode: CalendarMode;

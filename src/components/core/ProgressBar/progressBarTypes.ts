@@ -3,6 +3,7 @@ import type {
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { LabelProps } from "@/components/core/Label";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type ProgressBarSize = "small" | "base" | "mid" | "large";
@@ -28,7 +29,11 @@ export type ProgressBarPartMotion = {
   pressOut?: MotionValue;
   enter?: MotionValue;
   leave?: MotionValue;
-  /** Plays when `value` / indeterminate identity changes. Fill scale stays kit-internal. */
+  /**
+   * `track`: value / indeterminate identity.
+   * `fill`: determinate `progressFill` (scale) or `progressIndeterminate`.
+   * Opt-in `fill.enter` — first paint at 0, then fill to `getProgressScale()`.
+   */
   change?: MotionValue;
 };
 
@@ -37,6 +42,9 @@ export type ProgressBarMotion = {
   fill?: ProgressBarPartMotion;
   header?: ProgressBarPartMotion;
   value?: ProgressBarPartMotion;
+  label?: ProgressBarPartMotion;
+  hint?: ProgressBarPartMotion;
+  error?: ProgressBarPartMotion;
 };
 
 export type ProgressBarDisplayState = {
@@ -84,8 +92,10 @@ export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
     error?: ReactNode;
     classNames?: Prettify<ProgressBarClassNames>;
     /**
-     * Per-slot motion (`track`, `fill`, `header`, `value`).
-     * Fill scale / indeterminate travel is kit-internal. Phase `change` plays on `track`.
+     * Per-slot motion (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`).
+     * Fill `change` defaults to `progressFill` / `progressIndeterminate`.
+     * `fill.enter` is opt-in (`"progressFill"` or a factory with `ctx.params.getProgressScale`).
+     * Chrome registers on the Root scope (siblings of Track). Track is the nested fill host.
      */
     motion?: Prettify<ProgressBarMotion>;
   };
@@ -105,12 +115,18 @@ export type ProgressBarValueProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ProgressBarPartMotion>;
 };
 
+export type ProgressBarLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<ProgressBarPartMotion>;
+};
+
 export type ProgressBarHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<ProgressBarPartMotion>;
 };
 
 export type ProgressBarErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<ProgressBarPartMotion>;
 };
 
 export type UseProgressBarRootStateProps = Omit<
@@ -141,13 +157,6 @@ export type ProgressBarTrackAriaProps = {
   indeterminate: boolean;
   labelId?: string;
   ariaDescribedBy?: string;
-};
-
-export type UseProgressBarFillAnimationProps = {
-  indeterminate: boolean;
-  /** 0–100 progress for determinate fill scale. */
-  percent: number;
-  isHorizontal: boolean;
 };
 
 export type ProgressBarSimpleBodyProps = {

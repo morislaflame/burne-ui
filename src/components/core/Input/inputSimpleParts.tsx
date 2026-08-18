@@ -1,8 +1,6 @@
-import { Field } from "@/components/core/Field";
-
 import { InputControl } from "./inputControlParts";
 import { useInputClassNames } from "./inputContext";
-import { InputError, InputHint } from "./inputFieldParts";
+import { InputError, InputHint, InputLabel } from "./inputFieldParts";
 import type { InputSimpleBodyProps } from "./inputTypes";
 
 export function InputSimpleBody({
@@ -20,9 +18,9 @@ export function InputSimpleBody({
   return (
     <>
       {label != null ? (
-        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <InputLabel id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Field.Label>
+        </InputLabel>
       ) : null}
       <InputControl id={inputId} size={size} status={status} {...controlProps} />
       {hint != null ? <InputHint>{hint}</InputHint> : null}

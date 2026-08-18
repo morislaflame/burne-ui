@@ -3,7 +3,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue } from "@/components/core/utils/slotMotion";
 import type { ShadowLevel } from "@/tokens/shadows";
 
 export type AlertSize = MessageBannerSize;
@@ -54,8 +54,15 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   /**
    * Per-slot motion (`root`, `indicator`, `title`, `description`, `action`).
    * `Alert.Message` / `Alert.Content` are `display: contents` and are not targets.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<AlertMotion>;
+  motion?: Prettify<MotionMapWithEvents<AlertMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   * Plays built-in phases and `motion.events` (`play` / `playSlot` / `playAll` / `set` / `cancel`).
+   */
+  motionController?: MotionController;
   /**
    * Hover lift + stronger shadow in the same `shadow` family (`--shadow-{shadow}-hover`).
    * Rest elevation stays when `false`. Shorthand for `motion.root.hoverIn/Out: false`.

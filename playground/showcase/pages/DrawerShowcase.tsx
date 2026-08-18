@@ -14,6 +14,10 @@ import { DrawerMotionInstantPanelDemo } from "../demos/drawer/DrawerMotionInstan
 import drawerMotionInstantPanelSource from "../demos/drawer/DrawerMotionInstantPanel.demo.tsx?raw";
 import { DrawerMotionTitleStaggerDemo } from "../demos/drawer/DrawerMotionTitleStagger.demo";
 import drawerMotionTitleStaggerSource from "../demos/drawer/DrawerMotionTitleStagger.demo.tsx?raw";
+import { DrawerMotionBodyStaggerDemo } from "../demos/drawer/DrawerMotionBodyStagger.demo";
+import drawerMotionBodyStaggerSource from "../demos/drawer/DrawerMotionBodyStagger.demo.tsx?raw";
+import { DrawerMotionHeadingBlockDemo } from "../demos/drawer/DrawerMotionHeadingBlock.demo";
+import drawerMotionHeadingBlockSource from "../demos/drawer/DrawerMotionHeadingBlock.demo.tsx?raw";
 import { DrawerMotionBounceSlideDemo } from "../demos/drawer/DrawerMotionBounceSlide.demo";
 import drawerMotionBounceSlideSource from "../demos/drawer/DrawerMotionBounceSlide.demo.tsx?raw";
 import { DrawerHandleDemo } from "../demos/drawer/DrawerHandle.demo";
@@ -60,11 +64,13 @@ export function DrawerShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — default slide, instant panel, title stagger, bounce factory."
+        description="Each card is a separate copyable example — default slide, instant panel, title stagger, headingBlock, bounce factory."
       >
         <ShowcaseDemoFromFile Demo={DrawerMotionDefaultDemo} source={drawerMotionDefaultSource} />
         <ShowcaseDemoFromFile Demo={DrawerMotionInstantPanelDemo} source={drawerMotionInstantPanelSource} />
         <ShowcaseDemoFromFile Demo={DrawerMotionTitleStaggerDemo} source={drawerMotionTitleStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DrawerMotionBodyStaggerDemo} source={drawerMotionBodyStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DrawerMotionHeadingBlockDemo} source={drawerMotionHeadingBlockSource} />
         <ShowcaseDemoFromFile Demo={DrawerMotionBounceSlideDemo} source={drawerMotionBounceSlideSource} />
       </ShowcaseSection>
 

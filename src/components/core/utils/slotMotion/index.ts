@@ -8,27 +8,61 @@
 export {
   KIT_MOTION_RECIPES,
   MOTION_PHASE_NAMES,
+  MOTION_RECIPE_METADATA_DEFAULTS,
   isMotionFactory,
   isMotionVarsObject,
   isMotionRunActive,
+  isMotionPhaseName,
   LEAVE_COMPLETE_FALLBACK_MS,
   type KitRecipeName,
   type MotionAnimation,
   type MotionCancelReason,
   type MotionContext,
+  type MotionDurationToken,
   type MotionFactory,
   type MotionPartPhases,
   type MotionPhaseName,
   type MotionRecipe,
+  type MotionRecipeMetadata,
   type MotionRecipeName,
   type MotionRecipeParams,
+  type MotionReducedStrategy,
   type MotionRun,
   type MotionTransformVars,
+  type MotionTweenVars,
+  type MotionTimeline,
+  type MotionTimelinePosition,
+  type MotionReplay,
   type MotionRunStatus,
   type MotionSlotMap,
   type MotionValue,
   type MotionVars,
 } from "./slotMotionTypes";
+export { KIT_MOTION_RECIPE_META } from "./kitMotionRecipeMeta";
+export {
+  createMotionEvents,
+  splitMotionRootMap,
+} from "./motionEvents";
+export type {
+  MotionEvents,
+  MotionMapWithEvents,
+} from "./motionEvents";
+export {
+  attachMotionController,
+  createMotionController,
+  createMotionControllerFromScope,
+  useMotionController,
+  useMotionControllerHandle,
+  useOptionalMotionController,
+  MotionControllerProvider,
+} from "./motionController";
+export type {
+  MotionBroadcastOptions,
+  MotionController,
+  MotionPlayEvent,
+  MotionPlayOptions,
+  MotionRunResult,
+} from "./motionControllerTypes";
 export {
   registerMotionRecipe,
   unregisterMotionRecipe,
@@ -36,6 +70,7 @@ export {
   listMotionRecipes,
   isKitMotionRecipe,
   getMotionRecipe,
+  getMotionRecipeMetadata,
   type RegisterMotionRecipeOptions,
 } from "./motionRecipeRegistry";
 export {

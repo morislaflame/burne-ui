@@ -1,72 +1,138 @@
+import { forwardRef } from "react";
+
 import { Field } from "@/components/core/Field";
-import type { LabelProps } from "@/components/core/Label";
 
 import { selectResolveHintStatus } from "./selectAPI";
+import { useSelectChromeSlot } from "./selectAnimations";
 import { useSelectClassNames, useSelectFieldContext } from "./selectContext";
-import type { SelectErrorProps, SelectHintProps } from "./selectTypes";
+import type { SelectErrorProps, SelectHintProps, SelectLabelProps } from "./selectTypes";
 
 import { cn } from "@/utils/cn";
 
-export function SelectLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useSelectClassNames();
+export const SelectLabel = forwardRef<HTMLElement, SelectLabelProps>(
+  function SelectLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useSelectClassNames();
+    const part = useSelectChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Field.Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 SelectLabel.displayName = "SelectLabel";
 
-export function SelectHint({
-  children,
-  status,
-  className,
-  id: idProp,
-  ...rest
-}: SelectHintProps) {
-  const field = useSelectFieldContext();
-  const slotClassNames = useSelectClassNames();
-  const hintStatus = selectResolveHintStatus(status, field.status);
+export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
+  function SelectHint(
+    {
+      children,
+      status,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useSelectFieldContext();
+    const slotClassNames = useSelectClassNames();
+    const hintStatus = selectResolveHintStatus(status, field.status);
+    const part = useSelectChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? field.hintId}
-      status={hintStatus}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? field.hintId}
+        status={hintStatus}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 SelectHint.displayName = "SelectHint";
 
-export function SelectError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: SelectErrorProps) {
-  const field = useSelectFieldContext();
-  const slotClassNames = useSelectClassNames();
+export const SelectError = forwardRef<HTMLElement, SelectErrorProps>(
+  function SelectError(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useSelectFieldContext();
+    const slotClassNames = useSelectClassNames();
+    const part = useSelectChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? field.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children ?? field.errorMessage}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? field.errorId}
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children ?? field.errorMessage}
+      </Field.Error>
+    );
+  },
+);
 
 SelectError.displayName = "Select.Error";

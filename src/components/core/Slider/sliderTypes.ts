@@ -7,6 +7,7 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { LabelProps } from "@/components/core/Label";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type SliderOrientation = "horizontal" | "vertical";
@@ -51,6 +52,9 @@ export type SliderMotion = {
   icon?: SliderPartMotion;
   header?: SliderPartMotion;
   value?: SliderPartMotion;
+  label?: SliderPartMotion;
+  hint?: SliderPartMotion;
+  error?: SliderPartMotion;
 };
 
 export type SliderDisplayState = {
@@ -176,9 +180,10 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
   error?: ReactNode;
   classNames?: Prettify<SliderClassNames>;
     /**
-     * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`).
+     * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`, `label`, `hint`, `error`).
      * Thumb press default: `pressSqueeze` (`pressOut: false`). Fill geometry (`left`/`width`) is kit-internal.
      * Phase `change` plays on `track` when value updates (broadcast; `fill` excluded).
+     * Chrome registers on the Root scope (siblings of Track).
      */
   motion?: Prettify<SliderMotion>;
 } & (
@@ -199,12 +204,18 @@ export type SliderValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
+export type SliderLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<SliderPartMotion>;
+};
+
 export type SliderHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<SliderPartMotion>;
 };
 
 export type SliderErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<SliderPartMotion>;
 };
 
 export type SliderFillProps = HTMLAttributes<HTMLSpanElement>;

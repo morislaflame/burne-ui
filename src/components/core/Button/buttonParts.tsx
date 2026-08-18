@@ -2,8 +2,9 @@ import { forwardRef, memo, useCallback, useImperativeHandle, useLayoutEffect, us
 
 import { Text } from "@/components/core/Text";
 import { clearWillChangeOnComplete, ensureRippleEase, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { isMotionFeatureEnabledFor, motionFeedbackExpandFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
@@ -170,21 +171,33 @@ export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
 ButtonContent.displayName = "ButtonContent";
 
 export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
-  function ButtonLabel({ className = "", children, ...rest }, ref) {
+  function ButtonLabel(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const asyncState = ctx?.asyncState ?? "idle";
     const cssHidden = !ctx?.asyncMotionReady && asyncState !== "idle";
+    const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalButtonMotionScope(),
+      slot: "label",
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+    });
 
     return (
       <span
-        ref={ref ?? ctx?.bindLabelRef}
+        ref={mergeRefs(setRef, ctx?.bindLabelRef)}
         className={buttonLabelClass({
           slotClass: slotClassNames.label,
           className,
           cssHidden,
         })}
         {...rest}
+        {...pointerHandlers}
       >
         {children}
       </span>
@@ -194,16 +207,32 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
 
 ButtonLabel.displayName = "ButtonLabel";
 
-export function ButtonIcon({ className = "", children, ...rest }: ButtonIconProps) {
+export function ButtonIcon({
+  className = "",
+  children,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: ButtonIconProps) {
   const ctx = useOptionalButtonContext();
   const slotClassNames = useButtonClassNames();
   const size = ctx?.size ?? "base";
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalButtonMotionScope(),
+    slot: "icon",
+    motion,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <span
+      ref={setRef}
       className={buttonIconClass(size, cn(slotClassNames.icon, className))}
       aria-hidden
       {...rest}
+      {...pointerHandlers}
     >
       {children}
     </span>
@@ -212,18 +241,34 @@ export function ButtonIcon({ className = "", children, ...rest }: ButtonIconProp
 
 ButtonIcon.displayName = "ButtonIcon";
 
-export function ButtonText({ className = "", children, ...rest }: ButtonTextProps) {
+export function ButtonText({
+  className = "",
+  children,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: ButtonTextProps) {
   const ctx = useOptionalButtonContext();
   const slotClassNames = useButtonClassNames();
   const size = ctx?.size ?? "base";
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalButtonMotionScope(),
+    slot: "text",
+    motion,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <Text
+      ref={setRef}
       variant={BUTTON_SIZE_TEXT_VARIANT[size]}
       as="span"
       inheritColor
       className={buttonTextClass(slotClassNames.text, className)}
       {...rest}
+      {...pointerHandlers}
     >
       {children}
     </Text>
@@ -233,17 +278,23 @@ export function ButtonText({ className = "", children, ...rest }: ButtonTextProp
 ButtonText.displayName = "ButtonText";
 
 export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
-  function ButtonLoader({ className = "", ...rest }, ref) {
+  function ButtonLoader({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const size = ctx?.size ?? "base";
     const asyncState = ctx?.asyncState ?? "idle";
     const loaderTextClass = ctx?.loaderTextClass ?? "";
     const cssHidden = !ctx?.asyncMotionReady && asyncState !== "loading";
+    const { setRef } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalButtonMotionScope(),
+      slot: "loader",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <span
-        ref={ref ?? ctx?.bindLoaderRef}
+        ref={mergeRefs(setRef, ctx?.bindLoaderRef)}
         className={buttonLoaderLayerClass(
           loaderTextClass,
           cn(slotClassNames.loader, className),
@@ -263,17 +314,23 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
 ButtonLoader.displayName = "ButtonLoader";
 
 export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
-  function ButtonSuccess({ className = "", ...rest }, ref) {
+  function ButtonSuccess({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const size = ctx?.size ?? "base";
     const asyncState = ctx?.asyncState ?? "idle";
     const layout = CONTROL_SIZE_LAYOUT[size];
     const cssHidden = !ctx?.asyncMotionReady && asyncState !== "success";
+    const { setRef } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalButtonMotionScope(),
+      slot: "success",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <span
-        ref={ref ?? ctx?.bindSuccessRef}
+        ref={mergeRefs(setRef, ctx?.bindSuccessRef)}
         className={buttonSuccessLayerClass(
           cn(slotClassNames.success, className),
           cssHidden,
@@ -290,17 +347,23 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
 ButtonSuccess.displayName = "ButtonSuccess";
 
 export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
-  function ButtonError({ className = "", ...rest }, ref) {
+  function ButtonError({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const size = ctx?.size ?? "base";
     const asyncState = ctx?.asyncState ?? "idle";
     const layout = CONTROL_SIZE_LAYOUT[size];
     const cssHidden = !ctx?.asyncMotionReady && asyncState !== "error";
+    const { setRef } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalButtonMotionScope(),
+      slot: "error",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <span
-        ref={ref ?? ctx?.bindErrorRef}
+        ref={mergeRefs(setRef, ctx?.bindErrorRef)}
         className={buttonErrorLayerClass(
           cn(slotClassNames.error, className),
           cssHidden,

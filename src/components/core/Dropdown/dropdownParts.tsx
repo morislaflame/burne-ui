@@ -5,11 +5,10 @@ import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles"
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 
-import { useDropdownPopoverMenu, resolveDropdownPopoverMotion } from "./dropdownAnimations";
+import { useDropdownPopoverMenu, resolveDropdownPopoverMotion, useDropdownMenuSlotMotion } from "./dropdownAnimations";
 import {
   useDropdown,
   useDropdownClassNames,
@@ -40,22 +39,50 @@ import { cn } from "@/utils/cn";
 
 export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
   function DropdownTrigger(
-    { children, className, asChild, onClick, onPointerDown, onKeyDown, ...rest },
+    {
+      children,
+      className,
+      asChild,
+      motion,
+      onClick,
+      onPointerDown,
+      onPointerOver,
+      onPointerOut,
+      onPointerUp,
+      onKeyDown,
+      ...rest
+    },
     forwardedRef,
   ) {
     const { open, setOpen, triggerRef, contentId } = useDropdown();
     const slotClassNames = useDropdownClassNames();
-    const openingRef = useOpeningRef();
-    const config = useMotionConfig();
+    const { part, openingRef, openAfterSqueeze } = useOverlayTriggerSlot<HTMLElement>({
+      scope: useOptionalDropdownMotionScope(),
+      slot: "trigger",
+      motion,
+      forwardedRef,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+
+    const mergedRef = useCallback(
+      (node: HTMLElement | null) => {
+        part.setRef(node);
+        triggerRef.current = node;
+      },
+      [part.setRef, triggerRef],
+    );
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         // Prevent child Button's own squeeze so Trigger drives the animation.
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
+        openAfterSqueeze(() => setOpen(true));
       },
-      [open, openingRef, triggerRef, setOpen, config],
+      [open, openingRef, openAfterSqueeze, setOpen],
     );
 
     const handleClick = useCallback(
@@ -77,11 +104,11 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
           e.preventDefault();
           if (open) setOpen(false);
           else {
-            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
+            openAfterSqueeze(() => setOpen(true));
           }
         }
       },
-      [onKeyDown, open, openingRef, setOpen, triggerRef, config],
+      [onKeyDown, open, openAfterSqueeze, setOpen],
     );
 
     if (asChild && isValidElement(children)) {
@@ -99,15 +126,18 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
             ),
             onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
               handlePointerDown(e);
-              onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+              part.pointerHandlers.onPointerDown(e);
             },
+            onPointerOver: part.pointerHandlers.onPointerOver,
+            onPointerOut: part.pointerHandlers.onPointerOut,
+            onPointerUp: part.pointerHandlers.onPointerUp,
             onClick: handleClick,
             onKeyDown: handleKeyDown,
             "aria-expanded": open,
             "aria-haspopup": "menu",
             "aria-controls": open ? contentId : undefined,
           },
-          mergeRefs(forwardedRef, triggerRef),
+          mergedRef,
           { runBeforeChild: ["onPointerDown", "onKeyDown"] },
         ),
       );
@@ -116,10 +146,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
     return (
       <button
         type="button"
-        ref={(node) => {
-          mergeForwardedRef(forwardedRef, node);
-          mergeForwardedRef(triggerRef, node);
-        }}
+        ref={mergedRef as React.Ref<HTMLButtonElement>}
         className={cn(
           DROPDOWN_TRIGGER_CLASS,
           slotClassNames.trigger,
@@ -128,13 +155,14 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={open ? contentId : undefined}
-        onPointerDown={(e) => {
-          onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
-          handlePointerDown(e as ReactPointerEvent<HTMLElement>);
-        }}
         onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
         onKeyDown={handleKeyDown as React.KeyboardEventHandler<HTMLButtonElement>}
         {...rest}
+        {...part.pointerHandlers}
+        onPointerDown={(e) => {
+          part.pointerHandlers.onPointerDown(e as ReactPointerEvent<HTMLElement>);
+          handlePointerDown(e as ReactPointerEvent<HTMLElement>);
+        }}
       >
         {children}
       </button>
@@ -284,13 +312,31 @@ DropdownGroup.displayName = "Dropdown.Group";
 
 export const DropdownLabel = forwardRef<HTMLDivElement, DropdownLabelProps>(
   function DropdownLabel(
-    { className, children, id: idProp, ...rest },
+    {
+      className,
+      children,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
     ref,
   ) {
     const autoId = useId();
     const id = idProp ?? autoId;
     const registerLabel = useDropdownGroupLabelRegister();
     const slotClassNames = useDropdownClassNames();
+    const part = useDropdownMenuSlotMotion<HTMLDivElement>("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     useLayoutEffect(() => {
       registerLabel?.(id);
@@ -299,7 +345,7 @@ export const DropdownLabel = forwardRef<HTMLDivElement, DropdownLabelProps>(
 
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         id={id}
         className={cn(
           DROPDOWN_LABEL_CLASS,
@@ -307,6 +353,7 @@ export const DropdownLabel = forwardRef<HTMLDivElement, DropdownLabelProps>(
           className,
         )}
         {...rest}
+        {...part.pointerHandlers}
       >
         <Text
           as="span"
@@ -324,14 +371,28 @@ DropdownLabel.displayName = "Dropdown.Label";
 
 export function DropdownSeparator({
   className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
 }: DropdownSeparatorProps) {
   const slotClassNames = useDropdownClassNames();
+  const part = useDropdownMenuSlotMotion("separator", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <Separator
+      ref={part.setRef}
       className={cn(slotClassNames.separator, className)}
       {...rest}
+      {...part.pointerHandlers}
     />
   );
 }

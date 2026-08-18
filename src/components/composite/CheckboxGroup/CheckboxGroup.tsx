@@ -5,7 +5,13 @@ import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components
 
 import { CHECKBOX_GROUP_USES_NATIVE_FIELDSET } from "./checkboxGroupA11y";
 import { resolveCheckboxGroupMotionDefaults, useCheckboxGroupRootMotion } from "./checkboxGroupAnimations";
-import { CheckboxGroupError, CheckboxGroupHint, CheckboxGroupLegend, CheckboxGroupList } from "./checkboxGroupParts";
+import {
+  CheckboxGroupActions,
+  CheckboxGroupError,
+  CheckboxGroupHint,
+  CheckboxGroupLegend,
+  CheckboxGroupList,
+} from "./checkboxGroupParts";
 import { CheckboxGroupClassNamesProvider, CheckboxGroupMotionProvider, CheckboxGroupProvider, useCheckboxGroupClassNames, useCheckboxGroupContext } from "./checkboxGroupContext";
 import type { CheckboxGroupProps } from "./checkboxGroupTypes";
 import { useCheckboxGroupRootState } from "./useCheckboxGroupRootState";
@@ -20,17 +26,31 @@ export type {
   CheckboxGroupLegendProps,
   CheckboxGroupListProps,
   CheckboxGroupErrorProps,
+  CheckboxGroupActionsProps,
   CheckboxGroupMotion,
   CheckboxGroupPartMotion,
 } from "./checkboxGroupTypes";
 
 const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroupFieldsetProps, "classNames">>(
-  function CheckboxGroupFieldsetShell(props, ref) {
+  function CheckboxGroupFieldsetShell(
+    {
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...props
+    },
+    ref,
+  ) {
     const slotClassNames = useCheckboxGroupClassNames();
     const { selectedValue } = useCheckboxGroupContext();
     const part = useCheckboxGroupRootMotion({
       forwardedRef: ref,
       selectionIdentity: selectedValue ?? "",
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     return (
@@ -95,4 +115,10 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
 
 CheckboxGroupRoot.displayName = "CheckboxGroup";
 
-export { CheckboxGroupLegend, CheckboxGroupHint, CheckboxGroupError, CheckboxGroupList };
+export {
+  CheckboxGroupLegend,
+  CheckboxGroupHint,
+  CheckboxGroupError,
+  CheckboxGroupActions,
+  CheckboxGroupList,
+};

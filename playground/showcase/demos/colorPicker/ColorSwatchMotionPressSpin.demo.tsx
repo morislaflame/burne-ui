@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { ColorSwatch } from "@/components/core/ColorPicker";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ColorSwatchMotionPressSpinDemo() {
   return (
@@ -14,20 +10,18 @@ export function ColorSwatchMotionPressSpinDemo() {
       motion={{
         root: {
           pressIn: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               rotate: 180,
               scale: 0.86,
               duration: 0.22,
               ease: "back.out(1.8)",
-              ...TL,
             }),
           pressOut: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               rotate: 0,
               scale: 1,
               duration: 0.28,
               ease: "power2.inOut",
-              ...TL,
             }),
         },
       }}

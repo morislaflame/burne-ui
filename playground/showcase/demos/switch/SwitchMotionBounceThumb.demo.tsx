@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Switch } from "@/components/core/Switch";
 
 export function SwitchMotionBounceThumbDemo() {
@@ -12,22 +10,13 @@ export function SwitchMotionBounceThumbDemo() {
         thumb: {
           check: (ctx) => {
             const travel = ctx.params.getTravelPx?.() ?? 0;
-            return gsap.to(ctx.el, {
+            return ctx.to({
               x: travel,
               duration: 0.45,
               ease: "back.out(1.6)",
-              overwrite: "auto",
-              force3D: false,
             });
           },
-          uncheck: (ctx) =>
-            gsap.to(ctx.el, {
-              x: 0,
-              duration: 0.22,
-              ease: "power2.in",
-              overwrite: "auto",
-              force3D: false,
-            }),
+          uncheck: { x: 0, duration: 0.22, ease: "power2.in" },
         },
       }}
     />

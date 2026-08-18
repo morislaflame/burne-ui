@@ -1,5 +1,4 @@
 import { useState } from "react";
-import gsap from "gsap";
 
 import { Button } from "@/components/core/Button";
 import { Drawer } from "@/components/core/Drawer";
@@ -20,24 +19,19 @@ export function DrawerMotionBounceSlideDemo() {
         motion={{
           panel: {
             enter: (ctx) =>
-              gsap.fromTo(
-                ctx.el,
+              ctx.fromTo(
                 { x: 80 },
                 {
                   x: 0,
                   duration: 0.5,
                   ease: "back.out(1.4)",
-                  overwrite: "auto",
-                  force3D: false,
                 },
               ),
             leave: (ctx) =>
-              gsap.to(ctx.el, {
+              ctx.to({
                 x: ctx.el.offsetWidth,
                 duration: 0.28,
                 ease: "power2.in",
-                overwrite: "auto",
-                force3D: false,
               }),
           },
         }}

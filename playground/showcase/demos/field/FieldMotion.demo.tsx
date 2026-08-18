@@ -1,6 +1,7 @@
-import { FieldMotionInstantEnterDemo } from "./FieldMotionInstantEnter.demo";
-import { FieldMotionRootWaveDemo } from "./FieldMotionRootWave.demo";
 import { FieldMotionErrorTintDemo } from "./FieldMotionErrorTint.demo";
+import { FieldMotionInstantEnterDemo } from "./FieldMotionInstantEnter.demo";
+import { FieldMotionLabelHintDemo } from "./FieldMotionLabelHint.demo";
+import { FieldMotionRootWaveDemo } from "./FieldMotionRootWave.demo";
 
 export function FieldMotionDemo() {
   return (
@@ -8,6 +9,7 @@ export function FieldMotionDemo() {
       <FieldMotionInstantEnterDemo />
       <FieldMotionRootWaveDemo />
       <FieldMotionErrorTintDemo />
+      <FieldMotionLabelHintDemo />
     </div>
   );
 }

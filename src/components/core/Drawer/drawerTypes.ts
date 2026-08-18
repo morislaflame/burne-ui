@@ -65,6 +65,8 @@ export type DrawerLifecycleMotion = {
 export type DrawerPartMotion = DrawerLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 export type DrawerMotion = {
@@ -74,9 +76,13 @@ export type DrawerMotion = {
   description?: DrawerPartMotion;
   close?: DrawerLifecycleMotion;
   header?: DrawerLifecycleMotion;
+  headingBlock?: DrawerPartMotion;
   footer?: DrawerLifecycleMotion;
   content?: DrawerLifecycleMotion;
+  body?: DrawerLifecycleMotion;
   handle?: DrawerLifecycleMotion;
+  /** Open squeeze on `Drawer.Trigger` (Root scope — outside Panel). */
+  trigger?: DrawerPartMotion;
 };
 
 export type DrawerProps = {
@@ -91,7 +97,7 @@ export type DrawerProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DrawerClassNames>;
-  /** Per-slot enter/leave. Overlay/panel defaults are kit overlay + drawer slide recipes. */
+  /** Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle`) plus `trigger` press on Root. Overlay/panel defaults are kit overlay + drawer slide recipes; trigger defaults to `pressSqueeze`. */
   motion?: Prettify<DrawerMotion>;
 };
 
@@ -108,6 +114,7 @@ export type DrawerTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */
   asChild?: boolean;
   children?: ReactNode;
+  motion?: Prettify<DrawerPartMotion>;
 };
 
 export type DrawerContextValue = {
@@ -152,14 +159,18 @@ export type DrawerHandleProps = Omit<
 export type DrawerHeaderProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DrawerLifecycleMotion>;
 };
-export type DrawerHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
+export type DrawerHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DrawerPartMotion>;
+};
 export type DrawerTitleProps = HTMLAttributes<HTMLHeadingElement> & {
   motion?: Prettify<DrawerPartMotion>;
 };
 export type DrawerDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
   motion?: Prettify<DrawerPartMotion>;
 };
-export type DrawerBodyProps = HTMLAttributes<HTMLDivElement>;
+export type DrawerBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DrawerLifecycleMotion>;
+};
 export type DrawerFooterProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DrawerLifecycleMotion>;
 };

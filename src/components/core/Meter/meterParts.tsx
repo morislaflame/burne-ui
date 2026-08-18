@@ -1,21 +1,29 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
-import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { useMeterFillAnimation, useMeterTrackSlotMotion } from "./meterAnimations";
 import {
+  progressScaleFromPercent,
+  resolveMeterMotionDefaults,
+  useMeterChromeSlot,
+  useMeterFillMotion,
+  useMeterTrackSlotMotion,
+} from "./meterAnimations";
+import {
+  MeterMotionProvider,
   useMeterClassNames,
   useMeterFieldContext,
   useOptionalMeterMotionScope,
 } from "./meterContext";
-import { meterFillClass, meterHeaderClass, meterTrackClass, meterValueClass } from "./meterStyles";
+import { meterDeterminateFillStyle, meterFillClass, meterHeaderClass, meterTrackClass, meterValueClass } from "./meterStyles";
 import type {
   MeterErrorProps,
   MeterHeaderProps,
   MeterHintProps,
+  MeterLabelProps,
   MeterSimpleBodyProps,
   MeterTrackProps,
   MeterValueProps,
@@ -32,7 +40,6 @@ export function MeterSimpleBody({
   error,
   trackProps,
 }: MeterSimpleBodyProps) {
-  const slotClassNames = useMeterClassNames();
   const showHeader = label != null || showValue || valueText != null;
 
   return (
@@ -40,7 +47,7 @@ export function MeterSimpleBody({
       {showHeader ? (
         <MeterHeader>
           {label != null ? (
-            <Label classNames={{ root: slotClassNames.label }}>{label}</Label>
+            <MeterLabel>{label}</MeterLabel>
           ) : null}
           {valueText != null ? (
             <MeterValue>{valueText}</MeterValue>
@@ -58,20 +65,44 @@ export function MeterSimpleBody({
   );
 }
 
-export function MeterLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useMeterClassNames();
+export const MeterLabel = forwardRef<HTMLElement, MeterLabelProps>(
+  function MeterLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useMeterClassNames();
+    const part = useMeterChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 MeterLabel.displayName = "MeterLabel";
 
@@ -133,47 +164,87 @@ export function MeterValue({ children, className, motion, ...rest }: MeterValueP
 
 MeterValue.displayName = "Meter.Value";
 
-export function MeterHint({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: MeterHintProps) {
-  const ctx = useMeterFieldContext();
-  const slotClassNames = useMeterClassNames();
+export const MeterHint = forwardRef<HTMLElement, MeterHintProps>(
+  function MeterHint(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useMeterFieldContext();
+    const slotClassNames = useMeterClassNames();
+    const part = useMeterChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? ctx.hintId}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? ctx.hintId}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 MeterHint.displayName = "Meter.Hint";
 
-export function MeterError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: MeterErrorProps) {
-  const ctx = useMeterFieldContext();
-  const slotClassNames = useMeterClassNames();
+export const MeterError = forwardRef<HTMLElement, MeterErrorProps>(
+  function MeterError(
+    {
+      children,
+      className,
+      id: idProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useMeterFieldContext();
+    const slotClassNames = useMeterClassNames();
+    const part = useMeterChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? ctx.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? ctx.errorId}
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
 
 MeterError.displayName = "Meter.Error";
 
@@ -195,15 +266,12 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
     },
     ref,
   ) {
-    const slotClassNames = useMeterClassNames();
-    const {
-      size: resolvedSize,
-      isHorizontal,
-      aria,
-      trackCrossStyle,
-      fillTargetStyle,
-      fillInitialStyle,
-    } = useMeterTrackState({
+    const parent = useOptionalMeterMotionScope();
+    const merged = mergeMotionSlotMaps(
+      parent?.getRootMotion(),
+      motion ? { track: motion } : undefined,
+    );
+    const state = useMeterTrackState({
       value,
       min,
       max,
@@ -214,64 +282,114 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       orientation,
       "aria-describedby": ariaDescribedByProp,
     });
-
-    const scope = useOptionalMeterMotionScope();
-    const trackPart = useMotionPart<HTMLDivElement>({
-      scope,
-      slot: "track",
-      motion,
-      forwardedRef: ref,
-      pointerPhases: false,
-    });
-    const fillPart = useMotionPart<HTMLSpanElement>({
-      scope,
-      slot: "fill",
-      pointerPhases: false,
-    });
-    const { fillRef } = useMeterFillAnimation({
-      fillTargetStyle,
-      isHorizontal,
-    });
-    useMeterTrackSlotMotion(scope, value);
-    const setFillRef = (node: HTMLSpanElement | null) => {
-      fillRef.current = node;
-      fillPart.setRef(node);
-    };
+    const defaults = useMemo(() => resolveMeterMotionDefaults(), []);
+    const percent = state.percent;
+    const isHorizontal = state.isHorizontal;
+    const params = useMemo(
+      () => ({
+        getProgressScale: () => progressScaleFromPercent(percent),
+        isHorizontal,
+      }),
+      [isHorizontal, percent],
+    );
 
     return (
-      <div
-        ref={trackPart.setRef}
-        role="meter"
-        aria-valuenow={aria["aria-valuenow"]}
-        aria-valuemin={aria["aria-valuemin"]}
-        aria-valuemax={aria["aria-valuemax"]}
-        aria-valuetext={aria["aria-valuetext"]}
-        aria-labelledby={aria["aria-labelledby"]}
-        aria-describedby={aria["aria-describedby"]}
-        aria-label={aria["aria-label"]}
-        className={meterTrackClass({
-          isHorizontal,
-          size: resolvedSize ?? "base",
-          thickness,
-          slotClass: slotClassNames.track,
-          className,
-        })}
-        style={trackCrossStyle}
-        {...rest}
-      >
-        <span
-          ref={setFillRef}
-          aria-hidden
-          className={meterFillClass({
-            isHorizontal,
-            hasCustomColor: Boolean(color),
-            slotClass: slotClassNames.fill,
-          })}
-          style={fillInitialStyle}
+      <MeterMotionProvider motion={merged} defaults={defaults} params={params}>
+        <MeterTrackHost
+          ref={ref}
+          className={className}
+          state={state}
+          {...rest}
         />
-      </div>
+      </MeterMotionProvider>
     );
   },
 );
 
 MeterTrack.displayName = "Meter.Track";
+
+const MeterTrackHost = forwardRef<
+  HTMLDivElement,
+  Omit<
+    MeterTrackProps,
+    | "motion"
+    | "value"
+    | "min"
+    | "max"
+    | "size"
+    | "thickness"
+    | "color"
+    | "formatValue"
+    | "orientation"
+  > & {
+    state: ReturnType<typeof useMeterTrackState>;
+  }
+>(function MeterTrackHost({ className, state, ...rest }, ref) {
+  const slotClassNames = useMeterClassNames();
+  const {
+    size: resolvedSize,
+    thickness,
+    color,
+    isHorizontal,
+    aria,
+    trackCrossStyle,
+    fillColorStyle,
+    percent,
+  } = state;
+  const scope = useOptionalMeterMotionScope();
+  const trackPart = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "track",
+    forwardedRef: ref,
+    pointerPhases: false,
+  });
+  const fillPart = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "fill",
+    pointerPhases: false,
+  });
+  useMeterFillMotion({
+    scope,
+    percent,
+    isHorizontal,
+    fillRef: fillPart.targetRef,
+  });
+  useMeterTrackSlotMotion(scope, String(percent));
+
+  return (
+    <div
+      ref={trackPart.setRef}
+      role="meter"
+      aria-valuenow={aria["aria-valuenow"]}
+      aria-valuemin={aria["aria-valuemin"]}
+      aria-valuemax={aria["aria-valuemax"]}
+      aria-valuetext={aria["aria-valuetext"]}
+      aria-labelledby={aria["aria-labelledby"]}
+      aria-describedby={aria["aria-describedby"]}
+      aria-label={aria["aria-label"]}
+      className={meterTrackClass({
+        isHorizontal,
+        size: resolvedSize ?? "base",
+        thickness,
+        slotClass: slotClassNames.track,
+        className,
+      })}
+      style={trackCrossStyle}
+      {...rest}
+    >
+      <span
+        ref={fillPart.setRef}
+        aria-hidden
+        className={meterFillClass({
+          isHorizontal,
+          hasCustomColor: Boolean(color),
+          slotClass: slotClassNames.fill,
+        })}
+        style={meterDeterminateFillStyle({
+          isHorizontal,
+          fillColorStyle,
+        })}
+      />
+    </div>
+  );
+});

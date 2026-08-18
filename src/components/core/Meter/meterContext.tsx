@@ -56,7 +56,7 @@ export function useMeterClassNames(): MeterClassNames {
   return useContext(MeterClassNamesContext);
 }
 
-/** Scope only. Defaults and host play live in `meterAnimations.ts`. */
+/** Scope only. Defaults + params + fill play live on Track (nested provider). */
 export const {
   MotionScopeProvider: MeterMotionProvider,
   useMotionScope: useMeterMotionScope,

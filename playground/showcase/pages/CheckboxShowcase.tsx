@@ -12,6 +12,14 @@ import { CheckboxMotionLabelColorDemo } from "../demos/checkbox/CheckboxMotionLa
 import checkboxMotionLabelColorSource from "../demos/checkbox/CheckboxMotionLabelColor.demo.tsx?raw";
 import { CheckboxMotionSpinningMarkDemo } from "../demos/checkbox/CheckboxMotionSpinningMark.demo";
 import checkboxMotionSpinningMarkSource from "../demos/checkbox/CheckboxMotionSpinningMark.demo.tsx?raw";
+import { CheckboxGroupMotionChangeTintDemo } from "../demos/checkboxGroup/CheckboxGroupMotionChangeTint.demo";
+import checkboxGroupMotionChangeTintSource from "../demos/checkboxGroup/CheckboxGroupMotionChangeTint.demo.tsx?raw";
+import { CheckboxGroupMotionHintEnterDemo } from "../demos/checkboxGroup/CheckboxGroupMotionHintEnter.demo";
+import checkboxGroupMotionHintEnterSource from "../demos/checkboxGroup/CheckboxGroupMotionHintEnter.demo.tsx?raw";
+import { CheckboxGroupMotionInstantEnterDemo } from "../demos/checkboxGroup/CheckboxGroupMotionInstantEnter.demo";
+import checkboxGroupMotionInstantEnterSource from "../demos/checkboxGroup/CheckboxGroupMotionInstantEnter.demo.tsx?raw";
+import { CheckboxGroupMotionRootWaveDemo } from "../demos/checkboxGroup/CheckboxGroupMotionRootWave.demo";
+import checkboxGroupMotionRootWaveSource from "../demos/checkboxGroup/CheckboxGroupMotionRootWave.demo.tsx?raw";
 import { CheckboxConsentCardDemo } from "../demos/checkbox/CheckboxConsentCard.demo";
 import checkboxConsentCardSource from "../demos/checkbox/CheckboxConsentCard.demo.tsx?raw";
 import { CheckboxFeatureFlagsDemo } from "../demos/checkbox/CheckboxFeatureFlags.demo";
@@ -62,6 +70,16 @@ export function CheckboxShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionSpinningMarkDemo} source={checkboxMotionSpinningMarkSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionLabelColorDemo} source={checkboxMotionLabelColorSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionFillMarkStaggerDemo} source={checkboxMotionFillMarkStaggerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="CheckboxGroup slot motion"
+        description="Group scope: instant enter skip, root wave, change tint on single selection, chrome enter on legend / hint."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionInstantEnterDemo} source={checkboxGroupMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionRootWaveDemo} source={checkboxGroupMotionRootWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionChangeTintDemo} source={checkboxGroupMotionChangeTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionHintEnterDemo} source={checkboxGroupMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

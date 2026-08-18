@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { TextArea } from "@/components/core/TextArea";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function TextAreaMotionControlTintDemo() {
   return (
@@ -16,7 +12,7 @@ export function TextAreaMotionControlTintDemo() {
       motion={{
         shell: {
           pressIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { scale: 0.985, duration: 0.1, yoyo: true, repeat: 1 }, 0);
             if (ctx.targets.control) {
               tweenCssColor(ctx.targets.control, "var(--color-primary)");

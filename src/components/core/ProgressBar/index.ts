@@ -27,6 +27,7 @@ export type {
   ProgressBarValueProps,
   ProgressBarHintProps,
   ProgressBarErrorProps,
+  ProgressBarLabelProps,
 } from "./ProgressBar";
 
 export {

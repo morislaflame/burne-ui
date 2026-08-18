@@ -1,9 +1,10 @@
 /**
  * Slot motion for Radio — look here first.
  *
- * Radio is an embedder: it has no `createMotionScope`. Root `motion` keys
- * map onto SelectionIndicator slots (`RADIO_MOTION_SLOT_MAP`).
- * Host play and kit defaults live in `selectionIndicatorAnimations.ts`.
+ * Hybrid: own `createMotionScope` for chrome (`label` / `hint` / `error`);
+ * indicator keys still map onto SelectionIndicator (`RADIO_MOTION_SLOT_MAP`).
+ * Host play for fill/mark lives in `selectionIndicatorAnimations.ts`. Chrome
+ * `check` / `uncheck` plays from `useRadioChromeSlot` (`useSlotPhaseOnChange`).
  *
  * Also: track opacity (`useRadioControlTrackAnimation`) and label squeeze
  * (`useRadioTextMotion`).
@@ -12,13 +13,18 @@ import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import {
+  useMotionPart,
+  useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
+} from "@/components/core/utils/slotMotion";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import { useLayoutEffect, useRef } from "react";
 
 import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
 
-import { useRadioFieldContext } from "./radioContext";
-import type { RadioMotion, UseRadioAnimationsProps } from "./radioTypes";
+import { useOptionalRadioMotionScope, useRadioFieldContext } from "./radioContext";
+import type { RadioCheckMotion, RadioMotion, UseRadioAnimationsProps } from "./radioTypes";
 
 /** Root Radio `motion` keys → SelectionIndicator slots. */
 export const RADIO_MOTION_SLOT_MAP = {
@@ -102,4 +108,27 @@ export function useRadioTextMotion({
     onPointerDown,
     onKeyDown,
   });
+}
+
+export type RadioChromeSlot = "label" | "hint" | "error";
+
+export function useRadioChromeSlot(slot: RadioChromeSlot, motion?: RadioCheckMotion) {
+  const ctx = useRadioFieldContext();
+  const scope = useOptionalRadioMotionScope();
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+  });
+  useSlotPhaseOnChange(scope, slot, ctx.mergedChecked, {
+    phase: ctx.mergedChecked ? "check" : "uncheck",
+    skipFirst: true,
+    target: part.targetRef,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
+}
+
+export function useRadioLabelSlot(motion?: RadioCheckMotion) {
+  return useRadioChromeSlot("label", motion);
 }

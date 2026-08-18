@@ -46,7 +46,8 @@ import type { ToastItemWrapperProps, ToastMotion, ToastViewportProps } from "./t
  * viewport height and scrim stay kit-internal.
  *
  * Host: `ToastItemWrapper` plays `enter` / `leave` on `root` and broadcasts
- * nested slots. Defaults wrap the item host (`TOAST_MOTION_DEFAULTS`).
+ * nested slots (`scheduleNestedEnterBroadcast`). Nested parts do not own mount enter.
+ * Defaults wrap the item host (`TOAST_MOTION_DEFAULTS`).
  * `Toast.Provider` / `add().motion` pass the map (like Dialog root).
  */
 export const TOAST_MOTION_HOST_SLOTS = ["root"] as const;

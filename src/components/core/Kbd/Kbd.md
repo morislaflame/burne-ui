@@ -95,8 +95,11 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 |------|------|------------------|
 | `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss`; `false` при `hoverLift={false}` |
 | `text` | `hoverIn` / `hoverOut` | нет |
+| `group` | `enter` / hover (opt-in) | empty |
 
 `hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). Явный `motion.root.hoverIn` важнее `hoverLift`.
+
+`Kbd.Group` регистрирует слот `group`. Если Group внутри Kbd — на ancestor scope; если standalone и задан `motion` на Group — свой `KbdMotionProvider`. Separator между клавишами — layout-only (`classNames.separator`), не motion-слот.
 
 **Где в коде:** типы — `kbdTypes.ts`; scope — `kbdContext.tsx`; defaults + host — `kbdAnimations.ts`; `Kbd.Text` — `kbdTextPart.tsx`; Provider — `Kbd.tsx`.
 
@@ -116,7 +119,7 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 configureMotion({ enableHoverLift: false });
 ```
 
-`Kbd.Group` wrapper не анимируется. Separator — static `Text` (`aria-hidden`).
+`Kbd.Group` слот `group` — opt-in (`motion` на Group или `motion.group` на Kbd). Separator — static `Text` (`aria-hidden`), не motion-слот.
 
 ## Токены и CSS
 

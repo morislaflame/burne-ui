@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   clearMotionRecipesForTests,
   getMotionRecipe,
+  getMotionRecipeMetadata,
   hasMotionRecipe,
   isKitMotionRecipe,
   listMotionRecipes,
@@ -10,6 +11,8 @@ import {
   registerMotionRecipe,
   unregisterMotionRecipe,
 } from "./motionRecipeRegistry";
+import { KIT_MOTION_RECIPE_META } from "./kitMotionRecipeMeta";
+import { KIT_MOTION_RECIPES } from "./slotMotionTypes";
 import { registerKitMotionRecipes } from "./recipes";
 
 afterEach(() => {
@@ -19,6 +22,13 @@ afterEach(() => {
 });
 
 describe("motionRecipeRegistry", () => {
+  it("attaches KIT_MOTION_RECIPE_META to every kit recipe", () => {
+    for (const name of KIT_MOTION_RECIPES) {
+      expect(KIT_MOTION_RECIPE_META[name], name).toBeDefined();
+      expect(getMotionRecipeMetadata(name)).toEqual(KIT_MOTION_RECIPE_META[name]);
+    }
+  });
+
   it("registers and replaces custom names without override", () => {
     const first = () => {};
     const second = () => {};
@@ -63,6 +73,18 @@ describe("motionRecipeRegistry", () => {
     unregisterMotionRecipe("chevronRotate");
     expect(getMotionRecipe("chevronRotate")).toBe(nextKit);
     registerKitMotionRecipes();
+  });
+
+  it("exposes kit metadata and lets app overlay hidesFirstPaint", () => {
+    expect(getMotionRecipeMetadata("contentFade")?.hidesFirstPaint).toBe(true);
+    expect(getMotionRecipeMetadata("portalSurfaceEnter")?.hidesFirstPaint).toBe(false);
+    expect(getMotionRecipeMetadata("collapsibleHeight")?.usesLayout).toBe(true);
+    registerMotionRecipe("meta-fade", () => {}, { hidesFirstPaint: true });
+    expect(getMotionRecipeMetadata("meta-fade")?.hidesFirstPaint).toBe(true);
+    registerMotionRecipe("contentFade", () => {}, { override: true });
+    expect(getMotionRecipeMetadata("contentFade")?.hidesFirstPaint).toBe(true);
+    registerMotionRecipe("contentFade", () => {}, { override: true, hidesFirstPaint: false });
+    expect(getMotionRecipeMetadata("contentFade")?.hidesFirstPaint).toBe(false);
   });
 
   it("has / list / isKitMotionRecipe", () => {

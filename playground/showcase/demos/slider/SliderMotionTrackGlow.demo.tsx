@@ -1,9 +1,6 @@
-import gsap from "gsap";
 import { IoVolumeHigh } from "react-icons/io5";
 
 import { Slider } from "@/components/core/Slider";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function SliderMotionTrackGlowDemo() {
   return (
@@ -17,7 +14,7 @@ export function SliderMotionTrackGlowDemo() {
       motion={{
         track: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             if (ctx.targets.fill) {
               tl.to(ctx.targets.fill, { autoAlpha: 0.72, duration: 0.2 }, 0);
             }
@@ -30,7 +27,7 @@ export function SliderMotionTrackGlowDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             if (ctx.targets.fill) {
               tl.to(ctx.targets.fill, { autoAlpha: 1, duration: 0.16 }, 0);
             }

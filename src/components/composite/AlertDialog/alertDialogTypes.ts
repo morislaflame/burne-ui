@@ -40,6 +40,8 @@ export type AlertDialogLifecycleMotion = {
 export type AlertDialogPartMotion = AlertDialogLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 /**
@@ -53,9 +55,13 @@ export type AlertDialogMotion = {
   description?: AlertDialogPartMotion;
   close?: AlertDialogLifecycleMotion;
   header?: AlertDialogLifecycleMotion;
+  headingBlock?: AlertDialogPartMotion;
   footer?: AlertDialogLifecycleMotion;
   content?: AlertDialogLifecycleMotion;
+  body?: AlertDialogLifecycleMotion;
   indicator?: AlertDialogLifecycleMotion;
+  /** Open squeeze on `AlertDialog.Trigger` (Root scope — outside Panel). */
+  trigger?: AlertDialogPartMotion;
 };
 
 /** Size tokens from shared `PANEL_SIZE_LAYOUT` (AlertDialog slice). */
@@ -97,7 +103,7 @@ export type AlertDialogProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<AlertDialogClassNames>;
-  /** Per-slot enter/leave. Overlay/panel defaults are kit modal recipes. */
+  /** Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator`) plus `trigger` press on Root. Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`. */
   motion?: Prettify<AlertDialogMotion>;
 };
 
@@ -123,6 +129,7 @@ export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & 
   /** Render trigger as a child element (the child receives all trigger props). */
   asChild?: boolean;
   children?: ReactNode;
+  motion?: Prettify<AlertDialogPartMotion>;
 };
 
 export type AlertDialogContextValue = {
@@ -169,7 +176,9 @@ export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
 export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
   motion?: Prettify<AlertDialogPartMotion>;
 };
-export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement>;
+export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
 export type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AlertDialogLifecycleMotion>;
 };
@@ -179,7 +188,9 @@ export type AlertDialogCloseProps = CloseButtonProps & {
 export type AlertDialogContentProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AlertDialogLifecycleMotion>;
 };
-export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
+export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogPartMotion>;
+};
 
 export type UseAlertDialogRootStateProps = Pick<
   AlertDialogProps,

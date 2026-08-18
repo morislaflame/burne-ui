@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Card } from "@/components/core/Card";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function CardMotionPressBounceDemo() {
   return (
@@ -12,16 +8,12 @@ export function CardMotionPressBounceDemo() {
       className="max-w-xs"
       motion={{
         root: {
-          pressIn: (ctx) =>
-            gsap.to(ctx.el, {
-              scale: 0.94,
-              duration: 0.12,
-              ease: "power2.out",
-              ...TL,
-              onComplete: () => {
-                gsap.to(ctx.el, { scale: 1, duration: 0.28, ease: "back.out(2.6)", ...TL });
-              },
-            }),
+          pressIn: (ctx) => {
+            const tl = ctx.timeline();
+            tl.to(ctx.el, { scale: 0.94, duration: 0.12, ease: "power2.out" }, 0);
+            tl.to(ctx.el, { scale: 1, duration: 0.28, ease: "back.out(2.6)" }, 0.12);
+            return tl;
+          },
         },
       }}
     >

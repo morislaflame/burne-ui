@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Pagination, type PaginationProps, type PaginationClassNames, type PaginationSummaryProps, type PaginationContentProps, type PaginationPageProps, type PaginationMotion, type PaginationPartMotion } from "burne-ui";
+import { Pagination, type PaginationProps, type PaginationClassNames, type PaginationSummaryProps, type PaginationContentProps, type PaginationPageProps, type PaginationMotion, type PaginationPartMotion, type PaginationSummaryPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -137,15 +137,18 @@ configureMotion({
 
 ### 2. Slot motion (кнопки)
 
-Публичный slot motion. Root — map-only Provider. Каждый Previous / Next / Page — nested scope слота `control`. FLIP на `<ol>` остаётся kit-internal (`usePaginationFlip`).
+Публичный slot motion. Root — map-only Provider. Каждый Previous / Next / Page — nested scope слота `control`. FLIP на `<ol>` (`Pagination.Content`) остаётся kit-internal (`usePaginationFlip`) — Content / Item / Page не отдельные публичные слоты.
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `control` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
+| `previousIcon` / `nextIcon` | press (broadcast с `control`) | нет |
+| `summary` | `change` (смена `page`) | нет |
+| `ellipsis` | `enter` / hover (opt-in) | empty; root scope, не nested `control` |
 
 `false` на `control.pressIn` — skip без kill. Active page — `<span>`, без squeeze.
 
-Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.Page`.
+Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.Page` / `Pagination.Summary`.
 
 **Где в коде:** типы — `paginationTypes.ts`; scope — `paginationContext.tsx`; defaults — `paginationAnimations.ts`; слот — `paginationParts.tsx`; карта на Root — `Pagination.tsx`.
 

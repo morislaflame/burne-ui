@@ -1,10 +1,11 @@
 /**
  * Slot motion for Dialog — look here first.
  *
- * DOM slots: `overlay`, `panel`, `title`, `description`, `close`, `header`, `footer`, `content`
- * Host: `Dialog.Panel` (`useDialogModalMotion`) plays `enter` / `leave` and broadcasts
- * nested slots. Root has no DOM — it only passes the `motion` map through context.
- * Defaults wrap the portal host (`DIALOG_MOTION_DEFAULTS` on the Panel provider).
+ * DOM slots: `overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`
+ * plus `trigger` on Root (open squeeze). Host: `Dialog.Panel` (`useDialogModalMotion`) plays `enter` / `leave` and broadcasts
+ * nested slots (`scheduleNestedEnterBroadcast`, exclude overlay/panel). Nested parts
+ * do not call `useOptionalEnterOnMount`. Root has no portal DOM — it passes the `motion`
+ * map and trigger defaults. Overlay/panel defaults wrap the portal host (`DIALOG_MOTION_DEFAULTS` on the Panel provider).
  */
 import { useCallback } from "react";
 

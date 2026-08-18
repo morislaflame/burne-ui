@@ -153,49 +153,86 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
 
 FieldHint.displayName = "FieldHint";
 
-export function FieldLabel({ variant: variantProp, ...rest }: FieldLabelProps) {
-  const size = useFieldSetSize();
-  const variant = variantProp ?? fieldLabelVariant(size);
-  return <Label variant={variant} {...rest} />;
-}
+export const FieldLabel = forwardRef<HTMLElement, FieldLabelProps>(
+  function FieldLabel(
+    {
+      variant: variantProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const size = useFieldSetSize();
+    const variant = variantProp ?? fieldLabelVariant(size);
+    const part = useFieldSlotMotion<HTMLElement>("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+
+    return (
+      <Label
+        ref={part.setRef}
+        variant={variant}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 FieldLabel.displayName = "Field.Label";
 
-export function FieldError({
-  role = "alert",
-  className,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-  ...props
-}: FieldErrorProps) {
-  const slotClassNames = useFieldClassNames();
-  const size = useFieldSetSize();
-  const part = useFieldSlotMotion<HTMLElement>("error", {
-    motion,
-    onPointerOver,
-    onPointerOut,
-    onPointerDown,
-    onPointerUp,
-  });
+export const FieldError = forwardRef<HTMLElement, FieldErrorProps>(
+  function FieldError(
+    {
+      role = "alert",
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...props
+    },
+    ref,
+  ) {
+    const slotClassNames = useFieldClassNames();
+    const size = useFieldSetSize();
+    const part = useFieldSlotMotion<HTMLElement>("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Text
-      ref={part.setRef}
-      as="p"
-      variant={fieldHintVariant(size)}
-      role={role}
-      className={fieldHintClass({
-        status: "danger",
-        className: cn(slotClassNames.error, className),
-      })}
-      {...part.pointerHandlers}
-      {...props}
-    />
-  );
-}
+    return (
+      <Text
+        ref={part.setRef}
+        as="p"
+        variant={fieldHintVariant(size)}
+        role={role}
+        className={fieldHintClass({
+          status: "danger",
+          className: cn(slotClassNames.error, className),
+        })}
+        {...part.pointerHandlers}
+        {...props}
+      />
+    );
+  },
+);
+
+FieldError.displayName = "Field.Error";
 
 export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
   function FieldLegend(

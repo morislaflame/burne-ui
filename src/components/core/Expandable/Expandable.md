@@ -26,7 +26,7 @@ import { Expandable, useExpandableContext, type ExpandableProps, type Expandable
 | `icon` | `ReactNode` | — | Simple API: иконка слева |
 | `className` | `string` | — | Классы на корневой `<div>` |
 | `classNames` | `ExpandableClassNames` | — | Слоты (см. ниже) |
-| `motion` | `ExpandableMotion` | — | Слоты `triggerLift` / `chevron` / `panelShell` |
+| `motion` | `ExpandableMotion` | — | Слоты `triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description` |
 
 ### Compound-подчасти
 
@@ -118,6 +118,7 @@ Compound определяется автоматически при наличи
 | `triggerLift` | `pressIn` (`pressOut` = `false`) | `pressSqueeze` на внутреннем lift-span, не на `<button>` |
 | `chevron` | `enter` / `leave` | `chevronRotate` (0° ↔ 180°) |
 | `panelShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target, не публичный слот) |
+| `title` / `icon` / `description` | `enter` / `leave` | нет; Trigger **рассылает** при open |
 
 `false` на фазе → мгновенное состояние (height/rotation), без твина. Первый paint: `useCollapsibleShellRef` / `data-chevron-init`.
 
@@ -172,8 +173,8 @@ Compound определяется автоматически при наличи
 
 <Expandable.Chevron
   motion={{
-    enter: (ctx) => gsap.to(ctx.el, { rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
-    leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.28 }),
+    enter: (ctx) => ctx.to({ rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => ctx.to({ rotation: 0, duration: 0.28 }),
   }}
 />
 ```
@@ -193,7 +194,7 @@ Compound определяется автоматически при наличи
   motion={{
     chevron: {
       enter: (ctx) => {
-        const tl = gsap.timeline();
+        const tl = ctx.timeline();
         tl.to(ctx.el, { rotation: 180, duration: 0.48, ease: "back.out(1.8)" }, 0);
         if (ctx.targets.panelInner) {
           tl.fromTo(ctx.targets.panelInner, { y: -8, autoAlpha: 0.25 }, { y: 0, autoAlpha: 1, duration: 0.32 }, 0.06);
@@ -201,7 +202,7 @@ Compound определяется автоматически при наличи
         return tl;
       },
       leave: (ctx) => {
-        const tl = gsap.timeline();
+        const tl = ctx.timeline();
         tl.to(ctx.el, { rotation: 0, duration: 0.28 }, 0);
         if (ctx.targets.panelInner) tl.to(ctx.targets.panelInner, { y: -6, autoAlpha: 0.25, duration: 0.18 }, 0);
         return tl;
@@ -214,18 +215,18 @@ Compound определяется автоматически при наличи
 
 <Expandable classNames={{ root: "border-token-info", trigger: "bg-info/5" }}>
   <Expandable.Trigger>
-    <Expandable.Title data-part="title" className="font-w-strong text-info">…</Expandable.Title>
+    <Expandable.Title className="font-w-strong text-info">…</Expandable.Title>
     <Expandable.Chevron
       className="text-info"
       motion={{
         enter: (ctx) => {
-          const title = ctx.el.closest("button")?.querySelector("[data-part=title]");
-          const tl = gsap.timeline();
+          const title = ctx.getTarget("title");
+          const tl = ctx.timeline();
           tl.to(ctx.el, { rotation: 180, duration: 0.42, ease: "back.out(1.6)" }, 0);
           if (title) tl.add(tweenCssColor(title, "var(--color-info)"), 0);
           return tl;
         },
-        leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.22 }),
+        leave: (ctx) => ctx.to({ rotation: 0, duration: 0.22 }),
       }}
     />
   </Expandable.Trigger>

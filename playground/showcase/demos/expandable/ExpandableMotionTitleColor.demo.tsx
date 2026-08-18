@@ -1,13 +1,7 @@
-import gsap from "gsap";
 import { IoInformationCircleOutline } from "react-icons/io5";
 
 import { Expandable } from "@/components/core/Expandable";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-function part(root: ParentNode, name: string): HTMLElement | null {
-  const node = root.querySelector(`[data-part="${name}"]`);
-  return node instanceof HTMLElement ? node : null;
-}
 
 function hoverTextColor(el: HTMLElement, color: string, duration = 0.25) {
   if (!el.dataset.motionColorRest) {
@@ -27,11 +21,6 @@ function restoreTextColor(el: HTMLElement, duration = 0.2) {
   });
 }
 
-function triggerPart(chevron: HTMLElement, name: string): HTMLElement | null {
-  const trigger = chevron.closest("button");
-  return trigger ? part(trigger, name) : null;
-}
-
 export function ExpandableMotionTitleColorDemo() {
   return (
     <Expandable
@@ -42,11 +31,11 @@ export function ExpandableMotionTitleColorDemo() {
     >
       <Expandable.Trigger className="hover:bg-info/10">
         <Expandable.Message>
-          <Expandable.Icon data-part="icon" className="text-info">
+          <Expandable.Icon className="text-info">
             <IoInformationCircleOutline aria-hidden />
           </Expandable.Icon>
           <Expandable.Content>
-            <Expandable.Title data-part="title" className="font-w-strong text-info">
+            <Expandable.Title className="font-w-strong text-info">
               Delivery window
             </Expandable.Title>
             <Expandable.Description className="text-foreground/70">
@@ -58,11 +47,9 @@ export function ExpandableMotionTitleColorDemo() {
           className="text-info"
           motion={{
             enter: (ctx) => {
-              const tl = gsap.timeline({
-                defaults: { overwrite: "auto", force3D: false },
-              });
-              const title = triggerPart(ctx.el, "title");
-              const icon = triggerPart(ctx.el, "icon");
+              const tl = ctx.timeline();
+              const title = ctx.getTarget("title");
+              const icon = ctx.getTarget("icon");
               tl.to(
                 ctx.el,
                 { rotation: 180, duration: 0.42, ease: "back.out(1.6)" },
@@ -81,13 +68,11 @@ export function ExpandableMotionTitleColorDemo() {
               return tl;
             },
             leave: (ctx) => {
-              const tl = gsap.timeline({
-                defaults: { overwrite: "auto", force3D: false, duration: 0.22 },
-              });
-              const title = triggerPart(ctx.el, "title");
-              const icon = triggerPart(ctx.el, "icon");
-              tl.to(ctx.el, { rotation: 0 }, 0);
-              if (icon) tl.to(icon, { scale: 1, rotate: 0 }, 0);
+              const tl = ctx.timeline();
+              const title = ctx.getTarget("title");
+              const icon = ctx.getTarget("icon");
+              tl.to(ctx.el, { rotation: 0, duration: 0.22 }, 0);
+              if (icon) tl.to(icon, { scale: 1, rotate: 0, duration: 0.22 }, 0);
               if (title) tl.add(restoreTextColor(title, 0.22), 0);
               return tl;
             },
@@ -96,7 +81,7 @@ export function ExpandableMotionTitleColorDemo() {
       </Expandable.Trigger>
       <Expandable.Panel className="border-t border-info/20 bg-info/5">
         <p className="text-small text-muted">
-          Height is still collapsibleHeight. Chevron motion reaches Title/Icon through data-part.
+          Height is still collapsibleHeight. Chevron factory reaches Title/Icon via ctx.getTarget.
         </p>
       </Expandable.Panel>
     </Expandable>

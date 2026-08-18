@@ -26,7 +26,8 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 | `shadow` | `small` \| `base` \| `mid` \| `large` | `base` | Размер тени покоя; hover — `--shadow-{size}-hover` |
 | `className` | `string` | — | Доп. классы на root |
 | `classNames` | `AlertClassNames` | — | Слоты подчастей |
-| `motion` | `AlertMotion` | — | Карта слотов `root` / `indicator` / `title` / `description` / `action` (`hoverIn` / `hoverOut`). Части принимают `AlertPartMotion` |
+| `motion` | `AlertMotion` & `{ events? }` | — | Карта слотов `root` / `indicator` / `title` / `description` / `action` (`hoverIn` / `hoverOut`). `events` — namespaced команды для `MotionController` |
+| `motionController` | `MotionController` | — | Handle снаружи scope: `play` / `playSlot` / `playAll` / `set` / `cancel`. Не путать с `motion` и `config.motion` |
 
 ### Compound-подчасти
 
@@ -116,7 +117,6 @@ Compound включается автоматически при наличии �
 **Где в коде:** типы — `alertTypes.ts`; scope — `alertContext.tsx`; defaults + host — `alertAnimations.ts` (`resolveAlertMotionDefaults`, `useAlertAnimations`); слоты — `alertParts.tsx` (`useMotionPart`); Provider — `Alert.tsx`.
 
 ```tsx
-import gsap from "gsap";
 import { Alert, killMotion, tweenCssColor } from "burne-ui";
 
 <Alert title="Saved" motion={{ title: { hoverIn: { y: -2 }, hoverOut: { y: 0 } } }} />
@@ -127,10 +127,18 @@ import { Alert, killMotion, tweenCssColor } from "burne-ui";
   title="Deploy"
   motion={{
     root: {
-      hoverIn: (ctx) => gsap.to(ctx.targets.title, { x: 8, repeat: -1, yoyo: true, duration: 0.35 }),
+      hoverIn: (ctx) =>
+        ctx.to(ctx.targets.title, {
+          x: 8,
+          repeat: -1,
+          yoyo: true,
+          duration: 0.35,
+          ease: "sine.inOut",
+        }),
       hoverOut: (ctx) => {
+        if (!ctx.targets.title) return undefined;
         killMotion(ctx.targets.title);
-        gsap.set(ctx.targets.title, { x: 0 });
+        return ctx.to(ctx.targets.title, { x: 0, duration: 0 });
       },
     },
   }}
@@ -153,8 +161,8 @@ import { Alert, killMotion, tweenCssColor } from "burne-ui";
 
 <Alert.Indicator
   motion={{
-    hoverIn: (ctx) => gsap.to(ctx.el, { rotate: 15, scale: 1.12, duration: 0.28, ease: "back.out(2)" }),
-    hoverOut: (ctx) => gsap.to(ctx.el, { rotate: 0, scale: 1, duration: 0.2 }),
+    hoverIn: (ctx) => ctx.to({ rotate: 15, scale: 1.12, duration: 0.28, ease: "back.out(2)" }),
+    hoverOut: (ctx) => ctx.to({ rotate: 0, scale: 1, duration: 0.2 }),
   }}
 />
 
@@ -165,13 +173,13 @@ import { Alert, killMotion, tweenCssColor } from "burne-ui";
   motion={{
     root: {
       hoverIn: (ctx) => {
-        const tl = gsap.timeline();
+        const tl = ctx.timeline();
         if (ctx.targets.indicator) tl.to(ctx.targets.indicator, { rotate: -8, duration: 0.28 }, 0);
         if (ctx.targets.title) tl.to(ctx.targets.title, { y: -3, duration: 0.28 }, 0.05);
         return tl;
       },
       hoverOut: (ctx) => {
-        const tl = gsap.timeline();
+        const tl = ctx.timeline();
         if (ctx.targets.indicator) tl.to(ctx.targets.indicator, { rotate: 0, duration: 0.22 }, 0);
         if (ctx.targets.title) tl.to(ctx.targets.title, { y: 0, duration: 0.22 }, 0);
         return tl;
@@ -179,6 +187,51 @@ import { Alert, killMotion, tweenCssColor } from "burne-ui";
     },
   }}
 />
+```
+
+Снаружи дерева — `useMotionControllerHandle()` / `createMotionController()` и проп `motionController` (не на DOM). Внутри Alert — `useMotionController()`. `play` — `MotionPlayEvent`: фазы и `motion.events` без дженерика. `set` — compositor snap без `MotionRun`. См. [Motion](/docs/motion#motioncontroller).
+
+```tsx
+import { Alert, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "notify:ping": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Ping() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("notify:ping")}>
+        Ping
+      </Button>
+      <Alert title="Saved" hoverLift={false} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+```tsx
+import { Alert, Button, useMotionControllerHandle } from "burne-ui";
+
+function Pulse() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("root", "hoverIn")}>
+        Pulse
+      </Button>
+      <Alert
+        title="Saved"
+        hoverLift={false}
+        motionController={controller}
+        motion={{
+          root: { hoverIn: { y: -6, duration: 0.28, replay: "rest" }, hoverOut: { y: 0, duration: 0.2 } },
+        }}
+      />
+    </>
+  );
+}
 ```
 
 См. [Motion](/docs/motion): приоритет part → root slot → рецепт; `false` отключает дефолт; factory + `ctx.targets` / `killMotion`.
@@ -371,7 +424,7 @@ resolveAlertLiveRole(status, role?) // → "status" | "alert"
 
 ```
 Alert/
-├── Alert.tsx                 # Provider: motion + resolveAlertMotionDefaults + params
+├── Alert.tsx                 # Provider: motion + defaults + params + controller
 ├── index.ts
 ├── alertTypes.ts             # AlertMotion / AlertPartMotion
 ├── alertStyles.ts
@@ -387,4 +440,4 @@ Alert/
 
 ## Storybook
 
-`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, slot motion gallery, светлая/тёмная тема.
+`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, slot motion gallery, `motionController`, светлая/тёмная тема.

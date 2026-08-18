@@ -1,13 +1,12 @@
 /**
  * Slot motion for Field / Field.Set — look here first.
  *
- * Field DOM slots: `root`, `hint`, `error`
+ * Field DOM slots: `root`, `label`, `hint`, `error`
  * Field.Set DOM slots: `root`, `stack`, `legend`, `legendHeader`, `group`, `actions`
  *
  * Hosts play optional `enter`. Defaults are empty — does not steal child Input motion.
  */
-import type { ForwardedRef } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type { ForwardedRef, PointerEventHandler } from "react";
 
 import {
   hasPointerPhases,
@@ -41,10 +40,10 @@ export function useFieldSlotMotion<T extends HTMLElement>(
   }: {
     motion?: FieldPartMotion;
     forwardedRef?: ForwardedRef<T>;
-    onPointerOver?: (e: ReactPointerEvent<T>) => void;
-    onPointerOut?: (e: ReactPointerEvent<T>) => void;
-    onPointerDown?: (e: ReactPointerEvent<T>) => void;
-    onPointerUp?: (e: ReactPointerEvent<T>) => void;
+    onPointerOver?: PointerEventHandler<T>;
+    onPointerOut?: PointerEventHandler<T>;
+    onPointerDown?: PointerEventHandler<T>;
+    onPointerUp?: PointerEventHandler<T>;
   } = {},
 ) {
   const scope = useOptionalFieldMotionScope();
@@ -77,10 +76,10 @@ export function useFieldSetSlotMotion<T extends HTMLElement>(
   }: {
     motion?: FieldPartMotion;
     forwardedRef?: ForwardedRef<T>;
-    onPointerOver?: (e: ReactPointerEvent<T>) => void;
-    onPointerOut?: (e: ReactPointerEvent<T>) => void;
-    onPointerDown?: (e: ReactPointerEvent<T>) => void;
-    onPointerUp?: (e: ReactPointerEvent<T>) => void;
+    onPointerOver?: PointerEventHandler<T>;
+    onPointerOut?: PointerEventHandler<T>;
+    onPointerDown?: PointerEventHandler<T>;
+    onPointerUp?: PointerEventHandler<T>;
   } = {},
 ) {
   const scope = useOptionalFieldSetMotionScope();

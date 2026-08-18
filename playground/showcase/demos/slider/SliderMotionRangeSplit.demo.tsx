@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Slider } from "@/components/core/Slider";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function SliderMotionRangeSplitDemo() {
   return (
@@ -19,28 +15,25 @@ export function SliderMotionRangeSplitDemo() {
           thumb="start"
           motion={{
             pressIn: (ctx) =>
-              gsap.to(ctx.el, {
+              ctx.to({
                 rotate: -22,
                 duration: 0.12,
                 yoyo: true,
                 repeat: 1,
                 ease: "power2.inOut",
-                ...TL,
               }),
           }}
         />
         <Slider.Thumb
           thumb="end"
           motion={{
-            pressIn: (ctx) =>
-              gsap.to(ctx.el, {
+            pressIn: {
                 scale: 1.28,
                 duration: 0.12,
                 yoyo: true,
                 repeat: 1,
                 ease: "back.out(2)",
-                ...TL,
-              }),
+              },
           }}
         />
       </Slider.Track>

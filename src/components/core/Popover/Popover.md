@@ -129,6 +129,12 @@ Title/Description — отдельная шкала Popover (компактне�
 | `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` (`motionTooltip()`) |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `body` | `enter` / `leave` | нет; хост **рассылает**, если задана |
+| `header` | `enter` / `leave` | нет; хост **рассылает**, если задана |
+| `arrow` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** |
+| `item` | `enter` / `leave` | нет; хост **рассылает**; repeated (Dropdown) |
+| `itemLabel`, `itemHint`, `itemIcon` | `enter` / `leave` + локальные hover | нет; хост **рассылает**; repeated (Dropdown) |
+| `label`, `subTrigger`, `separator` | `enter` / `leave` | нет; Dropdown pass-through (не `classNames.label` = Title) |
+| `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Content |
 
 Nested `enter` — следующий кадр после host (`portalSurfaceEnter` / `preparePortalSurfaceForEnter`), без `offsetHeight` flush.
 
@@ -171,7 +177,7 @@ configureMotion({
 `Popover.Trigger` на `pointerdown` (если закрыт):
 
 1. `e.preventDefault()` при `asChild` — не дублировать squeeze child Button
-2. `runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: true })`
+2. `runOpenAfterSqueeze` ждёт `motion.trigger.pressIn` (дефолт `pressSqueeze`; другой рецепт / factory на карте `trigger`; `false` — без squeeze)
 
 **Close:** `click` при `open=true` → immediate close; `Enter`/`Space` toggle.
 
@@ -217,7 +223,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
 | Nested title / body | slot broadcast | — | `motion.title` / `description` / `body` |
-| Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | `asChild` |
+| Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale` | `motion.trigger.pressIn` |
 | Rest shadow | `shadow-token-large` | — | `variant="default"` |
 | Gloss interactive | gloss utils | gloss tokens | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side`, `align`, `offset` |

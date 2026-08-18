@@ -12,6 +12,12 @@ import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
 import dropdownGlossSource from "../demos/dropdown/DropdownGloss.demo.tsx?raw";
 import { DropdownMotionBodyStaggerDemo } from "../demos/dropdown/DropdownMotionBodyStagger.demo";
 import dropdownMotionBodyStaggerSource from "../demos/dropdown/DropdownMotionBodyStagger.demo.tsx?raw";
+import { DropdownMotionLabelDemo } from "../demos/dropdown/DropdownMotionLabel.demo";
+import dropdownMotionLabelSource from "../demos/dropdown/DropdownMotionLabel.demo.tsx?raw";
+import { DropdownMotionSeparatorDemo } from "../demos/dropdown/DropdownMotionSeparator.demo";
+import dropdownMotionSeparatorSource from "../demos/dropdown/DropdownMotionSeparator.demo.tsx?raw";
+import { DropdownMotionTriggerPressDemo } from "../demos/dropdown/DropdownMotionTriggerPress.demo";
+import dropdownMotionTriggerPressSource from "../demos/dropdown/DropdownMotionTriggerPress.demo.tsx?raw";
 import { DropdownMotionInstantLeaveDemo } from "../demos/dropdown/DropdownMotionInstantLeave.demo";
 import dropdownMotionInstantLeaveSource from "../demos/dropdown/DropdownMotionInstantLeave.demo.tsx?raw";
 import { DropdownMotionOriginScaleDemo } from "../demos/dropdown/DropdownMotionOriginScale.demo";
@@ -55,10 +61,13 @@ export function DropdownShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — instant leave, body stagger, submenu slide, origin scale."
+        description="Each card is a separate copyable example — custom trigger press, instant leave, body stagger, label + subTrigger, separator, submenu slide, origin scale."
       >
+        <ShowcaseDemoFromFile Demo={DropdownMotionTriggerPressDemo} source={dropdownMotionTriggerPressSource} />
         <ShowcaseDemoFromFile Demo={DropdownMotionInstantLeaveDemo} source={dropdownMotionInstantLeaveSource} />
         <ShowcaseDemoFromFile Demo={DropdownMotionBodyStaggerDemo} source={dropdownMotionBodyStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DropdownMotionLabelDemo} source={dropdownMotionLabelSource} />
+        <ShowcaseDemoFromFile Demo={DropdownMotionSeparatorDemo} source={dropdownMotionSeparatorSource} />
         <ShowcaseDemoFromFile Demo={DropdownMotionSubSlideXDemo} source={dropdownMotionSubSlideXSource} />
         <ShowcaseDemoFromFile Demo={DropdownMotionOriginScaleDemo} source={dropdownMotionOriginScaleSource} />
       </ShowcaseSection>

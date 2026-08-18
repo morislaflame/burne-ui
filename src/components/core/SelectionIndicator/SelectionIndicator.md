@@ -112,6 +112,7 @@ CSS-переменные: `--selection-indicator-xsmall` … `--selection-indica
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
+| `root` | `check` / `uncheck` | нет (shell зарегистрирован; Checkbox `indicator` → `root`) |
 | `fill` | `check` / `uncheck` | `selectionFill` |
 | `mark` | `check` / `uncheck` | `selectionMark` |
 

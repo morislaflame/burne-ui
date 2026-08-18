@@ -113,9 +113,13 @@ Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `we
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `navPrev` / `navNext` | hover/press | `hoverLiftFirstLevel` (без тени) + `pressSqueeze` (`pressOut: false`) |
-| `cell` | hover/press | то же |
+| `navPrevIcon` / `navNextIcon` | hover/press / `enter` | нет |
+| `header` / `headerTitle` / `grid` / `footer` | `enter` / hover/press | нет |
+| `footerToday` / `footerClear` | `enter` / hover/press (opt-in) | empty; kit buttons в Footer |
+| `cell` | hover/press | то же, что nav (nested scope) |
+| `cellText` | hover/press / `enter` | нет; nested cell scope |
 
-`false` на hover — skip без kill. Compound: `motion` на `Calendar.NavPrev` / `Calendar.NavNext`.
+`false` на hover — skip без kill. Compound: `motion` на `Calendar.NavPrev` / `Calendar.NavNext` / `Calendar.Header` / `Calendar.Footer`. `cellText` — nested cell scope. Иконки навигации — слоты `navPrevIcon` / `navNextIcon` (не `classNames.navIcon`).
 
 **Где в коде:** типы — `calendarTypes.ts`; scope — `calendarContext.tsx`; defaults — `calendarAnimations.ts`; слоты — `calendarParts.tsx`; Provider — `Calendar.tsx`.
 

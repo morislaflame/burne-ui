@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Skeleton } from "@/components/core/Skeleton";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function SkeletonMotionRegionEnterDemo() {
   return (
@@ -11,7 +7,7 @@ export function SkeletonMotionRegionEnterDemo() {
       motion={{
         region: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35 }),
         },
       }}
     >

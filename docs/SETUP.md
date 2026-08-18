@@ -41,7 +41,7 @@ npm install burne-ui react-icons gsap
 
 `gsap` — **peer** (не бандлится в `dist`): одно инстанс в приложении, tree-shaking у потребителя. `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
 
-`CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin` — безопасно при `sideEffects: ["**/*.css"]`).
+`CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin`). Kit motion recipes регистрируются из `runMotionPhase` (не полагаемся на tree-shake side-effect import). `sideEffects` включает CSS и `slotMotion/recipes/index.ts`.
 
 ---
 

@@ -1,3 +1,5 @@
+import { AlertDialogMotionHeadingBlockDemo } from "./AlertDialogMotionHeadingBlock.demo";
+import { AlertDialogMotionBodyStaggerDemo } from "./AlertDialogMotionBodyStagger.demo";
 import { AlertDialogMotionChromeSplitDemo } from "./AlertDialogMotionChromeSplit.demo";
 import { AlertDialogMotionIndicatorPopDemo } from "./AlertDialogMotionIndicatorPop.demo";
 import { AlertDialogMotionInstantPanelDemo } from "./AlertDialogMotionInstantPanel.demo";
@@ -9,6 +11,8 @@ export function AlertDialogMotionDemo() {
       <AlertDialogMotionInstantPanelDemo />
       <AlertDialogMotionIndicatorPopDemo />
       <AlertDialogMotionChromeSplitDemo />
+      <AlertDialogMotionBodyStaggerDemo />
+      <AlertDialogMotionHeadingBlockDemo />
       <AlertDialogMotionOverlayHoldDemo />
     </div>
   );

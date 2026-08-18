@@ -1,6 +1,7 @@
 import { CheckboxGroupMotionInstantEnterDemo } from "./CheckboxGroupMotionInstantEnter.demo";
 import { CheckboxGroupMotionRootWaveDemo } from "./CheckboxGroupMotionRootWave.demo";
 import { CheckboxGroupMotionChangeTintDemo } from "./CheckboxGroupMotionChangeTint.demo";
+import { CheckboxGroupMotionHintEnterDemo } from "./CheckboxGroupMotionHintEnter.demo";
 
 export function CheckboxGroupMotionDemo() {
   return (
@@ -8,6 +9,7 @@ export function CheckboxGroupMotionDemo() {
       <CheckboxGroupMotionInstantEnterDemo />
       <CheckboxGroupMotionRootWaveDemo />
       <CheckboxGroupMotionChangeTintDemo />
+      <CheckboxGroupMotionHintEnterDemo />
     </div>
   );
 }

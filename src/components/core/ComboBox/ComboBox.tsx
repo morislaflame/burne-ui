@@ -19,6 +19,7 @@ export type {
   ComboBoxProps,
   ComboBoxSimpleProps,
   ComboBoxHintProps,
+  ComboBoxLabelProps,
   ComboBoxErrorProps,
   ComboBoxInputGroupProps,
   ComboBoxInputProps,

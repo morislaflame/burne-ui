@@ -2,7 +2,6 @@ import type { PointerEventHandler, ReactNode } from "react";
 import { forwardRef, useMemo, useRef } from "react";
 
 import { Field } from "@/components/core/Field";
-import type { LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -14,6 +13,7 @@ import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import {
   resolveTimeFieldMotionDefaults,
   resolveTimeFieldMotionParams,
+  useTimeFieldChromeSlot,
   useTimeFieldShellAnimations,
 } from "./timeFieldAnimations";
 import { timeFieldHintStatus, timeFieldSegLabel, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
@@ -28,6 +28,7 @@ import type {
   TimeFieldControlProps,
   TimeFieldErrorProps,
   TimeFieldHintProps,
+  TimeFieldLabelProps,
   TimeFieldPartMotion,
   TimeFieldSimpleBodyProps,
 } from "./timeFieldTypes";
@@ -395,66 +396,130 @@ function TimeFieldControlSurface({
   );
 }
 
-export function TimeFieldLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useTimeFieldClassNames();
+export const TimeFieldLabel = forwardRef<HTMLElement, TimeFieldLabelProps>(
+  function TimeFieldLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useTimeFieldClassNames();
+    const part = useTimeFieldChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
+    return (
+      <Field.Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
 
 TimeFieldLabel.displayName = "TimeFieldLabel";
 
-export function TimeFieldHint({
-  children,
-  id: idProp,
-  className,
-  ...rest
-}: TimeFieldHintProps) {
-  const ctx = useTimeFieldContext();
-  const slotClassNames = useTimeFieldClassNames();
+export const TimeFieldHint = forwardRef<HTMLElement, TimeFieldHintProps>(
+  function TimeFieldHint(
+    {
+      children,
+      id: idProp,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useTimeFieldContext();
+    const slotClassNames = useTimeFieldClassNames();
+    const part = useTimeFieldChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Hint
-      id={idProp ?? ctx.hintId}
-      status={timeFieldHintStatus(ctx.status)}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? ctx.hintId}
+        status={timeFieldHintStatus(ctx.status)}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 TimeFieldHint.displayName = "TimeFieldHint";
 
-export function TimeFieldError({
-  children,
-  id: idProp,
-  className,
-  ...rest
-}: TimeFieldErrorProps) {
-  const ctx = useTimeFieldContext();
-  const slotClassNames = useTimeFieldClassNames();
+export const TimeFieldError = forwardRef<HTMLElement, TimeFieldErrorProps>(
+  function TimeFieldError(
+    {
+      children,
+      id: idProp,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useTimeFieldContext();
+    const slotClassNames = useTimeFieldClassNames();
+    const part = useTimeFieldChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
-  return (
-    <Field.Error
-      id={idProp ?? ctx.errorId}
-      role="alert"
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Error>
-  );
-}
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? ctx.errorId}
+        role="alert"
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
 
 TimeFieldError.displayName = "TimeFieldError";
 
@@ -465,15 +530,9 @@ export function TimeFieldSimpleBody({
   labelId,
   controlProps,
 }: TimeFieldSimpleBodyProps) {
-  const slotClassNames = useTimeFieldClassNames();
-
   return (
     <>
-      {label != null ? (
-        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
-          {label}
-        </Field.Label>
-      ) : null}
+      {label != null ? <TimeFieldLabel id={labelId}>{label}</TimeFieldLabel> : null}
       <TimeFieldControl {...controlProps} />
       {hint != null && <TimeFieldHint>{hint}</TimeFieldHint>}
       {error != null && <TimeFieldError>{error}</TimeFieldError>}

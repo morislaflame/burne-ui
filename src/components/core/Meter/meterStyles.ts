@@ -147,31 +147,17 @@ export function meterFillColorStyle(color?: string): CSSProperties | undefined {
   return { background: color };
 }
 
-export function meterFillTargetStyle({
+export function meterDeterminateFillStyle({
   isHorizontal,
-  percent,
-}: {
-  isHorizontal: boolean;
-  percent: number;
-}): CSSProperties {
-  if (isHorizontal) {
-    return { width: `${percent}%`, height: "100%" };
-  }
-  return { width: "100%", height: `${percent}%` };
-}
-
-export function meterFillInitialStyle({
-  isHorizontal,
-  percent,
   fillColorStyle,
 }: {
   isHorizontal: boolean;
-  percent: number;
   fillColorStyle?: CSSProperties;
 }): CSSProperties {
   return {
-    width: isHorizontal ? `${percent}%` : "100%",
-    height: isHorizontal ? "100%" : `${percent}%`,
+    width: "100%",
+    height: "100%",
+    transformOrigin: isHorizontal ? "left center" : "bottom center",
     ...fillColorStyle,
   };
 }

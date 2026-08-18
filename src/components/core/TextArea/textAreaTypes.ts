@@ -10,6 +10,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { LabelProps } from "@/components/core/Label";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
@@ -34,12 +35,17 @@ export type TextAreaPartMotion = {
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
 };
 
 export type TextAreaMotion = {
   shell?: TextAreaPartMotion;
   control?: TextAreaPartMotion;
   resizeHandle?: TextAreaPartMotion;
+  label?: TextAreaPartMotion;
+  hint?: TextAreaPartMotion;
+  error?: TextAreaPartMotion;
 };
 
 export type TextAreaControlProps = Omit<
@@ -84,7 +90,7 @@ export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
   size?: TextAreaSize;
   classNames?: Prettify<TextAreaClassNames>;
   /**
-   * Per-slot motion (`shell`, `control`, `resizeHandle`).
+   * Per-slot motion (`shell`, `control`, `resizeHandle`, `label`, `hint`, `error`).
    * Resize drag height is kit-internal, not a public MotionVars layout tween.
    */
   motion?: Prettify<TextAreaMotion>;
@@ -102,13 +108,19 @@ export type UseTextAreaShellAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
 };
 
+export type TextAreaLabelProps = Omit<LabelProps, "motion"> & {
+  motion?: Prettify<TextAreaPartMotion>;
+};
+
 export type TextAreaHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   status?: Exclude<TextAreaStatus, "danger"> | "default";
+  motion?: Prettify<TextAreaPartMotion>;
 };
 
 export type TextAreaErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
+  motion?: Prettify<TextAreaPartMotion>;
 };
 
 export type UseTextAreaRootStateProps = TextAreaSimpleProps;

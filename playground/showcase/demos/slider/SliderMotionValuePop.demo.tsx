@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Slider } from "@/components/core/Slider";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function SliderMotionValuePopDemo() {
   return (
@@ -16,7 +12,7 @@ export function SliderMotionValuePopDemo() {
       motion={{
         thumb: {
           pressIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { scale: 1.18, duration: 0.12, yoyo: true, repeat: 1, ease: "back.out(2)" }, 0);
             if (ctx.targets.value) {
               tl.to(ctx.targets.value, { y: -6, scale: 1.12, duration: 0.16, yoyo: true, repeat: 1 }, 0);

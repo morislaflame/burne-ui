@@ -2,7 +2,7 @@ import type { FieldsetHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
 
-import type { FieldErrorProps } from "@/components/core/Field";
+import type { FieldErrorProps, FieldSetActionsProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type {
@@ -44,6 +44,10 @@ export type CheckboxGroupPartMotion = {
 export type CheckboxGroupMotion = {
   root?: CheckboxGroupPartMotion;
   list?: CheckboxGroupPartMotion;
+  legend?: CheckboxGroupPartMotion;
+  hint?: CheckboxGroupPartMotion;
+  error?: CheckboxGroupPartMotion;
+  actions?: CheckboxGroupPartMotion;
 };
 
 export type CheckboxGroupProps = Omit<
@@ -64,19 +68,29 @@ export type CheckboxGroupProps = Omit<
   children?: ReactNode;
   classNames?: Prettify<CheckboxGroupClassNames>;
   /**
-   * Per-slot motion (`root`, `list`). Items keep Checkbox motion.
-   * `change` plays on `root` when `selection="single"` value updates. Defaults are empty.
+   * Per-slot motion (`root`, `list`, `legend`, `hint`, `error`, `actions`).
+   * Items keep Checkbox motion. `change` plays on `root` when `selection="single"`
+   * value updates. `Group` is not a slot. Defaults are empty.
    */
   motion?: Prettify<CheckboxGroupMotion>;
 };
 
 export type UseCheckboxGroupRootStateProps = CheckboxGroupProps;
 
-export type CheckboxGroupHintProps = OptionGroupHintProps;
-export type CheckboxGroupLegendProps = OptionGroupLegendProps;
+export type CheckboxGroupHintProps = OptionGroupHintProps & {
+  motion?: Prettify<CheckboxGroupPartMotion>;
+};
+export type CheckboxGroupLegendProps = OptionGroupLegendProps & {
+  motion?: Prettify<CheckboxGroupPartMotion>;
+};
 export type CheckboxGroupListProps = OptionGroupListProps & {
   motion?: Prettify<CheckboxGroupPartMotion>;
 };
 export type CheckboxGroupOrientation = OptionGroupOrientation;
-export type CheckboxGroupErrorProps = FieldErrorProps;
+export type CheckboxGroupErrorProps = Omit<FieldErrorProps, "motion"> & {
+  motion?: Prettify<CheckboxGroupPartMotion>;
+};
+export type CheckboxGroupActionsProps = Omit<FieldSetActionsProps, "motion"> & {
+  motion?: Prettify<CheckboxGroupPartMotion>;
+};
 export type CheckboxGroupLabelProps = LabelProps;

@@ -94,7 +94,7 @@ export const ANIMATION_FLAG_LABELS = {
   enableAsyncButtonCrossfade: "Button async crossfade",
   enableContentFade: "Content fade",
   enableFeedbackExpand: "Button feedback ring",
-  enableProgressFill: "Progress bar fill",
+  enableProgressFill: "Progress / meter fill",
   enableLoadingDots: "Loading dots wave",
   enableModalMotion: "Modal / drawer",
   enableSwitchThumb: "Switch thumb",

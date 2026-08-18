@@ -59,6 +59,8 @@ export type DialogLifecycleMotion = {
 export type DialogPartMotion = DialogLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 export type DialogMotion = {
@@ -68,8 +70,12 @@ export type DialogMotion = {
   description?: DialogPartMotion;
   close?: DialogLifecycleMotion;
   header?: DialogLifecycleMotion;
+  headingBlock?: DialogPartMotion;
   footer?: DialogLifecycleMotion;
   content?: DialogLifecycleMotion;
+  body?: DialogLifecycleMotion;
+  /** Open squeeze on `Dialog.Trigger` (Root scope — outside Panel). */
+  trigger?: DialogPartMotion;
 };
 
 export type DialogProps = {
@@ -81,7 +87,7 @@ export type DialogProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DialogClassNames>;
-  /** Per-slot enter/leave. Overlay/panel defaults are kit modal recipes. */
+  /** Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`) plus `trigger` press on Root. Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`. */
   motion?: Prettify<DialogMotion>;
 };
 
@@ -98,6 +104,7 @@ export type DialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */
   asChild?: boolean;
   children?: ReactNode;
+  motion?: Prettify<DialogPartMotion>;
 };
 
 export type DialogContextValue = {
@@ -131,7 +138,9 @@ export type DialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
 export type DialogDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
   motion?: Prettify<DialogPartMotion>;
 };
-export type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
+export type DialogBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
 export type DialogFooterProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DialogLifecycleMotion>;
 };
@@ -141,7 +150,9 @@ export type DialogCloseProps = CloseButtonProps & {
 export type DialogContentProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DialogLifecycleMotion>;
 };
-export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
+export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogPartMotion>;
+};
 
 export type UseDialogRootStateProps = Pick<
   DialogProps,

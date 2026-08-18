@@ -25,6 +25,7 @@ import { toastSurfaceEnterRecipe, toastSurfaceLeaveRecipe } from "./toastSurface
 import { contentFadeRecipe } from "./contentFade";
 import { fileRowExitRecipe } from "./fileRowExit";
 import { searchExpandRecipe, searchIconShiftRecipe } from "./searchExpand";
+import { progressFillRecipe, progressIndeterminateRecipe } from "./progressFill";
 
 /** Idempotent kit-layer write. Does not clear app overrides (`{ override: true }`). */
 export function registerKitMotionRecipes(): void {
@@ -55,6 +56,8 @@ export function registerKitMotionRecipes(): void {
   registerKitMotionRecipe("searchExpand", searchExpandRecipe);
   registerKitMotionRecipe("searchIconShift", searchIconShiftRecipe);
   registerKitMotionRecipe("fileRowExit", fileRowExitRecipe);
+  registerKitMotionRecipe("progressFill", progressFillRecipe);
+  registerKitMotionRecipe("progressIndeterminate", progressIndeterminateRecipe);
 }
 
 registerKitMotionRecipes();

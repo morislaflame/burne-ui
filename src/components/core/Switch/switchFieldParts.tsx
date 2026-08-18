@@ -2,7 +2,9 @@ import { forwardRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 
+import { useSwitchChromeSlot } from "./switchAnimations";
 import { useSwitchClassNames, useSwitchFieldContext } from "./switchContext";
 import {
   SWITCH_CONTENT_COMPOUND_CLASS,
@@ -52,18 +54,19 @@ export const SwitchContent = forwardRef<HTMLDivElement, SwitchContentProps>(
 
 SwitchContent.displayName = "SwitchContent";
 
-export function SwitchLabel({ children, className, ...rest }: SwitchLabelProps) {
+export function SwitchLabel({ children, className, motion, ...rest }: SwitchLabelProps) {
   const field = useSwitchFieldContext();
   const slotClassNames = useSwitchClassNames();
   const sz = SWITCH_LAYOUT[field.size];
+  const { setRef } = useSwitchChromeSlot("label", motion);
 
   return (
     <span
-      ref={(node) => {
+      ref={mergeRefs(setRef, (node) => {
         if (field.isCompound && field.useInlineCompoundMotion) {
           field.textMotionRef.current = node;
         }
-      }}
+      })}
       className={cn(
         SWITCH_LABEL_CLASS,
         field.isCompound && switchLabelCellClass(field.labelPosition),
@@ -94,12 +97,14 @@ export function SwitchLabel({ children, className, ...rest }: SwitchLabelProps) 
 
 SwitchLabel.displayName = "SwitchLabel";
 
-export function SwitchHint({ children, className, variant, ...rest }: SwitchHintProps) {
+export function SwitchHint({ children, className, variant, motion, ...rest }: SwitchHintProps) {
   const ctx = useSwitchFieldContext();
   const slotClassNames = useSwitchClassNames();
+  const { setRef } = useSwitchChromeSlot("hint", motion);
 
   return (
     <Field.Hint
+      ref={setRef}
       as="span"
       id={ctx.hintId}
       variant={variant ?? SWITCH_LAYOUT[ctx.size].desc}
@@ -118,12 +123,14 @@ export function SwitchHint({ children, className, variant, ...rest }: SwitchHint
 
 SwitchHint.displayName = "Switch.Hint";
 
-export function SwitchError({ children, className, ...rest }: SwitchErrorProps) {
+export function SwitchError({ children, className, motion, ...rest }: SwitchErrorProps) {
   const ctx = useSwitchFieldContext();
   const slotClassNames = useSwitchClassNames();
+  const { setRef } = useSwitchChromeSlot("error", motion);
 
   return (
     <Field.Error
+      ref={setRef}
       as="span"
       id={ctx.errorId}
       variant={SWITCH_LAYOUT[ctx.size].desc}

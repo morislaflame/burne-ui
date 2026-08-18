@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Alert } from "@/components/core/Alert";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 
@@ -30,9 +28,7 @@ export function AlertMotionTimelineDemo() {
       motion={{
         root: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false },
-            });
+            const tl = ctx.timeline();
             if (ctx.targets.indicator) {
               tl.to(
                 ctx.targets.indicator,
@@ -50,18 +46,16 @@ export function AlertMotionTimelineDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({
-              defaults: { overwrite: "auto", force3D: false, duration: 0.22 },
-            });
+            const tl = ctx.timeline();
             if (ctx.targets.indicator) {
-              tl.to(ctx.targets.indicator, { rotate: 0, scale: 1 }, 0);
+              tl.to(ctx.targets.indicator, { rotate: 0, scale: 1, duration: 0.22 }, 0);
             }
             if (ctx.targets.title) {
               tl.add(restoreTextColor(ctx.targets.title, 0.22), 0);
-              tl.to(ctx.targets.title, { y: 0 }, 0);
+              tl.to(ctx.targets.title, { y: 0, duration: 0.22 }, 0);
             }
             if (ctx.targets.description) {
-              tl.to(ctx.targets.description, { y: 0 }, 0);
+              tl.to(ctx.targets.description, { y: 0, duration: 0.22 }, 0);
             }
             return tl;
           },

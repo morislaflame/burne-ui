@@ -14,6 +14,7 @@ export type {
   SliderErrorProps,
   SliderHeaderProps,
   SliderHintProps,
+  SliderLabelProps,
   SliderOrientation,
   SliderRangeProps,
   SliderProps,

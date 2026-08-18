@@ -1,13 +1,15 @@
 /**
  * Slot motion for Popover — look here first.
  *
- * DOM slots: `content` (portal surface), `title`, `description`, `body`
+ * DOM slots: `content` (portal surface), `header`, `title`, `description`, `body`, `arrow`,
+ * `trigger` (Root), plus pass-through `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` /
+ * `subTrigger` / `separator` (Dropdown).
  * Host: `Popover.Content` (`usePopoverContentLifecycle`) plays `enter` / `leave`
- * on `content` and broadcasts nested slots. Root has no portal DOM — it only
- * passes the `motion` map through context. Defaults wrap the portal host
+ * on `content` and broadcasts nested slots. Root has no portal DOM — it passes the
+ * `motion` map and trigger defaults. Overlay/content defaults wrap the portal host
  * (`POPOVER_MOTION_DEFAULTS` on the Content provider).
  *
- * Trigger squeeze stays `runOpenAfterSqueeze` (asChild Button already presses).
+ * Trigger open squeeze uses slot `pressIn` (`playOverlayTriggerOpenSqueeze`).
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 

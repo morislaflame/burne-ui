@@ -1,5 +1,6 @@
 import { BreadcrumbsMotionCrumbWaveDemo } from "./BreadcrumbsMotionCrumbWave.demo";
 import { BreadcrumbsMotionInstantPressDemo } from "./BreadcrumbsMotionInstantPress.demo";
+import { BreadcrumbsMotionListSeparatorDemo } from "./BreadcrumbsMotionListSeparator.demo";
 import { BreadcrumbsMotionTextTintDemo } from "./BreadcrumbsMotionTextTint.demo";
 
 export function BreadcrumbsMotionDemo() {
@@ -8,6 +9,7 @@ export function BreadcrumbsMotionDemo() {
       <BreadcrumbsMotionInstantPressDemo />
       <BreadcrumbsMotionCrumbWaveDemo />
       <BreadcrumbsMotionTextTintDemo />
+      <BreadcrumbsMotionListSeparatorDemo />
     </div>
   );
 }

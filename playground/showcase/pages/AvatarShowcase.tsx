@@ -49,7 +49,11 @@ export function AvatarShowcase() {
         title="Slot motion"
         description="Image enter (Replay) — instant vs scale-in. Group hover — instant vs rotate."
       >
-        <ShowcaseDemoFromFile Demo={AvatarMotionInstantFadeDemo} source={avatarMotionInstantFadeSource} />
+        <ShowcaseDemoFromFile
+          Demo={AvatarMotionInstantFadeDemo}
+          source={avatarMotionInstantFadeSource}
+          replay
+        />
         <ShowcaseDemoFromFile Demo={AvatarMotionImageScaleDemo} source={avatarMotionImageScaleSource} />
         <ShowcaseDemoFromFile Demo={AvatarMotionInstantGroupDemo} source={avatarMotionInstantGroupSource} />
         <ShowcaseDemoFromFile Demo={AvatarMotionGroupRotateDemo} source={avatarMotionGroupRotateSource} />

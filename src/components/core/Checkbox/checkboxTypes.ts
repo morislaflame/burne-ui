@@ -41,13 +41,18 @@ export type CheckboxClassNames = {
 export type CheckboxCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
 };
 
-/** Root map. Keys → SelectionIndicator slots in `checkboxAnimations.ts`. */
+/** Root map. Indicator keys → SelectionIndicator; chrome (`label` / `hint` / `error`) is Checkbox's own scope. */
 export type CheckboxMotion = {
   indicator?: CheckboxCheckMotion;
   indicatorFill?: CheckboxCheckMotion;
   indicatorMark?: CheckboxCheckMotion;
+  label?: CheckboxCheckMotion;
+  hint?: CheckboxCheckMotion;
+  error?: CheckboxCheckMotion;
 };
 
 export type CheckboxProps = Omit<
@@ -86,11 +91,17 @@ export type CheckboxContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-export type CheckboxLabelProps = Omit<LabelProps, "htmlFor">;
+export type CheckboxLabelProps = Omit<LabelProps, "htmlFor"> & {
+  motion?: Prettify<CheckboxCheckMotion>;
+};
 
-export type CheckboxHintProps = Omit<FieldHintProps, "id" | "as">;
+export type CheckboxHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<CheckboxCheckMotion>;
+};
 
-export type CheckboxErrorProps = Omit<FieldErrorProps, "id" | "as">;
+export type CheckboxErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<CheckboxCheckMotion>;
+};
 
 export type CheckboxFieldContextValue = {
   inputId: string;

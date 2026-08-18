@@ -3,6 +3,7 @@ import "../utils/glossInteractive.css";
 import { PopoverClassNamesProvider, PopoverMotionProvider, PopoverProvider } from "./popoverContext";
 import type { PopoverProps } from "./popoverTypes";
 import { usePopoverRootState } from "./usePopoverRootState";
+import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
 
 export type {
   PopoverArrowProps,
@@ -63,7 +64,7 @@ export function PopoverRoot({
   return (
     <PopoverProvider value={contextValue}>
       <PopoverClassNamesProvider classNames={classNames}>
-        <PopoverMotionProvider motion={motion}>
+        <PopoverMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
         {children}
         </PopoverMotionProvider>
       </PopoverClassNamesProvider>

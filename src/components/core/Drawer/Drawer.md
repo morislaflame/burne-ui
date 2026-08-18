@@ -91,7 +91,7 @@ const [open, setOpen] = useState(false);
 
 ## Анимации
 
-`drawerAnimations.ts` → slot motion (`DRAWER_MOTION_DEFAULTS`) + `useDrawerModalMotion` → `useModalMotion`. Root без DOM портала передаёт карту `motion`; хост — `Drawer.Panel` (defaults + `params.placement` для `drawerSlide*`). Trigger squeeze — `runOpenAfterSqueeze`. Drag — `useDrawerHandleDrag.ts` (не публичный слот).
+`drawerAnimations.ts` → slot motion (`DRAWER_MOTION_DEFAULTS`) + `useDrawerModalMotion` → `useModalMotion`. Root без DOM портала передаёт карту `motion`; хост — `Drawer.Panel` (defaults + `params.placement` для `drawerSlide*`). Trigger — слот `trigger` на Root (`pressSqueeze`; другой рецепт через `motion.trigger.pressIn`). Drag — `useDrawerHandleDrag.ts` (не публичный слот).
 
 **DOM-структура (портал):**
 
@@ -111,7 +111,10 @@ const [open, setOpen] = useState(false);
 | `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
 | `panel` | `enter` / `leave` | `drawerSlideEnter` / `drawerSlideLeave` (`params.placement`) |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
-| `close`, `header`, `footer`, `content`, `handle` | `enter` / `leave` | нет; хост **рассылает**, если задана |
+| `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle` | `enter` / `leave` | нет; хост **рассылает**, если задана |
+| `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
+
+`body` — `Drawer.Body` (скролл), не слот `content`.
 
 Nested `enter` — следующий кадр после host, без overlay `offsetHeight` flush. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
 
@@ -165,7 +168,7 @@ Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: 
 
 ### Trigger open squeeze
 
-Как `Dialog.Trigger`: `e.preventDefault()` + `runOpenAfterSqueeze` → `animateInteractivePressSqueeze` → `onOpenChange(true)`.
+Как `Dialog.Trigger`: `e.preventDefault()` + `runOpenAfterSqueeze` → `motion.trigger.pressIn` (дефолт `pressSqueeze`) → `onOpenChange(true)`. Другой рецепт — `motion.trigger.pressIn`.
 
 ### Gloss panel
 
@@ -196,7 +199,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 | Nested title / handle | slot broadcast | — | `motion.title` / … |
 | Drag dismiss | `useDrawerHandleDrag` | interactive (finish) | ratio 0.38, velocity 0.45 |
 | Drag snap-back | `useDrawerHandleDrag` | interactive | — |
-| Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | — |
+| Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale` | `motion.trigger.pressIn` |
 | Skip close after drag | `skipCloseAnimRef` | — | внутренний флаг |
 
 ### Сравнение с Dialog

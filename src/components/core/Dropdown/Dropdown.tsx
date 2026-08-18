@@ -21,6 +21,7 @@ import {
 import { dropdownRootClass } from "./dropdownStyles";
 import type { DropdownProps } from "./dropdownTypes";
 import { useDropdownRootState } from "./useDropdownRootState";
+import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
 
 import { cn } from "@/utils/cn";
 
@@ -83,7 +84,7 @@ export function DropdownRoot({
     <DropdownProvider value={contextValue}>
       <DropdownClassNamesProvider classNames={classNames}>
         <DropdownIndicatorPreferenceProvider value={selectionIndicator}>
-          <DropdownMotionProvider motion={motion}>
+          <DropdownMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
           <div
             className={dropdownRootClass({
               inJoinedButtonGroup,

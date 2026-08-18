@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useMemo, useRef } from "react";
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
-import { useExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
+import { useExpandableMotionScope, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
 import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
@@ -204,8 +204,29 @@ export const AccordionPanel = forwardRef<HTMLDivElement, AccordionPanelProps>(
 
 AccordionPanel.displayName = "Accordion.Panel";
 
-export function AccordionBody({ className, ...rest }: AccordionBodyProps) {
-  return <Text as="div" variant="base" className={accordionBodyClass(className)} {...rest} />;
-}
+export const AccordionBody = forwardRef<HTMLDivElement, AccordionBodyProps>(
+  function AccordionBody({ className, motion, ...rest }, ref) {
+    const slotClassNames = useAccordionClassNames();
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalExpandableMotionScope(),
+      slot: "body",
+      motion,
+      forwardedRef: ref,
+    });
+
+    return (
+      <Text
+        as="div"
+        ref={setRef}
+        variant="base"
+        className={accordionBodyClass({
+          className,
+          slotClass: slotClassNames.body,
+        })}
+        {...rest}
+      />
+    );
+  },
+);
 
 AccordionBody.displayName = "Accordion.Body";

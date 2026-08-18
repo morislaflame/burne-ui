@@ -7,10 +7,14 @@
  * `x`/`y`/`scale`) stays kit-internal in `useSlidingTabIndicator.ts`.
  *
  * Hosts:
- * - Root / List play optional `enter`. Root plays `change` when the selected value updates.
- * - Each Tab is a nested scope. Inactive tabs default to `hoverLiftFirstLevel`
- *   + `pressSqueeze` on `tabText`. Selected / disabled → those phases `false`.
- * - Panel plays opt-in `enter` / `leave` on selection.
+ * - Root plays optional `enter` and `change` when the selected value updates
+ *   (hover / press only if the user sets those recipes).
+ * - List plays optional `enter` only (`pointerPhases: false`).
+ * - Each Tab is a nested unique scope. `tab` / `tabText` `enter` is mount-only
+ *   (`useOptionalEnterOnMount`). Selection is `check` / `uncheck` (`skipFirst`).
+ * - Inactive tabs default to `hoverLiftFirstLevel` + `pressSqueeze` on `tabText`.
+ *   Selected / disabled → those pointer phases `false`.
+ * - Panel plays opt-in `enter` / `leave` on panel visibility (not tab selection).
  */
 import {
   useCallback,
@@ -19,6 +23,7 @@ import {
   useState,
   type KeyboardEvent,
   type PointerEvent,
+  type RefObject,
 } from "react";
 
 import {
@@ -74,9 +79,18 @@ export function useTabsListEnter(scope: MotionScopeValue | null) {
   useOptionalEnterOnMount(scope, "list");
 }
 
+export function useTabsTabEnter(
+  scope: MotionScopeValue | null,
+  tabTarget?: RefObject<HTMLElement | null>,
+  textTarget?: RefObject<HTMLElement | null>,
+) {
+  useOptionalEnterOnMount(scope, "tab", tabTarget);
+  useOptionalEnterOnMount(scope, "tabText", textTarget);
+}
+
 function playTabPhase(
   scope: MotionScopeValue,
-  phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut" | "check" | "uncheck" | "enter",
+  phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut" | "check" | "uncheck",
 ) {
   const tabEl = scope.getTarget("tab");
   const textEl = scope.getTarget("tabText");
@@ -166,19 +180,22 @@ export function useTabsTabPointerMotion({
   };
 }
 
-export function useTabsTabSelectionMotion(scope: MotionScopeValue, selected: boolean) {
-  const prevRef = useRef<boolean | undefined>(undefined);
-
-  useLayoutEffect(() => {
-    if (prevRef.current === undefined) {
-      prevRef.current = selected;
-      if (selected) playTabPhase(scope, "enter");
-      return;
-    }
-    if (prevRef.current === selected) return;
-    prevRef.current = selected;
-    playTabPhase(scope, selected ? "check" : "uncheck");
-  }, [scope, selected]);
+export function useTabsTabSelectionMotion(
+  scope: MotionScopeValue,
+  selected: boolean,
+  tabTarget?: RefObject<HTMLElement | null>,
+  textTarget?: RefObject<HTMLElement | null>,
+) {
+  useSlotPhaseOnChange(scope, "tab", selected, {
+    phase: selected ? "check" : "uncheck",
+    skipFirst: true,
+    target: tabTarget,
+  });
+  useSlotPhaseOnChange(scope, "tabText", selected, {
+    phase: selected ? "check" : "uncheck",
+    skipFirst: true,
+    target: textTarget,
+  });
 }
 
 export function useTabsPanelLifecycle(

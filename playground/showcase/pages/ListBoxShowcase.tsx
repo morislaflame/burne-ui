@@ -20,6 +20,12 @@ import { ListBoxMotionItemWaveDemo } from "../demos/listBox/ListBoxMotionItemWav
 import listBoxMotionItemWaveSource from "../demos/listBox/ListBoxMotionItemWave.demo.tsx?raw";
 import { ListBoxMotionLabelTintDemo } from "../demos/listBox/ListBoxMotionLabelTint.demo";
 import listBoxMotionLabelTintSource from "../demos/listBox/ListBoxMotionLabelTint.demo.tsx?raw";
+import { ListBoxMotionHintStaggerDemo } from "../demos/listBox/ListBoxMotionHintStagger.demo";
+import listBoxMotionHintStaggerSource from "../demos/listBox/ListBoxMotionHintStagger.demo.tsx?raw";
+import { ListBoxMotionSectionHeaderDemo } from "../demos/listBox/ListBoxMotionSectionHeader.demo";
+import listBoxMotionSectionHeaderSource from "../demos/listBox/ListBoxMotionSectionHeader.demo.tsx?raw";
+import { ListBoxMotionSeparatorDemo } from "../demos/listBox/ListBoxMotionSeparator.demo";
+import listBoxMotionSeparatorSource from "../demos/listBox/ListBoxMotionSeparator.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -65,10 +71,13 @@ export function ListBoxShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxCommandPaletteDemo} source={listBoxCommandPaletteSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across item/label/icon, compound Label + Icon motion.">
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across item/label/icon, compound Label + Icon motion, section header, empty enter, separator.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionInstantPressDemo} source={listBoxMotionInstantPressSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionItemWaveDemo} source={listBoxMotionItemWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionLabelTintDemo} source={listBoxMotionLabelTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionHintStaggerDemo} source={listBoxMotionHintStaggerSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionSectionHeaderDemo} source={listBoxMotionSectionHeaderSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionSeparatorDemo} source={listBoxMotionSeparatorSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

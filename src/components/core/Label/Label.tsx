@@ -1,5 +1,5 @@
-import type { HTMLAttributes, PointerEvent as ReactPointerEvent } from "react";
-import { useMemo } from "react";
+import type { ForwardedRef, HTMLAttributes, PointerEvent as ReactPointerEvent } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { resolveLabelMotionDefaults, useLabelRootMotion } from "./labelAnimations";
 import { LabelClassNamesProvider, LabelMotionProvider, useLabelClassNames, useLabelMotionScope } from "./labelContext";
@@ -23,12 +23,15 @@ export function LabelRoot({
   htmlFor: htmlForProp,
   id: idProp,
   variant = "base",
+  forwardedRef,
   onPointerOver,
   onPointerOut,
   onPointerDown,
   onPointerUp,
   ...rest
-}: Omit<LabelProps, "classNames" | "motion">) {
+}: Omit<LabelProps, "classNames" | "motion"> & {
+  forwardedRef?: ForwardedRef<HTMLElement>;
+}) {
   const { htmlFor, id, required } = useLabelRootState({
     required: requiredProp,
     htmlFor: htmlForProp,
@@ -41,6 +44,7 @@ export function LabelRoot({
   });
   const scope = useLabelMotionScope();
   const part = useLabelRootMotion({
+    forwardedRef,
     motion: scope.getRootMotion()?.root,
     onPointerOver: onPointerOver as ((e: ReactPointerEvent<HTMLElement>) => void) | undefined,
     onPointerOut: onPointerOut as ((e: ReactPointerEvent<HTMLElement>) => void) | undefined,
@@ -55,8 +59,8 @@ export function LabelRoot({
         id={id}
         htmlFor={htmlFor}
         className={rootClass}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         <LabelContent required={required} variant={variant}>
           {children}
@@ -72,8 +76,8 @@ export function LabelRoot({
       ref={part.setRef}
       id={id}
       className={rootClass}
-      {...part.pointerHandlers}
       {...spanRest}
+      {...part.pointerHandlers}
     >
       <LabelContent required={required} variant={variant}>
         {children}
@@ -82,15 +86,18 @@ export function LabelRoot({
   );
 }
 
-export function Label({ classNames, motion, ...rest }: LabelProps) {
+export const Label = forwardRef<HTMLElement, LabelProps>(function Label(
+  { classNames, motion, ...rest },
+  ref,
+) {
   const motionDefaults = useMemo(() => resolveLabelMotionDefaults(), []);
   return (
     <LabelClassNamesProvider classNames={classNames}>
       <LabelMotionProvider motion={motion} defaults={motionDefaults}>
-        <LabelRoot {...rest} />
+        <LabelRoot forwardedRef={ref} {...rest} />
       </LabelMotionProvider>
     </LabelClassNamesProvider>
   );
-}
+});
 
 export { LabelSlot };

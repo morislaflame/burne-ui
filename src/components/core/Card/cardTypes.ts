@@ -7,7 +7,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { ShadowLevel } from "@/tokens/shadows";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue } from "@/components/core/utils/slotMotion";
 import type { CardSize } from "./cardStyles";
 
 export type { CardSize } from "./cardStyles";
@@ -78,8 +78,14 @@ export type CardProps = Omit<
   /**
    * Per-slot motion (`root`, `title`, `description`, `header`, `headingBlock`, `body`, `footer`).
    * Pressable defaults: second-level hover lift + squeeze (gloss recipes when gloss).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<CardMotion>;
+  motion?: Prettify<MotionMapWithEvents<CardMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
 };
 
 export type CardHeaderProps = HTMLAttributes<HTMLDivElement> & {

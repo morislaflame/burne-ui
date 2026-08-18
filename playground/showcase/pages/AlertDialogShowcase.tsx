@@ -10,6 +10,10 @@ import { AlertDialogGlossDemo } from "../demos/alertDialog/AlertDialogGloss.demo
 import alertDialogGlossSource from "../demos/alertDialog/AlertDialogGloss.demo.tsx?raw";
 import { AlertDialogMotionChromeSplitDemo } from "../demos/alertDialog/AlertDialogMotionChromeSplit.demo";
 import alertDialogMotionChromeSplitSource from "../demos/alertDialog/AlertDialogMotionChromeSplit.demo.tsx?raw";
+import { AlertDialogMotionBodyStaggerDemo } from "../demos/alertDialog/AlertDialogMotionBodyStagger.demo";
+import alertDialogMotionBodyStaggerSource from "../demos/alertDialog/AlertDialogMotionBodyStagger.demo.tsx?raw";
+import { AlertDialogMotionHeadingBlockDemo } from "../demos/alertDialog/AlertDialogMotionHeadingBlock.demo";
+import alertDialogMotionHeadingBlockSource from "../demos/alertDialog/AlertDialogMotionHeadingBlock.demo.tsx?raw";
 import { AlertDialogMotionIndicatorPopDemo } from "../demos/alertDialog/AlertDialogMotionIndicatorPop.demo";
 import alertDialogMotionIndicatorPopSource from "../demos/alertDialog/AlertDialogMotionIndicatorPop.demo.tsx?raw";
 import { AlertDialogMotionInstantPanelDemo } from "../demos/alertDialog/AlertDialogMotionInstantPanel.demo";
@@ -51,11 +55,13 @@ export function AlertDialogShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — instant panel, indicator pop, header/footer split, overlay hold."
+        description="Each card is a separate copyable example — instant panel, indicator pop, header/footer split, headingBlock, overlay hold."
       >
         <ShowcaseDemoFromFile Demo={AlertDialogMotionInstantPanelDemo} source={alertDialogMotionInstantPanelSource} />
         <ShowcaseDemoFromFile Demo={AlertDialogMotionIndicatorPopDemo} source={alertDialogMotionIndicatorPopSource} />
         <ShowcaseDemoFromFile Demo={AlertDialogMotionChromeSplitDemo} source={alertDialogMotionChromeSplitSource} />
+        <ShowcaseDemoFromFile Demo={AlertDialogMotionBodyStaggerDemo} source={alertDialogMotionBodyStaggerSource} />
+        <ShowcaseDemoFromFile Demo={AlertDialogMotionHeadingBlockDemo} source={alertDialogMotionHeadingBlockSource} />
         <ShowcaseDemoFromFile Demo={AlertDialogMotionOverlayHoldDemo} source={alertDialogMotionOverlayHoldSource} />
       </ShowcaseSection>
 

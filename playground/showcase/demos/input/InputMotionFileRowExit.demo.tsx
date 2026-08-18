@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { Input } from "@/components/core/Input";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function InputMotionFileRowExitDemo() {
   return (
@@ -15,7 +11,7 @@ export function InputMotionFileRowExitDemo() {
       motion={{
         fileRow: {
           leave: (ctx) =>
-            gsap.to(ctx.el, {
+            ctx.to({
               rotate: -10,
               x: 28,
               y: -6,
@@ -23,7 +19,6 @@ export function InputMotionFileRowExitDemo() {
               autoAlpha: 0,
               duration: 0.34,
               ease: "power2.in",
-              ...TL,
             }),
         },
       }}

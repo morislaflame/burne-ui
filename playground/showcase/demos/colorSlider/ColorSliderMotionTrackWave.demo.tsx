@@ -1,8 +1,4 @@
-import gsap from "gsap";
-
 import { ColorSlider } from "@/components/core/ColorPicker";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ColorSliderMotionTrackWaveDemo() {
   return (
@@ -13,10 +9,10 @@ export function ColorSliderMotionTrackWaveDemo() {
       motion={{
         root: {
           enter: (ctx) =>
-            gsap.fromTo(ctx.el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ...TL }),
+            ctx.fromTo({ opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3 }),
         },
         track: {
-          enter: (ctx) => gsap.fromTo(ctx.el, { scaleX: 0.85 }, { scaleX: 1, duration: 0.28, ...TL }),
+          enter: (ctx) => ctx.fromTo({ scaleX: 0.85 }, { scaleX: 1, duration: 0.28 }),
         },
       }}
     />

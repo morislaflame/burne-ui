@@ -22,6 +22,7 @@ import { tabsPanelId, tabsTabA11y, tabsTabId } from "./tabsA11y";
 import {
   resolveTabsTabMotionDefaults,
   useTabsTabPointerMotion,
+  useTabsTabEnter,
   useTabsTabSelectionMotion,
 } from "./tabsAnimations";
 import {
@@ -118,7 +119,8 @@ function TabsTabSurface({
     slot: "tabText",
     pointerPhases: false,
   });
-  useTabsTabSelectionMotion(scope, isSelected);
+  useTabsTabEnter(scope, tabPart.targetRef, textPart.targetRef);
+  useTabsTabSelectionMotion(scope, isSelected, tabPart.targetRef, textPart.targetRef);
 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {

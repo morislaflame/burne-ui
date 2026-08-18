@@ -12,10 +12,14 @@ import { MeterVerticalDemo } from "../demos/meter/MeterVertical.demo";
 import meterVerticalSource from "../demos/meter/MeterVertical.demo.tsx?raw";
 import { MeterMotionInstantEnterDemo } from "../demos/meter/MeterMotionInstantEnter.demo";
 import meterMotionInstantEnterSource from "../demos/meter/MeterMotionInstantEnter.demo.tsx?raw";
+import { MeterMotionFillEnterDemo } from "../demos/meter/MeterMotionFillEnter.demo";
+import meterMotionFillEnterSource from "../demos/meter/MeterMotionFillEnter.demo.tsx?raw";
 import { MeterMotionTrackWaveDemo } from "../demos/meter/MeterMotionTrackWave.demo";
 import meterMotionTrackWaveSource from "../demos/meter/MeterMotionTrackWave.demo.tsx?raw";
 import { MeterMotionChangeTintDemo } from "../demos/meter/MeterMotionChangeTint.demo";
 import meterMotionChangeTintSource from "../demos/meter/MeterMotionChangeTint.demo.tsx?raw";
+import { MeterMotionHintEnterDemo } from "../demos/meter/MeterMotionHintEnter.demo";
+import meterMotionHintEnterSource from "../demos/meter/MeterMotionHintEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -56,10 +60,12 @@ export function MeterShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={MeterQuotaBannerDemo} source={meterQuotaBannerSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, track timeline, change-phase tint. Fill width stays kit-internal.">
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, fill enter (recipe or custom factory), track timeline, change-phase tint, chrome enter on label / hint / error.">
         <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionInstantEnterDemo} source={meterMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionFillEnterDemo} source={meterMotionFillEnterSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionTrackWaveDemo} source={meterMotionTrackWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionChangeTintDemo} source={meterMotionChangeTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionHintEnterDemo} source={meterMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

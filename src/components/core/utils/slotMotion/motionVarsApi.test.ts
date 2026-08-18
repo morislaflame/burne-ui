@@ -1,7 +1,5 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import gsap from "gsap";
-
 import type {
   MotionContext,
   MotionFactory,
@@ -21,6 +19,8 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
 
     expectTypeOf<MotionVars>().toHaveProperty("x");
     expectTypeOf<MotionVars>().toHaveProperty("autoAlpha");
+    expectTypeOf<MotionVars>().toHaveProperty("yoyo");
+    expectTypeOf<MotionVars>().toHaveProperty("replay");
     expectTypeOf<MotionVars>().not.toHaveProperty("width");
     expectTypeOf<MotionVars>().not.toHaveProperty("height");
     expectTypeOf<MotionVars>().not.toHaveProperty("rotation");
@@ -64,6 +64,8 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
       liftScale: 1.02,
       placement: "left",
       getTravelPx: () => 12,
+      getProgressScale: () => 0.72,
+      isHorizontal: true,
       duration: 0.18,
     };
     expect(params.placement).toBe("left");
@@ -71,6 +73,8 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
     expectTypeOf<MotionContext["params"]>().toEqualTypeOf<MotionRecipeParams>();
     expectTypeOf<MotionRecipeParams>().toHaveProperty("liftScale");
     expectTypeOf<MotionRecipeParams>().toHaveProperty("getTravelPx");
+    expectTypeOf<MotionRecipeParams>().toHaveProperty("getProgressScale");
+    expectTypeOf<MotionRecipeParams>().toHaveProperty("isHorizontal");
     expectTypeOf<MotionRecipeParams>().not.toHaveProperty("notAKitKey");
 
     // @ts-expect-error custom app data does not go on params
@@ -80,7 +84,7 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
 
   it("allows compositor props in a factory, not in public vars", () => {
     const factory: MotionFactory = (ctx) =>
-      gsap.to(ctx.el, { rotation: 45, scaleX: 0.5, opacity: 0.8, duration: 0.2 });
+      ctx.fromRest({ rotation: 45, scaleX: 0.5, opacity: 0.8, duration: 0.2 });
     expect(typeof factory).toBe("function");
   });
 });

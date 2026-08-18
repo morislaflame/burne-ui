@@ -1,9 +1,6 @@
-import gsap from "gsap";
 import { IoAt, IoSearch } from "react-icons/io5";
 
 import { Input } from "@/components/core/Input";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function InputMotionAffixOrbitDemo() {
   return (
@@ -17,7 +14,7 @@ export function InputMotionAffixOrbitDemo() {
       motion={{
         shell: {
           hoverIn: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: -1.4, y: -2, duration: 0.22 }, 0);
             if (ctx.targets.prefix) {
               tl.to(ctx.targets.prefix, { y: -5, rotate: -12, duration: 0.22 }, 0);
@@ -31,7 +28,7 @@ export function InputMotionAffixOrbitDemo() {
             return tl;
           },
           hoverOut: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: 0, y: 0, duration: 0.18 }, 0);
             if (ctx.targets.prefix) {
               tl.to(ctx.targets.prefix, { y: 0, rotate: 0, duration: 0.18 }, 0);

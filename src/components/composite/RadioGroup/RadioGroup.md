@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupClassNames, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLabelProps, type RadioGroupLegendProps, type RadioGroupListProps } from "burne-ui";
+import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupClassNames, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLabelProps, type RadioGroupLegendProps, type RadioGroupListProps, type RadioGroupMotion, type RadioGroupPartMotion } from "burne-ui";
 import { Radio } from "burne-ui";
 ```
 
@@ -53,6 +53,7 @@ Simple API нет.
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
 | `className` | — | На `<fieldset>` |
 | `classNames` | — | Слоты `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` |
+| `motion` | — | Слоты `root`, `list`, `legend`, `hint`, `error`, `actions` |
 
 `variant`, `status` на root **нет**.
 
@@ -77,6 +78,7 @@ Simple API нет.
 |------|--------------|----------|
 | `orientation` | `vertical` | `vertical` \| `horizontal` |
 | `className` | — | На list container |
+| `motion` | — | Part motion слота `list` |
 
 ## size и orientation
 
@@ -93,7 +95,15 @@ Simple API нет.
 
 ## Анимации
 
-У `RadioGroup` **нет собственных** анимаций. Motion делегирован `Radio`:
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` (fieldset), `list`, `legend`, `hint`, `error`, `actions` | `enter` (opt-in); `change` on `root` when value updates | empty |
+
+`Group` не слот. Motion item Radio остаётся на пункте. Field.Set — отдельный scope; chrome группы регистрируется в scope RadioGroup.
+
+`radioGroupAnimations.ts` играет `enter` / `change` на `root` и `enter` на chrome.
 
 **DOM:**
 
@@ -107,15 +117,19 @@ Simple API нет.
       <Text ref=textMotion />        ← press squeeze
 ```
 
-### 1. Dot indicator (slot motion)
+### 1. Group slot motion
+
+`motion` на `RadioGroup`: `root` / `list` / `legend` / `hint` / `error` / `actions`. `change` на `root` при смене `value`.
+
+### 2. Dot indicator (slot motion)
 
 `Radio` — embedder в SelectionIndicator. Карта `motion` на `Radio`: `indicator` / `indicatorFill` / `indicatorMark` (`check` / `uncheck`). См. `Radio.md`.
 
-### 2. Text press motion
+### 3. Text press motion
 
 `useRadioTextMotion` на label text.
 
-### 3. Track fade
+### 4. Track fade
 
 `useRadioControlTrackAnimation` при `disabled`.
 
@@ -132,14 +146,14 @@ configureMotion({
 
 ### Чего нет
 
-- Group-level animation при смене `value`
 - Portal motion
-- Hover lift на fieldset
+- Hover lift на fieldset по умолчанию (`hoverIn` — opt-in)
 
 ### Сводка: что настраивается где
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
+| Group chrome / change | `radioGroupAnimations.ts` | — | `motion` на RadioGroup |
 | Dot fill | `Radio.motion` → SelectionIndicator | selection fill tokens | `motion` на Radio |
 | Text squeeze | `useRadioTextMotion` | `pressSqueezeScale` | `disabled` |
 | Track fade | radio animations | `interactiveDuration` | `disabled` |
@@ -277,6 +291,7 @@ RadioGroup/
 ├── radioGroupTypes.ts
 ├── radioGroupParts.tsx
 ├── radioGroupContext.tsx
+├── radioGroupAnimations.ts
 ├── useRadioGroupRootState.ts
 └── RadioGroup.stories.tsx
 
@@ -285,4 +300,4 @@ composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGr
 
 ## Storybook
 
-`Composite Components/RadioGroup` — playground, card layout, horizontal, descriptions, required, error, controlled, sizes, `classNames` customization, accessibility.
+`Composite Components/RadioGroup` — playground, card layout, horizontal, descriptions, required, error, controlled, sizes, `classNames` customization, slot motion gallery, accessibility.

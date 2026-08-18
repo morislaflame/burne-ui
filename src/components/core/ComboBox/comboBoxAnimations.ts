@@ -1,16 +1,16 @@
 /**
  * Slot motion for ComboBox — look here first.
  *
- * DOM slots: `inputGroup` (host), `input`, `trigger`, `triggerIcon`
+ * DOM slots: `inputGroup` (host), `input`, `trigger`, `triggerIcon`, `label`, `hint`, `error`
  *
  * Root passes the `motion` map. Host is `ComboBox.InputGroup` (defaults + `play`).
+ * Chrome (`label` / `hint` / `error`) registers on the Root scope.
  * Gloss hover/press stay on `useGlossFieldShellMotion`.
  * Open-after-squeeze uses slot `pressIn` (non-gloss) or kit gloss squeeze.
  *
- * Not slots: Field `root` / `label` / `hint` / `error`; Popover / ListBox
- * (menu enter lives on Popover).
+ * Not slots: Field's own scope; Popover / ListBox (menu enter lives on Popover).
  */
-import { useCallback, useMemo, useRef, type MutableRefObject, type RefObject } from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler, type RefObject } from "react";
 
 import {
   animateGlossInteractivePressSqueeze,
@@ -22,14 +22,17 @@ import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import {
+  hasPointerPhases,
   mergeMotionPointerHandlers,
+  useMotionPart,
   useMotionPointerPhases,
+  useOptionalEnterOnMount,
   type MotionScopeValue,
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { useComboBoxMotionScope } from "./comboBoxContext";
+import { useComboBoxMotionScope, useOptionalComboBoxMotionScope } from "./comboBoxContext";
 import type {
   ComboBoxMotion,
   ComboBoxPartMotion,
@@ -276,4 +279,42 @@ export function useComboBoxShellAnimations({
       : standardShellHover.motionClass,
     glossDisabledAttr: disabled && isGloss ? { "data-gloss-disabled": "" } : {},
   };
+}
+
+export type ComboBoxChromeSlot = "label" | "hint" | "error";
+
+export function useComboBoxChromeSlot(
+  slot: ComboBoxChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: ComboBoxPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalComboBoxMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }

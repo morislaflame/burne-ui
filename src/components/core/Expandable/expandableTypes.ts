@@ -44,6 +44,9 @@ export type ExpandableMotion = {
   triggerLift?: ExpandableTriggerLiftMotion;
   chevron?: ExpandableLifecycleMotion;
   panelShell?: ExpandableLifecycleMotion;
+  title?: ExpandableLifecycleMotion;
+  icon?: ExpandableLifecycleMotion;
+  description?: ExpandableLifecycleMotion;
 };
 
 export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -60,7 +63,8 @@ export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   disabled?: boolean;
   classNames?: Prettify<ExpandableClassNames>;
   /**
-   * Per-slot motion: `triggerLift` (press), `chevron` (enter/leave rotate), `panelShell` (height).
+   * Per-slot motion: `triggerLift` (press), `chevron` (enter/leave rotate), `panelShell` (height),
+   * plus `title` / `icon` / `description` (broadcast on open).
    */
   motion?: Prettify<ExpandableMotion>;
 };
@@ -89,11 +93,17 @@ export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<ExpandableTriggerLiftMotion>;
 };
 
-export type ExpandableIconProps = HTMLAttributes<HTMLSpanElement>;
+export type ExpandableIconProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ExpandableLifecycleMotion>;
+};
 export type ExpandableMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableContentProps = HTMLAttributes<HTMLDivElement>;
-export type ExpandableTitleProps = HTMLAttributes<HTMLDivElement>;
-export type ExpandableDescriptionProps = HTMLAttributes<HTMLDivElement>;
+export type ExpandableTitleProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ExpandableLifecycleMotion>;
+};
+export type ExpandableDescriptionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ExpandableLifecycleMotion>;
+};
 export type ExpandableChevronProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ExpandableLifecycleMotion>;
 };

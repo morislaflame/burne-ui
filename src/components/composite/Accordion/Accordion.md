@@ -47,7 +47,7 @@ Simple API нет.
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — для всех Item |
 | `className` | — | На root `<div>` |
 | `classNames` | — | `AccordionClassNames` — слоты root + все Item (наследуются через `AccordionClassNamesProvider`) |
-| `motion` | — | `AccordionMotion` — те же слоты, что у Expandable (`triggerLift` / `chevron` / `panelShell`). Item перекрывает root |
+| `motion` | — | `AccordionMotion` — слоты Expandable (`triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description`) плюс Accordion-only `body`. Item перекрывает root |
 | `children` | — | `Accordion.Item` |
 
 `variant` на root **нет**.
@@ -69,7 +69,7 @@ Simple API нет.
 | Часть | Реализация | Назначение |
 |-------|------------|------------|
 | `Accordion.Item` | `Expandable` | Один пункт аккордеона |
-| `Accordion.Heading` | `<h3>` | Семантическая обёртка секции (a11y heading). Не путать с `Accordion.Title` — видимый текстовый заголовок внутри Message. |
+| `Accordion.Heading` | `<h3>` | Семантическая обёртка секции (a11y heading). Не путать с `Accordion.Title` — видимый текстовый заголовок внутри Message. Не motion-слот. |
 | `Accordion.Trigger` | `Expandable.Trigger` (`hideChevron=true`) | Кнопка toggle |
 | `Accordion.Message` | `Expandable.Message` | Grid-слоты в trigger |
 | `Accordion.Icon` | `Expandable.Icon` | Leading icon |
@@ -78,7 +78,7 @@ Simple API нет.
 | `Accordion.Description` | `Expandable.Description` | Подзаголовок muted |
 | `Accordion.Chevron` | Custom chevron span | Шеврон вместо `Expandable.Chevron`; регистрирует слот `chevron` Expandable |
 | `Accordion.Panel` | `Expandable.Panel` | Раскрываемая `<section>` |
-| `Accordion.Body` | `Text as="div"` | Тело панели (`text-muted`) |
+| `Accordion.Body` | `Text as="div"` | Тело панели (`text-muted`); motion-слот `body` на scope Expandable |
 
 `Accordion.Trigger` props: те же что `Expandable.Trigger` (`asChild`, `hideChevron`, …).
 
@@ -112,22 +112,22 @@ const [value, setValue] = useState<string | null>("shipping");
 
 ## Анимации
 
-Accordion — **embedder** в Expandable: своего `createMotionScope` нет. Root/Item `motion` мержится и передаётся в `Expandable`. Хост play и дефолты — `expandableAnimations.ts` (`pressSqueeze`, `chevronRotate`, `collapsibleHeight`). `Accordion.Chevron` регистрирует слот `chevron` (Trigger по умолчанию `hideChevron`).
+Accordion — **embedder** в Expandable: своего `createMotionScope` нет. Root/Item `motion` мержится и передаётся в `Expandable`. Хост play и дефолты — `expandableAnimations.ts` (`pressSqueeze`, `chevronRotate`, `collapsibleHeight`). `Accordion.Chevron` регистрирует слот `chevron` (Trigger по умолчанию `hideChevron`). `Accordion.Body` регистрирует Accordion-only слот `body` на том же Expandable scope (`useMotionPart`). `Accordion.Heading` — a11y-обёртка, не слот. Слоты `title` / `icon` / `description` те же, что у Expandable (`ctx.getTarget` из factory шеврона).
 
 ```tsx
 <Accordion motion={{ panelShell: { enter: false, leave: false } }}>…</Accordion>
 
 <Accordion.Chevron
   motion={{
-    enter: (ctx) => gsap.to(ctx.el, { rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
-    leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.28 }),
+    enter: (ctx) => ctx.to({ rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => ctx.to({ rotation: 0, duration: 0.28 }),
   }}
 />
 ```
 
 `leave: false` на `panelShell` — хост сразу ставит closed height (как Expandable). Factory leave должна свернуть высоту в `0`.
 
-**Где в коде:** карта — `accordionAnimations.ts` (`resolveAccordionItemMotion`); Chevron — `accordionParts.tsx` (`useMotionPart` на scope Expandable).
+**Где в коде:** карта — `accordionAnimations.ts` (`resolveAccordionItemMotion`); Chevron / Body — `accordionParts.tsx` (`useMotionPart` на scope Expandable).
 
 См. [Motion](/docs/motion) и `Expandable.md`.
 
@@ -179,7 +179,7 @@ configureMotion({
 
 - Group-level FLIP при смене `value`
 - `variant="gloss"` на Accordion
-- Анимация `Accordion.Body` / `Heading` как публичные слоты
+- Анимация `Accordion.Heading` как публичный слот (a11y-обёртка)
 
 ### Сводка: что настраивается где
 
@@ -188,6 +188,8 @@ configureMotion({
 | Panel height | `panelShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Item / Panel |
 | Trigger squeeze | `triggerLift` → `pressSqueeze` | `pressSqueezeScale` | `motion` на Trigger |
 | Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
+| Nested title / icon | slot broadcast | — | `motion.title` / `icon` / `description`; или `ctx.getTarget` |
+| Accordion body | `body` на Expandable scope | — | `motion.body` на Root / Item |
 | Ripple | `<Ripple />` | `rippleExpandableDuration` | в Trigger children |
 
 ## Токены и CSS
@@ -228,6 +230,7 @@ type AccordionClassNames = {
   panelShell?: string;
   panel?: string;
   glossContent?: string;
+  body?: string;
 };
 ```
 
@@ -248,6 +251,7 @@ type AccordionClassNames = {
 | `description` | `Accordion.Description` → `Expandable.Description` |
 | `chevron` | `Accordion.Chevron` (свой компонент, не `Expandable.Chevron`) |
 | `panelShell` / `panel` | `Accordion.Panel` → `Expandable.Panel` |
+| `body` | `Accordion.Body` (Accordion-only DOM) |
 | `glossContent` | `Expandable`'s gloss-wrapper (не используется, т.к. Item всегда `variant="default"`) |
 
 ### Пример: переопределение на одном Item

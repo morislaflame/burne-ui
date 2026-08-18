@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { ColorPicker } from "@/components/core/ColorPicker";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ColorPickerMotionAreaChangeDemo() {
   return (
@@ -13,7 +9,7 @@ export function ColorPickerMotionAreaChangeDemo() {
       motion={{
         area: {
           change: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { scale: 1.02, duration: 0.12 }, 0);
             tl.to(ctx.el, { scale: 1, duration: 0.16 }, 0.12);
             tweenCssColor(ctx.el, "var(--color-primary)");

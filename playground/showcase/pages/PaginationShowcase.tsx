@@ -14,6 +14,8 @@ import { PaginationMotionInstantPressDemo } from "../demos/pagination/Pagination
 import paginationMotionInstantPressSource from "../demos/pagination/PaginationMotionInstantPress.demo.tsx?raw";
 import { PaginationMotionControlWaveDemo } from "../demos/pagination/PaginationMotionControlWave.demo";
 import paginationMotionControlWaveSource from "../demos/pagination/PaginationMotionControlWave.demo.tsx?raw";
+import { PaginationMotionEllipsisDemo } from "../demos/pagination/PaginationMotionEllipsis.demo";
+import paginationMotionEllipsisSource from "../demos/pagination/PaginationMotionEllipsis.demo.tsx?raw";
 import { PaginationMotionNavTintDemo } from "../demos/pagination/PaginationMotionNavTint.demo";
 import paginationMotionNavTintSource from "../demos/pagination/PaginationMotionNavTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -56,9 +58,10 @@ export function PaginationShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationCustomLabelsDemo} source={paginationCustomLabelsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant skip, press timeline + stagger children, compound Previous/Next.">
+      <ShowcaseSection title="Slot motion" description="Instant skip, press timeline + stagger children, compound Previous/Next, ellipsis enter.">
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionInstantPressDemo} source={paginationMotionInstantPressSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionControlWaveDemo} source={paginationMotionControlWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionEllipsisDemo} source={paginationMotionEllipsisSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionNavTintDemo} source={paginationMotionNavTintSource} />
       </ShowcaseSection>
 

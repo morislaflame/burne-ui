@@ -5,7 +5,8 @@
  * `fill`, `content`, `label`, `iconStart`, `iconEnd`, `text`
  * Host: root (`useToggleButtonAnimations`) plays `hoverIn` / `hoverOut` / `pressIn` / `pressOut`.
  * Fill `check` / `uncheck` plays from the fill hook (coordinated with squeeze release).
- * Defaults: `resolveToggleButtonMotionDefaults`.
+ * Nested `iconStart` / `iconEnd` use `playBroadcast` with exclude so one node
+ * does not play twice. Defaults: `resolveToggleButtonMotionDefaults`.
  */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";

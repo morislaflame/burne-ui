@@ -1,6 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { enterHidesFirstPaint } from "./enterHidesFirstPaint";
+import {
+  clearMotionRecipesForTests,
+  registerMotionRecipe,
+  unregisterMotionRecipe,
+} from "./motionRecipeRegistry";
+import { registerKitMotionRecipes } from "./recipes";
+
+afterEach(() => {
+  clearMotionRecipesForTests();
+  registerKitMotionRecipes();
+});
 
 describe("enterHidesFirstPaint", () => {
   it("is false for skip / factory / missing", () => {
@@ -27,5 +38,13 @@ describe("enterHidesFirstPaint", () => {
     expect(enterHidesFirstPaint("portalSurfaceEnter")).toBe(false);
     expect(enterHidesFirstPaint("modalPanelEnter")).toBe(false);
     expect(enterHidesFirstPaint("hoverLiftSecondLevel")).toBe(false);
+  });
+
+  it("hides a custom recipe when metadata.hidesFirstPaint is set", () => {
+    registerMotionRecipe("meta-enter-fade", () => {}, { hidesFirstPaint: true });
+    expect(enterHidesFirstPaint("meta-enter-fade")).toBe(true);
+    expect(enterHidesFirstPaint({ recipe: "meta-enter-fade" })).toBe(true);
+    unregisterMotionRecipe("meta-enter-fade");
+    expect(enterHidesFirstPaint("meta-enter-fade")).toBe(false);
   });
 });

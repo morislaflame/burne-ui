@@ -38,6 +38,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     pressable = false,
     classNames,
     motion,
+    motionController,
     onPress,
     onPointerOver: onPointerOverProp,
     onPointerOut: onPointerOutProp,
@@ -76,7 +77,12 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
 
   return (
     <CardProvider classNames={classNames} size={state.size}>
-      <CardMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+      <CardMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+      >
         <CardSurface
           pressable={pressable}
           isGloss={state.isGloss}

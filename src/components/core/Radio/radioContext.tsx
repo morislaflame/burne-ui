@@ -1,17 +1,23 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   RadioClassNames,
   RadioClassNamesProviderProps,
   RadioFieldContextValue,
   RadioMotion,
-  RadioMotionProviderProps,
 } from "./radioTypes";
 
 const RadioFieldContext = createContext<RadioFieldContextValue | null>(null);
 const RadioClassNamesContext = createContext<RadioClassNames>({});
-/** Embedder: no createMotionScope. Mapping lives in `radioAnimations.ts`. */
-const RadioMotionContext = createContext<RadioMotion | undefined>(undefined);
+
+/** Own scope for chrome (`label` / `hint` / `error`). Indicator keys still embed into SelectionIndicator. */
+export const {
+  MotionScopeProvider: RadioMotionProvider,
+  useMotionScope: useRadioMotionScope,
+  useOptionalMotionScope: useOptionalRadioMotionScope,
+} = createMotionScope("Radio");
 
 export function RadioFieldProvider({
   value,
@@ -58,17 +64,8 @@ export function useRadioClassNames(): RadioClassNames {
   return useContext(RadioClassNamesContext);
 }
 
-export function RadioMotionProvider({
-  motion,
-  children,
-}: RadioMotionProviderProps) {
-  return (
-    <RadioMotionContext.Provider value={motion}>{children}</RadioMotionContext.Provider>
-  );
-}
-
 export function useRadioMotion(): RadioMotion | undefined {
-  return useContext(RadioMotionContext);
+  return useOptionalRadioMotionScope()?.getRootMotion() as RadioMotion | undefined;
 }
 
 export { RadioFieldContext };

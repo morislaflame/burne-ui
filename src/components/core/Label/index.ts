@@ -1,7 +1,6 @@
 import { Label, LabelRoot, LabelSlot } from "./Label";
-import type { LabelProps } from "./labelTypes";
 
-export type LabelComponent = ((props: LabelProps) => ReturnType<typeof Label>) & {
+export type LabelComponent = typeof Label & {
   Slot: typeof LabelSlot;
 };
 

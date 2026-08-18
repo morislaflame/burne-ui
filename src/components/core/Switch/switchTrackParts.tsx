@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, type RefObject } from "react";
 
 import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 
 import "@/components/core/utils/glossPanel.css";
 
@@ -80,6 +80,10 @@ function SwitchTrackHost({
   classNames: trackClassNames,
   children,
   travelPxRef,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
 }: Omit<SwitchTrackProps, "motion"> & { travelPxRef: RefObject<number> }) {
   const rootClassNames = useSwitchClassNames();
@@ -110,6 +114,20 @@ function SwitchTrackHost({
     iconOnRef,
   });
 
+  const scope = useSwitchMotionScope();
+  const trackPointer = hasPointerPhases(scope.getRootMotion()?.track);
+  const trackPart = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "track",
+    pointerPhases: trackPointer,
+    pressPhases: trackPointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, "track", trackPart.targetRef);
+
   const ctx = useMemo<SwitchTrackContextValue>(
     () => ({
       checked,
@@ -139,7 +157,7 @@ function SwitchTrackHost({
   return (
     <SwitchTrackProvider value={ctx}>
       <span
-        ref={trackRef}
+        ref={mergeRefs(trackRef, trackPart.setRef)}
         className={switchTrackClass({
           size,
           thickness,
@@ -150,6 +168,7 @@ function SwitchTrackHost({
         style={switchTrackCustomStyle(thickness)}
         aria-hidden
         {...rest}
+        {...trackPart.pointerHandlers}
       >
         {children ?? defaultBody}
       </span>

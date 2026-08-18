@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// F30: XxxMotion public slots ↔ package Component.md; site en/ru when present;
-// master motion docs phases; wired vs not-wired overlap; host/embedder notes.
+// F30 + 8.6 + W3.1: XxxMotion public slots ↔ package Component.md and DOM registrations;
+// site en/ru when present; master motion docs phases + recipe metadata + MotionController;
+// wired vs not-wired overlap; host/embedder notes.
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,6 +44,27 @@ const PORTAL_HOSTS = new Set([
 ]);
 
 const EMBEDDERS = new Set(["Checkbox", "Radio", "Accordion", "Dropdown"]);
+
+/** Height-recipe target — not a public XxxMotion slot. */
+const INTERNAL_MOTION_SLOTS = new Set(["panelInner"]);
+
+/**
+ * Public motion keys that configure a nested scope (not registered on this host).
+ * ColorPicker `hueSlider` / `alphaSlider` → ColorSlider.Track `motion`.
+ */
+const PASS_THROUGH_MOTION_SLOTS = {
+  ColorPicker: new Set(["hueSlider", "alphaSlider", "trigger"]),
+  /** Dropdown (and similar) register repeated `item` / chrome on the Popover portal scope. */
+  Popover: new Set(["item", "itemLabel", "itemHint", "itemIcon", "label", "subTrigger", "separator"]),
+};
+
+const SLOT_REGISTER_RES = [
+  /registerTarget\(\s*["']([A-Za-z]\w*)["']/g,
+  /\bslot:\s*["']([A-Za-z]\w*)["']/g,
+  /use[A-Za-z]+SlotMotion(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
+  /use[A-Za-z]+PartMotion(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
+  /use[A-Za-z]+ChromeSlot(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
+];
 
 const SKIP_MAP_SUFFIX =
   /(Part|Lifecycle|Pointer|Check|TriggerLift|TitleLift|Root)Motion$/;
@@ -175,6 +197,40 @@ async function listTypesFiles() {
   return files;
 }
 
+async function collectRegisteredSlots(folder, typeSlots) {
+  const slots = new Set();
+  let entries;
+  try {
+    entries = await readdir(folder);
+  } catch {
+    return slots;
+  }
+  for (const child of entries) {
+    if (!/\.(ts|tsx)$/.test(child)) continue;
+    if (/\.stories\.|\.test\.|\.spec\./.test(child)) continue;
+    if (child === "index.ts") continue;
+    const source = await readFile(path.join(folder, child), "utf8");
+    const text = stripComments(source);
+    for (const re of SLOT_REGISTER_RES) {
+      re.lastIndex = 0;
+      for (const match of text.matchAll(re)) {
+        slots.add(match[1]);
+      }
+    }
+    for (const match of text.matchAll(
+      /\?\s*["']([A-Za-z]\w*)["']\s*:\s*["']([A-Za-z]\w*)["']/g,
+    )) {
+      if (typeSlots.has(match[1])) slots.add(match[1]);
+      if (typeSlots.has(match[2])) slots.add(match[2]);
+    }
+    if (/\bslot:\s*side\b/.test(text)) {
+      if (typeSlots.has("prefix")) slots.add("prefix");
+      if (typeSlots.has("suffix")) slots.add("suffix");
+    }
+  }
+  return slots;
+}
+
 async function siteExists() {
   try {
     const entries = await readdir(siteRoot);
@@ -293,6 +349,39 @@ async function main() {
         );
       }
     }
+
+    const typeSlots = new Set();
+    for (const item of group.maps) {
+      for (const slot of item.slots) typeSlots.add(slot);
+    }
+    if (typeSlots.has("icon") && (typeSlots.has("iconStart") || typeSlots.has("iconEnd"))) {
+      errors.push(
+        `${group.folderName}: XxxMotion has both \`icon\` and \`iconStart\`/\`iconEnd\` — use iconStart/iconEnd only`,
+      );
+    }
+    if (!EMBEDDERS.has(group.folderName)) {
+      const passThrough = PASS_THROUGH_MOTION_SLOTS[group.folderName] ?? new Set();
+      const registered = await collectRegisteredSlots(
+        group.maps[0].folder,
+        typeSlots,
+      );
+      const missingDom = [...typeSlots].filter(
+        (slot) => !registered.has(slot) && !passThrough.has(slot),
+      );
+      if (missingDom.length > 0) {
+        errors.push(
+          `${group.folderName}: XxxMotion slot(s) not registered in DOM: ${missingDom.map((s) => `\`${s}\``).join(", ")}`,
+        );
+      }
+      const extraDom = [...registered].filter(
+        (slot) => !typeSlots.has(slot) && !INTERNAL_MOTION_SLOTS.has(slot),
+      );
+      if (extraDom.length > 0) {
+        errors.push(
+          `${group.folderName}: DOM registration(s) missing from XxxMotion: ${extraDom.map((s) => `\`${s}\``).join(", ")}`,
+        );
+      }
+    }
   }
 
   const hasSite = await siteExists();
@@ -322,6 +411,40 @@ async function main() {
       if (!/`change`/.test(motionMd) || !/MOTION_PHASE_NAMES/.test(motionMd)) {
         errors.push(
           `motion/${locale}.md: must document \`change\` and MOTION_PHASE_NAMES`,
+        );
+      }
+      if (!/MotionRecipeMetadata/.test(motionMd) || !/`hidesFirstPaint`/.test(motionMd)) {
+        errors.push(
+          `motion/${locale}.md: must document MotionRecipeMetadata and hidesFirstPaint`,
+        );
+      }
+      if (
+        !/MotionController/.test(motionMd) ||
+        !/`createMotionController`/.test(motionMd) ||
+        !/`motionController`/.test(motionMd) ||
+        !/`MotionPlayEvent`/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document MotionController, createMotionController, motionController, and MotionPlayEvent`,
+        );
+      }
+      if (
+        !/`createMotionEvents`/.test(motionMd) ||
+        !/`events`/.test(motionMd) ||
+        !/MotionMapWithEvents/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document createMotionEvents, events, and MotionMapWithEvents`,
+        );
+      }
+      if (!/`fromRest`/.test(motionMd) || !/`replay`/.test(motionMd)) {
+        errors.push(
+          `motion/${locale}.md: must document fromRest and replay`,
+        );
+      }
+      if (!/`iconStart`/.test(motionMd) || !/`iconEnd`/.test(motionMd)) {
+        errors.push(
+          `motion/${locale}.md: must document iconStart/iconEnd slot names`,
         );
       }
 

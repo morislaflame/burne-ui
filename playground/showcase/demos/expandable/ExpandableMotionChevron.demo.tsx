@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Expandable } from "@/components/core/Expandable";
 
 export function ExpandableMotionChevronDemo() {
@@ -10,19 +8,15 @@ export function ExpandableMotionChevronDemo() {
         <Expandable.Chevron
           motion={{
             enter: (ctx) =>
-              gsap.to(ctx.el, {
+              ctx.to({
                 rotation: 180,
                 duration: 0.45,
                 ease: "back.out(1.6)",
-                overwrite: "auto",
-                force3D: false,
               }),
             leave: (ctx) =>
-              gsap.to(ctx.el, {
+              ctx.to({
                 rotation: 0,
                 duration: 0.28,
-                overwrite: "auto",
-                force3D: false,
               }),
           }}
         />

@@ -1,5 +1,3 @@
-import gsap from "gsap";
-
 import { Button } from "@/components/core/Button";
 import { useToast } from "@/components/core/Toast";
 
@@ -18,8 +16,7 @@ export function ToastMotionBounceDemo() {
           motion: {
             root: {
               enter: (ctx) =>
-                gsap.fromTo(
-                  ctx.el,
+                ctx.fromTo(
                   { y: 28, scale: 0.92, autoAlpha: 0 },
                   {
                     y: 0,
@@ -27,20 +24,15 @@ export function ToastMotionBounceDemo() {
                     autoAlpha: 1,
                     duration: 0.5,
                     ease: "back.out(1.4)",
-                    overwrite: "auto",
-                    force3D: false,
                   },
                 ),
-              leave: (ctx) =>
-                gsap.to(ctx.el, {
-                  y: 24,
-                  scale: 0.94,
-                  autoAlpha: 0,
-                  duration: 0.22,
-                  ease: "power2.in",
-                  overwrite: "auto",
-                  force3D: false,
-                }),
+              leave: {
+                y: 24,
+                scale: 0.94,
+                autoAlpha: 0,
+                duration: 0.22,
+                ease: "power2.in",
+              },
             },
           },
         })

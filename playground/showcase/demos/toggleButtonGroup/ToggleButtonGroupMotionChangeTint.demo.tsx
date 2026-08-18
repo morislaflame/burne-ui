@@ -1,10 +1,6 @@
-import gsap from "gsap";
-
 import { ToggleButtonGroup } from "@/components/composite/ToggleButtonGroup";
 import { ToggleButton } from "@/components/core/ToggleButton";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ToggleButtonGroupMotionChangeTintDemo() {
   return (
@@ -14,7 +10,7 @@ export function ToggleButtonGroupMotionChangeTintDemo() {
       motion={{
         root: {
           change: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.to(ctx.el, { y: -2, duration: 0.1 }, 0);
             tl.to(ctx.el, { y: 0, duration: 0.14 }, 0.1);
             tweenCssColor(ctx.el, "var(--color-primary)");

@@ -8,10 +8,14 @@ import { DisclosureCheckoutStepsDemo } from "../demos/disclosure/DisclosureCheck
 import disclosureCheckoutStepsSource from "../demos/disclosure/DisclosureCheckoutSteps.demo.tsx?raw";
 import { DisclosureGlossDemo } from "../demos/disclosure/DisclosureGloss.demo";
 import disclosureGlossSource from "../demos/disclosure/DisclosureGloss.demo.tsx?raw";
+import { DisclosureMotionChevronDemo } from "../demos/disclosure/DisclosureMotionChevron.demo";
+import disclosureMotionChevronSource from "../demos/disclosure/DisclosureMotionChevron.demo.tsx?raw";
 import { DisclosureMotionGroupChevronDemo } from "../demos/disclosure/DisclosureMotionGroupChevron.demo";
 import disclosureMotionGroupChevronSource from "../demos/disclosure/DisclosureMotionGroupChevron.demo.tsx?raw";
 import { DisclosureMotionInstantPanelDemo } from "../demos/disclosure/DisclosureMotionInstantPanel.demo";
 import disclosureMotionInstantPanelSource from "../demos/disclosure/DisclosureMotionInstantPanel.demo.tsx?raw";
+import { DisclosureMotionTitleDemo } from "../demos/disclosure/DisclosureMotionTitle.demo";
+import disclosureMotionTitleSource from "../demos/disclosure/DisclosureMotionTitle.demo.tsx?raw";
 import { DisclosureMotionTitleLiftQuietDemo } from "../demos/disclosure/DisclosureMotionTitleLiftQuiet.demo";
 import disclosureMotionTitleLiftQuietSource from "../demos/disclosure/DisclosureMotionTitleLiftQuiet.demo.tsx?raw";
 import { DisclosureMotionTitleLiftTiltDemo } from "../demos/disclosure/DisclosureMotionTitleLiftTilt.demo";
@@ -59,11 +63,13 @@ export function DisclosureShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Each card is a separate copyable example — instant height, titleLift tilt, quiet hover, group chevron snap."
+        description="Each card is a separate copyable example — instant height, title slot, titleLift tilt, quiet hover, chevron + icon, group chevron snap."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionInstantPanelDemo} source={disclosureMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionTitleDemo} source={disclosureMotionTitleSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionTitleLiftTiltDemo} source={disclosureMotionTitleLiftTiltSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionTitleLiftQuietDemo} source={disclosureMotionTitleLiftQuietSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionChevronDemo} source={disclosureMotionChevronSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionGroupChevronDemo} source={disclosureMotionGroupChevronSource} />
       </ShowcaseSection>
 

@@ -1,10 +1,6 @@
-import gsap from "gsap";
-
 import { ButtonGroup } from "@/components/composite/ButtonGroup";
 import { Button } from "@/components/core/Button";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ButtonGroupMotionTextTintDemo() {
   return (
@@ -12,7 +8,7 @@ export function ButtonGroupMotionTextTintDemo() {
       motion={{
         text: {
           enter: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.fromTo(ctx.el, { scale: 0.9 }, { scale: 1, duration: 0.22 }, 0);
             tweenCssColor(ctx.el, "var(--color-primary)");
             return tl;

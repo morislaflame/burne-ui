@@ -1,12 +1,11 @@
 import { forwardRef, useCallback } from "react";
 
-import { Field } from "@/components/core/Field";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 
 import { useSelectClassNames, useSelectContext } from "./selectContext";
-import { SelectError, SelectHint } from "./selectFieldParts";
+import { SelectError, SelectHint, SelectLabel } from "./selectFieldParts";
 import { SELECT_LISTBOX_CLASS, SELECT_POPOVER_BODY_CLASS, SELECT_POPOVER_CLASS } from "./selectStyles";
 import { SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectTriggerParts";
 import type { SelectPopoverProps } from "./selectTypes";
@@ -163,9 +162,9 @@ export function SelectSimpleBody({
   return (
     <>
       {label != null ? (
-        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <SelectLabel id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Field.Label>
+        </SelectLabel>
       ) : null}
       <SelectTriggerGroup>
         <SelectValue />

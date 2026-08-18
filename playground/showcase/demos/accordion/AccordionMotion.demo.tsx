@@ -1,3 +1,4 @@
+import { AccordionMotionBodyDemo } from "./AccordionMotionBody.demo";
 import { AccordionMotionBounceHeightDemo } from "./AccordionMotionBounceHeight.demo";
 import { AccordionMotionChevronDemo } from "./AccordionMotionChevron.demo";
 import { AccordionMotionInstantPanelDemo } from "./AccordionMotionInstantPanel.demo";
@@ -7,6 +8,7 @@ export function AccordionMotionDemo() {
     <div className="flex w-full flex-col gap-large">
       <AccordionMotionInstantPanelDemo />
       <AccordionMotionChevronDemo />
+      <AccordionMotionBodyDemo />
       <AccordionMotionBounceHeightDemo />
     </div>
   );

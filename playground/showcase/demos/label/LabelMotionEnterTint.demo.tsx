@@ -1,9 +1,5 @@
-import gsap from "gsap";
-
 import { Label } from "@/components/core/Label";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function LabelMotionEnterTintDemo() {
   return (
@@ -12,7 +8,7 @@ export function LabelMotionEnterTintDemo() {
       motion={{
         text: {
           enter: (ctx) => {
-            const tl = gsap.timeline({ ...TL });
+            const tl = ctx.timeline();
             tl.fromTo(ctx.el, { y: 6 }, { y: 0, duration: 0.22 }, 0);
             tweenCssColor(ctx.el, "var(--color-primary)");
             return tl;

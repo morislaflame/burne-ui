@@ -1,7 +1,14 @@
 import { Label } from "@/components/core/Label";
-import { OptionGroupActions, OptionGroupGroup } from "@/components/composite/utils/optionGroupFieldset";
+import { OptionGroupGroup } from "@/components/composite/utils/optionGroupFieldset";
 
-import { RadioGroupError, RadioGroupHint, RadioGroupLegend, RadioGroupList, RadioGroupRoot } from "./RadioGroup";
+import {
+  RadioGroupActions,
+  RadioGroupError,
+  RadioGroupHint,
+  RadioGroupLegend,
+  RadioGroupList,
+  RadioGroupRoot,
+} from "./RadioGroup";
 
 export const RadioGroup = Object.assign(RadioGroupRoot, {
   Legend: RadioGroupLegend,
@@ -10,7 +17,7 @@ export const RadioGroup = Object.assign(RadioGroupRoot, {
   Error: RadioGroupError,
   List: RadioGroupList,
   Group: OptionGroupGroup,
-  Actions: OptionGroupActions,
+  Actions: RadioGroupActions,
 });
 
 export type {
@@ -19,9 +26,12 @@ export type {
   RadioGroupClassNames,
   RadioGroupHintProps,
   RadioGroupErrorProps,
+  RadioGroupActionsProps,
   RadioGroupLabelProps,
   RadioGroupLegendProps,
   RadioGroupListProps,
+  RadioGroupMotion,
+  RadioGroupPartMotion,
 } from "./radioGroupTypes";
 
 export type { RadioGroupContextValue } from "./radioGroupTypes";

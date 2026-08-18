@@ -145,6 +145,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     action,
     classNames,
     motion,
+    motionController,
     hoverLift = true,
     shadow = "base",
     className = "",
@@ -192,7 +193,12 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return (
     <AlertContext.Provider value={contextValue}>
       <AlertClassNamesProvider classNames={classNames}>
-        <AlertMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+        <AlertMotionProvider
+          motion={motion}
+          defaults={motionDefaults}
+          params={motionParams}
+          controller={motionController}
+        >
           <AlertSurface
             ref={ref}
             variant={contextValue.variant}

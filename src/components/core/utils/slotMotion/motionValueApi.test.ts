@@ -21,6 +21,8 @@ describe("MotionValue public API", () => {
 
     const tweenFactory: MotionFactory = (ctx) =>
       gsap.to(ctx.el, { y: -2, duration: 0.2 });
+    const fromRestFactory: MotionFactory = (ctx) =>
+      ctx.fromRest({ y: -8, duration: 0.16, yoyo: true, repeat: 1 });
     const killFactory: MotionFactory = () => ({ kill: () => undefined });
     const voidFactory: MotionFactory = (ctx) => {
       gsap.set(ctx.el, { y: 0 });
@@ -39,11 +41,12 @@ describe("MotionValue public API", () => {
       recipeVars,
       recipeOff,
       tweenFactory,
+      fromRestFactory,
       killFactory,
       voidFactory,
       promiseFactory,
       colorFactory,
     ];
-    expect(values).toHaveLength(11);
+    expect(values).toHaveLength(12);
   });
 });

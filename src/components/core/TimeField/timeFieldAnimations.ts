@@ -1,29 +1,34 @@
 /**
  * Slot motion for TimeField — look here first.
  *
- * DOM slots: `shell` (host), `prefix`, `suffix`, `segments`
+ * DOM slots: `shell` (host), `prefix`, `suffix`, `segments`,
+ * `label`, `hint`, `error` (Root scope — siblings of Control).
  *
  * Root passes the `motion` map. Host is `TimeField.Control` (defaults + `play`).
- * Gloss hover/press stay on `useGlossFieldShellMotion`.
+ * Chrome registers on the Root scope. Gloss hover/press stay on `useGlossFieldShellMotion`.
  *
- * Not slots: Field `root` / `label` / `hint` / `error`; `shellInner` /
+ * Not slots: Field's own scope; `shellInner` /
  * `segmentGroup` / `segment` / `segmentSeparator` / `keyboardInput` (layout).
  */
-import { useCallback, useMemo, useRef, type MutableRefObject, type PointerEvent } from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEvent, type PointerEventHandler } from "react";
 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
+  hasPointerPhases,
   mergeMotionPointerHandlers,
+  useMotionPart,
   useMotionPointerPhases,
+  useOptionalEnterOnMount,
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { useTimeFieldMotionScope } from "./timeFieldContext";
+import { useOptionalTimeFieldMotionScope, useTimeFieldMotionScope } from "./timeFieldContext";
 import type {
   TimeFieldMotion,
+  TimeFieldPartMotion,
   UseTimeFieldShellAnimationsProps,
 } from "./timeFieldTypes";
 
@@ -171,5 +176,43 @@ export function useTimeFieldShellAnimations({
     standardShellHoverMotionClass: standardShellHover.motionClass,
     glossDisabledAttr: disabled && isGloss ? { "data-gloss-disabled": "" } : {},
   };
+}
+
+export type TimeFieldChromeSlot = "label" | "hint" | "error";
+
+export function useTimeFieldChromeSlot(
+  slot: TimeFieldChromeSlot,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: TimeFieldPartMotion;
+    forwardedRef?: ForwardedRef<HTMLElement>;
+    onPointerOver?: PointerEventHandler<HTMLElement>;
+    onPointerOut?: PointerEventHandler<HTMLElement>;
+    onPointerDown?: PointerEventHandler<HTMLElement>;
+    onPointerUp?: PointerEventHandler<HTMLElement>;
+  } = {},
+) {
+  const scope = useOptionalTimeFieldMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<HTMLElement>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
+  return part;
 }
 

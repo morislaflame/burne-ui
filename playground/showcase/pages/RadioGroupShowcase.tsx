@@ -22,6 +22,12 @@ import { RadioGroupHorizontalSizesDemo } from "../demos/radioGroup/RadioGroupHor
 import radioGroupHorizontalSizesSource from "../demos/radioGroup/RadioGroupHorizontalSizes.demo.tsx?raw";
 import { RadioGroupPlanCardsDemo } from "../demos/radioGroup/RadioGroupPlanCards.demo";
 import radioGroupPlanCardsSource from "../demos/radioGroup/RadioGroupPlanCards.demo.tsx?raw";
+import { RadioGroupMotionChangeTintDemo } from "../demos/radioGroup/RadioGroupMotionChangeTint.demo";
+import radioGroupMotionChangeTintSource from "../demos/radioGroup/RadioGroupMotionChangeTint.demo.tsx?raw";
+import { RadioGroupMotionHintEnterDemo } from "../demos/radioGroup/RadioGroupMotionHintEnter.demo";
+import radioGroupMotionHintEnterSource from "../demos/radioGroup/RadioGroupMotionHintEnter.demo.tsx?raw";
+import { RadioGroupMotionInstantEnterDemo } from "../demos/radioGroup/RadioGroupMotionInstantEnter.demo";
+import radioGroupMotionInstantEnterSource from "../demos/radioGroup/RadioGroupMotionInstantEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -54,6 +60,15 @@ export function RadioGroupShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionCornerFillDemo} source={radioMotionCornerFillSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionSpinningMarkDemo} source={radioMotionSpinningMarkSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionFillMarkStaggerDemo} source={radioMotionFillMarkStaggerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Group slot motion"
+        description="RadioGroup scope: instant enter skip, change tint, chrome enter on legend / hint. Radio items keep Radio motion."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupMotionInstantEnterDemo} source={radioGroupMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupMotionChangeTintDemo} source={radioGroupMotionChangeTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupMotionHintEnterDemo} source={radioGroupMotionHintEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

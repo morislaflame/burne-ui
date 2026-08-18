@@ -1,10 +1,7 @@
-import gsap from "gsap";
 import { IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
 import { Surface } from "@/components/core/Surface";
-
-const TL = { overwrite: "auto" as const, force3D: false };
 
 export function ListBoxMotionItemWaveDemo() {
   return (
@@ -16,7 +13,7 @@ export function ListBoxMotionItemWaveDemo() {
           icon={<IoGlobeOutline aria-hidden />}
           motion={{
             hoverIn: (ctx) => {
-              const tl = gsap.timeline({ ...TL });
+              const tl = ctx.timeline();
               tl.to(ctx.el, { x: 4, duration: 0.18 }, 0);
               if (ctx.targets.label) {
                 tl.to(ctx.targets.label, { x: 6, duration: 0.18 }, 0.04);
@@ -27,7 +24,7 @@ export function ListBoxMotionItemWaveDemo() {
               return tl;
             },
             hoverOut: (ctx) => {
-              const tl = gsap.timeline({ ...TL });
+              const tl = ctx.timeline();
               tl.to(ctx.el, { x: 0, duration: 0.16 }, 0);
               if (ctx.targets.label) {
                 tl.to(ctx.targets.label, { x: 0, duration: 0.16 }, 0);

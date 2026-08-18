@@ -16,6 +16,8 @@ import { BreadcrumbsMotionCrumbWaveDemo } from "../demos/breadcrumbs/Breadcrumbs
 import breadcrumbsMotionCrumbWaveSource from "../demos/breadcrumbs/BreadcrumbsMotionCrumbWave.demo.tsx?raw";
 import { BreadcrumbsMotionTextTintDemo } from "../demos/breadcrumbs/BreadcrumbsMotionTextTint.demo";
 import breadcrumbsMotionTextTintSource from "../demos/breadcrumbs/BreadcrumbsMotionTextTint.demo.tsx?raw";
+import { BreadcrumbsMotionListSeparatorDemo } from "../demos/breadcrumbs/BreadcrumbsMotionListSeparator.demo";
+import breadcrumbsMotionListSeparatorSource from "../demos/breadcrumbs/BreadcrumbsMotionListSeparator.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -47,10 +49,11 @@ export function BreadcrumbsShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsDocTrailDemo} source={breadcrumbsDocTrailSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant skip, timeline itemLink→text, tint + ellipsis press.">
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline itemLink→text, tint + ellipsis press, list and separator enter.">
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionInstantPressDemo} source={breadcrumbsMotionInstantPressSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionCrumbWaveDemo} source={breadcrumbsMotionCrumbWaveSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionTextTintDemo} source={breadcrumbsMotionTextTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionListSeparatorDemo} source={breadcrumbsMotionListSeparatorSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>
