@@ -14,18 +14,8 @@ import { ListBoxSizesDemo } from "../demos/listBox/ListBoxSizes.demo";
 import listBoxSizesSource from "../demos/listBox/ListBoxSizes.demo.tsx?raw";
 import { ListBoxWorkspacePickerDemo } from "../demos/listBox/ListBoxWorkspacePicker.demo";
 import listBoxWorkspacePickerSource from "../demos/listBox/ListBoxWorkspacePicker.demo.tsx?raw";
-import { ListBoxMotionInstantPressDemo } from "../demos/listBox/ListBoxMotionInstantPress.demo";
-import listBoxMotionInstantPressSource from "../demos/listBox/ListBoxMotionInstantPress.demo.tsx?raw";
-import { ListBoxMotionItemWaveDemo } from "../demos/listBox/ListBoxMotionItemWave.demo";
-import listBoxMotionItemWaveSource from "../demos/listBox/ListBoxMotionItemWave.demo.tsx?raw";
-import { ListBoxMotionLabelTintDemo } from "../demos/listBox/ListBoxMotionLabelTint.demo";
-import listBoxMotionLabelTintSource from "../demos/listBox/ListBoxMotionLabelTint.demo.tsx?raw";
-import { ListBoxMotionHintStaggerDemo } from "../demos/listBox/ListBoxMotionHintStagger.demo";
-import listBoxMotionHintStaggerSource from "../demos/listBox/ListBoxMotionHintStagger.demo.tsx?raw";
-import { ListBoxMotionSectionHeaderDemo } from "../demos/listBox/ListBoxMotionSectionHeader.demo";
-import listBoxMotionSectionHeaderSource from "../demos/listBox/ListBoxMotionSectionHeader.demo.tsx?raw";
-import { ListBoxMotionSeparatorDemo } from "../demos/listBox/ListBoxMotionSeparator.demo";
-import listBoxMotionSeparatorSource from "../demos/listBox/ListBoxMotionSeparator.demo.tsx?raw";
+import { ListBoxSlotMotionGalleryDemo } from "../demos/listBox/slotMotion/gallery";
+import { ListBoxMotionControllerGalleryDemo } from "../demos/listBox/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -72,12 +62,14 @@ export function ListBoxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant skip, timeline across item/label/icon, compound Label + Icon motion, section header, empty enter, separator.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionInstantPressDemo} source={listBoxMotionInstantPressSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionItemWaveDemo} source={listBoxMotionItemWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionLabelTintDemo} source={listBoxMotionLabelTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionHintStaggerDemo} source={listBoxMotionHintStaggerSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionSectionHeaderDemo} source={listBoxMotionSectionHeaderSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionSeparatorDemo} source={listBoxMotionSeparatorSource} />
+        <ListBoxSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on header (no root), playAll on repeated headers, nested ListBox.Item scope, listbox events."
+      >
+        <ListBoxMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

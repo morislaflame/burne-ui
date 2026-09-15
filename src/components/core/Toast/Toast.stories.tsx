@@ -7,7 +7,8 @@ import { Button } from "@/components/core/Button";
 
 import { Toast, type ToastPlacement, type ToastSize, type ToastStatus } from ".";
 import { useToast } from "./useToast";
-import { ToastMotionDemo } from "../../../../playground/showcase/demos/toast/ToastMotion.demo";
+import { ToastSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/toast/slotMotion/gallery";
+import { ToastMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/toast/motionController/gallery";
 
 const pageFrame = (Story: ComponentType) => (
   <div
@@ -494,5 +495,18 @@ export const PortalContainer: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (instant, bounce, title stagger)",
-  render: () => <ToastMotionDemo />,
+  render: () => <ToastSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Standalone `Toast` mounts its own scope — `play()` targets `root`. Stack: pass `motionController` on `toast.show()`.",
+      },
+    },
+  },
+  render: () => <ToastMotionControllerGalleryDemo />,
 };

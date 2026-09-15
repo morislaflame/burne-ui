@@ -14,7 +14,8 @@ import {
 } from "@/stories-utils/motionStoryPlay";
 import { Dialog, type DialogSize } from ".";
 import { useDialog } from "./dialogContext";
-import { DialogMotionDemo } from "../../../../playground/showcase/demos/dialog/DialogMotion.demo";
+import { DialogSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/dialog/slotMotion/gallery";
+import { DialogMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/dialog/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -857,5 +858,18 @@ export const SlotMotion: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (instant, bounce, color, parts, timeline)",
-  render: () => <DialogMotionDemo />,
+  render: () => <DialogSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `Dialog.Panel` — `playSlot(\"panel\")`. `play()` skips (no `root`). Panel stays open in a contained portal.",
+      },
+    },
+  },
+  render: () => <DialogMotionControllerGalleryDemo />,
 };

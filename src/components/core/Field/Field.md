@@ -40,6 +40,8 @@ Compound через `Object.assign`:
 | `classNames.root` | Слот root |
 | `classNames.hint` | Слот hint |
 | `classNames.error` | Слот error |
+| `motion` | Карта слотов `root` / `label` / `hint` / `error` + `events`. Не крадёт motion Input |
+| `motionController` | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Field.Set` и не Input |
 
 ### `Field.Set` — группа полей
 
@@ -74,6 +76,8 @@ Compound через `Object.assign`:
 | `disabled` | — | На `<fieldset>` |
 | `hintId` / `errorId` | auto | Для `aria-describedby` у дочерних контролов |
 | `classNames` | — | Слоты root, stack, legend, group, actions |
+| `motion` | — | Карта слотов Set + `events`. Отдельный scope от `Field` |
+| `motionController` | — | Handle для scope `Field.Set`, не внутреннего Field / Input |
 
 > **Не стилизуйте поверхность на `Field.Set`:** у нативного `<fieldset>` `<legend>` рендерится **вне** content box. `border` / `rounded` / `padding` / `bg-*` на `className` / `classNames.root` **не оборачивают** legend — «карточки» вокруг всей группы так не сделать. Для рамки оберните Set во внешний `div` / `Card`. Подробнее — [ограничение fieldset](#ограничение-нативного-fieldset).
 
@@ -106,6 +110,33 @@ Field.Set (fieldset)
 | Field.Set `root` / `stack` / `legend` / `legendHeader` / `group` / `actions` | `enter` / hover/press | нет |
 
 **Где в коде:** типы — `fieldTypes.ts`; scope — `fieldContext.tsx`; defaults — `fieldAnimations.ts`; слоты — `fieldParts.tsx`.
+
+`play()` ищет слот `root` у Field. `playSlot("label")` / `playSlot("hint")`. `Field.Set` — другой scope: handle на `Field.Set`, `playSlot("legend")`. Один handle ≠ два scope. Не класть `motionController` на `Field.Label` — это scope Field, не Label. `useMotionController()` в children `Field.Hint` / `Field.Error` попадает в nested `Text`; в sibling-части (галерея Inside) — scope Field.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`field:nudge`, `field:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Field, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "field:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("field:nudge")}>
+        Nudge
+      </Button>
+      <Field motionController={controller} motion={{ events }}>
+        <Field.Label>Email</Field.Label>
+        <Field.Hint>Field scope, not Input.</Field.Hint>
+      </Field>
+    </>
+  );
+}
+```
 
 ```tsx
 <Field

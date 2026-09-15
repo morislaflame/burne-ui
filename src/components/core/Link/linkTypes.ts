@@ -7,7 +7,10 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type {
+  MotionController,
+  MotionMapWithEvents,
+  MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 
@@ -50,9 +53,18 @@ type LinkSharedProps = Omit<
   showDefaultIcon?: boolean;
   defaultIconPosition?: LinkIconPos;
   classNames?: Prettify<LinkClassNames>;
-  /** Per-slot motion (`root`, `text`, `icon`). No hover shadow. */
-  motion?: Prettify<LinkMotion>;
-};
+  /**
+   * Per-slot motion (`root`, `text`, `icon`). No hover shadow.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * `states` — app modes for `motionState` (not a DOM slot, not a phase).
+   */
+  motion?: Prettify<MotionMapWithEvents<LinkMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type LinkProps =
   | (LinkSharedProps & {

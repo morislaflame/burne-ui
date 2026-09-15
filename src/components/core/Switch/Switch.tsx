@@ -45,6 +45,10 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
       className,
       classNames,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerDown,
       onKeyDown,
       ...rest
@@ -86,7 +90,10 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
     return (
       <SwitchFieldProvider value={state.fieldCtx}>
         <SwitchClassNamesProvider classNames={classNames}>
-          <SwitchMotionProvider motion={motion}>
+          <SwitchMotionProvider motion={motion} controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}>
           <label ref={ref} className={gridClass} onPointerDown={handlePointerDown} onKeyDown={handleKeyDown}>
             {state.isCompound ? (
               injectSwitchControlProps(children, state.controlRest)
@@ -105,7 +112,15 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
                 labelPosition={state.labelPosition}
                 hintId={state.hintId}
                 errorId={state.errorId}
-                controlProps={state.controlRest as SwitchControlProps}
+                controlProps={
+                  {
+                    ...state.controlRest,
+                    motionController,
+                    motionState,
+                    motionPayload,
+                    playInitialState,
+                  } as SwitchControlProps
+                }
               />
             )}
           </label>

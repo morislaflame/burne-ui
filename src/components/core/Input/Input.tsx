@@ -40,6 +40,10 @@ export function InputRoot({
   status = "default",
   size = "base",
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: InputSimpleProps) {
   const formCtx = useOptionalFormBindingContext();
@@ -71,14 +75,20 @@ export function InputRoot({
       labelId={state.fieldCtx.labelId}
       size={state.size}
       status={state.status}
-      controlProps={rest}
+      controlProps={{ ...rest, motionController, motionState, motionPayload, playInitialState }}
     />
   );
 
   return (
     <InputFieldProvider value={state.fieldCtx}>
       <InputClassNamesProvider classNames={classNames}>
-        <InputMotionProvider motion={motion}>
+        <InputMotionProvider
+          motion={motion}
+          controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field className={cn(classNames?.root, className)} size={resolvedSize}>
               {body}

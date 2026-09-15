@@ -3,7 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
-import { LabelMotionDemo } from "../../../../playground/showcase/demos/label/LabelMotion.demo";
+import { LabelMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/label/motionController/gallery";
+import { LabelSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/label/slotMotion/gallery";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -88,5 +89,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <LabelMotionDemo />,
+  render: () => <LabelSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot vs playAll, stagger, exclude required, cancel loop, label events.",
+      },
+    },
+  },
+  render: () => <LabelMotionControllerGalleryDemo />,
 };

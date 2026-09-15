@@ -112,7 +112,6 @@ export const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
 export const BUTTON_BASE_INTERACTIVE_CLASS =
   "relative overflow-hidden inline-flex items-center justify-center outline-none focus-ring disabled:pointer-events-none";
 
-export const BUTTON_CLIP_LAYER_CLASS = "pointer-events-none absolute inset-0 z-0 overflow-hidden";
 
 export const BUTTON_CONTENT_MOTION_CLASS =
   "relative z-[1] grid w-full min-w-0 place-items-center";
@@ -126,14 +125,13 @@ export const BUTTON_LEFT_ICON_SLOT_CLASS = "inline-flex shrink-0 items-center ju
 
 export const BUTTON_LABEL_TEXT_CLASS = "min-w-0 shrink";
 
-export const BUTTON_ASYNC_GRID_LAYER_CLASS = "col-start-1 row-start-1 flex items-center justify-center";
+export const BUTTON_OVERLAY_GRID_LAYER_CLASS = "col-start-1 row-start-1 flex items-center justify-center";
 
 /**
- * First paint / pre-motion: hide inactive async layers via Tailwind.
- * After `asyncMotionReady`, GSAP owns visibility (inline autoAlpha) — do not keep this class
- * on inactive layers or crossfade will snap.
+ * CSS rest for overlay layers (`Button.Loader` / `Success` / `Error`).
+ * GSAP `autoAlpha` from `motion.states` overrides inline; first paint stays hidden.
  */
-export const BUTTON_ASYNC_LAYER_INACTIVE_CLASS =
+export const BUTTON_OVERLAY_LAYER_INACTIVE_CLASS =
   "invisible opacity-0 pointer-events-none";
 
 export const BUTTON_SUCCESS_LAYER_CLASS = "text-success";
@@ -270,10 +268,6 @@ export function buttonSpinnerClass(size: ComponentSize): string {
   return cn(layout.spinnerIcon, layout.spinnerBorder);
 }
 
-export function buttonFeedbackExpandRippleClass(): string {
-  return "pointer-events-none absolute left-1/2 top-1/2 z-0 rounded-full";
-}
-
 export function buttonSpinnerInnerClass(): string {
   return "box-border inline-block rounded-full border-current border-t-transparent";
 }
@@ -299,17 +293,13 @@ export function buttonLabelClass({
   slotClass,
   className,
   layoutClass,
-  cssHidden,
 }: {
   slotClass?: string;
   className?: string;
   layoutClass?: string;
-  /** Pre-motion hide when label is not the active async layer. */
-  cssHidden?: boolean;
 }): string {
   return cn(
     BUTTON_LABEL_LAYER_CLASS,
-    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
     slotClass,
     layoutClass,
     className,
@@ -327,29 +317,28 @@ export function buttonTextClass(slotClass?: string, className?: string): string 
 export function buttonLoaderLayerClass(
   loaderTextClass: string,
   slotClass?: string,
-  cssHidden?: boolean,
 ): string {
   return cn(
-    BUTTON_ASYNC_GRID_LAYER_CLASS,
-    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    BUTTON_OVERLAY_GRID_LAYER_CLASS,
+    BUTTON_OVERLAY_LAYER_INACTIVE_CLASS,
     loaderTextClass,
     slotClass,
   );
 }
 
-export function buttonSuccessLayerClass(slotClass?: string, cssHidden?: boolean): string {
+export function buttonSuccessLayerClass(slotClass?: string): string {
   return cn(
-    BUTTON_ASYNC_GRID_LAYER_CLASS,
-    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    BUTTON_OVERLAY_GRID_LAYER_CLASS,
+    BUTTON_OVERLAY_LAYER_INACTIVE_CLASS,
     BUTTON_SUCCESS_LAYER_CLASS,
     slotClass,
   );
 }
 
-export function buttonErrorLayerClass(slotClass?: string, cssHidden?: boolean): string {
+export function buttonErrorLayerClass(slotClass?: string): string {
   return cn(
-    BUTTON_ASYNC_GRID_LAYER_CLASS,
-    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    BUTTON_OVERLAY_GRID_LAYER_CLASS,
+    BUTTON_OVERLAY_LAYER_INACTIVE_CLASS,
     BUTTON_ERROR_LAYER_CLASS,
     slotClass,
   );

@@ -56,6 +56,10 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       children,
       className = "",
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     } = rawProps;
 
@@ -70,7 +74,10 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
     return (
       <CalendarProvider value={contextValue}>
         <CalendarClassNamesProvider classNames={classNames}>
-          <CalendarMotionProvider motion={motion} defaults={motionDefaults}>
+          <CalendarMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <div
             ref={setRootRef}
             className={calendarRootClass(

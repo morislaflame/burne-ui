@@ -161,6 +161,10 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     children,
     hoverLift = true,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver: onPointerOverFromProps,
     onPointerOut: onPointerOutFromProps,
     ...rest
@@ -184,7 +188,15 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 
   return (
     <BadgeClassNamesProvider classNames={classNames}>
-      <BadgeMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+      <BadgeMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <BadgeAnchorSurface
           className={className}
           classNames={classNames}
@@ -226,6 +238,10 @@ function BadgeAnchorSurface({
     | "children"
     | "hoverLift"
     | "motion"
+    | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
     | "onPointerOver"
     | "onPointerOut"
   >;
@@ -239,19 +255,19 @@ function BadgeAnchorSurface({
   const setMergedRef = useCallback(
     (node: HTMLDivElement | null) => {
       anchorRef.current = node;
+      scope?.registerTarget("anchor", node);
       if (typeof forwardedRef === "function") forwardedRef(node);
       else if (forwardedRef) forwardedRef.current = node;
     },
-    [forwardedRef],
+    [forwardedRef, scope],
   );
 
   const registerLiftTarget = useCallback(
     (el: HTMLElement | null) => {
       liftedRef.current = el;
       registerBadgeAnchorLiftTarget(el, hoverLift);
-      scope?.registerTarget("anchor", el);
     },
-    [hoverLift, scope],
+    [hoverLift],
   );
 
   const ctx = useMemo(

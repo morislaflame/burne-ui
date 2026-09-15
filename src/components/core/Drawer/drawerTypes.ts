@@ -12,7 +12,7 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
 /** Viewport extent of the panel (orthogonal to chrome `size`). */
@@ -71,7 +71,7 @@ export type DrawerPartMotion = DrawerLifecycleMotion & {
 
 export type DrawerMotion = {
   overlay?: DrawerLifecycleMotion;
-  panel?: DrawerLifecycleMotion;
+  panel?: DrawerPartMotion;
   title?: DrawerPartMotion;
   description?: DrawerPartMotion;
   close?: DrawerLifecycleMotion;
@@ -97,9 +97,19 @@ export type DrawerProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DrawerClassNames>;
-  /** Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle`) plus `trigger` press on Root. Overlay/panel defaults are kit overlay + drawer slide recipes; trigger defaults to `pressSqueeze`. */
-  motion?: Prettify<DrawerMotion>;
-};
+  /**
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle`) plus `trigger` press on Root.
+   * Overlay/panel defaults are kit overlay + drawer slide recipes; trigger defaults to `pressSqueeze`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Root has no portal DOM — portal slots live on `Drawer.Panel`.
+   */
+  motion?: Prettify<MotionMapWithEvents<DrawerMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Portal slots need a separate handle on `Drawer.Panel`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
   extent?: DrawerExtent;
@@ -107,8 +117,13 @@ export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
   themeAnchor?: HTMLElement | null;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  motion?: Prettify<DrawerMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<DrawerMotion>>;
+  /**
+   * Handle for the portal host (`panel`, `overlay`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("panel")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DrawerTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */

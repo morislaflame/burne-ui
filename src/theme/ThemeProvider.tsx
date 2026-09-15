@@ -1,4 +1,7 @@
-import { createContext, createElement, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
+
+import type { MotionConfig } from "@/components/core/utils/motionConfig";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
 
 import { resolveTheme, DEFAULT_THEME_STORAGE_KEY, type BurneThemeMode } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";
@@ -58,6 +61,12 @@ export type ThemeProviderProps = {
   /** Element that receives `data-theme`. @default document.documentElement */
   root?: HTMLElement | null;
   onThemeChange?: (theme: BurneThemeMode) => void;
+  /**
+   * GSAP overlay for this tree (and portals via React context).
+   * Unspecified keys inherit the parent overlay or `configureMotion()`.
+   * Does not write CSS tokens — use `applyThemeTokens` / `BurneUIProvider` for `--motion-surface-duration`.
+   */
+  motion?: Partial<MotionConfig> | null;
 };
 
 export function ThemeProvider({
@@ -67,6 +76,7 @@ export function ThemeProvider({
   storageKey = DEFAULT_THEME_STORAGE_KEY,
   root = null,
   onThemeChange,
+  motion,
 }: ThemeProviderProps) {
   const [uncontrolled, setUncontrolled] = useState<BurneThemeMode>(() => {
     return readStoredTheme(storageKey) ?? defaultTheme;
@@ -108,7 +118,11 @@ export function ThemeProvider({
     [theme, resolvedTheme, setTheme],
   );
 
-  return createElement(BurneThemeContext.Provider, { value }, children);
+  return (
+    <BurneThemeContext.Provider value={value}>
+      <MotionConfigProvider motion={motion}>{children}</MotionConfigProvider>
+    </BurneThemeContext.Provider>
+  );
 }
 
 export function useBurneTheme(): BurneThemeContextValue {

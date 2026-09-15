@@ -6,20 +6,14 @@ import { AvatarGlossDemo } from "../demos/avatar/AvatarGloss.demo";
 import avatarGlossSource from "../demos/avatar/AvatarGloss.demo.tsx?raw";
 import { AvatarGroupDemo } from "../demos/avatar/AvatarGroup.demo";
 import avatarGroupSource from "../demos/avatar/AvatarGroup.demo.tsx?raw";
-import { AvatarMotionGroupRotateDemo } from "../demos/avatar/AvatarMotionGroupRotate.demo";
-import avatarMotionGroupRotateSource from "../demos/avatar/AvatarMotionGroupRotate.demo.tsx?raw";
-import { AvatarMotionImageScaleDemo } from "../demos/avatar/AvatarMotionImageScale.demo";
-import avatarMotionImageScaleSource from "../demos/avatar/AvatarMotionImageScale.demo.tsx?raw";
-import { AvatarMotionInstantFadeDemo } from "../demos/avatar/AvatarMotionInstantFade.demo";
-import avatarMotionInstantFadeSource from "../demos/avatar/AvatarMotionInstantFade.demo.tsx?raw";
-import { AvatarMotionInstantGroupDemo } from "../demos/avatar/AvatarMotionInstantGroup.demo";
-import avatarMotionInstantGroupSource from "../demos/avatar/AvatarMotionInstantGroup.demo.tsx?raw";
+import { AvatarMotionControllerGalleryDemo } from "../demos/avatar/motionController/gallery";
 import { AvatarPresenceRowDemo } from "../demos/avatar/AvatarPresenceRow.demo";
 import avatarPresenceRowSource from "../demos/avatar/AvatarPresenceRow.demo.tsx?raw";
 import { AvatarProjectMembersDemo } from "../demos/avatar/AvatarProjectMembers.demo";
 import avatarProjectMembersSource from "../demos/avatar/AvatarProjectMembers.demo.tsx?raw";
 import { AvatarSizesFallbackDemo } from "../demos/avatar/AvatarSizesFallback.demo";
 import avatarSizesFallbackSource from "../demos/avatar/AvatarSizesFallback.demo.tsx?raw";
+import { AvatarSlotMotionGalleryDemo } from "../demos/avatar/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -45,18 +39,15 @@ export function AvatarShowcase() {
         <ShowcaseDemoFromFile Demo={AvatarGlossDemo} source={avatarGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="Image enter (Replay) — instant vs scale-in. Group hover — instant vs rotate.">
+        <AvatarSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Image enter (Replay) — instant vs scale-in. Group hover — instant vs rotate."
+        title="MotionController"
+        description="One gallery: playSlot / set on root, image/fallback slots, ping, presence timeline, waitForComplete."
       >
-        <ShowcaseDemoFromFile
-          Demo={AvatarMotionInstantFadeDemo}
-          source={avatarMotionInstantFadeSource}
-          replay
-        />
-        <ShowcaseDemoFromFile Demo={AvatarMotionImageScaleDemo} source={avatarMotionImageScaleSource} />
-        <ShowcaseDemoFromFile Demo={AvatarMotionInstantGroupDemo} source={avatarMotionInstantGroupSource} />
-        <ShowcaseDemoFromFile Demo={AvatarMotionGroupRotateDemo} source={avatarMotionGroupRotateSource} />
+        <AvatarMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

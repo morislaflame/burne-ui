@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef } from "react";
+
+import { useControllableState } from "@/components/core/utils/useControllableState";
 
 import type { TooltipContextValue, TooltipProps } from "./tooltipTypes";
 
-export type UseTooltipRootStateProps = Omit<TooltipProps, "classNames" | "children">;
+export type UseTooltipRootStateProps = Omit<
+  TooltipProps,
+  "classNames" | "children" | "motion"
+>;
 
 export function useTooltipRootState({
   size = "base",
@@ -12,9 +17,16 @@ export function useTooltipRootState({
   side = "top",
   icon,
   showIcon,
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
   portalContainer,
 }: UseTooltipRootStateProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const triggerRef = useRef<HTMLElement | null>(null);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
@@ -32,12 +44,12 @@ export function useTooltipRootState({
       showTimerRef.current = null;
       setOpen(true);
     }, delayShowMs);
-  }, [clearTimer, delayShowMs]);
+  }, [clearTimer, delayShowMs, setOpen]);
 
   const hide = useCallback(() => {
     clearTimer();
     setOpen(false);
-  }, [clearTimer]);
+  }, [clearTimer, setOpen]);
 
   useEffect(() => () => clearTimer(), [clearTimer]);
 

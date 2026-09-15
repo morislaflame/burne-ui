@@ -16,6 +16,10 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
     className,
     children,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -27,7 +31,10 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   const motionDefaults = useMemo(() => resolveTextMotionDefaults(), []);
 
   return (
-    <TextMotionProvider motion={motion} defaults={motionDefaults}>
+    <TextMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <TextSurface
         variant={variant}
         as={as}

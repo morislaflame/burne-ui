@@ -33,6 +33,10 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       type,
       "aria-label": ariaLabel,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerDown,
       onPointerUp,
       onPointerEnter,
@@ -75,7 +79,15 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
 
     return (
       <CloseButtonClassNamesProvider classNames={state.classNames}>
-        <CloseButtonMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+        <CloseButtonMotionProvider
+          motion={motion}
+          defaults={motionDefaults}
+          params={motionParams}
+          controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+        >
           <CloseButtonSurface
             state={state}
             motion={motion}
@@ -134,6 +146,7 @@ function CloseButtonSurface({
     | "type"
     | "aria-label"
     | "motion"
+    | "motionController"
     | "onPointerDown"
     | "onPointerUp"
     | "onPointerEnter"

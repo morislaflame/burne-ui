@@ -3,10 +3,12 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import type {
   MotionContext,
   MotionFactory,
+  MotionPayload,
   MotionRecipeParams,
   MotionTransformVars,
   MotionVars,
 } from "./slotMotionTypes";
+import type { MotionStateHostProps } from "./motionEvents";
 
 /**
  * Compile-time coverage for F17: public MotionVars stay layout-safe;
@@ -71,10 +73,22 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
     expect(params.placement).toBe("left");
 
     expectTypeOf<MotionContext["params"]>().toEqualTypeOf<MotionRecipeParams>();
+    expectTypeOf<MotionContext["payload"]>().toEqualTypeOf<unknown>();
+    expectTypeOf<MotionContext<{ attempt: number }>["payload"]>().toEqualTypeOf<
+      Readonly<{ attempt: number }> | undefined
+    >();
+    expectTypeOf<MotionStateHostProps<{ attempt: number }>["motionPayload"]>().toEqualTypeOf<
+      { attempt: number } | undefined
+    >();
+    expectTypeOf<MotionPayload>().toHaveProperty("progress");
+    expectTypeOf<MotionPayload>().toHaveProperty("itemId");
+    expectTypeOf<MotionPayload>().toHaveProperty("result");
+    expectTypeOf<MotionPayload>().toHaveProperty("error");
     expectTypeOf<MotionRecipeParams>().toHaveProperty("liftScale");
     expectTypeOf<MotionRecipeParams>().toHaveProperty("getTravelPx");
     expectTypeOf<MotionRecipeParams>().toHaveProperty("getProgressScale");
     expectTypeOf<MotionRecipeParams>().toHaveProperty("isHorizontal");
+    expectTypeOf<MotionRecipeParams>().not.toHaveProperty("payload");
     expectTypeOf<MotionRecipeParams>().not.toHaveProperty("notAKitKey");
 
     // @ts-expect-error custom app data does not go on params
@@ -86,5 +100,10 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
     const factory: MotionFactory = (ctx) =>
       ctx.fromRest({ rotation: 45, scaleX: 0.5, opacity: 0.8, duration: 0.2 });
     expect(typeof factory).toBe("function");
+    expectTypeOf<MotionContext>().toHaveProperty("wait");
+    expectTypeOf<MotionContext>().toHaveProperty("sequence");
+    expectTypeOf<MotionContext>().toHaveProperty("parallel");
+    expectTypeOf<MotionContext>().toHaveProperty("onInterrupt");
+    expectTypeOf<MotionContext>().toHaveProperty("onError");
   });
 });

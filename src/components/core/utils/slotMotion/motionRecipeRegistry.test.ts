@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   clearMotionRecipesForTests,
@@ -15,9 +15,12 @@ import { KIT_MOTION_RECIPE_META } from "./kitMotionRecipeMeta";
 import { KIT_MOTION_RECIPES } from "./slotMotionTypes";
 import { registerKitMotionRecipes } from "./recipes";
 
-afterEach(() => {
+beforeEach(() => {
   clearMotionRecipesForTests();
   registerKitMotionRecipes();
+});
+
+afterEach(() => {
   vi.restoreAllMocks();
 });
 

@@ -1,11 +1,12 @@
 import type { ComponentType } from "react";
-import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
 import { IoAdd } from "react-icons/io5";
 
-import { Button, type ButtonAsyncState, type ButtonStatus, type ButtonVariant } from ".";
-import { ButtonMotionDemo } from "../../../../playground/showcase/demos/button/ButtonMotion.demo";
+import { Button, type ButtonStatus, type ButtonVariant } from ".";
+import { ButtonSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/button/slotMotion/gallery";
+import { ButtonMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/button/motionController/gallery";
+import { ButtonMotionStateSaveDemo } from "../../../../playground/showcase/demos/button/ButtonMotionStateSave.demo";
 
 const BUTTON_VARIANTS: ButtonVariant[] = [
   "default",
@@ -92,6 +93,10 @@ const meta = {
       control: "boolean",
       description:
         "Built-in `<Ripple />` with tone matching variant. Enabled by default in Storybook for demo.",
+    },
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
     },
   },
   render: (args) => <Button {...args} />,
@@ -270,60 +275,9 @@ export const OnLightTheme: Story = {
   decorators: [...lightThemeDecorator],
 };
 
-export const AsyncSuccess: Story = {
-  name: "Async → success",
-  args: {
-    children: "Save",
-    ripple: true,
-    onAsyncClick: () =>
-      new Promise<boolean>((resolve) => {
-        window.setTimeout(() => resolve(true), 1400);
-      }),
-  },
-};
-
-export const AsyncError: Story = {
-  name: "Async → error",
-  args: {
-    children: "Submit",
-    ripple: true,
-    onAsyncClick: () =>
-      new Promise<boolean>((resolve) => {
-        window.setTimeout(() => resolve(false), 1400);
-      }),
-  },
-};
-
-function ControlledAsyncDemo() {
-  const [state, setState] = useState<ButtonAsyncState>("idle");
-
-  const run = useCallback(() => {
-    if (state !== "idle") return;
-    setState("loading");
-    window.setTimeout(() => {
-      setState(Math.random() > 0.5 ? "success" : "error");
-    }, 1200);
-  }, [state]);
-
-  return (
-    <div className="flex flex-col items-center gap-mid">
-      <Button asyncState={state} onClick={run} disabled={state !== "idle"} ripple>
-        Controlled
-      </Button>
-      <button
-        type="button"
-        className="text-muted text-sm underline"
-        onClick={() => setState("idle")}
-      >
-        Reset to idle
-      </button>
-    </div>
-  );
-}
-
-export const ControlledAsync: Story = {
-  name: "Controlled asyncState",
-  render: () => <ControlledAsyncDemo />,
+export const MotionStateSave: Story = {
+  name: "motionState save",
+  render: () => <ButtonMotionStateSaveDemo />,
 };
 
 // ─── Gloss variant ───────────────────────────────────────────────────────────
@@ -455,5 +409,18 @@ export const AsChildLink: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ButtonMotionDemo />,
+  render: () => <ButtonSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot, playAll stagger, set/cancel, stacked timelines, async events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <ButtonMotionControllerGalleryDemo />,
 };

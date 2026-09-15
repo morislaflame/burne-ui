@@ -29,7 +29,7 @@ export function LabelRoot({
   onPointerDown,
   onPointerUp,
   ...rest
-}: Omit<LabelProps, "classNames" | "motion"> & {
+}: Omit<LabelProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   forwardedRef?: ForwardedRef<HTMLElement>;
 }) {
   const { htmlFor, id, required } = useLabelRootState({
@@ -87,13 +87,16 @@ export function LabelRoot({
 }
 
 export const Label = forwardRef<HTMLElement, LabelProps>(function Label(
-  { classNames, motion, ...rest },
+  { classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveLabelMotionDefaults(), []);
   return (
     <LabelClassNamesProvider classNames={classNames}>
-      <LabelMotionProvider motion={motion} defaults={motionDefaults}>
+      <LabelMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <LabelRoot forwardedRef={ref} {...rest} />
       </LabelMotionProvider>
     </LabelClassNamesProvider>

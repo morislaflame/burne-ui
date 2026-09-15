@@ -8,7 +8,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Slider } from ".";
-import { SliderMotionDemo } from "../../../../playground/showcase/demos/slider/SliderMotion.demo";
+import { SliderSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/slider/slotMotion/gallery";
+import { SliderMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/slider/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -290,5 +291,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SliderMotionDemo />,
+  render: () => <SliderSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on track/thumb (no play: no root slot), chrome label on Root, range thumb stagger, slider events.",
+      },
+    },
+  },
+  render: () => <SliderMotionControllerGalleryDemo />,
 };

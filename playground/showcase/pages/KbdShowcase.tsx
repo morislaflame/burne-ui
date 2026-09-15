@@ -2,16 +2,6 @@ import { KbdClassNamesFullDemo } from "../demos/kbd/KbdClassNamesFull.demo";
 import kbdClassNamesFullSource from "../demos/kbd/KbdClassNamesFull.demo.tsx?raw";
 import { KbdGlossDemo } from "../demos/kbd/KbdGloss.demo";
 import kbdGlossSource from "../demos/kbd/KbdGloss.demo.tsx?raw";
-import { KbdMotionInstantHoverDemo } from "../demos/kbd/KbdMotionInstantHover.demo";
-import kbdMotionInstantHoverSource from "../demos/kbd/KbdMotionInstantHover.demo.tsx?raw";
-import { KbdMotionKeyBounceDemo } from "../demos/kbd/KbdMotionKeyBounce.demo";
-import kbdMotionKeyBounceSource from "../demos/kbd/KbdMotionKeyBounce.demo.tsx?raw";
-import { KbdMotionGroupDemo } from "../demos/kbd/KbdMotionGroup.demo";
-import kbdMotionGroupSource from "../demos/kbd/KbdMotionGroup.demo.tsx?raw";
-import { KbdMotionRootTiltDemo } from "../demos/kbd/KbdMotionRootTilt.demo";
-import kbdMotionRootTiltSource from "../demos/kbd/KbdMotionRootTilt.demo.tsx?raw";
-import { KbdMotionTextPopDemo } from "../demos/kbd/KbdMotionTextPop.demo";
-import kbdMotionTextPopSource from "../demos/kbd/KbdMotionTextPop.demo.tsx?raw";
 import { KbdVariantsDemo } from "../demos/kbd/KbdVariants.demo";
 import kbdVariantsSource from "../demos/kbd/KbdVariants.demo.tsx?raw";
 import { KbdSizesDemo } from "../demos/kbd/KbdSizes.demo";
@@ -20,6 +10,8 @@ import { KbdGroupDemo } from "../demos/kbd/KbdGroup.demo";
 import kbdGroupSource from "../demos/kbd/KbdGroup.demo.tsx?raw";
 import { KbdShortcutsDemo } from "../demos/kbd/KbdShortcuts.demo";
 import kbdShortcutsSource from "../demos/kbd/KbdShortcuts.demo.tsx?raw";
+import { KbdSlotMotionGalleryDemo } from "../demos/kbd/slotMotion/gallery";
+import { KbdMotionControllerGalleryDemo } from "../demos/kbd/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -45,15 +37,15 @@ export function KbdShowcase() {
         <ShowcaseDemoFromFile Demo={KbdGlossDemo} source={kbdGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: instant hover, root tilt, text pop, key bounce, Group enter.">
+        <KbdSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant hover, root tilt, text pop, key bounce, Group enter."
+        title="MotionController"
+        description="One gallery: play vs playSlot vs playAll, standalone Group host, cancel loop, kbd events."
       >
-        <ShowcaseDemoFromFile Demo={KbdMotionInstantHoverDemo} source={kbdMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile Demo={KbdMotionRootTiltDemo} source={kbdMotionRootTiltSource} />
-        <ShowcaseDemoFromFile Demo={KbdMotionTextPopDemo} source={kbdMotionTextPopSource} />
-        <ShowcaseDemoFromFile Demo={KbdMotionKeyBounceDemo} source={kbdMotionKeyBounceSource} />
-        <ShowcaseDemoFromFile Demo={KbdMotionGroupDemo} source={kbdMotionGroupSource} />
+        <KbdMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection title="Kbd.Group" description="Multiple keys with separator «+».">

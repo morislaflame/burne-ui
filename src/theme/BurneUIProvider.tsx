@@ -200,8 +200,9 @@ export function BurneUIProvider(props: BurneUIProviderProps) {
       storageKey={resolvedStorageKey}
       root={root}
       onThemeChange={onThemeChange}
+      motion={resolvedConfig.motion}
     >
-      <MotionConfigProvider motion={resolvedConfig.motion}>{content}</MotionConfigProvider>
+      {content}
     </ThemeProvider>
   );
 }

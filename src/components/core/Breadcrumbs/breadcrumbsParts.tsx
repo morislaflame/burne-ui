@@ -210,6 +210,8 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
         className={slotClassNames.itemLinkWrapper}
         innerClassName={cn("", slotClassNames.itemLink, item.className)}
         textClassName={slotClassNames.itemLinkText}
+        motion={item.motion}
+        motionController={item.motionController}
       >
         {item.label}
       </InteractiveCrumb>
@@ -258,15 +260,26 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
       innerClassName,
       textClassName,
       "aria-current": ariaCurrent,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
     },
     forwardedRef,
   ) {
     const parentScope = useOptionalBreadcrumbsMotionScope();
     const motionDefaults = useMemo(() => resolveBreadcrumbsItemMotionDefaults(), []);
-    const mergedMotion = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
+    const mergedMotion = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { itemLink: motion } : undefined,
+    );
 
     return (
-      <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <InteractiveCrumbSurface
           href={href}
           onClick={onClick}

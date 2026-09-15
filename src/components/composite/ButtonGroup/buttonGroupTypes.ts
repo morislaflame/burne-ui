@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 
@@ -49,9 +49,15 @@ export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "ch
   /**
    * Per-slot motion (`root`, `text`). Items keep Button motion — group does not wrap item hosts.
    * Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<ButtonGroupMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ButtonGroupMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
   groupSegment?: ButtonGroupSegment;

@@ -2,8 +2,9 @@
  * Centralized animation configuration for Burne UI (GSAP + CSS motion tokens).
  *
  * `configureMotion()` sets the **app default** (global singleton). Nested
- * `BurneUIProvider` / `MotionConfigProvider` overlay a resolved config for that
- * React tree (portals inherit via context, not DOM). Safe without `document`
+ * `BurneUIProvider` / `ThemeProvider` / `MotionConfigProvider` overlay a resolved
+ * config for that React tree (portals inherit via context, not DOM). Innermost
+ * overlay wins for keys it sets; unspecified keys inherit. Safe without `document`
  * (SSR). Invalid fields are skipped; finite out-of-range numbers are clamped
  * (`MOTION_CONFIG_LIMITS`).
  *
@@ -41,9 +42,7 @@ export type MotionFeatureFlag =
   | "enableRipple"
   | "enableExpandable"
   | "enableToastStack"
-  | "enableAsyncButtonCrossfade"
   | "enableContentFade"
-  | "enableFeedbackExpand"
   | "enableProgressFill"
   | "enableLoadingDots"
   | "enableModalMotion"
@@ -142,14 +141,11 @@ export interface MotionConfig {
   rippleExpandableOpacityFrom: number;
 
   /**
-   * CSS easing string used in keyframe animations (button async-ripple).
+   * CSS easing string used in keyframe animations (converge-ripple).
    * Also used to build GSAP CustomEase for converge-ripple.
    * @default "cubic-bezier(0.25, 0.55, 0.35, 0.95)"
    */
   rippleEaseCss: string;
-
-  /** Duration (ms) of the feedback-expand ring after async button. @default 720 */
-  feedbackExpandDuration: number;
 
   /**
    * Duration (ms) for Expandable / Accordion panel height animation.
@@ -208,14 +204,8 @@ export interface MotionConfig {
   /** Toast stack repositioning (transform / opacity / height). @default true */
   enableToastStack: boolean;
 
-  /** Button async state crossfade (label ↔ loader ↔ success/error). @default true */
-  enableAsyncButtonCrossfade: boolean;
-
   /** Content fade-in (e.g. Avatar image load). @default true */
   enableContentFade: boolean;
-
-  /** Async button success/error expand ring. @default true */
-  enableFeedbackExpand: boolean;
 
   /** Duration (ms) for Meter / ProgressBar fill when `value` changes. @default 600 */
   progressFillDuration: number;
@@ -293,7 +283,6 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   rippleExpandableDuration: 700,
   rippleExpandableOpacityFrom: 0.34,
   rippleEaseCss: "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
-  feedbackExpandDuration: 720,
   expandDuration: 200,
   expandOpenEase: "sine.inOut",
   surfaceTransitionDuration: 600,
@@ -306,9 +295,7 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   enableRipple: true,
   enableExpandable: true,
   enableToastStack: true,
-  enableAsyncButtonCrossfade: true,
   enableContentFade: true,
-  enableFeedbackExpand: true,
   progressFillDuration: 600,
   progressFillEase: "power2.out",
   enableProgressFill: true,
@@ -388,6 +375,7 @@ function overlayEqualsCurrent(accepted: Partial<MotionConfig>): boolean {
 /**
  * Overlay `motion` keys onto a base config (provider scope).
  * Empty / fully invalid overlay returns `base` (same reference).
+ * Nested providers call this from outer → inner; inner keys win.
  */
 export function overlayMotionConfig(
   base: Readonly<MotionConfig>,
@@ -408,7 +396,7 @@ export function resolveMotionConfig(
 
 /**
  * Override any subset of the **global default** motion config.
- * Nested trees overlay via `BurneUIProvider` / `MotionConfigProvider`, not this call.
+ * Nested trees overlay via `BurneUIProvider` / `ThemeProvider` / `MotionConfigProvider`, not this call.
  * Call once before your app renders (or from a single theme editor root).
  * SSR-safe: CSS tokens are written only when `document` exists.
  * Invalid fields are skipped (dev warning); the rest of the override still applies.
@@ -564,17 +552,6 @@ export function motionContentFadeFor(config: Readonly<MotionConfig>) {
 /** Quick fade (Avatar image, Calendar range tint). */
 export function motionContentFade() {
   return motionContentFadeFor(_config);
-}
-
-export function motionFeedbackExpandFor(config: Readonly<MotionConfig>) {
-  return {
-    duration: config.feedbackExpandDuration / 1000,
-  } as const;
-}
-
-/** Feedback-expand ring after async button. Easing — `ensureRippleEase()` at call site. */
-export function motionFeedbackExpand() {
-  return motionFeedbackExpandFor(_config);
 }
 
 export function motionProgressFillFor(config: Readonly<MotionConfig>) {

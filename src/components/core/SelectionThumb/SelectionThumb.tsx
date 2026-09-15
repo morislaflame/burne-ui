@@ -44,6 +44,10 @@ export function SelectionThumb({
   classNames,
   children,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   onPointerOver,
   onPointerOut,
   onPointerDown,
@@ -53,7 +57,10 @@ export function SelectionThumb({
   const motionDefaults = useMemo(() => resolveSelectionThumbMotionDefaults(), []);
 
   return (
-    <SelectionThumbMotionProvider motion={motion} defaults={motionDefaults}>
+    <SelectionThumbMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <SelectionThumbShell
         size={size}
         gloss={gloss}
@@ -107,6 +114,7 @@ function SelectionThumbShell({
     | "classNames"
     | "children"
     | "motion"
+    | "motionController"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"

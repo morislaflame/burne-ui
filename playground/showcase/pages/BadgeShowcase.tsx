@@ -4,14 +4,7 @@ import { BadgeClassNamesFullDemo } from "../demos/badge/BadgeClassNamesFull.demo
 import badgeClassNamesFullSource from "../demos/badge/BadgeClassNamesFull.demo.tsx?raw";
 import { BadgeGlossDemo } from "../demos/badge/BadgeGloss.demo";
 import badgeGlossSource from "../demos/badge/BadgeGloss.demo.tsx?raw";
-import { BadgeMotionAnchorPopDemo } from "../demos/badge/BadgeMotionAnchorPop.demo";
-import badgeMotionAnchorPopSource from "../demos/badge/BadgeMotionAnchorPop.demo.tsx?raw";
-import { BadgeMotionDotPulseDemo } from "../demos/badge/BadgeMotionDotPulse.demo";
-import badgeMotionDotPulseSource from "../demos/badge/BadgeMotionDotPulse.demo.tsx?raw";
-import { BadgeMotionInstantHoverDemo } from "../demos/badge/BadgeMotionInstantHover.demo";
-import badgeMotionInstantHoverSource from "../demos/badge/BadgeMotionInstantHover.demo.tsx?raw";
-import { BadgeMotionRootTiltDemo } from "../demos/badge/BadgeMotionRootTilt.demo";
-import badgeMotionRootTiltSource from "../demos/badge/BadgeMotionRootTilt.demo.tsx?raw";
+import { BadgeMotionControllerGalleryDemo } from "../demos/badge/motionController/gallery";
 import { BadgeInboxButtonDemo } from "../demos/badge/BadgeInboxButton.demo";
 import badgeInboxButtonSource from "../demos/badge/BadgeInboxButton.demo.tsx?raw";
 import { BadgePlacementsDemo } from "../demos/badge/BadgePlacements.demo";
@@ -24,6 +17,7 @@ import { BadgeSizesDemo } from "../demos/badge/BadgeSizes.demo";
 import badgeSizesSource from "../demos/badge/BadgeSizes.demo.tsx?raw";
 import { BadgeVariantsDemo } from "../demos/badge/BadgeVariants.demo";
 import badgeVariantsSource from "../demos/badge/BadgeVariants.demo.tsx?raw";
+import { BadgeSlotMotionGalleryDemo } from "../demos/badge/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -49,14 +43,15 @@ export function BadgeShowcase() {
         <ShowcaseDemoFromFile Demo={BadgeGlossDemo} source={badgeGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: instant hover, root tilt, Anchor pop, dot pulse.">
+        <BadgeSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant hover, root tilt, Anchor pop, dot pulse."
+        title="MotionController"
+        description="One gallery: playSlot / set on root, Badge.Anchor slot, ping, count bump, same-node timeline, motionState scramble."
       >
-        <ShowcaseDemoFromFile Demo={BadgeMotionInstantHoverDemo} source={badgeMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile Demo={BadgeMotionRootTiltDemo} source={badgeMotionRootTiltSource} />
-        <ShowcaseDemoFromFile Demo={BadgeMotionAnchorPopDemo} source={badgeMotionAnchorPopSource} />
-        <ShowcaseDemoFromFile Demo={BadgeMotionDotPulseDemo} source={badgeMotionDotPulseSource} />
+        <BadgeMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection title="Badge.Anchor" description="Counter and dot-indicator on top of avatar.">

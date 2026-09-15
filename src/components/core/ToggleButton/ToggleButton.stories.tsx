@@ -8,7 +8,8 @@ import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { ToggleButton, type ToggleButtonVariant } from ".";
-import { ToggleButtonMotionDemo } from "../../../../playground/showcase/demos/toggle-button/ToggleButtonMotion.demo";
+import { ToggleButtonMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/toggle-button/motionController/gallery";
+import { ToggleButtonSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/toggle-button/slotMotion/gallery";
 
 const VARIANTS: ToggleButtonVariant[] = ["default", "outline", "ghost"];
 
@@ -207,5 +208,18 @@ export const CompoundLayout: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ToggleButtonMotionDemo />,
+  render: () => <ToggleButtonSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot / set, play vs fill/iconStart, iconStart/iconEnd, stagger, exclude fill, like events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <ToggleButtonMotionControllerGalleryDemo />,
 };

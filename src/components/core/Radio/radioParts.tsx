@@ -10,7 +10,7 @@ import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { radioInputAriaLabel } from "./radioA11y";
 import { radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
 import { resolveRadioIndicatorMotion, useRadioChromeSlot, useRadioControlTrackAnimation, useRadioLabelSlot } from "./radioAnimations";
-import { useRadioClassNames, useRadioFieldContext, useRadioMotion } from "./radioContext";
+import { useRadioClassNames, useRadioFieldContext, useRadioMotion, useOptionalRadioMotionScope } from "./radioContext";
 import { RADIO_CONTENT_COMPOUND_CLASS, RADIO_CONTENT_PASS_THROUGH_CLASS, RADIO_CONTROL_TRACK_CLASS, RADIO_ERROR_DISABLED_CLASS, RADIO_HINT_DISABLED_CLASS, RADIO_INPUT_VISUALLY_HIDDEN_CLASS, RADIO_LABEL_CLASS, RADIO_LABEL_COMPOUND_SECONDARY_CLASS, RADIO_LABEL_MOTION_CLASS, RADIO_LABEL_TEXT_DANGER_CLASS, RADIO_LABEL_TEXT_DISABLED_CLASS, RADIO_REQUIRED_MARK_CLASS, RADIO_SIMPLE_LABEL_TEXT_CLASS, RADIO_SIMPLE_LABEL_WRAP_CLASS, RADIO_SIZE_LAYOUT, radioControlCellClass, radioControlClass, radioErrorRow, radioLabelCellClass, radioSecondaryCellClass } from "./radioStyles";
 import type {
   RadioContentProps,
@@ -21,11 +21,12 @@ import type {
   RadioLabelProps,
   RadioSize,
 } from "./radioTypes";
+import type { MotionController, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import { cn } from "@/utils/cn";
 
 export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
-  function RadioControl({ className, children, ...rest }, ref) {
+  function RadioControl({ className, children, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const ctx = useRadioFieldContext();
     const slotClassNames = useRadioClassNames();
     const trackRef = useRadioControlTrackAnimation();
@@ -74,7 +75,10 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
             slotClassNames.controlTrack,
           )}
         >
-          {children ?? <RadioIndicator />}
+          {children ?? <RadioIndicator motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState} />}
         </span>
       </span>
     );
@@ -89,15 +93,22 @@ export function RadioIndicator({
   classNames: classNamesProp,
   size: sizeProp,
   motion: motionProp,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: RadioIndicatorProps) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const rootMotion = useRadioMotion();
-  const motion = resolveRadioIndicatorMotion({
+  const mapped = resolveRadioIndicatorMotion({
     rootMotion,
     indicatorMotion: motionProp,
   });
+  const parentEvents = useOptionalRadioMotionScope()?.getEvents();
+  const events = mapped?.events ?? parentEvents;
+  const motion = events ? { ...mapped, events } : mapped;
 
   return (
     <SelectionIndicator
@@ -111,6 +122,10 @@ export function RadioIndicator({
         className,
       })}
       motion={motion}
+      motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
       {...rest}
     >
       {children}
@@ -271,6 +286,10 @@ export function RadioSimpleBody({
   danger,
   hintId,
   errorId,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: {
   label: React.ReactNode;
   hint: React.ReactNode;
@@ -284,7 +303,8 @@ export function RadioSimpleBody({
   danger: boolean;
   hintId: string;
   errorId: string;
-}) {
+  motionController?: MotionController;
+} & MotionStateHostProps) {
   const slotClassNames = useRadioClassNames();
   const sz = RADIO_SIZE_LAYOUT[size];
   const { setRef: setLabelMotionRef } = useRadioLabelSlot();
@@ -293,7 +313,10 @@ export function RadioSimpleBody({
 
   return (
     <>
-      <RadioControl />
+      <RadioControl motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState} />
       <span
         ref={mergeRefs(textColRef, setLabelMotionRef)}
         className={cn(

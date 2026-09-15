@@ -29,6 +29,7 @@ export const EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES = new Set([
   "ExpandableMessage",
   "Accordion.Trigger",
   "Accordion.Panel",
+  "Accordion.Body",
   "Accordion.Message",
   "Accordion.Heading",
 ]);

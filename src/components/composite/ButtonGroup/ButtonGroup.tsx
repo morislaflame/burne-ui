@@ -38,6 +38,10 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
       buttonSize = "base",
       variant = "default",
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerOver,
       onPointerOut,
       onPointerDown,
@@ -60,7 +64,10 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
     return (
       <ButtonGroupLayoutProvider value={layoutValue}>
         <ButtonGroupClassNamesProvider classNames={classNames}>
-          <ButtonGroupMotionProvider motion={motion} defaults={motionDefaults}>
+          <ButtonGroupMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
             <ButtonGroupRootSurface
               forwardedRef={ref}
               orientation={orientation}

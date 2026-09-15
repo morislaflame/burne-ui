@@ -12,7 +12,8 @@ import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStor
 
 import type { ComboBoxOption } from "./comboBoxTypes";
 import { ComboBox } from ".";
-import { ComboBoxMotionDemo } from "../../../../playground/showcase/demos/combobox/ComboBoxMotion.demo";
+import { ComboBoxSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/combobox/slotMotion/gallery";
+import { ComboBoxMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/combobox/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -496,5 +497,18 @@ export const ListBoxItemSlots: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ComboBoxMotionDemo />,
+  render: () => <ComboBoxSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on inputGroup/input (no play: no root slot), chrome label on Root, cancel loop, combo events.",
+      },
+    },
+  },
+  render: () => <ComboBoxMotionControllerGalleryDemo />,
 };

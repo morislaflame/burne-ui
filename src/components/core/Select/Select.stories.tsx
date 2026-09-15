@@ -12,7 +12,8 @@ import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import type { SelectOption } from "./selectTypes";
 import { Select } from ".";
-import { SelectMotionDemo } from "../../../../playground/showcase/demos/select/SelectMotion.demo";
+import { SelectSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/select/slotMotion/gallery";
+import { SelectMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/select/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -404,7 +405,20 @@ export const StatusDanger: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SelectMotionDemo />,
+  render: () => <SelectSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on triggerGroup/value (no play: no root slot), chrome label on Root, cancel loop, select events.",
+      },
+    },
+  },
+  render: () => <SelectMotionControllerGalleryDemo />,
 };
 
 export const Playground: Story = {

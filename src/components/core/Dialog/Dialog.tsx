@@ -34,6 +34,10 @@ export function DialogRoot({
   children,
   classNames,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   portalContainer,
 }: DialogProps) {
   const state = useDialogRootState({
@@ -48,7 +52,10 @@ export function DialogRoot({
     <DialogProvider value={state.contextValue}>
       <DialogClassNamesProvider classNames={classNames}>
         {/* Root has no portal DOM. Trigger defaults live here (Trigger is outside Panel). */}
-        <DialogMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
+        <DialogMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         {children}
         </DialogMotionProvider>
       </DialogClassNamesProvider>

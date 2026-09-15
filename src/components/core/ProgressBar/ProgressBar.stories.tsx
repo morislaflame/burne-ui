@@ -8,7 +8,8 @@ import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Button } from "@/components/core/Button";
 import { ProgressBar } from "@/components/core/ProgressBar";
-import { ProgressBarMotionDemo } from "../../../../playground/showcase/demos/progressBar/ProgressBarMotion.demo";
+import { ProgressBarMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/progressBar/motionController/gallery";
+import { ProgressBarSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/progressBar/slotMotion/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -260,5 +261,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ProgressBarMotionDemo />,
+  render: () => <ProgressBarSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on track/fill (no play: no root slot), chrome value on Root, cancel loop, progress events.",
+      },
+    },
+  },
+  render: () => <ProgressBarMotionControllerGalleryDemo />,
 };

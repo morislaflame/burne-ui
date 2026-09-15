@@ -2,7 +2,8 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { SelectionThumb } from "@/components/core/SelectionThumb";
-import { SelectionThumbMotionDemo } from "../../../../playground/showcase/demos/selectionThumb/SelectionThumbMotion.demo";
+import { SelectionThumbMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/selectionThumb/motionController/gallery";
+import { SelectionThumbSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/selectionThumb/slotMotion/gallery";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -33,5 +34,18 @@ export const Playground: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SelectionThumbMotionDemo />,
+  render: () => <SelectionThumbSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — standalone thumb only. play(root), icon slot, stagger, inside Icon, cancel, thumb events.",
+      },
+    },
+  },
+  render: () => <SelectionThumbMotionControllerGalleryDemo />,
 };

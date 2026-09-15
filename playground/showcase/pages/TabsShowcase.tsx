@@ -16,12 +16,8 @@ import { TabsSettingsPanelDemo } from "../demos/tabs/TabsSettingsPanel.demo";
 import tabsSettingsPanelSource from "../demos/tabs/TabsSettingsPanel.demo.tsx?raw";
 import { TabsVerticalSidebarDemo } from "../demos/tabs/TabsVerticalSidebar.demo";
 import tabsVerticalSidebarSource from "../demos/tabs/TabsVerticalSidebar.demo.tsx?raw";
-import { TabsMotionInstantEnterDemo } from "../demos/tabs/TabsMotionInstantEnter.demo";
-import tabsMotionInstantEnterSource from "../demos/tabs/TabsMotionInstantEnter.demo.tsx?raw";
-import { TabsMotionPanelWaveDemo } from "../demos/tabs/TabsMotionPanelWave.demo";
-import tabsMotionPanelWaveSource from "../demos/tabs/TabsMotionPanelWave.demo.tsx?raw";
-import { TabsMotionSelectionTintDemo } from "../demos/tabs/TabsMotionSelectionTint.demo";
-import tabsMotionSelectionTintSource from "../demos/tabs/TabsMotionSelectionTint.demo.tsx?raw";
+import { TabsSlotMotionGalleryDemo } from "../demos/tabs/slotMotion/gallery";
+import { TabsMotionControllerGalleryDemo } from "../demos/tabs/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -72,9 +68,14 @@ export function TabsShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Skip default tab hover, panel enter timeline, check/uncheck tint. Indicator FLIP is kit-internal.">
-        <ShowcaseDemoFromFile align="stretch" Demo={TabsMotionInstantEnterDemo} source={tabsMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TabsMotionPanelWaveDemo} source={tabsMotionPanelWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TabsMotionSelectionTintDemo} source={tabsMotionSelectionTintSource} />
+        <TabsSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play vs playSlot on Tabs chrome, nested Tab / Panel scopes, tabs events."
+      >
+        <TabsMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

@@ -7,7 +7,8 @@ import { Text } from "@/components/core/Text";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Kbd, type KbdVariant } from ".";
-import { KbdMotionDemo } from "../../../../playground/showcase/demos/kbd/KbdMotion.demo";
+import { KbdSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/kbd/slotMotion/gallery";
+import { KbdMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/kbd/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -192,5 +193,18 @@ export const HoverLiftOff: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <KbdMotionDemo />,
+  render: () => <KbdSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot vs playAll, standalone Group host, cancel loop, kbd events.",
+      },
+    },
+  },
+  render: () => <KbdMotionControllerGalleryDemo />,
 };

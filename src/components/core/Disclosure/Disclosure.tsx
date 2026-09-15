@@ -53,6 +53,10 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       chevronPosition,
       dragHandle,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -83,7 +87,10 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
     return (
       <DisclosureProvider value={state.contextValue}>
         <DisclosureClassNamesProvider classNames={classNames}>
-          <DisclosureMotionProvider motion={mergedMotion} defaults={defaults}>
+          <DisclosureMotionProvider motion={mergedMotion} defaults={defaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <div
             ref={ref}
             className={disclosureRootClass({

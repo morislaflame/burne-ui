@@ -33,6 +33,10 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
     className = "",
     classNames,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -44,7 +48,10 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
   const motionDefaults = useMemo(() => resolveLoadingMotionDefaults(), []);
 
   return (
-    <LoadingMotionProvider motion={motion} defaults={motionDefaults}>
+    <LoadingMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <LoadingSurface
         type={type}
         size={size}
@@ -100,6 +107,7 @@ function LoadingSurface({
     | "className"
     | "classNames"
     | "motion"
+    | "motionController"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"

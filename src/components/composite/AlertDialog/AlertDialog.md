@@ -53,7 +53,8 @@ Simple API нет — всегда compound.
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `classNames` | — | Слоты кастомизации (см. ниже) |
-| `motion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`). Root без DOM — как `classNames` |
+| `motion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`). Root без DOM — как `classNames`. `events` — app-команды |
+| `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `AlertDialog.Panel` |
 | `children` | — | `Trigger` + `Panel` |
 
 ### `AlertDialogClassNames`
@@ -172,6 +173,32 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 ```
 
 **Где в коде:** типы — `alertDialogTypes.ts`; scope — `alertDialogContext.tsx`; defaults + host play — `alertDialogAnimations.ts` (`ALERT_DIALOG_MOTION_DEFAULTS`, `useAlertDialogModalMotion`); слоты и Panel-provider — `alertDialogParts.tsx`; карта `motion` на корне — `AlertDialog.tsx`.
+
+Проп `motionController` на **`AlertDialog.Panel`**. `play()` skip — нет `root`; `playSlot("panel")`. playground / Storybook **MotionController**.
+
+```tsx
+import { AlertDialog, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "alert:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("panel", "alert:nudge")}>
+        Nudge
+      </Button>
+      <AlertDialog open>
+        <AlertDialog.Panel motionController={controller} motion={{ events }}>
+          <AlertDialog.Title>Title</AlertDialog.Title>
+        </AlertDialog.Panel>
+      </AlertDialog>
+    </>
+  );
+}
+```
 
 Open squeeze — слот `trigger` на Root (дефолт `pressSqueeze`; другой рецепт через `motion.trigger.pressIn`).
 

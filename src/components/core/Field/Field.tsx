@@ -39,6 +39,10 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
       disabled,
       size = "base",
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -49,7 +53,14 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
     return (
       <FieldSetSizeProvider size={size}>
         <FieldSetClassNamesProvider classNames={classNames}>
-          <FieldSetMotionProvider motion={motion} defaults={motionDefaults}>
+          <FieldSetMotionProvider
+            motion={motion}
+            defaults={motionDefaults}
+            controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+          >
             <FieldSetRootInner
               ref={ref}
               className={className}

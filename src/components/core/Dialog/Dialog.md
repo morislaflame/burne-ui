@@ -19,7 +19,9 @@ import { Dialog, type DialogProps, type DialogVariant, type DialogClassNames, ty
 | `onOpenChange` | `(open: boolean) => void` | нет | Смена состояния |
 | `children` | `ReactNode` | — | `Dialog.Panel`, `Dialog.Trigger`, … |
 | `classNames` | `DialogClassNames` | — | Слоты всех подчастей |
-| `motion` | `DialogMotion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`; у `title` / `description` ещё `hoverIn` / `hoverOut`). Root без DOM — как `classNames` |
+| `motion` | `DialogMotion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`; у `title` / `description` ещё `hoverIn` / `hoverOut`). Root без DOM — как `classNames`. `events` / `states` — не слоты |
+| `motionController` | `MotionController` | — | Handle Root-scope (`trigger`). Портальные слоты — отдельный handle на `Dialog.Panel` |
+| `motionState` / `motionPayload` / `playInitialState` | — | — | Trigger scope. Панель — те же пропы на `Dialog.Panel`. Не DOM. Снимок — `createMotionFactory` / `MotionPayload` |
 
 Root **не рендерит DOM** — только контекст и `classNames` provider.
 
@@ -46,6 +48,8 @@ Root **не рендерит DOM** — только контекст и `classNa
 | `dismissOnBackdrop` | `boolean` | `true` | Закрытие по клику на overlay |
 | `className` | `string` | — | На focusable panel wrapper |
 | `themeAnchor` | `HTMLElement` | auto | Якорь для светлой темы портала |
+| `motionController` | `MotionController` | — | Handle портального хоста (`panel` / `overlay` / chrome). `play()` skip — нет `root`. `playSlot("panel")` |
+| `motionState` / `motionPayload` / `playInitialState` | — | — | Playback `motion.states` на портальном scope. Карта `states` с Root мержится в Panel. Снимок — `createMotionFactory` / `MotionPayload` |
 
 ### `DialogClassNames`
 
@@ -167,6 +171,32 @@ Nested `enter` — следующий кадр после host, без layout fl
 ```
 
 **Где в коде:** типы — `dialogTypes.ts`; scope — `dialogContext.tsx`; defaults + host play — `dialogAnimations.ts` (`DIALOG_MOTION_DEFAULTS`, `useDialogModalMotion`); слоты и Panel-provider — `dialogParts.tsx`; карта `motion` на корне — `Dialog.tsx`.
+
+Проп `motionController` на **`Dialog.Panel`** (портальный хост). Root handle — только `trigger`. `play()` skip — нет `root`; `playSlot("panel")`. `events` / `states` на Panel (или на Root — мерж в Panel). `motionState` тоже на Panel, если режимы играют слоты панели. См. [Motion](/docs/motion#motioncontroller).
+
+```tsx
+import { Button, Dialog, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "dialog:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("panel", "dialog:nudge")}>
+        Nudge
+      </Button>
+      <Dialog open>
+        <Dialog.Panel motionController={controller} motion={{ events }}>
+          <Dialog.Title>Title</Dialog.Title>
+        </Dialog.Panel>
+      </Dialog>
+    </>
+  );
+}
+```
 
 ```tsx
 import { Dialog, tweenCssColor } from "burne-ui";
@@ -454,4 +484,4 @@ Dialog/
 
 ## Storybook
 
-`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`, slot motion gallery.
+`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`, slot motion gallery, `motionController`.

@@ -7,7 +7,8 @@ import { IoInformationCircleOutline, IoLockClosedOutline, IoNotificationsOutline
 import { Text } from "@/components/core/Text";
 
 import { Disclosure } from ".";
-import { DisclosureMotionDemo } from "../../../../playground/showcase/demos/disclosure/DisclosureMotion.demo";
+import { DisclosureMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/disclosure/motionController/gallery";
+import { DisclosureSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/disclosure/slotMotion/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -432,5 +433,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (instant, title lift, quiet hover, group)",
-  render: () => <DisclosureMotionDemo />,
+  render: () => <DisclosureSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot(titleLift) (no root), play vs playSlot, stagger, exclude, inside tree, cancel, disclosure events.",
+      },
+    },
+  },
+  render: () => <DisclosureMotionControllerGalleryDemo />,
 };

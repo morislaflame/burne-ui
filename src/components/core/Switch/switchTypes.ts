@@ -11,7 +11,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { SwitchSize } from "./switchGeometry";
 
@@ -112,7 +112,12 @@ export type SwitchControlProps = Omit<
       >
     >;
     children?: ReactNode;
-  };
+    /**
+     * Forwarded to an auto-created `Switch.Track` (simple / Control without a Track child).
+     * Explicit `<Switch.Track motionController>` wins on that nested host.
+     */
+    motionController?: MotionController;
+  } & MotionStateHostProps;
 
 export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   size: SwitchSize;
@@ -127,8 +132,14 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   classNames?: Prettify<
     Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "icon">
   >;
-  motion?: Prettify<SwitchMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<SwitchMotion>>;
+  /**
+   * Handle for this Track nested host (`track` / `fill` / `thumb` / `iconOn` / `iconOff`).
+   * Simple API: pass `motionController` on `Switch` — it is forwarded here.
+   * There is no `root` on this scope — `play()` skips; use `playSlot("track")`.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type SwitchFillProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<SwitchCheckMotion>;
@@ -160,9 +171,22 @@ export type SwitchProps = Omit<
   disabled?: boolean;
   className?: string;
   classNames?: Prettify<SwitchClassNames>;
-  motion?: Prettify<SwitchMotion>;
+  /**
+   * Per-slot motion (`track`, `fill`, `thumb`, `iconOn`, `iconOff`, `label`, `hint`, `error`).
+   * Track is the nested fill host. Chrome registers on the Root scope.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `Switch.Track`.
+   * Compound: this handle attaches to the Root chrome scope; pass another handle on `Track`.
+   */
+  motion?: Prettify<MotionMapWithEvents<SwitchMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the Track nested Provider. Compound: Root chrome scope.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
-};
+} & MotionStateHostProps;
 
 export type SwitchSimpleProps = SwitchProps & SwitchControlProps;
 
@@ -187,8 +211,11 @@ export type SwitchClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type UseSwitchRootStateProps = Omit<SwitchProps, "className" | "classNames" | "onPointerDown" | "motion"> &
-  Partial<SwitchControlProps>;
+export type UseSwitchRootStateProps = Omit<
+  SwitchProps,
+  "className" | "classNames" | "onPointerDown" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
+> &
+  Partial<Omit<SwitchControlProps, "motionController">>;
 
 export type UseSwitchAnimationsProps = {
   isDisabled?: boolean;

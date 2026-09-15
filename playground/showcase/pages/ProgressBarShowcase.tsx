@@ -12,16 +12,8 @@ import { ProgressVerticalDemo } from "../demos/progress-bar/ProgressVertical.dem
 import progressVerticalSource from "../demos/progress-bar/ProgressVertical.demo.tsx?raw";
 import { ProgressVerticalMetersDemo } from "../demos/progress-bar/ProgressVerticalMeters.demo";
 import progressVerticalMetersSource from "../demos/progress-bar/ProgressVerticalMeters.demo.tsx?raw";
-import { ProgressBarMotionInstantEnterDemo } from "../demos/progressBar/ProgressBarMotionInstantEnter.demo";
-import progressBarMotionInstantEnterSource from "../demos/progressBar/ProgressBarMotionInstantEnter.demo.tsx?raw";
-import { ProgressBarMotionFillEnterDemo } from "../demos/progressBar/ProgressBarMotionFillEnter.demo";
-import progressBarMotionFillEnterSource from "../demos/progressBar/ProgressBarMotionFillEnter.demo.tsx?raw";
-import { ProgressBarMotionTrackWaveDemo } from "../demos/progressBar/ProgressBarMotionTrackWave.demo";
-import progressBarMotionTrackWaveSource from "../demos/progressBar/ProgressBarMotionTrackWave.demo.tsx?raw";
-import { ProgressBarMotionChangeTintDemo } from "../demos/progressBar/ProgressBarMotionChangeTint.demo";
-import progressBarMotionChangeTintSource from "../demos/progressBar/ProgressBarMotionChangeTint.demo.tsx?raw";
-import { ProgressBarMotionHintEnterDemo } from "../demos/progressBar/ProgressBarMotionHintEnter.demo";
-import progressBarMotionHintEnterSource from "../demos/progressBar/ProgressBarMotionHintEnter.demo.tsx?raw";
+import { ProgressBarMotionControllerGalleryDemo } from "../demos/progressBar/motionController/gallery";
+import { ProgressBarSlotMotionGalleryDemo } from "../demos/progressBar/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -63,12 +55,15 @@ export function ProgressBarShowcase() {
         <ShowcaseDemoFromFile Demo={ProgressVerticalMetersDemo} source={progressVerticalMetersSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, fill enter (recipe or custom factory), track timeline, change-phase tint, chrome enter on label / hint / error.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionInstantEnterDemo} source={progressBarMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionFillEnterDemo} source={progressBarMotionFillEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionTrackWaveDemo} source={progressBarMotionTrackWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionChangeTintDemo} source={progressBarMotionChangeTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionHintEnterDemo} source={progressBarMotionHintEnterSource} />
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, fill enter (recipe or custom factory), track timeline, change-phase tint, chrome enter on label / hint / error, fill sheen (backgroundPosition from track.enter).">
+        <ProgressBarSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="Two scopes: simple API handle on Track (no play — there is no root slot). Compound chrome handle on Root; fill needs a second handle on Track."
+      >
+        <ProgressBarMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

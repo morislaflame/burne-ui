@@ -220,13 +220,19 @@ CalendarNavNext.displayName = "Calendar.NavNext";
 const CalendarInteractiveCellInner = forwardRef<
   HTMLButtonElement,
   CalendarInteractiveCellProps
->(function CalendarInteractiveCell(props, ref) {
+>(function CalendarInteractiveCell({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, ref) {
   const parentScope = useOptionalCalendarMotionScope();
   const motionDefaults = useMemo(() => resolveCalendarCellMotionDefaults(), []);
-  const mergedMotion = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
+  const mergedMotion = mergeMotionSlotMaps(
+    parentScope?.getRootMotion(),
+    motion ? { cell: motion } : undefined,
+  );
 
   return (
-    <CalendarMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+    <CalendarMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <CalendarInteractiveCellSurface {...props} forwardedRef={ref} />
     </CalendarMotionProvider>
   );
@@ -369,7 +375,9 @@ function calendarCellPropsEqual(
     prev.tabIndex === next.tabIndex &&
     prev.rovingKey === next.rovingKey &&
     prev.className === next.className &&
-    prev.children === next.children
+    prev.children === next.children &&
+    prev.motion === next.motion &&
+    prev.motionController === next.motionController
   );
 }
 

@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useMemo, useRef } from "react";
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
-import { useExpandableMotionScope, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
+import { useExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
 import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
@@ -61,7 +61,7 @@ function AccordionChevronSvg({ className = "" }: { className?: string }) {
 }
 
 export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(function AccordionItem(
-  { value, disabled, classNames, className, children, motion, ...rest },
+  { value, disabled, classNames, className, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const { value: openValue, setValue, size, motion: rootMotion } = useAccordionContext();
@@ -90,6 +90,10 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
         className={accordionItemClass(className)}
         classNames={resolveAccordionItemExpandableClassNames(mergedClassNames)}
         motion={mergedMotion}
+        motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
         {...rest}
       >
         {children}
@@ -205,19 +209,13 @@ export const AccordionPanel = forwardRef<HTMLDivElement, AccordionPanelProps>(
 AccordionPanel.displayName = "Accordion.Panel";
 
 export const AccordionBody = forwardRef<HTMLDivElement, AccordionBodyProps>(
-  function AccordionBody({ className, motion, ...rest }, ref) {
+  function AccordionBody({ className, ...rest }, ref) {
     const slotClassNames = useAccordionClassNames();
-    const { setRef } = useMotionPart<HTMLDivElement>({
-      scope: useOptionalExpandableMotionScope(),
-      slot: "body",
-      motion,
-      forwardedRef: ref,
-    });
 
     return (
       <Text
         as="div"
-        ref={setRef}
+        ref={ref}
         variant="base"
         className={accordionBodyClass({
           className,

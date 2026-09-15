@@ -7,7 +7,8 @@ import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
 
 import { ListBox } from "@/components/core/ListBox";
-import { ListBoxMotionDemo } from "../../../../playground/showcase/demos/listBox/ListBoxMotion.demo";
+import { ListBoxSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/listBox/slotMotion/gallery";
+import { ListBoxMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/listBox/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -220,5 +221,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ListBoxMotionDemo />,
+  render: () => <ListBoxSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on ListBox chrome (no root), nested Item scope, listbox events.",
+      },
+    },
+  },
+  render: () => <ListBoxMotionControllerGalleryDemo />,
 };

@@ -115,7 +115,6 @@ const MOTION_STATE_KEYS = [
   "rippleExpandableDuration",
   "rippleExpandableOpacityFrom",
   "rippleEaseCss",
-  "feedbackExpandDuration",
   "expandDuration",
   "expandOpenEase",
   "surfaceTransitionDuration",
@@ -135,9 +134,7 @@ const MOTION_STATE_KEYS = [
   "enableRipple",
   "enableExpandable",
   "enableToastStack",
-  "enableAsyncButtonCrossfade",
   "enableContentFade",
-  "enableFeedbackExpand",
   "enableProgressFill",
   "enableLoadingDots",
   "enableModalMotion",
@@ -215,7 +212,6 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     rippleExpandableDuration: withPalettes.rippleExpandableDuration,
     rippleExpandableOpacityFrom: withPalettes.rippleExpandableOpacityFrom,
     rippleEaseCss: withPalettes.rippleEaseCss,
-    feedbackExpandDuration: withPalettes.feedbackExpandDuration,
     expandDuration: withPalettes.expandDuration,
     expandOpenEase: withPalettes.expandOpenEase,
     surfaceTransitionDuration: withPalettes.surfaceTransitionDuration,
@@ -235,9 +231,7 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     enableRipple: withPalettes.enableRipple,
     enableExpandable: withPalettes.enableExpandable,
     enableToastStack: withPalettes.enableToastStack,
-    enableAsyncButtonCrossfade: withPalettes.enableAsyncButtonCrossfade,
     enableContentFade: withPalettes.enableContentFade,
-    enableFeedbackExpand: withPalettes.enableFeedbackExpand,
     enableProgressFill: withPalettes.enableProgressFill,
     enableLoadingDots: withPalettes.enableLoadingDots,
     enableModalMotion: withPalettes.enableModalMotion,
@@ -496,7 +490,6 @@ export function applyBurneThemeConfig(
       state.rippleExpandableOpacityFrom = m.rippleExpandableOpacityFrom;
     }
     if (m.rippleEaseCss !== undefined) state.rippleEaseCss = m.rippleEaseCss;
-    if (m.feedbackExpandDuration !== undefined) state.feedbackExpandDuration = m.feedbackExpandDuration;
     if (m.expandDuration !== undefined) state.expandDuration = m.expandDuration;
     if (m.expandOpenEase !== undefined) state.expandOpenEase = m.expandOpenEase;
     if (m.surfaceTransitionDuration !== undefined) {
@@ -522,11 +515,7 @@ export function applyBurneThemeConfig(
     if (m.enableRipple !== undefined) state.enableRipple = m.enableRipple;
     if (m.enableExpandable !== undefined) state.enableExpandable = m.enableExpandable;
     if (m.enableToastStack !== undefined) state.enableToastStack = m.enableToastStack;
-    if (m.enableAsyncButtonCrossfade !== undefined) {
-      state.enableAsyncButtonCrossfade = m.enableAsyncButtonCrossfade;
-    }
     if (m.enableContentFade !== undefined) state.enableContentFade = m.enableContentFade;
-    if (m.enableFeedbackExpand !== undefined) state.enableFeedbackExpand = m.enableFeedbackExpand;
     if (m.enableProgressFill !== undefined) state.enableProgressFill = m.enableProgressFill;
     if (m.enableLoadingDots !== undefined) state.enableLoadingDots = m.enableLoadingDots;
     if (m.enableModalMotion !== undefined) state.enableModalMotion = m.enableModalMotion;

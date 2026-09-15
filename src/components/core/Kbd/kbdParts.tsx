@@ -17,6 +17,10 @@ export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(
       separator = "+",
       children,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerOver,
       onPointerOut,
       ...rest
@@ -39,12 +43,19 @@ export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(
       </KbdGroupSurface>
     );
 
-    if (parentScope || motion == null) {
+    if (parentScope || (motion == null && motionController == null && motionState == null)) {
       return surface;
     }
 
     return (
-      <KbdMotionProvider motion={{ group: motion }} defaults={{}}>
+      <KbdMotionProvider
+        motion={motion ? { group: motion } : undefined}
+        defaults={{}}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         {surface}
       </KbdMotionProvider>
     );
@@ -77,6 +88,7 @@ function KbdGroupSurface({
     | "separator"
     | "children"
     | "motion"
+    | "motionController"
     | "onPointerOver"
     | "onPointerOut"
   >;

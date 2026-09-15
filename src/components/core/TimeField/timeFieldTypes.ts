@@ -11,7 +11,7 @@ import type { Prettify } from "@/utils/prettify";
 import type { FieldLabelProps } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type TimeFieldSize = ComponentSize;
 
@@ -100,7 +100,12 @@ export type TimeFieldControlProps = Omit<
   onPointerDown?: PointerEventHandler<HTMLFieldSetElement>;
   /** Shell part motion. Root `motion.shell` still applies; this wins on the Control host. */
   motion?: Prettify<TimeFieldPartMotion>;
-};
+  /**
+   * Deferred handle for the Control host (`shell`, `prefix`, `suffix`, `segments`).
+   * One handle → this nested scope. Simple API: pass `motionController` on `TimeField` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "suffix"> & {
   children?: ReactNode;
@@ -125,11 +130,20 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
   classNames?: Prettify<TimeFieldClassNames>;
   /**
    * Per-slot motion (`shell`, `prefix`, `suffix`, `segments`, `label`, `hint`, `error`).
-   * Chrome registers on the Root scope (siblings of Control).
+   * Chrome registers on the Root scope (siblings of Control). Control is the nested shell host.
    * Segment spinbuttons are not individual slots.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `TimeField.Control` (shell host).
+   * Compound: this handle attaches to the Root chrome scope; pass another handle on `Control`.
    */
-  motion?: Prettify<TimeFieldMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TimeFieldMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the Control nested Provider. Compound: Root chrome scope.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseTimeFieldShellAnimationsProps = {
   shellRef: RefObject<HTMLFieldSetElement | null>;
@@ -140,7 +154,7 @@ export type UseTimeFieldShellAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLFieldSetElement>) => void;
 };
 
-export type TimeFieldLabelProps = Omit<FieldLabelProps, "motion"> & {
+export type TimeFieldLabelProps = Omit<FieldLabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<TimeFieldPartMotion>;
 };
 
@@ -173,4 +187,4 @@ export type TimeFieldSimpleBodyProps = {
   };
 };
 
-export type UseTimeFieldRootStateProps = TimeFieldProps;
+export type UseTimeFieldRootStateProps = Omit<TimeFieldProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;

@@ -60,7 +60,7 @@ toast.dismiss(id);
 | `promise(p, opts)` | loading → success/error |
 | `dismiss(id)` | Запуск dismiss-анимации |
 
-`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `timeout` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `loading`, `classNames`, `motion`.
+`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `timeout` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `loading`, `classNames`, `motion`, `motionController`.
 
 ### Toast.Root (карточка)
 
@@ -73,6 +73,8 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 | `loading` | `false` | Spinner вместо status-иконки |
 | `onClose` | — | Показывает close-кнопку (simple API). **Исключение state-API:** Toast не controlled по `open` — dismiss через Provider/`useToast`; `onClose` только гейтит кнопку и колбэк dismiss. Не путать с `onOpenChange` оверлеев. |
 | `classNames` | — | Слоты карточки |
+| `motion` | — | Карта слотов. Standalone монтирует scope; стек — `add().motion` |
+| `motionController` | — | Standalone: handle карточки (`play()` → `root`). Стек: `toast.show({ motionController })` |
 
 ## variant и status
 
@@ -109,7 +111,29 @@ toast.show({
 });
 ```
 
-**Где в коде:** типы — `toastTypes.ts`; scope — `toastContext.tsx`; defaults + host play — `toastAnimations.tsx`; слоты — `toastParts.tsx`.
+**Где в коде:** типы — `toastTypes.ts`; scope — `toastContext.tsx`; defaults + host play — `toastAnimations.tsx`; слоты — `toastParts.tsx`. Standalone `<Toast motionController>` монтирует Provider, если нет родительского scope стека.
+
+Проп `motionController` на standalone **`Toast`** (`play()` → `root`) или в `toast.show({ motionController })`. `events` — сосед слотов. playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Toast, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "toast:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("toast:nudge")}>
+        Nudge
+      </Button>
+      <Toast title="Saved" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 **DOM-структура (viewport):**
 

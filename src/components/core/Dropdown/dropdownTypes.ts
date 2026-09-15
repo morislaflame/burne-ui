@@ -3,7 +3,11 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { PopoverSide, PopoverVariant } from "@/components/core/Popover";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
-import type { MotionScopeValue, MotionValue } from "@/components/core/utils/slotMotion";
+import type {
+  MotionController,
+  MotionMapWithEvents,
+  MotionScopeValue,
+  MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
 import type {
   SelectionIndicatorClassNames,
   SelectionIndicatorSize,
@@ -108,9 +112,15 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /**
    * Per-slot motion. Main menu: Popover slots (`content`, `title`, `description`, `body`, `item`, `itemLabel`, `itemHint`, `itemIcon`, `label`, `subTrigger`, `separator`).
    * Submenu portal: `subContent`. Trigger press: `trigger` on Root (default `pressSqueeze`).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<DropdownMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<DropdownMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Menu slots need a separate handle on
+   * `Dropdown.Popover`; submenu — on `Dropdown.SubContent`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DropdownContextValue = {
   open: boolean;
@@ -158,8 +168,17 @@ export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   offset?: number;
   /** Overrides Root `portalContainer` for the main menu panel. */
   portalContainer?: HTMLElement | null;
-  motion?: Prettify<DropdownPopoverMotion>;
-};
+  /**
+   * Merged with Root menu slots and forwarded to the inner Popover.
+   * `events` — namespaced app commands for the portal host.
+   */
+  motion?: Prettify<MotionMapWithEvents<DropdownPopoverMotion>>;
+  /**
+   * Handle for the menu portal host (`content` / `item` / chrome). `play()` skips — no `root`.
+   * Use `playSlot("content")` / `playSlot("item")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
   selectionIndicator?: boolean;
@@ -184,7 +203,12 @@ export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
   /** Overrides Root `portalContainer` for the submenu panel. */
   portalContainer?: HTMLElement | null;
   motion?: Prettify<DropdownLifecycleMotion>;
-};
+  /**
+   * Handle for the submenu portal host (`subContent`). Nested Provider — not the Root
+   * trigger scope. `play()` skips. Use `playSlot("subContent")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<DropdownPartMotion>;

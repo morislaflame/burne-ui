@@ -12,7 +12,6 @@ export const Button = Object.assign(ButtonRoot, {
 
 export type {
   ButtonProps,
-  ButtonAsyncState,
   ButtonSize,
   ButtonVariant,
   ButtonStatus,

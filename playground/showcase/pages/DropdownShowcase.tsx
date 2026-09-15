@@ -10,20 +10,6 @@ import { DropdownCustomSubTriggerIconDemo } from "../demos/dropdown/DropdownCust
 import dropdownCustomSubTriggerIconSource from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo.tsx?raw";
 import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
 import dropdownGlossSource from "../demos/dropdown/DropdownGloss.demo.tsx?raw";
-import { DropdownMotionBodyStaggerDemo } from "../demos/dropdown/DropdownMotionBodyStagger.demo";
-import dropdownMotionBodyStaggerSource from "../demos/dropdown/DropdownMotionBodyStagger.demo.tsx?raw";
-import { DropdownMotionLabelDemo } from "../demos/dropdown/DropdownMotionLabel.demo";
-import dropdownMotionLabelSource from "../demos/dropdown/DropdownMotionLabel.demo.tsx?raw";
-import { DropdownMotionSeparatorDemo } from "../demos/dropdown/DropdownMotionSeparator.demo";
-import dropdownMotionSeparatorSource from "../demos/dropdown/DropdownMotionSeparator.demo.tsx?raw";
-import { DropdownMotionTriggerPressDemo } from "../demos/dropdown/DropdownMotionTriggerPress.demo";
-import dropdownMotionTriggerPressSource from "../demos/dropdown/DropdownMotionTriggerPress.demo.tsx?raw";
-import { DropdownMotionInstantLeaveDemo } from "../demos/dropdown/DropdownMotionInstantLeave.demo";
-import dropdownMotionInstantLeaveSource from "../demos/dropdown/DropdownMotionInstantLeave.demo.tsx?raw";
-import { DropdownMotionOriginScaleDemo } from "../demos/dropdown/DropdownMotionOriginScale.demo";
-import dropdownMotionOriginScaleSource from "../demos/dropdown/DropdownMotionOriginScale.demo.tsx?raw";
-import { DropdownMotionSubSlideXDemo } from "../demos/dropdown/DropdownMotionSubSlideX.demo";
-import dropdownMotionSubSlideXSource from "../demos/dropdown/DropdownMotionSubSlideX.demo.tsx?raw";
 import { DropdownMultipleDemo } from "../demos/dropdown/DropdownMultiple.demo";
 import dropdownMultipleSource from "../demos/dropdown/DropdownMultiple.demo.tsx?raw";
 import { DropdownPopoverSideDemo } from "../demos/dropdown/DropdownPopoverSide.demo";
@@ -34,6 +20,8 @@ import { DropdownStatusPickerDemo } from "../demos/dropdown/DropdownStatusPicker
 import dropdownStatusPickerSource from "../demos/dropdown/DropdownStatusPicker.demo.tsx?raw";
 import { DropdownUserMenuDemo } from "../demos/dropdown/DropdownUserMenu.demo";
 import dropdownUserMenuSource from "../demos/dropdown/DropdownUserMenu.demo.tsx?raw";
+import { DropdownSlotMotionGalleryDemo } from "../demos/dropdown/slotMotion/gallery";
+import { DropdownMotionControllerGalleryDemo } from "../demos/dropdown/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -59,17 +47,15 @@ export function DropdownShowcase() {
         <ShowcaseDemoFromFile Demo={DropdownGlossDemo} source={dropdownGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: custom trigger press, instant leave, body stagger, label + subTrigger, separator, submenu slide, origin scale.">
+        <DropdownSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — custom trigger press, instant leave, body stagger, label + subTrigger, separator, submenu slide, origin scale."
+        title="MotionController"
+        description="Handle on Dropdown.Popover (portal host). play() skips. playSlot(content / item). Root handle is trigger-only."
       >
-        <ShowcaseDemoFromFile Demo={DropdownMotionTriggerPressDemo} source={dropdownMotionTriggerPressSource} />
-        <ShowcaseDemoFromFile Demo={DropdownMotionInstantLeaveDemo} source={dropdownMotionInstantLeaveSource} />
-        <ShowcaseDemoFromFile Demo={DropdownMotionBodyStaggerDemo} source={dropdownMotionBodyStaggerSource} />
-        <ShowcaseDemoFromFile Demo={DropdownMotionLabelDemo} source={dropdownMotionLabelSource} />
-        <ShowcaseDemoFromFile Demo={DropdownMotionSeparatorDemo} source={dropdownMotionSeparatorSource} />
-        <ShowcaseDemoFromFile Demo={DropdownMotionSubSlideXDemo} source={dropdownMotionSubSlideXSource} />
-        <ShowcaseDemoFromFile Demo={DropdownMotionOriginScaleDemo} source={dropdownMotionOriginScaleSource} />
+        <DropdownMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

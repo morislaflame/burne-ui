@@ -37,6 +37,10 @@ export function AlertDialogRoot({
   closeOnEscape = true,
   classNames,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   portalContainer,
 }: AlertDialogProps) {
   const state = useAlertDialogRootState({
@@ -54,7 +58,10 @@ export function AlertDialogRoot({
     <AlertDialogClassNamesProvider classNames={classNames}>
       <AlertDialogProvider value={state.contextValue}>
         {/* Root has no DOM. Trigger defaults live here (Trigger is outside Panel). */}
-        <AlertDialogMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
+        <AlertDialogMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         {children}
         </AlertDialogMotionProvider>
       </AlertDialogProvider>

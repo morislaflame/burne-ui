@@ -37,6 +37,10 @@ export function TextAreaRoot({
   status = "default",
   size = "base",
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: TextAreaSimpleProps) {
   const state = useTextAreaRootState({
@@ -61,14 +65,20 @@ export function TextAreaRoot({
       labelId={state.fieldCtx.labelId}
       size={state.size}
       status={state.status}
-      controlProps={rest}
+      controlProps={{ ...rest, motionController, motionState, motionPayload, playInitialState }}
     />
   );
 
   return (
     <TextAreaFieldProvider value={state.fieldCtx}>
       <TextAreaClassNamesProvider classNames={classNames}>
-        <TextAreaMotionProvider motion={motion}>
+        <TextAreaMotionProvider
+          motion={motion}
+          controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field className={cn(classNames?.root, className)} size={state.size}>
               {body}

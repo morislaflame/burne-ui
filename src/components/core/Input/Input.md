@@ -54,7 +54,9 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 | `prefix` / `suffix` | — | Affix-слоты (не для `file`) |
 | `groupSegment` | — | Сегмент `ButtonGroup` |
 | `classNames` | — | См. ниже |
-| `motion` | — | Карта слотов на Root / simple API; на `Input.Control` — part motion `shell` |
+| `motion` | — | Root / simple: карта слотов + `events` / `states`. На `Input.Control` — part motion слота `shell` |
+| `motionController` | — | Simple: форвардится на Control (хост `shell`). Compound: Root chrome; для shell — второй handle на `Input.Control`. Не на DOM |
+| `motionState` / `motionPayload` / `playInitialState` | — | Не DOM-атрибуты. Simple: Root chrome + форвард на Control. Compound: Root — chrome; Control — свой scope. Пара к `motion.states`. Снимок — `createMotionFactory` / `MotionPayload` |
 
 ### `InputClassNames`
 
@@ -110,6 +112,30 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 ```
 
 Compound: `motion` на `Input.Control` — part motion слота `shell`. На `Input.Label` / `Hint` / `Error` — chrome Root scope (не scope Control).
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("prefix", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `Input.Control`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`input:nudge`, `input:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в Control). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Input, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "input:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "input:nudge")}>
+        Nudge
+      </Button>
+      <Input label="Email" placeholder="you@example.com" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 **ButtonGroup:** при `groupSegment` shell hover/press выключены.
 
@@ -266,4 +292,4 @@ Input/
 
 ## Storybook
 
-`Core Components/Input` — simple/compound, variant, status, password, file, gloss, ButtonGroup segment, `classNames`, slot motion gallery.
+`Core Components/Input` — simple/compound, variant, status, password, file, gloss, ButtonGroup segment, `classNames`, Slot motion, MotionController.

@@ -220,4 +220,15 @@ export function clearWillChangeOnComplete(
   };
 }
 
+/**
+ * App-side GSAP plugins (Flip, ScrollTrigger, Draggable, TextPlugin, SplitText, …).
+ * Not bundled in burne-ui — pass the plugin modules you imported from `"gsap/…"`.
+ * `CustomEase` stays kit-internal (ripple).
+ */
+export function registerMotionPlugins(...plugins: unknown[]): void {
+  const list = plugins.filter((plugin): plugin is object => plugin != null && typeof plugin === "object");
+  if (list.length === 0) return;
+  gsap.registerPlugin(...(list as gsap.Plugin[]));
+}
+
 export { gsap };

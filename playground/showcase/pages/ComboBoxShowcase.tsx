@@ -20,14 +20,8 @@ import { ComboBoxInlineToolbarDemo } from "../demos/combobox/ComboBoxInlineToolb
 import comboBoxInlineToolbarSource from "../demos/combobox/ComboBoxInlineToolbar.demo.tsx?raw";
 import { ComboBoxWorkspacePickerDemo } from "../demos/combobox/ComboBoxWorkspacePicker.demo";
 import comboBoxWorkspacePickerSource from "../demos/combobox/ComboBoxWorkspacePicker.demo.tsx?raw";
-import { ComboBoxMotionInstantHoverDemo } from "../demos/combobox/ComboBoxMotionInstantHover.demo";
-import comboBoxMotionInstantHoverSource from "../demos/combobox/ComboBoxMotionInstantHover.demo.tsx?raw";
-import { ComboBoxMotionInputWaveDemo } from "../demos/combobox/ComboBoxMotionInputWave.demo";
-import comboBoxMotionInputWaveSource from "../demos/combobox/ComboBoxMotionInputWave.demo.tsx?raw";
-import { ComboBoxMotionInputTintDemo } from "../demos/combobox/ComboBoxMotionInputTint.demo";
-import comboBoxMotionInputTintSource from "../demos/combobox/ComboBoxMotionInputTint.demo.tsx?raw";
-import { ComboBoxMotionHintEnterDemo } from "../demos/combobox/ComboBoxMotionHintEnter.demo";
-import comboBoxMotionHintEnterSource from "../demos/combobox/ComboBoxMotionHintEnter.demo.tsx?raw";
+import { ComboBoxSlotMotionGalleryDemo } from "../demos/combobox/slotMotion/gallery";
+import { ComboBoxMotionControllerGalleryDemo } from "../demos/combobox/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -103,10 +97,14 @@ export function ComboBoxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound part motion.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionInstantHoverDemo} source={comboBoxMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionInputWaveDemo} source={comboBoxMotionInputWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionInputTintDemo} source={comboBoxMotionInputTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionHintEnterDemo} source={comboBoxMotionHintEnterSource} />
+        <ComboBoxSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on inputGroup (no play: no root slot), chrome label on Root, cancel loop, combo events."
+      >
+        <ComboBoxMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

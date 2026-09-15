@@ -16,9 +16,13 @@ import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
+  splitMotionRootMap,
+  mergeMotionRootSiblings,
+  remapMotionStateSlots,
   useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
+  type MotionMapWithEvents,
 } from "@/components/core/utils/slotMotion";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
@@ -38,9 +42,9 @@ export function resolveCheckboxIndicatorMotion({
   rootMotion,
   indicatorMotion,
 }: {
-  rootMotion?: CheckboxMotion;
-  indicatorMotion?: SelectionIndicatorMotion;
-}): SelectionIndicatorMotion | undefined {
+  rootMotion?: MotionMapWithEvents<CheckboxMotion>;
+  indicatorMotion?: MotionMapWithEvents<SelectionIndicatorMotion>;
+}): MotionMapWithEvents<SelectionIndicatorMotion> | undefined {
   const fromRoot: SelectionIndicatorMotion | undefined = rootMotion
     ? {
         [CHECKBOX_MOTION_SLOT_MAP.indicator]: rootMotion.indicator,
@@ -48,11 +52,21 @@ export function resolveCheckboxIndicatorMotion({
         [CHECKBOX_MOTION_SLOT_MAP.indicatorMark]: rootMotion.indicatorMark,
       }
     : undefined;
-  if (!fromRoot && !indicatorMotion) return undefined;
-  return {
+  const events = splitMotionRootMap(indicatorMotion).events ?? splitMotionRootMap(rootMotion).events;
+  const states = mergeMotionRootSiblings(
+    { states: remapMotionStateSlots(splitMotionRootMap(rootMotion).states, CHECKBOX_MOTION_SLOT_MAP) },
+    { states: splitMotionRootMap(indicatorMotion).states },
+  ).states;
+  if (!fromRoot && !indicatorMotion && !events && !states) return undefined;
+  const mapped: SelectionIndicatorMotion = {
     root: { ...fromRoot?.root, ...indicatorMotion?.root },
     fill: { ...fromRoot?.fill, ...indicatorMotion?.fill },
     mark: { ...fromRoot?.mark, ...indicatorMotion?.mark },
+  };
+  return {
+    ...mapped,
+    ...(events ? { events } : {}),
+    ...(states ? { states } : {}),
   };
 }
 

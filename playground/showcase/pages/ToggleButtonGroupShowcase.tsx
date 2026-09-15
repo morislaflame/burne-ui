@@ -16,12 +16,8 @@ import { ToggleButtonGroupVerticalDemo } from "../demos/toggleButtonGroup/Toggle
 import toggleButtonGroupVerticalSource from "../demos/toggleButtonGroup/ToggleButtonGroupVertical.demo.tsx?raw";
 import { ToggleButtonGroupViewToolbarDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupViewToolbar.demo";
 import toggleButtonGroupViewToolbarSource from "../demos/toggleButtonGroup/ToggleButtonGroupViewToolbar.demo.tsx?raw";
-import { ToggleButtonGroupMotionInstantEnterDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupMotionInstantEnter.demo";
-import toggleButtonGroupMotionInstantEnterSource from "../demos/toggleButtonGroup/ToggleButtonGroupMotionInstantEnter.demo.tsx?raw";
-import { ToggleButtonGroupMotionRootWaveDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupMotionRootWave.demo";
-import toggleButtonGroupMotionRootWaveSource from "../demos/toggleButtonGroup/ToggleButtonGroupMotionRootWave.demo.tsx?raw";
-import { ToggleButtonGroupMotionChangeTintDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupMotionChangeTint.demo";
-import toggleButtonGroupMotionChangeTintSource from "../demos/toggleButtonGroup/ToggleButtonGroupMotionChangeTint.demo.tsx?raw";
+import { ToggleButtonGroupMotionControllerGalleryDemo } from "../demos/toggleButtonGroup/motionController/gallery";
+import { ToggleButtonGroupSlotMotionGalleryDemo } from "../demos/toggleButtonGroup/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -74,10 +70,15 @@ export function ToggleButtonGroupShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ToggleButtonGroupEditorBarDemo} source={toggleButtonGroupEditorBarSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, root enter, change on selection. Item ToggleButton motion is separate.">
-        <ShowcaseDemoFromFile align="center" Demo={ToggleButtonGroupMotionInstantEnterDemo} source={toggleButtonGroupMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="center" Demo={ToggleButtonGroupMotionRootWaveDemo} source={toggleButtonGroupMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="center" Demo={ToggleButtonGroupMotionChangeTintDemo} source={toggleButtonGroupMotionChangeTintSource} />
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root enter, change on selection, Flip pill. Item ToggleButton motion is separate.">
+        <ToggleButtonGroupSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot / set, group events, timeline, waitForComplete."
+      >
+        <ToggleButtonGroupMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

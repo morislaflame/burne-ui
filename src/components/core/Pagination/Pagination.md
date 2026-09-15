@@ -48,6 +48,7 @@ const [page, setPage] = useState(1);
 | `aria-label` | `"Pagination"` | Accessible name `<nav>` |
 | `className` | — | На `<nav>` |
 | `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не Previous / Next / Page |
 
 ### `PaginationClassNames`
 
@@ -60,9 +61,9 @@ const [page, setPage] = useState(1);
 | `Pagination.Summary` | Текстовая сводка (опционально) |
 | `Pagination.Content` | `<ol>` списка controls |
 | `Pagination.Item` | `<li>` wrapper |
-| `Pagination.Previous` / `Next` | Nav buttons с auto disable |
+| `Pagination.Previous` / `Next` | Nav buttons с auto disable; nested motion scope (`motionController`, `playSlot("control")`) |
 | `Pagination.PreviousIcon` / `NextIcon` | `IoChevronBack` / `Forward` |
-| `Pagination.Page` | Кнопка номера страницы |
+| `Pagination.Page` | Кнопка номера страницы; nested motion scope (`motionController`, `playSlot("control")`) |
 | `Pagination.Pages` | Auto range из context |
 | `Pagination.Ellipsis` | Декоративное `…` (`children ?? "…"`) |
 
@@ -143,10 +144,44 @@ configureMotion({
 |------|------|------------------|
 | `control` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
 | `previousIcon` / `nextIcon` | press (broadcast с `control`) | нет |
-| `summary` | `change` (смена `page`) | нет |
+| `summary` | `change` (смена `page`); hover (opt-in) | нет |
 | `ellipsis` | `enter` / hover (opt-in) | empty; root scope, не nested `control` |
 
 `false` на `control.pressIn` — skip без kill. Active page — `<span>`, без squeeze.
+
+Слота `root` нет: `play()` skip. `playSlot("summary")` / `playAll` — chrome (`summary` / `ellipsis`), не nested Previous / Next / Page. Каждый control — **вложенный** scope: свой `motionController`, `playSlot("control")`. Один handle ≠ два scope. FLIP на `<ol>` не слот.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`pagination:nudge`, `pagination:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Pagination.Summary`) видит Pagination; внутри Previous / Page — scope control.
+
+```tsx
+import { Button, Pagination, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "pagination:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("summary", "pagination:nudge")}>
+        Nudge
+      </Button>
+      <Pagination page={page} totalPages={12} onPageChange={setPage} motionController={controller} motion={{ events }}>
+        <Pagination.Summary>Page {page} of 12</Pagination.Summary>
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.Previous />
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Next />
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination>
+    </>
+  );
+}
+```
 
 Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.Page` / `Pagination.Summary`.
 
@@ -283,4 +318,4 @@ Pagination/
 
 ## Storybook
 
-`Core Components/Pagination` — prev/next, full pages, controlled state, light theme, `classNames`.
+`Core Components/Pagination` — prev/next, full pages, controlled state, light theme, `classNames`, slot motion gallery, MotionController.

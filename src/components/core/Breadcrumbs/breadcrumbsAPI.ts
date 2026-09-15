@@ -34,6 +34,8 @@ function collectItemsDeep(children: ReactNode, out: BreadcrumbItemData[]) {
         onClick: props.onClick,
         current: props.current,
         className: props.className,
+        motion: props.motion,
+        motionController: props.motionController,
       });
       return;
     }

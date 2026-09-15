@@ -9,7 +9,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TimeField } from "./index";
-import { TimeFieldMotionDemo } from "../../../../playground/showcase/demos/time-field/TimeFieldMotion.demo";
+import { TimeFieldSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/time-field/slotMotion/gallery";
+import { TimeFieldMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/time-field/motionController/gallery";
 
 function isValidTime(value: string) {
   const parts = value.split(":").map(Number);
@@ -374,5 +375,18 @@ export const SegmentSeparator: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <TimeFieldMotionDemo />,
+  render: () => <TimeFieldSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on shell/prefix (no play: no root slot), chrome label on Root, cancel loop, time events.",
+      },
+    },
+  },
+  render: () => <TimeFieldMotionControllerGalleryDemo />,
 };

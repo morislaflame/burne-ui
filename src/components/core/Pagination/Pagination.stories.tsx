@@ -4,7 +4,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor } from "storybook/test";
 
 import { Pagination } from "@/components/core/Pagination";
-import { PaginationMotionDemo } from "../../../../playground/showcase/demos/pagination/PaginationMotion.demo";
+import { PaginationSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/pagination/slotMotion/gallery";
+import { PaginationMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/pagination/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -388,5 +389,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <PaginationMotionDemo />,
+  render: () => <PaginationSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on Pagination chrome (no root), nested Previous/Page control scope, pagination events. FLIP stays kit-internal.",
+      },
+    },
+  },
+  render: () => <PaginationMotionControllerGalleryDemo />,
 };

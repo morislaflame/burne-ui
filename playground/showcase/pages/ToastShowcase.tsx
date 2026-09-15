@@ -8,12 +8,6 @@ import { ToastDeployPanelDemo } from "../demos/toast/ToastDeployPanel.demo";
 import toastDeployPanelSource from "../demos/toast/ToastDeployPanel.demo.tsx?raw";
 import { ToastModificationsDemo } from "../demos/toast/ToastModifications.demo";
 import toastModificationsSource from "../demos/toast/ToastModifications.demo.tsx?raw";
-import { ToastMotionBounceDemo } from "../demos/toast/ToastMotionBounce.demo";
-import toastMotionBounceSource from "../demos/toast/ToastMotionBounce.demo.tsx?raw";
-import { ToastMotionInstantLeaveDemo } from "../demos/toast/ToastMotionInstantLeave.demo";
-import toastMotionInstantLeaveSource from "../demos/toast/ToastMotionInstantLeave.demo.tsx?raw";
-import { ToastMotionTitleStaggerDemo } from "../demos/toast/ToastMotionTitleStagger.demo";
-import toastMotionTitleStaggerSource from "../demos/toast/ToastMotionTitleStagger.demo.tsx?raw";
 import { ToastPlacementsDemo } from "../demos/toast/ToastPlacements.demo";
 import toastPlacementsSource from "../demos/toast/ToastPlacements.demo.tsx?raw";
 import { ToastPromiseFlowDemo } from "../demos/toast/ToastPromiseFlow.demo";
@@ -22,6 +16,8 @@ import { ToastSizesDemo } from "../demos/toast/ToastSizes.demo";
 import toastSizesSource from "../demos/toast/ToastSizes.demo.tsx?raw";
 import { ToastUndoActionDemo } from "../demos/toast/ToastUndoAction.demo";
 import toastUndoActionSource from "../demos/toast/ToastUndoAction.demo.tsx?raw";
+import { ToastSlotMotionGalleryDemo } from "../demos/toast/slotMotion/gallery";
+import { ToastMotionControllerGalleryDemo } from "../demos/toast/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -50,13 +46,15 @@ export function ToastShowcase() {
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: instant leave, bounce factory, title stagger.">
+        <ToastSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant leave, bounce factory, title stagger."
+        title="MotionController"
+        description="Standalone Toast mounts its own scope — play() targets root. Stack items: pass motionController on toast.show()."
       >
-        <ShowcaseDemoFromFile Demo={ToastMotionInstantLeaveDemo} source={toastMotionInstantLeaveSource} />
-        <ShowcaseDemoFromFile Demo={ToastMotionBounceDemo} source={toastMotionBounceSource} />
-        <ShowcaseDemoFromFile Demo={ToastMotionTitleStaggerDemo} source={toastMotionTitleStaggerSource} />
+        <ToastMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -66,7 +64,6 @@ export function ToastShowcase() {
         <ShowcaseDemoFromFile Demo={ToastClassNamesFullDemo} source={toastClassNamesFullSource} />
         <ShowcaseDemoFromFile Demo={ToastClassNamesCompoundDemo} source={toastClassNamesFullSource} />
       </ShowcaseSection>
-
 
       <ShowcaseSection
         title="portalContainer"

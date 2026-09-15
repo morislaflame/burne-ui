@@ -9,7 +9,7 @@ import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart, type MotionController, type MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
@@ -47,6 +47,10 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       onPointerEnter,
       onPointerLeave,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -75,13 +79,26 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         }),
       [disabled, groupSegment, isGloss],
     );
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { inputGroup: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
 
     return (
-      <ComboBoxMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+      <ComboBoxMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <ComboBoxInputGroupSurface
           forwardedRef={ref}
           className={className}
@@ -128,6 +145,7 @@ function ComboBoxInputGroupSurface({
     | "onPointerEnter"
     | "onPointerLeave"
     | "motion"
+    | "motionController"
   >;
 }) {
   const slotClassNames = useComboBoxClassNames();
@@ -500,12 +518,17 @@ export function ComboBoxSimpleBody({
   hint,
   error,
   labelId,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: {
   label: React.ReactNode;
   hint: React.ReactNode;
   error: React.ReactNode;
   labelId: string;
-}) {
+  motionController?: MotionController;
+} & MotionStateHostProps) {
   const slotClassNames = useComboBoxClassNames();
 
   return (
@@ -515,7 +538,10 @@ export function ComboBoxSimpleBody({
           {label}
         </ComboBoxLabel>
       ) : null}
-      <ComboBoxInputGroup>
+      <ComboBoxInputGroup motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}>
         <ComboBoxInput />
         <ComboBoxTrigger />
       </ComboBoxInputGroup>

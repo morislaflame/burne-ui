@@ -10,6 +10,7 @@ import { getMotionRecipe } from "./motionRecipeRegistry";
 import { createMotionTweenApi, playDeclarativeMotion } from "./motionTween";
 import { registerKitMotionRecipes } from "./recipes";
 import {
+  isMotionAbortError,
   isMotionFactory,
   isMotionVarsObject,
   LEAVE_COMPLETE_FALLBACK_MS,
@@ -67,6 +68,9 @@ type PhaseRun = {
   resolveWait: () => void;
   setAnimation: (animation: MotionAnimation | undefined) => void;
   addCleanup: (fn: () => void) => void;
+  onInterrupt: (fn: (reason?: MotionCancelReason) => void) => void;
+  onError: (fn: (error: unknown) => void) => void;
+  invokeError: (error: unknown) => void;
   signal: AbortSignal;
 };
 
@@ -81,6 +85,8 @@ function createPhaseRun(
   let animation: MotionAnimation | undefined;
   let cancelReason: MotionCancelReason | undefined;
   const cleanups: Array<() => void> = [];
+  const interruptCbs: Array<(reason?: MotionCancelReason) => void> = [];
+  const errorCbs: Array<(error: unknown) => void> = [];
   let waitResolved = false;
   let resolveFinished: () => void = () => {};
   const finished = new Promise<void>((resolve) => {
@@ -107,10 +113,29 @@ function createPhaseRun(
     if (!abort.signal.aborted) abort.abort();
   };
 
+  const invokeError = (error: unknown) => {
+    for (const fn of errorCbs) {
+      try {
+        fn(error);
+      } catch {
+        /* app callbacks must not break settle */
+      }
+    }
+  };
+
   const settle = (next: MotionRunStatus, options?: { invokeComplete?: boolean }) => {
     if (status !== "running") return;
     status = next;
-    if (next === "cancelled") abortIfNeeded();
+    if (next === "cancelled") {
+      abortIfNeeded();
+      for (const fn of interruptCbs) {
+        try {
+          fn(cancelReason);
+        } catch {
+          /* app callbacks must not break settle */
+        }
+      }
+    }
     runCleanup();
     if (waitForComplete || next !== "finished") detach();
     if (options?.invokeComplete && next !== "cancelled") userComplete?.();
@@ -156,6 +181,13 @@ function createPhaseRun(
     addCleanup: (fn) => {
       cleanups.push(fn);
     },
+    onInterrupt: (fn) => {
+      interruptCbs.push(fn);
+    },
+    onError: (fn) => {
+      errorCbs.push(fn);
+    },
+    invokeError,
     signal: abort.signal,
   };
 }
@@ -186,6 +218,9 @@ export type RunMotionPhaseOptions = {
   waitForComplete?: boolean;
   slot?: string;
   config?: Readonly<MotionConfig>;
+  fromState?: string;
+  toState?: string;
+  payload?: unknown;
 };
 
 function warnLeaveFallback(slot: string | undefined): void {
@@ -241,9 +276,13 @@ export function runMotionPhase({
   waitForComplete = false,
   slot,
   config,
+  fromState,
+  toState,
+  payload,
 }: RunMotionPhaseOptions): MotionRun {
   const phaseRun = createPhaseRun(el, waitForComplete, complete);
-  const { run, settle, resolveWait, setAnimation, addCleanup, signal } = phaseRun;
+  const { run, settle, resolveWait, setAnimation, addCleanup, onInterrupt, onError, invokeError, signal } =
+    phaseRun;
 
   const finishSuccess = () => {
     if (signal.aborted) return;
@@ -275,6 +314,9 @@ export function runMotionPhase({
   const ctx = {
     el,
     phase,
+    fromState,
+    toState,
+    payload,
     targets,
     getTarget: getTarget ?? ((name) => targets[name] ?? null),
     getTargets:
@@ -292,6 +334,8 @@ export function runMotionPhase({
     isCurrent: run.isCurrent,
     signal,
     onCleanup: addCleanup,
+    onInterrupt,
+    onError,
     ...createMotionTweenApi({
       el,
       phase,
@@ -299,6 +343,7 @@ export function runMotionPhase({
       config: cfg,
       onCleanup: addCleanup,
       setAnimation,
+      signal,
     }),
   } satisfies MotionContext;
 
@@ -360,6 +405,7 @@ export function runMotionPhase({
       phase,
       kind: "threw",
     });
+    invokeError(error);
     settle("failed", { invokeComplete: true });
     return run;
   }
@@ -397,12 +443,14 @@ export function runMotionPhase({
       },
       (error) => {
         if (signal.aborted || run.status !== "running" || !run.isCurrent()) return;
+        if (isMotionAbortError(error)) return;
         warnMotionProducerError(error, {
           recipe: recipeNameForError,
           slot,
           phase,
           kind: "rejected",
         });
+        invokeError(error);
         settle("failed", { invokeComplete: true });
       },
     );

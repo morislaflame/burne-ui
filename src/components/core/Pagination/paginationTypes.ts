@@ -7,7 +7,7 @@ import type {
 } from "react";
 import type { IconBaseProps } from "react-icons";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type PaginationClassNames = {
   /** Root `<nav>`. */
@@ -50,7 +50,7 @@ export type PaginationPartMotion = {
   enter?: MotionValue;
 };
 
-export type PaginationSummaryPartMotion = {
+export type PaginationSummaryPartMotion = PaginationPartMotion & {
   change?: MotionValue;
 };
 
@@ -80,9 +80,18 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   /**
    * Per-slot motion (`control`, `previousIcon`, `nextIcon`, `summary`, `ellipsis`).
    * `Pagination.Content` / `Item` / `Page` are not separate slots (`control` covers buttons).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * There is no `root` slot — `play()` skips; use `playSlot("summary")` / `playAll`.
    */
-  motion?: Prettify<PaginationMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<PaginationMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this pagination chrome scope (`summary` / `ellipsis`).
+   * Nested Previous / Next / Page are separate scopes — pass a handle there.
+   * FLIP on `<ol>` is kit-internal. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type PaginationClassNamesProviderProps = {
   classNames?: Prettify<PaginationClassNames>;
@@ -104,7 +113,12 @@ export type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
 
 export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<PaginationPartMotion>;
-};
+  /**
+   * Handle for this control's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("control")`. Icons live here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type PaginationPageProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -114,7 +128,12 @@ export type PaginationPageProps = Omit<
   active?: boolean;
   children?: ReactNode;
   motion?: Prettify<PaginationPartMotion>;
-};
+  /**
+   * Handle for this page button's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("control")`. Active page is a `<span>` (no control scope).
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<PaginationPartMotion>;
@@ -125,7 +144,8 @@ export type PaginationPagesProps = Record<string, never>;
 export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   motion?: Prettify<PaginationPartMotion>;
-};
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type PaginationIconProps = IconBaseProps & {
   motion?: Prettify<PaginationPartMotion>;

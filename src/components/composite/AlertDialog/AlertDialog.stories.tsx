@@ -8,7 +8,8 @@ import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 import { AlertDialog, primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone, type AlertDialogSize } from "./index";
 import { useAlertDialog } from "./useAlertDialog";
 import type { AlertStatus } from "@/components/core/Alert";
-import { AlertDialogMotionDemo } from "../../../../playground/showcase/demos/alertDialog/AlertDialogMotion.demo";
+import { AlertDialogSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/alertDialog/slotMotion/gallery";
+import { AlertDialogMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/alertDialog/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -420,5 +421,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (instant, indicator, chrome, overlay)",
-  render: () => <AlertDialogMotionDemo />,
+  render: () => <AlertDialogSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `AlertDialog.Panel` — `playSlot(\"panel\")`. `play()` skips (no `root`). Panel stays open in a contained portal.",
+      },
+    },
+  },
+  render: () => <AlertDialogMotionControllerGalleryDemo />,
 };

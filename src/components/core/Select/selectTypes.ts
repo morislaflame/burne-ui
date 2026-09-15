@@ -6,7 +6,7 @@ import type { InputSize, InputStatus, InputVariant } from "@/components/core/Inp
 import type { LabelProps } from "@/components/core/Label";
 import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
 export type SelectOption = {
@@ -82,9 +82,19 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   /**
    * Per-slot motion (`triggerGroup`, `value`, `trigger`, `triggerIcon`, `label`, `hint`, `error`).
    * Menu enter lives on Popover — not duplicated here.
+   * Chrome registers on the Root scope (siblings of TriggerGroup). TriggerGroup is the nested shell host.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `Select.TriggerGroup` (shell host).
+   * Compound: this handle attaches to the Root chrome scope; pass another handle on `TriggerGroup`.
    */
-  motion?: Prettify<SelectMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<SelectMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the TriggerGroup nested Provider. Compound: Root chrome scope.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type SelectSimpleProps = SelectProps & {
   options: SelectOption[];
@@ -133,7 +143,12 @@ export type SelectTriggerGroupProps = HTMLAttributes<HTMLDivElement> & {
   groupSegment?: ButtonGroupSegment;
   /** Part motion for the `triggerGroup` host slot. Root `motion.triggerGroup` still applies. */
   motion?: Prettify<SelectPartMotion>;
-};
+  /**
+   * Deferred handle for the TriggerGroup host (`triggerGroup`, `value`, `trigger`, `triggerIcon`).
+   * One handle → this nested scope. Simple API: pass `motionController` on `Select` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type SelectValueProps = HTMLAttributes<HTMLButtonElement> & {
   placeholder?: string;
@@ -173,7 +188,7 @@ export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   >;
 };
 
-export type SelectLabelProps = Omit<LabelProps, "motion"> & {
+export type SelectLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<SelectPartMotion>;
 };
 

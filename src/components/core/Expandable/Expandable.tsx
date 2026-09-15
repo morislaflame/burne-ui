@@ -49,6 +49,10 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
       className,
       classNames,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -80,7 +84,10 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
     return (
       <ExpandableProvider value={state.contextValue}>
         <ExpandableClassNamesProvider classNames={classNames}>
-          <ExpandableMotionProvider motion={motion} defaults={EXPANDABLE_MOTION_DEFAULTS}>
+          <ExpandableMotionProvider motion={motion} defaults={EXPANDABLE_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <div
             ref={setRootRef}
             className={expandableRootClass({

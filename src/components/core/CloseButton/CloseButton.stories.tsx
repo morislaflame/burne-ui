@@ -3,7 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
 
 import { CloseButton } from "./index";
-import { CloseButtonMotionDemo } from "../../../../playground/showcase/demos/close-button/CloseButtonMotion.demo";
+import { CloseButtonMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/close-button/motionController/gallery";
+import { CloseButtonSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/close-button/slotMotion/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -56,6 +57,10 @@ const meta = {
       control: "boolean",
       description:
         "Built-in `<Ripple />` with tone matching variant. Off by default in Storybook.",
+    },
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
     },
   },
   render: (args) => <CloseButton {...args} />,
@@ -175,5 +180,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <CloseButtonMotionDemo />,
+  render: () => <CloseButtonSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot / set, play vs playSlot(icon), stagger, dismiss events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <CloseButtonMotionControllerGalleryDemo />,
 };

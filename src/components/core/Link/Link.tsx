@@ -29,7 +29,10 @@ export type {
 
 export { LinkIcon };
 
-export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "classNames" | "motion">>(
+export const LinkRoot = forwardRef<
+  HTMLAnchorElement,
+  Omit<LinkProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">
+>(
   function LinkRoot(
     {
       href,
@@ -141,14 +144,21 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
 LinkRoot.displayName = "Link";
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { classNames, motion, ...rest },
+  { classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveLinkMotionDefaults(), []);
 
   return (
     <LinkClassNamesProvider classNames={classNames}>
-      <LinkMotionProvider motion={motion} defaults={motionDefaults}>
+      <LinkMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <LinkRoot ref={ref} {...rest} />
       </LinkMotionProvider>
     </LinkClassNamesProvider>

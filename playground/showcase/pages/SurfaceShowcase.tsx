@@ -10,18 +10,10 @@ import { SurfaceNestedPanelsDemo } from "../demos/surface/SurfaceNestedPanels.de
 import surfaceNestedPanelsSource from "../demos/surface/SurfaceNestedPanels.demo.tsx?raw";
 import { SurfaceVariantsDemo } from "../demos/surface/SurfaceVariants.demo";
 import surfaceVariantsSource from "../demos/surface/SurfaceVariants.demo.tsx?raw";
-import { SurfaceMotionInstantEnterDemo } from "../demos/surface/SurfaceMotionInstantEnter.demo";
-import surfaceMotionInstantEnterSource from "../demos/surface/SurfaceMotionInstantEnter.demo.tsx?raw";
-import { SurfaceMotionRootWaveDemo } from "../demos/surface/SurfaceMotionRootWave.demo";
-import surfaceMotionRootWaveSource from "../demos/surface/SurfaceMotionRootWave.demo.tsx?raw";
-import { SurfaceMotionEnterTintDemo } from "../demos/surface/SurfaceMotionEnterTint.demo";
-import surfaceMotionEnterTintSource from "../demos/surface/SurfaceMotionEnterTint.demo.tsx?raw";
-import { SeparatorMotionInstantEnterDemo } from "../demos/separator/SeparatorMotionInstantEnter.demo";
-import separatorMotionInstantEnterSource from "../demos/separator/SeparatorMotionInstantEnter.demo.tsx?raw";
-import { SeparatorMotionRootWaveDemo } from "../demos/separator/SeparatorMotionRootWave.demo";
-import separatorMotionRootWaveSource from "../demos/separator/SeparatorMotionRootWave.demo.tsx?raw";
-import { SeparatorMotionEnterTintDemo } from "../demos/separator/SeparatorMotionEnterTint.demo";
-import separatorMotionEnterTintSource from "../demos/separator/SeparatorMotionEnterTint.demo.tsx?raw";
+import { SurfaceMotionControllerGalleryDemo } from "../demos/surface/motionController/gallery";
+import { SurfaceSlotMotionGalleryDemo } from "../demos/surface/slotMotion/gallery";
+import { SeparatorSlotMotionGalleryDemo } from "../demos/separator/slotMotion/gallery";
+import { SeparatorMotionControllerGalleryDemo } from "../demos/separator/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -57,15 +49,25 @@ export function SurfaceShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant enter skip, root timeline + hover, enter tint.">
-        <ShowcaseDemoFromFile align="stretch" Demo={SurfaceMotionInstantEnterDemo} source={surfaceMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SurfaceMotionRootWaveDemo} source={surfaceMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SurfaceMotionEnterTintDemo} source={surfaceMotionEnterTintSource} />
+        <SurfaceSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot / set, cancel a looping run, ping, timeline, waitForComplete."
+      >
+        <SurfaceMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion (Separator)" description="Instant enter skip, scale-in timeline, enter tint.">
-        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorMotionInstantEnterDemo} source={separatorMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorMotionRootWaveDemo} source={separatorMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorMotionEnterTintDemo} source={separatorMotionEnterTintSource} />
+        <SeparatorSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (Separator)"
+        description="One gallery: play / set on root, cancel a looping run, ping, timeline, waitForComplete."
+      >
+        <SeparatorMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

@@ -20,28 +20,12 @@ import { ColorPickerSidesDemo } from "../demos/colorPicker/ColorPickerSides.demo
 import colorPickerSidesSource from "../demos/colorPicker/ColorPickerSides.demo.tsx?raw";
 import { ColorSlidersDemo } from "../demos/colorPicker/ColorSliders.demo";
 import colorSlidersSource from "../demos/colorPicker/ColorSliders.demo.tsx?raw";
-import { ColorSwatchMotionInstantHoverDemo } from "../demos/colorPicker/ColorSwatchMotionInstantHover.demo";
-import colorSwatchMotionInstantHoverSource from "../demos/colorPicker/ColorSwatchMotionInstantHover.demo.tsx?raw";
-import { ColorSwatchMotionPulseDemo } from "../demos/colorPicker/ColorSwatchMotionPulse.demo";
-import colorSwatchMotionPulseSource from "../demos/colorPicker/ColorSwatchMotionPulse.demo.tsx?raw";
-import { ColorSwatchMotionPressSpinDemo } from "../demos/colorPicker/ColorSwatchMotionPressSpin.demo";
-import colorSwatchMotionPressSpinSource from "../demos/colorPicker/ColorSwatchMotionPressSpin.demo.tsx?raw";
-import { ColorPickerMotionInstantEnterDemo } from "../demos/colorPicker/ColorPickerMotionInstantEnter.demo";
-import colorPickerMotionInstantEnterSource from "../demos/colorPicker/ColorPickerMotionInstantEnter.demo.tsx?raw";
-import { ColorPickerMotionPanelWaveDemo } from "../demos/colorPicker/ColorPickerMotionPanelWave.demo";
-import colorPickerMotionPanelWaveSource from "../demos/colorPicker/ColorPickerMotionPanelWave.demo.tsx?raw";
-import { ColorPickerMotionAreaChangeDemo } from "../demos/colorPicker/ColorPickerMotionAreaChange.demo";
-import colorPickerMotionAreaChangeSource from "../demos/colorPicker/ColorPickerMotionAreaChange.demo.tsx?raw";
-import { ColorPickerMotionAlphaInputDemo } from "../demos/colorPicker/ColorPickerMotionAlphaInput.demo";
-import colorPickerMotionAlphaInputSource from "../demos/colorPicker/ColorPickerMotionAlphaInput.demo.tsx?raw";
-import { ColorPickerMotionPreviewSwatchDemo } from "../demos/colorPicker/ColorPickerMotionPreviewSwatch.demo";
-import colorPickerMotionPreviewSwatchSource from "../demos/colorPicker/ColorPickerMotionPreviewSwatch.demo.tsx?raw";
-import { ColorSliderMotionInstantEnterDemo } from "../demos/colorSlider/ColorSliderMotionInstantEnter.demo";
-import colorSliderMotionInstantEnterSource from "../demos/colorSlider/ColorSliderMotionInstantEnter.demo.tsx?raw";
-import { ColorSliderMotionTrackWaveDemo } from "../demos/colorSlider/ColorSliderMotionTrackWave.demo";
-import colorSliderMotionTrackWaveSource from "../demos/colorSlider/ColorSliderMotionTrackWave.demo.tsx?raw";
-import { ColorSliderMotionChangeTintDemo } from "../demos/colorSlider/ColorSliderMotionChangeTint.demo";
-import colorSliderMotionChangeTintSource from "../demos/colorSlider/ColorSliderMotionChangeTint.demo.tsx?raw";
+import { ColorSwatchSlotMotionGalleryDemo } from "../demos/colorPicker/colorSwatchSlotMotion/gallery";
+import { ColorPickerSlotMotionGalleryDemo } from "../demos/colorPicker/slotMotion/gallery";
+import { ColorPickerMotionControllerGalleryDemo } from "../demos/colorPicker/motionController/gallery";
+import { ColorSliderMotionControllerGalleryDemo } from "../demos/colorSlider/motionController/gallery";
+import { ColorSliderSlotMotionGalleryDemo } from "../demos/colorSlider/slotMotion/gallery";
+import { ColorSwatchMotionControllerGalleryDemo } from "../demos/colorSwatch/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -115,23 +99,36 @@ export function ColorPickerShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Interactive ColorSwatch: instant skip, sequential timeline, press spin.">
-        <ShowcaseDemoFromFile Demo={ColorSwatchMotionInstantHoverDemo} source={colorSwatchMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile Demo={ColorSwatchMotionPulseDemo} source={colorSwatchMotionPulseSource} />
-        <ShowcaseDemoFromFile Demo={ColorSwatchMotionPressSpinDemo} source={colorSwatchMotionPressSpinSource} />
+        <ColorSwatchSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion (ColorPicker)" description="Instant panel enter skip, contentPanel→area timeline, area change, alphaInput enter, ColorPicker.Preview. Thumb left/top stays kit-internal.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerMotionInstantEnterDemo} source={colorPickerMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerMotionPanelWaveDemo} source={colorPickerMotionPanelWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerMotionAreaChangeDemo} source={colorPickerMotionAreaChangeSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerMotionAlphaInputDemo} source={colorPickerMotionAlphaInputSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerMotionPreviewSwatchDemo} source={colorPickerMotionPreviewSwatchSource} />
+        <ColorPickerSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot(contentPanel) — no root slot, area slot, cancel loop, picker events. Panel stays open."
+      >
+        <ColorPickerMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion (ColorSlider)" description="Instant track enter skip, root/track timeline, change on value. Thumb geometry stays kit-internal.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorSliderMotionInstantEnterDemo} source={colorSliderMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorSliderMotionTrackWaveDemo} source={colorSliderMotionTrackWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ColorSliderMotionChangeTintDemo} source={colorSliderMotionChangeTintSource} />
+        <ColorSliderSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (ColorSlider)"
+        description="Simple API forwards the handle to Track (play() skip). Compound children: handle on Root (root slot). Events merge into Track."
+      >
+        <ColorSliderMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (ColorSwatch)"
+        description="Interactive swatch only (`onClick`). Decorative span has no scope. play() on root, cancel, swatch events, timeline."
+      >
+        <ColorSwatchMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

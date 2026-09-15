@@ -62,8 +62,11 @@ Simple API (props `title` на root) нет — только compound children.
 | `onClick` / `onKeyDown` / `onPointerDown` | — | Низкоуровневые handlers |
 | `className` | — | Root / gloss panel |
 | `classNames` | — | Слоты |
-| `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer`. Ключ `events` — app-команды для `MotionController` |
+| `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
 | `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+| `motionState` | — | Режим (`idle` / `paying` / `paid`). Тот же ещё раз — тишина |
+| `motionPayload` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Не замыкать `useState`. Объекты копируются и freeze; без смены `motionState` не переигрывает |
+| `playInitialState` | `false` | Играть `states[motionState]` на маунте |
 
 ### `CardClassNames`
 
@@ -131,7 +134,33 @@ Simple API (props `title` на root) нет — только compound children.
 
 `content` / `glossContent` — layout-обёртки, не публичные motion-слоты.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`checkout:saving`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent` (фазы и namespaced events без дженерика). См. [Motion](/docs/motion#motionevents).
+Сырой follow мыши (`gsap.quickTo` на `x`/`y`, не фаза `hoverIn`) — слайд **Mouse follow** в галерее Slot motion.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`checkout:saving`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent` (фазы и namespaced events без дженерика). Хореография Alert + Card — `MotionGroup`. Задержки в factory — `ctx.wait` / `sequence`. См. [Motion](/docs/motion#motionevents), [MotionGroup](/docs/motion#motiongroup) и [async helpers](/docs/motion#async-helpers).
+
+Режимы checkout — `motionState` + `motion.states` (`createMotionStates`). Тот же `paying` ещё раз не переигрывает. Не класть `idle` в `MOTION_PHASE_NAMES`. См. [Motion and state managers](/docs/motion-state).
+
+```tsx
+import { Card, createMotionFactory, createMotionStates, type MotionPayload } from "burne-ui";
+
+type CheckoutPayload = MotionPayload & { tries: number };
+
+const failedShake = createMotionFactory<CheckoutPayload>((ctx) => {
+  const n = ctx.payload?.tries ?? 1;
+  return ctx.fromRest({ x: n > 1 ? 9 : 7, duration: 0.07, yoyo: true, repeat: 5 });
+});
+
+const states = createMotionStates({
+  idle: { root: { y: 0, duration: 0.2 } },
+  paying: { root: { y: -4, duration: 0.32, yoyo: true, repeat: -1 } },
+  paid: { root: { y: 0, duration: 0.25 } },
+  failed: { root: failedShake },
+});
+
+<Card motionState={status} motionPayload={{ tries }} motion={{ states }}>
+  <Card.Title>Checkout</Card.Title>
+</Card>
+```
 
 ```tsx
 import { Card, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";

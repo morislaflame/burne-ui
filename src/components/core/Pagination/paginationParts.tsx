@@ -32,7 +32,7 @@ import type {
   PaginationSummaryProps,
 } from "./paginationTypes";
 
-export const PaginationRootShell = forwardRef<HTMLElement, Omit<PaginationProps, "classNames">>(
+export const PaginationRootShell = forwardRef<HTMLElement, Omit<PaginationProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">>(
   function PaginationRootShell(
     {
       children,
@@ -76,6 +76,10 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       onPointerUp,
       onKeyDown,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -88,7 +92,10 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
     );
 
     return (
-      <PaginationMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <PaginationMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <PaginationInteractiveSurface
           forwardedRef={ref}
           className={className}
@@ -134,6 +141,7 @@ function PaginationInteractiveSurface({
     | "onPointerUp"
     | "onKeyDown"
     | "motion"
+    | "motionController"
   >;
 }) {
   const scope = useOptionalPaginationMotionScope();
@@ -452,7 +460,11 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
       children,
       onClick,
       className,
-      motion: _motion,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       "aria-label": ariaLabel,
       ...rest
     },
@@ -508,6 +520,11 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
         {...(pageAriaLabel != null ? { "aria-label": pageAriaLabel } : {})}
         onClick={handleClick}
         className={cn(slotClassNames.page, className)}
+        motion={motion}
+        motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
         {...rest}
       >
         <Text

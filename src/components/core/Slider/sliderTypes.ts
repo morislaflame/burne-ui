@@ -8,7 +8,7 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type SliderOrientation = "horizontal" | "vertical";
 
@@ -166,8 +166,13 @@ export type SliderRangeProps = SliderCommonProps & {
 };
 
 export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
-  motion?: Prettify<SliderMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<SliderMotion>>;
+  /**
+   * Deferred handle for a standalone Track (no parent Slider Root).
+   * Inside `<Slider>` the Root handle covers track + chrome — do not pass a second handle here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   children?: ReactNode;
@@ -183,10 +188,17 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
      * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`, `label`, `hint`, `error`).
      * Thumb press default: `pressSqueeze` (`pressOut: false`). Fill geometry (`left`/`width`) is kit-internal.
      * Phase `change` plays on `track` when value updates (broadcast; `fill` excluded).
-     * Chrome registers on the Root scope (siblings of Track).
+     * Chrome and Track share the Root scope (siblings). There is no `root` slot.
+     * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
      */
-  motion?: Prettify<SliderMotion>;
-} & (
+    motion?: Prettify<MotionMapWithEvents<SliderMotion>>;
+    /**
+     * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+     * One handle → Root scope (chrome + track/thumb). Standalone `Slider.Track` uses its own prop.
+     * Not placed on the DOM.
+     */
+    motionController?: MotionController;
+} & MotionStateHostProps & (
     | Partial<Omit<SliderSingleProps, "orientation" | "className" | "classNames">>
     | Partial<Omit<SliderRangeProps, "orientation" | "className" | "classNames">>
   );
@@ -204,7 +216,7 @@ export type SliderValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
-export type SliderLabelProps = Omit<LabelProps, "motion"> & {
+export type SliderLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<SliderPartMotion>;
 };
 
@@ -271,6 +283,9 @@ export type SliderThumbButtonProps = {
   | "active"
 >;
 
-export type UseSliderRootStateProps = Omit<SliderProps, "className" | "classNames" | "motion">;
+export type UseSliderRootStateProps = Omit<
+  SliderProps,
+  "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
+>;
 
 export type FillSpan = { start: number; end: number };

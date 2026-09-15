@@ -110,6 +110,34 @@ Fill стартует в **release-фазе squeeze** (`params.onReleaseStart`),
 
 Цвет текста — **`tweenCssColor`**, не сырой `gsap.to({ color: "var(--…)" })`.
 
+Проп `motionController` + ключ `events` на `motion` — app-команды (`like:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Button, ToggleButton, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "like:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("like:nudge")}>
+        Nudge
+      </Button>
+      <ToggleButton motionController={controller} motion={{ events, root: { pressIn: false } }}>
+        Like
+      </ToggleButton>
+    </>
+  );
+}
+```
+
+`play()` ищет слот `root`. `playSlot("fill")` / `playSlot("iconStart")` — доменные слоты. `playAll` + `stagger`, `exclude: ["fill"]` на `check`, timeline `like:pop` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
+
+Сырой GSAP в Slot motion: **MorphSVG** — path иконки морфится круг → сердце на `check` (обратно на `uncheck`). Kit fill остаётся.
+
 ### Координация fill с press
 
 1. `pointerdown` → если `pressIn` = kit squeeze, `deferFillFromPressRef = true`

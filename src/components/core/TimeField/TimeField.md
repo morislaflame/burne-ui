@@ -53,7 +53,8 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `id` | auto | Связь label/control |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
-| `motion` | — | per-slot motion (`shell`, `prefix`, `suffix`, `segments`, `label`, `hint`, `error`) |
+| `motion` | — | Root / simple: карта слотов + `events`. На `TimeField.Control` — part motion слота `shell` |
+| `motionController` | — | Simple: форвардится на Control (хост `shell`). Compound: Root chrome; для shell — второй handle на `TimeField.Control`. Не на DOM |
 
 ### `TimeFieldClassNames`
 
@@ -109,6 +110,30 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 ```
 
 Compound: `motion` на `TimeField.Control` — part motion слота `shell`. На `TimeField.Label` / `Hint` / `Error` — chrome Root scope.
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("prefix", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `TimeField.Control`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`time:nudge`, `time:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в Control). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, TimeField, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "time:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "time:nudge")}>
+        Nudge
+      </Button>
+      <TimeField label="Start" defaultValue="09:30" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 ## Токены и CSS
 

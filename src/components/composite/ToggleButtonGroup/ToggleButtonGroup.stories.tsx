@@ -8,7 +8,8 @@ import { Text } from "@/components/core/Text";
 import { ToggleButton } from "@/components/core/ToggleButton";
 
 import { ToggleButtonGroup } from "./index";
-import { ToggleButtonGroupMotionDemo } from "../../../../playground/showcase/demos/toggleButtonGroup/ToggleButtonGroupMotion.demo";
+import { ToggleButtonGroupMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/toggleButtonGroup/motionController/gallery";
+import { ToggleButtonGroupSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/toggleButtonGroup/slotMotion/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -170,5 +171,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ToggleButtonGroupMotionDemo />,
+  render: () => <ToggleButtonGroupSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot / set on group root, group events, timeline, waitForComplete.",
+      },
+    },
+  },
+  render: () => <ToggleButtonGroupMotionControllerGalleryDemo />,
 };

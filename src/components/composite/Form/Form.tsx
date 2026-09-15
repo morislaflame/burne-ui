@@ -44,6 +44,10 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     onSubmitError,
     errorSummary,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -78,7 +82,10 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     <FormClassNamesProvider classNames={classNames}>
       <FormBindingContext.Provider value={bindingValue}>
         <FormShellProvider shellIds={shellIds} size={resolvedSize}>
-          <FormMotionProvider motion={motion} defaults={motionDefaults}>
+          <FormMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
             <FormRootSurface
               forwardedRef={ref}
               handleSubmit={handleSubmit}
@@ -160,6 +167,7 @@ function FormRootSurface({
     | "onSubmitError"
     | "errorSummary"
     | "motion"
+    | "motionController"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"

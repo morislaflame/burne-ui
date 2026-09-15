@@ -20,7 +20,8 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `placement` | `right` | `left` \| `right` \| `top` \| `bottom` |
 | `size` | `base` | Chrome density (`PANEL_SIZE_LAYOUT`): padding, typography, close/footer buttons |
 | `classNames` | — | Слоты портала и панели |
-| `motion` | — | Карта слотов. Root без portal DOM — хост `Drawer.Panel` |
+| `motion` | — | Карта слотов. Root без portal DOM — хост `Drawer.Panel`. `events` — app-команды |
+| `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `Drawer.Panel` |
 
 ### Compound-подчасти
 
@@ -45,6 +46,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `themeAnchor` | auto | Якорь темы для overlay портала |
 | `className` | — | На focusable panel wrapper |
 | `motion` | — | Мерж с картой Root; defaults + `params.placement` |
+| `motionController` | — | Handle портального хоста (`panel` / chrome). `play()` skip. `playSlot("panel")` |
 
 ### Пример
 
@@ -121,6 +123,32 @@ Nested `enter` — следующий кадр после host, без overlay `
 Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: высота нижней панели может вырасти после mount. `leave` factory должна вернуть tween и **увести панель за край** (`x: el.offsetWidth` и т.п.) — короткий сдвиг на 80px оставит панель на экране, и `dialog.close()` даст рывок. Прерывание leave (повторный open) отменяет `MotionRun` и не вызывает `complete`. `panel.enter/leave: false` — хост сразу ставит rest / off-screen; overlay по-прежнему фейдится.
 
 **Где в коде:** типы — `drawerTypes.ts`; scope — `drawerContext.tsx`; defaults + host play — `drawerAnimations.ts`; Panel-provider — `drawerParts.tsx`; карта на корне — `Drawer.tsx`.
+
+Проп `motionController` на **`Drawer.Panel`**. `play()` skip — нет `root`; `playSlot("panel")`. playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Drawer, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "drawer:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("panel", "drawer:nudge")}>
+        Nudge
+      </Button>
+      <Drawer open>
+        <Drawer.Panel motionController={controller} motion={{ events }}>
+          <Drawer.Title>Title</Drawer.Title>
+        </Drawer.Panel>
+      </Drawer>
+    </>
+  );
+}
+```
 
 ```tsx
 <Drawer motion={{ panel: { enter: false, leave: false } }}>…</Drawer>

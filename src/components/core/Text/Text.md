@@ -32,6 +32,8 @@ Compound API нет: компонент leaf-level и не имеет подча
 | `as` | зависит от `variant` | HTML-тег или React component |
 | `inheritColor` | `false` | Не добавлять `text-foreground` |
 | `className` | — | Дополнительные классы |
+| `motion` | — | Per-slot (`root`). `events` — app-команды `MotionController` |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 | HTML props | — | Все `HTMLAttributes<HTMLElement>` кроме переопределённого `className` |
 
 ### `TextVariant`
@@ -72,9 +74,35 @@ Compound API нет: компонент leaf-level и не имеет подча
 |-------|------|--------|
 | `root` | `enter` / hover / press (opt-in) | empty |
 
-Свой scope на корне. Без пропа `motion` GSAP не играет.
+Свой scope на корне. Без пропа `motion` GSAP не играет. `play()` ищет слот `root`.
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`text:nudge`, `text:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Text, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "text:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("text:nudge")}>
+        Nudge
+      </Button>
+      <Text variant="large" motionController={controller} motion={{ events }}>
+        Nudge the copy
+      </Text>
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **SplitText words** (3D `rotateX` + stagger, не chars как у Link) и **TextPlugin** typewriter. Не в ките и не в MotionController.
 
 
 Без пропа `motion` визуал прежний: публичный slot motion — opt-in, defaults пустые.
@@ -95,6 +123,7 @@ createElement(as ?? defaultTag, {
 |----------|------|-------------------|
 | Typography render | Нет | — |
 | Color/variant switch | Нет | — |
+| Slot motion / MotionController | Opt-in | — |
 
 ## Стилизация и кастомизация
 
@@ -164,4 +193,4 @@ Text/
 
 ## Storybook
 
-`Core Components/Text` — default, `as="span"` + перенос, surface panel, light theme.
+`Core Components/Text` — default, `as="span"` + перенос, surface panel, light theme, Slot motion, MotionController.

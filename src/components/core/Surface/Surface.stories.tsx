@@ -11,7 +11,8 @@ import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { Surface, type SurfaceVariant } from "./Surface";
-import { SurfaceMotionDemo } from "../../../../playground/showcase/demos/surface/SurfaceMotion.demo";
+import { SurfaceSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/surface/slotMotion/gallery";
+import { SurfaceMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/surface/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -57,6 +58,10 @@ const meta = {
     shadow: { control: "select", options: ["none", "small", "base", "mid", "large"] },
     padding: { control: "select", options: ["none", "small", "base", "mid", "large"] },
     radius: { control: "select", options: ["base", "mid", "large"] },
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
+    },
   },
 } satisfies Meta<typeof Surface>;
 
@@ -302,5 +307,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SurfaceMotionDemo />,
+  render: () => <SurfaceSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot, playAll stagger, set/cancel, stacked timelines, async events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <SurfaceMotionControllerGalleryDemo />,
 };

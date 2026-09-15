@@ -64,6 +64,10 @@ export function DropdownRoot({
   popoverVariant,
   portalContainer,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: DropdownProps) {
   const { contextValue } = useDropdownRootState({
@@ -84,7 +88,10 @@ export function DropdownRoot({
     <DropdownProvider value={contextValue}>
       <DropdownClassNamesProvider classNames={classNames}>
         <DropdownIndicatorPreferenceProvider value={selectionIndicator}>
-          <DropdownMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
+          <DropdownMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <div
             className={dropdownRootClass({
               inJoinedButtonGroup,

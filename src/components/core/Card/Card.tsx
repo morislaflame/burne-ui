@@ -39,6 +39,9 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     classNames,
     motion,
     motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPress,
     onPointerOver: onPointerOverProp,
     onPointerOut: onPointerOutProp,
@@ -82,6 +85,9 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         defaults={motionDefaults}
         params={motionParams}
         controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
       >
         <CardSurface
           pressable={pressable}

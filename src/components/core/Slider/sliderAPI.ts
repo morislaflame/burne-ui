@@ -125,7 +125,7 @@ export function normalizeSliderMarks(
   max: number,
 ): number[] | undefined {
   if (!marks?.length) return undefined;
-  return [...new Set(marks.map((mark) => clampSliderValue(mark, min, max)))].toSorted(
+  return [...new Set(marks.map((mark) => clampSliderValue(mark, min, max)))].sort(
     (a, b) => a - b,
   );
 }

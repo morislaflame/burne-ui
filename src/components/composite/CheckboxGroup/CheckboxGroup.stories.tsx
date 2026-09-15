@@ -8,7 +8,8 @@ import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { CheckboxGroup } from ".";
-import { CheckboxGroupMotionDemo } from "../../../../playground/showcase/demos/checkboxGroup/CheckboxGroupMotion.demo";
+import { CheckboxGroupSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/checkboxGroup/slotMotion/gallery";
+import { CheckboxGroupMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/checkboxGroup/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -210,5 +211,18 @@ export const Sizes: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <CheckboxGroupMotionDemo />,
+  render: () => <CheckboxGroupSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on group chrome, cancel loop, checks events. Item Checkbox keeps its own scope.",
+      },
+    },
+  },
+  render: () => <CheckboxGroupMotionControllerGalleryDemo />,
 };

@@ -45,6 +45,7 @@ import { Breadcrumbs, type BreadcrumbsProps, type BreadcrumbsClassNames, type Br
 | `aria-label` | `"Хлебные крошки"` | Accessible name для `<nav>` |
 | `className` | — | Классы на `<nav>` |
 | `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Breadcrumbs.Item` |
 
 ### `BreadcrumbItem`
 
@@ -63,7 +64,7 @@ type BreadcrumbItem = {
 | Часть | Назначение |
 |-------|------------|
 | `Breadcrumbs.List` | `<ol>` с auto-walk `Breadcrumbs.Item` |
-| `Breadcrumbs.Item` | Marker для compound (рендерится через walk) |
+| `Breadcrumbs.Item` | Marker для compound (рендерится через walk); nested motion scope (`motionController`, `playSlot("itemLink")`) |
 | `Breadcrumbs.Separator` | Кастомный chevron (в simple/compound pieces — `IoChevronForward`) |
 
 `Breadcrumbs.Item` в compound — declarative marker (`return null`), данные собираются через `displayName` walk.
@@ -104,7 +105,36 @@ type BreadcrumbItem = {
 | `list` | `enter` / hover (opt-in) | empty; `<ol>` на root scope |
 | `separator` | `enter` / hover (opt-in) | empty; repeated на root scope |
 
-`false` на `itemLink.pressIn` — skip без kill. Current/static сегменты не анимируются. `Breadcrumbs.Item` — data-only (`return null`), не motion-слот.
+`false` на `itemLink.pressIn` — skip без kill. Current/static сегменты не анимируются. `Breadcrumbs.Item` — data-only (`return null`), не motion-слот; `motionController` на Item прокидывается в nested crumb.
+
+Слота `root` нет: `play()` skip. `playSlot("list")` / `playAll` — chrome (`list` / repeated `separator`), не nested crumbs. Каждый интерактивный crumb — **вложенный** scope: свой `motionController` на `Breadcrumbs.Item`, `playSlot("itemLink")`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`breadcrumbs:nudge`, `breadcrumbs:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Breadcrumbs.List`) видит Breadcrumbs; внутри Item — scope crumb.
+
+```tsx
+import { Button, Breadcrumbs, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "breadcrumbs:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("list", "breadcrumbs:nudge")}>
+        Nudge
+      </Button>
+      <Breadcrumbs collapse={false} motionController={controller} motion={{ events }}>
+        <Breadcrumbs.List>
+          <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+        </Breadcrumbs.List>
+      </Breadcrumbs>
+    </>
+  );
+}
+```
 
 **Где в коде:** типы — `breadcrumbsTypes.ts`; scope — `breadcrumbsContext.tsx`; defaults — `breadcrumbsAnimations.ts`; слоты — `breadcrumbsParts.tsx`; карта на Root — `Breadcrumbs.tsx`.
 
@@ -246,4 +276,4 @@ Breadcrumbs/
 
 ## Storybook
 
-`Core Components/Breadcrumbs` — simple/compound, collapse, long chain, light theme, per-item className, `classNames`.
+`Core Components/Breadcrumbs` — simple/compound, collapse, long chain, light theme, per-item className, `classNames`, slot motion gallery, MotionController.

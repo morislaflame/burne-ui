@@ -61,6 +61,8 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormHea
 | `onSubmitError` | — | `(errors) => void` при ошибках валидации |
 | `className` | — | На `<form>` |
 | `classNames` | — | Слоты layout |
+| `motion` | — | Карта chrome-слотов + `events`. Не крадёт motion Input |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Form.Field` / `Form.Section` и не Input |
 | HTML form attrs | — | `aria-label`, `id`, … |
 
 `onSubmit` HTML переопределён — нативная валидация отключена (`noValidate`).
@@ -71,10 +73,10 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormHea
 |-------|-----|------------|
 | `Form` | `<form>` | Root + state machine |
 | `Form.Header` | `<div>` | Обёртка `Title` + `Description` (`headingGap`) |
-| `Form.Section` | `<div>` | Группа полей |
+| `Form.Section` | `<div>` | Группа полей; вложенный motion scope (`motionController`, `playSlot("section")`) |
 | `Form.Title` | `Text as="h2"` | Заголовок формы |
 | `Form.Description` | `<p>` | Описание |
-| `Form.Field` | `<div>` | Обёртка + регистрация `rules` |
+| `Form.Field` | `<div>` | Обёртка + регистрация `rules`; вложенный motion scope (`motionController`, `playSlot("field")`) |
 | `Form.Actions` | `<div>` | Кнопки submit/cancel |
 | `Form.ErrorSummary` | `role="alert"` sr-only | Сводка ошибок (auto в root). `children` или `Form` prop `errorSummary` — ReactNode / `(entries) => ReactNode` |
 | `Form.Announce` | `role="status"` sr-only | Live region (auto в root) |
@@ -161,8 +163,36 @@ type FormFieldRules = {
 
 Не крадёт motion дочерних Input.
 
-`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется. Пользовательские `onPointerOver` / `Out` / `Down` / `Up` **мержатся** с motion (не заменяют).
+`play()` ищет слот `root` у Form. `playSlot("title")` / `playAll` — chrome (`header` / `title` / `description` / `actions` …). `Form.Field` и `Form.Section` создают **вложенный** scope: свой `motionController`, `playSlot("field")` / `playSlot("section")` (своего `root` нет). Один handle ≠ два scope.
 
+Проп `motionController` + ключ `events` на `motion` — app-команды (`form:nudge`, `form:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside) видит Form; в children `Form.Title` попадает в nested `Text`.
+
+```tsx
+import { Button, Form, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "form:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("form:nudge")}>
+        Nudge
+      </Button>
+      <Form aria-label="Profile" motionController={controller} motion={{ events }}>
+        <Form.Header>
+          <Form.Title>Profile</Form.Title>
+        </Form.Header>
+      </Form>
+    </>
+  );
+}
+```
+
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется. Пользовательские `onPointerOver` / `Out` / `Down` / `Up` **мержатся** с motion (не заменяют).
 
 `formAnimations.ts` — opt-in `enter` / `change` на chrome формы. Дефолтного GSAP нет: дочерние контролы (`Input`, `Button`, `Checkbox`, `ComboBox`) оставляют свои хосты.
 

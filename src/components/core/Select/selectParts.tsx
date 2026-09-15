@@ -3,6 +3,7 @@ import { forwardRef, useCallback } from "react";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
+import type { MotionController, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import { useSelectClassNames, useSelectContext } from "./selectContext";
 import { SelectError, SelectHint, SelectLabel } from "./selectFieldParts";
@@ -151,12 +152,17 @@ export function SelectSimpleBody({
   hint,
   error,
   labelId,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: {
   label: React.ReactNode;
   hint: React.ReactNode;
   error: React.ReactNode;
   labelId: string;
-}) {
+  motionController?: MotionController;
+} & MotionStateHostProps) {
   const slotClassNames = useSelectClassNames();
 
   return (
@@ -166,7 +172,10 @@ export function SelectSimpleBody({
           {label}
         </SelectLabel>
       ) : null}
-      <SelectTriggerGroup>
+      <SelectTriggerGroup motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}>
         <SelectValue />
         <SelectTrigger />
       </SelectTriggerGroup>

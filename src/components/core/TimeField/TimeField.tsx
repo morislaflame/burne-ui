@@ -46,6 +46,10 @@ export function TimeFieldRoot({
   suffix,
   segmentSeparator,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: TimeFieldProps) {
   const state = useTimeFieldRootState({
@@ -83,6 +87,10 @@ export function TimeFieldRoot({
         prefix,
         suffix,
         segmentSeparator,
+        motionController,
+        motionState,
+        motionPayload,
+        playInitialState,
       }}
     />
   );
@@ -90,7 +98,13 @@ export function TimeFieldRoot({
   return (
     <TimeFieldFieldProvider value={state.fieldCtx}>
       <TimeFieldClassNamesProvider classNames={classNames}>
-        <TimeFieldMotionProvider motion={motion}>
+        <TimeFieldMotionProvider
+          motion={motion}
+          controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
           <Field
             size={state.size}

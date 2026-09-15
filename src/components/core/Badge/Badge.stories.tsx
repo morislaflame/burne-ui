@@ -13,7 +13,8 @@ import { Card } from "@/components/core/Card";
 import { Badge, type BadgePlacement, type BadgeStatus, type BadgeVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
-import { BadgeMotionDemo } from "../../../../playground/showcase/demos/badge/BadgeMotion.demo";
+import { BadgeSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/badge/slotMotion/gallery";
+import { BadgeMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/badge/motionController/gallery";
 
 const GREEN_AVATAR_URL = PIN_IMAGE1;
 const ORANGE_AVATAR_URL = PIN_IMAGE2;
@@ -98,6 +99,10 @@ const meta = {
     size: {
       control: "select",
       options: ["small", "base", "mid", "large"],
+    },
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
     },
   },
 } satisfies Meta<typeof Badge>;
@@ -610,5 +615,18 @@ export const GlossLight: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <BadgeMotionDemo />,
+  render: () => <BadgeSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot, playAll stagger, set/cancel, stacked timelines, async events, waitForComplete, motionState scramble.",
+      },
+    },
+  },
+  render: () => <BadgeMotionControllerGalleryDemo />,
 };

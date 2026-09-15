@@ -38,7 +38,7 @@ import type { TabsTabProps } from "./tabsTypes";
 import { cn } from "@/utils/cn";
 
 export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
-  { motion, ...rest },
+  { motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const {
@@ -62,7 +62,10 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
   );
 
   return (
-    <TabsMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+    <TabsMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <TabsTabSurface forwardedRef={ref} itemMotion={motion} size={size} variant={variant} {...rest} />
     </TabsMotionProvider>
   );

@@ -10,7 +10,7 @@ import { isContainedPortal, resolvePortalContainer } from "@/components/core/uti
 import { focusElement } from "@/components/core/utils/focusElement";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
@@ -520,11 +520,23 @@ AlertDialogTrigger.displayName = "AlertDialog.Trigger";
 
 // ─── AlertDialog.Panel ────────────────────────────────────────────────────────
 
-export function AlertDialogPanel({ motion, ...props }: AlertDialogPanelProps) {
+export function AlertDialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, ...props }: AlertDialogPanelProps) {
   const parentScope = useOptionalAlertDialogMotionScope();
-  const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+  const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+  const siblings = mergeMotionRootSiblings(
+    { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+    motion,
+  );
+  const merged = { ...mergedSlots, ...siblings };
   return (
-    <AlertDialogMotionProvider motion={merged} defaults={ALERT_DIALOG_MOTION_DEFAULTS}>
+    <AlertDialogMotionProvider
+      motion={merged}
+      defaults={ALERT_DIALOG_MOTION_DEFAULTS}
+      controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+    >
       <AlertDialogPanelHost {...props} />
     </AlertDialogMotionProvider>
   );
@@ -537,7 +549,7 @@ function AlertDialogPanelHost({
   themeAnchor,
   portalContainer: portalContainerProp,
   children,
-}: Omit<AlertDialogPanelProps, "motion">) {
+}: Omit<AlertDialogPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">) {
   const {
     open,
     titleId,

@@ -1,0 +1,48 @@
+import { Breadcrumbs } from "@/components/core/Breadcrumbs";
+import { Button } from "@/components/core/Button";
+import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
+
+function preventNav(event: { preventDefault(): void }) {
+  event.preventDefault();
+}
+
+export function BreadcrumbsMotionControllerDemo() {
+  const controller = useMotionControllerHandle();
+
+  return (
+    <div className="flex flex-col gap-2xlarge">
+      <div className="flex flex-wrap gap-small">
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("list", "hoverIn")}>
+          playSlot(list)
+        </Button>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("list", "hoverOut")}>
+          Reset
+        </Button>
+        <Button size="small" variant="ghost" onClick={() => controller.set("list", { y: 0 })}>
+          Snap
+        </Button>
+      </div>
+      <Breadcrumbs
+        collapse={false}
+        motionController={controller}
+        motion={{
+          itemLink: { pressIn: false, pressOut: false },
+          list: {
+            hoverIn: { y: -6, duration: 0.28, replay: "rest" },
+            hoverOut: { y: 0, duration: 0.2 },
+          },
+        }}
+      >
+        <Breadcrumbs.List>
+          <Breadcrumbs.Item href="#" onClick={preventNav}>
+            Home
+          </Breadcrumbs.Item>
+          <Breadcrumbs.Item href="#" onClick={preventNav}>
+            Catalog
+          </Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+        </Breadcrumbs.List>
+      </Breadcrumbs>
+    </div>
+  );
+}

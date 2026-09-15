@@ -2,7 +2,8 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Separator } from "@/components/core/Separator";
-import { SeparatorMotionDemo } from "../../../../playground/showcase/demos/separator/SeparatorMotion.demo";
+import { SeparatorMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/separator/motionController/gallery";
+import { SeparatorSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/separator/slotMotion/gallery";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -33,5 +34,18 @@ export const Playground: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SeparatorMotionDemo />,
+  render: () => <SeparatorSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play / set on root, cancel loop, sep events.",
+      },
+    },
+  },
+  render: () => <SeparatorMotionControllerGalleryDemo />,
 };

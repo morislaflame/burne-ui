@@ -12,6 +12,7 @@ export {
   isMotionFactory,
   isMotionVarsObject,
   isMotionRunActive,
+  isMotionAbortError,
   isMotionPhaseName,
   LEAVE_COMPLETE_FALLBACK_MS,
   type KitRecipeName,
@@ -19,6 +20,7 @@ export {
   type MotionCancelReason,
   type MotionContext,
   type MotionDurationToken,
+  type MotionDelay,
   type MotionFactory,
   type MotionPartPhases,
   type MotionPhaseName,
@@ -26,12 +28,14 @@ export {
   type MotionRecipeMetadata,
   type MotionRecipeName,
   type MotionRecipeParams,
+  type MotionPayload,
   type MotionReducedStrategy,
   type MotionRun,
   type MotionTransformVars,
   type MotionTweenVars,
   type MotionTimeline,
   type MotionTimelinePosition,
+  type MotionSequenceStep,
   type MotionReplay,
   type MotionRunStatus,
   type MotionSlotMap,
@@ -41,11 +45,19 @@ export {
 export { KIT_MOTION_RECIPE_META } from "./kitMotionRecipeMeta";
 export {
   createMotionEvents,
+  createMotionFactory,
+  createMotionStates,
+  mergeMotionRootSiblings,
+  mergeMotionStates,
+  remapMotionStateSlots,
   splitMotionRootMap,
 } from "./motionEvents";
 export type {
   MotionEvents,
   MotionMapWithEvents,
+  MotionStateHostProps,
+  MotionStateSlots,
+  MotionStates,
 } from "./motionEvents";
 export {
   attachMotionController,
@@ -63,6 +75,22 @@ export type {
   MotionPlayOptions,
   MotionRunResult,
 } from "./motionControllerTypes";
+export {
+  createMotionGroup,
+  MotionGroupMember,
+  MotionGroupProvider,
+  useMotionGroup,
+  useMotionGroupHandle,
+  useMotionGroupMember,
+  useOptionalMotionGroup,
+} from "./motionGroup";
+export type {
+  MotionGroup,
+  MotionGroupPlayAllOptions,
+  MotionGroupTimeline,
+  MotionGroupTimelinePlayAllOptions,
+  MotionGroupTimelinePlayOptions,
+} from "./motionGroupTypes";
 export {
   registerMotionRecipe,
   unregisterMotionRecipe,
@@ -108,5 +136,3 @@ export {
   useSlotPhaseOnChange,
 } from "./useSlotLifecycle";
 export { registerKitMotionRecipes } from "./recipes";
-
-import "./recipes";

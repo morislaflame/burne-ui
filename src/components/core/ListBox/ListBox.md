@@ -71,6 +71,7 @@ Option-grid (indicator | label | icon) включается только ког�
 | `listId` | auto | id для `aria-*` |
 | `aria-label` / `aria-labelledby` | — | Accessible name списка |
 | `classNames` | — | см. стилизацию |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `ListBox.Item` |
 
 ### Compound-подчасти
 
@@ -80,7 +81,7 @@ Option-grid (indicator | label | icon) включается только ког�
 | `ListBox.Header` | Заголовок секции |
 | `ListBox.Separator` | Разделитель |
 | `ListBox.Empty` | Пустое состояние |
-| `ListBox.Item` | `role="option"` button; simple: `label` / `hint` / `icon` / `indicator` |
+| `ListBox.Item` | `role="option"` button; simple: `label` / `hint` / `icon` / `indicator`; nested motion scope (`motionController`, `playSlot("item")`) |
 | `ListBox.Label` / `Hint` / `Icon` | Слоты grid item |
 | `ListBox.ItemIndicator` | `SelectionIndicator` (compound: `.Fill`, `.Mark`) |
 
@@ -117,6 +118,33 @@ Option-grid (indicator | label | icon) включается только ког�
 | `section` / `header` / `empty` / `separator` | `enter` (opt-in); hover/press если задать | нет |
 
 `false` на `item.pressIn` — skip без kill.
+
+Слота `root` нет: `play()` skip. `playSlot("header")` / `playAll` — chrome (`section` / `header` / `empty` / `separator`, repeated), не nested Item. Каждый `ListBox.Item` — **вложенный** scope: свой `motionController`, `playSlot("item")` / `playSlot("label")`. Один handle ≠ два scope. Gloss panel и `data-active` не слоты.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`listbox:nudge`, `listbox:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `ListBox.Header`) видит ListBox; внутри Item — scope пункта.
+
+```tsx
+import { Button, ListBox, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "listbox:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("header", "listbox:nudge")}>
+        Nudge
+      </Button>
+      <ListBox aria-label="Lang" motionController={controller} motion={{ events }}>
+        <ListBox.Header>Lang</ListBox.Header>
+        <ListBox.Item value="en" label="English" />
+      </ListBox>
+    </>
+  );
+}
+```
 
 **Где в коде:** типы — `listBoxTypes.ts`; scope — `listBoxContext.tsx`; defaults + keyboard play — `listBoxAnimations.ts`; слоты — `listBoxParts.tsx`; Provider — `ListBox.tsx`.
 
@@ -238,4 +266,4 @@ ListBox/
 
 ## Storybook
 
-`Core Components/ListBox` — single/multiple, sections, gloss, indicator, `classNames`, slot motion gallery.
+`Core Components/ListBox` — single/multiple, sections, gloss, indicator, `classNames`, slot motion gallery, MotionController.

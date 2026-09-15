@@ -34,6 +34,10 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     children,
     hoverLift = true,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     ...rest
@@ -77,7 +81,15 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   return (
     <BadgeClassNamesProvider classNames={classNames}>
-      <BadgeMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+      <BadgeMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <BadgeSurface
           variant={variant}
           status={status}

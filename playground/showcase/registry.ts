@@ -22,6 +22,9 @@ import { ExpandableShowcase } from "./pages/ExpandableShowcase";
 import { FieldShowcase } from "./pages/FieldShowcase";
 import { FormShowcase } from "./pages/FormShowcase";
 import { GlossShowcase } from "./pages/GlossShowcase";
+import { MotionAsyncShowcase } from "./pages/MotionAsyncShowcase";
+import { MotionConfigShowcase } from "./pages/MotionConfigShowcase";
+import { MotionGroupShowcase } from "./pages/MotionGroupShowcase";
 import { InputShowcase } from "./pages/InputShowcase";
 import { KbdShowcase } from "./pages/KbdShowcase";
 import { LinkShowcase } from "./pages/LinkShowcase";
@@ -159,7 +162,12 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   {
     id: "theme",
     label: "Theme",
-    pages: [{ id: "gloss", label: "Gloss", Page: GlossShowcase }],
+    pages: [
+      { id: "gloss", label: "Gloss", Page: GlossShowcase },
+      { id: "motion-group", label: "MotionGroup", Page: MotionGroupShowcase },
+      { id: "motion-async", label: "MotionAsync", Page: MotionAsyncShowcase },
+      { id: "motion-config", label: "MotionConfig", Page: MotionConfigShowcase },
+    ],
   },
 ];
 

@@ -18,18 +18,8 @@ import { TableRowSelectionDemo } from "../demos/table/TableRowSelection.demo";
 import tableRowSelectionSource from "../demos/table/TableRowSelection.demo.tsx?raw";
 import { TableTeamRosterDemo } from "../demos/table/TableTeamRoster.demo";
 import tableTeamRosterSource from "../demos/table/TableTeamRoster.demo.tsx?raw";
-import { TableMotionInstantEnterDemo } from "../demos/table/TableMotionInstantEnter.demo";
-import tableMotionInstantEnterSource from "../demos/table/TableMotionInstantEnter.demo.tsx?raw";
-import { TableMotionRootWaveDemo } from "../demos/table/TableMotionRootWave.demo";
-import tableMotionRootWaveSource from "../demos/table/TableMotionRootWave.demo.tsx?raw";
-import { TableMotionRowCheckDemo } from "../demos/table/TableMotionRowCheck.demo";
-import tableMotionRowCheckSource from "../demos/table/TableMotionRowCheck.demo.tsx?raw";
-import { TableMotionColumnLabelDemo } from "../demos/table/TableMotionColumnLabel.demo";
-import tableMotionColumnLabelSource from "../demos/table/TableMotionColumnLabel.demo.tsx?raw";
-import { TableMotionEmptyDemo } from "../demos/table/TableMotionEmpty.demo";
-import tableMotionEmptySource from "../demos/table/TableMotionEmpty.demo.tsx?raw";
-import { TableMotionHeaderBodyDemo } from "../demos/table/TableMotionHeaderBody.demo";
-import tableMotionHeaderBodySource from "../demos/table/TableMotionHeaderBody.demo.tsx?raw";
+import { TableSlotMotionGalleryDemo } from "../demos/table/slotMotion/gallery";
+import { TableMotionControllerGalleryDemo } from "../demos/table/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -109,12 +99,14 @@ export function TableShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant enter skip, root/content timeline, row check/uncheck, column Label enter, headerRow and body, Table.Empty. Sort chevron stays kit-internal.">
-        <ShowcaseDemoFromFile align="stretch" Demo={TableMotionInstantEnterDemo} source={tableMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TableMotionRootWaveDemo} source={tableMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TableMotionRowCheckDemo} source={tableMotionRowCheckSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TableMotionColumnLabelDemo} source={tableMotionColumnLabelSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TableMotionHeaderBodyDemo} source={tableMotionHeaderBodySource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TableMotionEmptyDemo} source={tableMotionEmptySource} />
+        <TableSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play vs playSlot on table chrome, playAll on repeated columns, nested Table.Row scope, table events."
+      >
+        <TableMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

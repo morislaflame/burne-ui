@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type {
   ToggleButtonGroupOrientation,
@@ -54,9 +54,15 @@ export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defau
   /**
    * Per-slot motion (`root`). Items keep ToggleButton motion — group does not wrap item hosts.
    * `change` plays when selection identity updates. Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<ToggleButtonGroupMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ToggleButtonGroupMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ToggleButtonGroupClassNamesProviderProps = {
   classNames?: Prettify<ToggleButtonGroupClassNames>;

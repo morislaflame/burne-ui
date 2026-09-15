@@ -15,7 +15,7 @@ import { tabsPanelClass } from "./tabsStyles";
 import type { TabsPanelProps } from "./tabsTypes";
 
 export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function TabsPanel(
-  { motion, ...rest },
+  { motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const parentScope = useOptionalTabsMotionScope();
@@ -25,7 +25,10 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function Tab
   );
 
   return (
-    <TabsMotionProvider motion={mergedMotion} defaults={{}}>
+    <TabsMotionProvider motion={mergedMotion} defaults={{}} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <TabsPanelSurface forwardedRef={ref} itemMotion={motion} {...rest} />
     </TabsMotionProvider>
   );

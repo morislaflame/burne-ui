@@ -10,14 +10,8 @@ import { PaginationTableFooterDemo } from "../demos/pagination/PaginationTableFo
 import paginationTableFooterSource from "../demos/pagination/PaginationTableFooter.demo.tsx?raw";
 import { PaginationWithPagesDemo } from "../demos/pagination/PaginationWithPages.demo";
 import paginationWithPagesSource from "../demos/pagination/PaginationWithPages.demo.tsx?raw";
-import { PaginationMotionInstantPressDemo } from "../demos/pagination/PaginationMotionInstantPress.demo";
-import paginationMotionInstantPressSource from "../demos/pagination/PaginationMotionInstantPress.demo.tsx?raw";
-import { PaginationMotionControlWaveDemo } from "../demos/pagination/PaginationMotionControlWave.demo";
-import paginationMotionControlWaveSource from "../demos/pagination/PaginationMotionControlWave.demo.tsx?raw";
-import { PaginationMotionEllipsisDemo } from "../demos/pagination/PaginationMotionEllipsis.demo";
-import paginationMotionEllipsisSource from "../demos/pagination/PaginationMotionEllipsis.demo.tsx?raw";
-import { PaginationMotionNavTintDemo } from "../demos/pagination/PaginationMotionNavTint.demo";
-import paginationMotionNavTintSource from "../demos/pagination/PaginationMotionNavTint.demo.tsx?raw";
+import { PaginationSlotMotionGalleryDemo } from "../demos/pagination/slotMotion/gallery";
+import { PaginationMotionControllerGalleryDemo } from "../demos/pagination/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -59,10 +53,14 @@ export function PaginationShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant skip, press timeline + stagger children, compound Previous/Next, ellipsis enter.">
-        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionInstantPressDemo} source={paginationMotionInstantPressSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionControlWaveDemo} source={paginationMotionControlWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionEllipsisDemo} source={paginationMotionEllipsisSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionNavTintDemo} source={paginationMotionNavTintSource} />
+        <PaginationSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on summary (no root), playAll chrome without nested controls, Pagination.Previous scope, pagination events."
+      >
+        <PaginationMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

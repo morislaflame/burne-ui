@@ -4,14 +4,6 @@ import { ToggleButtonControlledDemo } from "../demos/toggle-button/ToggleButtonC
 import toggleButtonControlledSource from "../demos/toggle-button/ToggleButtonControlled.demo.tsx?raw";
 import { ToggleButtonGlossDemo } from "../demos/toggle-button/ToggleButtonGloss.demo";
 import toggleButtonGlossSource from "../demos/toggle-button/ToggleButtonGloss.demo.tsx?raw";
-import { ToggleButtonMotionFillFromBottomDemo } from "../demos/toggle-button/ToggleButtonMotionFillFromBottom.demo";
-import toggleButtonMotionFillFromBottomSource from "../demos/toggle-button/ToggleButtonMotionFillFromBottom.demo.tsx?raw";
-import { ToggleButtonMotionIconSpinDemo } from "../demos/toggle-button/ToggleButtonMotionIconSpin.demo";
-import toggleButtonMotionIconSpinSource from "../demos/toggle-button/ToggleButtonMotionIconSpin.demo.tsx?raw";
-import { ToggleButtonMotionInstantFillDemo } from "../demos/toggle-button/ToggleButtonMotionInstantFill.demo";
-import toggleButtonMotionInstantFillSource from "../demos/toggle-button/ToggleButtonMotionInstantFill.demo.tsx?raw";
-import { ToggleButtonMotionTextTintDemo } from "../demos/toggle-button/ToggleButtonMotionTextTint.demo";
-import toggleButtonMotionTextTintSource from "../demos/toggle-button/ToggleButtonMotionTextTint.demo.tsx?raw";
 import { ToggleButtonReactionBarDemo } from "../demos/toggle-button/ToggleButtonReactionBar.demo";
 import toggleButtonReactionBarSource from "../demos/toggle-button/ToggleButtonReactionBar.demo.tsx?raw";
 import { ToggleButtonSizesDemo } from "../demos/toggle-button/ToggleButtonSizes.demo";
@@ -22,6 +14,8 @@ import { ToggleButtonVariantsDemo } from "../demos/toggle-button/ToggleButtonVar
 import toggleButtonVariantsSource from "../demos/toggle-button/ToggleButtonVariants.demo.tsx?raw";
 import { ToggleButtonViewSwitchDemo } from "../demos/toggle-button/ToggleButtonViewSwitch.demo";
 import toggleButtonViewSwitchSource from "../demos/toggle-button/ToggleButtonViewSwitch.demo.tsx?raw";
+import { ToggleButtonMotionControllerGalleryDemo } from "../demos/toggle-button/motionController/gallery";
+import { ToggleButtonSlotMotionGalleryDemo } from "../demos/toggle-button/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -61,14 +55,15 @@ export function ToggleButtonShowcase() {
         <ShowcaseDemoFromFile Demo={ToggleButtonGlossDemo} source={toggleButtonGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="Default recipes, instant fill, fill from bottom, icon/text factories, MorphSVG heart.">
+        <ToggleButtonSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant fill, fill from bottom, icon spin on check, text tint."
+        title="MotionController"
+        description="One gallery: playSlot / set, play vs fill/iconStart, iconStart/iconEnd, stagger, exclude fill, like events, waitForComplete."
       >
-        <ShowcaseDemoFromFile Demo={ToggleButtonMotionInstantFillDemo} source={toggleButtonMotionInstantFillSource} />
-        <ShowcaseDemoFromFile Demo={ToggleButtonMotionFillFromBottomDemo} source={toggleButtonMotionFillFromBottomSource} />
-        <ShowcaseDemoFromFile Demo={ToggleButtonMotionIconSpinDemo} source={toggleButtonMotionIconSpinSource} />
-        <ShowcaseDemoFromFile Demo={ToggleButtonMotionTextTintDemo} source={toggleButtonMotionTextTintSource} />
+        <ToggleButtonMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

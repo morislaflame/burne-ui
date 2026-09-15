@@ -6,7 +6,7 @@ import type {
   SelectionIndicatorVariant,
   SelectionIndicatorClassNames,
 } from "@/components/core/SelectionIndicator";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type ListBoxSize = "small" | "base" | "mid" | "large";
 
@@ -93,8 +93,19 @@ export type ListBoxProps = Omit<
   onActiveValueChange?: (value: string | null) => void;
   listId?: string;
   classNames?: Prettify<ListBoxClassNames>;
-  motion?: Prettify<ListBoxMotion>;
-};
+  /**
+   * Per-slot motion (`item`, `label`, `header`, `section` …).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * There is no `root` slot — `play()` skips; use `playSlot("header")` / `playAll`.
+   */
+  motion?: Prettify<MotionMapWithEvents<ListBoxMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this list chrome scope (`section` / `header` / `empty` / `separator`).
+   * Nested `ListBox.Item` is a separate scope — pass a handle there. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ListBoxClassNamesProviderProps = {
   classNames?: Prettify<ListBoxClassNames>;
@@ -133,7 +144,12 @@ export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> 
   /** Simple API: render selection indicator (same as `<ListBox.ItemIndicator />`). */
   indicator?: boolean;
   motion?: Prettify<ListBoxPartMotion>;
-};
+  /**
+   * Handle for this item's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("item")`. Label / hint / icon live here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ListBoxPartMotion>;

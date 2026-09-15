@@ -19,7 +19,13 @@ import {
   MotionControllerProvider,
 } from "./motionController";
 import type { MotionController } from "./motionControllerTypes";
-import { splitMotionRootMap, type MotionEvents, type MotionRootInput } from "./motionEvents";
+import {
+  splitMotionRootMap,
+  type MotionEvents,
+  type MotionRootInput,
+  type MotionStates,
+} from "./motionEvents";
+import { useMotionStatePlayback } from "./playMotionState";
 import {
   isMotionPhaseName,
   type MotionPartPhases,
@@ -39,6 +45,9 @@ export type PlaySlotPhaseOptions = {
   el?: HTMLElement | null;
   waitForComplete?: boolean;
   complete?: () => void;
+  fromState?: string;
+  toState?: string;
+  payload?: unknown;
 };
 
 export type PlayBroadcastOptions = {
@@ -51,6 +60,7 @@ export type PlayBroadcastOptions = {
 export type MotionScopeValue = {
   getRootMotion: () => MotionSlotMap | undefined;
   getEvents: () => MotionEvents | undefined;
+  getStates: () => MotionStates | undefined;
   getDefaults: () => MotionSlotMap | undefined;
   getParams: () => MotionRecipeParams;
   /** Unique / first live instance of a slot. Repeated slots: `getTargets(slot)`. */
@@ -97,6 +107,7 @@ export function createMotionScopeController({
   const hostIds = new Map<string, symbol>();
   const getSlots = () => splitMotionRootMap(getRootMotion()).slots;
   const getEvents = () => splitMotionRootMap(getRootMotion()).events;
+  const getStates = () => splitMotionRootMap(getRootMotion()).states;
 
   const register = (input: MotionRegisterInput) => registry.register(input);
 
@@ -140,6 +151,9 @@ export function createMotionScopeController({
       waitForComplete: options?.waitForComplete,
       slot,
       config: getConfig?.(),
+      fromState: options?.fromState,
+      toState: options?.toState,
+      payload: options?.payload,
     });
   };
 
@@ -184,6 +198,7 @@ export function createMotionScopeController({
   const scope: MotionScopeValue = {
     getRootMotion: getSlots,
     getEvents,
+    getStates,
     getDefaults,
     getParams,
     getTarget: registry.getTarget,
@@ -208,6 +223,9 @@ export function createMotionScope(debugName: string) {
     defaults,
     params,
     controller: appController,
+    motionState,
+    motionPayload,
+    playInitialState = false,
     children,
   }: {
     motion?: MotionRootInput;
@@ -215,6 +233,10 @@ export function createMotionScope(debugName: string) {
     params?: MotionRecipeParams;
     /** Deferred handle from `createMotionController()` — attach for the Provider lifetime. */
     controller?: MotionController;
+    motionState?: string;
+    /** App snapshot for `ctx.payload` — not kit `params`. */
+    motionPayload?: unknown;
+    playInitialState?: boolean;
     children: ReactNode;
   }) {
     const motionRef = useRef(motion);
@@ -244,6 +266,8 @@ export function createMotionScope(debugName: string) {
       attachMotionController(appController, scope);
       return () => attachMotionController(appController, null);
     }, [appController, scope]);
+
+    useMotionStatePlayback(scope, motionState, motionPayload, playInitialState);
 
     return (
       <MotionScopeContext.Provider value={scope}>

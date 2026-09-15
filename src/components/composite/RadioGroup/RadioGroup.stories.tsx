@@ -10,7 +10,7 @@ import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import { RadioGroup } from ".";
-import { RadioGroupMotionDemo } from "../../../../playground/showcase/demos/radioGroup/RadioGroupMotion.demo";
+import { RadioGroupSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/radioGroup/slotMotion/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -307,7 +307,7 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <RadioGroupMotionDemo />,
+  render: () => <RadioGroupSlotMotionGalleryDemo />,
 };
 
 export const Accessibility: Story = {

@@ -1,6 +1,6 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { FieldErrorProps, FieldSetActionsProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -71,9 +71,16 @@ export type CheckboxGroupProps = Omit<
    * Per-slot motion (`root`, `list`, `legend`, `hint`, `error`, `actions`).
    * Items keep Checkbox motion. `change` plays on `root` when `selection="single"`
    * value updates. `Group` is not a slot. Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<CheckboxGroupMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<CheckboxGroupMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this group chrome scope (not item Checkbox / SelectionIndicator).
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseCheckboxGroupRootStateProps = CheckboxGroupProps;
 

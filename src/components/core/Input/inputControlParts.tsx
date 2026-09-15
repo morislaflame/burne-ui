@@ -7,7 +7,7 @@ import { Text } from "@/components/core/Text";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 import {
@@ -70,6 +70,10 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
       name,
       value,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -149,10 +153,15 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
         }),
       [blocked, groupSegment, isGloss],
     );
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { shell: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
 
     const isFile = inputType === "file";
     const isPassword = inputType === "password";
@@ -221,7 +230,15 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     );
 
     return (
-      <InputMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+      <InputMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <InputControlSurface
           variant={variant}
           status={status}
@@ -326,6 +343,7 @@ function InputTextControl({
     | "name"
     | "value"
     | "motion"
+    | "motionController"
   >;
 }) {
   const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
@@ -458,6 +476,7 @@ function InputControlSurface({
     | "name"
     | "value"
     | "motion"
+    | "motionController"
   >;
 }) {
   const {

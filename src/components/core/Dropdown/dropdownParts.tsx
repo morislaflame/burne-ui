@@ -184,6 +184,10 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       offset = POPOVER_DEFAULT_OFFSET,
       portalContainer: portalContainerProp,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     forwardedRef,
@@ -236,6 +240,10 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         motion={popoverMotion}
       >
         <Popover.Content
+          motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
           ref={(node) => {
             mergeForwardedRef(forwardedRef, node);
             mergeForwardedRef(contentRef, node);

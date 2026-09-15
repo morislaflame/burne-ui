@@ -10,6 +10,8 @@ import { SelectionIndicatorThumbGalleryDemo } from "../demos/selectionIndicator/
 import selectionIndicatorThumbGallerySource from "../demos/selectionIndicator/SelectionIndicatorThumbGallery.demo.tsx?raw";
 import { SelectionIndicatorVariantMixDemo } from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo";
 import selectionIndicatorVariantMixSource from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo.tsx?raw";
+import { SelectionIndicatorMotionControllerGalleryDemo } from "../demos/selectionIndicator/motionController/gallery";
+import { SelectionThumbMotionControllerGalleryDemo } from "../demos/selectionThumb/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -32,6 +34,20 @@ export function SelectionIndicatorShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGlossDemo} source={selectionIndicatorGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play(check) on root, play vs playSlot, stagger, exclude fill, inside Fill, cancel, indicator events. Do not put the handle on Checkbox."
+      >
+        <SelectionIndicatorMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (SelectionThumb)"
+        description="Standalone thumb only — Switch/Slider do not forward this handle. play(root), icon slot, stagger, inside Icon, cancel, thumb events."
+      >
+        <SelectionThumbMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

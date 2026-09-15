@@ -8,7 +8,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type DisclosureVariant =
   | "default"
@@ -36,11 +36,16 @@ export type DisclosureClassNames = {
   glossContent?: string;
   handle?: string;
   group?: string;
+  body?: string;
 };
 
 export type DisclosureLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
 };
 
 export type DisclosureTitleLiftMotion = {
@@ -52,7 +57,7 @@ export type DisclosureTitleLiftMotion = {
 
 /**
  * Per-slot motion. DOM slots: `titleLift` (`classNames.titleLift`), `title`, `chevron`,
- * `contentShell`, `icon`. `panelInner` is an internal height-recipe target, not a public slot.
+ * `contentShell`, `icon`, `body` (Content `<section>`). `panelInner` is an internal height-recipe target, not a public slot.
  * Handle-drag is kit-internal (not a slot).
  */
 export type DisclosureMotion = {
@@ -61,6 +66,7 @@ export type DisclosureMotion = {
   chevron?: DisclosureLifecycleMotion;
   contentShell?: DisclosureLifecycleMotion;
   icon?: DisclosureLifecycleMotion;
+  body?: DisclosureLifecycleMotion;
 };
 
 export type DisclosureGroupContextValue = {
@@ -108,10 +114,18 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<DisclosureClassNames>;
   /**
    * Per-slot motion: `titleLift` (hover/press), `title` (enter/leave broadcast), `chevron` (enter/leave rotate),
-   * `contentShell` (height), `icon` (broadcast on open). Group `motion` is merged into each item.
+   * `contentShell` (height), `icon` / `body` (broadcast on open). Group `motion` is merged into each item.
+   * There is no `root` slot — `play()` skips; use `playSlot("titleLift")` / `playAll`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<DisclosureMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<DisclosureMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this Disclosure scope. `Disclosure.Group` has no scope — pass a handle per item.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;

@@ -14,7 +14,8 @@ import { Surface } from "@/components/core/Surface";
 import { Text } from "@/components/core/Text";
 import type { FormValues } from "./formTypes";
 import { Form } from "./index";
-import { FormMotionDemo } from "../../../../playground/showcase/demos/form/FormMotion.demo";
+import { FormSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/form/slotMotion/gallery";
+import { FormMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/form/motionController/gallery";
 
 const localeOptions: ComboBoxOption[] = [
   { value: "ru", label: "Russian", hint: "UI and emails in Russian" },
@@ -741,5 +742,18 @@ export const Sizes: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <FormMotionDemo />,
+  render: () => <FormSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on Form chrome, Form.Field is a nested scope, cancel loop, form events.",
+      },
+    },
+  },
+  render: () => <FormMotionControllerGalleryDemo />,
 };

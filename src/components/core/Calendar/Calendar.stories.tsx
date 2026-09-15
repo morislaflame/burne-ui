@@ -5,7 +5,8 @@ import { expect, waitFor } from "storybook/test";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
 import { Calendar, useCalendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
-import { CalendarMotionDemo } from "../../../../playground/showcase/demos/calendar/CalendarMotion.demo";
+import { CalendarSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/calendar/slotMotion/gallery";
+import { CalendarMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/calendar/motionController/gallery";
 
 function CustomTitleLabel() {
   const { viewDate, view } = useCalendar();
@@ -417,5 +418,18 @@ export const CustomTitleFormat: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <CalendarMotionDemo />,
+  render: () => <CalendarSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on Calendar chrome (no root), nested Day cell scope, calendar events.",
+      },
+    },
+  },
+  render: () => <CalendarMotionControllerGalleryDemo />,
 };

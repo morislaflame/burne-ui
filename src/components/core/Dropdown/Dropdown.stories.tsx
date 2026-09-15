@@ -12,7 +12,8 @@ import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStor
 import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 import { Dropdown } from ".";
-import { DropdownMotionDemo } from "../../../../playground/showcase/demos/dropdown/DropdownMotion.demo";
+import { DropdownSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/dropdown/slotMotion/gallery";
+import { DropdownMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/dropdown/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -730,5 +731,10 @@ export const PopoverSideTop: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (instant leave, body stagger, submenu, origin)",
-  render: () => <DropdownMotionDemo />,
+  render: () => <DropdownSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery (portal host, items, trigger)",
+  render: () => <DropdownMotionControllerGalleryDemo />,
 };

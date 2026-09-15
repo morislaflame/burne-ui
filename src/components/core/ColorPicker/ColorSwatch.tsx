@@ -52,6 +52,10 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       className = "",
       onClick,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerEnter,
       onPointerLeave,
       onPointerOver,
@@ -92,6 +96,10 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         className={className}
         onClick={onClick}
         motion={motion}
+        motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
         ariaLabelProp={ariaLabelProp}
         buttonRest={buttonRest}
         forwardedRef={ref}
@@ -118,6 +126,10 @@ function ColorSwatchButton({
   className,
   onClick,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ariaLabelProp,
   buttonRest,
   forwardedRef,
@@ -137,8 +149,12 @@ function ColorSwatchButton({
   className: string;
   onClick?: ColorSwatchProps["onClick"];
   motion?: ColorSwatchProps["motion"];
+  motionController?: ColorSwatchProps["motionController"];
+  motionState?: ColorSwatchProps["motionState"];
+  motionPayload?: ColorSwatchProps["motionPayload"];
+  playInitialState?: ColorSwatchProps["playInitialState"];
   ariaLabelProp?: string;
-  buttonRest: Omit<ColorSwatchProps, "color" | "size" | "shape" | "selected" | "disabled" | "className" | "onClick" | "motion" | "onPointerEnter" | "onPointerLeave" | "onPointerOver" | "onPointerOut" | "onPointerDown" | "onPointerUp" | "onKeyDown" | "aria-label">;
+  buttonRest: Omit<ColorSwatchProps, "color" | "size" | "shape" | "selected" | "disabled" | "className" | "onClick" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState" | "onPointerEnter" | "onPointerLeave" | "onPointerOver" | "onPointerOut" | "onPointerDown" | "onPointerUp" | "onKeyDown" | "aria-label">;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   onPointerEnter?: ColorSwatchProps["onPointerEnter"];
   onPointerLeave?: ColorSwatchProps["onPointerLeave"];
@@ -163,7 +179,10 @@ function ColorSwatchButton({
   );
 
   return (
-    <ColorSwatchMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+    <ColorSwatchMotionProvider motion={motion} defaults={motionDefaults} params={motionParams} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <ColorSwatchButtonSurface
         color={color}
         size={size}

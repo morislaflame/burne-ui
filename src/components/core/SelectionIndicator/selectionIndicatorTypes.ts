@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { SelectionIndicatorSize, SelectionIndicatorVariant } from "./selectionIndicatorTokens";
 
 export type SelectionIndicatorClassNames = {
@@ -30,8 +30,18 @@ export type SelectionIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
   icon?: ReactNode;
   children?: ReactNode;
   classNames?: Prettify<SelectionIndicatorClassNames>;
-  motion?: Prettify<SelectionIndicatorMotion>;
-};
+  /**
+   * Per-slot motion (`root`, `fill`, `mark`). Checkbox / Radio embed this scope — do not
+   * put `motionController` on the embedder.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   */
+  motion?: Prettify<MotionMapWithEvents<SelectionIndicatorMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this indicator scope (`root` / `fill` / `mark`). Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type SelectionIndicatorFillProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<SelectionIndicatorCheckMotion>;

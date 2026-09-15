@@ -48,9 +48,13 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     onBlur,
     onFocus,
     className,
-    classNames,
-    motion,
-    onPointerDown,
+      classNames,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
+      onPointerDown,
     onKeyDown,
     onClick,
     ...rest
@@ -102,7 +106,10 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
   return (
     <RadioFieldProvider value={state.contextValue}>
       <RadioClassNamesProvider classNames={classNames}>
-        <RadioMotionProvider motion={motion}>
+        <RadioMotionProvider motion={motion} controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}>
           <label
             ref={ref}
             data-selected={state.mergedChecked ? true : undefined}
@@ -127,6 +134,10 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
                 danger={state.danger}
                 hintId={state.hintId}
                 errorId={state.errorId}
+                motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
               />
             )}
           </label>

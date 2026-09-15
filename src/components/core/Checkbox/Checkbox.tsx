@@ -55,6 +55,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       className,
       classNames,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerDown,
       onKeyDown,
       "aria-label": ariaLabel,
@@ -115,7 +119,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       return (
         <CheckboxFieldProvider value={state.contextValue}>
           <CheckboxClassNamesProvider classNames={classNames}>
-            <CheckboxMotionProvider motion={motion}>
+            <CheckboxMotionProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
             <FieldLabelContext.Provider value={state.fieldLabelContext}>
               <fieldset
                 ref={ref as Ref<HTMLFieldSetElement>}
@@ -143,7 +150,12 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
     return (
       <CheckboxFieldProvider value={state.contextValue}>
         <CheckboxClassNamesProvider classNames={classNames}>
-          <CheckboxMotionProvider motion={motion}>
+          <CheckboxMotionProvider
+          motion={motion}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
           <label
             ref={ref}
             htmlFor={state.contextValue.inputId}
@@ -166,6 +178,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
               status={state.isDanger}
               hintId={state.hintId}
               errorId={state.errorId}
+              motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
             />
           </label>
           </CheckboxMotionProvider>

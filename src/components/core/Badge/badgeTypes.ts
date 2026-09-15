@@ -9,7 +9,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { IconPosition } from "@/components/core/utils/iconPosition";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
 
@@ -139,8 +139,13 @@ export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
    * @default true
    */
   hoverLift?: boolean;
-  motion?: Prettify<BadgeMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<BadgeMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   variant?: BadgeVariant;
@@ -162,9 +167,16 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   hoverLift?: boolean;
   /**
    * Per-slot motion (`root` on Badge, `anchor` on `Badge.Anchor`).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * `states` — app modes for `motionState` (not a DOM slot, not a phase).
    */
-  motion?: Prettify<BadgeMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<BadgeMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type BadgeInlineChildProps = {
   node: ReactNode;

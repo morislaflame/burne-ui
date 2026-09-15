@@ -9,7 +9,7 @@ import { mergeRefs } from "@/components/core/utils/mergeRefs";
 
 import { checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
 import { resolveCheckboxIndicatorMotion, useCheckboxChromeSlot, useCheckboxControlTrackAnimation, useCheckboxLabelSlot } from "./checkboxAnimations";
-import { useCheckboxClassNames, useCheckboxFieldContext, useCheckboxMotion } from "./checkboxContext";
+import { useCheckboxClassNames, useCheckboxFieldContext, useCheckboxMotion, useOptionalCheckboxMotionScope } from "./checkboxContext";
 import { CHECKBOX_CONTENT_COMPOUND_CLASS, CHECKBOX_CONTENT_PASS_THROUGH_CLASS, CHECKBOX_CONTENT_POINTER_CLASS, CHECKBOX_CONTROL_CLASS, CHECKBOX_ERROR_DISABLED_CLASS, CHECKBOX_HINT_DISABLED_CLASS, CHECKBOX_INPUT_TRACK_OVERLAY_CLASS, CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS, CHECKBOX_LABEL_CLASS, CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS, CHECKBOX_LABEL_MOTION_CLASS, CHECKBOX_LABEL_TEXT_DANGER_CLASS, CHECKBOX_LABEL_TEXT_DISABLED_CLASS, CHECKBOX_REQUIRED_MARK_CLASS, CHECKBOX_SIMPLE_LABEL_TEXT_CLASS, CHECKBOX_SIMPLE_LABEL_WRAP_CLASS, CHECKBOX_SIZE_LAYOUT, checkboxControlCellClass, checkboxControlTrackClass, checkboxErrorRow, checkboxLabelCellClass, checkboxSecondaryCellClass } from "./checkboxStyles";
 import type {
   CheckboxContentProps,
@@ -20,11 +20,12 @@ import type {
   CheckboxLabelProps,
   CheckboxSize,
 } from "./checkboxTypes";
+import type { MotionController, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import { cn } from "@/utils/cn";
 
 export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>(
-  function CheckboxControl({ className, children, ...rest }, ref) {
+  function CheckboxControl({ className, children, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const ctx = useCheckboxFieldContext();
     const slotClassNames = useCheckboxClassNames();
     const trackRef = useCheckboxControlTrackAnimation();
@@ -86,7 +87,10 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
                   onChange: ctx.onChange,
                 })}
           />
-          {children ?? <CheckboxIndicator />}
+          {children ?? <CheckboxIndicator motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState} />}
         </span>
       </span>
     );
@@ -101,15 +105,22 @@ export function CheckboxIndicator({
   classNames: classNamesProp,
   size: sizeProp,
   motion: motionProp,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: CheckboxIndicatorProps) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   const rootMotion = useCheckboxMotion();
-  const motion = resolveCheckboxIndicatorMotion({
+  const mapped = resolveCheckboxIndicatorMotion({
     rootMotion,
     indicatorMotion: motionProp,
   });
+  const parentEvents = useOptionalCheckboxMotionScope()?.getEvents();
+  const events = mapped?.events ?? parentEvents;
+  const motion = events ? { ...mapped, events } : mapped;
 
   return (
     <SelectionIndicator
@@ -124,6 +135,10 @@ export function CheckboxIndicator({
         className,
       })}
       motion={motion}
+      motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
       {...rest}
     >
       {children}
@@ -301,6 +316,10 @@ export function CheckboxSimpleBody({
   status,
   hintId,
   errorId,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: {
   label: React.ReactNode;
   hint: React.ReactNode;
@@ -314,7 +333,8 @@ export function CheckboxSimpleBody({
   status: boolean;
   hintId: string;
   errorId: string;
-}) {
+  motionController?: MotionController;
+} & MotionStateHostProps) {
   const slotClassNames = useCheckboxClassNames();
   const sz = CHECKBOX_SIZE_LAYOUT[size];
   const { setRef: setLabelMotionRef } = useCheckboxLabelSlot();
@@ -323,7 +343,10 @@ export function CheckboxSimpleBody({
 
   return (
     <>
-      <CheckboxControl />
+      <CheckboxControl motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState} />
       <span
         ref={mergeRefs(textColRef, setLabelMotionRef)}
         className={cn(

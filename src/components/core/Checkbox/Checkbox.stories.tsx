@@ -10,7 +10,8 @@ import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { Label } from "@/components/core/Label";
 
 import { Checkbox } from "./index";
-import { CheckboxMotionDemo } from "../../../../playground/showcase/demos/checkbox/CheckboxMotion.demo";
+import { CheckboxSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/checkbox/slotMotion/gallery";
+import { CheckboxMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/checkbox/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -447,5 +448,10 @@ export const SlotMotion: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (color, parts, timeline)",
-  render: () => <CheckboxMotionDemo />,
+  render: () => <CheckboxSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery (embedder, chrome)",
+  render: () => <CheckboxMotionControllerGalleryDemo />,
 };

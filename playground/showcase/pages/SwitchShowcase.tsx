@@ -10,26 +10,14 @@ import { SwitchDisabledDemo } from "../demos/switch/SwitchDisabled.demo";
 import switchDisabledSource from "../demos/switch/SwitchDisabled.demo.tsx?raw";
 import { SwitchGlossDemo } from "../demos/switch/SwitchGloss.demo";
 import switchGlossSource from "../demos/switch/SwitchGloss.demo.tsx?raw";
-import { SwitchMotionDefaultDemo } from "../demos/switch/SwitchMotionDefault.demo";
-import switchMotionDefaultSource from "../demos/switch/SwitchMotionDefault.demo.tsx?raw";
-import { SwitchMotionInstantThumbDemo } from "../demos/switch/SwitchMotionInstantThumb.demo";
-import switchMotionInstantThumbSource from "../demos/switch/SwitchMotionInstantThumb.demo.tsx?raw";
-import { SwitchMotionBounceThumbDemo } from "../demos/switch/SwitchMotionBounceThumb.demo";
-import switchMotionBounceThumbSource from "../demos/switch/SwitchMotionBounceThumb.demo.tsx?raw";
-import { SwitchMotionFillFadeDemo } from "../demos/switch/SwitchMotionFillFade.demo";
-import switchMotionFillFadeSource from "../demos/switch/SwitchMotionFillFade.demo.tsx?raw";
-import { SwitchMotionIconsDemo } from "../demos/switch/SwitchMotionIcons.demo";
-import switchMotionIconsSource from "../demos/switch/SwitchMotionIcons.demo.tsx?raw";
-import { SwitchMotionLabelColorDemo } from "../demos/switch/SwitchMotionLabelColor.demo";
-import switchMotionLabelColorSource from "../demos/switch/SwitchMotionLabelColor.demo.tsx?raw";
-import { SwitchMotionTrackDemo } from "../demos/switch/SwitchMotionTrack.demo";
-import switchMotionTrackSource from "../demos/switch/SwitchMotionTrack.demo.tsx?raw";
 import { SwitchNotificationsDemo } from "../demos/switch/SwitchNotifications.demo";
 import switchNotificationsSource from "../demos/switch/SwitchNotifications.demo.tsx?raw";
 import { SwitchSizesDemo } from "../demos/switch/SwitchSizes.demo";
 import switchSizesSource from "../demos/switch/SwitchSizes.demo.tsx?raw";
 import { SwitchSettingsPanelDemo } from "../demos/switch/SwitchSettingsPanel.demo";
 import switchSettingsPanelSource from "../demos/switch/SwitchSettingsPanel.demo.tsx?raw";
+import { SwitchMotionControllerGalleryDemo } from "../demos/switch/motionController/gallery";
+import { SwitchSlotMotionGalleryDemo } from "../demos/switch/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -59,17 +47,15 @@ export function SwitchShowcase() {
         <ShowcaseDemoFromFile Demo={SwitchGlossDemo} source={switchGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: default thumb, instant snap, bounce factory, fill fade, icon spin, track pulse.">
+        <SwitchSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — default thumb, instant snap, bounce factory, fill fade, icon spin, track pulse."
+        title="MotionController"
+        description="One gallery: playSlot(track) on simple API, play() skip, chrome label on Root, stagger, exclude fill, inside tree, cancel, switch events."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionDefaultDemo} source={switchMotionDefaultSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionInstantThumbDemo} source={switchMotionInstantThumbSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionBounceThumbDemo} source={switchMotionBounceThumbSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionFillFadeDemo} source={switchMotionFillFadeSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionIconsDemo} source={switchMotionIconsSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionLabelColorDemo} source={switchMotionLabelColorSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionTrackDemo} source={switchMotionTrackSource} />
+        <SwitchMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

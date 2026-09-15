@@ -4,7 +4,7 @@ import type {
   TooltipSide,
 } from "@/components/core/Tooltip/tooltipPosition";
 import type { PanelSize } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 
@@ -42,7 +42,7 @@ export type PopoverPartMotion = PopoverLifecycleMotion & {
 };
 
 export type PopoverMotion = {
-  content?: PopoverLifecycleMotion;
+  content?: PopoverPartMotion;
   header?: PopoverLifecycleMotion;
   title?: PopoverPartMotion;
   description?: PopoverPartMotion;
@@ -96,16 +96,22 @@ export type PopoverProps = {
    * Per-slot motion (`content`, `header`, `title`, `description`, `body`, `arrow`, `trigger`, plus Dropdown pass-through).
    * Root has no portal DOM — the host is `Popover.Content`. Trigger lives on Root.
    * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`; `trigger.pressIn` → `pressSqueeze`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<PopoverMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<PopoverMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Portal slots need a separate handle on `Popover.Content`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type PopoverClassNamesProviderProps = {
   classNames?: Prettify<PopoverClassNames>;
   children: ReactNode;
 };
 
-export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames" | "motion">;
+export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
 
 export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   /** Merge props onto the single child (Button, etc.) instead of rendering a `<button>` wrapper. */
@@ -143,8 +149,13 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   contentRole?: "dialog" | undefined;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  motion?: Prettify<PopoverMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<PopoverMotion>>;
+  /**
+   * Handle for the portal host (`content`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("content")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UsePopoverContentLifecycleProps = {
   open: boolean;

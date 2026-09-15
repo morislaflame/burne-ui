@@ -28,6 +28,8 @@ Compound API нет.
 |------|--------------|----------|
 | `orientation` | `horizontal` | `horizontal` \| `vertical` |
 | `className` | — | Дополнительные классы |
+| `motion` | — | Per-slot (`root`). `events` — app-команды `MotionController` |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 | HTML props | — | Пробрасываются на root element |
 
 ## Ориентация и DOM
@@ -47,9 +49,31 @@ Compound API нет.
 |-------|------|--------|
 | `root` | `enter` / hover / press (opt-in) | empty |
 
-Свой scope на корне.
+Свой scope на корне. Один DOM-слот — `play()` ищет `root`. Нет `play vs playSlot` / stagger / exclude.
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`sep:nudge`, `sep:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Separator, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "sep:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("sep:nudge")}>
+        Nudge
+      </Button>
+      <Separator className="w-full" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 
 Без пропа `motion` GSAP не играет — opt-in slot motion с пустыми defaults.
@@ -59,6 +83,7 @@ Compound API нет.
 | Анимация | GSAP | `configureMotion` |
 |----------|------|-------------------|
 | Render | Нет | — |
+| Slot motion / MotionController | Opt-in | — |
 
 ## Стилизация и кастомизация
 
@@ -104,8 +129,4 @@ Separator/
 └── index.ts
 ```
 
-Storybook: отдельных stories нет; примеры использования — в `Card.stories`, `Surface.stories`.
-
-## Storybook
-
-Используется как dependency в других stories (`Card`, `Surface`). Отдельной страницы `Core Components/Separator` может не быть.
+Storybook: `Core Components/Separator` — playground, Slot motion, MotionController. Также dependency в `Card` / `Surface`.

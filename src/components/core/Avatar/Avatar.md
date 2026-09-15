@@ -69,7 +69,8 @@ import { Avatar, type AvatarProps, type AvatarClassNames, type AvatarSize, type 
 | `tooltipSide` | `top` | Сторона tooltip |
 | `className` | — | Root shell (в gloss — внутренний круг) |
 | `classNames` | — | Слоты компонента |
-| `motion` | — | Карта слотов `root` / `image` / `fallback`; на `Avatar.Group` — `groupItem` |
+| `motion` | — | Карта слотов `root` / `image` / `fallback`; на `Avatar.Group` — `groupItem`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
 
 ### `AvatarClassNames`
 
@@ -112,6 +113,8 @@ Fallback typography:
 
 `glossWrap` — layout-обёртка, не публичный motion-слот. `false` на `image.enter` / `leave` — хост ставит instant visible/hidden.
 
+Магнит группы к курсору (`quickTo` на каждом Avatar, kit `groupItem` hover выключен) — слайд **Magnet** в галерее Slot motion.
+
 **Где в коде:** типы — `avatarTypes.ts`; scope — `avatarContext.tsx`; defaults + host play — `avatarAnimations.ts`; слоты — `avatarParts.tsx`; Provider — `Avatar.tsx`. Каждый item в `Avatar.Group` — nested `AvatarMotionProvider`.
 
 ```tsx
@@ -122,6 +125,30 @@ Fallback typography:
   <Avatar label="B" />
 </Avatar.Group>
 ```
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`presence:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Avatar, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "presence:ping": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Ping() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("presence:ping")}>
+        Ping
+      </Button>
+      <Avatar label="Ada" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+Сложенный presence-timeline, `playSlot("root" | "image")` и `waitForComplete` — playground / Storybook **MotionController**.
 
 ### Отключение
 

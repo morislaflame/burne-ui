@@ -6,6 +6,7 @@ import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { cn } from "@/utils/cn";
 
+import { mergeMotionRootSiblings } from "@/components/core/utils/slotMotion";
 import {
   mergeMotionSlotMaps,
   resolveColorSliderMotionDefaults,
@@ -50,16 +51,24 @@ const CHANNEL_DEFAULT: Record<ColorChannel, number> = {
 };
 
 export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps>(
-  function ColorSliderTrack({ motion, ...rest }, ref) {
+  function ColorSliderTrack({ motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parent = useOptionalColorSliderMotionScope();
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parent?.getRootMotion(),
       motion ? { track: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parent?.getEvents(),
+      states: parent?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
     const motionDefaults = useMemo(() => resolveColorSliderMotionDefaults(), []);
 
     return (
-      <ColorSliderMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <ColorSliderMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <ColorSliderTrackSurface forwardedRef={ref} itemMotion={motion} {...rest} />
       </ColorSliderMotionProvider>
     );
@@ -293,6 +302,10 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
       className = "",
       children,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -300,7 +313,14 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
     const motionDefaults = useMemo(() => resolveColorSliderMotionDefaults(), []);
 
     return (
-      <ColorSliderMotionProvider motion={motion} defaults={motionDefaults}>
+      <ColorSliderMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        controller={children ? motionController : undefined}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <ColorSliderRootSurface
           forwardedRef={ref}
           channel={channel}
@@ -310,6 +330,10 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
           orientation={orientation}
           className={className}
           rest={rest}
+          trackController={children ? undefined : motionController}
+          trackMotionState={children ? undefined : motionState}
+          trackMotionPayload={children ? undefined : motionPayload}
+          trackPlayInitialState={children ? undefined : playInitialState}
         >
           {children}
         </ColorSliderRootSurface>
@@ -328,6 +352,10 @@ function ColorSliderRootSurface({
   className,
   children,
   rest,
+  trackController,
+  trackMotionState,
+  trackMotionPayload,
+  trackPlayInitialState,
 }: {
   forwardedRef: ForwardedRef<HTMLDivElement>;
   channel: ColorSliderProps["channel"];
@@ -339,8 +367,23 @@ function ColorSliderRootSurface({
   children: ColorSliderProps["children"];
   rest: Omit<
     ColorSliderProps,
-    "channel" | "color" | "label" | "size" | "orientation" | "className" | "children" | "motion"
+    | "channel"
+    | "color"
+    | "label"
+    | "size"
+    | "orientation"
+    | "className"
+    | "children"
+    | "motion"
+    | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
+  trackController: ColorSliderProps["motionController"];
+  trackMotionState: ColorSliderProps["motionState"];
+  trackMotionPayload: ColorSliderProps["motionPayload"];
+  trackPlayInitialState: ColorSliderProps["playInitialState"];
 }) {
   const part = useColorSliderRootMotion({ forwardedRef });
 
@@ -355,7 +398,17 @@ function ColorSliderRootSurface({
             </Text>
           </div>
         ) : null}
-        <ColorSliderTrack channel={channel} color={color} size={size} orientation={orientation} {...rest} />
+        <ColorSliderTrack
+          channel={channel}
+          color={color}
+          size={size}
+          orientation={orientation}
+          motionController={trackController}
+          motionState={trackMotionState}
+          motionPayload={trackMotionPayload}
+          playInitialState={trackPlayInitialState}
+          {...rest}
+        />
       </div>
     );
   }

@@ -3,7 +3,7 @@ import { animateCollapsibleHeight } from "@/components/core/utils/useCollapsible
 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
 
-/** Enter/leave panel height. Snapshot `scrollHeight` inside `animateCollapsibleHeight` — not a GSAP function value. */
+/** Enter/leave panel height. Snapshot layout height inside `animateCollapsibleHeight` — not a GSAP function value. */
 export function collapsibleHeightRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const inner = ctx.targets.panelInner;
   if (!inner) return undefined;

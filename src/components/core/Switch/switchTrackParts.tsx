@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, type RefObject } from "react";
 
 import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 
 import "@/components/core/utils/glossPanel.css";
 
@@ -39,12 +39,21 @@ import { cn } from "@/utils/cn";
 
 export function SwitchTrack({
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   size,
   thickness,
   ...rest
 }: SwitchTrackProps) {
   const parentScope = useOptionalSwitchMotionScope();
-  const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+  const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+  const siblings = mergeMotionRootSiblings({
+    events: parentScope?.getEvents(),
+    states: parentScope?.getStates(),
+  });
+  const merged = { ...mergedSlots, ...siblings };
   const travelPxRef = useRef(0);
   const getTravelPx = useCallback(() => travelPxRef.current, []);
 
@@ -53,6 +62,10 @@ export function SwitchTrack({
       motion={merged}
       defaults={SWITCH_MOTION_DEFAULTS}
       params={{ getTravelPx }}
+      controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
     >
       <SwitchTrackHost
         size={size}
@@ -85,7 +98,7 @@ function SwitchTrackHost({
   onPointerDown,
   onPointerUp,
   ...rest
-}: Omit<SwitchTrackProps, "motion"> & { travelPxRef: RefObject<number> }) {
+}: Omit<SwitchTrackProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { travelPxRef: RefObject<number> }) {
   const rootClassNames = useSwitchClassNames();
   const slotClassNames = useMemo(
     () => ({ ...rootClassNames, ...trackClassNames }),

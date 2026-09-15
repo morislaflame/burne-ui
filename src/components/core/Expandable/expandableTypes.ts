@@ -7,7 +7,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type ExpandableSize = ComponentSize;
 export type ExpandableVariant = "default" | "gloss";
@@ -26,6 +26,7 @@ export type ExpandableClassNames = {
   chevron?: string;
   panelShell?: string;
   panel?: string;
+  body?: string;
 };
 
 export type ExpandableLifecycleMotion = {
@@ -47,6 +48,7 @@ export type ExpandableMotion = {
   title?: ExpandableLifecycleMotion;
   icon?: ExpandableLifecycleMotion;
   description?: ExpandableLifecycleMotion;
+  body?: ExpandableLifecycleMotion;
 };
 
 export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -64,10 +66,16 @@ export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   classNames?: Prettify<ExpandableClassNames>;
   /**
    * Per-slot motion: `triggerLift` (press), `chevron` (enter/leave rotate), `panelShell` (height),
-   * plus `title` / `icon` / `description` (broadcast on open).
+   * plus `title` / `icon` / `description` / `body` (broadcast on open; `body` is the Panel `<section>`).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<ExpandableMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ExpandableMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 
 export type ExpandableContextValue = {

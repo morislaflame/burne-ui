@@ -28,6 +28,10 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     children,
     hoverLift = true,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     ...rest
@@ -51,7 +55,15 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
 
   return (
     <KbdClassNamesProvider classNames={classNames}>
-      <KbdMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+      <KbdMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <KbdSurface
           rootClass={state.rootClass}
           size={state.size}

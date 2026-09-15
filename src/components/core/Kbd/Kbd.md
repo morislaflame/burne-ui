@@ -41,7 +41,8 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 | `variant` | `default` | `default` \| `primary` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `hoverLift` | `true` | Hover shadow/lift (2nd level). Shorthand for `motion.root.hoverIn/Out: false` |
-| `motion` | — | Карта слотов `root` / `text` |
+| `motion` | — | Карта слотов `root` / `text` / `group` + `events` |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Standalone `Kbd.Group` — свой handle |
 | `className` | — | На `<kbd>` |
 | `classNames` | — | `root`, `text`, `group`, `separator` |
 
@@ -51,6 +52,8 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 |------|--------------|----------|
 | `separator` | `"+"` | Между keys; `null` — скрыть |
 | `classNames` | — | `group`, `separator` (override) |
+| `motion` | — | Part motion слота `group`. Standalone Group создаёт свой scope |
+| `motionController` | — | Handle для standalone Group. Внутри `<Kbd>` — handle на Root |
 
 ### `KbdClassNames`
 
@@ -99,7 +102,33 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 `hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). Явный `motion.root.hoverIn` важнее `hoverLift`.
 
-`Kbd.Group` регистрирует слот `group`. Если Group внутри Kbd — на ancestor scope; если standalone и задан `motion` на Group — свой `KbdMotionProvider`. Separator между клавишами — layout-only (`classNames.separator`), не motion-слот.
+`Kbd.Group` регистрирует слот `group`. Если Group внутри Kbd — на ancestor scope; если standalone и задан `motion` / `motionController` на Group — свой `KbdMotionProvider`. Separator между клавишами — layout-only (`classNames.separator`), не motion-слот.
+
+`play()` ищет слот `root`. `playSlot("text")` / `playAll`. Standalone Group — `playSlot("group")` (своего `root` нет). Сырой GSAP не выдумывать — Slot motion покрывает tilt / text pop.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`kbd:nudge`, `kbd:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в `Kbd.Text` видит scope Kbd, не внутренний `Text`.
+
+```tsx
+import { Button, Kbd, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "kbd:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("kbd:nudge")}>
+        Nudge
+      </Button>
+      <Kbd hoverLift={false} motionController={controller} motion={{ events }}>
+        ⌘
+      </Kbd>
+    </>
+  );
+}
+```
 
 **Где в коде:** типы — `kbdTypes.ts`; scope — `kbdContext.tsx`; defaults + host — `kbdAnimations.ts`; `Kbd.Text` — `kbdTextPart.tsx`; Provider — `Kbd.tsx`.
 

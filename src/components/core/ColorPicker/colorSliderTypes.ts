@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { SliderOrientation, SliderSize } from "@/components/core/Slider/sliderTypes";
 
@@ -47,7 +47,12 @@ export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"
    * Defaults are empty.
    */
   motion?: Prettify<ColorSliderPartMotion>;
-};
+  /**
+   * Handle for this Track nested host (`track`). Simple API: pass `motionController`
+   * on `ColorSlider` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   channel: ColorChannel;
@@ -62,6 +67,15 @@ export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   /**
    * Per-slot motion (`root`, `track`). Nested ColorSlider.Track does not inherit defaults.
    * Pass `motion.track` through to Track. Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `ColorSlider.Track`.
+   * Compound: this handle attaches to the Root `root` slot; pass another handle on `Track`.
    */
-  motion?: Prettify<ColorSliderMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ColorSliderMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the Track nested Provider. Compound: Root scope (`root`).
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;

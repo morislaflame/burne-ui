@@ -1,6 +1,6 @@
 import type { FieldsetHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { LabelProps } from "@/components/core/Label";
 import type { TextVariant } from "@/components/core/Text";
@@ -63,9 +63,16 @@ export type FieldProps = HTMLAttributes<HTMLDivElement> & {
   /**
    * Per-slot motion (`root`, `label`, `hint`, `error`). Does not steal child Input motion.
    * Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<FieldMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<FieldMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this Field scope (not nested Input, not `Field.Set`).
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type FieldClassNamesProviderProps = {
   classNames?: Prettify<FieldClassNames>;
@@ -85,7 +92,7 @@ export type FieldHintProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<FieldPartMotion>;
 };
 
-export type FieldLabelProps = Omit<LabelProps, "motion"> & {
+export type FieldLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<FieldPartMotion>;
 };
 export type FieldErrorProps = Omit<FieldHintProps, "status">;
@@ -122,10 +129,16 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
   classNames?: Prettify<FieldSetClassNames>;
   /**
    * Per-slot motion (`root`, `stack`, `legend`, `legendHeader`, `group`, `actions`).
-   * Defaults are empty.
+   * Defaults are empty. Separate scope from `Field` — pass its own `motionController`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<FieldSetMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<FieldSetMotion>>;
+  /**
+   * Deferred handle for the Field.Set scope. Not the inner Field / Input handle.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseFieldSetRootStateResult = {
   legend: ReactNode;

@@ -14,12 +14,8 @@ import { LinkSizesDemo } from "../demos/link/LinkSizes.demo";
 import linkSizesSource from "../demos/link/LinkSizes.demo.tsx?raw";
 import { LinkVariantsDemo } from "../demos/link/LinkVariants.demo";
 import linkVariantsSource from "../demos/link/LinkVariants.demo.tsx?raw";
-import { LinkMotionInstantHoverDemo } from "../demos/link/LinkMotionInstantHover.demo";
-import linkMotionInstantHoverSource from "../demos/link/LinkMotionInstantHover.demo.tsx?raw";
-import { LinkMotionTextWaveDemo } from "../demos/link/LinkMotionTextWave.demo";
-import linkMotionTextWaveSource from "../demos/link/LinkMotionTextWave.demo.tsx?raw";
-import { LinkMotionTextTintDemo } from "../demos/link/LinkMotionTextTint.demo";
-import linkMotionTextTintSource from "../demos/link/LinkMotionTextTint.demo.tsx?raw";
+import { LinkMotionControllerGalleryDemo } from "../demos/link/motionController/gallery";
+import { LinkSlotMotionGalleryDemo } from "../demos/link/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -68,10 +64,15 @@ export function LinkShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={LinkCardActionsDemo} source={linkCardActionsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound text/icon factories.">
-        <ShowcaseDemoFromFile Demo={LinkMotionInstantHoverDemo} source={linkMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile Demo={LinkMotionTextWaveDemo} source={linkMotionTextWaveSource} />
-        <ShowcaseDemoFromFile Demo={LinkMotionTextTintDemo} source={linkMotionTextTintSource} />
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound text/icon factories, SplitText chars.">
+        <LinkSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot / set, play vs playSlot, icon/text, stagger, exclude, nav events, waitForComplete, motionState SplitText."
+      >
+        <LinkMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

@@ -9,7 +9,7 @@ import { resolvePortalContainer, applyFloatingPortalPosition } from "@/component
 import { messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
-import { hasPointerPhases, mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { hasPointerPhases, mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import "../utils/glossInteractive.css";
 
 import { bindTriggerEvents, mergeDescribedBy } from "./tooltipA11y";
@@ -483,11 +483,23 @@ export function TooltipArrow({
 TooltipArrow.displayName = "TooltipArrow";
 
 export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
-  function TooltipContent({ motion, ...props }, forwardedRef) {
+  function TooltipContent({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
     const parentScope = useOptionalTooltipMotionScope();
-    const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const siblings = mergeMotionRootSiblings(
+      { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+      motion,
+    );
+    const merged = { ...mergedSlots, ...siblings };
     return (
-      <TooltipMotionProvider motion={merged} defaults={TOOLTIP_MOTION_DEFAULTS}>
+      <TooltipMotionProvider
+        motion={merged}
+        defaults={TOOLTIP_MOTION_DEFAULTS}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <TooltipContentHost {...props} forwardedRef={forwardedRef} />
       </TooltipMotionProvider>
     );
@@ -504,7 +516,7 @@ function TooltipContentHost({
       portalContainer: portalContainerProp,
       forwardedRef,
       ...rest
-    }: Omit<TooltipContentProps, "motion"> & {
+    }: Omit<TooltipContentProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
       forwardedRef?: ForwardedRef<HTMLDivElement>;
     }) {
     const slotClassNames = useTooltipClassNames();

@@ -23,6 +23,7 @@ function fakeEl(height = 0): HTMLElement {
   return {
     style,
     scrollHeight: height,
+    offsetHeight: height,
     getBoundingClientRect() {
       const h = store.height ? Number.parseFloat(store.height) : height;
       return { left: 0, top: 0, right: 120, bottom: h, width: 120, height: h };
@@ -98,9 +99,23 @@ describe("animateCollapsibleHeight", () => {
       ease: "none",
     });
 
-    Object.defineProperty(inner, "scrollHeight", { configurable: true, get: () => 180 });
+    Object.defineProperty(inner, "offsetHeight", { configurable: true, get: () => 180 });
     notify([] as unknown as ResizeObserverEntry[], {} as ResizeObserver);
 
     expect(tween.resetTo).toHaveBeenCalledWith("height", 180);
+  });
+
+  it("ignores transform overflow on descendants when snapshotting enter height", () => {
+    const inner = fakeEl(144);
+    Object.defineProperty(inner, "scrollHeight", { configurable: true, get: () => 152 });
+    const fromTo = vi.spyOn(gsap, "fromTo").mockReturnValue(stubTween() as unknown as gsap.core.Tween);
+
+    animateCollapsibleHeight(fakeEl(), inner, true, {
+      reduced: false,
+      duration: 0.2,
+      ease: "none",
+    });
+
+    expect(fromTo.mock.calls[0][2]?.height).toBe(144);
   });
 });

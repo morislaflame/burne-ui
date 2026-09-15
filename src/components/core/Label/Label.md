@@ -21,6 +21,8 @@ Simple API + минимальный compound (`Label.Slot` — null-компон
 | `required` | `boolean` | `false` / context | Показывает `*` (`text-danger`) |
 | `className` | `string` | — | На root |
 | `classNames` | `LabelClassNames` | — | Слоты: `root`, `text`, `required` |
+| `motion` | — | — | Per-slot (`root`, `text`, `required`). `events` — app-команды `MotionController` |
+| `motionController` | — | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 | `children` | `ReactNode` | — | Текст подписи |
 
 ### `LabelClassNames`
@@ -90,12 +92,33 @@ type FieldLabelContextValue = {
 |-------|------|--------|
 | `root`, `text`, `required` | `enter` (opt-in); hover/press if you set them | empty |
 
-Не крадёт motion Input.
+Не крадёт motion Input. `play()` ищет слот `root`. `playSlot("text")` / `playAll` — соседние слоты. `required` должен быть `true`, иначе слот `required` не в DOM.
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
+Проп `motionController` + ключ `events` на `motion` — app-команды (`label:nudge`, `label:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в `children` попадает в nested scope внутреннего `Text`, не в Label — handle передавайте на корень Label.
 
-**В Label нет GSAP и hover motion** — статичная типографика.
+```tsx
+import { Button, Label, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "label:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("label:nudge")}>
+        Nudge
+      </Button>
+      <Label required motionController={controller} motion={{ events }}>
+        Email
+      </Label>
+    </>
+  );
+}
+```
 
 **DOM-структура:**
 
@@ -130,8 +153,8 @@ type FieldLabelContextValue = {
 
 | Анимация | В Label | Где настраивать |
 |----------|---------|-----------------|
-| GSAP | нет | — |
-| Hover lift | нет | контрол (Input и др.) |
+| Slot motion / MotionController | opt-in | `motion` / `motionController` |
+| Hover lift контрола | нет | контрол (Input и др.) |
 | CSS transition | вручную | `classNames` |
 
 ## Токены и CSS
@@ -229,4 +252,4 @@ Label/
 
 ## Storybook
 
-`Core Components/Label` — default, required, с Input, span-режим, `classNames`.
+`Core Components/Label` — default, required, с Input, span-режим, `classNames`, Slot motion, MotionController.

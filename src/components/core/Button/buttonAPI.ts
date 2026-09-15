@@ -1,10 +1,5 @@
 import { Children, isValidElement, type ReactNode } from "react";
 
-import type {
-  ButtonAsyncLayerKind,
-  ButtonAsyncState,
-} from "./buttonTypes";
-
 export const BUTTON_COMPOUND_SLOT_NAMES = new Set([
   "ButtonContent",
   "ButtonLabel",
@@ -63,35 +58,3 @@ export function shouldWrapButtonChildrenInText(children: ReactNode): boolean {
   const displayName = (only.type as { displayName?: string }).displayName;
   return displayName == null || !BUTTON_COMPOUND_SLOT_NAMES.has(displayName);
 }
-
-export function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
-  const corners: [number, number][] = [
-    [0, 0],
-    [w, 0],
-    [0, h],
-    [w, h],
-  ];
-  return Math.max(...corners.map(([cx, cy]) => Math.hypot(cx - px, cy - py)));
-}
-
-export function centerCoverDiameter(w: number, h: number) {
-  return 2 * maxDistanceToCorners(w / 2, h / 2, w, h);
-}
-
-export function isButtonAsyncLayerActive(
-  state: ButtonAsyncState,
-  layer: ButtonAsyncLayerKind,
-): boolean {
-  switch (layer) {
-    case "label":
-      return state === "idle";
-    case "loader":
-      return state === "loading";
-    case "success":
-      return state === "success";
-    case "error":
-      return state === "error";
-  }
-}
-
-

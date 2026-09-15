@@ -56,7 +56,7 @@ export function FieldRootShell({
   onPointerDown,
   onPointerUp,
   ...rest
-}: Omit<FieldProps, "classNames" | "motion">) {
+}: Omit<FieldProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">) {
   const slotClassNames = useFieldClassNames();
   const inheritedSize = useOptionalFieldSize();
   const size = resolveFieldSize(sizeProp ?? inheritedSize ?? undefined);
@@ -83,11 +83,14 @@ export function FieldRootShell({
   );
 }
 
-export function FieldRoot({ classNames, size, children, motion, ...rest }: FieldProps) {
+export function FieldRoot({ classNames, size, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest }: FieldProps) {
   const motionDefaults = useMemo(() => resolveFieldMotionDefaults(), []);
   const content = (
     <FieldClassNamesProvider classNames={classNames}>
-      <FieldMotionProvider motion={motion} defaults={motionDefaults}>
+      <FieldMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <FieldRootShell size={size} {...rest}>
           {children}
         </FieldRootShell>
@@ -443,7 +446,7 @@ export function FieldSetStack({
 
 export const FieldSetRootInner = forwardRef<
   HTMLFieldSetElement,
-  Omit<FieldSetProps, "classNames" | "size" | "children" | "motion"> & {
+  Omit<FieldSetProps, "classNames" | "size" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
     state: UseFieldSetRootStateResult;
   }
 >(function FieldSetRootInner(

@@ -40,6 +40,10 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
       onValueChange: _onValueChange,
       onKeyDown: _onKeyDown,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerOver,
       onPointerOut,
       onPointerDown,
@@ -56,7 +60,14 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
     return (
       <ToggleButtonGroupProvider value={contextValue}>
         <ToggleButtonGroupClassNamesProvider classNames={classNames}>
-          <ToggleButtonGroupMotionProvider motion={motion} defaults={motionDefaults}>
+          <ToggleButtonGroupMotionProvider
+            motion={motion}
+            defaults={motionDefaults}
+            controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+          >
             <ToggleButtonGroupRootSurface
               forwardedRef={ref}
               orientation={orientation}

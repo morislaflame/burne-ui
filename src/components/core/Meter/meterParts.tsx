@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from "react";
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import {
   progressScaleFromPercent,
@@ -261,16 +261,25 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       orientation,
       className,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       "aria-describedby": ariaDescribedByProp,
       ...rest
     },
     ref,
   ) {
     const parent = useOptionalMeterMotionScope();
-    const merged = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parent?.getRootMotion(),
       motion ? { track: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parent?.getEvents(),
+      states: parent?.getStates(),
+    });
+    const merged = { ...mergedSlots, ...siblings };
     const state = useMeterTrackState({
       value,
       min,
@@ -294,7 +303,15 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
     );
 
     return (
-      <MeterMotionProvider motion={merged} defaults={defaults} params={params}>
+      <MeterMotionProvider
+        motion={merged}
+        defaults={defaults}
+        params={params}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <MeterTrackHost
           ref={ref}
           className={className}
@@ -313,6 +330,7 @@ const MeterTrackHost = forwardRef<
   Omit<
     MeterTrackProps,
     | "motion"
+    | "motionController"
     | "value"
     | "min"
     | "max"

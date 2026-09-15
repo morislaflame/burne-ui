@@ -47,6 +47,10 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
       siblingCount,
       "aria-label": ariaLabel,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -63,7 +67,10 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
     return (
       <PaginationProvider value={contextValue}>
         <PaginationClassNamesProvider classNames={classNames}>
-          <PaginationMotionProvider motion={motion}>
+          <PaginationMotionProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <PaginationRootShell
             ref={ref}
             className={className}

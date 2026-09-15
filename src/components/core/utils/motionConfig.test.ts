@@ -180,4 +180,37 @@ describe("overlayMotionConfig", () => {
     expect(overlayMotionConfig(base)).toBe(base);
     expect(overlayMotionConfig(base, { interactiveDuration: Number.NaN })).toBe(base);
   });
+
+  it("nested overlays: inner keys win, unspecified inherit, siblings stay isolated", () => {
+    const global = overlayMotionConfig(MOTION_CONFIG_DEFAULTS, {
+      interactiveDuration: 300,
+      tooltipDuration: 180,
+    });
+    const theme = overlayMotionConfig(global, { interactiveDuration: 400 });
+    const inner = overlayMotionConfig(theme, { enableHoverLift: false });
+    const sibling = overlayMotionConfig(global, { interactiveDuration: 80 });
+
+    expect(theme.interactiveDuration).toBe(400);
+    expect(theme.tooltipDuration).toBe(180);
+    expect(inner.interactiveDuration).toBe(400);
+    expect(inner.enableHoverLift).toBe(false);
+    expect(sibling.interactiveDuration).toBe(80);
+    expect(sibling.tooltipDuration).toBe(180);
+    expect(sibling.enableHoverLift).toBe(true);
+    expect(global.interactiveDuration).toBe(300);
+  });
+});
+
+describe("applyMotionCssTokens two roots", () => {
+  it("writes independent --motion-surface-duration on each root", () => {
+    const fast = fakeRoot();
+    const slow = fakeRoot();
+    applyMotionCssTokens(fast as unknown as HTMLElement, { surfaceTransitionDuration: 120 });
+    applyMotionCssTokens(slow as unknown as HTMLElement, { surfaceTransitionDuration: 800 });
+    expect(fast.props[MOTION_CSS_VAR.surfaceDuration]).toBe("120ms");
+    expect(slow.props[MOTION_CSS_VAR.surfaceDuration]).toBe("800ms");
+
+    applyMotionCssTokens(fast as unknown as HTMLElement, { surfaceTransitionDuration: 120 });
+    expect(slow.props[MOTION_CSS_VAR.surfaceDuration]).toBe("800ms");
+  });
 });

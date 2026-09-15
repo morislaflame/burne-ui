@@ -5,7 +5,8 @@ import { expect } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { Skeleton } from ".";
-import { SkeletonMotionDemo } from "../../../../playground/showcase/demos/skeleton/SkeletonMotion.demo";
+import { SkeletonMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/skeleton/motionController/gallery";
+import { SkeletonSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/skeleton/slotMotion/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -264,5 +265,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SkeletonMotionDemo />,
+  render: () => <SkeletonSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play() on Root, playSlot on Region (nested scope), cancel loop, skel events.",
+      },
+    },
+  },
+  render: () => <SkeletonMotionControllerGalleryDemo />,
 };

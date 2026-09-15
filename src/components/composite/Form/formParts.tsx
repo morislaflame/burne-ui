@@ -36,7 +36,7 @@ import type {
 } from "./formTypes";
 
 export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
-  function FormSection({ className = "", classNames, motion, ...rest }, ref) {
+  function FormSection({ className = "", classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parentScope = useOptionalFormMotionScope();
     const mergedMotion = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -45,7 +45,10 @@ export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
     const motionDefaults = useMemo(() => ({}), []);
 
     return (
-      <FormMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <FormMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <FormSectionSurface
           forwardedRef={ref}
           className={className}
@@ -69,7 +72,7 @@ function FormSectionSurface({
   className: string;
   classNames: FormSectionProps["classNames"];
   itemMotion?: FormSectionProps["motion"];
-  rest: Omit<FormSectionProps, "className" | "classNames" | "motion">;
+  rest: Omit<FormSectionProps, "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
 }) {
   const {
     onPointerOver,
@@ -359,7 +362,7 @@ export const FormAnnounce = forwardRef<HTMLDivElement, FormAnnounceProps>(
 FormAnnounce.displayName = "Form.Announce";
 
 export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
-  function FormField({ name, rules, className = "", classNames, children, motion, ...rest }, ref) {
+  function FormField({ name, rules, className = "", classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parentScope = useOptionalFormMotionScope();
     const mergedMotion = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -368,7 +371,10 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
     const motionDefaults = useMemo(() => ({}), []);
 
     return (
-      <FormMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <FormMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <FormFieldSurface
           name={name}
           rules={rules}
@@ -397,7 +403,7 @@ function FormFieldSurface({
 }: FormFieldProps & {
   itemMotion?: FormFieldProps["motion"];
   forwardedRef: ForwardedRef<HTMLDivElement>;
-  rest: Omit<FormFieldProps, "name" | "rules" | "className" | "classNames" | "children" | "motion">;
+  rest: Omit<FormFieldProps, "name" | "rules" | "className" | "classNames" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
 }) {
   const rootClassNames = useFormClassNames();
   const form = useOptionalFormBindingContext();

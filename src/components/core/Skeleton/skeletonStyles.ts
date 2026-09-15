@@ -2,10 +2,10 @@ import type { CSSProperties } from "react";
 
 import type { SkeletonAnimation, SkeletonRadius } from "./skeletonTypes";
 
-export const SKELETON_BASE_CLASS = "relative overflow-hidden bg-primary-tint";
+export const SKELETON_BASE_CLASS = "relative overflow-hidden bg-primary-tint skeleton-animate";
 
 export const SKELETON_WAVE_OVERLAY_CLASS =
-  "pointer-events-none absolute inset-0 -translate-x-full";
+  "pointer-events-none absolute inset-0 -translate-x-full skeleton-animate";
 
 export const SKELETON_CIRCLE_RADIUS_CLASS = "rounded-full";
 

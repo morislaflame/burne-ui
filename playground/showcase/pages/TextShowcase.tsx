@@ -8,12 +8,8 @@ import { TextStatsGridDemo } from "../demos/text/TextStatsGrid.demo";
 import textStatsGridSource from "../demos/text/TextStatsGrid.demo.tsx?raw";
 import { TextVariantsDemo } from "../demos/text/TextVariants.demo";
 import textVariantsSource from "../demos/text/TextVariants.demo.tsx?raw";
-import { TextMotionInstantEnterDemo } from "../demos/text/TextMotionInstantEnter.demo";
-import textMotionInstantEnterSource from "../demos/text/TextMotionInstantEnter.demo.tsx?raw";
-import { TextMotionRootWaveDemo } from "../demos/text/TextMotionRootWave.demo";
-import textMotionRootWaveSource from "../demos/text/TextMotionRootWave.demo.tsx?raw";
-import { TextMotionEnterTintDemo } from "../demos/text/TextMotionEnterTint.demo";
-import textMotionEnterTintSource from "../demos/text/TextMotionEnterTint.demo.tsx?raw";
+import { TextSlotMotionGalleryDemo } from "../demos/text/slotMotion/gallery";
+import { TextMotionControllerGalleryDemo } from "../demos/text/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -44,10 +40,15 @@ export function TextShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TextStatsGridDemo} source={textStatsGridSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, root timeline, enter tint factory.">
-        <ShowcaseDemoFromFile align="center" Demo={TextMotionInstantEnterDemo} source={textMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="center" Demo={TextMotionRootWaveDemo} source={textMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="center" Demo={TextMotionEnterTintDemo} source={textMotionEnterTintSource} />
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root timeline, enter tint, SplitText words, TextPlugin typewriter.">
+        <TextSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play / set, cancel a looping run, ping, timeline, waitForComplete, events false."
+      >
+        <TextMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

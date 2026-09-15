@@ -10,7 +10,8 @@ import { Checkbox } from "@/components/core/Checkbox";
 import { Pagination } from "@/components/core/Pagination";
 
 import { Table, type Selection, type SortDescriptor, type TableRowTone } from ".";
-import { TableMotionDemo } from "../../../../playground/showcase/demos/table/TableMotion.demo";
+import { TableSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/table/slotMotion/gallery";
+import { TableMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/table/motionController/gallery";
 
 // ─── shared data ─────────────────────────────────────────────────────────────
 
@@ -1037,5 +1038,18 @@ export const HeaderRow: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <TableMotionDemo />,
+  render: () => <TableSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on table chrome, playAll on repeated columns, nested Table.Row scope, table events.",
+      },
+    },
+  },
+  render: () => <TableMotionControllerGalleryDemo />,
 };

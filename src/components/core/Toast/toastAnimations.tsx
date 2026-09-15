@@ -12,6 +12,8 @@ import {
   hideNestedEnterSlots,
   killMotionScope,
   mergeMotionSlotMaps,
+  mergeMotionRootSiblings,
+  splitMotionRootMap,
   scheduleNestedEnterBroadcast,
   useMotionPart,
   waitForLeaveGeneration,
@@ -303,16 +305,24 @@ export function ToastItemWrapper({
   providerMotion,
 }: ToastItemWrapperProps) {
   const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
-  const mergedMotion = useMemo(
-    () => mergeMotionSlotMaps(providerMotion, entry.motion) as ToastMotion | undefined,
-    [entry.motion, providerMotion],
-  );
+  const mergedMotion = useMemo(() => {
+    const mergedSlots = mergeMotionSlotMaps(providerMotion, entry.motion);
+    const siblings = mergeMotionRootSiblings(
+      splitMotionRootMap(providerMotion),
+      splitMotionRootMap(entry.motion),
+    );
+    return { ...mergedSlots, ...siblings };
+  }, [entry.motion, providerMotion]);
 
   return (
     <ToastMotionProvider
       motion={mergedMotion}
       defaults={TOAST_MOTION_DEFAULTS}
       params={{ isTop, slideDir }}
+      controller={entry.motionController}
+      motionState={entry.motionState}
+      motionPayload={entry.motionPayload}
+      playInitialState={entry.playInitialState}
     >
       <ToastItemMotionHost
         entry={entry}

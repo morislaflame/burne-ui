@@ -1,7 +1,6 @@
 import type {
   ButtonHTMLAttributes,
   HTMLAttributes,
-  MouseEvent,
   ReactNode,
   RefObject,
 } from "react";
@@ -9,7 +8,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
 
 export type ButtonVariant =
@@ -23,16 +22,6 @@ export type ButtonVariant =
 export type ButtonStatus = "default" | "danger" | "success" | "info" | "warning";
 
 export type ButtonSize = ComponentSize;
-
-export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
-
-export type ButtonAsyncLayerKind = "label" | "loader" | "success" | "error";
-
-export type ExpandRipple = {
-  id: number;
-  size: number;
-  tone: "success" | "error";
-};
 
 export type ButtonClassNames = {
   root?: string;
@@ -49,18 +38,8 @@ export type ButtonContextValue = {
   size: ButtonSize;
   variant: ButtonVariant;
   status: ButtonStatus;
-  asyncState: ButtonAsyncState;
-  /**
-   * After first GSAP sync, motion owns layer visibility (inline autoAlpha).
-   * Before that, parts hide inactive layers via Tailwind for SSR / first paint.
-   */
-  asyncMotionReady: boolean;
   groupSegment: ButtonGroupSegment | undefined;
   loaderTextClass: string;
-  bindLabelRef: (node: HTMLSpanElement | null) => void;
-  bindLoaderRef: (node: HTMLSpanElement | null) => void;
-  bindSuccessRef: (node: HTMLSpanElement | null) => void;
-  bindErrorRef: (node: HTMLSpanElement | null) => void;
   contentMotionRef: RefObject<HTMLSpanElement | null>;
 };
 
@@ -88,26 +67,29 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   status?: ButtonStatus;
   size?: ButtonSize;
   iconOnly?: boolean;
-  asyncState?: ButtonAsyncState;
-  onAsyncStateChange?: (state: ButtonAsyncState) => void;
-  onAsyncClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<boolean>;
-  asyncFeedbackMs?: number;
   icon?: ReactNode;
   /** @default "start" */
   iconPosition?: IconPosition;
   classNames?: Prettify<ButtonClassNames>;
   /**
    * Per-slot motion (`root` = the button, or the inner content span in a ButtonGroup segment;
-   * `label` / `icon` / `text`; async `loader` / `success` / `error` without replacing kit crossfade).
+   * `label` / `icon` / `text`; overlay `loader` / `success` / `error` when the app mounts those parts).
    * Hover/press defaults: `hoverLiftFirstLevel` / `pressSqueeze` (gloss → `hoverLiftGloss` / `pressSqueezeGloss`).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * `states` — app modes for `motionState` (not a DOM slot, not a phase).
    */
-  motion?: Prettify<ButtonMotion>;
+  motion?: Prettify<MotionMapWithEvents<ButtonMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
   /**
    * Enable converge-ripple from the press point (`<Ripple />` inside the button, tone under `variant`).
    * @default false
    */
   ripple?: boolean;
-};
+} & MotionStateHostProps;
 
 export type ButtonContentProps = HTMLAttributes<HTMLSpanElement>;
 
@@ -143,14 +125,6 @@ export type ButtonSimpleContentProps = {
   children?: ReactNode;
 };
 
-export type ButtonExpandRippleHandle = {
-  push: (tone: "success" | "error", size: number) => void;
-};
-
-export type ButtonExpandRippleLayerProps = {
-  clipClass: string;
-};
-
 export type UseButtonRootStateProps = Pick<
   ButtonProps,
   | "variant"
@@ -158,10 +132,6 @@ export type UseButtonRootStateProps = Pick<
   | "size"
   | "iconOnly"
   | "groupSegment"
-  | "asyncState"
-  | "onAsyncStateChange"
-  | "onAsyncClick"
-  | "asyncFeedbackMs"
   | "disabled"
   | "className"
   | "classNames"
@@ -175,10 +145,6 @@ export type UseButtonRootStateProps = Pick<
 
 export type UseButtonAnimationsProps = {
   variant: ButtonVariant;
-  status: ButtonStatus;
-  size: ButtonSize;
-  asyncState: ButtonAsyncState;
-  isControlled: boolean;
   blocked: boolean;
   groupSegment: ButtonGroupSegment | undefined;
   motion?: ButtonMotion;
@@ -193,12 +159,6 @@ export type UseButtonAnimationsProps = {
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
 };
 
-export type ButtonFeedbackExpandRippleProps = {
-  size: number;
-  tone: "success" | "error";
-  onDone: () => void;
-};
-
 export type ButtonSpinnerProps = {
   className?: string;
 };
@@ -210,4 +170,3 @@ export type ButtonIconCheckProps = {
 export type ButtonIconCrossProps = {
   className?: string;
 };
-

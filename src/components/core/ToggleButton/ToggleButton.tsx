@@ -69,6 +69,7 @@ type ToggleButtonSurfaceProps = {
     | "disabled"
     | "children"
     | "motion"
+    | "motionController"
     | "onClick"
     | "onFocus"
     | "onPointerDown"
@@ -223,6 +224,10 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       disabled,
       children,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onClick,
       onFocus,
       onPointerDown,
@@ -276,6 +281,10 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
           motion={motion}
           defaults={motionDefaults}
           params={motionParams}
+          controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
         >
           <ToggleButtonSurface
             state={state}

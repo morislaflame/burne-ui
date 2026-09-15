@@ -7,7 +7,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Input } from "./index";
-import { InputMotionDemo } from "../../../../playground/showcase/demos/input/InputMotion.demo";
+import { InputSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/input/slotMotion/gallery";
+import { InputMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/input/motionController/gallery";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -409,5 +410,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <InputMotionDemo />,
+  render: () => <InputSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on shell/prefix (no play: no root slot), chrome label on Root, cancel loop, input events.",
+      },
+    },
+  },
+  render: () => <InputMotionControllerGalleryDemo />,
 };

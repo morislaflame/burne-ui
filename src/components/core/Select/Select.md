@@ -58,6 +58,8 @@ const options = [
 | `menuMaxHeight` | `min(24rem, 70vh)` | scroll ListBox |
 | `name` | — | Form binding |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | Root / simple: карта слотов + `events`. На `Select.TriggerGroup` — part motion слота `triggerGroup` |
+| `motionController` | — | Simple: форвардится на TriggerGroup (хост `triggerGroup`). Compound: Root chrome; для shell — второй handle на `Select.TriggerGroup`. Не на DOM |
 
 ### `SelectClassNames`
 
@@ -108,6 +110,30 @@ const options = [
 ```
 
 Compound: `motion` на `Select.TriggerGroup` — part motion слота `triggerGroup`; на `Select.Value` / `Select.Trigger` — свои слоты. На `Select.Label` / `Hint` / `Error` — chrome Root scope.
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("triggerGroup", …)` / `playSlot("value", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `Select.TriggerGroup`. Один handle ≠ два scope. Меню — Popover, не этот scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`select:nudge`, `select:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("triggerGroup", event)` (карта `events` с корня мержится в TriggerGroup). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Select, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "select:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("triggerGroup", "select:nudge")}>
+        Nudge
+      </Button>
+      <Select label="Framework" options={options} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 **ButtonGroup:** при `groupSegment` shell hover/press выключены.
 
@@ -233,4 +259,4 @@ Select/
 
 ## Storybook
 
-`Core Components/Select` — simple/compound, status, gloss, Form, `classNames`, keyboard, slot motion gallery.
+`Core Components/Select` — simple/compound, status, gloss, Form, `classNames`, keyboard, Slot motion, MotionController.

@@ -73,6 +73,10 @@ export function SliderRoot({
   gloss,
   thumbClassName,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...divRest
 }: SliderProps) {
   const state = useSliderRootState({
@@ -125,7 +129,14 @@ export function SliderRoot({
   return (
     <SliderFieldProvider value={state.fieldCtx}>
       <SliderClassNamesProvider classNames={classNames}>
-        <SliderMotionProvider motion={motion} defaults={motionDefaults}>
+        <SliderMotionProvider
+          motion={motion}
+          defaults={motionDefaults}
+          controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+        >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               id={state.sliderId}

@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { ColorSwatchShape, ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
@@ -73,9 +73,16 @@ export type ColorPickerProps = {
    * Root is a portal-host map (like Dropdown). `contentPanel` / `hexInput` / `alphaInput` / `presets` / `previewSwatch` play opt-in `enter`.
    * `area` plays `change` on hex (not mount `enter` — drag surface). Thumb `left`/`top` is kit-internal.
    * `trigger` is pass-through to Popover. Defaults are empty. Pass `hueSlider` / `alphaSlider` through to ColorSlider (nested scope does not inherit).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<ColorPickerMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ColorPickerMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Provider lives on Root; slots register when `Content` is open. No `root` slot — use `playSlot("contentPanel")`.
+   * Not placed on the DOM. Nested ColorSlider / ColorSwatch keep their own scopes.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ColorPickerTriggerProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,

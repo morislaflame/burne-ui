@@ -4,20 +4,7 @@ import { ExpandableCompoundDemo } from "../demos/expandable/ExpandableCompound.d
 import expandableCompoundSource from "../demos/expandable/ExpandableCompound.demo.tsx?raw";
 import { ExpandableGlossDemo } from "../demos/expandable/ExpandableGloss.demo";
 import expandableGlossSource from "../demos/expandable/ExpandableGloss.demo.tsx?raw";
-import { ExpandableMotionChevronDemo } from "../demos/expandable/ExpandableMotionChevron.demo";
-import expandableMotionChevronSource from "../demos/expandable/ExpandableMotionChevron.demo.tsx?raw";
-import { ExpandableMotionDefaultDemo } from "../demos/expandable/ExpandableMotionDefault.demo";
-import expandableMotionDefaultSource from "../demos/expandable/ExpandableMotionDefault.demo.tsx?raw";
-import { ExpandableMotionInstantPanelDemo } from "../demos/expandable/ExpandableMotionInstantPanel.demo";
-import expandableMotionInstantPanelSource from "../demos/expandable/ExpandableMotionInstantPanel.demo.tsx?raw";
-import { ExpandableMotionBounceHeightDemo } from "../demos/expandable/ExpandableMotionBounceHeight.demo";
-import expandableMotionBounceHeightSource from "../demos/expandable/ExpandableMotionBounceHeight.demo.tsx?raw";
-import { ExpandableMotionClipWipeDemo } from "../demos/expandable/ExpandableMotionClipWipe.demo";
-import expandableMotionClipWipeSource from "../demos/expandable/ExpandableMotionClipWipe.demo.tsx?raw";
-import { ExpandableMotionPanelInnerDemo } from "../demos/expandable/ExpandableMotionPanelInner.demo";
-import expandableMotionPanelInnerSource from "../demos/expandable/ExpandableMotionPanelInner.demo.tsx?raw";
-import { ExpandableMotionTitleColorDemo } from "../demos/expandable/ExpandableMotionTitleColor.demo";
-import expandableMotionTitleColorSource from "../demos/expandable/ExpandableMotionTitleColor.demo.tsx?raw";
+import { ExpandableMotionControllerGalleryDemo } from "../demos/expandable/motionController/gallery";
 import { ExpandableOrderDetailsDemo } from "../demos/expandable/ExpandableOrderDetails.demo";
 import expandableOrderDetailsSource from "../demos/expandable/ExpandableOrderDetails.demo.tsx?raw";
 import { ExpandableSettingsStackDemo } from "../demos/expandable/ExpandableSettingsStack.demo";
@@ -28,6 +15,7 @@ import { ExpandableSimpleApiDemo } from "../demos/expandable/ExpandableSimpleApi
 import expandableSimpleApiSource from "../demos/expandable/ExpandableSimpleApi.demo.tsx?raw";
 import { ExpandableSizesDemo } from "../demos/expandable/ExpandableSizes.demo";
 import expandableSizesSource from "../demos/expandable/ExpandableSizes.demo.tsx?raw";
+import { ExpandableSlotMotionGalleryDemo } from "../demos/expandable/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -57,17 +45,15 @@ export function ExpandableShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableCompoundDemo} source={expandableCompoundSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: default recipes, instant panel, custom panelShell expand, chevron factory, classNames.">
+        <ExpandableSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — default recipes, instant panel, custom panelShell expand, chevron factory, classNames."
+        title="MotionController"
+        description="One gallery: playSlot on title (no root slot), playAll stagger, ping, ctx.targets timeline, waitForComplete."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionDefaultDemo} source={expandableMotionDefaultSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionInstantPanelDemo} source={expandableMotionInstantPanelSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionChevronDemo} source={expandableMotionChevronSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionBounceHeightDemo} source={expandableMotionBounceHeightSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionClipWipeDemo} source={expandableMotionClipWipeSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionPanelInnerDemo} source={expandableMotionPanelInnerSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionTitleColorDemo} source={expandableMotionTitleColorSource} />
+        <ExpandableMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

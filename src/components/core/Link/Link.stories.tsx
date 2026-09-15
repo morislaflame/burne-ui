@@ -7,7 +7,8 @@ import { IoDocumentTextOutline, IoOpenOutline } from "react-icons/io5";
 import { Text } from "@/components/core/Text";
 
 import { Link } from "@/components/core/Link";
-import { LinkMotionDemo } from "../../../../playground/showcase/demos/link/LinkMotion.demo";
+import { LinkMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/link/motionController/gallery";
+import { LinkSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/link/slotMotion/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -50,6 +51,12 @@ const meta = {
     href: "#",
     children: "Learn more",
     size: "base",
+  },
+  argTypes: {
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
+    },
   },
 } satisfies Meta<typeof Link>;
 
@@ -235,5 +242,18 @@ export const AsChild: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <LinkMotionDemo />,
+  render: () => <LinkSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot / set, play vs playSlot, icon/text, stagger, exclude, nav events, waitForComplete, motionState SplitText.",
+      },
+    },
+  },
+  render: () => <LinkMotionControllerGalleryDemo />,
 };

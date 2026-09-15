@@ -56,6 +56,10 @@ export function SelectRoot({
   menuMaxHeight,
   name,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: SelectProps) {
   const formCtx = useOptionalFormBindingContext();
@@ -93,7 +97,13 @@ export function SelectRoot({
     <SelectFieldProvider value={state.fieldCtx}>
       <SelectProvider value={state.selectCtx}>
         <SelectClassNamesProvider classNames={classNames}>
-          <SelectMotionProvider motion={motion}>
+          <SelectMotionProvider
+            motion={motion}
+            controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+          >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               size={resolvedSize}
@@ -112,6 +122,10 @@ export function SelectRoot({
                   hint={state.hint}
                   error={state.error}
                   labelId={state.fieldCtx.labelId}
+                  motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
                 />
               )}
             </Field>

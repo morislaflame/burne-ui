@@ -27,6 +27,8 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 | `shellRef` | — | Ref на shell (для parent slide anim — Switch) |
 | `className` | — | На shell |
 | `children` | — | Обычно `SelectionThumb.Icon` |
+| `motion` | — | Слоты `root` / `icon`. `events` — app-команды `MotionController` |
+| `motionController` | — | Standalone only. Switch/Slider **не** форвардят свой handle сюда |
 
 ### `SelectionThumb.Icon`
 
@@ -58,7 +60,32 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 |-------|------|--------|
 | `root`, `icon` | `enter` / hover / press (opt-in) | empty |
 
-Switch/Slider не передают `motion` — pointer-фазы выключены.
+Switch/Slider не передают `motion` — pointer-фазы выключены. Standalone: есть слот `root`, `play()` работает.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`thumb:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, SelectionThumb, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+import { IoMoon } from "react-icons/io5";
+
+const events = createMotionEvents({
+  "thumb:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("thumb:nudge")}>
+        Nudge
+      </Button>
+      <SelectionThumb motionController={controller} motion={{ events }}>
+        <SelectionThumb.Icon><IoMoon aria-hidden /></SelectionThumb.Icon>
+      </SelectionThumb>
+    </>
+  );
+}
+```
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 

@@ -4,8 +4,11 @@ import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import { isMotionPhaseName } from "./slotMotionTypes";
 import type {
   MotionAnimation,
+  MotionDelay,
+  MotionDurationToken,
   MotionPhaseName,
   MotionReplay,
+  MotionSequenceStep,
   MotionTimeline,
   MotionTimelinePosition,
   MotionTweenVars,
@@ -45,6 +48,7 @@ export type MotionTweenHost = {
   config: Readonly<MotionConfig>;
   onCleanup: (fn: () => void) => void;
   setAnimation: (animation: MotionAnimation | undefined) => void;
+  signal: AbortSignal;
 };
 
 export type MotionTweenApi = {
@@ -65,6 +69,9 @@ export type MotionTweenApi = {
     ): MotionAnimation | undefined;
   };
   timeline: () => MotionTimeline;
+  wait: (delay: MotionDelay) => Promise<void>;
+  sequence: (...steps: MotionSequenceStep[]) => Promise<void>;
+  parallel: (...steps: MotionSequenceStep[]) => Promise<void>;
 };
 
 export function resolveMotionReplay(
@@ -88,6 +95,45 @@ function overwriteFor(phase: string): "auto" | true {
   return isMotionPhaseName(phase) ? "auto" : true;
 }
 
+const MOTION_DURATION_TOKENS: readonly MotionDurationToken[] = [
+  "interactiveDuration",
+  "tooltipDuration",
+  "modalDuration",
+  "switchThumbDuration",
+  "selectionFillDuration",
+  "expandDuration",
+  "toastDismissDuration",
+  "progressFillDuration",
+  "progressIndeterminateDuration",
+];
+
+function isMotionDurationToken(value: string): value is MotionDurationToken {
+  return (MOTION_DURATION_TOKENS as readonly string[]).includes(value);
+}
+
+/** Seconds for GSAP `delay`. `"expand"` → `expandDuration`. Invalid / non-finite → omit. */
+export function resolveMotionDelay(
+  delay: MotionDelay | undefined,
+  cfg: Readonly<MotionConfig>,
+): number | undefined {
+  if (delay === undefined) return undefined;
+  if (typeof delay === "number") {
+    return Number.isFinite(delay) ? Math.max(0, delay) : undefined;
+  }
+  const key = delay === "expand" ? "expandDuration" : delay;
+  if (!isMotionDurationToken(key)) return undefined;
+  const ms = cfg[key];
+  if (typeof ms !== "number" || !Number.isFinite(ms)) return undefined;
+  return Math.max(0, ms / 1000);
+}
+
+/**
+ * Timeline children must coexist on the same node (lift then scale then rest).
+ * App-event `ctx.to` still uses `overwrite: true`; a timeline with that flag
+ * kills earlier tweens at **add** time, so the last rest pose looks like a no-op.
+ */
+const TIMELINE_OVERWRITE = "auto" as const;
+
 function pickTransform(vars: MotionTweenVars): MotionTweenVars {
   const out: MotionTweenVars = {};
   for (const key of TRANSFORM_KEYS) {
@@ -106,13 +152,14 @@ function toGsapVars(
   overwrite: "auto" | true,
 ): Record<string, unknown> {
   const props = pickTransform(vars);
+  const delay = resolveMotionDelay(vars.delay, cfg);
   return {
     ...props,
     duration: vars.duration ?? cfg.interactiveDuration / 1000,
     ease: vars.ease ?? cfg.interactiveEase,
     ...(vars.yoyo !== undefined ? { yoyo: vars.yoyo } : {}),
     ...(vars.repeat !== undefined ? { repeat: vars.repeat } : {}),
-    ...(vars.delay !== undefined ? { delay: vars.delay } : {}),
+    ...(delay !== undefined ? { delay } : {}),
     overwrite,
     force3D: false,
   };
@@ -168,7 +215,9 @@ function playTween(
   }
   const toVars = toGsapVars(vars, options.config, options.overwrite);
   if (from) {
-    return asAnimation(gsap.fromTo(el, pickTransform(from), toVars));
+    return asAnimation(
+      gsap.fromTo(el, pickTransform(from), { ...toVars, immediateRender: true }),
+    );
   }
   return asAnimation(gsap.to(el, toVars));
 }
@@ -230,7 +279,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
   const timeline = (): MotionTimeline => {
     const tl = gsap.timeline({
       defaults: {
-        overwrite,
+        overwrite: TIMELINE_OVERWRITE,
         force3D: false,
         duration: host.config.interactiveDuration / 1000,
         ease: host.config.interactiveEase,
@@ -269,6 +318,12 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
         if (child) tl.add(child as gsap.core.Animation, position);
         return self;
       },
+      wait: (delay, position) => {
+        const seconds = resolveMotionDelay(delay, host.config) ?? 0;
+        if (host.reduced || seconds <= 0) return self;
+        tl.to({}, { duration: seconds, ease: "none" }, position);
+        return self;
+      },
     };
 
     function addTween(
@@ -282,13 +337,130 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
         gsap.set(el, { ...pickTransform(vars), force3D: false });
         return;
       }
-      const toVars = toGsapVars(vars, host.config, overwrite);
-      if (from) tl.fromTo(el, pickTransform(from), toVars, position);
+      const toVars = toGsapVars(vars, host.config, TIMELINE_OVERWRITE);
+      if (from) tl.fromTo(el, pickTransform(from), { ...toVars, immediateRender: true }, position);
       else tl.to(el, toVars, position);
     }
 
     return self;
   };
 
-  return { to, fromRest, fromTo, timeline };
+  const wait = (delay: MotionDelay) => waitMotionDelay(host, delay);
+  const sequence = (...steps: MotionSequenceStep[]) => runMotionSequence(host, steps);
+  const parallel = (...steps: MotionSequenceStep[]) => runMotionParallel(host, steps);
+
+  return { to, fromRest, fromTo, timeline, wait, sequence, parallel };
+}
+
+function motionAbortError(): Error {
+  if (typeof DOMException === "function") {
+    return new DOMException("Motion wait aborted", "AbortError");
+  }
+  const error = new Error("Motion wait aborted");
+  error.name = "AbortError";
+  return error;
+}
+
+function throwIfMotionAborted(signal: AbortSignal): void {
+  if (signal.aborted) throw motionAbortError();
+}
+
+function isDelayStep(step: MotionSequenceStep): step is MotionDelay {
+  return typeof step === "number" || typeof step === "string";
+}
+
+function waitForMotionAnimation(
+  animation: MotionAnimation,
+  signal: AbortSignal,
+): Promise<void> {
+  throwIfMotionAborted(signal);
+  const hook = animation.eventCallback;
+  if (typeof hook !== "function") return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener("abort", onAbort);
+      fn();
+    };
+    const onAbort = () => finish(() => reject(motionAbortError()));
+    signal.addEventListener("abort", onAbort, { once: true });
+    const prev = hook.call(animation, "onComplete");
+    hook.call(animation, "onComplete", function (this: unknown, ...args: unknown[]) {
+      if (typeof prev === "function") {
+        (prev as (this: unknown, ...a: unknown[]) => unknown).apply(this, args);
+      }
+      finish(resolve);
+    });
+  });
+}
+
+async function settleMotionStep(
+  host: MotionTweenHost,
+  result: void | Promise<void> | Pick<MotionAnimation, "kill"> | undefined,
+): Promise<void> {
+  throwIfMotionAborted(host.signal);
+  if (result == null) return;
+  if (typeof result === "object" && "then" in result) {
+    await result;
+    throwIfMotionAborted(host.signal);
+    return;
+  }
+  if (typeof result === "object" && "kill" in result) {
+    await waitForMotionAnimation(result, host.signal);
+  }
+}
+
+export function waitMotionDelay(host: MotionTweenHost, delay: MotionDelay): Promise<void> {
+  throwIfMotionAborted(host.signal);
+  const seconds = resolveMotionDelay(delay, host.config) ?? 0;
+  if (host.reduced || seconds <= 0) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      host.signal.removeEventListener("abort", onAbort);
+      fn();
+    };
+    const timeoutId = globalThis.setTimeout(() => {
+      finish(() => {
+        if (host.signal.aborted) reject(motionAbortError());
+        else resolve();
+      });
+    }, seconds * 1000);
+    const onAbort = () => {
+      globalThis.clearTimeout(timeoutId);
+      finish(() => reject(motionAbortError()));
+    };
+    host.signal.addEventListener("abort", onAbort, { once: true });
+    host.onCleanup(() => {
+      globalThis.clearTimeout(timeoutId);
+      host.signal.removeEventListener("abort", onAbort);
+    });
+  });
+}
+
+export async function runMotionSequence(
+  host: MotionTweenHost,
+  steps: readonly MotionSequenceStep[],
+): Promise<void> {
+  throwIfMotionAborted(host.signal);
+  for (const step of steps) {
+    throwIfMotionAborted(host.signal);
+    if (isDelayStep(step)) {
+      await waitMotionDelay(host, step);
+      continue;
+    }
+    await settleMotionStep(host, step());
+  }
+}
+
+export async function runMotionParallel(
+  host: MotionTweenHost,
+  steps: readonly MotionSequenceStep[],
+): Promise<void> {
+  throwIfMotionAborted(host.signal);
+  await Promise.all(steps.map((step) => runMotionSequence(host, [step])));
 }

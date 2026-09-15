@@ -10,14 +10,8 @@ import { BreadcrumbsProductHeaderDemo } from "../demos/breadcrumbs/BreadcrumbsPr
 import breadcrumbsProductHeaderSource from "../demos/breadcrumbs/BreadcrumbsProductHeader.demo.tsx?raw";
 import { BreadcrumbsShortPathDemo } from "../demos/breadcrumbs/BreadcrumbsShortPath.demo";
 import breadcrumbsShortPathSource from "../demos/breadcrumbs/BreadcrumbsShortPath.demo.tsx?raw";
-import { BreadcrumbsMotionInstantPressDemo } from "../demos/breadcrumbs/BreadcrumbsMotionInstantPress.demo";
-import breadcrumbsMotionInstantPressSource from "../demos/breadcrumbs/BreadcrumbsMotionInstantPress.demo.tsx?raw";
-import { BreadcrumbsMotionCrumbWaveDemo } from "../demos/breadcrumbs/BreadcrumbsMotionCrumbWave.demo";
-import breadcrumbsMotionCrumbWaveSource from "../demos/breadcrumbs/BreadcrumbsMotionCrumbWave.demo.tsx?raw";
-import { BreadcrumbsMotionTextTintDemo } from "../demos/breadcrumbs/BreadcrumbsMotionTextTint.demo";
-import breadcrumbsMotionTextTintSource from "../demos/breadcrumbs/BreadcrumbsMotionTextTint.demo.tsx?raw";
-import { BreadcrumbsMotionListSeparatorDemo } from "../demos/breadcrumbs/BreadcrumbsMotionListSeparator.demo";
-import breadcrumbsMotionListSeparatorSource from "../demos/breadcrumbs/BreadcrumbsMotionListSeparator.demo.tsx?raw";
+import { BreadcrumbsSlotMotionGalleryDemo } from "../demos/breadcrumbs/slotMotion/gallery";
+import { BreadcrumbsMotionControllerGalleryDemo } from "../demos/breadcrumbs/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -50,10 +44,14 @@ export function BreadcrumbsShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant skip, timeline itemLink→text, tint + ellipsis press, list and separator enter.">
-        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionInstantPressDemo} source={breadcrumbsMotionInstantPressSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionCrumbWaveDemo} source={breadcrumbsMotionCrumbWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionTextTintDemo} source={breadcrumbsMotionTextTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionListSeparatorDemo} source={breadcrumbsMotionListSeparatorSource} />
+        <BreadcrumbsSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on list (no root), playAll on repeated separators, nested Item itemLink scope, breadcrumbs events."
+      >
+        <BreadcrumbsMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

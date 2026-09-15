@@ -7,7 +7,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type ToastSize = MessageBannerSize;
 
@@ -34,7 +34,7 @@ export type ToastPartMotion = ToastLifecycleMotion & {
 };
 
 export type ToastMotion = {
-  root?: ToastLifecycleMotion;
+  root?: ToastPartMotion;
   indicator?: ToastLifecycleMotion;
   title?: ToastPartMotion;
   description?: ToastPartMotion;
@@ -70,8 +70,13 @@ export type AddToastOpts = {
   id?: string;
   loading?: boolean;
   classNames?: Prettify<ToastClassNames>;
-  motion?: Prettify<ToastMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
+  /**
+   * Handle for this toast item scope (`root`, chrome). Stack host is `ToastItemWrapper`.
+   * `play()` targets `root`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type PromiseToastOpts<T> = {
   loading?: ReactNode;
@@ -80,8 +85,9 @@ export type PromiseToastOpts<T> = {
   placement?: ToastPlacement;
   timeout?: number;
   classNames?: Prettify<ToastClassNames>;
-  motion?: Prettify<ToastMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ToastEntry = {
   id: string;
@@ -96,8 +102,9 @@ export type ToastEntry = {
   createdAt: number;
   loading: boolean;
   classNames?: Prettify<ToastClassNames>;
-  motion?: Prettify<ToastMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ToastLiveAnnouncement = {
   text: string;
@@ -139,7 +146,7 @@ export type ToastProviderProps = {
   /** DOM node for viewport portals. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<ToastClassNames>;
-  motion?: Prettify<ToastMotion>;
+  motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
 };
 
 export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -152,8 +159,18 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   loading?: boolean;
   onClose?: () => void;
   classNames?: Prettify<ToastClassNames>;
-  motion?: Prettify<ToastMotion>;
-};
+  /**
+   * Per-slot motion (`root`, `indicator`, `title`, `description`, `action`, `close`).
+   * Standalone `<Toast>` mounts its own scope. Stack items inherit from `Toast.Provider` / `add()`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   */
+  motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
+  /**
+   * Handle for the standalone card scope. Stack: pass `motionController` on `toast.show()` instead.
+   * `play()` targets `root`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseToastRootStateProps = Pick<
   ToastProps,
@@ -197,7 +214,7 @@ export type ToastItemWrapperProps = {
   onRemoveFinal: (id: string) => void;
   onHeightChange: (id: string, h: number) => void;
   providerClassNames?: ToastClassNames;
-  providerMotion?: ToastMotion;
+  providerMotion?: Prettify<MotionMapWithEvents<ToastMotion>>;
 };
 
 export type ToastViewportProps = {
@@ -207,6 +224,6 @@ export type ToastViewportProps = {
   onDismiss: (id: string) => void;
   onRemoveFinal: (id: string) => void;
   classNames?: Prettify<ToastClassNames>;
-  motion?: Prettify<ToastMotion>;
+  motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
   defaultSize?: ToastSize;
 };

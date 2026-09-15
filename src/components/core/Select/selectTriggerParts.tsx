@@ -9,7 +9,7 @@ import { IoChevronDown } from "react-icons/io5";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import {
   createTypeaheadBufferState,
   isTypeaheadPrintableKey,
@@ -53,6 +53,10 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       onPointerEnter,
       onPointerLeave,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -81,13 +85,26 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
         }),
       [disabled, groupSegment, isGloss],
     );
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { triggerGroup: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
 
     return (
-      <SelectMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+      <SelectMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <SelectTriggerGroupSurface
           forwardedRef={ref}
           className={className}
@@ -134,6 +151,7 @@ function SelectTriggerGroupSurface({
     | "onPointerEnter"
     | "onPointerLeave"
     | "motion"
+    | "motionController"
   >;
 }) {
   const slotClassNames = useSelectClassNames();

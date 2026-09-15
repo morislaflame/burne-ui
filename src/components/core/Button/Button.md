@@ -1,6 +1,6 @@
 # Button
 
-Интерактивная кнопка первого уровня: варианты поверхности, семантические статусы, async-состояния, converge-ripple и GSAP-анимации hover/press.
+Интерактивная кнопка первого уровня: варианты поверхности, семантические статусы, converge-ripple и GSAP-анимации hover/press.
 
 ## Импорт
 
@@ -11,7 +11,6 @@ import type {
   ButtonVariant,
   ButtonStatus,
   ButtonSize,
-  ButtonAsyncState,
   ButtonClassNames,
   ButtonMotion,
 } from "burne-ui";
@@ -39,15 +38,15 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 | `iconPosition` | `start` \| `end` | `start` | Позиция `icon` |
 | `iconOnly` | `boolean` | `false` | Компактная ширина (`min-w-fit`); обязателен `aria-label` |
 | `disabled` | `boolean` | `false` | Блокировка; наследуется из `Form` |
-| `asyncState` | `idle` \| `loading` \| `success` \| `error` | — | Контролируемое async-состояние |
-| `onAsyncStateChange` | `(state) => void` | — | Колбэк при смене async (uncontrolled) |
-| `onAsyncClick` | `(e) => Promise<boolean>` | — | Uncontrolled async: `true` → success, `false` → error |
-| `asyncFeedbackMs` | `number` | `2000` | Задержка возврата в `idle` после success/error |
 | `groupSegment` | `ButtonGroupSegment` | — | Сегмент в `ButtonGroup` (скругления, glue) |
 | `asChild` | `boolean` | `false` | Стили/поведение на единственный child (`<a>`, Next.js `<Link>`) |
 | `className` | `string` | — | Доп. классы на корневой `<button>` (или child при `asChild`) |
 | `classNames` | `ButtonClassNames` | — | Слоты подчастей |
-| `motion` | `ButtonMotion` | — | Карта слотов (`root`, `label`, `icon`, `text`, `loader`, `success`, `error`) |
+| `motion` | `ButtonMotion` | — | Карта слотов (`root`, `label`, `icon`, `text`, `loader`, `success`, `error`). Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
+| `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+| `motionState` | `string` | — | App-режим (`idle` / `loading` / `success`). Тот же ещё раз — тишина |
+| `motionPayload` | `unknown` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Не замыкать `useState`. Объекты копируются и freeze; без смены `motionState` не переигрывает |
+| `playInitialState` | `boolean` | `false` | Играть `states[motionState]` на маунте |
 | `type` | `button` \| `submit` \| `reset` | `button` | Нативный type (не передаётся при `asChild`) |
 | … | `ButtonHTMLAttributes` | — | Остальные атрибуты кнопки |
 
@@ -71,20 +70,43 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
   <IoAdd aria-hidden className="icon-base" />
 </Button>
 
-// Async (uncontrolled)
-<Button
-  ripple
-  onAsyncClick={async () => {
-    await save();
-    return true; // success; false → error
-  }}
->
-  Сохранить
-</Button>
+```tsx
+import { Button, createMotionStates } from "burne-ui";
 
-// Async (controlled)
-const [state, setState] = useState<ButtonAsyncState>("idle");
-<Button asyncState={state} onClick={run} disabled={state !== "idle"} />
+const states = createMotionStates({
+  idle: {
+    label: { autoAlpha: 1, scale: 1, duration: 0.2 },
+    loader: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+    success: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+    error: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+  },
+  loading: {
+    label: { autoAlpha: 0, scale: 0.92, duration: 0.2 },
+    loader: { autoAlpha: 1, scale: 1, duration: 0.2 },
+    success: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+    error: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+  },
+  success: {
+    label: { autoAlpha: 0, scale: 0.92, duration: 0.2 },
+    loader: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+    success: { autoAlpha: 1, scale: 1, duration: 0.2 },
+    error: { autoAlpha: 0, scale: 0.85, duration: 0.2 },
+  },
+});
+
+<Button
+  variant="primary"
+  disabled={mode !== "idle"}
+  aria-busy={mode === "loading"}
+  motionState={mode}
+  motion={{ states, root: { pressIn: false } }}
+  onClick={() => void save()}
+>
+  <Button.Label>Сохранить</Button.Label>
+  <Button.Loader />
+  <Button.Success />
+  <Button.Error />
+</Button>
 ```
 
 ## variant и status
@@ -122,28 +144,27 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 ## Анимации
 
-Все motion — **GSAP**. Hover/press на корне — **slot motion** (`buttonAnimations.ts`). Async-слои и expand-ripple остаются внутренней GSAP-логикой, не публичными фазами.
+Все motion — **GSAP**. Hover/press на корне — **slot motion** (`buttonAnimations.ts`). Слои `loader` / `success` / `error` — compound-части: CSS rest скрыт, видимость через `motion.states`.
 
 **DOM-структура (упрощённо):**
 
 ```
 <button>                          ← refs, pointer handlers, shadow (если не groupSegment)
   <Ripple />                      ← опционально, z-0
-  <span clipLayer>                ← expand ripples async
   <span contentMotionRef>         ← squeeze target при groupSegment (`motion.root` целится сюда)
-    grid: label | loader | success | error
+    grid: label (+ loader / success / error, если приложение смонтировало части)
 ```
 
 ### Slot motion
 
-Слот: `root` (кнопка; в `ButtonGroup` сегменте — внутренний content span). Вложенные `label` / `icon` / `text` регистрируются через `useMotionPart`; хост рассылает hover/press (`exclude` `root` + async-слои). `loader` / `success` / `error` — публичные слоты поверх kit-crossfade, не подменяют autoAlpha.
+Слот: `root` (кнопка; в `ButtonGroup` сегменте — внутренний content span). Вложенные `label` / `icon` / `text` регистрируются через `useMotionPart`; хост рассылает hover/press (`exclude` `root` + overlay-слои). `loader` / `success` / `error` — публичные слоты для `motion.states`, не для kit-crossfade.
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
 | `root` | `pressIn` | `pressSqueeze` или `pressSqueezeGloss` (полный in+release; `pressOut` по умолчанию `false`) |
 | `label` / `icon` / `text` | hover / press | нет; хост **рассылает** |
-| `loader` / `success` / `error` | hover / press | нет; kit владеет autoAlpha |
+| `loader` / `success` / `error` | hover / press | нет; CSS rest скрыт, поза — `motion.states` |
 
 `pressOut: false` — kit squeeze сам отпускает. Клавиатура `Enter`/`Space` играет `pressIn`.
 
@@ -163,6 +184,53 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
   Custom y
 </Button>
 ```
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`cta:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+`motionState` + `motion.states` — поза кнопки из React/store (`idle` / `loading` / `success`). Слои `Button.Loader` / `Success` / `Error` **не** монтируются в simple API: приложение само ставит compound-части и перечисляет их в каждом режиме (слот без ключа в новом state не сбрасывается). Несколько слотов на одном режиме: `root` + `text` (перелив / фабрика с GSAP-плагином). Подпись для TextPlugin — `motionPayload` (`from` / `to`) + `createMotionFactory`. Плагины — в приложении, рецепт: [Motion and state managers](/docs/motion-state#плагины--текст-на-state).
+
+```tsx
+import { Button, createMotionStates } from "burne-ui";
+
+const states = createMotionStates({
+  idle: {
+    root: { scale: 1, duration: 0.2 },
+    text: { autoAlpha: 1, duration: 0.2 },
+  },
+  busy: {
+    root: { scale: 0.97, duration: 0.2 },
+    text: { autoAlpha: 0.4, duration: 0.45, yoyo: true, repeat: -1, ease: "sine.inOut" },
+  },
+});
+
+<Button motionState={mode} motion={{ states, root: { pressIn: false } }}>
+  {mode === "busy" ? "Working…" : "Idle"}
+</Button>
+```
+
+```tsx
+import { Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "cta:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("cta:nudge")}>
+        Nudge
+      </Button>
+      <Button motionController={controller} motion={{ events, root: { pressIn: false } }}>
+        Pay
+      </Button>
+    </>
+  );
+}
+```
+
+`playAll("hoverIn", { stagger })` по `icon` / `text`, async `cta:saving` → success (timeline на иконке и тексте) и `waitForComplete` — playground / Storybook **MotionController**.
 
 Цвет — `tweenCssColor`, не сырой `gsap.to({ color })`. Иконка и текст — отдельные слоты (хост рассылает hover с кнопки):
 
@@ -246,7 +314,7 @@ configureMotion({
 - `ease`: `ensureRippleEase()` из `rippleEaseCss`
 - `duration`: prop `rippleDefaultDuration` (default 700 ms)
 
-Цвет: `buttonConvergeRippleColor(variant, status)`. Отключено при `blocked` или `asyncState !== "idle"`.
+Цвет: `buttonConvergeRippleColor(variant, status)`. Отключено при `disabled`.
 
 ```ts
 configureMotion({
@@ -257,51 +325,13 @@ configureMotion({
 });
 ```
 
-### 3. Async crossfade (label ↔ loader ↔ success/error)
+### 3. Overlay layers (`Button.Loader` / `Success` / `Error`)
 
-Четыре слоя в CSS grid, refs через `createButtonAsyncLayerRefCallback`:
+Simple API монтирует только label. Overlay-части — compound: CSS rest = `invisible opacity-0`, показ — `motion.states` (`autoAlpha` / `scale`). В каждом режиме перечислите все четыре слота, иначе поза останется на пропущенном.
 
-| Слой | `asyncState` | scale in | scale out |
-|------|--------------|----------|-----------|
-| label | `idle` | 1 | 0.92 |
-| loader | `loading` | 1 | 0.85 |
-| success | `success` | 1 | 0.85 |
-| error | `error` | 1 | 0.85 |
+`disabled` и `aria-busy` задаёт приложение (нативный атрибут), не кит.
 
-**Первый paint (SSR / до motion):** неактивные слои скрыты Tailwind-классом `invisible opacity-0` по `asyncState` (`asyncMotionReady === false`).
-
-**После sync:** `asyncMotionReady` → GSAP владеет `autoAlpha` (классы hide снимаются, чтобы crossfade не снэпился).
-
-**Переход:** GSAP `to` на каждом слое — `autoAlpha` + `scale`, vars = `motionInteractive()`.
-
-**Первый mount:** мгновенный `gsap.set` без анимации, затем `asyncMotionReady`.
-
-**Uncontrolled `onAsyncClick`:** loading → then success/error + `pushExpandRipple`.
-
-```ts
-configureMotion({
-  enableAsyncButtonCrossfade: true,
-  interactiveDuration: 280,  // длительность crossfade
-});
-```
-
-**Reduced motion:** мгновенная смена видимости без GSAP.
-
-### 4. Feedback expand ring
-
-После `loading → success|error` — `ButtonExpandRippleLayer` (свой `useState`, imperative `push`) рендерит `ButtonFeedbackExpandRipple` из центра кнопки; dismiss не ре-рендерит корень Button:
-
-- `fromTo`: `scale: 0, autoAlpha: 0.5` → `scale: 1, autoAlpha: 0`
-- Размер: `centerCoverDiameter(w, h)` — покрывает всю кнопку
-- Цвет: `color-mix(success|danger 55%)`
-- `ease`: `ensureRippleEase()`, duration: `motionFeedbackExpand()`
-
-```ts
-configureMotion({
-  enableFeedbackExpand: true,
-  feedbackExpandDuration: 720,
-});
-```
+Живой пример — playground / Storybook **motionState save**.
 
 ### Сводка: что настраивается где
 
@@ -310,8 +340,7 @@ configureMotion({
 | Hover lift | slot motion `hoverLiftFirstLevel` / `hoverLiftGloss` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `!blocked` |
 | Press squeeze | slot motion `pressSqueeze` / `pressSqueezeGloss` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `!blocked` |
 | Ripple | `<Ripple />` | `rippleDefaultDuration`, `rippleDefaultOpacityFrom`, `enableRipple` | `ripple` |
-| Async crossfade | `buttonAnimations` layoutEffect | `enableAsyncButtonCrossfade`, `interactiveDuration` | `asyncState` |
-| Expand ring | `ButtonFeedbackExpandRipple` | `enableFeedbackExpand`, `feedbackExpandDuration` | — |
+| Overlay save | `motion.states` + compound Loader/Success/Error | — | приложение |
 | Gloss motion | `glossInteractiveMotion` | те же interactive | `variant="gloss"` |
 
 ## Токены и CSS-классы
@@ -369,7 +398,7 @@ configureMotion({
 | `label` | Слой лейбла (иконка + текст) |
 | `icon` | Обёртка иконки |
 | `text` | Текстовый span |
-| `loader` / `success` / `error` | Async-слои |
+| `loader` / `success` / `error` | Overlay-слои (compound; CSS rest скрыт) |
 
 | Prop | Что стилизует |
 |------|---------------|
@@ -424,11 +453,11 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 ## Доступность
 
 - Нативный `<button>` с корректным `type`.
-- `aria-busy={true}` при `asyncState === "loading"`.
+- `aria-busy` — нативный атрибут приложения (например при `motionState === "loading"`).
 - При `iconOnly` — обязателен осмысленный `aria-label`.
-- Иконки в `icon` и async-слоях — `aria-hidden`.
+- Иконки в `icon` и overlay-слоях — `aria-hidden`.
 - Focus ring через `focus-ring` + status outline.
-- При blocked (`disabled` или busy async) — `disabled` + `pointer-events-none`, opacity 50%.
+- При `disabled` — `disabled` + `pointer-events-none`, opacity 50%.
 
 ## Интеграция с контекстами
 
@@ -446,14 +475,13 @@ Button/
 ├── buttonTypes.ts          # ButtonMotion / ButtonPartMotion
 ├── buttonStyles.ts
 ├── buttonAPI.ts
-├── buttonA11y.ts
 ├── buttonContext.tsx       # createMotionScope("Button")
 ├── buttonParts.tsx
-├── buttonAnimations.ts     # defaults, host play, async crossfade
+├── buttonAnimations.ts     # defaults, host play
 ├── useButtonRootState.ts
 └── Button.stories.tsx
 ```
 
 ## Storybook
 
-`Core Components/Button` — варианты, статусы, размеры, async, gloss, светлая/тёмная тема (`data-theme="light"`).
+`Core Components/Button` — варианты, статусы, размеры, motionState save, gloss, светлая/тёмная тема (`data-theme="light"`).

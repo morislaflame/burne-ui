@@ -55,25 +55,25 @@ const CLOSE_BUTTON_SIZE: Record<
   { root: string; icon: string }
 > = {
   small: {
-    root: "h-control-xsmall w-control-xsmall",
+    root: "h-control-xsmall w-control-xsmall min-w-control-xsmall",
     icon: "icon-small",
   },
   base: {
-    root: "h-control-small w-control-small",
+    root: "h-control-small w-control-small min-w-control-small",
     icon: "icon-base",
   },
   mid: {
-    root: "h-control-base w-control-base",
+    root: "h-control-base w-control-base min-w-control-base",
     icon: "icon-mid",
   },
   large: {
-    root: "h-control-mid w-control-mid",
+    root: "h-control-mid w-control-mid min-w-control-mid",
     icon: "icon-large",
   },
 };
 
 export const CLOSE_BUTTON_ROOT_BASE_CLASS =
-  "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none focus-ring overflow-hidden";
+  "relative z-0 flex aspect-square shrink-0 cursor-pointer items-center justify-center rounded-full outline-none focus-ring overflow-hidden";
 
 export const CLOSE_BUTTON_DISABLED_CLASS = "cursor-not-allowed opacity-50";
 

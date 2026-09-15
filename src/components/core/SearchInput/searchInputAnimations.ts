@@ -4,7 +4,7 @@
  * DOM slots: `root` (search shell), `icon`, `clear`, `input`, `expandTrigger`
  *
  * Host: root (`useSearchInputAnimations`) plays hover/press when not gloss,
- * and `enter` / `leave` on expand/collapse (FLIP: `searchExpand` + `searchIconShift` on icon).
+ * and `enter` / `leave` on expand/collapse (`searchExpand` width/radius + `searchIconShift` on icon).
  * Gloss hover/press/focus stay on `useGlossFieldShellMotion` (field-shell focus lift).
  *
  * Defaults: `resolveSearchInputMotionDefaults`.

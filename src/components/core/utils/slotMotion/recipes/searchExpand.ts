@@ -28,7 +28,7 @@ function metricsOf(ctx: MotionContext): SearchExpandMetrics | null {
   return { targetW, collapsedDim, expandedRadius, padX, iconBox, iconLeftCollapsedCss };
 }
 
-/** FLIP: layout width snaps, visual `scaleX`. `enter` expands, `leave` collapses. */
+/** Layout exception: tween shell `width` + `borderRadius`. `enter` expands, `leave` collapses. */
 export function searchExpandRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const metrics = metricsOf(ctx);
   if (!metrics) return undefined;
@@ -41,7 +41,7 @@ export function searchExpandRecipe(ctx: MotionContext): MotionAnimation | undefi
   return animateSearchShellExpand(ctx.el, open, metrics, ctx.config) as unknown as MotionAnimation;
 }
 
-/** Icon layout `left` snaps; visual FLIP is `x` (counters parent `scaleX`). */
+/** Icon layout `left` snaps; visual interpolation is `x` (no `scaleX`). */
 export function searchIconShiftRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const metrics = metricsOf(ctx);
   if (!metrics) return undefined;

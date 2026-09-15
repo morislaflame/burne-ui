@@ -12,7 +12,7 @@ import type { Prettify } from "@/utils/prettify";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { LabelProps } from "@/components/core/Label";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type TextAreaVariant = "default" | "outline" | "secondary" | "gloss";
 
@@ -60,7 +60,12 @@ export type TextAreaControlProps = Omit<
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
   /** Shell part motion. Root `motion.shell` still applies; this wins on the Control host. */
   motion?: Prettify<TextAreaPartMotion>;
-};
+  /**
+   * Deferred handle for the Control host (`shell`, `control`, `resizeHandle`).
+   * One handle → this nested scope. Simple API: pass `motionController` on `TextArea` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TextAreaFieldContextValue = {
   textareaId: string;
@@ -92,9 +97,19 @@ export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
   /**
    * Per-slot motion (`shell`, `control`, `resizeHandle`, `label`, `hint`, `error`).
    * Resize drag height is kit-internal, not a public MotionVars layout tween.
+   * Chrome registers on the Root scope (siblings of Control). Control is the nested shell host.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `TextArea.Control` (shell host).
+   * Compound: this handle attaches to the Root chrome scope; pass another handle on `Control`.
    */
-  motion?: Prettify<TextAreaMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TextAreaMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the Control nested Provider. Compound: Root chrome scope.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TextAreaSimpleProps = TextAreaProps & Omit<TextAreaControlProps, "motion">;
 
@@ -108,7 +123,7 @@ export type UseTextAreaShellAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
 };
 
-export type TextAreaLabelProps = Omit<LabelProps, "motion"> & {
+export type TextAreaLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<TextAreaPartMotion>;
 };
 

@@ -6,6 +6,8 @@ import { Disclosure } from "@/components/core/Disclosure";
 import { Surface, type SurfacePadding } from "@/components/core/Surface";
 import { cn } from "@/utils/cn";
 
+import { ShowcaseDemoStage, type ShowcaseDemoAlign } from "./ShowcaseDemoStage";
+
 function ShowcaseCodePanel({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -73,18 +75,12 @@ export function ShowcaseDemo({
   /** JSX/TSX-snippet corresponding to the demo above. */
   code?: string;
   className?: string;
-  align?: "start" | "center" | "stretch";
+  align?: ShowcaseDemoAlign;
   padding?: SurfacePadding;
   /** Remount the demo to replay mount `enter` animations. */
   replay?: boolean;
 }) {
   const [play, setPlay] = useState(0);
-  const alignClass =
-    align === "center"
-      ? "flex flex-col items-center"
-      : align === "stretch"
-        ? "flex flex-col"
-        : undefined;
 
   return (
     <div
@@ -97,14 +93,12 @@ export function ShowcaseDemo({
         variant="default"
         padding={padding}
         className={cn(
-          "rounded-none border-0 shadow-none bg-transparent min-h-72 p-large",
-          replay
-            ? "flex flex-col gap-mid"
-            : cn("flex items-center justify-center", alignClass),
+          "rounded-none border-0 shadow-none bg-transparent min-h-72 p-large relative flex flex-col",
+          replay ? "gap-mid" : "justify-center",
         )}
       >
         {replay ? (
-          <div className="flex w-full shrink-0 justify-end">
+          <div className="flex w-full shrink-0 justify-end absolute top-large right-large">
             <Button
               type="button"
               variant="outline"
@@ -117,16 +111,9 @@ export function ShowcaseDemo({
             </Button>
           </div>
         ) : null}
-        {replay ? (
-          <div
-            key={play}
-            className={cn("flex w-full flex-1 items-center justify-center", alignClass)}
-          >
-            {children}
-          </div>
-        ) : (
-          children
-        )}
+        <ShowcaseDemoStage key={play} align={align}>
+          {children}
+        </ShowcaseDemoStage>
       </Surface>
       {code ? <ShowcaseCodePanel code={code} /> : null}
     </div>

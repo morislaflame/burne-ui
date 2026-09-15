@@ -1,6 +1,6 @@
 # Skeleton
 
-Плейсхолдер загрузки: pulse, wave, shimmer или static (`none`). Compound API: `Skeleton.Circle`, `Skeleton.Text`, `Skeleton.Block`, `Skeleton.Region`. **Только CSS-анимации** — без GSAP.
+Плейсхолдер загрузки: pulse, wave, shimmer или static (`none`). Compound API: `Skeleton.Circle`, `Skeleton.Text`, `Skeleton.Block`, `Skeleton.Region`. CSS-анимации костей — без GSAP; opt-in slot motion / `motionController` — GSAP.
 
 ## Импорт
 
@@ -41,6 +41,8 @@ import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTe
 | `radius` | `small` | `none` \| `small` \| `mid` \| `full` |
 | `className` | — | Размеры, width (Tailwind) |
 | `classNames` | — | `root`, `wave` |
+| `motion` | — | Per-slot (`root`). `events` — app-команды `MotionController` |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Каждая часть (Root / Circle / Text / Block / Region) — свой nested scope |
 | `style` | — | Inline styles |
 | `children` | — | Произвольный layout |
 
@@ -76,6 +78,7 @@ import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTe
 | `busy` | `true` | `aria-busy` на контейнере-родителе |
 | `className` / `classNames.root` | — | Layout обёртки (без декоративного surface) |
 | `aria-label` / `aria-labelledby` | — | Имя региона для AT (рекомендуется) |
+| `motion` / `motionController` | — | Nested scope слота `region`. Не играет `root` у костей внутри |
 | `children` | — | Skeleton-плейсхолдеры или загруженный контент |
 
 `Skeleton.Region` — **не** декоративный: без `aria-hidden` / `role="presentation"`. Плейсхолдеры внутри остаются presentation.
@@ -127,6 +130,32 @@ Nested Provider на compound-частях.
 
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет скелетон видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
+Каждая public-часть монтирует **свой** nested scope. `play()` ищет слот `root` — работает на Root / Circle / Text / Block. `Skeleton.Region` — только `region`: `playSlot("region", …)`, не `play()`. Один handle ≠ кости внутри Region.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`skel:nudge`, `skel:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Skeleton, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "skel:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("skel:nudge")}>
+        Nudge
+      </Button>
+      <Skeleton className="h-8 w-full" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **grayscale** на `Skeleton.Region` (`filter: grayscale(1)` → `0`). CSS wave / pulse / shimmer — kit-internal, не демонить как кастом. Не в ките и не в MotionController.
+
 
 Волна шиммера — **CSS** (`styles.css` keyframes). Opt-in `enter` — `skeletonAnimations.ts` (GSAP).
 
@@ -164,10 +193,10 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 
 ### Чего нет
 
-- GSAP / `configureMotion`
-- Hover / press interaction
+- Hover / press interaction (дефолты пустые; opt-in через `motion`)
 - Portal motion
 - `classNames` на root кроме `root`/`wave` (Text adds `line`)
+- Shared scope между Root и Region / Circle / Text / Block
 
 ### Сводка: что настраивается где
 
@@ -178,12 +207,13 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 | Shimmer | CSS `@keyframes` | — | `animation="shimmer"` |
 | Line stagger | inline `animationDelay` | — | `Skeleton.Text` |
 | Static | no animation | — | `animation="none"` |
+| Reduced motion | `.skeleton-animate { animation: none }` | — | `prefers-reduced-motion` |
 
 ## Токены и CSS
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| Base | `bg-primary-tint relative overflow-hidden` |
+| Base | `bg-primary-tint relative overflow-hidden skeleton-animate` |
 | Wave overlay | absolute inset, gradient slide |
 | Shimmer gradient | `var(--color-primary-tint)` → `strong` |
 | Circle default | `rounded-full h-control-base w-control-base` |
@@ -283,6 +313,7 @@ Skeleton/
 ├── skeletonTypes.ts
 ├── skeletonStyles.ts
 ├── skeletonParts.tsx
+├── skeletonAnimations.ts
 ├── skeletonA11y.ts
 ├── useSkeletonRootState.ts
 └── Skeleton.stories.tsx
@@ -290,4 +321,4 @@ Skeleton/
 
 ## Storybook
 
-`Core Components/Skeleton` — all variants, text lines, circles, card layout, list, block, `Skeleton.Region`, custom sizes, `CustomClassNames`.
+`Core Components/Skeleton` — all variants, text lines, circles, card layout, list, block, `Skeleton.Region`, custom sizes, `CustomClassNames`, Slot motion, MotionController.

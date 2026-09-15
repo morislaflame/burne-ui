@@ -26,7 +26,8 @@ import { Expandable, useExpandableContext, type ExpandableProps, type Expandable
 | `icon` | `ReactNode` | — | Simple API: иконка слева |
 | `className` | `string` | — | Классы на корневой `<div>` |
 | `classNames` | `ExpandableClassNames` | — | Слоты (см. ниже) |
-| `motion` | `ExpandableMotion` | — | Слоты `triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description` |
+| `motion` | `ExpandableMotion` | — | Слоты `triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description` / `body`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
 
 ### Compound-подчасти
 
@@ -39,7 +40,7 @@ import { Expandable, useExpandableContext, type ExpandableProps, type Expandable
 | `Expandable.Title` | Заголовок |
 | `Expandable.Description` | Подзаголовок (`text-muted`) |
 | `Expandable.Chevron` | Кастомный шеврон (вместо дефолтного) |
-| `Expandable.Panel` | Раскрываемая секция (`<section>`) |
+| `Expandable.Panel` | Раскрываемая секция (`<section>`); слот `body` |
 
 ### `ExpandableClassNames`
 
@@ -58,6 +59,7 @@ type ExpandableClassNames = {
   chevron?: string;
   panelShell?: string;
   panel?: string;
+  body?: string;
 };
 ```
 
@@ -118,11 +120,36 @@ Compound определяется автоматически при наличи
 | `triggerLift` | `pressIn` (`pressOut` = `false`) | `pressSqueeze` на внутреннем lift-span, не на `<button>` |
 | `chevron` | `enter` / `leave` | `chevronRotate` (0° ↔ 180°) |
 | `panelShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target, не публичный слот) |
-| `title` / `icon` / `description` | `enter` / `leave` | нет; Trigger **рассылает** при open |
+| `title` / `icon` / `description` / `body` | `enter` / `leave` | нет; Trigger **рассылает** при open |
 
 `false` на фазе → мгновенное состояние (height/rotation), без твина. Первый paint: `useCollapsibleShellRef` / `data-chevron-init`.
 
-Своё раскрытие — factory на `panelShell`. Закрытое состояние кита всё равно `height: 0`; factory должна вернуть tween 0 ↔ измеренная высота (снимок `scrollHeight` **до** `fromTo`, не `height: () => …`) и на `enter` complete снять inline `height` (`clearProps`), иначе панель залипнет.
+Проп `motionController` + ключ `events` на `motion` — app-команды (`faq:nudge`), не фазы. У Expandable нет слота `root`: `play()` ищите с `{ slot: "title" }` или `playSlot("title", …)`. См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Expandable, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "faq:nudge": { x: 8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <Expandable
+      title="FAQ"
+      motionController={controller}
+      motion={{ events }}
+    >
+      …
+    </Expandable>
+  );
+}
+```
+
+`playAll` stagger по `icon` / `title` / `description` (`exclude` panel/chevron), factory `ctx.targets` и `waitForComplete` на `title` — playground / Storybook **MotionController**.
+
+Своё раскрытие — factory на `panelShell`. Закрытое состояние кита всё равно `height: 0`; factory должна вернуть tween 0 ↔ измеренная высота (снимок `offsetHeight` **до** `fromTo`, не `height: () => …` и не `scrollHeight` — `y` на `body` раздувает overflow) и на `enter` complete снять inline `height` (`clearProps`), иначе панель залипнет.
 
 ```tsx
 <Expandable
@@ -131,7 +158,7 @@ Compound определяется автоматически при наличи
     panelShell: {
       enter: (ctx) => {
         ctx.el.style.overflow = "hidden";
-        const height = ctx.targets.panelInner?.scrollHeight ?? 0;
+        const height = ctx.targets.panelInner?.offsetHeight ?? 0;
         return gsap.fromTo(
           ctx.el,
           { height: 0 },
@@ -179,7 +206,25 @@ Compound определяется автоматически при наличи
 />
 ```
 
-`classNames` / `className` на частях сочетаются с factory. `panelInner` — внутренний target рецепта высоты, его можно трогать из factory шеврона через `ctx.targets.panelInner` (высота панели остаётся `collapsibleHeight`).
+`classNames` / `className` на частях сочетаются с factory. `body` — публичный слот на `<section>` панели (`motion.body` / `playSlot("body")`; тот же узел, что `classNames.panel`). `panelInner` — внутренний target рецепта высоты. Если `leave` ставит `autoAlpha: 0`, `enter` тоже должен снимать его через `autoAlpha` (не только `opacity`) — иначе после первого закрытия контент остаётся `visibility: hidden`. `delay: "expand"` (или `"expandDuration"`) на enter — старт после `collapsibleHeight`, иначе fade/`y` идут внутри `overflow: hidden` и их не видно. На `leave` delay не ставьте.
+
+```tsx
+<Expandable
+  title="FAQ"
+  motion={{
+    body: {
+      enter: (ctx) =>
+        ctx.fromTo(
+          { y: 8, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.28, delay: "expand" },
+        ),
+      leave: { y: 6, autoAlpha: 0, duration: 0.16 },
+    },
+  }}
+>
+  …
+</Expandable>
+```
 
 ```tsx
 <Expandable
@@ -239,7 +284,8 @@ Compound определяется автоматически при наличи
 ```
 panelShell (overflow-hidden, анимируемая height)
   └── panelInner (внутренний target рецепта)
-        └── <section> …контент…
+        └── <section class=panel>     ← слот `body` / classNames.panel + classNames.body
+              children
 ```
 
 #### Кастомизация раскрытия
@@ -267,6 +313,7 @@ configureMotion({
 | Раскрытие панели | `collapsibleHeight` | `expandDuration`, `expandOpenEase`, `enableExpandable` |
 | Press squeeze | `pressSqueeze` на `triggerLift` | `interactiveDuration`, `pressSqueezeScale`, `enablePressSqueeze` |
 | Поворот шеврона | `chevronRotate` | `interactiveDuration`, `interactiveEase`, `enableExpandable` |
+| Контент панели | `body` (broadcast на open) | `expandDuration` (через `delay: "expand"`) |
 | Ripple на триггере | `<Ripple />` | `rippleDefaultDuration`, `enableRipple` (см. Ripple.md) |
 
 ## Ripple на триггере
@@ -316,6 +363,7 @@ configureMotion({
 | `chevron` | Chevron / `Expandable.Chevron` | Размер, rotate target |
 | `panelShell` | Обёртка panel height anim | Overflow clip |
 | `panel` | `Expandable.Panel` section | Padding контента, typography |
+| `body` | тот же `<section>` | Motion-слот контента (`motion.body`) |
 
 `variant`, `size` — trigger/content padding и title из `COLLAPSIBLE_SIZE_LAYOUT`; иконки — `CONTROL_SIZE_LAYOUT`.
 

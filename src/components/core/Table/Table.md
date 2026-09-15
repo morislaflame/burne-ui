@@ -54,6 +54,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `variant` | `default` | `default` \| `secondary` \| `toned` \| `gloss` |
 | `className` | — | Root wrapper |
 | `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Table.Row` |
 
 ### `Table.Content` props
 
@@ -84,7 +85,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `Table.Label` | Текст заголовка колонки (`className` / `ref` / `motion`); simple children Column оборачиваются автоматически. Слот `classNames.columnLabel`; motion-слот `label` |
 | `Table.Body` | `<tbody>` + empty state |
 | `Table.Empty` | `<td>` empty placeholder; motion-слот `empty`, CSS `classNames.emptyCell` |
-| `Table.Row` | `<tr>` + tone/selection |
+| `Table.Row` | `<tr>` + tone/selection; вложенный motion scope (`motionController`, `playSlot("row")`) |
 | `Table.Cell` | `<td>` |
 | `Table.Footer` | Footer bar под table |
 
@@ -123,6 +124,43 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 `enter` — mount (`useOptionalEnterOnMount`, в том числе у изначально выбранной строки). Selection после mount — `check` / `uncheck` (`skipFirst`, не второй `enter`). `column` / `label` — repeated на scope таблицы; `cell` — repeated на nested row scope (`part.targetRef`).
 
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет таблицу видимой). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется. Пользовательские `onPointerOver` / `Out` / `Down` / `Up` **мержатся** с motion (не заменяют).
+
+`play()` ищет слот `root` у Table. `playSlot("header")` / `playAll` — chrome (`scrollContainer` / `content` / `header` / `body` / `footer` …) и **repeated** `column` / `label` на том же scope. `Table.Row` создаёт **вложенный** scope: свой `motionController`, `playSlot("row")` (своего `root` нет); `cell` — repeated на scope строки. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`table:nudge`, `table:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside) видит Table; внутри `Table.Row` — scope строки.
+
+```tsx
+import { Button, Table, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "table:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("table:nudge")}>
+        Nudge
+      </Button>
+      <Table motionController={controller} motion={{ events }}>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Crew">
+            <Table.Header>
+              <Table.Column isRowHeader>Name</Table.Column>
+            </Table.Header>
+            <Table.Body>
+              <Table.Row id="ada">
+                <Table.Cell>Ada</Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+    </>
+  );
+}
+```
 
 
 `tableAnimations.tsx` — единственный GSAP-слой. Остальное — CSS hover/selection.

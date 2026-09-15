@@ -8,7 +8,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Switch } from ".";
-import { SwitchMotionDemo } from "../../../../playground/showcase/demos/switch/SwitchMotion.demo";
+import { SwitchMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/switch/motionController/gallery";
+import { SwitchSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/switch/slotMotion/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -353,5 +354,18 @@ export const SimpleLabelClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <SwitchMotionDemo />,
+  render: () => <SwitchSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — simple API forwards to Track (play() skip), chrome label on Root, stagger, exclude fill, switch events.",
+      },
+    },
+  },
+  render: () => <SwitchMotionControllerGalleryDemo />,
 };

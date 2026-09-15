@@ -9,7 +9,7 @@ import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useDialogModalMotion, DIALOG_MOTION_DEFAULTS } from "./dialogAnimations";
 import { useDialog, useDialogClassNames, useDialogMotionScope, useOptionalDialogMotionScope, DialogMotionProvider } from "./dialogContext";
@@ -438,11 +438,23 @@ DialogTrigger.displayName = "Dialog.Trigger";
 // ─── Dialog.Panel ─────────────────────────────────────────────────────────────
 
 export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
-  function DialogPanel({ motion, ...props }, forwardedRef) {
+  function DialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
     const parentScope = useOptionalDialogMotionScope();
-    const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const siblings = mergeMotionRootSiblings(
+      { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+      motion,
+    );
+    const merged = { ...mergedSlots, ...siblings };
     return (
-      <DialogMotionProvider motion={merged} defaults={DIALOG_MOTION_DEFAULTS}>
+      <DialogMotionProvider
+        motion={merged}
+        defaults={DIALOG_MOTION_DEFAULTS}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <DialogPanelHost {...props} forwardedRef={forwardedRef} />
       </DialogMotionProvider>
     );
@@ -461,7 +473,7 @@ function DialogPanelHost({
   children,
   forwardedRef,
   ...rest
-}: Omit<DialogPanelProps, "motion"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
+}: Omit<DialogPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
   const {
     open,
     onOpenChange,

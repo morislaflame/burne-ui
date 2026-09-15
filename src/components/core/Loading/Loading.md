@@ -21,6 +21,8 @@ Simple API — один `<span role="status">`.
 | `color` | см. ниже | `primary` | Семантический цвет |
 | `label` | `string` | `"Loading"` | `aria-label` для screen reader |
 | `className` | `string` | — | На root |
+| `motion` | — | — | Per-slot (`root`, `spinner`, `dots`). `events` — app-команды `MotionController` |
+| `motionController` | — | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 
 ### `LoadingColor`
 
@@ -74,6 +76,30 @@ Simple API — один `<span role="status">`.
 Волна точек остаётся kit-internal GSAP, не публичный layout-tween.
 
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет индикатор видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`load:nudge`, `load:pulse`), не фазы. `createMotionEvents`. `play` ищет слот `root`; `playSlot("spinner")` — кольцо (лучше `opacity` / `filter`, не transform: CSS `animate-spin` живёт на том же узле). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Loading, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "load:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("load:nudge")}>
+        Nudge
+      </Button>
+      <Loading motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **filter blur** на `spinner` (кольцо проявляется из размытия). Волна точек — kit-internal, не демонить как кастом. Не в ките и не в MotionController.
 
 
 ### 1. Spinner (`type="spinner"`)
@@ -156,6 +182,7 @@ configureMotion({
 |----------|---------|-------------------|----------|
 | Spin | `spinner` | — | CSS `animate-spin` |
 | Dots wave | `dots` | `loadingDotsDuration`, eases, `enableLoadingDots` | `jumpPx`, `scalePeak` per size |
+| Slot motion | оба | — | opt-in `motion` на `root` / `spinner` / `dots` |
 | Reduced motion | оба | — | `motion-reduce` / prefers-reduced |
 
 ## Токены и CSS

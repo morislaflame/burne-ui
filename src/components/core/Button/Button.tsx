@@ -18,13 +18,13 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import "../utils/glossInteractive.css";
 
 import { resolveButtonMotionDefaults, useButtonAnimations } from "./buttonAnimations";
-import { buttonHasCompoundPart, hasButtonCompoundChildren } from "./buttonAPI";
+import { buttonHasCompoundPart } from "./buttonAPI";
 import {
   ButtonClassNamesProvider,
   ButtonContextProvider,
   ButtonMotionProvider,
 } from "./buttonContext";
-import { ButtonContent, ButtonError, ButtonExpandRippleLayer, ButtonLabel, ButtonLoader, ButtonSuccess } from "./buttonParts";
+import { ButtonContent, ButtonLabel } from "./buttonParts";
 import { ButtonSimpleContent } from "./buttonSimpleContent";
 import type { ButtonMotion, ButtonProps } from "./buttonTypes";
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
@@ -33,7 +33,6 @@ import { useButtonRootState } from "./useButtonRootState";
 
 export type {
   ButtonProps,
-  ButtonAsyncState,
   ButtonSize,
   ButtonVariant,
   ButtonStatus,
@@ -63,9 +62,6 @@ function resolveButtonInner({
   children,
   isCompound,
   hasCompoundContent,
-  hasCompoundLoader,
-  hasCompoundSuccess,
-  hasCompoundError,
   icon,
   iconPosition,
   classNames,
@@ -74,9 +70,6 @@ function resolveButtonInner({
   children: ReactNode;
   isCompound: boolean;
   hasCompoundContent: boolean;
-  hasCompoundLoader: boolean;
-  hasCompoundSuccess: boolean;
-  hasCompoundError: boolean;
   icon?: ReactNode;
   iconPosition?: ButtonProps["iconPosition"];
   classNames?: ButtonProps["classNames"];
@@ -84,14 +77,7 @@ function resolveButtonInner({
 }) {
   if (isCompound) {
     if (hasCompoundContent) return children;
-    return (
-      <ButtonContent>
-        {children}
-        {!hasCompoundLoader ? <ButtonLoader /> : null}
-        {!hasCompoundSuccess ? <ButtonSuccess /> : null}
-        {!hasCompoundError ? <ButtonError /> : null}
-      </ButtonContent>
-    );
+    return <ButtonContent>{children}</ButtonContent>;
   }
 
   return (
@@ -101,9 +87,6 @@ function resolveButtonInner({
           {children}
         </ButtonSimpleContent>
       </ButtonLabel>
-      <ButtonLoader />
-      <ButtonSuccess />
-      <ButtonError />
     </ButtonContent>
   );
 }
@@ -145,10 +128,6 @@ function ButtonSurface({
   }: ButtonSurfaceProps) {
     const animations = useButtonAnimations({
       variant: state.variant,
-      status: state.status,
-      size: state.size,
-      asyncState: state.asyncState,
-      isControlled: state.isControlled,
       blocked: state.blocked,
       groupSegment: state.groupSegment,
       motion,
@@ -163,66 +142,41 @@ function ButtonSurface({
       onKeyDown,
     });
 
-    const handleClick = animations.createAsyncClickHandler(
-      state.onClick,
-      state.onAsyncClick,
-      state.isControlled,
-      state.internalAsync,
-      state.setUncontrolledAsync,
-      state.scheduleAsyncIdleReset,
-    );
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+      if (state.blocked) {
+        event.preventDefault();
+        return;
+      }
+      state.onClick?.(event);
+    };
 
     const contextValue = {
       size: state.size,
       variant: state.variant,
       status: state.status,
-      asyncState: state.asyncState,
-      asyncMotionReady: animations.asyncMotionReady,
       groupSegment: state.groupSegment,
       loaderTextClass: state.loaderTextClass,
-      bindLabelRef: animations.bindLabelRef,
-      bindLoaderRef: animations.bindLoaderRef,
-      bindSuccessRef: animations.bindSuccessRef,
-      bindErrorRef: animations.bindErrorRef,
       contentMotionRef: animations.contentMotionRef,
     };
 
-    const {
-      hasCompoundContent,
-      hasCompoundLoader,
-      hasCompoundSuccess,
-      hasCompoundError,
-      isCompound,
-    } = useMemo(() => {
-      return {
-        hasCompoundContent: buttonHasCompoundPart(contentChildren, "ButtonContent"),
-        hasCompoundLoader: buttonHasCompoundPart(contentChildren, "ButtonLoader"),
-        hasCompoundSuccess: buttonHasCompoundPart(contentChildren, "ButtonSuccess"),
-        hasCompoundError: buttonHasCompoundPart(contentChildren, "ButtonError"),
-        isCompound: hasButtonCompoundChildren(contentChildren),
-      };
-    }, [contentChildren]);
+    const hasCompoundContent = useMemo(
+      () => buttonHasCompoundPart(contentChildren, "ButtonContent"),
+      [contentChildren],
+    );
 
     const inner = (
       <>
         {state.ripple ? (
           <Ripple
             color={state.convergeRippleColor}
-            disabled={state.blocked || state.asyncState !== "idle"}
+            disabled={state.blocked}
             className={state.clipClass}
           />
         ) : null}
-        <ButtonExpandRippleLayer
-          ref={animations.expandRippleLayerRef}
-          clipClass={state.clipClass}
-        />
         {resolveButtonInner({
           children: contentChildren,
-          isCompound,
+          isCompound: state.isCompound,
           hasCompoundContent,
-          hasCompoundLoader,
-          hasCompoundSuccess,
-          hasCompoundError,
           icon: state.icon,
           iconPosition: state.iconPosition,
           classNames: state.classNames,
@@ -241,7 +195,6 @@ function ButtonSurface({
               {
                 ...rest,
                 className: state.buttonClass,
-                "aria-busy": state.ariaBusy,
                 "aria-disabled": state.blocked || undefined,
                 tabIndex: state.blocked
                   ? -1
@@ -272,7 +225,6 @@ function ButtonSurface({
             {...rest}
             type={state.type}
             disabled={state.blocked}
-            aria-busy={state.ariaBusy}
             className={state.buttonClass}
             onPointerOver={animations.pointerHandlers.onPointerOver}
             onPointerOut={animations.pointerHandlers.onPointerOut}
@@ -300,10 +252,6 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     status,
     size,
     type,
-    asyncState,
-    onAsyncStateChange,
-    onAsyncClick,
-    asyncFeedbackMs,
     disabled,
     icon,
     iconPosition,
@@ -311,6 +259,10 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     iconOnly,
     groupSegment,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     asChild = false,
     children,
     onClick,
@@ -341,10 +293,6 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     status,
     size,
     type,
-    asyncState,
-    onAsyncStateChange,
-    onAsyncClick,
-    asyncFeedbackMs,
     disabled,
     icon,
     iconPosition,
@@ -372,7 +320,15 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
 
   return (
     <ButtonClassNamesProvider classNames={state.classNames}>
-      <ButtonMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+      <ButtonMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <ButtonSurface
           state={state}
           motion={motion}

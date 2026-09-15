@@ -33,6 +33,10 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
       children,
       "aria-label": ariaLabel,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -43,7 +47,10 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
     return (
       <BreadcrumbsCollapseProvider collapse={collapse}>
         <BreadcrumbsClassNamesProvider classNames={classNames}>
-          <BreadcrumbsMotionProvider motion={motion}>
+          <BreadcrumbsMotionProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <nav
             ref={ref}
             aria-label={resolveBreadcrumbsAriaLabel(ariaLabel, breadcrumbsLabel)}

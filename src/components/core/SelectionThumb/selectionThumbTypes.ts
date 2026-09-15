@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode, Ref, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTokens";
 
@@ -36,9 +36,16 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
   /**
    * Per-slot motion (`root`). Defaults are empty — custom factories are opt-in.
    * Switch / Slider keep their own slot motion; this map is for standalone use.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<SelectionThumbMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<SelectionThumbMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Standalone thumb only — Switch/Slider do not forward their handle here.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: SelectionIndicatorSize;

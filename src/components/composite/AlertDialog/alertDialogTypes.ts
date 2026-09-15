@@ -5,7 +5,7 @@ import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTyp
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 import type { ButtonSize } from "@/components/core/Button";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type {
   PanelSize,
   PanelSizeLayout,
@@ -50,7 +50,7 @@ export type AlertDialogPartMotion = AlertDialogLifecycleMotion & {
  */
 export type AlertDialogMotion = {
   overlay?: AlertDialogLifecycleMotion;
-  panel?: AlertDialogLifecycleMotion;
+  panel?: AlertDialogPartMotion;
   title?: AlertDialogPartMotion;
   description?: AlertDialogPartMotion;
   close?: AlertDialogLifecycleMotion;
@@ -103,9 +103,19 @@ export type AlertDialogProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<AlertDialogClassNames>;
-  /** Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator`) plus `trigger` press on Root. Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`. */
-  motion?: Prettify<AlertDialogMotion>;
-};
+  /**
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator`) plus `trigger` press on Root.
+   * Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Root has no portal DOM — portal slots live on `AlertDialog.Panel`.
+   */
+  motion?: Prettify<MotionMapWithEvents<AlertDialogMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Portal slots need a separate handle on `AlertDialog.Panel`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type AlertDialogClassNamesProviderProps = {
   classNames?: Prettify<AlertDialogClassNames>;
@@ -122,8 +132,13 @@ export type AlertDialogPanelProps = {
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   children?: ReactNode;
-  motion?: Prettify<AlertDialogMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<AlertDialogMotion>>;
+  /**
+   * Handle for the portal host (`panel`, `overlay`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("panel")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */

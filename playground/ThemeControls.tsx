@@ -1008,19 +1008,9 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               label="Toast stack"
             />
             <Switch
-              checked={state.enableAsyncButtonCrossfade}
-              onChange={(e) => setAnimationFlag("enableAsyncButtonCrossfade", e.target.checked)}
-              label="Button async crossfade"
-            />
-            <Switch
               checked={state.enableContentFade}
               onChange={(e) => setAnimationFlag("enableContentFade", e.target.checked)}
               label="Content fade (Avatar etc..)"
-            />
-            <Switch
-              checked={state.enableFeedbackExpand}
-              onChange={(e) => setAnimationFlag("enableFeedbackExpand", e.target.checked)}
-              label="Button feedback ring"
             />
             <Switch
               checked={state.enableProgressFill}

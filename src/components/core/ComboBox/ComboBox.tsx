@@ -56,6 +56,10 @@ export function ComboBoxRoot({
   menuMaxHeight,
   name,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: ComboBoxProps) {
   const formCtx = useOptionalFormBindingContext();
@@ -93,7 +97,13 @@ export function ComboBoxRoot({
     <ComboBoxFieldProvider value={state.fieldCtx}>
       <ComboBoxProvider value={state.comboCtx}>
         <ComboBoxClassNamesProvider classNames={classNames}>
-          <ComboBoxMotionProvider motion={motion}>
+          <ComboBoxMotionProvider
+            motion={motion}
+            controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+          >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               size={resolvedSize}
@@ -112,6 +122,10 @@ export function ComboBoxRoot({
                   hint={state.hint}
                   error={state.error}
                   labelId={state.fieldCtx.labelId}
+                  motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}
                 />
               )}
             </Field>

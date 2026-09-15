@@ -7,7 +7,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Expandable } from ".";
-import { ExpandableMotionDemo } from "../../../../playground/showcase/demos/expandable/ExpandableMotion.demo";
+import { ExpandableSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/expandable/slotMotion/gallery";
+import { ExpandableMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/expandable/motionController/gallery";
 
 const PIN_IMAGE =
   "https://i.pinimg.com/736x/89/e2/85/89e285ca1fc973db199bf395f7c89669.jpg";
@@ -70,6 +71,12 @@ const meta = {
   decorators: [...darkThemeDecorator],
   args: {
     title: "Title",
+  },
+  argTypes: {
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
+    },
   },
 } satisfies Meta<typeof Expandable>;
 
@@ -275,5 +282,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ExpandableMotionDemo />,
+  render: () => <ExpandableSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot, playAll stagger, set/cancel, stacked timelines, async events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <ExpandableMotionControllerGalleryDemo />,
 };

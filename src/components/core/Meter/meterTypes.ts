@@ -4,7 +4,7 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type MeterSize = "small" | "base" | "mid" | "large";
 
@@ -84,7 +84,12 @@ export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> &
   orientation?: MeterOrientation;
   className?: string;
   motion?: Prettify<MeterPartMotion>;
-};
+  /**
+   * Deferred handle for the Track fill host (`track`, `fill`). One handle → this nested scope.
+   * Simple API: pass `motionController` on `Meter` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type MeterProps = HTMLAttributes<HTMLDivElement> &
   Partial<Omit<MeterTrackProps, "motion">> & {
@@ -102,9 +107,18 @@ export type MeterProps = HTMLAttributes<HTMLDivElement> &
      * Fill `change` defaults to `progressFill`. `fill.enter` is opt-in
      * (`"progressFill"` or a factory with `ctx.params.getProgressScale`).
      * Chrome registers on the Root scope (siblings of Track). Track is the nested fill host.
+     * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+     * Simple API: `motionController` is forwarded to `Meter.Track` (fill host).
+     * Compound: this handle attaches to the Root chrome scope; pass another handle on `Track`.
      */
-    motion?: Prettify<MeterMotion>;
-  };
+    motion?: Prettify<MotionMapWithEvents<MeterMotion>>;
+    /**
+     * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+     * Simple API: forwarded to the Track nested Provider. Compound: Root chrome scope.
+     * Not placed on the DOM.
+     */
+    motionController?: MotionController;
+  } & MotionStateHostProps;
 
 export type MeterClassNamesProviderProps = {
   classNames?: Prettify<MeterClassNames>;
@@ -137,7 +151,7 @@ export type MeterErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 
 export type UseMeterRootStateProps = Omit<
   MeterProps,
-  "className" | "classNames" | "motion"
+  "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
 
 export type UseMeterTrackStateProps = Pick<

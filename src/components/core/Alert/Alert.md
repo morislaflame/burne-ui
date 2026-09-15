@@ -26,8 +26,11 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 | `shadow` | `small` \| `base` \| `mid` \| `large` | `base` | Размер тени покоя; hover — `--shadow-{size}-hover` |
 | `className` | `string` | — | Доп. классы на root |
 | `classNames` | `AlertClassNames` | — | Слоты подчастей |
-| `motion` | `AlertMotion` & `{ events? }` | — | Карта слотов `root` / `indicator` / `title` / `description` / `action` (`hoverIn` / `hoverOut`). `events` — namespaced команды для `MotionController` |
+| `motion` | `AlertMotion` & `{ events?; states? }` | — | Карта слотов `root` / `indicator` / `title` / `description` / `action` (`hoverIn` / `hoverOut`). `events` — namespaced команды для `MotionController`. `states` — режимы для `motionState` |
 | `motionController` | `MotionController` | — | Handle снаружи scope: `play` / `playSlot` / `playAll` / `set` / `cancel`. Не путать с `motion` и `config.motion` |
+| `motionState` | `string` | — | Режим (`idle` / `loading` / `success`). Тот же ещё раз — тишина. Не фаза. Не на DOM |
+| `motionPayload` | `unknown` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Не замыкать `useState`. Объекты копируются и freeze; без смены `motionState` не переигрывает */
+| `playInitialState` | `boolean` | `false` | Играть `states[motionState]` на маунте |
 
 ### Compound-подчасти
 
@@ -114,6 +117,8 @@ Compound включается автоматически при наличии �
 
 `hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). Явный `motion.root.hoverIn` важнее `hoverLift`. Simple API монтирует те же части — `motion.title` работает без compound.
 
+3D tilt (`rotationX` / `rotationY` через `quickTo`, `hoverLift={false}`) — слайд **Tilt** в галерее Slot motion.
+
 **Где в коде:** типы — `alertTypes.ts`; scope — `alertContext.tsx`; defaults + host — `alertAnimations.ts` (`resolveAlertMotionDefaults`, `useAlertAnimations`); слоты — `alertParts.tsx` (`useMotionPart`); Provider — `Alert.tsx`.
 
 ```tsx
@@ -189,7 +194,7 @@ import { Alert, killMotion, tweenCssColor } from "burne-ui";
 />
 ```
 
-Снаружи дерева — `useMotionControllerHandle()` / `createMotionController()` и проп `motionController` (не на DOM). Внутри Alert — `useMotionController()`. `play` — `MotionPlayEvent`: фазы и `motion.events` без дженерика. `set` — compositor snap без `MotionRun`. См. [Motion](/docs/motion#motioncontroller).
+Снаружи дерева — `useMotionControllerHandle()` / `createMotionController()` и проп `motionController` (не на DOM). Внутри Alert — `useMotionController()`. `play` — `MotionPlayEvent`: фазы и `motion.events` без дженерика. `set` — compositor snap без `MotionRun`. Несколько хостов (Alert + Card) — `MotionGroup`, не `querySelector`. Задержки в factory — `ctx.wait` / `sequence`, не `setTimeout`. Плагины GSAP — `registerMotionPlugins`. См. [Motion](/docs/motion#motioncontroller), [MotionGroup](/docs/motion#motiongroup) и [async helpers](/docs/motion#async-helpers).
 
 ```tsx
 import { Alert, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -234,7 +239,33 @@ function Pulse() {
 }
 ```
 
-См. [Motion](/docs/motion): приоритет part → root slot → рецепт; `false` отключает дефолт; factory + `ctx.targets` / `killMotion`.
+См. [Motion](/docs/motion): приоритет part → root slot → рецепт; `false` отключает дефолт; factory + `ctx.targets` / `killMotion`. Режимы `idle → loading → success` — `motionState` + `motion.states`, не фаза `change`. Совместимость со сторами: [Motion and state managers](/docs/motion-state).
+
+```tsx
+import { Alert, createMotionFactory, createMotionStates, type MotionPayload } from "burne-ui";
+
+type SavePayload = MotionPayload & { attempt: number };
+
+const errorShake = createMotionFactory<SavePayload>((ctx) => {
+  const n = ctx.payload?.attempt ?? 1;
+  return ctx.fromRest({ x: n > 1 ? 8 : 5, duration: 0.07, yoyo: true, repeat: 5 });
+});
+
+const states = createMotionStates({
+  idle: { root: { autoAlpha: 1, duration: 0.2 } },
+  loading: { root: { autoAlpha: 0.7, y: -3, duration: 0.28, yoyo: true, repeat: -1 } },
+  success: { root: { autoAlpha: 1, y: 0, duration: 0.25 } },
+  error: { root: errorShake },
+});
+
+<Alert
+  title="Draft"
+  hoverLift={false}
+  motionState={status}
+  motionPayload={{ attempt }}
+  motion={{ states }}
+/>
+```
 
 **DOM-структура:**
 
@@ -440,4 +471,4 @@ Alert/
 
 ## Storybook
 
-`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, slot motion gallery, `motionController`, светлая/тёмная тема.
+`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, slot motion gallery, `motionController`, `motionState`, светлая/тёмная тема.

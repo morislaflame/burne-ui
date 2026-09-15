@@ -6,8 +6,10 @@ import {
   type FormatShowcaseSourceOptions,
 } from "../utils/formatShowcaseSource";
 
-import { ShowcaseDemo } from "./ShowcaseDemo";
 import type { SurfacePadding } from "@/components/core/Surface";
+
+import { ShowcaseDemo } from "./ShowcaseDemo";
+import type { ShowcaseDemoAlign } from "./ShowcaseDemoStage";
 
 export type ShowcaseDemoFromFileProps = {
   Demo: ComponentType;
@@ -15,7 +17,7 @@ export type ShowcaseDemoFromFileProps = {
   source: string;
   format?: FormatShowcaseSourceOptions;
   className?: string;
-  align?: "start" | "center" | "stretch";
+  align?: ShowcaseDemoAlign;
   padding?: SurfacePadding;
   /**
    * Remount chrome for mount `enter`. Default: on when source plays `enter`

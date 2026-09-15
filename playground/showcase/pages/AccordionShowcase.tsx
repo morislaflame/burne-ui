@@ -4,20 +4,14 @@ import { AccordionClassNamesFullDemo } from "../demos/accordion/AccordionClassNa
 import accordionClassNamesFullSource from "../demos/accordion/AccordionClassNamesFull.demo.tsx?raw";
 import { AccordionCompoundDemo } from "../demos/accordion/AccordionCompound.demo";
 import accordionCompoundSource from "../demos/accordion/AccordionCompound.demo.tsx?raw";
-import { AccordionMotionBounceHeightDemo } from "../demos/accordion/AccordionMotionBounceHeight.demo";
-import accordionMotionBounceHeightSource from "../demos/accordion/AccordionMotionBounceHeight.demo.tsx?raw";
-import { AccordionMotionChevronDemo } from "../demos/accordion/AccordionMotionChevron.demo";
-import accordionMotionChevronSource from "../demos/accordion/AccordionMotionChevron.demo.tsx?raw";
-import { AccordionMotionBodyDemo } from "../demos/accordion/AccordionMotionBody.demo";
-import accordionMotionBodySource from "../demos/accordion/AccordionMotionBody.demo.tsx?raw";
-import { AccordionMotionInstantPanelDemo } from "../demos/accordion/AccordionMotionInstantPanel.demo";
-import accordionMotionInstantPanelSource from "../demos/accordion/AccordionMotionInstantPanel.demo.tsx?raw";
 import { AccordionSizesDemo } from "../demos/accordion/AccordionSizes.demo";
 import accordionSizesSource from "../demos/accordion/AccordionSizes.demo.tsx?raw";
 import { AccordionDocsSectionsDemo } from "../demos/accordion/AccordionDocsSections.demo";
 import accordionDocsSectionsSource from "../demos/accordion/AccordionDocsSections.demo.tsx?raw";
 import { AccordionReleaseNotesDemo } from "../demos/accordion/AccordionReleaseNotes.demo";
 import accordionReleaseNotesSource from "../demos/accordion/AccordionReleaseNotes.demo.tsx?raw";
+import { AccordionSlotMotionGalleryDemo } from "../demos/accordion/slotMotion/gallery";
+import { AccordionMotionControllerGalleryDemo } from "../demos/accordion/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -39,14 +33,15 @@ export function AccordionShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionSizesDemo} source={accordionSizesSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: instant panel, custom chevron + title/icon, body slot, bounce height.">
+        <AccordionSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant panel, custom chevron + title/icon, Accordion.Body, bounce height."
+        title="MotionController"
+        description="Handle on Accordion.Item (Expandable host). One handle → one item. play() skips — no root."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionInstantPanelDemo} source={accordionMotionInstantPanelSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionChevronDemo} source={accordionMotionChevronSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionBodyDemo} source={accordionMotionBodySource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionBounceHeightDemo} source={accordionMotionBounceHeightSource} />
+        <AccordionMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

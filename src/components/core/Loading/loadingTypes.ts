@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -49,9 +49,15 @@ export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
   /**
    * Per-slot motion (`root`, `spinner`, `dots`). Dot wave stays kit-internal.
    * Defaults are empty — `enter` runs on mount only when set.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<LoadingMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<LoadingMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type LoadingDotsLayout = {
   dotClass: string;

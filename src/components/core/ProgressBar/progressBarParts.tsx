@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from "react";
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import {
   progressScaleFromPercent,
   resolveProgressBarMotionDefaults,
@@ -269,16 +269,25 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       orientation,
       className,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       "aria-describedby": ariaDescribedByProp,
       ...rest
     },
     ref,
   ) {
     const parent = useOptionalProgressBarMotionScope();
-    const merged = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parent?.getRootMotion(),
       motion ? { track: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parent?.getEvents(),
+      states: parent?.getStates(),
+    });
+    const merged = { ...mergedSlots, ...siblings };
     const state = useProgressBarTrackState({
       value,
       indeterminate,
@@ -308,7 +317,15 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     );
 
     return (
-      <ProgressBarMotionProvider motion={merged} defaults={defaults} params={params}>
+      <ProgressBarMotionProvider
+        motion={merged}
+        defaults={defaults}
+        params={params}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <ProgressBarTrackHost
           ref={ref}
           className={className}
@@ -327,6 +344,7 @@ const ProgressBarTrackHost = forwardRef<
   Omit<
     ProgressBarTrackProps,
     | "motion"
+    | "motionController"
     | "value"
     | "indeterminate"
     | "min"

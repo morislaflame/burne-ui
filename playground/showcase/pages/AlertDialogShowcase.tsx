@@ -8,18 +8,6 @@ import { AlertDialogDeleteAccountDemo } from "../demos/alertDialog/AlertDialogDe
 import alertDialogDeleteAccountSource from "../demos/alertDialog/AlertDialogDeleteAccount.demo.tsx?raw";
 import { AlertDialogGlossDemo } from "../demos/alertDialog/AlertDialogGloss.demo";
 import alertDialogGlossSource from "../demos/alertDialog/AlertDialogGloss.demo.tsx?raw";
-import { AlertDialogMotionChromeSplitDemo } from "../demos/alertDialog/AlertDialogMotionChromeSplit.demo";
-import alertDialogMotionChromeSplitSource from "../demos/alertDialog/AlertDialogMotionChromeSplit.demo.tsx?raw";
-import { AlertDialogMotionBodyStaggerDemo } from "../demos/alertDialog/AlertDialogMotionBodyStagger.demo";
-import alertDialogMotionBodyStaggerSource from "../demos/alertDialog/AlertDialogMotionBodyStagger.demo.tsx?raw";
-import { AlertDialogMotionHeadingBlockDemo } from "../demos/alertDialog/AlertDialogMotionHeadingBlock.demo";
-import alertDialogMotionHeadingBlockSource from "../demos/alertDialog/AlertDialogMotionHeadingBlock.demo.tsx?raw";
-import { AlertDialogMotionIndicatorPopDemo } from "../demos/alertDialog/AlertDialogMotionIndicatorPop.demo";
-import alertDialogMotionIndicatorPopSource from "../demos/alertDialog/AlertDialogMotionIndicatorPop.demo.tsx?raw";
-import { AlertDialogMotionInstantPanelDemo } from "../demos/alertDialog/AlertDialogMotionInstantPanel.demo";
-import alertDialogMotionInstantPanelSource from "../demos/alertDialog/AlertDialogMotionInstantPanel.demo.tsx?raw";
-import { AlertDialogMotionOverlayHoldDemo } from "../demos/alertDialog/AlertDialogMotionOverlayHold.demo";
-import alertDialogMotionOverlayHoldSource from "../demos/alertDialog/AlertDialogMotionOverlayHold.demo.tsx?raw";
 import { AlertDialogLogoutDemo } from "../demos/alertDialog/AlertDialogLogout.demo";
 import alertDialogLogoutSource from "../demos/alertDialog/AlertDialogLogout.demo.tsx?raw";
 import { AlertDialogStatusDemo } from "../demos/alertDialog/AlertDialogStatus.demo";
@@ -28,6 +16,8 @@ import { AlertDialogSizesDemo } from "../demos/alertDialog/AlertDialogSizes.demo
 import alertDialogSizesSource from "../demos/alertDialog/AlertDialogSizes.demo.tsx?raw";
 import { AlertDialogUnsavedChangesDemo } from "../demos/alertDialog/AlertDialogUnsavedChanges.demo";
 import alertDialogUnsavedChangesSource from "../demos/alertDialog/AlertDialogUnsavedChanges.demo.tsx?raw";
+import { AlertDialogSlotMotionGalleryDemo } from "../demos/alertDialog/slotMotion/gallery";
+import { AlertDialogMotionControllerGalleryDemo } from "../demos/alertDialog/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -53,18 +43,16 @@ export function AlertDialogShowcase() {
         <ShowcaseDemoFromFile Demo={AlertDialogGlossDemo} source={alertDialogGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant panel, indicator pop, header/footer split, headingBlock, overlay hold."
-      >
-        <ShowcaseDemoFromFile Demo={AlertDialogMotionInstantPanelDemo} source={alertDialogMotionInstantPanelSource} />
-        <ShowcaseDemoFromFile Demo={AlertDialogMotionIndicatorPopDemo} source={alertDialogMotionIndicatorPopSource} />
-        <ShowcaseDemoFromFile Demo={AlertDialogMotionChromeSplitDemo} source={alertDialogMotionChromeSplitSource} />
-        <ShowcaseDemoFromFile Demo={AlertDialogMotionBodyStaggerDemo} source={alertDialogMotionBodyStaggerSource} />
-        <ShowcaseDemoFromFile Demo={AlertDialogMotionHeadingBlockDemo} source={alertDialogMotionHeadingBlockSource} />
-        <ShowcaseDemoFromFile Demo={AlertDialogMotionOverlayHoldDemo} source={alertDialogMotionOverlayHoldSource} />
+      <ShowcaseSection title="Slot motion" description="One gallery: instant panel, indicator pop, header/footer split, headingBlock, overlay hold.">
+        <AlertDialogSlotMotionGalleryDemo />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="MotionController"
+        description="Handle on AlertDialog.Panel (portal host). play() skips — use playSlot(&quot;panel&quot;). Panel stays open in a contained portal."
+      >
+        <AlertDialogMotionControllerGalleryDemo />
+      </ShowcaseSection>
 
       <ShowcaseSection
         title="portalContainer"

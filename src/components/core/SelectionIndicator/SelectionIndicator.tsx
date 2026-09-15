@@ -47,6 +47,10 @@ export function SelectionIndicator({
   className,
   classNames,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: SelectionIndicatorProps) {
   const { shellClassName, contextValue, usesCompound, fillSlot, markSlot, hasMark, markContent, showsFill } =
@@ -76,7 +80,10 @@ export function SelectionIndicator({
 
   return (
     <SelectionIndicatorProvider value={contextValue}>
-      <SelectionIndicatorMotionProvider motion={motion} defaults={SELECTION_INDICATOR_MOTION_DEFAULTS}>
+      <SelectionIndicatorMotionProvider motion={motion} defaults={SELECTION_INDICATOR_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <SelectionIndicatorRootSlot className={shellClassName} motion={motion?.root} {...rest}>
           {body}
         </SelectionIndicatorRootSlot>

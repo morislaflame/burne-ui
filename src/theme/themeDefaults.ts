@@ -139,7 +139,6 @@ export type ThemeTokenState = {
   rippleExpandableDuration: number;
   rippleExpandableOpacityFrom: number;
   rippleEaseCss: string;
-  feedbackExpandDuration: number;
   expandDuration: number;
   expandOpenEase: string;
   progressFillDuration: number;
@@ -161,9 +160,7 @@ export type ThemeTokenState = {
   enableRipple: boolean;
   enableExpandable: boolean;
   enableToastStack: boolean;
-  enableAsyncButtonCrossfade: boolean;
   enableContentFade: boolean;
-  enableFeedbackExpand: boolean;
   enableProgressFill: boolean;
   enableLoadingDots: boolean;
   enableModalMotion: boolean;
@@ -553,7 +550,6 @@ export function motionConfigFromThemeState(state: ThemeTokenState): Partial<Moti
     rippleExpandableDuration: state.rippleExpandableDuration,
     rippleExpandableOpacityFrom: state.rippleExpandableOpacityFrom,
     rippleEaseCss: state.rippleEaseCss,
-    feedbackExpandDuration: state.feedbackExpandDuration,
     expandDuration: state.expandDuration,
     expandOpenEase: state.expandOpenEase,
     surfaceTransitionDuration: state.surfaceTransitionDuration,
@@ -573,9 +569,7 @@ export function motionConfigFromThemeState(state: ThemeTokenState): Partial<Moti
     enableRipple: state.enableRipple,
     enableExpandable: state.enableExpandable,
     enableToastStack: state.enableToastStack,
-    enableAsyncButtonCrossfade: state.enableAsyncButtonCrossfade,
     enableContentFade: state.enableContentFade,
-    enableFeedbackExpand: state.enableFeedbackExpand,
     enableProgressFill: state.enableProgressFill,
     enableLoadingDots: state.enableLoadingDots,
     enableModalMotion: state.enableModalMotion,

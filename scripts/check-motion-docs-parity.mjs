@@ -437,6 +437,46 @@ async function main() {
           `motion/${locale}.md: must document createMotionEvents, events, and MotionMapWithEvents`,
         );
       }
+      if (
+        !/`motionState`/.test(motionMd) ||
+        !/`states`/.test(motionMd) ||
+        !/`createMotionStates`/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document motionState, states, and createMotionStates`,
+        );
+      }
+      if (
+        !/MotionGroup/.test(motionMd) ||
+        !/`createMotionGroup`/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document MotionGroup and createMotionGroup`,
+        );
+      }
+      if (
+        !/`ctx.wait`/.test(motionMd) ||
+        !/`sequence`/.test(motionMd) ||
+        !/`parallel`/.test(motionMd) ||
+        !/`onInterrupt`/.test(motionMd) ||
+        !/`onError`/.test(motionMd) ||
+        !/`registerMotionPlugins`/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document ctx.wait, sequence/parallel, onInterrupt/onError, and registerMotionPlugins`,
+        );
+      }
+      if (
+        !/`ThemeProvider`/.test(motionMd) ||
+        !/`MotionConfigProvider`/.test(motionMd) ||
+        !/`useMotionConfig`/.test(motionMd) ||
+        !/Precedence/.test(motionMd) ||
+        !/`configureMotion`/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document ThemeProvider, MotionConfigProvider, useMotionConfig, Precedence, and configureMotion`,
+        );
+      }
       if (!/`fromRest`/.test(motionMd) || !/`replay`/.test(motionMd)) {
         errors.push(
           `motion/${locale}.md: must document fromRest and replay`,
@@ -490,6 +530,26 @@ async function main() {
       }
     } catch {
       // already reported missing files
+    }
+
+    for (const locale of ["en", "ru"]) {
+      const statePath = path.join(siteRoot, `content/docs/motion-state/${locale}.md`);
+      try {
+        const stateMd = await readFile(statePath, "utf8");
+        if (
+          !/`motionState`/.test(stateMd) ||
+          !/`createMotionStates`/.test(stateMd) ||
+          !/Zustand/.test(stateMd) ||
+          !/Redux/.test(stateMd) ||
+          !/TanStack/.test(stateMd)
+        ) {
+          errors.push(
+            `motion-state/${locale}.md: must document motionState, createMotionStates, Zustand, Redux, and TanStack`,
+          );
+        }
+      } catch {
+        errors.push(`motion-state/${locale}.md is missing`);
+      }
     }
 
     const checkedSite = new Set();

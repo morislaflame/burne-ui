@@ -1,7 +1,7 @@
 import type { LabelHTMLAttributes, ReactNode } from "react";
 import type { TextVariant } from "@/components/core/Text";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type LabelClassNames = {
   root?: string;
@@ -32,9 +32,15 @@ export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children">
   classNames?: Prettify<LabelClassNames>;
   /**
    * Per-slot motion (`root`, `text`, `required`). Defaults are empty — custom factories are opt-in.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<LabelMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<LabelMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type LabelClassNamesProviderProps = {
   classNames?: Prettify<LabelClassNames>;

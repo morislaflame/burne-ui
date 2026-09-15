@@ -57,6 +57,10 @@ export function ProgressBarRoot({
   color,
   formatValue,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...divRest
 }: ProgressBarProps) {
   const state = useProgressBarRootState({
@@ -87,14 +91,20 @@ export function ProgressBarRoot({
       valueText={state.valueText}
       hint={state.hint}
       error={state.error}
-      trackProps={state.trackProps}
+      trackProps={{ ...state.trackProps, motionController, motionState, motionPayload, playInitialState }}
     />
   );
 
   return (
     <ProgressBarFieldProvider value={state.fieldCtx}>
       <ProgressBarClassNamesProvider classNames={classNames}>
-        <ProgressBarMotionProvider motion={motion}>
+        <ProgressBarMotionProvider
+          motion={motion}
+          controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               id={state.progressId}

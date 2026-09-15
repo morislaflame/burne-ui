@@ -16,10 +16,13 @@ import {
   killMotionScope,
   killStoredMotion,
   mergeMotionSlotMaps,
+  mergeMotionRootSiblings,
+  splitMotionRootMap,
   useMotionPart,
   useOptionalEnterOnMount,
   waitForLeaveGeneration,
 } from "@/components/core/utils/slotMotion";
+import type { MotionMapWithEvents } from "@/components/core/utils/slotMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
@@ -58,9 +61,9 @@ export function resolveDropdownPopoverMotion({
   rootMotion,
   popoverMotion,
 }: {
-  rootMotion?: DropdownMotion;
-  popoverMotion?: DropdownPopoverMotion;
-}): PopoverMotion | undefined {
+  rootMotion?: MotionMapWithEvents<DropdownMotion>;
+  popoverMotion?: MotionMapWithEvents<DropdownPopoverMotion>;
+}): MotionMapWithEvents<PopoverMotion> | undefined {
   const fromRoot: DropdownPopoverMotion = {};
   if (rootMotion?.content) fromRoot.content = rootMotion.content;
   if (rootMotion?.title) fromRoot.title = rootMotion.title;
@@ -74,7 +77,13 @@ export function resolveDropdownPopoverMotion({
   if (rootMotion?.subTrigger) fromRoot.subTrigger = rootMotion.subTrigger;
   if (rootMotion?.separator) fromRoot.separator = rootMotion.separator;
   const pickedRoot = Object.keys(fromRoot).length ? fromRoot : undefined;
-  return mergeMotionSlotMaps(pickedRoot, popoverMotion) as PopoverMotion | undefined;
+  const slots = mergeMotionSlotMaps(pickedRoot, popoverMotion) as PopoverMotion | undefined;
+  const siblings = mergeMotionRootSiblings(
+    splitMotionRootMap(rootMotion),
+    splitMotionRootMap(popoverMotion),
+  );
+  if (!slots && !siblings.events && !siblings.states) return undefined;
+  return { ...slots, ...siblings };
 }
 
 export type DropdownMenuChromeSlot = "label" | "subTrigger" | "separator";

@@ -40,6 +40,8 @@ import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexTo
 | `side` | `bottom` | Popover side |
 | `disabled` | `false` | Блокирует trigger |
 | `classNames` | — | Слоты |
+| `motion` | — | Карта слотов `contentPanel` / `area` / `hexInput` / … + `events`. Нет слота `root` |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Слоты живы, пока `Content` открыт |
 
 ### `ColorPicker.Trigger` props
 
@@ -113,12 +115,83 @@ Channels: `hue`, `saturation`, `value`, `alpha`, `red`, `green`, `blue`.
 
 Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не публичный layout-tween. `previewSwatch` — `ColorPicker.Preview`. Drag на `Area` / `areaThumb` **мержится** с slot pointer phases через `useMotionPart` (`onPointerDown` пользователя → motion press → drag, если не `defaultPrevented`). ColorSwatch в presets сохраняет свой scope.
 
+`play()` ищет слот `root` — у ColorPicker его нет, только `playSlot("contentPanel")` / `playSlot("area")` / `playAll`. Слоты регистрируются, когда панель открыта (`open` / `defaultOpen`). `hueSlider` / `alphaSlider` / ColorSwatch — вложенные scope, не этот handle.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`picker:nudge`, `picker:pulse`), не фазы. `createMotionEvents`. События тоже через `playSlot("contentPanel", event)`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, ColorPicker, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "picker:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("contentPanel", "picker:nudge")}>
+        Nudge
+      </Button>
+      <ColorPicker open defaultValue="#3b82f6" motionController={controller} motion={{ events }}>
+        <ColorPicker.Trigger />
+        <ColorPicker.Content />
+      </ColorPicker>
+    </>
+  );
+}
+```
+
 **ColorSlider** — свой scope; Track — nested host.
 
 | Слот | Фазы | Дефолт |
 |------|------|--------|
 | `root` | `enter` | empty |
 | `track` | `enter`; `change` при value | empty |
+
+Simple API: `motionController` форвардится на Track (слота `root` на этом handle нет — `play()` skip, `playSlot("track", …)`). Compound (есть `children`): handle на Root (`root`); Track — свой `motionController`. Карта `events` с корня мержится в Track. Thumb geometry — kit-internal.
+
+```tsx
+import { Button, ColorSlider, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "slider:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("track", "slider:nudge")}>
+        Nudge
+      </Button>
+      <ColorSlider channel="hue" defaultValue={180} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+**ColorSwatch** — scope только у interactive (`onClick`). Декоративный `<span>` без Provider. Есть слот `root`: `play()` ок.
+
+```tsx
+import { Button, ColorSwatch, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "swatch:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("swatch:nudge")}>
+        Nudge
+      </Button>
+      <ColorSwatch color="#3b82f6" aria-label="Accent" onClick={() => undefined} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 Thumb ColorSlider = `SliderThumbButton`, не дублирует публичный слот Slider thumb.
 

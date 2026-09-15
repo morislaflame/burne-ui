@@ -36,6 +36,10 @@ export function useToast(): { toast: ToastAPI } {
         placement: opts.placement,
         classNames: opts.classNames,
         motion: opts.motion,
+        motionController: opts.motionController,
+        motionState: opts.motionState,
+        motionPayload: opts.motionPayload,
+        playInitialState: opts.playInitialState,
       });
 
       void p.then(

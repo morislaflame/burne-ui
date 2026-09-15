@@ -389,6 +389,10 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
     const { open, headerId, panelId, size, setHasPanel } = useExpandable();
     const slotClassNames = useExpandableClassNames();
     const panelMotion = useExpandablePanelMotion({ open, motion });
+    const { setRef: setBodyPartRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalExpandableMotionScope(),
+      slot: "body",
+    });
 
     useLayoutEffect(() => {
       setHasPanel(true);
@@ -397,10 +401,11 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
 
     const setSectionRef = useCallback(
       (node: HTMLDivElement | null) => {
+        setBodyPartRef(node);
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [ref, setBodyPartRef],
     );
 
     return (
@@ -421,7 +426,7 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             className={expandablePanelClass({
               size,
               className,
-              slotClass: slotClassNames.panel,
+              slotClass: cn(slotClassNames.panel, slotClassNames.body),
             })}
             {...props}
           >

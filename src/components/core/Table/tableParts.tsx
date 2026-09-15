@@ -555,7 +555,7 @@ export const TableEmpty = forwardRef<HTMLTableCellElement, TableEmptyProps>(
 TableEmpty.displayName = "Table.Empty";
 
 const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
-  { id, tone, children, className, onClick, onKeyDown, motion, ...rest },
+  { id, tone, children, className, onClick, onKeyDown, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const parentScope = useOptionalTableMotionScope();
@@ -565,7 +565,10 @@ const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function Ta
   );
 
   return (
-    <TableMotionProvider motion={mergedMotion} defaults={{}}>
+    <TableMotionProvider motion={mergedMotion} defaults={{}} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <TableRowSurface
         id={id}
         tone={tone}
@@ -601,7 +604,7 @@ function TableRowSurface({
   onKeyDown?: TableRowProps["onKeyDown"];
   itemMotion?: TableRowProps["motion"];
   forwardedRef: ForwardedRef<HTMLTableRowElement>;
-  rest: Omit<TableRowProps, "id" | "tone" | "children" | "className" | "onClick" | "onKeyDown" | "motion">;
+  rest: Omit<TableRowProps, "id" | "tone" | "children" | "className" | "onClick" | "onKeyDown" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
 }) {
   const variant = useTableVariant();
   const slotClassNames = useTableClassNames();

@@ -74,6 +74,7 @@ export type SearchInputProps = Omit<
   /**
    * Per-slot motion (`root`, `icon`, `clear`, `input`, `expandTrigger`).
    * Expand/collapse: `root` / `icon` `enter` / `leave` (`searchExpand` / `searchIconShift`).
+   * `searchExpand` tweens shell `width` (kit layout exception), not `scaleX`.
    */
   motion?: Prettify<SearchInputMotion>;
 };

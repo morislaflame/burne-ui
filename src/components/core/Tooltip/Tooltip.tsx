@@ -13,8 +13,14 @@ export function TooltipRoot({
   side = "top",
   icon,
   showIcon,
+  open,
+  defaultOpen,
+  onOpenChange,
   portalContainer,
   motion,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: TooltipProps) {
   const { contextValue } = useTooltipRootState({
     size,
@@ -24,12 +30,20 @@ export function TooltipRoot({
     side,
     icon,
     showIcon,
+    open,
+    defaultOpen,
+    onOpenChange,
     portalContainer,
   });
 
   return (
     <TooltipClassNamesProvider classNames={classNames}>
-      <TooltipMotionProvider motion={motion}>
+      <TooltipMotionProvider
+          motion={motion}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
         <TooltipContext.Provider value={contextValue}>{children}</TooltipContext.Provider>
       </TooltipMotionProvider>
     </TooltipClassNamesProvider>

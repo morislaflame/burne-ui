@@ -51,7 +51,8 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 | `showValue` | simple | Показать formatted value в header |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Карта слотов (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`). Fill: `progressFill`. Chrome — Root scope; Track — nested fill host |
+| `motion` | — | Карта слотов (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`). Fill: `progressFill`. Chrome — Root scope; Track — nested fill host. `events` — app-команды `MotionController`, не DOM-слот |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Simple API: форвардится на Track. Compound: Root chrome; для fill — второй handle на `Meter.Track` |
 
 ### `MeterClassNames`
 
@@ -91,6 +92,32 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform / `scaleX`/`scaleY`, не `autoAlpha` (`visibility: hidden` прячет и fill). Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Без `fill.enter` первый кадр — мгновенный scale.
 
 `meterAnimations.ts` → `progressFill`.
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("track", …)` / `playSlot("fill", …)`. Compound chrome — handle на Root (`playSlot("value")`); fill-хост — отдельный handle на `Meter.Track`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`meter:nudge`, `meter:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("track", event)` (карта `events` с корня мержится в Track). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Meter, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "meter:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("track", "meter:nudge")}>
+        Nudge
+      </Button>
+      <Meter label="Storage" showValue value={62} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **glow** — `box-shadow` на fill из `track.enter` через `ctx.targets.fill` (квота / уровень). Не `fill.enter` (scale). Не width / scaleX. Не в ките и не в MotionController.
 
 **DOM:**
 
@@ -245,4 +272,4 @@ Meter/
 
 ## Storybook
 
-`Core Components/Meter` — horizontal/vertical, sizes, color, compound, `classNames`.
+`Core Components/Meter` — horizontal/vertical, sizes, color, compound, `classNames`, Slot motion, MotionController.

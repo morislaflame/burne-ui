@@ -39,6 +39,10 @@ export function DrawerRoot({
   children,
   classNames,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   portalContainer,
 }: DrawerProps) {
   const state = useDrawerRootState({
@@ -53,7 +57,10 @@ export function DrawerRoot({
   return (
     <DrawerProvider value={state.contextValue}>
       <DrawerClassNamesProvider classNames={classNames}>
-        <DrawerMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
+        <DrawerMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         {children}
         </DrawerMotionProvider>
       </DrawerClassNamesProvider>

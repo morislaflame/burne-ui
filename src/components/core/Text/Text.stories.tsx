@@ -3,7 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
 import { Text } from "./Text";
-import { TextMotionDemo } from "../../../../playground/showcase/demos/text/TextMotion.demo";
+import { TextMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/text/motionController/gallery";
+import { TextSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/text/slotMotion/gallery";
 
 /** Dark theme — tokens from `:root`, explicit background for stories. */
 const darkThemeDecorator = [
@@ -137,5 +138,18 @@ export const OnLightTheme: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <TextMotionDemo />,
+  render: () => <TextSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play / set on root, cancel loop, text events. Slot motion also has SplitText words and TextPlugin typewriter.",
+      },
+    },
+  },
+  render: () => <TextMotionControllerGalleryDemo />,
 };

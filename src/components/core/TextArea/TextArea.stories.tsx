@@ -7,7 +7,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TextArea } from "./index";
-import { TextAreaMotionDemo } from "../../../../playground/showcase/demos/textarea/TextAreaMotion.demo";
+import { TextAreaSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/textarea/slotMotion/gallery";
+import { TextAreaMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/textarea/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -171,5 +172,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <TextAreaMotionDemo />,
+  render: () => <TextAreaSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on shell/resizeHandle (no play: no root slot), chrome label on Root, cancel loop, area events.",
+      },
+    },
+  },
+  render: () => <TextAreaMotionControllerGalleryDemo />,
 };

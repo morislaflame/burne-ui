@@ -31,6 +31,8 @@ import type {
 | `aria-label` | `string` | `"Close"` (из `BurneLabels`, см. ниже) | Доступное имя; без пропа — дефолт из `BurneUIProvider` `labels` |
 | `className` | `string` | — | Классы на корневой `<button>` |
 | `classNames` | `CloseButtonClassNames` | — | Слоты: `root`, `icon`, `ripple` |
+| `motion` | `MotionMapWithEvents<CloseButtonMotion>` | — | Slot map `root` / `icon`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
 | `type` | `button` \| `submit` \| `reset` | `button` | Нативный type |
 | … | `ButtonHTMLAttributes` (без `children`) | — | `onClick`, `onPointer*`, и т.д. |
 
@@ -91,12 +93,12 @@ type CloseButtonClassNames = {
 
 | size | Корень | Иконка |
 |------|--------|--------|
-| `small` | `h-control-xsmall w-control-xsmall` | `icon-small` |
-| `base` | `h-control-small w-control-small` | `icon-base` |
-| `mid` | `h-control-base w-control-base` | `icon-mid` |
-| `large` | `h-control-mid w-control-mid` | `icon-large` |
+| `small` | `h-control-xsmall w-control-xsmall min-w-control-xsmall` | `icon-small` |
+| `base` | `h-control-small w-control-small min-w-control-small` | `icon-base` |
+| `mid` | `h-control-base w-control-base min-w-control-base` | `icon-mid` |
+| `large` | `h-control-mid w-control-mid min-w-control-mid` | `icon-large` |
 
-Форма всегда `rounded-full`.
+Форма всегда `rounded-full` + `aspect-square` (`min-w-control-*` не даёт родителю с `w-fit` сжать круг в овал).
 
 ## Анимации
 
@@ -116,6 +118,32 @@ type CloseButtonClassNames = {
 ```tsx
 <CloseButton aria-label="Close" motion={{ root: { hoverIn: false, hoverOut: false } }} />
 ```
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`dismiss:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Button, CloseButton, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "dismiss:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("dismiss:nudge")}>
+        Nudge
+      </Button>
+      <CloseButton aria-label="Close" motionController={controller} motion={{ events, root: { pressIn: false } }} />
+    </>
+  );
+}
+```
+
+`play()` ищет слот `root`. `playSlot("icon")` — доменный слот. `playAll` + `stagger`, timeline `dismiss:spin` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
+
+Сырой GSAP в Slot motion: **DrawSVG** — два штриха крестика прорисовываются на hover (`classNames.icon: opacity-0`, kit hover/press выключены). Overlay SVG — sibling кнопки, поэтому squeeze на обёртке (`scale: 0.98`); timeline kill на leave, чтобы delayed-штрих не стартовал повторно.
 
 ## Токены и CSS-классы
 
@@ -222,4 +250,4 @@ CloseButton/
 
 ## Storybook
 
-`Core Components/CloseButton` — размеры, варианты, матрица variant×size, ripple, кастомизация `classNames`, светлая/тёмная тема.
+`Core Components/CloseButton` — размеры, варианты, матрица variant×size, ripple, кастомизация `classNames`, slot motion gallery, `motionController`, светлая/тёмная тема.

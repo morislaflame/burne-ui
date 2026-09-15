@@ -14,16 +14,9 @@ import { SearchInputGlossDemo } from "../demos/search-input/SearchInputGloss.dem
 import searchInputGlossSource from "../demos/search-input/SearchInputGloss.demo.tsx?raw";
 import { SearchInputGlossHeroDemo } from "../demos/search-input/SearchInputGlossHero.demo";
 import searchInputGlossHeroSource from "../demos/search-input/SearchInputGlossHero.demo.tsx?raw";
-import { SearchInputMotionHoverTiltDemo } from "../demos/search-input/SearchInputMotionHoverTilt.demo";
-import searchInputMotionHoverTiltSource from "../demos/search-input/SearchInputMotionHoverTilt.demo.tsx?raw";
-import { SearchInputMotionIconSpinDemo } from "../demos/search-input/SearchInputMotionIconSpin.demo";
-import searchInputMotionIconSpinSource from "../demos/search-input/SearchInputMotionIconSpin.demo.tsx?raw";
-import { SearchInputMotionInstantExpandDemo } from "../demos/search-input/SearchInputMotionInstantExpand.demo";
-import searchInputMotionInstantExpandSource from "../demos/search-input/SearchInputMotionInstantExpand.demo.tsx?raw";
-import { SearchInputMotionPressBounceDemo } from "../demos/search-input/SearchInputMotionPressBounce.demo";
-import searchInputMotionPressBounceSource from "../demos/search-input/SearchInputMotionPressBounce.demo.tsx?raw";
 import { SearchInputWithResultDemo } from "../demos/search-input/SearchInputWithResult.demo";
 import searchInputWithResultSource from "../demos/search-input/SearchInputWithResult.demo.tsx?raw";
+import { SearchInputSlotMotionGalleryDemo } from "../demos/search-input/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -68,14 +61,8 @@ export function SearchInputShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={SearchInputGlossDemo} source={searchInputGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant expand, icon spin, press bounce, hover tilt."
-      >
-        <ShowcaseDemoFromFile align="center" Demo={SearchInputMotionInstantExpandDemo} source={searchInputMotionInstantExpandSource} />
-        <ShowcaseDemoFromFile align="center" Demo={SearchInputMotionIconSpinDemo} source={searchInputMotionIconSpinSource} />
-        <ShowcaseDemoFromFile align="center" Demo={SearchInputMotionPressBounceDemo} source={searchInputMotionPressBounceSource} />
-        <ShowcaseDemoFromFile align="center" Demo={SearchInputMotionHoverTiltDemo} source={searchInputMotionHoverTiltSource} />
+      <ShowcaseSection title="Slot motion" description="One gallery: instant expand, icon spin, press bounce, hover tilt.">
+        <SearchInputSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

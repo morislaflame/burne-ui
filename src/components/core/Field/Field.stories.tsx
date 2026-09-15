@@ -7,7 +7,8 @@ import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
-import { FieldMotionDemo } from "../../../../playground/showcase/demos/field/FieldMotion.demo";
+import { FieldSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/field/slotMotion/gallery";
+import { FieldMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/field/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -254,5 +255,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <FieldMotionDemo />,
+  render: () => <FieldSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on Field, Field.Set is a separate scope, cancel loop, field events.",
+      },
+    },
+  },
+  render: () => <FieldMotionControllerGalleryDemo />,
 };

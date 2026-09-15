@@ -7,7 +7,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Radio } from ".";
-import { RadioMotionDemo } from "../../../../playground/showcase/demos/radio/RadioMotion.demo";
+import { RadioSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/radio/slotMotion/gallery";
+import { RadioMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/radio/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -270,5 +271,10 @@ export const SimpleLabelClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (fill, mark, stagger)",
-  render: () => <RadioMotionDemo />,
+  render: () => <RadioSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery (embedder, chrome)",
+  render: () => <RadioMotionControllerGalleryDemo />,
 };

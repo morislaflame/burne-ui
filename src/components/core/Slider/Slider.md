@@ -78,7 +78,8 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | `disabled` | `false` | |
 | `showValue` | simple | Показать value в header |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Карта слотов. Chrome `label` / `hint` / `error` — Root scope. Compound: `motion` на `Slider.Thumb` — part motion этого thumb |
+| `motion` | — | Карта слотов + `events`. Chrome `label` / `hint` / `error` и Track — один Root scope. Compound: `motion` на `Slider.Thumb` — part motion этого thumb |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Один handle на Root покрывает chrome + track/thumb. Standalone `Slider.Track` — свой handle |
 
 ### `SliderClassNames`
 
@@ -101,7 +102,31 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 
 `false` на `thumb.pressIn` — squeeze не играет. Compound: `motion` на `Slider.Thumb` — part motion этого thumb (range start/end независимо). На `Slider.Label` / `Hint` / `Error` — chrome Root scope.
 
-`change` на track — дискретный тик значения (pulse / tint), не follow за пальцем. Пузырь с инерцией над thumb — playground demo `SliderMotionThumbInertia` (`gsap.quickTo` на `x`), не kit Tooltip.
+Слота `root` нет: `play()` ищет `"root"` и skip. `playSlot("track", …)` / `playSlot("thumb", …)` / `playSlot("label", …)`. Один handle на Root = chrome + track (не два scope, в отличие от ProgressBar). Standalone `Slider.Track` без Root — handle на Track.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`slider:nudge`, `slider:pulse`), не фазы. `createMotionEvents`. События играть через `playSlot("track", event)`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Slider, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "slider:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("track", "slider:nudge")}>
+        Nudge
+      </Button>
+      <Slider label="Volume" showValue defaultValue={55} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+`change` на track — дискретный тик значения (pulse / tint), не follow за пальцем. Пузырь с инерцией над thumb — playground demo `SliderMotionThumbInertia` (`gsap.quickTo` на `x`), не kit Tooltip. Сырой GSAP — Slot motion, не MotionController.
 
 **Где в коде:** типы — `sliderTypes.ts`; scope — `sliderContext.tsx`; defaults — `sliderAnimations.ts`; слоты — `sliderParts.tsx` / `sliderThumbParts.tsx` / `sliderTrackParts.tsx`; Provider — `Slider.tsx`. Drag позиции — `useSliderTrackState.ts`.
 

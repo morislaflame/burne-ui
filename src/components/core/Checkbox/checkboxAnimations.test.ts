@@ -36,4 +36,12 @@ describe("resolveCheckboxIndicatorMotion", () => {
       ),
     ).toBe(uncheck);
   });
+
+  it("forwards root events onto the SelectionIndicator map", () => {
+    const nudge = { y: -4, duration: 0.16 };
+    const mapped = resolveCheckboxIndicatorMotion({
+      rootMotion: { events: { "check:nudge": nudge } },
+    });
+    expect(mapped?.events?.["check:nudge"]).toEqual(nudge);
+  });
 });

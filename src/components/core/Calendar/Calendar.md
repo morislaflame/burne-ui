@@ -53,6 +53,7 @@ import { Calendar, RU_LOCALE, useCalendar, type CalendarProps, type CalendarMode
 | `locale` | built-in RU | Weekdays, months, Today/Clear labels |
 | `minDate` / `maxDate` | — | Ограничения выбора |
 | `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Calendar.Day` |
 
 ### Mode-specific value
 
@@ -73,6 +74,9 @@ import { Calendar, RU_LOCALE, useCalendar, type CalendarProps, type CalendarMode
 | `Calendar.Header` | Nav prev/next + title (drill-up view) |
 | `Calendar.Grid` | Weekdays + day/month/year cells |
 | `Calendar.Footer` | Today / Clear actions |
+| `Calendar.Title` | Drill-up month/year control |
+| `Calendar.NavPrev` / `NavNext` | Навигация месяца |
+| `Calendar.Day` | Ячейка дня; nested motion scope (`motionController`, `playSlot("cell")`) |
 
 ### `useCalendar()`
 
@@ -120,6 +124,33 @@ Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `we
 | `cellText` | hover/press / `enter` | нет; nested cell scope |
 
 `false` на hover — skip без kill. Compound: `motion` на `Calendar.NavPrev` / `Calendar.NavNext` / `Calendar.Header` / `Calendar.Footer`. `cellText` — nested cell scope. Иконки навигации — слоты `navPrevIcon` / `navNextIcon` (не `classNames.navIcon`).
+
+Слота `root` нет: `play()` skip. `playSlot("header")` / `playAll` — chrome (`header` / `navPrev` / `grid` / `footer` …), не nested ячейки. Каждая ячейка — **вложенный** scope: свой `motionController` на `Calendar.Day`, `playSlot("cell")` / `playSlot("cellText")`. Один handle ≠ два scope. Fill дня и range half-fill не слоты.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`calendar:nudge`, `calendar:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Calendar.Footer`) видит Calendar; внутри `Calendar.Day` — scope ячейки.
+
+```tsx
+import { Button, Calendar, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "calendar:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("header", "calendar:nudge")}>
+        Nudge
+      </Button>
+      <Calendar motionController={controller} motion={{ events }}>
+        <Calendar.Header />
+        <Calendar.Grid />
+      </Calendar>
+    </>
+  );
+}
+```
 
 **Где в коде:** типы — `calendarTypes.ts`; scope — `calendarContext.tsx`; defaults — `calendarAnimations.ts`; слоты — `calendarParts.tsx`; Provider — `Calendar.tsx`.
 
@@ -267,4 +298,4 @@ Calendar/
 
 ## Storybook
 
-`Core Components/Calendar` — single/range/multiple, sizes, variants, views, gloss, `classNames`.
+`Core Components/Calendar` — single/range/multiple, sizes, variants, views, gloss, `classNames`, slot motion gallery, MotionController.

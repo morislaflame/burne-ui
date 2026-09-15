@@ -18,16 +18,8 @@ import { CalendarRenderDayDemo } from "../demos/calendar/CalendarRenderDay.demo"
 import calendarRenderDaySource from "../demos/calendar/CalendarRenderDay.demo.tsx?raw";
 import { CalendarSizesDemo } from "../demos/calendar/CalendarSizes.demo";
 import calendarSizesSource from "../demos/calendar/CalendarSizes.demo.tsx?raw";
-import { CalendarMotionInstantHoverDemo } from "../demos/calendar/CalendarMotionInstantHover.demo";
-import calendarMotionInstantHoverSource from "../demos/calendar/CalendarMotionInstantHover.demo.tsx?raw";
-import { CalendarMotionNavWaveDemo } from "../demos/calendar/CalendarMotionNavWave.demo";
-import calendarMotionNavWaveSource from "../demos/calendar/CalendarMotionNavWave.demo.tsx?raw";
-import { CalendarMotionNavTintDemo } from "../demos/calendar/CalendarMotionNavTint.demo";
-import calendarMotionNavTintSource from "../demos/calendar/CalendarMotionNavTint.demo.tsx?raw";
-import { CalendarMotionChromeDemo } from "../demos/calendar/CalendarMotionChrome.demo";
-import calendarMotionChromeSource from "../demos/calendar/CalendarMotionChrome.demo.tsx?raw";
-import { CalendarMotionFooterActionsDemo } from "../demos/calendar/CalendarMotionFooterActions.demo";
-import calendarMotionFooterActionsSource from "../demos/calendar/CalendarMotionFooterActions.demo.tsx?raw";
+import { CalendarSlotMotionGalleryDemo } from "../demos/calendar/slotMotion/gallery";
+import { CalendarMotionControllerGalleryDemo } from "../demos/calendar/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -107,11 +99,14 @@ export function CalendarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant skip, navPrev→navNext timeline, compound NavPrev/NavNext, footer Today/Clear.">
-        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionInstantHoverDemo} source={calendarMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionNavWaveDemo} source={calendarMotionNavWaveSource} />
-        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionNavTintDemo} source={calendarMotionNavTintSource} />
-        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionChromeDemo} source={calendarMotionChromeSource} />
-        <ShowcaseDemoFromFile align="start" Demo={CalendarMotionFooterActionsDemo} source={calendarMotionFooterActionsSource} />
+        <CalendarSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on header (no root), playAll chrome without nested cells, Calendar.Day scope, calendar events."
+      >
+        <CalendarMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

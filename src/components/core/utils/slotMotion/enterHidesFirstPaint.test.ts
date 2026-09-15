@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { enterHidesFirstPaint } from "./enterHidesFirstPaint";
 import {
@@ -8,7 +8,7 @@ import {
 } from "./motionRecipeRegistry";
 import { registerKitMotionRecipes } from "./recipes";
 
-afterEach(() => {
+beforeEach(() => {
   clearMotionRecipesForTests();
   registerKitMotionRecipes();
 });

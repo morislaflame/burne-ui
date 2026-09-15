@@ -1,7 +1,7 @@
 import type { FormHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type FormValues = Record<string, unknown>;
 
@@ -128,14 +128,26 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & 
   /**
    * Per-slot motion (`root`, `header`, `title`, `description`, `actions`, `errorSummary`,
    * `announce`, `section`, `field`). Does not steal child Input motion. Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<FormMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<FormMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this Form scope (not nested `Form.Field` / `Form.Section`, not Input).
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type FormSectionProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<Pick<FormClassNames, "section">>;
   motion?: Prettify<FormPartMotion>;
-};
+  /**
+   * Handle for the nested Section scope (no `root` — `playSlot("section")`).
+   * Separate from the Form root handle.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type FormHeaderProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<Pick<FormClassNames, "header">>;
@@ -169,7 +181,12 @@ export type FormFieldProps = HTMLAttributes<HTMLDivElement> & {
   rules?: FormFieldRules;
   classNames?: Prettify<Pick<FormClassNames, "field">>;
   motion?: Prettify<FormPartMotion>;
-};
+  /**
+   * Handle for the nested Field scope (no `root` — `playSlot("field")`).
+   * Separate from the Form root handle. Does not steal child Input motion.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseFormRootStateProps = FormProps;
 

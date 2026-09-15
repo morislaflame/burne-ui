@@ -8,7 +8,8 @@ import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Button } from "@/components/core/Button";
 import { Meter } from "@/components/core/Meter";
-import { MeterMotionDemo } from "../../../../playground/showcase/demos/meter/MeterMotion.demo";
+import { MeterMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/meter/motionController/gallery";
+import { MeterSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/meter/slotMotion/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -263,5 +264,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <MeterMotionDemo />,
+  render: () => <MeterSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on track/fill (no play: no root slot), chrome value on Root, cancel loop, meter events.",
+      },
+    },
+  },
+  render: () => <MeterMotionControllerGalleryDemo />,
 };

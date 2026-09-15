@@ -14,12 +14,8 @@ import { SkeletonTableRowsDemo } from "../demos/skeleton/SkeletonTableRows.demo"
 import skeletonTableRowsSource from "../demos/skeleton/SkeletonTableRows.demo.tsx?raw";
 import { SkeletonTextBlockDemo } from "../demos/skeleton/SkeletonTextBlock.demo";
 import skeletonTextBlockSource from "../demos/skeleton/SkeletonTextBlock.demo.tsx?raw";
-import { SkeletonMotionInstantEnterDemo } from "../demos/skeleton/SkeletonMotionInstantEnter.demo";
-import skeletonMotionInstantEnterSource from "../demos/skeleton/SkeletonMotionInstantEnter.demo.tsx?raw";
-import { SkeletonMotionRootWaveDemo } from "../demos/skeleton/SkeletonMotionRootWave.demo";
-import skeletonMotionRootWaveSource from "../demos/skeleton/SkeletonMotionRootWave.demo.tsx?raw";
-import { SkeletonMotionRegionEnterDemo } from "../demos/skeleton/SkeletonMotionRegionEnter.demo";
-import skeletonMotionRegionEnterSource from "../demos/skeleton/SkeletonMotionRegionEnter.demo.tsx?raw";
+import { SkeletonMotionControllerGalleryDemo } from "../demos/skeleton/motionController/gallery";
+import { SkeletonSlotMotionGalleryDemo } from "../demos/skeleton/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -72,10 +68,15 @@ export function SkeletonShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonArticlePreviewDemo} source={skeletonArticlePreviewSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, root enter, Region enter factory.">
-        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonMotionInstantEnterDemo} source={skeletonMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonMotionRootWaveDemo} source={skeletonMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonMotionRegionEnterDemo} source={skeletonMotionRegionEnterSource} />
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root enter, Region enter factory, grayscale wake on Region. CSS wave/pulse/shimmer stay kit-internal.">
+        <SkeletonSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="Each part has its own scope. play() on Root; Region is a nested host (playSlot). Circle/Text/Block take their own handle."
+      >
+        <SkeletonMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

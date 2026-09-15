@@ -1,4 +1,4 @@
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type {
   ForwardedRef,
   HTMLAttributes,
@@ -44,9 +44,15 @@ export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   hoverLift?: boolean;
   /**
    * Per-slot motion (`root`, `text`, `group`).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<KbdMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<KbdMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type KbdGroupProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   classNames?: Prettify<KbdClassNames>;
@@ -58,10 +64,15 @@ export type KbdGroupProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & 
   children?: ReactNode;
   /**
    * Part motion for the wrapping `<span>` (`group` slot).
-   * Standalone Group (no Kbd ancestor) creates its own scope when this is set.
+   * Standalone Group (no Kbd ancestor) creates its own scope when this or `motionController` is set.
    */
   motion?: Prettify<KbdPartMotion>;
-};
+  /**
+   * Deferred handle for a standalone Group (no parent Kbd). Inside `<Kbd>` use the Root handle.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type KbdClassNamesProviderProps = {
   classNames?: Prettify<KbdClassNames>;

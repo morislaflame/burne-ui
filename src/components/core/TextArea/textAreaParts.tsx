@@ -3,7 +3,7 @@ import { forwardRef, useId, useMemo, useRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -105,6 +105,10 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
       onPointerDown,
       "aria-describedby": ariaDescribedByProp,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -141,13 +145,26 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
       () => resolveTextAreaMotionParams({ blocked, isGloss, pointerInside: pointerInsideRef }),
       [blocked, isGloss],
     );
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { shell: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
 
     return (
-      <TextAreaMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+      <TextAreaMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <TextAreaControlSurface
           variant={variant}
           status={status}
@@ -233,6 +250,7 @@ function TextAreaControlSurface({
     | "onPointerDown"
     | "aria-describedby"
     | "motion"
+    | "motionController"
   >;
 }) {
   const shellSurface = textareaShellSurfaceClass({ variant, status });

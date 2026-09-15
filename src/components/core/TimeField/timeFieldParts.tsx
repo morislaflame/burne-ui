@@ -7,7 +7,7 @@ import "@/components/core/utils/glossInteractive.css";
 
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import {
@@ -87,6 +87,10 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       onPointerEnter,
       onPointerLeave,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     } = props;
     const resolvedDisabled = disabled ?? false;
@@ -107,13 +111,26 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         }),
       [isGloss, resolvedDisabled],
     );
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { shell: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
 
     return (
-      <TimeFieldMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+      <TimeFieldMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <TimeFieldControlSurface
           forwardedRef={ref}
           value={value}
@@ -207,6 +224,7 @@ function TimeFieldControlSurface({
     | "onPointerEnter"
     | "onPointerLeave"
     | "motion"
+    | "motionController"
   >;
 }) {
   const labels = useBurneLabels();

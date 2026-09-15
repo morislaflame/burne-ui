@@ -5,7 +5,8 @@ import { expect } from "storybook/test";
 import { Ripple } from "@/components/core/Ripple";
 
 import { Accordion } from ".";
-import { AccordionMotionDemo } from "../../../../playground/showcase/demos/accordion/AccordionMotion.demo";
+import { AccordionSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/accordion/slotMotion/gallery";
+import { AccordionMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/accordion/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -195,5 +196,10 @@ export const PressRipple: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (instant, chevron, bounce)",
-  render: () => <AccordionMotionDemo />,
+  render: () => <AccordionSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery (Item host, repeated)",
+  render: () => <AccordionMotionControllerGalleryDemo />,
 };

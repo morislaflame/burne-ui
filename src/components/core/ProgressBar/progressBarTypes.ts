@@ -4,7 +4,7 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type ProgressBarSize = "small" | "base" | "mid" | "large";
 
@@ -78,7 +78,12 @@ export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "childr
   orientation?: ProgressBarOrientation;
   className?: string;
   motion?: Prettify<ProgressBarPartMotion>;
-};
+  /**
+   * Deferred handle for the Track fill host (`track`, `fill`). One handle → this nested scope.
+   * Simple API: pass `motionController` on `ProgressBar` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
   Partial<Omit<ProgressBarTrackProps, "motion">> & {
@@ -96,9 +101,18 @@ export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
      * Fill `change` defaults to `progressFill` / `progressIndeterminate`.
      * `fill.enter` is opt-in (`"progressFill"` or a factory with `ctx.params.getProgressScale`).
      * Chrome registers on the Root scope (siblings of Track). Track is the nested fill host.
+     * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+     * Simple API: `motionController` is forwarded to `ProgressBar.Track` (fill host).
+     * Compound: this handle attaches to the Root chrome scope; pass another handle on `Track`.
      */
-    motion?: Prettify<ProgressBarMotion>;
-  };
+    motion?: Prettify<MotionMapWithEvents<ProgressBarMotion>>;
+    /**
+     * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+     * Simple API: forwarded to the Track nested Provider. Compound: Root chrome scope.
+     * Not placed on the DOM.
+     */
+    motionController?: MotionController;
+  } & MotionStateHostProps;
 
 export type ProgressBarClassNamesProviderProps = {
   classNames?: Prettify<ProgressBarClassNames>;
@@ -131,7 +145,7 @@ export type ProgressBarErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 
 export type UseProgressBarRootStateProps = Omit<
   ProgressBarProps,
-  "className" | "classNames" | "motion"
+  "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
 
 export type UseProgressBarTrackStateProps = Pick<

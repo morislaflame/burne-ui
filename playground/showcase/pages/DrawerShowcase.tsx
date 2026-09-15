@@ -8,18 +8,6 @@ import { DrawerFilterSheetDemo } from "../demos/drawer/DrawerFilterSheet.demo";
 import drawerFilterSheetSource from "../demos/drawer/DrawerFilterSheet.demo.tsx?raw";
 import { DrawerGlossDemo } from "../demos/drawer/DrawerGloss.demo";
 import drawerGlossSource from "../demos/drawer/DrawerGloss.demo.tsx?raw";
-import { DrawerMotionDefaultDemo } from "../demos/drawer/DrawerMotionDefault.demo";
-import drawerMotionDefaultSource from "../demos/drawer/DrawerMotionDefault.demo.tsx?raw";
-import { DrawerMotionInstantPanelDemo } from "../demos/drawer/DrawerMotionInstantPanel.demo";
-import drawerMotionInstantPanelSource from "../demos/drawer/DrawerMotionInstantPanel.demo.tsx?raw";
-import { DrawerMotionTitleStaggerDemo } from "../demos/drawer/DrawerMotionTitleStagger.demo";
-import drawerMotionTitleStaggerSource from "../demos/drawer/DrawerMotionTitleStagger.demo.tsx?raw";
-import { DrawerMotionBodyStaggerDemo } from "../demos/drawer/DrawerMotionBodyStagger.demo";
-import drawerMotionBodyStaggerSource from "../demos/drawer/DrawerMotionBodyStagger.demo.tsx?raw";
-import { DrawerMotionHeadingBlockDemo } from "../demos/drawer/DrawerMotionHeadingBlock.demo";
-import drawerMotionHeadingBlockSource from "../demos/drawer/DrawerMotionHeadingBlock.demo.tsx?raw";
-import { DrawerMotionBounceSlideDemo } from "../demos/drawer/DrawerMotionBounceSlide.demo";
-import drawerMotionBounceSlideSource from "../demos/drawer/DrawerMotionBounceSlide.demo.tsx?raw";
 import { DrawerHandleDemo } from "../demos/drawer/DrawerHandle.demo";
 import drawerHandleSource from "../demos/drawer/DrawerHandle.demo.tsx?raw";
 import { DrawerMobileNavDemo } from "../demos/drawer/DrawerMobileNav.demo";
@@ -30,6 +18,8 @@ import { DrawerPlacementDemo } from "../demos/drawer/DrawerPlacement.demo";
 import drawerPlacementSource from "../demos/drawer/DrawerPlacement.demo.tsx?raw";
 import { DrawerPortalContainerDemo } from "../demos/drawer/DrawerPortalContainer.demo";
 import drawerPortalContainerSource from "../demos/drawer/DrawerPortalContainer.demo.tsx?raw";
+import { DrawerSlotMotionGalleryDemo } from "../demos/drawer/slotMotion/gallery";
+import { DrawerMotionControllerGalleryDemo } from "../demos/drawer/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -62,16 +52,15 @@ export function DrawerShowcase() {
         <ShowcaseDemoFromFile Demo={DrawerGlossDemo} source={drawerGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: default slide, instant panel, title stagger, headingBlock, bounce factory.">
+        <DrawerSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — default slide, instant panel, title stagger, headingBlock, bounce factory."
+        title="MotionController"
+        description="Handle on Drawer.Panel (portal host). play() skips — use playSlot(&quot;panel&quot;). Panel stays open in a contained portal."
       >
-        <ShowcaseDemoFromFile Demo={DrawerMotionDefaultDemo} source={drawerMotionDefaultSource} />
-        <ShowcaseDemoFromFile Demo={DrawerMotionInstantPanelDemo} source={drawerMotionInstantPanelSource} />
-        <ShowcaseDemoFromFile Demo={DrawerMotionTitleStaggerDemo} source={drawerMotionTitleStaggerSource} />
-        <ShowcaseDemoFromFile Demo={DrawerMotionBodyStaggerDemo} source={drawerMotionBodyStaggerSource} />
-        <ShowcaseDemoFromFile Demo={DrawerMotionHeadingBlockDemo} source={drawerMotionHeadingBlockSource} />
-        <ShowcaseDemoFromFile Demo={DrawerMotionBounceSlideDemo} source={drawerMotionBounceSlideSource} />
+        <DrawerMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

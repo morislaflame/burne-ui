@@ -20,16 +20,8 @@ import { TextAreaSupportTicketDemo } from "../demos/textarea/TextAreaSupportTick
 import textAreaSupportTicketSource from "../demos/textarea/TextAreaSupportTicket.demo.tsx?raw";
 import { TextAreaWithErrorDemo } from "../demos/textarea/TextAreaWithError.demo";
 import textAreaWithErrorSource from "../demos/textarea/TextAreaWithError.demo.tsx?raw";
-import { TextAreaMotionControlTintDemo } from "../demos/textarea/TextAreaMotionControlTint.demo";
-import textAreaMotionControlTintSource from "../demos/textarea/TextAreaMotionControlTint.demo.tsx?raw";
-import { TextAreaMotionHintEnterDemo } from "../demos/textarea/TextAreaMotionHintEnter.demo";
-import textAreaMotionHintEnterSource from "../demos/textarea/TextAreaMotionHintEnter.demo.tsx?raw";
-import { TextAreaMotionInstantHoverDemo } from "../demos/textarea/TextAreaMotionInstantHover.demo";
-import textAreaMotionInstantHoverSource from "../demos/textarea/TextAreaMotionInstantHover.demo.tsx?raw";
-import { TextAreaMotionResizePulseDemo } from "../demos/textarea/TextAreaMotionResizePulse.demo";
-import textAreaMotionResizePulseSource from "../demos/textarea/TextAreaMotionResizePulse.demo.tsx?raw";
-import { TextAreaMotionShellWaveDemo } from "../demos/textarea/TextAreaMotionShellWave.demo";
-import textAreaMotionShellWaveSource from "../demos/textarea/TextAreaMotionShellWave.demo.tsx?raw";
+import { TextAreaSlotMotionGalleryDemo } from "../demos/textarea/slotMotion/gallery";
+import { TextAreaMotionControllerGalleryDemo } from "../demos/textarea/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -73,15 +65,15 @@ export function TextAreaShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={TextAreaGlossDemo} source={textAreaGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor.">
+        <TextAreaSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor."
+        title="MotionController"
+        description="One gallery: playSlot on shell (no play: no root slot), chrome label on Root, cancel loop, area events."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionInstantHoverDemo} source={textAreaMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionShellWaveDemo} source={textAreaMotionShellWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionResizePulseDemo} source={textAreaMotionResizePulseSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionControlTintDemo} source={textAreaMotionControlTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionHintEnterDemo} source={textAreaMotionHintEnterSource} />
+        <TextAreaMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

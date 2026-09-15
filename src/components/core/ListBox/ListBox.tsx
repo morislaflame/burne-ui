@@ -64,6 +64,10 @@ export function ListBoxRoot({
   "aria-label": ariaLabelProp,
   "aria-labelledby": ariaLabelledByProp,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...rest
 }: ListBoxProps) {
   const { listId, contextValue, activeValue: resolvedActiveValue } =
@@ -90,7 +94,10 @@ export function ListBoxRoot({
     <ListBoxProvider value={contextValue}>
       <ListBoxActiveValueProvider value={resolvedActiveValue}>
         <ListBoxClassNamesProvider classNames={classNames}>
-          <ListBoxMotionProvider motion={motion} defaults={motionDefaults}>
+          <ListBoxMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <ListBoxRootShell
             listId={listId}
             variant={variant}

@@ -31,6 +31,10 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
     radius = "mid",
     children,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -42,7 +46,10 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
   const motionDefaults = useMemo(() => resolveSurfaceMotionDefaults(), []);
 
   return (
-    <SurfaceMotionProvider motion={motion} defaults={motionDefaults}>
+    <SurfaceMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <SurfaceSurface
         className={className}
         classNames={classNames}
@@ -103,6 +110,7 @@ function SurfaceSurface({
     | "radius"
     | "children"
     | "motion"
+    | "motionController"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"

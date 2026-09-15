@@ -1,6 +1,6 @@
 import type { ElementType, HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type TextVariant =
   | "accent-header"
@@ -33,6 +33,12 @@ export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
   /**
    * Per-slot motion (`root`). Defaults are empty — custom factories are opt-in.
    * `enter` runs on mount only when set.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<TextMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TextMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;

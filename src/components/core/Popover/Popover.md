@@ -54,7 +54,8 @@ const [open, setOpen] = useState(false);
 | `anchorRef` | trigger | Внешний anchor для positioning |
 | `shouldDismiss` | — | `(target) => boolean` — veto outside dismiss |
 | `classNames` | — | Слоты |
-| `motion` | — | Карта слотов. Root без portal DOM — хост `Popover.Content` |
+| `motion` | — | Карта слотов. Root без portal DOM — хост `Popover.Content`. `events` — app-команды |
+| `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `Popover.Content` |
 
 ### `Popover.Content` props
 
@@ -68,6 +69,7 @@ const [open, setOpen] = useState(false);
 | `unstyled` | `false` | Без padding частей / gap / minmax; radius + surface остаются |
 | `contentRole` | `dialog` | `dialog` \| `undefined` |
 | `motion` | — | Мерж с картой Root; defaults на Content |
+| `motionController` | — | Handle портального хоста (`content` / chrome). `play()` skip. `playSlot("content")` |
 
 ### Compound-подчасти
 
@@ -141,6 +143,35 @@ Nested `enter` — следующий кадр после host (`portalSurfaceEn
 `leave: false` — портал размонтируется сразу. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Motion-слот Title — `title`, хотя `classNames` зовут его `label`.
 
 **Где в коде:** типы — `popoverTypes.ts`; scope — `popoverContext.tsx`; defaults + host — `popoverAnimations.ts`; Content-provider — `popoverParts.tsx`; карта на корне — `Popover.tsx`.
+
+Проп `motionController` на **`Popover.Content`**. `play()` skip — нет `root`; `playSlot("content")`. `events` на Content (или Root — мерж). playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Popover, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "popover:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "popover:nudge")}>
+        Nudge
+      </Button>
+      <Popover open>
+        <Popover.Trigger asChild>
+          <Button size="small" variant="outline">Open</Button>
+        </Popover.Trigger>
+        <Popover.Content motionController={controller} motion={{ events }}>
+          <Popover.Title>Title</Popover.Title>
+        </Popover.Content>
+      </Popover>
+    </>
+  );
+}
+```
 
 ```tsx
 <Popover motion={{ content: { leave: false } }}>…</Popover>

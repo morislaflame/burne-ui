@@ -6,9 +6,12 @@ import { expect, screen } from "storybook/test";
 import { Text } from "@/components/core/Text";
 
 import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToColorString, hsvaToHex, type HSVA } from ".";
-import { ColorSwatchMotionDemo } from "../../../../playground/showcase/demos/colorPicker/ColorSwatchMotion.demo";
-import { ColorPickerMotionDemo } from "../../../../playground/showcase/demos/colorPicker/ColorPickerMotion.demo";
-import { ColorSliderMotionDemo } from "../../../../playground/showcase/demos/colorSlider/ColorSliderMotion.demo";
+import { ColorSwatchSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/colorPicker/colorSwatchSlotMotion/gallery";
+import { ColorPickerSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/colorPicker/slotMotion/gallery";
+import { ColorPickerMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/colorPicker/motionController/gallery";
+import { ColorSliderMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/colorSlider/motionController/gallery";
+import { ColorSliderSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/colorSlider/slotMotion/gallery";
+import { ColorSwatchMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/colorSwatch/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -421,15 +424,54 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ColorSwatchMotionDemo />,
+  render: () => <ColorSwatchSlotMotionGalleryDemo />,
 };
 
 export const ColorPickerSlotMotionGallery: Story = {
   name: "ColorPicker slot motion gallery",
-  render: () => <ColorPickerMotionDemo />,
+  render: () => <ColorPickerSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot(contentPanel) (no root), area slot, cancel loop, picker events. Panel stays `open`.",
+      },
+    },
+  },
+  render: () => <ColorPickerMotionControllerGalleryDemo />,
 };
 
 export const ColorSliderSlotMotionGallery: Story = {
   name: "ColorSlider slot motion gallery",
-  render: () => <ColorSliderMotionDemo />,
+  render: () => <ColorSliderSlotMotionGalleryDemo />,
+};
+
+export const ColorSliderMotionControllerGallery: Story = {
+  name: "ColorSlider MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — simple API forwards to Track (play() skip). Compound: handle on Root. Events merge into Track.",
+      },
+    },
+  },
+  render: () => <ColorSliderMotionControllerGalleryDemo />,
+};
+
+export const ColorSwatchMotionControllerGallery: Story = {
+  name: "ColorSwatch MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — interactive ColorSwatch (`onClick`) only. play() on root, cancel, swatch events, timeline.",
+      },
+    },
+  },
+  render: () => <ColorSwatchMotionControllerGalleryDemo />,
 };

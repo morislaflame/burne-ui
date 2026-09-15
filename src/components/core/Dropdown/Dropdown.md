@@ -78,7 +78,8 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `closeOnSelect` | `!multiple` | Закрывать после выбора |
 | `popoverVariant` | `default` | `default` \| `gloss` для panel |
 | `classNames` | — | Слоты |
-| `motion` | — | Главное меню: `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` (в Popover). Submenu: `subContent`. Trigger: `trigger` на Root (`pressSqueeze`). |
+| `motion` | — | Главное меню: `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` (в Popover). Submenu: `subContent`. Trigger: `trigger` на Root (`pressSqueeze`). `events` — app-команды |
+| `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `Dropdown.Popover`; submenu — на `Dropdown.SubContent` |
 
 ### `DropdownClassNames`
 
@@ -152,6 +153,35 @@ Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popov
 ```
 
 Нет hover-lift на root wrapper. Item/sub row — CSS `hoverVariant`, не GSAP shadow.
+
+Проп `motionController` на **`Dropdown.Popover`** для меню (`content` / `item`). `play()` skip — нет `root`; `playSlot("content")` / `playSlot("item")`. Handle на Root — только `trigger`. Submenu — handle на `Dropdown.SubContent` (`playSlot("subContent")`). `events` на Popover (или Root — мерж). playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Dropdown, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "dropdown:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "dropdown:nudge")}>
+        Nudge
+      </Button>
+      <Dropdown open>
+        <Dropdown.Trigger asChild>
+          <Button size="small" variant="outline">Menu</Button>
+        </Dropdown.Trigger>
+        <Dropdown.Popover motionController={controller} motion={{ events }}>
+          <Dropdown.Item>Alpha</Dropdown.Item>
+        </Dropdown.Popover>
+      </Dropdown>
+    </>
+  );
+}
+```
 
 ### 1. Trigger open — press squeeze
 

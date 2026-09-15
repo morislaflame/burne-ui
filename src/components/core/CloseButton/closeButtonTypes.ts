@@ -2,7 +2,10 @@ import type { ButtonHTMLAttributes, KeyboardEvent, MutableRefObject, PointerEven
 import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type {
+  MotionController,
+  MotionMapWithEvents,
+  MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
 
 export type CloseButtonVariant =
   | "default"
@@ -40,8 +43,17 @@ export type CloseButtonProps = Omit<
   size?: CloseButtonSize;
   ripple?: boolean;
   classNames?: Prettify<CloseButtonClassNames>;
-  motion?: Prettify<CloseButtonMotion>;
-};
+  /**
+   * Per-slot motion (`root`, `icon`). Ripple is kit-internal.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   */
+  motion?: Prettify<MotionMapWithEvents<CloseButtonMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type CloseButtonClassNamesProviderProps = {
   classNames?: Prettify<CloseButtonClassNames>;
@@ -58,6 +70,7 @@ export type UseCloseButtonRootStateProps = Omit<
   | "onPointerOut"
   | "onKeyDown"
   | "motion"
+  | "motionController"
 >;
 
 export type UseCloseButtonAnimationsProps = {

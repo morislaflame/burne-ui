@@ -10,8 +10,8 @@ import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 
 import { Alert, type AlertSize, type AlertStatus, type AlertVariant } from ".";
-import { AlertMotionDemo } from "../../../../playground/showcase/demos/alert/AlertMotion.demo";
-import { AlertMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/alert/AlertMotionControllerGallery.demo";
+import { AlertSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/alert/slotMotion/gallery";
+import { AlertMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/alert/motionController/gallery";
 
 const ALERT_VARIANTS: AlertVariant[] = ["default", "outline", "secondary", "gloss"];
 
@@ -605,7 +605,7 @@ export const SlotMotionOrchestration: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery (color, parts, timeline)",
-  render: () => <AlertMotionDemo />,
+  render: () => <AlertSlotMotionGalleryDemo />,
 };
 
 export const SlotMotionController: Story = {

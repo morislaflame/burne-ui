@@ -7,7 +7,7 @@ import type {
   TooltipVariant,
 } from "@/components/core/Tooltip";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type AvatarSize = "small" | "base" | "mid" | "large";
 
@@ -63,9 +63,15 @@ export type AvatarProps = HTMLAttributes<HTMLDivElement> & {
   /**
    * Per-slot motion (`root`, `image`, `fallback`). Image fade: `enter` / `leave`.
    * Group item hover is `motion.groupItem` on `Avatar.Group`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<AvatarMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<AvatarMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseAvatarRootStateProps = Pick<
   AvatarProps,

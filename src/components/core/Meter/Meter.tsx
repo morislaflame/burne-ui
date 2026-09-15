@@ -56,6 +56,10 @@ export function MeterRoot({
   color,
   formatValue,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
   ...divRest
 }: MeterProps) {
   const state = useMeterRootState({
@@ -85,14 +89,20 @@ export function MeterRoot({
       valueText={state.valueText}
       hint={state.hint}
       error={state.error}
-      trackProps={state.trackProps}
+      trackProps={{ ...state.trackProps, motionController, motionState, motionPayload, playInitialState }}
     />
   );
 
   return (
     <MeterFieldProvider value={state.fieldCtx}>
       <MeterClassNamesProvider classNames={classNames}>
-        <MeterMotionProvider motion={motion}>
+        <MeterMotionProvider
+          motion={motion}
+          controller={state.isCompound ? motionController : undefined}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               id={state.meterId}

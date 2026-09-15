@@ -42,7 +42,7 @@ export type {
 export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
 
 export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
-  { variant: variantProp = "default", className, classNames, children, motion, ...rest },
+  { variant: variantProp = "default", className, classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const { variant, isGloss } = useTableRootState({ variant: variantProp });
@@ -51,7 +51,10 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
   return (
     <TableVariantProvider variant={variant}>
       <TableClassNamesProvider classNames={classNames}>
-        <TableMotionProvider motion={motion} defaults={motionDefaults}>
+        <TableMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <TableRootSurface
             forwardedRef={ref}
             isGloss={isGloss}
@@ -85,7 +88,7 @@ function TableRootSurface({
   slotClass?: string;
   glossClass?: string;
   className?: string;
-  rest: Omit<TableProps, "variant" | "className" | "classNames" | "children" | "motion">;
+  rest: Omit<TableProps, "variant" | "className" | "classNames" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
   children: TableProps["children"];
 }) {
   const {

@@ -18,6 +18,10 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
     orientation = "horizontal",
     className = "",
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -29,7 +33,10 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
   const motionDefaults = useMemo(() => resolveSeparatorMotionDefaults(), []);
 
   return (
-    <SeparatorMotionProvider motion={motion} defaults={motionDefaults}>
+    <SeparatorMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <SeparatorSurface
         orientation={orientation}
         className={className}
@@ -69,6 +76,7 @@ function SeparatorSurface({
     | "orientation"
     | "className"
     | "motion"
+    | "motionController"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"

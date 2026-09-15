@@ -11,7 +11,10 @@ import type { Prettify } from "@/utils/prettify";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type {
+  MotionController,
+  MotionMapWithEvents,
+  MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
 
 
 export type ToggleButtonSize = ComponentSize;
@@ -88,9 +91,15 @@ export type ToggleButtonProps = Omit<
    * Per-slot motion (`root`, `fill`, `content`, `label`, `iconStart`, `iconEnd`, `text`).
    * Root defaults: first-level lift + squeeze (gloss recipes when gloss).
    * Fill defaults: `selectionFill` on `check` / `uncheck`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<ToggleButtonMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<ToggleButtonMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type ToggleButtonFillProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ToggleButtonCheckMotion>;

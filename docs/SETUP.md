@@ -41,7 +41,7 @@ npm install burne-ui react-icons gsap
 
 `gsap` — **peer** (не бандлится в `dist`): одно инстанс в приложении, tree-shaking у потребителя. `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
 
-`CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin`). Kit motion recipes регистрируются из `runMotionPhase` (не полагаемся на tree-shake side-effect import). `sideEffects` включает CSS и `slotMotion/recipes/index.ts`.
+`CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin`). Kit motion recipes регистрируются лениво из `runMotionPhase` при первом play (нет top-level `registerKitMotionRecipes()`). `sideEffects` — только CSS.
 
 ---
 
@@ -514,7 +514,6 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
       enableHoverLift: true,
       enablePressSqueeze: true,
       enableRipple: true,
-      enableAsyncButtonCrossfade: true,
       enableProgressFill: true,
       enableLoadingDots: true,
       enableModalMotion: true,
@@ -534,7 +533,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 | Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
 | Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
 | Master kill-switch | `enableAnimations` — `false` отключает все feature-флаги одним ключом (`isMotionFeatureEnabled`) |
-| Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableAsyncButtonCrossfade`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableFeedbackExpand`, `enableProgressFill`, `enableLoadingDots`, `enableModalMotion`, `enableSwitchThumb`, `enableTabsIndicator`, `enablePaginationFlip`, `enableSelectionFill` |
+| Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableProgressFill`, `enableLoadingDots`, `enableModalMotion`, `enableSwitchThumb`, `enableTabsIndicator`, `enablePaginationFlip`, `enableSelectionFill` |
 
 Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа). Диапазоны валидации — **`MOTION_CONFIG_LIMITS`**.
 
@@ -564,7 +563,6 @@ configureMotion({
 | `MODAL_PANEL_SCALE_FROM` (`0.97`) | `modalSurfaceMotion.ts` | Стартовый scale панели модалки |
 | `RIPPLE_MIN_SCALE` (`0.12`) | `pressRipple.tsx` | Минимальный «core» converge-ripple |
 | `TOAST_STACK_PEEK_PX` / `SCALE_STEP` / `ENTRY_OFFSET_PX` | `toastAPI.ts` | Геометрия стека тостов |
-| `BUTTON_ASYNC_LAYER_SCALE` (0.92 / 0.85) | `buttonAnimations.ts` | Scale async-слоёв label/loader/success/error |
 | `GLOSS_DECOR` + `GLOSS_SHINE_*` | `glossInteractiveMotion.ts` | Траектории shine/conic gloss |
 
 ### Важно при live-theme builder
@@ -652,10 +650,10 @@ import { cn } from "burne-ui";
 - `storageKey` / `defaultTheme` у скрипта и у `BurneUIProvider` / `ThemeProvider` должны совпадать.
 - На `<html>` нужен `suppressHydrationWarning`.
 
-### На кнопке сразу видны loader, текст и крестик
+### Overlay-слои кнопки видны вместе с текстом
 
-- Типично для **SSR** со старым `burne-ui` без first-paint hide async-слоёв (Tailwind `invisible opacity-0` до `asyncMotionReady`) — обновите пакет.
-- Проверьте, что `enableAsyncButtonCrossfade` не отключён без альтернативного скрытия слоёв.
+- Simple API не монтирует `Button.Loader` / `Success` / `Error`. Если вы их ставили сами — CSS rest (`invisible opacity-0`) скрывает до `motion.states`.
+- В каждом режиме `createMotionStates` перечислите все overlay-слоты, иначе поза останется.
 
 ### Анимации не меняются после `configureMotion` / темы
 

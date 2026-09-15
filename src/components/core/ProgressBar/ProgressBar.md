@@ -55,7 +55,8 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 | `formatValue` | — | Текст value / `aria-valuetext` |
 | `showValue` | simple | Header value |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Карта слотов (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`). Fill: `progressFill` / `progressIndeterminate`. Chrome — Root scope; Track — nested fill host |
+| `motion` | — | Карта слотов (`track`, `fill`, `header`, `value`, `label`, `hint`, `error`). Fill: `progressFill` / `progressIndeterminate`. Chrome — Root scope; Track — nested fill host. `events` — app-команды `MotionController`, не DOM-слот |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Simple API: форвардится на Track. Compound: Root chrome; для fill — второй handle на `ProgressBar.Track` |
 
 ### `ProgressBarClassNames`
 
@@ -96,6 +97,32 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform / `scaleX`/`scaleY`, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Без `fill.enter` первый кадр — мгновенный scale (как раньше).
 
 `progressBarAnimations.ts` → `progressFill` / `progressIndeterminate`.
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("track", …)` / `playSlot("fill", …)`. Compound chrome — handle на Root (`playSlot("value")`); fill-хост — отдельный handle на `ProgressBar.Track`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`progress:nudge`, `progress:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("track", event)` (карта `events` с корня мержится в Track). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, ProgressBar, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "progress:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("track", "progress:nudge")}>
+        Nudge
+      </Button>
+      <ProgressBar label="Upload" showValue value={62} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **sheen** — блик `backgroundPosition` по fill из `track.enter` через `ctx.targets.fill`. Не `fill.enter` (enter на fill ведёт scale через `useBarFillMotion`). Не width / scaleX. Не в ките и не в MotionController.
 
 **DOM (determinate):**
 
@@ -276,4 +303,4 @@ ProgressBar/
 
 ## Storybook
 
-`Core Components/ProgressBar` — determinate, indeterminate, vertical, color, `classNames`.
+`Core Components/ProgressBar` — determinate, indeterminate, vertical, color, `classNames`, Slot motion, MotionController.

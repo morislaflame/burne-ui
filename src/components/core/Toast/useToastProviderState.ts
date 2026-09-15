@@ -65,6 +65,10 @@ export function useToastProviderState({
         loading: opts.loading ?? false,
         classNames: { ...providerClassNames, ...opts.classNames },
         motion: opts.motion,
+        motionController: opts.motionController,
+        motionState: opts.motionState,
+        motionPayload: opts.motionPayload,
+        playInitialState: opts.playInitialState,
       };
       setToasts((prev) => [...prev, entry]);
       announce(entry);
@@ -116,9 +120,9 @@ export function useToastProviderState({
 
   const sortedByPlacement = useCallback(
     (placement: ToastPlacement) =>
-      toasts
-        .filter((t) => t.placement === placement)
-        .toSorted((a, b) => b.createdAt - a.createdAt),
+      [...toasts.filter((t) => t.placement === placement)].sort(
+        (a, b) => b.createdAt - a.createdAt,
+      ),
     [toasts],
   );
 

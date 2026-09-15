@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
@@ -6,9 +6,8 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
-import { buttonAriaBusy } from "./buttonA11y";
 import { hasButtonCompoundChildren } from "./buttonAPI";
-import type { ButtonAsyncState, UseButtonRootStateProps } from "./buttonTypes";
+import type { UseButtonRootStateProps } from "./buttonTypes";
 import { BUTTON_BASE_INTERACTIVE_CLASS, BUTTON_CURSOR_CLASS, BUTTON_DISABLED_OPACITY_CLASS, BUTTON_STATUS_FOCUS_OUTLINE, buttonConvergeRippleColor, buttonLoaderTextClass, buttonRootClass, buttonSurfaceMotionClass } from "./buttonStyles";
 
 export function useButtonRootState({
@@ -16,10 +15,6 @@ export function useButtonRootState({
   status = "default",
   size: sizeProp,
   type = "button",
-  asyncState: asyncStateProp,
-  onAsyncStateChange,
-  onAsyncClick,
-  asyncFeedbackMs = 2000,
   disabled: disabledProp,
   icon,
   iconPosition = "start",
@@ -41,30 +36,7 @@ export function useButtonRootState({
   const variant = variantProp ?? groupCtx?.variant ?? "default";
   const userDisabled = Boolean(disabledProp ?? formCtx?.disabled ?? formCtx?.isSubmitting);
   const isGloss = variant === "gloss";
-
-  const [internalAsync, setInternalAsync] = useState<ButtonAsyncState>("idle");
-  const isControlled = asyncStateProp !== undefined;
-  const asyncState: ButtonAsyncState = isControlled ? asyncStateProp! : internalAsync;
-
-  const setUncontrolledAsync = useCallback(
-    (next: ButtonAsyncState) => {
-      setInternalAsync(next);
-      onAsyncStateChange?.(next);
-    },
-    [onAsyncStateChange],
-  );
-
-  const scheduleAsyncIdleReset = useCallback(() => {
-    window.setTimeout(() => {
-      setUncontrolledAsync("idle");
-    }, asyncFeedbackMs);
-  }, [asyncFeedbackMs, setUncontrolledAsync]);
-
-  const busy =
-    asyncState === "loading" ||
-    asyncState === "success" ||
-    asyncState === "error";
-  const blocked = userDisabled || busy;
+  const blocked = userDisabled;
 
   const sizeRounded = CONTROL_SIZE_LAYOUT[size].rounded;
   const roundingClass = groupSegment
@@ -103,7 +75,6 @@ export function useButtonRootState({
     status,
     ripple,
     blocked,
-    busy,
     userDisabled,
     isGloss,
     groupSegment,
@@ -111,9 +82,6 @@ export function useButtonRootState({
     buttonClass,
     convergeRippleColor,
     loaderTextClass,
-    asyncState,
-    isControlled,
-    internalAsync,
     icon,
     iconPosition,
     children,
@@ -121,9 +89,5 @@ export function useButtonRootState({
     isCompound,
     labelLayoutClass,
     onClick,
-    onAsyncClick,
-    setUncontrolledAsync,
-    scheduleAsyncIdleReset,
-    ariaBusy: buttonAriaBusy(asyncState),
   };
 }

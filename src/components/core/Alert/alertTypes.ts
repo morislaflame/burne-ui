@@ -3,7 +3,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
-import type { MotionController, MotionMapWithEvents, MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { ShadowLevel } from "@/tokens/shadows";
 
 export type AlertSize = MessageBannerSize;
@@ -55,6 +55,7 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
    * Per-slot motion (`root`, `indicator`, `title`, `description`, `action`).
    * `Alert.Message` / `Alert.Content` are `display: contents` and are not targets.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * `states` — app modes for `motionState` (not a DOM slot, not a phase).
    */
   motion?: Prettify<MotionMapWithEvents<AlertMotion>>;
   /**
@@ -75,7 +76,7 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
    * @default "base"
    */
   shadow?: ShadowLevel;
-};
+} & MotionStateHostProps;
 
 export type AlertContextValue = {
   variant: AlertVariant;

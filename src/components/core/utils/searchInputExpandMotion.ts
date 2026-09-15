@@ -1,6 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractiveFor, resolveMotionConfig, type MotionConfig } from "@/components/core/utils/motionConfig";
-import type { MotionTransformVars } from "@/components/core/utils/slotMotion/slotMotionTypes";
 
 export type SearchExpandMetrics = {
   targetW: number;
@@ -11,9 +10,8 @@ export type SearchExpandMetrics = {
   iconLeftCollapsedCss: string;
 };
 
-type FlipBox = { left: number; width: number };
-
-const shellFlipBox = new WeakMap<HTMLElement, FlipBox>();
+/** Last committed layout width — React may drop `w-control-*` before the recipe runs. */
+const lastShellWidth = new WeakMap<HTMLElement, number>();
 
 function shellHorizontalBorderPx(shellEl: HTMLElement): number {
   return shellEl.offsetWidth - shellEl.clientWidth;
@@ -26,12 +24,34 @@ export function iconLeftCollapsedPx(
   return (metrics.collapsedDim - borderPx - metrics.iconBox) / 2;
 }
 
-function readBox(el: HTMLElement, fallbackWidth: number): FlipBox {
-  const rect = el.getBoundingClientRect();
-  return {
-    left: rect.left,
-    width: rect.width > 0 ? rect.width : fallbackWidth,
-  };
+function recordShellWidth(el: HTMLElement, open: boolean, metrics: SearchExpandMetrics): void {
+  const w = el.getBoundingClientRect().width;
+  lastShellWidth.set(el, w > 0 ? w : open ? metrics.targetW : metrics.collapsedDim);
+}
+
+/**
+ * Prefer live inline width (mid-tween interrupt). If React already swapped
+ * collapsed `w-control-*` for auto, fall back to the last committed box.
+ */
+function readFromWidth(el: HTMLElement, open: boolean, metrics: SearchExpandMetrics): number {
+  const fallback = open ? metrics.collapsedDim : metrics.targetW;
+  const rectW = el.getBoundingClientRect().width;
+  if (el.style.width) {
+    const inline = Number.parseFloat(el.style.width);
+    if (Number.isFinite(inline) && inline > 0) return rectW > 0 ? rectW : inline;
+  }
+  const recorded = lastShellWidth.get(el);
+  if (recorded && recorded > 0) return recorded;
+  return rectW > 0 ? rectW : fallback;
+}
+
+/** Map current width onto the collapsed circle → expanded radius range. */
+export function searchShellRadiusForWidth(width: number, metrics: SearchExpandMetrics): number {
+  const span = metrics.targetW - metrics.collapsedDim;
+  const t = span > 0 ? (width - metrics.collapsedDim) / span : 0;
+  const clamped = Math.min(1, Math.max(0, t));
+  const collapsedR = metrics.collapsedDim / 2;
+  return collapsedR + clamped * (metrics.expandedRadius - collapsedR);
 }
 
 function applySearchShellLayout(el: HTMLElement, open: boolean, metrics: SearchExpandMetrics): void {
@@ -43,13 +63,13 @@ function applySearchShellLayout(el: HTMLElement, open: boolean, metrics: SearchE
   el.style.removeProperty("height");
 }
 
-function clearShellFlip(el: HTMLElement): void {
+function clearShellMotion(el: HTMLElement): void {
   gsap.set(el, {
     x: 0,
     y: 0,
     scaleX: 1,
     scaleY: 1,
-    clearProps: "transformOrigin,borderRadius",
+    clearProps: "transform,transformOrigin,borderRadius",
     force3D: false,
   });
 }
@@ -66,11 +86,7 @@ function applyIconLayout(
   iconEl.style.left = open ? `${metrics.padX}px` : metrics.iconLeftCollapsedCss;
 }
 
-function recordShellFlipBox(el: HTMLElement, open: boolean, metrics: SearchExpandMetrics): void {
-  shellFlipBox.set(el, readBox(el, open ? metrics.targetW : metrics.collapsedDim));
-}
-
-/** Layout snap only. Visual FLIP transforms are cleared. */
+/** Layout snap only. Visual transforms are cleared. */
 export function applySearchExpandInstant(
   el: HTMLElement,
   iconEl: HTMLElement | null,
@@ -80,8 +96,8 @@ export function applySearchExpandInstant(
   killMotion(el);
   if (iconEl) killMotion(iconEl);
   applySearchShellLayout(el, open, metrics);
-  clearShellFlip(el);
-  recordShellFlipBox(el, open, metrics);
+  clearShellMotion(el);
+  recordShellWidth(el, open, metrics);
   if (iconEl) {
     applyIconLayout(iconEl, open, metrics);
     clearIconFlip(iconEl);
@@ -89,8 +105,9 @@ export function applySearchExpandInstant(
 }
 
 /**
- * FLIP the shell from the last recorded visual box (handles right-aligned toolbars).
- * Layout width snaps; visual interpolation is `x` + `scaleX` from the top-left.
+ * Layout exception: tween shell `width` + `borderRadius` (not `scaleX`).
+ * `scaleX` on `rounded-full` turns the pill into an ellipse and stretches the icon.
+ * Right-aligned toolbars grow through layout (`flex-end` / `ml-auto`) — no FLIP `x`.
  */
 export function animateSearchShellExpand(
   el: HTMLElement,
@@ -98,51 +115,43 @@ export function animateSearchShellExpand(
   metrics: SearchExpandMetrics,
   config?: Readonly<MotionConfig>,
 ): gsap.core.Tween {
-  const fallbackFromW = open ? metrics.collapsedDim : metrics.targetW;
-  const first = shellFlipBox.get(el) ?? readBox(el, fallbackFromW);
-  killMotion(el);
-  applySearchShellLayout(el, open, metrics);
-  const last = readBox(el, open ? metrics.targetW : metrics.collapsedDim);
-  shellFlipBox.set(el, last);
-
-  const dx = first.left - last.left;
-  const sx = last.width > 0 ? first.width / last.width : 1;
-  const fromRadius = open ? metrics.collapsedDim / 2 : metrics.expandedRadius;
+  const fromW = readFromWidth(el, open, metrics);
+  const toW = open ? metrics.targetW : metrics.collapsedDim;
+  const fromRadius = searchShellRadiusForWidth(fromW, metrics);
   const toRadius = open ? metrics.expandedRadius : metrics.collapsedDim / 2;
   const vars = motionInteractiveFor(resolveMotionConfig(config));
 
+  killMotion(el);
   gsap.set(el, {
-    x: dx,
-    y: 0,
-    scaleX: sx,
-    scaleY: 1,
-    borderRadius: fromRadius,
-    transformOrigin: "0 0",
-    force3D: false,
-  });
-
-  const to: MotionTransformVars = {
     x: 0,
+    y: 0,
     scaleX: 1,
-    duration: vars.duration,
-    ease: vars.ease,
-  };
-
-  return gsap.to(el, {
-    ...to,
-    borderRadius: toRadius,
-    overwrite: "auto",
+    scaleY: 1,
     force3D: false,
-    onComplete: () => {
-      clearShellFlip(el);
-      recordShellFlipBox(el, open, metrics);
-    },
   });
+
+  return gsap.fromTo(
+    el,
+    { width: fromW, borderRadius: fromRadius },
+    {
+      width: toW,
+      borderRadius: toRadius,
+      duration: vars.duration,
+      ease: vars.ease,
+      overwrite: "auto",
+      force3D: false,
+      onComplete: () => {
+        applySearchShellLayout(el, open, metrics);
+        clearShellMotion(el);
+        recordShellWidth(el, open, metrics);
+      },
+    },
+  );
 }
 
 /**
- * FLIP the icon in parent space: layout `left` snaps, visual `x`.
- * `scaleX` counters the parent shell FLIP so the glyph is not stretched.
+ * Layout `left` snaps; visual interpolation is `x` only (no `scaleX` —
+ * the shell no longer scales, so a counter-scale would stretch the glyph).
  */
 export function animateSearchIconShift(
   iconEl: HTMLElement,
@@ -151,27 +160,20 @@ export function animateSearchIconShift(
   metrics: SearchExpandMetrics,
   config?: Readonly<MotionConfig>,
 ): gsap.core.Tween {
-  const parentSx = Number(gsap.getProperty(shellEl, "scaleX")) || 1;
   const borderPx = shellHorizontalBorderPx(shellEl);
   const fromLeft = open ? iconLeftCollapsedPx(metrics, borderPx) : metrics.padX;
   const toLeft = open ? metrics.padX : iconLeftCollapsedPx(metrics, borderPx);
   const x0 = fromLeft - toLeft;
-  const counterSx = parentSx > 0 ? 1 / parentSx : 1;
   const vars = motionInteractiveFor(resolveMotionConfig(config));
 
   killMotion(iconEl);
   applyIconLayout(iconEl, open, metrics);
-  gsap.set(iconEl, { x: x0, scaleX: counterSx, force3D: false });
-
-  const to: MotionTransformVars = {
-    x: 0,
-    scaleX: 1,
-    duration: vars.duration,
-    ease: vars.ease,
-  };
+  gsap.set(iconEl, { x: x0, scaleX: 1, force3D: false });
 
   return gsap.to(iconEl, {
-    ...to,
+    x: 0,
+    duration: vars.duration,
+    ease: vars.ease,
     overwrite: "auto",
     force3D: false,
     onComplete: () => {

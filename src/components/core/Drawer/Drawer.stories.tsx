@@ -13,7 +13,8 @@ import {
 
 import { Drawer, type DrawerPlacement, type DrawerExtent } from ".";
 import { useDrawer } from "./drawerContext";
-import { DrawerMotionDemo } from "../../../../playground/showcase/demos/drawer/DrawerMotion.demo";
+import { DrawerSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/drawer/slotMotion/gallery";
+import { DrawerMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/drawer/motionController/gallery";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -706,5 +707,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <DrawerMotionDemo />,
+  render: () => <DrawerSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `Drawer.Panel` — `playSlot(\"panel\")`. `play()` skips (no `root`). Panel stays open in a contained portal.",
+      },
+    },
+  },
+  render: () => <DrawerMotionControllerGalleryDemo />,
 };

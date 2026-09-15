@@ -50,7 +50,8 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
 | `icon` | — | Кастомный mark (приоритет над check/dot) |
 | `className` | — | Мержится в **root** |
 | `classNames` | — | `root`, `fill`, `mark` |
-| `motion` | — | `root` / `fill` / `mark` (`check` / `uncheck`) |
+| `motion` | — | `root` / `fill` / `mark` (`check` / `uncheck`). `events` — app-команды `MotionController` |
+| `motionController` | — | Handle на этом scope. Checkbox / Radio — embedder: **не** вешать handle на них |
 
 ### `SelectionIndicatorClassNames`
 
@@ -115,6 +116,30 @@ CSS-переменные: `--selection-indicator-xsmall` … `--selection-indica
 | `root` | `check` / `uncheck` | нет (shell зарегистрирован; Checkbox `indicator` → `root`) |
 | `fill` | `check` / `uncheck` | `selectionFill` |
 | `mark` | `check` / `uncheck` | `selectionMark` |
+
+Есть слот `root`: `play()` / `playSlot("fill")` / `playAll`. Фазы слотов — `check` / `uncheck`, не hover.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`indicator:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, SelectionIndicator, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "indicator:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("indicator:nudge")}>
+        Nudge
+      </Button>
+      <SelectionIndicator selected check motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 Часть побеждает слот корня. `false` отключает дефолт. Factory: `(ctx) => gsap.to(ctx.el, …)`.
 

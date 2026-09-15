@@ -9,7 +9,7 @@ import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import {
@@ -538,15 +538,24 @@ DrawerTrigger.displayName = "Drawer.Trigger";
 // ─── Drawer.Panel ─────────────────────────────────────────────────────────────
 
 export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
-  function DrawerPanel({ motion, ...props }, forwardedRef) {
+  function DrawerPanel({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
     const parentScope = useOptionalDrawerMotionScope();
     const { placement } = useDrawer();
-    const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const siblings = mergeMotionRootSiblings(
+      { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+      motion,
+    );
+    const merged = { ...mergedSlots, ...siblings };
     return (
       <DrawerMotionProvider
         motion={merged}
         defaults={DRAWER_MOTION_DEFAULTS}
         params={{ placement }}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
       >
         <DrawerPanelHost {...props} forwardedRef={forwardedRef} />
       </DrawerMotionProvider>
@@ -566,7 +575,7 @@ function DrawerPanelHost({
   children,
   forwardedRef,
   ...rest
-}: Omit<DrawerPanelProps, "motion"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
+}: Omit<DrawerPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
   const baseCtx = useDrawer();
   const {
     open,

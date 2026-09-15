@@ -13,8 +13,8 @@ import { Text } from "@/components/core/Text";
 import { Card, type CardSize, type CardVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/mockImages";
 import { IoArrowForward, IoTimeOutline } from "react-icons/io5";
-import { CardMotionDemo } from "../../../../playground/showcase/demos/card/CardMotion.demo";
-import { CardMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/card/CardMotionControllerGallery.demo";
+import { CardSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/card/slotMotion/gallery";
+import { CardMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/card/motionController/gallery";
 
 const CARD_SIZES: CardSize[] = ["small", "base", "mid", "large"];
 
@@ -853,7 +853,7 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <CardMotionDemo />,
+  render: () => <CardSlotMotionGalleryDemo />,
 };
 
 export const MotionControllerGallery: Story = {

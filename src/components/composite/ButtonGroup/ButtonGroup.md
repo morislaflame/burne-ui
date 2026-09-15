@@ -57,6 +57,8 @@ Compound part: `ButtonGroup.Text`.
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` \| `primary` |
 | `className` | — | На root `<div role="group">` |
 | `classNames` | — | Слоты: `root`, `separator`, `text`, `textLabel` |
+| `motion` | — | Per-slot (`root`, `text`). `events` — app-команды `MotionController`, не DOM-слот |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 | `children` | — | Сегменты |
 
 `status` на группе нет — на дочерних `Button`.
@@ -76,6 +78,7 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 | `buttonSize` | Высота frame (из context или prop) |
 | `groupSegment` | Override позиции сегмента |
 | `className` | На span-оболочку |
+| `motion` | Per-slot `text` (enter / pointer). Дефолты empty |
 | `children` | Текст (через `Text`) |
 
 ### Auto-detect сегментов
@@ -122,6 +125,33 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
+Проп `motionController` + ключ `events` на `motion` — app-команды (`toolbar:nudge`), не фазы. `createMotionEvents`. `play` ищет слот `root`; `playSlot("text")` — подпись. `waitForComplete` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, ButtonGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "toolbar:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("toolbar:nudge")}>
+        Nudge
+      </Button>
+      <ButtonGroup aria-label="Edit" motionController={controller} motion={{ events }}>
+        <ButtonGroup.Text>Edit</ButtonGroup.Text>
+        <Button>Cut</Button>
+        <Button>Copy</Button>
+      </ButtonGroup>
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **ScrambleText** — decode подписи `ButtonGroup.Text` (`chars: "01"`). Не в ките и не в MotionController.
 
 `buttonGroupAnimations.ts` играет opt-in `enter` на `root` / `text`. Motion сегментов по-прежнему на детях.
 
@@ -146,7 +176,7 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 
 ### ButtonGroup.Text
 
-Статичный span — **без** GSAP.
+Слот `text` — opt-in `enter` / pointer через `motion` на корне или на `ButtonGroup.Text`. Дефолты empty: без пропа подпись статична.
 
 #### Кастомизация
 
@@ -161,8 +191,8 @@ configureMotion({
 
 ### Чего нет
 
-- Group-level enter/exit
-- Собственные GSAP-хуки в composite
+- Дефолтного group enter/exit (empty defaults; opt-in)
+- ScrambleText / сырой GSAP в ките — только demo Slot motion
 
 ### Сводка: что настраивается где
 
@@ -170,7 +200,7 @@ configureMotion({
 |----------|---------|---------------------------|----------------|
 | Button squeeze | `useFirstLevelInteractiveMotion` | `pressSqueezeScale` | `groupSegment` |
 | Input shell | field shell utils | hover tokens | `groupSegment` |
-| ButtonGroup.Text | — | — | static |
+| ButtonGroup.Text | slot motion `text` | — | `motion` / `ButtonGroup.Text motion` |
 
 ## Токены и CSS
 

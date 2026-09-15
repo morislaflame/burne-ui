@@ -47,6 +47,10 @@ export function ColorPickerRoot({
   disabled = false,
   classNames,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: ColorPickerProps) {
   const { contextValue } = useColorPickerRootState({
     value,
@@ -60,7 +64,10 @@ export function ColorPickerRoot({
   return (
     <ColorPickerProvider value={contextValue}>
       <ColorPickerClassNamesProvider classNames={classNames}>
-        <ColorPickerMotionProvider motion={motion} defaults={motionDefaults}>
+        <ColorPickerMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <Popover
             open={openProp}
             defaultOpen={defaultOpen}

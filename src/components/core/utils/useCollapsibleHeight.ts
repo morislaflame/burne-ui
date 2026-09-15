@@ -5,8 +5,18 @@ import { isMotionFeatureEnabledFor, motionExpandFor, resolveMotionConfig, type M
 import { useMotionConfig } from "./motionConfigContext";
 import { prefersReducedMotion, usePrefersReducedMotion } from "./reducedMotion";
 
-/** Content wrapper height (padding + child borders; no margin collapse). Snapshot before the tween — do not pass as a GSAP function value. */
+/**
+ * In-flow layout height of the content wrapper (padding + child borders).
+ * Snapshot before the tween — do not pass as a GSAP function value.
+ *
+ * Prefer `offsetHeight` over `scrollHeight`: transformed descendants
+ * (`motion.body` `y`) inflate scrollable overflow, so the shell overshoots and
+ * snaps when the transform settles. `scrollHeight` is only a fallback when the
+ * shell has already clipped the inner to 0.
+ */
 export function measureCollapsibleContentHeight(inner: HTMLElement): number {
+  const layout = inner.offsetHeight;
+  if (layout > 0) return layout;
   return inner.scrollHeight;
 }
 

@@ -51,7 +51,8 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 | `danger` | `false` | Красный label text |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`) |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`). `events` — app-команды |
+| `motionController` | — | Simple API: форвардится на SelectionIndicator. Compound: Root chrome (`label` / `hint` / `error`); Indicator — второй handle |
 
 Повторный клик по выбранному radio **снимает выбор** (если не `required` и не required-группа).
 
@@ -114,6 +115,30 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 `Radio.Indicator` → `SelectionIndicator` с `dot` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Radio прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Radio.Indicator` / `.Fill` / `.Mark`.
 
 **Где в коде:** карта слотов — `radioAnimations.ts` (`RADIO_MOTION_SLOT_MAP`, `resolveRadioIndicatorMotion`); scope chrome — `radioContext.tsx` (`label` / `hint` / `error`); host fill/mark — `selectionIndicatorAnimations.ts`.
+
+Simple API — `motionController` форвардится в SelectionIndicator: `play()` играет слот `root`, `playSlot("fill")`. Compound chrome — handle на Root (`playSlot("label")`); индикатор — отдельный handle на `Radio.Indicator`. Явный `<Radio.Indicator motionController>` побеждает форвард с корня.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`radio:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("root", event)`. playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Radio, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "radio:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("root", "radio:nudge")}>
+        Nudge
+      </Button>
+      <Radio name="plan" value="pro" label="Pro" defaultChecked motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 ```tsx
 <Radio

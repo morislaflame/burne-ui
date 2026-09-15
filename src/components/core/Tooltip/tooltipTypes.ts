@@ -8,7 +8,7 @@ import type { Prettify } from "@/utils/prettify";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { TooltipSide } from "./tooltipPosition";
 
@@ -44,7 +44,7 @@ export type TooltipPartMotion = TooltipLifecycleMotion & {
 };
 
 export type TooltipMotion = {
-  content?: TooltipLifecycleMotion;
+  content?: TooltipPartMotion;
   title?: TooltipPartMotion;
   description?: TooltipPartMotion;
   indicator?: TooltipPartMotion;
@@ -61,6 +61,9 @@ export type TooltipProps = {
   side?: TooltipSide;
   icon?: ReactNode;
   showIcon?: boolean;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<TooltipClassNames>;
@@ -68,9 +71,10 @@ export type TooltipProps = {
    * Per-slot motion. Root has no portal DOM — the host is `Tooltip.Content`.
    * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`.
    * Nested `title` / `description` / `indicator` / `arrow` / `panel` are broadcast on enter/leave.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<TooltipMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TooltipMotion>>;
+} & MotionStateHostProps;
 
 export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
   /** Merge props onto the single child (Button, etc.) instead of wrapping in `<span>`. */
@@ -82,8 +86,13 @@ export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   offset?: number;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  motion?: Prettify<TooltipMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TooltipMotion>>;
+  /**
+   * Handle for the portal host (`content`, `panel`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("content")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<TooltipPartMotion>;

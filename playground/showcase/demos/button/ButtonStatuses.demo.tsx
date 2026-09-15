@@ -19,7 +19,7 @@ const BUTTON_STATUSES: ButtonStatus[] = [
 
 export function ButtonStatusesDemo() {
   return (
-    <div className="flex w-full flex-col gap-2xlarge">
+    <div className="flex flex-col gap-2xlarge">
       {BUTTON_STATUSES.map((status) => (
         <div key={status} className="flex flex-col gap-base">
           <span className="text-xsmall font-w-mid uppercase tracking-wide text-muted">

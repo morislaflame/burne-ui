@@ -48,7 +48,8 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 | `rows` | `1` | Нативные rows |
 | `resizable` | `true` | Drag-handle в углу |
 | `classNames` | — | `root`, `shell`, `control`, `resizeHandle`, … |
-| `motion` | — | Карта слотов на Root / simple API; на `TextArea.Control` — part motion `shell` |
+| `motion` | — | Root / simple: карта слотов + `events`. На `TextArea.Control` — part motion слота `shell` |
+| `motionController` | — | Simple: форвардится на Control (хост `shell`). Compound: Root chrome; для shell — второй handle на `TextArea.Control`. Не на DOM |
 
 ### `TextAreaClassNames`
 
@@ -90,6 +91,30 @@ Press на shell не стартует, если target внутри `[data-text
 ```
 
 Compound: `motion` на `TextArea.Control` — part motion слота `shell`. На `TextArea.Label` / `Hint` / `Error` — chrome Root scope.
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("resizeHandle", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `TextArea.Control`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`area:nudge`, `area:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в Control). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, TextArea, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "area:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "area:nudge")}>
+        Nudge
+      </Button>
+      <TextArea label="Note" placeholder="Write a note…" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 ### Кастомизация
 
@@ -214,4 +239,4 @@ TextArea/
 
 ## Storybook
 
-`Core Components/TextArea` — simple/compound, resizable, gloss, status, `classNames`, slot motion gallery.
+`Core Components/TextArea` — simple/compound, resizable, gloss, status, `classNames`, Slot motion, MotionController.

@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type {
   ExpandableContentProps,
@@ -32,9 +33,7 @@ export type AccordionClassNames = {
   body?: string;
 };
 
-export type AccordionMotion = ExpandableMotion & {
-  body?: ExpandableLifecycleMotion;
-};
+export type AccordionMotion = ExpandableMotion;
 export type AccordionLifecycleMotion = ExpandableLifecycleMotion;
 export type AccordionTriggerLiftMotion = ExpandableTriggerLiftMotion;
 
@@ -49,10 +48,12 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "
   size?: ExpandableSize;
   classNames?: Prettify<AccordionClassNames>;
   /**
-   * Per-slot motion forwarded to each Item's Expandable, plus Accordion-only `body`.
-   * Item `motion` overrides the same slots. `Accordion.Heading` is not a slot.
+   * Per-slot motion forwarded to each Item's Expandable (including `body` on the
+   * Panel `<section>`). Item `motion` overrides the same slots. `Accordion.Heading`
+   * is not a slot. `Accordion.Body` is optional muted text, not a motion slot.
+   * `events` — namespaced app commands; each Item is its own Expandable scope.
    */
-  motion?: Prettify<AccordionMotion>;
+  motion?: Prettify<MotionMapWithEvents<AccordionMotion>>;
   children?: ReactNode;
 };
 
@@ -63,9 +64,14 @@ export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"
   /** Locally overrides slots inherited from the root (merged like `Breadcrumbs.List`). */
   classNames?: Prettify<AccordionClassNames>;
   /** Overrides root `motion` for this item (merged like `classNames`). */
-  motion?: Prettify<AccordionMotion>;
+  motion?: Prettify<MotionMapWithEvents<AccordionMotion>>;
+  /**
+   * Handle for this Item's Expandable scope. Accordion has no group scope —
+   * one handle → one Item. Not placed on the DOM.
+   */
+  motionController?: MotionController;
   children?: ReactNode;
-};
+} & MotionStateHostProps;
 
 export type AccordionHeadingProps = HTMLAttributes<HTMLHeadingElement>;
 
@@ -90,9 +96,7 @@ export type AccordionPanelProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AccordionLifecycleMotion>;
 };
 
-export type AccordionBodyProps = HTMLAttributes<HTMLDivElement> & {
-  motion?: Prettify<AccordionLifecycleMotion>;
-};
+export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
 
 export type AccordionContextValue = {
   value: string | null;
@@ -100,7 +104,7 @@ export type AccordionContextValue = {
   /** Stable auto-id for an Item without explicit `value` (call once per Item mount). */
   allocateAutoItemId: () => string;
   size: ExpandableSize;
-  motion?: AccordionMotion;
+  motion?: MotionMapWithEvents<AccordionMotion>;
 };
 
 export type AccordionClassNamesProviderProps = {

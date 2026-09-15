@@ -1,7 +1,7 @@
 import { ButtonAsChildDemo } from "../demos/button/ButtonAsChild.demo";
 import buttonAsChildSource from "../demos/button/ButtonAsChild.demo.tsx?raw";
-import { ButtonAsyncClickDemo } from "../demos/button/ButtonAsyncClick.demo";
-import buttonAsyncClickSource from "../demos/button/ButtonAsyncClick.demo.tsx?raw";
+import { ButtonMotionStateSaveDemo } from "../demos/button/ButtonMotionStateSave.demo";
+import buttonMotionStateSaveSource from "../demos/button/ButtonMotionStateSave.demo.tsx?raw";
 import { ButtonCtaCardDemo } from "../demos/button/ButtonCtaCard.demo";
 import buttonCtaCardSource from "../demos/button/ButtonCtaCard.demo.tsx?raw";
 import { ButtonDangerBannerDemo } from "../demos/button/ButtonDangerBanner.demo";
@@ -10,24 +10,14 @@ import { ButtonFabClusterDemo } from "../demos/button/ButtonFabCluster.demo";
 import buttonFabClusterSource from "../demos/button/ButtonFabCluster.demo.tsx?raw";
 import { ButtonGlossDemo } from "../demos/button/ButtonGloss.demo";
 import buttonGlossSource from "../demos/button/ButtonGloss.demo.tsx?raw";
-import { ButtonMotionCompoundPartsDemo } from "../demos/button/ButtonMotionCompoundParts.demo";
-import buttonMotionCompoundPartsSource from "../demos/button/ButtonMotionCompoundParts.demo.tsx?raw";
-import { ButtonMotionDefaultDemo } from "../demos/button/ButtonMotionDefault.demo";
-import buttonMotionDefaultSource from "../demos/button/ButtonMotionDefault.demo.tsx?raw";
-import { ButtonMotionHoverYDemo } from "../demos/button/ButtonMotionHoverY.demo";
-import buttonMotionHoverYSource from "../demos/button/ButtonMotionHoverY.demo.tsx?raw";
-import { ButtonMotionIconColorDemo } from "../demos/button/ButtonMotionIconColor.demo";
-import buttonMotionIconColorSource from "../demos/button/ButtonMotionIconColor.demo.tsx?raw";
-import { ButtonMotionNoPressDemo } from "../demos/button/ButtonMotionNoPress.demo";
-import buttonMotionNoPressSource from "../demos/button/ButtonMotionNoPress.demo.tsx?raw";
-import { ButtonMotionWiggleDemo } from "../demos/button/ButtonMotionWiggle.demo";
-import buttonMotionWiggleSource from "../demos/button/ButtonMotionWiggle.demo.tsx?raw";
+import { ButtonMotionControllerGalleryDemo } from "../demos/button/motionController/gallery";
 import { ButtonSizesDemo } from "../demos/button/ButtonSizes.demo";
 import buttonSizesSource from "../demos/button/ButtonSizes.demo.tsx?raw";
 import { ButtonStatusesDemo } from "../demos/button/ButtonStatuses.demo";
 import buttonStatusesSource from "../demos/button/ButtonStatuses.demo.tsx?raw";
 import { ButtonVariantsDemo } from "../demos/button/ButtonVariants.demo";
 import buttonVariantsSource from "../demos/button/ButtonVariants.demo.tsx?raw";
+import { ButtonSlotMotionGalleryDemo } from "../demos/button/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -37,7 +27,7 @@ export function ButtonShowcase() {
   return (
     <ShowcasePage
       title="Button"
-      description="Main action button: fill options, sizes, statuses, icons, gloss and asynchronous click."
+      description="Main action button: fill options, sizes, statuses, icons, gloss and motionState save."
       importPath='import { Button } from "@/components/core/Button";'
       tags={["core", "actions"]}
     >
@@ -60,23 +50,22 @@ export function ButtonShowcase() {
         <ShowcaseDemoFromFile Demo={ButtonGlossDemo} source={buttonGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — disable a phase, vars, factory, or motion + classNames."
-      >
-        <ShowcaseDemoFromFile Demo={ButtonMotionDefaultDemo} source={buttonMotionDefaultSource} />
-        <ShowcaseDemoFromFile Demo={ButtonMotionNoPressDemo} source={buttonMotionNoPressSource} />
-        <ShowcaseDemoFromFile Demo={ButtonMotionHoverYDemo} source={buttonMotionHoverYSource} />
-        <ShowcaseDemoFromFile Demo={ButtonMotionWiggleDemo} source={buttonMotionWiggleSource} />
-        <ShowcaseDemoFromFile Demo={ButtonMotionIconColorDemo} source={buttonMotionIconColorSource} />
-        <ShowcaseDemoFromFile Demo={ButtonMotionCompoundPartsDemo} source={buttonMotionCompoundPartsSource} />
+      <ShowcaseSection title="Slot motion" description="One gallery: disable a phase, vars, factory, or motion + classNames.">
+        <ButtonSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Asynchronous click"
-        description="onAsyncClick returns Promise; ripple and state loading/success/error."
+        title="MotionController"
+        description="One gallery: playSlot / set, playAll stagger on icon + text, ping, async save, waitForComplete."
       >
-        <ShowcaseDemoFromFile Demo={ButtonAsyncClickDemo} source={buttonAsyncClickSource} />
+        <ButtonMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="motionState save"
+        description="App owns idle → loading → success/error. Compound Loader / Success / Error + createMotionStates."
+      >
+        <ShowcaseDemoFromFile Demo={ButtonMotionStateSaveDemo} source={buttonMotionStateSaveSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -102,7 +91,7 @@ export function ButtonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, status, icon, iconOnly, ripple, onAsyncClick, disabled, asChild, variant gloss."
+            description="variant, size, status, icon, iconOnly, ripple, disabled, asChild, variant gloss, motionState."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Ripple">

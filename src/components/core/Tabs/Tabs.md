@@ -47,14 +47,15 @@ const [tab, setTab] = useState("profile");
 | `disabled` | `false` | Отключает всю группу |
 | `className` | — | На root `<div>` |
 | `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Tabs.Tab` / `Tabs.Panel` |
 
 ### Compound-подчасти
 
 | Часть | Назначение |
 |-------|------------|
 | `Tabs.List` | `role="tablist"`, indicator, keyboard nav |
-| `Tabs.Tab` | Кнопка вкладки; `value`, `asChild`, `disabled` |
-| `Tabs.Panel` | `role="tabpanel"`, `value` |
+| `Tabs.Tab` | Кнопка вкладки; `value`, `asChild`, `disabled`; вложенный motion scope (`motionController`, `playSlot("tab")`) |
+| `Tabs.Panel` | `role="tabpanel"`, `value`; вложенный motion scope (`motionController`, `playSlot("panel")`) |
 
 ### `TabsClassNames`
 
@@ -131,6 +132,35 @@ configureMotion({
 | `panel` | `enter` / `leave` | empty (opt-in) |
 
 Каждый Tab / Panel — nested Provider. `tab` / `tabText` `enter` — opt-in mount; selection — `check` / `uncheck` (`skipFirst`). `panel` `enter` / `leave` — видимость панели, не selection вкладки. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in. Смена вкладки во время `panel.leave` отменяет run (`cancelled`) и не оставляет панель в leaving.
+
+`play()` ищет слот `root` у Tabs. `playSlot("list")` / `playAll` — chrome (`root` / `list`), не nested Tab/Panel. `Tabs.Tab` и `Tabs.Panel` создают **вложенный** scope: свой `motionController`, `playSlot("tab")` / `playSlot("tabText")` / `playSlot("panel")` (своего `root` нет). Один handle ≠ два scope. Indicator FLIP не слот.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`tabs:nudge`, `tabs:kick`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Tabs.List`) видит Tabs; внутри Tab/Panel — их nested scope.
+
+```tsx
+import { Button, Tabs, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "tabs:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("tabs:nudge")}>
+        Nudge
+      </Button>
+      <Tabs defaultValue="one" motionController={controller} motion={{ events }}>
+        <Tabs.List>
+          <Tabs.Tab value="one">One</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="one">Panel</Tabs.Panel>
+      </Tabs>
+    </>
+  );
+}
+```
 
 `asChild` на Tab — нет внутреннего `tabText` слота.
 

@@ -8,18 +8,6 @@ import { TooltipClassNamesFullDemo, TooltipClassNamesGlossDemo } from "../demos/
 import tooltipClassNamesFullSource from "../demos/tooltip/TooltipClassNamesFull.demo.tsx?raw";
 import { TooltipGlossDemo } from "../demos/tooltip/TooltipGloss.demo";
 import tooltipGlossSource from "../demos/tooltip/TooltipGloss.demo.tsx?raw";
-import { TooltipMotionDefaultDemo } from "../demos/tooltip/TooltipMotionDefault.demo";
-import tooltipMotionDefaultSource from "../demos/tooltip/TooltipMotionDefault.demo.tsx?raw";
-import { TooltipMotionInstantLeaveDemo } from "../demos/tooltip/TooltipMotionInstantLeave.demo";
-import tooltipMotionInstantLeaveSource from "../demos/tooltip/TooltipMotionInstantLeave.demo.tsx?raw";
-import { TooltipMotionSideSlideDemo } from "../demos/tooltip/TooltipMotionSideSlide.demo";
-import tooltipMotionSideSlideSource from "../demos/tooltip/TooltipMotionSideSlide.demo.tsx?raw";
-import { TooltipMotionSlideYDemo } from "../demos/tooltip/TooltipMotionSlideY.demo";
-import tooltipMotionSlideYSource from "../demos/tooltip/TooltipMotionSlideY.demo.tsx?raw";
-import { TooltipMotionPanelDemo } from "../demos/tooltip/TooltipMotionPanel.demo";
-import tooltipMotionPanelSource from "../demos/tooltip/TooltipMotionPanel.demo.tsx?raw";
-import { TooltipMotionStaggerDemo } from "../demos/tooltip/TooltipMotionStagger.demo";
-import tooltipMotionStaggerSource from "../demos/tooltip/TooltipMotionStagger.demo.tsx?raw";
 import { TooltipIconToolbarDemo } from "../demos/tooltip/TooltipIconToolbar.demo";
 import tooltipIconToolbarSource from "../demos/tooltip/TooltipIconToolbar.demo.tsx?raw";
 import { TooltipShortcutGridDemo } from "../demos/tooltip/TooltipShortcutGrid.demo";
@@ -30,6 +18,8 @@ import { TooltipSizesDemo } from "../demos/tooltip/TooltipSizes.demo";
 import tooltipSizesSource from "../demos/tooltip/TooltipSizes.demo.tsx?raw";
 import { TooltipVariantsDemo } from "../demos/tooltip/TooltipVariants.demo";
 import tooltipVariantsSource from "../demos/tooltip/TooltipVariants.demo.tsx?raw";
+import { TooltipSlotMotionGalleryDemo } from "../demos/tooltip/slotMotion/gallery";
+import { TooltipMotionControllerGalleryDemo } from "../demos/tooltip/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -55,22 +45,20 @@ export function TooltipShowcase() {
         <ShowcaseDemoFromFile Demo={TooltipGlossDemo} source={tooltipGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: default recipe, instant leave, slide factory, panel slot, stagger + classNames.">
+        <TooltipSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, panel slot, stagger + classNames."
+        title="MotionController"
+        description="Handle on Tooltip.Content (portal host). play() skips — use playSlot(&quot;content&quot;). Controlled open keeps the panel live."
       >
-        <ShowcaseDemoFromFile Demo={TooltipMotionDefaultDemo} source={tooltipMotionDefaultSource} />
-        <ShowcaseDemoFromFile Demo={TooltipMotionInstantLeaveDemo} source={tooltipMotionInstantLeaveSource} />
-        <ShowcaseDemoFromFile Demo={TooltipMotionSlideYDemo} source={tooltipMotionSlideYSource} />
-        <ShowcaseDemoFromFile Demo={TooltipMotionPanelDemo} source={tooltipMotionPanelSource} />
-        <ShowcaseDemoFromFile Demo={TooltipMotionStaggerDemo} source={tooltipMotionStaggerSource} />
-        <ShowcaseDemoFromFile Demo={TooltipMotionSideSlideDemo} source={tooltipMotionSideSlideSource} />
+        <TooltipMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={TooltipSidesDemo} source={tooltipSidesSource} />
       </ShowcaseSection>
-
 
       <ShowcaseSection
         title="portalContainer"

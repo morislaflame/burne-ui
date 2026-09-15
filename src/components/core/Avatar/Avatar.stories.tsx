@@ -9,7 +9,8 @@ import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Avatar } from ".";
-import { AvatarMotionDemo } from "../../../../playground/showcase/demos/avatar/AvatarMotion.demo";
+import { AvatarSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/avatar/slotMotion/gallery";
+import { AvatarMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/avatar/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -36,6 +37,12 @@ const meta = {
     },
   },
   decorators: [...framedDecorator],
+  argTypes: {
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
+    },
+  },
 } satisfies Meta<typeof Avatar>;
 
 export default meta;
@@ -276,5 +283,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <AvatarMotionDemo />,
+  render: () => <AvatarSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot, playAll stagger, set/cancel, stacked timelines, async events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <AvatarMotionControllerGalleryDemo />,
 };

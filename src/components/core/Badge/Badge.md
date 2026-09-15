@@ -74,7 +74,11 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `dot` | `false` | Только круглый индикатор |
 | `placement` | `top-right` внутри anchor | Позиция overlay |
 | `hoverLift` | `true` | Hover shadow/lift. Shorthand for `motion.root.hoverIn/Out: false` |
-| `motion` | — | Карта слотов `root` / `anchor` |
+| `motion` | — | Карта слотов `root` / `anchor`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
+| `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+| `motionState` | — | App-режим (`idle` / `syncing` / `live`). Тот же ещё раз — тишина |
+| `motionPayload` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Без смены режима не переигрывает. Объекты копируются и freeze |
+| `playInitialState` | `false` | Играть `states[motionState]` на маунте |
 | `className` | — | Root layout class |
 | `classNames` | — | Слоты |
 
@@ -83,6 +87,9 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `hoverLift` | `true` | Поднимать direct child badge через anchor |
+| `motion` | — | Карта `anchor` (+ `events` / `states`) |
+| `motionController` | — | Handle на scope Anchor |
+| `motionState` | — | Режим на scope Anchor (свой Provider) |
 | `className` | — | Wrapper |
 | `classNames` | — | Общие слоты для anchor и вложенного badge |
 
@@ -161,6 +168,48 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 ```
 
 Split-lift: pointer на Anchor, цель — `data-badge-lift-target`. Кастомизируйте `motion.anchor`, не `motion.root` у вложенного Badge.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`notify:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+`motionState` + `motion.states` — поза из React/store (`idle` / `syncing` / `live`). Тот же режим ещё раз — тишина. Слот `root` (отдельного `text` нет): фабрика может крутить GSAP-плагин на внутреннем `Text`. Подпись для ScrambleText — `motionPayload` (`from` / `to`) + `createMotionFactory`. Плагины — в приложении; живой **ScrambleText** — слайд `motionState` в галерее MotionController. Рецепт: [Motion and state managers](/docs/motion-state#плагины--текст-на-state).
+
+```tsx
+import { Badge, createMotionStates } from "burne-ui";
+
+const states = createMotionStates({
+  idle: { root: { y: 0, duration: 0.2 } },
+  syncing: { root: { y: -2, duration: 0.36, yoyo: true, repeat: -1 } },
+  live: { root: { y: 0, duration: 0.25 } },
+});
+
+<Badge hoverLift={false} motionState={mode} motion={{ states }}>
+  {mode === "live" ? "Live" : "Offline"}
+</Badge>
+```
+
+```tsx
+import { Badge, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "notify:ping": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Ping() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("notify:ping")}>
+        Ping
+      </Button>
+      <Badge hoverLift={false} motionController={controller} motion={{ events }}>
+        Saved
+      </Badge>
+    </>
+  );
+}
+```
+
+Сложенный `ctx.timeline()`, async `inbox:saving` → success и `playSlot("anchor")` на `Badge.Anchor` — playground / Storybook **MotionController**.
 
 ### Отключение
 

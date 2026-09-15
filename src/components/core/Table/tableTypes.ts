@@ -5,7 +5,7 @@ import type {
   ThHTMLAttributes,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { TableRowTone } from "./tableStyles";
 
@@ -70,9 +70,16 @@ export type TableProps = HTMLAttributes<HTMLDivElement> & {
   /**
    * Per-slot motion (`root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`, `row`, `column`, `cell`, `label`, `empty`).
    * `glossContent` is not a slot. `emptyCell` is CSS for `Table.Empty`. Sort chevron rotation is kit-internal. Defaults are empty.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<TableMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TableMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this table chrome scope (`root` / `header` / `column` …).
+   * Nested `Table.Row` is a separate scope — pass its own handle. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseTableRootStateProps = Pick<TableProps, "variant">;
 
@@ -148,7 +155,12 @@ export type TableRowProps = Omit<HTMLAttributes<HTMLTableRowElement>, "id"> & {
   id?: string | number;
   tone?: TableRowTone;
   motion?: Prettify<TablePartMotion>;
-};
+  /**
+   * Handle for this row's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("row")`. Cells live here (`playAll` on the row handle).
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TableCellProps = TdHTMLAttributes<HTMLTableCellElement> & {
   motion?: Prettify<TablePartMotion>;

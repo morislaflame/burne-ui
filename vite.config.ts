@@ -48,6 +48,8 @@ export default defineConfig({
     dropStylesEntryArtifacts(),
   ],
   build: {
+    /** Syntax floor of the published bundle. Prototype methods are not polyfilled. */
+    target: "es2020",
     /** Readable `ui.css` for npm (not minified to a single line). */
     cssMinify: false,
     lib: {

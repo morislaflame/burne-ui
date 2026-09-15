@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, type ForwardedRef } from "react";
+import { forwardRef, useMemo, type ForwardedRef, type PointerEvent as ReactPointerEvent } from "react";
 
 import {
   hasPointerPhases,
@@ -43,6 +43,14 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
     variant = "default",
     disabled = false,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
     ...rest
   },
   ref,
@@ -61,13 +69,20 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
   return (
     <TabsContext.Provider value={contextValue}>
       <TabsClassNamesProvider classNames={classNames}>
-        <TabsMotionProvider motion={motion} defaults={motionDefaults}>
+        <TabsMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
           <TabsRootSurface
             value={contextValue.value}
             orientation={contextValue.orientation}
             slotClass={classNames?.root}
             className={className}
             forwardedRef={ref}
+            onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
             rest={rest}
           >
             {children}
@@ -86,6 +101,10 @@ function TabsRootSurface({
   slotClass,
   className,
   forwardedRef,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   rest,
   children,
 }: {
@@ -94,6 +113,10 @@ function TabsRootSurface({
   slotClass?: string;
   className?: string;
   forwardedRef: ForwardedRef<HTMLDivElement>;
+  onPointerOver?: (e: ReactPointerEvent<HTMLDivElement>) => void;
+  onPointerOut?: (e: ReactPointerEvent<HTMLDivElement>) => void;
+  onPointerDown?: (e: ReactPointerEvent<HTMLDivElement>) => void;
+  onPointerUp?: (e: ReactPointerEvent<HTMLDivElement>) => void;
   rest: Omit<
     TabsProps,
     | "children"
@@ -107,6 +130,11 @@ function TabsRootSurface({
     | "variant"
     | "disabled"
     | "motion"
+    | "motionController"
+    | "onPointerOver"
+    | "onPointerOut"
+    | "onPointerDown"
+    | "onPointerUp"
   >;
   children: TabsProps["children"];
 }) {
@@ -118,6 +146,10 @@ function TabsRootSurface({
     forwardedRef,
     pointerPhases: pointer,
     pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
   useTabsRootEnter(scope, value);
 
@@ -130,8 +162,8 @@ function TabsRootSurface({
         className,
       })}
       data-orientation={orientation}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
     >
       {children}
     </div>

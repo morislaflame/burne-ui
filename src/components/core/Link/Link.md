@@ -24,7 +24,11 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNa
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
 | `className` | `string` | — | На `<a>` (или child при `asChild`) |
 | `classNames` | `LinkClassNames` | — | `root`, `text`, `icon` |
-| `motion` | `LinkMotion` | — | Slot map `root` / `text` / `icon` |
+| `motion` | `MotionMapWithEvents<LinkMotion>` | — | Slot map `root` / `text` / `icon`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
+| `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+| `motionState` | `string` | — | App-режим (`idle` / `sharing` / `copied`). Тот же ещё раз — тишина |
+| `motionPayload` | `unknown` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Объекты копируются и freeze; без смены `motionState` не переигрывает |
+| `playInitialState` | `boolean` | `false` | Играть `states[motionState]` на маунте |
 | … | `AnchorHTMLAttributes` | — | `target`, `rel`, `onClick`, … |
 
 ### `LinkClassNames`
@@ -109,6 +113,50 @@ import NextLink from "next/link";
   Instant hover
 </Link>
 ```
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`nav:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Button, Link, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "nav:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("nav:nudge")}>
+        Nudge
+      </Button>
+      <Link href="#" motionController={controller} motion={{ events, root: { pressIn: false } }}>
+        Docs
+      </Link>
+    </>
+  );
+}
+```
+
+`play()` ищет слот `root`. `playSlot("icon")` / `playSlot("text")` — доменные слоты. `playAll` + `stagger` / `exclude`, timeline `nav:copied` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
+
+`motionState` + `motion.states` — поза ссылки из React/store (`idle` / `sharing` / `copied`). Не путать с `nav:copied` events. Слот `text` — **SplitText** по символам (плагин в приложении, `overflow-visible` на `classNames.text`). `revert()` в `onCleanup` только если char-ноды ещё в слоте (React мог уже сменить подпись). Если фабрика читает снимок — `createMotionFactory` / `motionPayload`. Живой слайд — галерея MotionController. Рецепт: [Motion and state managers](/docs/motion-state#плагины--текст-на-state).
+
+```tsx
+import { Link, createMotionStates } from "burne-ui";
+
+const states = createMotionStates({
+  idle: { text: (ctx) => splitReveal(ctx, false) },
+  sharing: { text: (ctx) => splitReveal(ctx, true) },
+  copied: { text: (ctx) => splitReveal(ctx, false) },
+});
+
+<Link href="#" motionState={mode} motion={{ states, root: { pressIn: false } }}>
+  {mode === "copied" ? "Copied" : "Share docs"}
+</Link>
+```
+
+Сырой GSAP в Slot motion: **SplitText** по символам текста (kit hoverLift выключен, `overflow-visible` на `classNames.text`).
 
 ## Токены и CSS
 
@@ -214,4 +262,4 @@ Link/
 
 ## Storybook
 
-`Core Components/Link` — default icon, underline, compound, размеры, кастомные иконки, светлая тема.
+`Core Components/Link` — default icon, underline, compound, размеры, кастомные иконки, slot motion gallery, `motionController`, светлая тема.

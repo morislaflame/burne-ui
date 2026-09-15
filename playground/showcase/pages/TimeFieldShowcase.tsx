@@ -18,14 +18,8 @@ import { TimeFieldStatusesDemo } from "../demos/time-field/TimeFieldStatuses.dem
 import timeFieldStatusesSource from "../demos/time-field/TimeFieldStatuses.demo.tsx?raw";
 import { TimeFieldSizesDemo } from "../demos/time-field/TimeFieldSizes.demo";
 import timeFieldSizesSource from "../demos/time-field/TimeFieldSizes.demo.tsx?raw";
-import { TimeFieldMotionInstantHoverDemo } from "../demos/time-field/TimeFieldMotionInstantHover.demo";
-import timeFieldMotionInstantHoverSource from "../demos/time-field/TimeFieldMotionInstantHover.demo.tsx?raw";
-import { TimeFieldMotionAffixWaveDemo } from "../demos/time-field/TimeFieldMotionAffixWave.demo";
-import timeFieldMotionAffixWaveSource from "../demos/time-field/TimeFieldMotionAffixWave.demo.tsx?raw";
-import { TimeFieldMotionPrefixTintDemo } from "../demos/time-field/TimeFieldMotionPrefixTint.demo";
-import timeFieldMotionPrefixTintSource from "../demos/time-field/TimeFieldMotionPrefixTint.demo.tsx?raw";
-import { TimeFieldMotionHintEnterDemo } from "../demos/time-field/TimeFieldMotionHintEnter.demo";
-import timeFieldMotionHintEnterSource from "../demos/time-field/TimeFieldMotionHintEnter.demo.tsx?raw";
+import { TimeFieldSlotMotionGalleryDemo } from "../demos/time-field/slotMotion/gallery";
+import { TimeFieldMotionControllerGalleryDemo } from "../demos/time-field/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -80,10 +74,14 @@ export function TimeFieldShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound Control press, chrome enter on label / hint / error.">
-        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionInstantHoverDemo} source={timeFieldMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionAffixWaveDemo} source={timeFieldMotionAffixWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionPrefixTintDemo} source={timeFieldMotionPrefixTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionHintEnterDemo} source={timeFieldMotionHintEnterSource} />
+        <TimeFieldSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on shell/prefix (no play: no root slot), chrome label on Root, cancel loop, time events."
+      >
+        <TimeFieldMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

@@ -1,23 +1,16 @@
-import { forwardRef, memo, useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { forwardRef } from "react";
 
 import { Text } from "@/components/core/Text";
-import { clearWillChangeOnComplete, ensureRippleEase, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
-import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
-import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-import { isMotionFeatureEnabledFor, motionFeedbackExpandFor } from "@/components/core/utils/motionConfig";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import { useButtonClassNames, useOptionalButtonContext, useOptionalButtonMotionScope } from "./buttonContext";
-import { buttonContentClass, buttonErrorLayerClass, buttonFeedbackExpandRippleClass, buttonIconClass, buttonIconSvgClass, buttonLabelClass, buttonLoaderLayerClass, buttonSpinnerClass, buttonSpinnerInnerClass, buttonSuccessLayerClass, buttonTextClass, BUTTON_CLIP_LAYER_CLASS, BUTTON_SIZE_TEXT_VARIANT, BUTTON_SPINNER_MOTION_CLASS } from "./buttonStyles";
+import { buttonContentClass, buttonErrorLayerClass, buttonIconClass, buttonIconSvgClass, buttonLabelClass, buttonLoaderLayerClass, buttonSpinnerClass, buttonSpinnerInnerClass, buttonSuccessLayerClass, buttonTextClass, BUTTON_SIZE_TEXT_VARIANT, BUTTON_SPINNER_MOTION_CLASS } from "./buttonStyles";
 import type {
   ButtonContentProps,
   ButtonErrorProps,
-  ButtonExpandRippleHandle,
-  ButtonExpandRippleLayerProps,
-  ButtonFeedbackExpandRippleProps,
   ButtonIconCheckProps,
   ButtonIconCrossProps,
   ButtonIconProps,
@@ -26,7 +19,6 @@ import type {
   ButtonSpinnerProps,
   ButtonSuccessProps,
   ButtonTextProps,
-  ExpandRipple,
 } from "./buttonTypes";
 
 export function ButtonSpinner({ className }: ButtonSpinnerProps) {
@@ -72,74 +64,6 @@ export function ButtonIconCross({ className }: ButtonIconCrossProps) {
   );
 }
 
-export function ButtonFeedbackExpandRipple({
-  size,
-  tone,
-  onDone,
-}: ButtonFeedbackExpandRippleProps) {
-  const config = useMotionConfig();
-  const ref = useRef<HTMLSpanElement>(null);
-  const onDoneRef = useRef(onDone);
-  onDoneRef.current = onDone;
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    let finished = false;
-    killMotion(el);
-
-    const reduceMotion =
-      prefersReducedMotion() || !isMotionFeatureEnabledFor(config, "enableFeedbackExpand");
-
-    if (reduceMotion) {
-      onDoneRef.current();
-      return;
-    }
-
-    setWillChangeTransform(el, true);
-    const tween = gsap.fromTo(
-      el,
-      { scale: 0, autoAlpha: 0.5 },
-      {
-        scale: 1,
-        autoAlpha: 0,
-        ...motionFeedbackExpandFor(config),
-        ease: ensureRippleEase(config.rippleEaseCss),
-        overwrite: "auto",
-        onComplete: clearWillChangeOnComplete(el, () => {
-          if (!finished) onDoneRef.current();
-        }),
-      },
-    );
-
-    return () => {
-      finished = true;
-      tween.kill();
-      killMotion(el);
-    };
-  }, [config, size, tone]);
-
-  return (
-    <span
-      ref={ref}
-      className={buttonFeedbackExpandRippleClass()}
-      style={{
-        width: size,
-        height: size,
-        marginLeft: -size / 2,
-        marginTop: -size / 2,
-        background:
-          tone === "success"
-            ? "color-mix(in oklab, var(--color-success) 55%, transparent)"
-            : "color-mix(in oklab, var(--color-danger) 55%, transparent)",
-        transform: "scale(0)",
-      }}
-      aria-hidden
-    />
-  );
-}
-
 export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
   function ButtonContent({ className = "", children, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
@@ -175,10 +99,7 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
     { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
     ref,
   ) {
-    const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
-    const asyncState = ctx?.asyncState ?? "idle";
-    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "idle";
     const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalButtonMotionScope(),
       slot: "label",
@@ -190,11 +111,10 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
 
     return (
       <span
-        ref={mergeRefs(setRef, ctx?.bindLabelRef)}
+        ref={setRef}
         className={buttonLabelClass({
           slotClass: slotClassNames.label,
           className,
-          cssHidden,
         })}
         {...rest}
         {...pointerHandlers}
@@ -282,9 +202,7 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const size = ctx?.size ?? "base";
-    const asyncState = ctx?.asyncState ?? "idle";
     const loaderTextClass = ctx?.loaderTextClass ?? "";
-    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "loading";
     const { setRef } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalButtonMotionScope(),
       slot: "loader",
@@ -294,13 +212,12 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
 
     return (
       <span
-        ref={mergeRefs(setRef, ctx?.bindLoaderRef)}
+        ref={setRef}
         className={buttonLoaderLayerClass(
           loaderTextClass,
           cn(slotClassNames.loader, className),
-          cssHidden,
         )}
-        aria-hidden={asyncState !== "loading"}
+        aria-hidden
         {...rest}
       >
         <ButtonSpinner
@@ -318,9 +235,7 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const size = ctx?.size ?? "base";
-    const asyncState = ctx?.asyncState ?? "idle";
     const layout = CONTROL_SIZE_LAYOUT[size];
-    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "success";
     const { setRef } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalButtonMotionScope(),
       slot: "success",
@@ -330,12 +245,9 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
 
     return (
       <span
-        ref={mergeRefs(setRef, ctx?.bindSuccessRef)}
-        className={buttonSuccessLayerClass(
-          cn(slotClassNames.success, className),
-          cssHidden,
-        )}
-        aria-hidden={asyncState !== "success"}
+        ref={setRef}
+        className={buttonSuccessLayerClass(cn(slotClassNames.success, className))}
+        aria-hidden
         {...rest}
       >
         <ButtonIconCheck className={layout.icon} />
@@ -351,9 +263,7 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const size = ctx?.size ?? "base";
-    const asyncState = ctx?.asyncState ?? "idle";
     const layout = CONTROL_SIZE_LAYOUT[size];
-    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "error";
     const { setRef } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalButtonMotionScope(),
       slot: "error",
@@ -363,12 +273,9 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
 
     return (
       <span
-        ref={mergeRefs(setRef, ctx?.bindErrorRef)}
-        className={buttonErrorLayerClass(
-          cn(slotClassNames.error, className),
-          cssHidden,
-        )}
-        aria-hidden={asyncState !== "error"}
+        ref={setRef}
+        className={buttonErrorLayerClass(cn(slotClassNames.error, className))}
+        aria-hidden
         {...rest}
       >
         <ButtonIconCross className={layout.icon} />
@@ -378,42 +285,3 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
 );
 
 ButtonError.displayName = "ButtonError";
-
-export const ButtonExpandRippleLayer = memo(
-  forwardRef<ButtonExpandRippleHandle, ButtonExpandRippleLayerProps>(
-    function ButtonExpandRippleLayer({ clipClass }, ref) {
-      const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
-      const expandId = useRef(0);
-
-      useImperativeHandle(
-        ref,
-        () => ({
-          push(tone, size) {
-            const id = ++expandId.current;
-            setExpandRipples((prev) => [...prev, { id, size, tone }]);
-          },
-        }),
-        [],
-      );
-
-      const onDismiss = useCallback((id: number) => {
-        setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
-      }, []);
-
-      return (
-        <span className={cn(BUTTON_CLIP_LAYER_CLASS, clipClass)} aria-hidden>
-          {expandRipples.map((rp) => (
-            <ButtonFeedbackExpandRipple
-              key={rp.id}
-              size={rp.size}
-              tone={rp.tone}
-              onDone={() => onDismiss(rp.id)}
-            />
-          ))}
-        </span>
-      );
-    },
-  ),
-);
-
-ButtonExpandRippleLayer.displayName = "ButtonExpandRippleLayer";

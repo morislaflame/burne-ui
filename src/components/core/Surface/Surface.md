@@ -33,6 +33,8 @@ Compound API нет.
 | `padding` | `none` | `none` \| `small` \| `base` \| `mid` \| `large` |
 | `radius` | `mid` | `base` \| `mid` \| `large` |
 | `className` | — | Дополнительные классы |
+| `motion` | — | Карта слота `root`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
 | HTML props | — | На root `<div>` |
 
 ## Variant / токены
@@ -80,7 +82,30 @@ Compound API нет.
 
 `glossContent` не публичный слот.
 
+Spotlight через CSS-переменные `--spot-x` / `--spot-y` (`quickTo`, не tween `background`) — слайд **Spotlight** в галерее Slot motion.
+
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`panel:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+
+```tsx
+import { Surface, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "panel:ping": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Ping() {
+  const controller = useMotionControllerHandle();
+  return (
+    <Surface padding="mid" motionController={controller} motion={{ events }}>
+      Panel
+    </Surface>
+  );
+}
+```
+
+Сложенный `ctx.timeline()` (lift → scale → rest), `waitForComplete` bounce и `cancel()` лупа — playground / Storybook **MotionController**.
 
 
 Без пропа `motion` hover/press GSAP не играет — пассивный layout primitive плюс opt-in slot motion.

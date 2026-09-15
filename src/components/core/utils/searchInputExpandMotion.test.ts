@@ -5,6 +5,7 @@ import {
   animateSearchShellExpand,
   applySearchExpandInstant,
   iconLeftCollapsedPx,
+  searchShellRadiusForWidth,
   type SearchExpandMetrics,
 } from "./searchInputExpandMotion";
 
@@ -47,23 +48,37 @@ function fakeEl(width = 36): HTMLElement {
   return node as unknown as HTMLElement;
 }
 
-describe("searchInputExpandMotion FLIP", () => {
-  it("snaps layout width and does not tween width/height/left", () => {
+describe("searchInputExpandMotion layout exception", () => {
+  it("tweens shell width and borderRadius, not scaleX/height/left", () => {
     const shell = fakeEl();
+    applySearchExpandInstant(shell, null, false, METRICS);
     const tween = animateSearchShellExpand(shell, true, METRICS);
 
-    expect(shell.style.width).toBe("280px");
-    expect(tween.vars.width).toBeUndefined();
+    expect(tween.vars.width).toBe(280);
+    expect(tween.vars.borderRadius).toBe(8);
+    expect(tween.vars.scaleX).toBeUndefined();
+    expect(tween.vars.x).toBeUndefined();
     expect(tween.vars.height).toBeUndefined();
     expect(tween.vars.left).toBeUndefined();
-    expect(tween.vars.x).toBe(0);
-    expect(tween.vars.scaleX).toBe(1);
     expect(tween.vars.force3D).toBe(false);
+    expect(tween.duration()).toBeGreaterThan(0.1);
 
     tween.kill();
   });
 
-  it("snaps icon left and tweens x, not left", () => {
+  it("collapses to collapsedDim width and half-height radius", () => {
+    const shell = fakeEl();
+    applySearchExpandInstant(shell, null, true, METRICS);
+    const tween = animateSearchShellExpand(shell, false, METRICS);
+
+    expect(tween.vars.width).toBe(36);
+    expect(tween.vars.borderRadius).toBe(18);
+    expect(tween.vars.scaleX).toBeUndefined();
+
+    tween.kill();
+  });
+
+  it("snaps icon left and tweens x, not left or scaleX", () => {
     const shell = fakeEl();
     const icon = fakeEl();
     const tween = animateSearchIconShift(icon, shell, true, METRICS);
@@ -71,7 +86,7 @@ describe("searchInputExpandMotion FLIP", () => {
     expect(icon.style.left).toBe("12px");
     expect(tween.vars.left).toBeUndefined();
     expect(tween.vars.x).toBe(0);
-    expect(tween.vars.scaleX).toBe(1);
+    expect(tween.vars.scaleX).toBeUndefined();
 
     tween.kill();
   });
@@ -86,13 +101,25 @@ describe("searchInputExpandMotion FLIP", () => {
     expect(icon.style.left).toBe(METRICS.iconLeftCollapsedCss);
   });
 
-  it("inverts x when the shell is right-aligned so the first frame does not jump", () => {
+  it("right-aligned expand does not use FLIP x/scaleX (layout width grows)", () => {
     const shell = fakeEl(36);
     applySearchExpandInstant(shell, null, false, METRICS);
     const tween = animateSearchShellExpand(shell, true, METRICS);
-    expect(shell.style.width).toBe("280px");
-    expect(tween.vars.x).toBe(0);
-    expect(tween.vars.scaleX).toBe(1);
+    expect(tween.vars.x).toBeUndefined();
+    expect(tween.vars.scaleX).toBeUndefined();
+    expect(tween.vars.width).toBe(280);
+    tween.kill();
+  });
+
+  it("starts width from the current box when interrupted", () => {
+    const shell = fakeEl();
+    applySearchExpandInstant(shell, null, false, METRICS);
+    shell.style.width = "120px";
+    const tween = animateSearchShellExpand(shell, true, METRICS);
+    expect(searchShellRadiusForWidth(120, METRICS)).toBeCloseTo(
+      18 + ((120 - 36) / (280 - 36)) * (8 - 18),
+    );
+    expect(tween.vars.width).toBe(280);
     tween.kill();
   });
 

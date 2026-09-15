@@ -13,7 +13,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
 
 export type RadioVariant = "default" | "secondary" | "outline" | "gloss";
@@ -69,12 +69,30 @@ export type RadioProps = Omit<
     danger?: boolean;
     className?: string;
     classNames?: Prettify<RadioClassNames>;
-    motion?: Prettify<RadioMotion>;
+    /**
+     * Per-slot motion. Indicator keys map onto SelectionIndicator; chrome (`label` / `hint` / `error`)
+     * is Radio's own scope. `events` — namespaced app commands for `MotionController.play`.
+     * Simple API: `motionController` is forwarded to the indicator host.
+     * Compound: this handle attaches to the Root chrome scope; pass another handle on `Radio.Indicator`.
+     */
+    motion?: Prettify<MotionMapWithEvents<RadioMotion>>;
+    /**
+     * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+     * Simple API: forwarded to SelectionIndicator. Compound: Root chrome scope.
+     * Not placed on the DOM.
+     */
+    motionController?: MotionController;
     onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
-  };
+  } & MotionStateHostProps;
 
 
-export type RadioControlProps = HTMLAttributes<HTMLSpanElement>;
+export type RadioControlProps = HTMLAttributes<HTMLSpanElement> & {
+  /**
+   * Forwarded to an auto-created `Radio.Indicator` (simple / Control without an Indicator child).
+   * Explicit `<Radio.Indicator motionController>` wins on that nested host.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type RadioIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<Pick<RadioClassNames, "indicator" | "indicatorFill" | "indicatorMark">>;
@@ -83,8 +101,13 @@ export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: RadioSize;
   classNames?: Prettify<RadioIndicatorClassNames>;
-  motion?: Prettify<SelectionIndicatorMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<SelectionIndicatorMotion>>;
+  /**
+   * Handle for the SelectionIndicator host (`root` / `fill` / `mark`).
+   * Simple API: pass `motionController` on `Radio` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -143,13 +166,14 @@ export type RadioClassNamesProviderProps = {
 };
 
 export type RadioMotionProviderProps = {
-  motion?: Prettify<RadioMotion>;
+  motion?: Prettify<MotionMapWithEvents<RadioMotion>>;
+  controller?: MotionController;
   children: ReactNode;
 };
 
 export type UseRadioRootStateProps = Omit<
   RadioProps,
-  "children" | "className" | "classNames" | "onPointerDown" | "onClick"
+  "children" | "className" | "classNames" | "onPointerDown" | "onClick" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
 
 export type UseRadioAnimationsProps = {

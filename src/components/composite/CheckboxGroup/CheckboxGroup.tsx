@@ -77,9 +77,13 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,
+      motion,
       hintId: _hintId,
       errorId: _errorId,
-      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...fieldsetProps
     } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useCheckboxGroupRootState(props);
@@ -102,7 +106,10 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
     return (
       <CheckboxGroupProvider value={contextValue}>
         <CheckboxGroupClassNamesProvider classNames={classNames}>
-          <CheckboxGroupMotionProvider motion={motion} defaults={motionDefaults}>
+          <CheckboxGroupMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
             <FieldLabelContext.Provider value={fieldLabelCtx}>
               {fieldset}
             </FieldLabelContext.Provider>

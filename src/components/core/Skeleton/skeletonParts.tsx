@@ -4,6 +4,9 @@ import { skeletonPresentationProps, skeletonRegionA11yProps } from "./skeletonA1
 import { resolveSkeletonMotionDefaults, useSkeletonSlotMotion } from "./skeletonAnimations";
 import { SkeletonMotionProvider, useSkeletonMotionScope } from "./skeletonContext";
 import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantStyle, skeletonWaveOverlayStyle } from "./skeletonStyles";
+import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import { cn } from "@/utils/cn";
+
 import type {
   SkeletonBlockProps,
   SkeletonCircleProps,
@@ -13,8 +16,6 @@ import type {
   SkeletonTextProps,
   SkeletonWaveProps,
 } from "./skeletonTypes";
-
-import { cn } from "@/utils/cn";
 
 export function SkeletonWave({ className, style }: SkeletonWaveProps) {
   return (
@@ -28,14 +29,22 @@ export function SkeletonWave({ className, style }: SkeletonWaveProps) {
 
 function SkeletonPartProvider({
   motion,
+  controller,
+  motionState,
+  motionPayload,
+  playInitialState,
   children,
 }: {
-  motion?: SkeletonMotion;
+  motion?: MotionMapWithEvents<SkeletonMotion>;
+  controller?: MotionController;
   children: React.ReactNode;
-}) {
+} & MotionStateHostProps) {
   const motionDefaults = useMemo(() => resolveSkeletonMotionDefaults(), []);
   return (
-    <SkeletonMotionProvider motion={motion} defaults={motionDefaults}>
+    <SkeletonMotionProvider motion={motion} defaults={motionDefaults} controller={controller}
+      motionState={motionState}
+      motionPayload={motionPayload}
+      playInitialState={playInitialState}>
       {children}
     </SkeletonMotionProvider>
   );
@@ -50,12 +59,19 @@ export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
       classNames,
       style,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
   ) {
     return (
-      <SkeletonPartProvider motion={motion}>
+      <SkeletonPartProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <SkeletonCircleSurface
           animation={animation}
           size={size}
@@ -90,7 +106,7 @@ function SkeletonCircleSurface({
   rootMotion?: SkeletonPartMotion;
   rest: Omit<
     SkeletonCircleProps,
-    "animation" | "size" | "className" | "classNames" | "style" | "motion"
+    "animation" | "size" | "className" | "classNames" | "style" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
   const part = useSkeletonSlotMotion<HTMLDivElement>({
@@ -131,12 +147,19 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
     classNames,
     style,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     ...rest
   },
   ref,
 ) {
   return (
-    <SkeletonPartProvider motion={motion}>
+    <SkeletonPartProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <SkeletonTextSurface
         animation={animation}
         lines={lines}
@@ -173,7 +196,7 @@ function SkeletonTextSurface({
   rootMotion?: SkeletonPartMotion;
   rest: Omit<
     SkeletonTextProps,
-    "animation" | "lines" | "lastShort" | "className" | "classNames" | "style" | "motion"
+    "animation" | "lines" | "lastShort" | "className" | "classNames" | "style" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
   const part = useSkeletonSlotMotion<HTMLDivElement>({
@@ -220,11 +243,14 @@ function SkeletonTextSurface({
 SkeletonText.displayName = "SkeletonText";
 
 export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(function SkeletonBlock(
-  { animation = "wave", className, classNames, style, children, motion, ...rest },
+  { animation = "wave", className, classNames, style, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   return (
-    <SkeletonPartProvider motion={motion}>
+    <SkeletonPartProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <SkeletonBlockSurface
         animation={animation}
         className={className}
@@ -259,7 +285,7 @@ function SkeletonBlockSurface({
   rootMotion?: SkeletonPartMotion;
   rest: Omit<
     SkeletonBlockProps,
-    "animation" | "className" | "classNames" | "style" | "children" | "motion"
+    "animation" | "className" | "classNames" | "style" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
   const part = useSkeletonSlotMotion<HTMLDivElement>({
@@ -293,11 +319,14 @@ SkeletonBlock.displayName = "SkeletonBlock";
 
 export const SkeletonRegion = forwardRef<HTMLDivElement, SkeletonRegionProps>(
   function SkeletonRegion(
-    { busy = true, className, classNames, children, motion, ...rest },
+    { busy = true, className, classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
     ref,
   ) {
     return (
-      <SkeletonPartProvider motion={motion}>
+      <SkeletonPartProvider motion={motion} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <SkeletonRegionSurface
           busy={busy}
           className={className}
@@ -330,7 +359,7 @@ function SkeletonRegionSurface({
   regionMotion?: SkeletonPartMotion;
   rest: Omit<
     SkeletonRegionProps,
-    "busy" | "className" | "classNames" | "children" | "motion"
+    "busy" | "className" | "classNames" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
   const part = useSkeletonSlotMotion<HTMLDivElement>({

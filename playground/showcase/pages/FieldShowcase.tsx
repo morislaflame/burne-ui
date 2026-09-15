@@ -10,16 +10,12 @@ import { FieldHorizontalPairDemo } from "../demos/field/FieldHorizontalPair.demo
 import fieldHorizontalPairSource from "../demos/field/FieldHorizontalPair.demo.tsx?raw";
 import { FieldSettingsPanelDemo } from "../demos/field/FieldSettingsPanel.demo";
 import fieldSettingsPanelSource from "../demos/field/FieldSettingsPanel.demo.tsx?raw";
-import { FieldMotionInstantEnterDemo } from "../demos/field/FieldMotionInstantEnter.demo";
-import fieldMotionInstantEnterSource from "../demos/field/FieldMotionInstantEnter.demo.tsx?raw";
-import { FieldMotionRootWaveDemo } from "../demos/field/FieldMotionRootWave.demo";
-import fieldMotionRootWaveSource from "../demos/field/FieldMotionRootWave.demo.tsx?raw";
-import { FieldMotionErrorTintDemo } from "../demos/field/FieldMotionErrorTint.demo";
-import fieldMotionErrorTintSource from "../demos/field/FieldMotionErrorTint.demo.tsx?raw";
-import { FieldMotionLabelHintDemo } from "../demos/field/FieldMotionLabelHint.demo";
-import fieldMotionLabelHintSource from "../demos/field/FieldMotionLabelHint.demo.tsx?raw";
 import { FieldSizesDemo } from "../demos/field/FieldSizes.demo";
 import fieldSizesSource from "../demos/field/FieldSizes.demo.tsx?raw";
+import { FieldSlotMotionGalleryDemo } from "../demos/field/slotMotion/gallery";
+import { FieldMotionControllerGalleryDemo } from "../demos/field/motionController/gallery";
+import { LabelSlotMotionGalleryDemo } from "../demos/label/slotMotion/gallery";
+import { LabelMotionControllerGalleryDemo } from "../demos/label/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -56,14 +52,26 @@ export function FieldShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={FieldSetClassNamesFullDemo} source={fieldClassNamesFullSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="Empty defaults — opt-in enter on root, label hover tint, hint enter, error tint.">
+        <FieldSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Empty defaults — opt-in enter on root, label hover tint, hint enter, error tint."
+        title="MotionController"
+        description="One gallery: play vs playSlot on Field, Field.Set is a separate scope, cancel loop, field events."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={FieldMotionInstantEnterDemo} source={fieldMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={FieldMotionRootWaveDemo} source={fieldMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={FieldMotionErrorTintDemo} source={fieldMotionErrorTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={FieldMotionLabelHintDemo} source={fieldMotionLabelHintSource} />
+        <FieldMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion (Label)" description="Instant enter skip, root timeline + text hover, text enter tint.">
+        <LabelSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (Label)"
+        description="play vs playSlot vs playAll, stagger, exclude required, cancel, events on text/required."
+      >
+        <LabelMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

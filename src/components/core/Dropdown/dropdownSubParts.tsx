@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownMenuSlotMotion, useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
 import { DropdownMotionProvider, useDropdown, useDropdownClassNames, useDropdownMotionScope, useDropdownSub, useOptionalDropdownMotionScope, DropdownSubProvider } from "./dropdownContext";
@@ -224,14 +224,23 @@ DropdownSubTrigger.displayName = "Dropdown.SubTrigger";
 export const DropdownSubContent = forwardRef<
   HTMLDivElement,
   DropdownSubContentProps
->(function DropdownSubContent({ motion, ...props }, forwardedRef) {
+>(function DropdownSubContent({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
   const parentScope = useOptionalDropdownMotionScope();
-  const merged = mergeMotionSlotMaps(
+  const mergedSlots = mergeMotionSlotMaps(
     parentScope?.getRootMotion(),
     motion ? { subContent: motion } : undefined,
   );
+  const siblings = mergeMotionRootSiblings({ events: parentScope?.getEvents(), states: parentScope?.getStates() });
+  const merged = { ...mergedSlots, ...siblings };
   return (
-    <DropdownMotionProvider motion={merged} defaults={DROPDOWN_SUB_MOTION_DEFAULTS}>
+    <DropdownMotionProvider
+      motion={merged}
+      defaults={DROPDOWN_SUB_MOTION_DEFAULTS}
+      controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+    >
       <DropdownSubContentHost {...props} forwardedRef={forwardedRef} />
     </DropdownMotionProvider>
   );
@@ -248,7 +257,7 @@ function DropdownSubContentHost({
   portalContainer: portalContainerProp,
   forwardedRef,
   ...rest
-}: Omit<DropdownSubContentProps, "motion"> & {
+}: Omit<DropdownSubContentProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   forwardedRef?: ForwardedRef<HTMLDivElement>;
 }) {
   const { open: subOpen, triggerRef, scheduleClose, cancelClose, setOpen } =

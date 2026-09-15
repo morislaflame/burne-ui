@@ -5,7 +5,7 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -60,9 +60,16 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
    * Indicator FLIP is kit-internal — not a public slot. Do not tween `width`/`left` of the indicator.
    * Inactive tabs default to `hoverLiftFirstLevel` + `pressSqueeze` on `tabText`.
    * Phase `change` plays on `root` when the selected value updates.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
-  motion?: Prettify<TabsMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<TabsMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this Tabs chrome scope (`root` / `list`). Nested `Tabs.Tab` /
+   * `Tabs.Panel` are separate scopes — pass a handle there. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type UseTabsRootStateProps = Pick<
   TabsProps,
@@ -84,13 +91,23 @@ export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"
   children?: ReactNode;
   asChild?: boolean;
   motion?: Prettify<TabsPartMotion>;
-};
+  /**
+   * Handle for this tab's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("tab")` / `playSlot("tabText")`.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
   value: string;
   children?: ReactNode;
   motion?: Prettify<TabsPartMotion>;
-};
+  /**
+   * Handle for this panel's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("panel")`.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type TabsContextValue = {
   value: string;

@@ -2,7 +2,7 @@
  * Slot motion for Badge — look here first.
  *
  * DOM slots: `root` (badge surface; inner lift target when split inside Anchor),
- * `anchor` (`Badge.Anchor` host — plays on the registered lift target)
+ * `anchor` (`Badge.Anchor` host — controller target is the wrapper; hover plays the lift child)
  *
  * Host: Badge root (`useBadgeAnimations`) plays pointer `hoverIn` / `hoverOut`.
  * `Badge.Anchor` (`useBadgeAnchorMotion`) plays `anchor` hover on the lifted child.

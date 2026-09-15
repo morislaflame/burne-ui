@@ -13,7 +13,7 @@ import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/butt
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { LabelProps } from "@/components/core/Label";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type InputVariant = "default" | "outline" | "secondary" | "gloss";
 export type InputStatus = SemanticStatus;
@@ -74,7 +74,12 @@ export type InputControlProps = Omit<
   classNames?: Prettify<InputClassNames>;
   /** Shell part motion. Root `motion.shell` still applies; this wins on the Control host. */
   motion?: Prettify<InputPartMotion>;
-};
+  /**
+   * Deferred handle for the Control host (`shell`, `control`, affixes, file slots).
+   * One handle → this nested scope. Simple API: pass `motionController` on `Input` — it is forwarded here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type InputFieldContextValue = {
   inputId: string;
@@ -107,9 +112,19 @@ export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
    * Per-slot motion (`shell`, `control`, `prefix`, `suffix`, `passwordToggle`,
    * `fileRow`, `fileRemove`, `label`, `hint`, `error`).
    * File remove leave: `fileRow.leave` (`fileRowExit`).
+   * Chrome registers on the Root scope (siblings of Control). Control is the nested shell host.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `Input.Control` (shell host).
+   * Compound: this handle attaches to the Root chrome scope; pass another handle on `Control`.
    */
-  motion?: Prettify<InputMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<InputMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the Control nested Provider. Compound: Root chrome scope.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type InputSimpleProps = InputProps & Omit<InputControlProps, "motion">;
 
@@ -123,7 +138,7 @@ export type UseInputShellAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
 };
 
-export type InputLabelProps = Omit<LabelProps, "motion"> & {
+export type InputLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<InputPartMotion>;
 };
 

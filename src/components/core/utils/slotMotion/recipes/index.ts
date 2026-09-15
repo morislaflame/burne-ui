@@ -59,5 +59,3 @@ export function registerKitMotionRecipes(): void {
   registerKitMotionRecipe("progressFill", progressFillRecipe);
   registerKitMotionRecipe("progressIndeterminate", progressIndeterminateRecipe);
 }
-
-registerKitMotionRecipes();

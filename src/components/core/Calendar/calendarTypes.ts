@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type CalendarLocale = {
   /** 7 items: Mon → Sun */
@@ -108,8 +108,20 @@ type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
    */
   renderDay?: CalendarRenderDay;
   classNames?: Prettify<CalendarClassNames>;
-  motion?: Prettify<CalendarMotion>;
-};
+  /**
+   * Per-slot motion (`navPrev`, `header`, `grid`, `footer`, `cell` …).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * There is no `root` slot — `play()` skips; use `playSlot("header")` / `playAll`.
+   */
+  motion?: Prettify<MotionMapWithEvents<CalendarMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this calendar chrome scope (`header` / `navPrev` / `grid` / `footer` …).
+   * Nested day/month/year cells are separate scopes — pass a handle on `Calendar.Day`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type CalendarProps =
   | (CalendarCommonProps & {
@@ -233,7 +245,13 @@ export type CalendarInteractiveCellProps = {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   children: ReactNode;
-};
+  motion?: Prettify<CalendarPartMotion>;
+  /**
+   * Handle for this cell's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("cell")`. `cellText` lives here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 /** Public `Calendar.Day` — size defaults from Calendar context. */
 export type CalendarDayProps = Omit<CalendarInteractiveCellProps, "size"> & {

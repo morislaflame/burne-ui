@@ -42,14 +42,26 @@ export function DisclosureIcon({
   className,
   children,
   motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...props
 }: DisclosureIconProps) {
   const { size } = useDisclosureContext();
   const slotClassNames = useDisclosureClassNames();
-  const { setRef } = useMotionPart<HTMLSpanElement>({
-    scope: useOptionalDisclosureMotionScope(),
+  const scope = useOptionalDisclosureMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.icon);
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope,
     slot: "icon",
     motion,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   if (children == null) return null;
@@ -64,6 +76,7 @@ export function DisclosureIcon({
         slotClass: slotClassNames.icon,
       })}
       {...props}
+      {...pointerHandlers}
     >
       {children}
     </span>

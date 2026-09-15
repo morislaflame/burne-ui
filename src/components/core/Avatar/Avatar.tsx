@@ -44,6 +44,10 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     children,
     role,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     "aria-label": ariaLabelProp,
     ...rest
   },
@@ -104,7 +108,10 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
   );
 
   return (
-    <AvatarMotionProvider motion={motion} defaults={motionDefaults}>
+    <AvatarMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <AvatarContext.Provider value={ctx}>
         <AvatarClassNamesProvider classNames={classNames}>
           {wrapped}

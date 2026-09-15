@@ -55,7 +55,8 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `label` / `hint` / `error` | — | Simple API |
 | `name` / `value` | — | Form / CheckboxGroup |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`) |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`). `events` — app-команды |
+| `motionController` | — | Simple API: форвардится на SelectionIndicator. Compound: Root chrome (`label` / `hint` / `error`); Indicator — второй handle |
 
 ### `CheckboxClassNames`
 
@@ -127,6 +128,30 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 `Checkbox.Indicator` → `SelectionIndicator` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Checkbox прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Checkbox.Indicator` / `.Fill` / `.Mark`.
 
 **Где в коде:** карта слотов — `checkboxAnimations.ts` (`CHECKBOX_MOTION_SLOT_MAP`, `resolveCheckboxIndicatorMotion`); scope chrome — `checkboxContext.tsx` (`label` / `hint` / `error`); host fill/mark — `selectionIndicatorAnimations.ts`.
+
+Simple API — `motionController` форвардится в SelectionIndicator: `play()` играет слот `root`, `playSlot("fill")`. Compound chrome — handle на Root (`playSlot("label")`); индикатор — отдельный handle на `Checkbox.Indicator`. Явный `<Checkbox.Indicator motionController>` побеждает форвард с корня.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`check:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("root", event)` (карта `events` с корня мержится в Indicator). playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Checkbox, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "check:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("root", "check:nudge")}>
+        Nudge
+      </Button>
+      <Checkbox label="Notify" defaultChecked motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 ```tsx
 import gsap from "gsap";

@@ -7,7 +7,8 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Breadcrumbs } from ".";
-import { BreadcrumbsMotionDemo } from "../../../../playground/showcase/demos/breadcrumbs/BreadcrumbsMotion.demo";
+import { BreadcrumbsSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/breadcrumbs/slotMotion/gallery";
+import { BreadcrumbsMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/breadcrumbs/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -297,5 +298,18 @@ export const CompoundWrappedItems: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <BreadcrumbsMotionDemo />,
+  render: () => <BreadcrumbsSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on Breadcrumbs chrome (no root), nested Item itemLink scope, breadcrumbs events.",
+      },
+    },
+  },
+  render: () => <BreadcrumbsMotionControllerGalleryDemo />,
 };

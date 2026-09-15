@@ -72,6 +72,33 @@ describe("runMotionPhase", () => {
     expect(first.kill).toHaveBeenCalledTimes(1);
   });
 
+  it("passes fromState / toState / payload on the factory context", () => {
+    const el = fakeEl();
+    let seen: Pick<MotionContext, "fromState" | "toState" | "payload" | "phase"> | undefined;
+    runMotionPhase({
+      el,
+      phase: "loading",
+      value: (ctx) => {
+        seen = {
+          fromState: ctx.fromState,
+          toState: ctx.toState,
+          payload: ctx.payload,
+          phase: ctx.phase,
+        };
+      },
+      targets: {},
+      fromState: "idle",
+      toState: "loading",
+      payload: { attempt: 2 },
+    });
+    expect(seen).toEqual({
+      fromState: "idle",
+      toState: "loading",
+      payload: { attempt: 2 },
+      phase: "loading",
+    });
+  });
+
   it("resolves waitForComplete immediately when the value is false", async () => {
     const { finished } = runMotionPhase({
       el: fakeEl(),
@@ -477,6 +504,69 @@ describe("runMotionPhase", () => {
     await leave.finished;
     expect(ctx?.signal.aborted).toBe(true);
     expect(cleanup).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls onInterrupt on cancel and not onError", async () => {
+    const interrupt = vi.fn();
+    const onError = vi.fn();
+    const run = runMotionPhase({
+      el: fakeEl(),
+      phase: "notify:hold",
+      value: (ctx) => {
+        ctx.onInterrupt(interrupt);
+        ctx.onError(onError);
+        return fakeAnimation();
+      },
+      targets: {},
+    });
+
+    run.cancel("killed");
+    await run.finished;
+    expect(interrupt).toHaveBeenCalledTimes(1);
+    expect(interrupt).toHaveBeenCalledWith("killed");
+    expect(onError).not.toHaveBeenCalled();
+    expect(run.status).toBe("cancelled");
+  });
+
+  it("calls onError when the factory throws and does not interrupt", async () => {
+    const interrupt = vi.fn();
+    const onError = vi.fn();
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const run = runMotionPhase({
+      el: fakeEl(),
+      phase: "notify:boom",
+      value: (ctx) => {
+        ctx.onInterrupt(interrupt);
+        ctx.onError(onError);
+        throw new Error("save failed");
+      },
+      targets: {},
+    });
+
+    await run.finished;
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(String(onError.mock.calls[0]?.[0])).toContain("save failed");
+    expect(interrupt).not.toHaveBeenCalled();
+    expect(run.status).toBe("failed");
+    error.mockRestore();
+  });
+
+  it("does not mark wait AbortError as a failed factory", async () => {
+    const onError = vi.fn();
+    const run = runMotionPhase({
+      el: fakeEl(),
+      phase: "notify:hold",
+      value: async (ctx) => {
+        ctx.onError(onError);
+        await ctx.wait(1);
+      },
+      targets: {},
+    });
+
+    run.cancel("host");
+    await run.finished;
+    expect(onError).not.toHaveBeenCalled();
+    expect(run.status).toBe("cancelled");
   });
 
   it("clears will-change on the target when the run is cancelled", async () => {

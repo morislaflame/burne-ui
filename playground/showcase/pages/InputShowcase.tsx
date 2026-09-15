@@ -18,16 +18,8 @@ import { InputSizesDemo } from "../demos/input/InputSizes.demo";
 import inputSizesSource from "../demos/input/InputSizes.demo.tsx?raw";
 import { InputVariantsDemo } from "../demos/input/InputVariants.demo";
 import inputVariantsSource from "../demos/input/InputVariants.demo.tsx?raw";
-import { InputMotionAffixOrbitDemo } from "../demos/input/InputMotionAffixOrbit.demo";
-import inputMotionAffixOrbitSource from "../demos/input/InputMotionAffixOrbit.demo.tsx?raw";
-import { InputMotionFileRowExitDemo } from "../demos/input/InputMotionFileRowExit.demo";
-import inputMotionFileRowExitSource from "../demos/input/InputMotionFileRowExit.demo.tsx?raw";
-import { InputMotionInstantHoverDemo } from "../demos/input/InputMotionInstantHover.demo";
-import inputMotionInstantHoverSource from "../demos/input/InputMotionInstantHover.demo.tsx?raw";
-import { InputMotionPasswordRevealDemo } from "../demos/input/InputMotionPasswordReveal.demo";
-import inputMotionPasswordRevealSource from "../demos/input/InputMotionPasswordReveal.demo.tsx?raw";
-import { InputMotionHintErrorDemo } from "../demos/input/InputMotionHintError.demo";
-import inputMotionHintErrorSource from "../demos/input/InputMotionHintError.demo.tsx?raw";
+import { InputSlotMotionGalleryDemo } from "../demos/input/slotMotion/gallery";
+import { InputMotionControllerGalleryDemo } from "../demos/input/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -70,15 +62,15 @@ export function InputShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={InputGlossDemo} source={inputGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: instant hover, affix orbit timeline, file-row leave factory, password toggle + press tint.">
+        <InputSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — instant hover, affix orbit timeline, file-row leave factory, password toggle + press tint."
+        title="MotionController"
+        description="One gallery: playSlot on shell (no play: no root slot), chrome label on Root, cancel loop, input events."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={InputMotionInstantHoverDemo} source={inputMotionInstantHoverSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={InputMotionAffixOrbitDemo} source={inputMotionAffixOrbitSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={InputMotionFileRowExitDemo} source={inputMotionFileRowExitSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={InputMotionPasswordRevealDemo} source={inputMotionPasswordRevealSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={InputMotionHintErrorDemo} source={inputMotionHintErrorSource} />
+        <InputMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

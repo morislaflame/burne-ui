@@ -62,7 +62,8 @@ Simple API нет.
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
 | `className` | — | На `<fieldset>` |
 | `classNames` | — | Слоты `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` |
-| `motion` | — | Слоты `root`, `list`, `legend`, `hint`, `error`, `actions` |
+| `motion` | — | Слоты `root`, `list`, `legend`, `hint`, `error`, `actions` + `events` |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не item Checkbox |
 
 `variant` на root **нет**.
 
@@ -112,6 +113,37 @@ Simple API нет.
 | `root` (fieldset), `list`, `legend`, `hint`, `error`, `actions` | `enter` (opt-in); `change` on `root` when `selection="single"` | empty |
 
 `Group` не слот. Motion item Checkbox остаётся на пункте. `OptionGroupFieldset` / Field.Set — отдельный scope; chrome группы регистрируется в scope CheckboxGroup (`ref` на `Field.Hint` / `Field.Legend` / `Field.Error` / `Field.Set.Actions`), без прокидывания group `motion` в Field.
+
+`play()` ищет слот `root` (fieldset). `playSlot("legend")` / `playSlot("list")`. Не класть handle группы на item `Checkbox`.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`checks:nudge`, `checks:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `CheckboxGroup.Label` — алиас `Label` (свой scope). `useMotionController()` в sibling-части (галерея Inside) видит группу; в children Hint — nested `Text`.
+
+```tsx
+import { Button, Checkbox, CheckboxGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "checks:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("checks:nudge")}>
+        Nudge
+      </Button>
+      <CheckboxGroup motionController={controller} motion={{ events }}>
+        <CheckboxGroup.Legend>
+          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+        </CheckboxGroup.Legend>
+        <CheckboxGroup.List>
+          <Checkbox value="pro" label="Pro" />
+        </CheckboxGroup.List>
+      </CheckboxGroup>
+    </>
+  );
+}
+```
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 

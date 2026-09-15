@@ -1,7 +1,9 @@
 import { forwardRef, useCallback } from "react";
 
+import { useMotionPart } from "@/components/core/utils/slotMotion";
+
 import { useDisclosureContentMotion } from "./disclosureAnimations";
-import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
+import { useDisclosureClassNames, useDisclosureContext, useOptionalDisclosureMotionScope } from "./disclosureContext";
 import { DISCLOSURE_CONTENT_SHELL_CLASS, DISCLOSURE_GLOSS_PANEL_CLASS, disclosureContentPanelClass, disclosureContentWrapClass, disclosureGlossContentClass } from "./disclosureStyles";
 import type { DisclosureContentProps } from "./disclosureTypes";
 
@@ -28,6 +30,10 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
       shellRef,
       innerRef,
     });
+    const { setRef: setBodyPartRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalDisclosureMotionScope(),
+      slot: "body",
+    });
 
     const setShellRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -40,6 +46,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
     const contentWrapCls = disclosureContentWrapClass(variant);
     const isGloss = variant === "gloss";
+    const panelClass = cn(slotClassNames.contentPanel, slotClassNames.body);
 
     return (
       <div
@@ -59,12 +66,10 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
         >
           {isGloss ? (
             <section
+              ref={setBodyPartRef}
               id={panelId}
               aria-labelledby={triggerId}
-              className={cn(
-                slotClassNames.contentPanel,
-                className,
-              )}
+              className={cn(panelClass, className)}
               {...rest}
             >
               <div
@@ -80,13 +85,14 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
             </section>
           ) : (
             <section
+              ref={setBodyPartRef}
               id={panelId}
               aria-labelledby={triggerId}
               className={disclosureContentPanelClass({
                 variant,
                 size,
                 className,
-                slotClass: slotClassNames.contentPanel,
+                slotClass: panelClass,
               })}
               {...rest}
             >

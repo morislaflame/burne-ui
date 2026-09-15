@@ -5,7 +5,7 @@ import { createMotionScope } from "@/components/core/utils/slotMotion";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
 
-import type { ButtonAsyncState, ButtonClassNames, ButtonContextValue } from "./buttonTypes";
+import type { ButtonClassNames, ButtonContextValue } from "./buttonTypes";
 
 const ButtonContext = createContext<ButtonContextValue | null>(null);
 const ButtonClassNamesContext = createContext<ButtonClassNames>({});
@@ -57,4 +57,4 @@ export function ButtonContextProvider({
 
 void ButtonContext;
 
-export type { ButtonGroupSegment, ButtonAsyncState };
+export type { ButtonGroupSegment };

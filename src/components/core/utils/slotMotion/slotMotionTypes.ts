@@ -56,6 +56,12 @@ export type MotionDurationToken =
   | "progressFillDuration"
   | "progressIndeterminateDuration";
 
+/**
+ * Tween delay: seconds, or a `MotionConfig` duration key (milliseconds → seconds).
+ * `"expand"` is `expandDuration` — start after `collapsibleHeight` on Expandable / Disclosure / Accordion.
+ */
+export type MotionDelay = number | MotionDurationToken | "expand";
+
 /** Reduced-motion / `enable*` off: snap to the end state, or skip the effect. */
 export type MotionReducedStrategy = "instant" | "skip";
 
@@ -150,7 +156,12 @@ export type MotionVars = {
   ease?: string;
   yoyo?: boolean;
   repeat?: number;
-  delay?: number;
+  /**
+   * Seconds, a `MotionDurationToken` (`"expandDuration"`), or `"expand"`
+   * (`expandDuration`). Use `"expand"` so Expandable / Disclosure / Accordion
+   * body enter starts after `collapsibleHeight`.
+   */
+  delay?: MotionDelay;
   /**
    * Start pose. Default: `"current"` for lifecycle phases; app events with
    * `yoyo: true` replay from `"rest"`. Set explicitly to override.
@@ -170,7 +181,7 @@ export type MotionVars = {
 export type MotionTweenVars = MotionTransformVars & {
   yoyo?: boolean;
   repeat?: number;
-  delay?: number;
+  delay?: MotionDelay;
 };
 
 /** GSAP timeline position (`0`, `"+=0.05"`, `"<"`). */
@@ -201,11 +212,22 @@ export type MotionTimeline = MotionAnimation & {
     child: Pick<MotionAnimation, "kill"> | undefined,
     position?: MotionTimelinePosition,
   ) => MotionTimeline;
+  /** Gap on the timeline (seconds / duration token). Prefer this over an empty tween. */
+  wait: (delay: MotionDelay, position?: MotionTimelinePosition) => MotionTimeline;
 };
 
 /**
- * Closed kit host params (`MotionContext.params`). Custom app data stays in a
- * factory closure — do not add an index signature.
+ * One step of `ctx.sequence` / `ctx.parallel`. A number or duration token is
+ * `ctx.wait`. A function may return a tween (wait for complete), a Promise, or void.
+ */
+export type MotionSequenceStep =
+  | MotionDelay
+  | (() => void | Promise<void> | Pick<MotionAnimation, "kill"> | undefined);
+
+/**
+ * Closed kit host params (`MotionContext.params`). App data belongs on
+ * `motionPayload` / `ctx.payload` (`MotionPayload`, `createMotionFactory`) — not
+ * here, not in `configureMotion`, and not in the recipe registry.
  */
 export type MotionRecipeParams = {
   pointerInside?: boolean | RefObject<boolean | null> | (() => boolean);
@@ -241,6 +263,31 @@ export type MotionRecipeParams = {
   iconLeftCollapsedCss?: string;
 };
 
+/**
+ * Suggested snapshot for `motionPayload` / `ctx.payload`. All fields optional —
+ * extend with app keys (`MotionPayload & { cartId: string }`).
+ * Mode name is `motionState` / `ctx.toState`; progress is not a mode name.
+ */
+export type MotionPayload = {
+  status?: string;
+  /** 0…1 (or any number). Updating this alone does not replay the mode. */
+  progress?: number;
+  itemId?: string;
+  direction?: number | string;
+  from?: unknown;
+  to?: unknown;
+  previous?: unknown;
+  next?: unknown;
+  /** Server / action result for success poses. */
+  result?: unknown;
+  /** Server / action error for failure poses. */
+  error?: unknown;
+  attempt?: number;
+};
+
+/** `Readonly` on objects/arrays; primitives and `unknown` stay as-is. */
+type MotionPayloadSnapshot<T> = T extends object ? Readonly<T> : T;
+
 /** Handle stored on `MotionRun`. GSAP tweens/timelines satisfy this via `kill`. */
 export type MotionAnimation = {
   kill: () => void;
@@ -267,9 +314,19 @@ export type MotionRun = {
   isCurrent: () => boolean;
 };
 
-export type MotionContext = {
+export type MotionContext<TPayload = unknown> = {
   el: HTMLElement;
   phase: MotionPhaseName | (string & {});
+  /** Previous `motionState` for a state transition. Undefined for phases / events. */
+  fromState?: string;
+  /** Next `motionState` for a state transition (`ctx.phase` is the same name). */
+  toState?: string;
+  /**
+   * Frozen snapshot from `motionPayload` at the start of this transition (plain
+   * objects / arrays are copied). Undefined for phases / events. Type it with
+   * `createMotionFactory<TPayload>` — do not close over React state.
+   */
+  payload?: MotionPayloadSnapshot<TPayload>;
   /**
    * Unique / first live node per slot at play time.
    * Repeated slots: use `ctx.el` (this instance) or `getTargets(slot)`.
@@ -292,6 +349,26 @@ export type MotionContext = {
   signal: AbortSignal;
   /** Register timer/RAF teardown; runs on cancel and when the run settles. */
   onCleanup: (fn: () => void) => void;
+  /**
+   * Fires once when this run is cancelled (new play, `kill`, unmount) — not on
+   * success or `failed`. Restore pose here; do not start a new play on `ctx`.
+   */
+  onInterrupt: (fn: (reason?: MotionCancelReason) => void) => void;
+  /**
+   * Fires when the factory/recipe throws or its Promise rejects (not on AbortError
+   * from `wait` / `sequence` after cancel).
+   */
+  onError: (fn: (error: unknown) => void) => void;
+  /**
+   * Cancellable delay. Seconds, a `MotionDurationToken`, or `"expand"`.
+   * Reduced motion skips the timer. Cancel rejects with `AbortError`
+   * (`isMotionAbortError`) — do not treat that as `failed`.
+   */
+  wait: (delay: MotionDelay) => Promise<void>;
+  /** Run steps one after another. Delay literals call `wait`. */
+  sequence: (...steps: MotionSequenceStep[]) => Promise<void>;
+  /** Run steps together; settles when every step has finished. */
+  parallel: (...steps: MotionSequenceStep[]) => Promise<void>;
   /**
    * Tween from the current pose. Kit sets `overwrite` (`"auto"` on phases, `true`
    * on app events) and `force3D: false` — do not copy those flags in app code.
@@ -325,13 +402,23 @@ export type MotionContext = {
  * A `Promise` is not cancellable — check `ctx.signal` / `isMotionRunActive(ctx)` before delayed DOM writes.
  * Package return type is `Pick<MotionAnimation, "kill">`, not `gsap.core.Animation` (peer).
  */
-export type MotionFactory = (
-  ctx: MotionContext,
+export type MotionFactory<TPayload = unknown> = (
+  ctx: MotionContext<TPayload>,
 ) => void | Promise<void> | Pick<MotionAnimation, "kill">;
 
 /** This run still owns the target and has not been cancelled. */
 export function isMotionRunActive(ctx: MotionContext): boolean {
   return !ctx.signal.aborted && ctx.isCurrent();
+}
+
+/** `ctx.wait` / `sequence` / `parallel` reject this when the run is cancelled. */
+export function isMotionAbortError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "name" in error &&
+    (error as { name: unknown }).name === "AbortError"
+  );
 }
 
 export type MotionRecipe = MotionFactory;

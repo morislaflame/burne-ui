@@ -41,6 +41,10 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       onPointerDown,
       onKeyDown,
       children,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -132,7 +136,10 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
         : compoundTrack;
     } else if (hasThumbChild) {
       trackVisual = (
-        <SwitchTrack {...trackDefaults}>
+        <SwitchTrack {...trackDefaults} motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState}>
           <SwitchFill />
           {children}
         </SwitchTrack>
@@ -140,7 +147,10 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
     } else if (children != null) {
       trackVisual = children;
     } else {
-      trackVisual = <SwitchTrack {...trackDefaults} />;
+      trackVisual = <SwitchTrack {...trackDefaults} motionController={motionController}
+                motionState={motionState}
+                motionPayload={motionPayload}
+                playInitialState={playInitialState} />;
     }
 
     return (

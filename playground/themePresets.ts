@@ -339,7 +339,6 @@ export const THEME_PRESETS = {
       rippleExpandableDuration: 960,
       rippleDefaultOpacityFrom: 0.38,
       rippleExpandableOpacityFrom: 0.3,
-      feedbackExpandDuration: 860,
       interactiveEase: "power2.out",
       hoverLiftEase: "sine.inOut",
       expandOpenEase: "sine.inOut",

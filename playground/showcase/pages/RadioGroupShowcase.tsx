@@ -6,12 +6,6 @@ import { RadioClassNamesFullDemo } from "../demos/radio/RadioClassNamesFull.demo
 import radioClassNamesFullSource from "../demos/radio/RadioClassNamesFull.demo.tsx?raw";
 import { RadioClassNamesSimpleLabelDemo } from "../demos/radio/RadioClassNamesSimpleLabel.demo";
 import radioClassNamesSimpleLabelSource from "../demos/radio/RadioClassNamesSimpleLabel.demo.tsx?raw";
-import { RadioMotionCornerFillDemo } from "../demos/radio/RadioMotionCornerFill.demo";
-import radioMotionCornerFillSource from "../demos/radio/RadioMotionCornerFill.demo.tsx?raw";
-import { RadioMotionFillMarkStaggerDemo } from "../demos/radio/RadioMotionFillMarkStagger.demo";
-import radioMotionFillMarkStaggerSource from "../demos/radio/RadioMotionFillMarkStagger.demo.tsx?raw";
-import { RadioMotionSpinningMarkDemo } from "../demos/radio/RadioMotionSpinningMark.demo";
-import radioMotionSpinningMarkSource from "../demos/radio/RadioMotionSpinningMark.demo.tsx?raw";
 import { RadioSizesDemo } from "../demos/radioGroup/RadioSizes.demo";
 import radioSizesSource from "../demos/radioGroup/RadioSizes.demo.tsx?raw";
 import { RadioGroupCustomIndicatorDemo } from "../demos/radioGroup/RadioGroupCustomIndicator.demo";
@@ -22,12 +16,9 @@ import { RadioGroupHorizontalSizesDemo } from "../demos/radioGroup/RadioGroupHor
 import radioGroupHorizontalSizesSource from "../demos/radioGroup/RadioGroupHorizontalSizes.demo.tsx?raw";
 import { RadioGroupPlanCardsDemo } from "../demos/radioGroup/RadioGroupPlanCards.demo";
 import radioGroupPlanCardsSource from "../demos/radioGroup/RadioGroupPlanCards.demo.tsx?raw";
-import { RadioGroupMotionChangeTintDemo } from "../demos/radioGroup/RadioGroupMotionChangeTint.demo";
-import radioGroupMotionChangeTintSource from "../demos/radioGroup/RadioGroupMotionChangeTint.demo.tsx?raw";
-import { RadioGroupMotionHintEnterDemo } from "../demos/radioGroup/RadioGroupMotionHintEnter.demo";
-import radioGroupMotionHintEnterSource from "../demos/radioGroup/RadioGroupMotionHintEnter.demo.tsx?raw";
-import { RadioGroupMotionInstantEnterDemo } from "../demos/radioGroup/RadioGroupMotionInstantEnter.demo";
-import radioGroupMotionInstantEnterSource from "../demos/radioGroup/RadioGroupMotionInstantEnter.demo.tsx?raw";
+import { RadioSlotMotionGalleryDemo } from "../demos/radio/slotMotion/gallery";
+import { RadioMotionControllerGalleryDemo } from "../demos/radio/motionController/gallery";
+import { RadioGroupSlotMotionGalleryDemo } from "../demos/radioGroup/slotMotion/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -53,22 +44,19 @@ export function RadioGroupShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupGlossDemo} source={radioGroupGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — corner fill, spinning mark, fill→mark timeline."
-      >
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionCornerFillDemo} source={radioMotionCornerFillSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionSpinningMarkDemo} source={radioMotionSpinningMarkSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionFillMarkStaggerDemo} source={radioMotionFillMarkStaggerSource} />
+      <ShowcaseSection title="Slot motion" description="One gallery: corner fill, spinning mark, fill→mark timeline.">
+        <RadioSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Group slot motion"
-        description="RadioGroup scope: instant enter skip, change tint, chrome enter on legend / hint. Radio items keep Radio motion."
+        title="MotionController (Radio)"
+        description="Simple API forwards the handle to SelectionIndicator. Compound Root is chrome (label / hint / error)."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupMotionInstantEnterDemo} source={radioGroupMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupMotionChangeTintDemo} source={radioGroupMotionChangeTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupMotionHintEnterDemo} source={radioGroupMotionHintEnterSource} />
+        <RadioMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Group slot motion" description="RadioGroup scope: instant enter skip, change tint, chrome enter on legend / hint. Radio items keep Radio motion.">
+        <RadioGroupSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

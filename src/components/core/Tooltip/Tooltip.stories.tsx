@@ -8,7 +8,8 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 import { Button } from "@/components/core/Button";
 
 import { Tooltip, type TooltipVariant } from ".";
-import { TooltipMotionDemo } from "../../../../playground/showcase/demos/tooltip/TooltipMotion.demo";
+import { TooltipSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/tooltip/slotMotion/gallery";
+import { TooltipMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/tooltip/motionController/gallery";
 
 const VARIANTS: TooltipVariant[] = [
   "default",
@@ -547,5 +548,18 @@ export const CompoundCustomIcon: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <TooltipMotionDemo />,
+  render: () => <TooltipSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `Tooltip.Content` — `playSlot(\"content\")`. `play()` skips (no `root`). Controlled `open` keeps the panel live.",
+      },
+    },
+  },
+  render: () => <TooltipMotionControllerGalleryDemo />,
 };

@@ -425,6 +425,10 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       onPointerEnter,
       onKeyDown,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -437,7 +441,10 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
     );
 
     return (
-      <ListBoxMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <ListBoxMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         <ListBoxItemSurface
           forwardedRef={ref}
           className={className}
@@ -507,6 +514,7 @@ function ListBoxItemSurface({
     | "onPointerEnter"
     | "onKeyDown"
     | "motion"
+    | "motionController"
   >;
 }) {
     const slotClassNames = useListBoxClassNames();

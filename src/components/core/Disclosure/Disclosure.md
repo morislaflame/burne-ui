@@ -60,7 +60,8 @@ Simple API нет.
 | `dragHandle` | `false` | Drag-to-expand (`variant="card"` only) |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
-| `motion` | — | Карта `titleLift` / `chevron` / `contentShell`. Group `motion` мержится в каждый item |
+| `motion` | — | Карта `titleLift` / `title` / `icon` / `chevron` / `contentShell` / `body`. `events` — app-команды `MotionController`. Group `motion` мержится в каждый item |
+| `motionController` | — | Handle: `playSlot` / `playAll` / `set` / `cancel`. Нет слота `root` — `play()` skip. На каждый item, не на `Disclosure.Group` |
 
 ### Compound parts
 
@@ -69,7 +70,7 @@ Simple API нет.
 | `Disclosure.Trigger` | Кнопка заголовка |
 | `Disclosure.Icon` | Leading icon слева от title |
 | `Disclosure.Chevron` | Кастомный chevron (compound) |
-| `Disclosure.Content` | Панель контента |
+| `Disclosure.Content` | Панель контента (`<section>` — слот `body`) |
 | `Disclosure.Handle` | Drag handle (`variant="card"`) |
 | `Disclosure.Group` | Аккордеон-контейнер |
 
@@ -111,7 +112,7 @@ Simple API нет.
 
 ### `DisclosureClassNames`
 
-`root`, `trigger`, `titleLift`, `title`, `icon`, `chevron`, `contentShell`, `contentWrap`, `contentPanel`, `glossPanel`, `glossContent`, `handle`, `group`.
+`root`, `trigger`, `titleLift`, `title`, `icon`, `chevron`, `contentShell`, `contentWrap`, `contentPanel`, `body`, `glossPanel`, `glossContent`, `handle`, `group`.
 
 ## variant и размеры
 
@@ -144,10 +145,11 @@ Simple API нет.
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `titleLift` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel` (gloss — `hoverLiftGloss`); `pressSqueeze` / `pressSqueezeGloss`; `pressOut: false` |
-| `title` | `enter` / `leave` | нет; Trigger **рассылает** при open |
+| `title` | `enter` / `leave` (+ hover/press opt-in) | нет; Trigger **рассылает** при open |
 | `chevron` | `enter` / `leave` | `chevronRotate` |
 | `contentShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target) |
-| `icon` | `enter` / `leave` | нет; Trigger **рассылает** при open |
+| `icon` | `enter` / `leave` (+ hover/press opt-in) | нет; Trigger **рассылает** при open |
+| `body` | `enter` / `leave` | нет; Trigger **рассылает** при open |
 
 ```tsx
 <Disclosure motion={{ contentShell: { enter: false, leave: false } }}>
@@ -162,7 +164,52 @@ Simple API нет.
 />
 ```
 
-`leave: false` на `contentShell` — хост сразу ставит closed height. Factory leave должна свернуть высоту в `0`. После drag skip — instant на chevron и shell.
+`leave: false` на `contentShell` — хост сразу ставит closed height. Factory leave должна свернуть высоту в `0`. После drag skip — instant на chevron и shell. `delay: "expand"` (или `"expandDuration"`) на enter `motion.body` — старт после `collapsibleHeight`, иначе fade/`y` идут внутри `overflow: hidden` и их не видно. На `leave` delay не ставьте.
+
+```tsx
+<Disclosure
+  motion={{
+    body: {
+      enter: (ctx) =>
+        ctx.fromTo(
+          { y: 8, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.28, delay: "expand" },
+        ),
+      leave: { y: 6, autoAlpha: 0, duration: 0.16 },
+    },
+  }}
+>
+  <Disclosure.Trigger>Title</Disclosure.Trigger>
+  <Disclosure.Content>…</Disclosure.Content>
+</Disclosure>
+```
+
+Слота `root` нет: `play()` skip. `playSlot("titleLift", …)` / `playAll`. `Disclosure.Group` без своего scope — handle на каждый item.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`disclosure:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Disclosure, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "disclosure:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("titleLift", "disclosure:nudge")}>
+        Nudge
+      </Button>
+      <Disclosure motionController={controller} motion={{ events }}>
+        <Disclosure.Trigger>Title</Disclosure.Trigger>
+        <Disclosure.Content>…</Disclosure.Content>
+      </Disclosure>
+    </>
+  );
+}
+```
 
 **Где в коде:** типы — `disclosureTypes.ts`; scope — `disclosureContext.tsx`; defaults + host play — `disclosureAnimations.ts` (`resolveDisclosureMotionDefaults`); слоты — `disclosureParts.tsx` / `disclosureContentPart.tsx`; Provider — `Disclosure.tsx`. Group карта — `disclosureGroup.tsx`.
 
@@ -176,7 +223,7 @@ Simple API нет.
     <span class=chevron />           ← slot chevron
   <div class=contentShell>           ← slot contentShell / collapsibleHeight
     <div class=contentWrap>          ← internal panelInner
-      <section class=contentPanel>
+      <section class=contentPanel>   ← slot `body`
   <div class=handle />               ← kit-internal drag, не слот
 ```
 
@@ -209,6 +256,7 @@ Pointer на кнопке, play на `titleLift`. `asChild` без lift-span —
 | Анимация | Слот / рецепт | Ключи `configureMotion` | Локальный prop |
 |----------|---------------|---------------------------|----------------|
 | Height collapse | `contentShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Content / Group |
+| Panel body | `body` (broadcast на open) | `expandDuration` (через `delay: "expand"`) | `motion.body` на Root (узел `Content` `<section>`) |
 | Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
 | Title hover/squeeze | `titleLift` | `hoverLiftScale`, `pressSqueezeScale` | `motion` на Trigger |
 | Drag expand | `useDisclosureContentDrag` | — | `dragHandle`, `variant="card"` |
@@ -246,6 +294,7 @@ Pointer на кнопке, play на `titleLift`. `asChild` без lift-span —
 | `contentShell` | Collapsible shell | Max-height helpers |
 | `contentWrap` | Inner wrap | Padding framed variants |
 | `contentPanel` | `<section>` | Content typography |
+| `body` | тот же `<section>` | Motion-слот контента (`motion.body` / `playSlot("body")`) |
 | `glossPanel` / `glossContent` | Gloss layers | Gloss variant |
 | `handle` | Drag bar | Card drag grip |
 | `group` | `Disclosure.Group` | Accordion container |

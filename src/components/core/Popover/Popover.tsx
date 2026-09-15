@@ -47,6 +47,10 @@ export function PopoverRoot({
   shouldDismiss,
   portalContainer,
   motion,
+  motionController,
+  motionState,
+  motionPayload,
+  playInitialState,
 }: PopoverProps) {
   const { contextValue } = usePopoverRootState({
     children,
@@ -64,7 +68,10 @@ export function PopoverRoot({
   return (
     <PopoverProvider value={contextValue}>
       <PopoverClassNamesProvider classNames={classNames}>
-        <PopoverMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}>
+        <PopoverMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
         {children}
         </PopoverMotionProvider>
       </PopoverClassNamesProvider>

@@ -7,7 +7,7 @@ import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTh
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 
 import { resolvePopoverDescribedBy, resolvePopoverLabelledBy, popoverTriggerA11y } from "./popoverA11y";
@@ -338,11 +338,23 @@ export const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
 PopoverBody.displayName = "PopoverBody";
 
 export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
-  function PopoverContent({ motion, ...props }, forwardedRef) {
+  function PopoverContent({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
     const parentScope = useOptionalPopoverMotionScope();
-    const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const siblings = mergeMotionRootSiblings(
+      { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+      motion,
+    );
+    const merged = { ...mergedSlots, ...siblings };
     return (
-      <PopoverMotionProvider motion={merged} defaults={POPOVER_MOTION_DEFAULTS}>
+      <PopoverMotionProvider
+        motion={merged}
+        defaults={POPOVER_MOTION_DEFAULTS}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <PopoverContentHost {...props} forwardedRef={forwardedRef} />
       </PopoverMotionProvider>
     );
@@ -364,7 +376,7 @@ function PopoverContentHost({
   portalContainer: portalContainerProp,
   forwardedRef,
   ...rest
-}: Omit<PopoverContentProps, "motion"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
+}: Omit<PopoverContentProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
   const {
     open,
     popoverId,

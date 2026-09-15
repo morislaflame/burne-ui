@@ -51,10 +51,11 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `side` | `top` | `top` \| `bottom` \| `left` \| `right` (+ auto-flip) |
 | `delayShowMs` | `240` | Задержка перед показом |
+| `open` / `defaultOpen` / `onOpenChange` | — | Controlled / uncontrolled. Галерея MotionController держит `open` |
 | `icon` | — | Иконка для semantic variants |
 | `showIcon` | auto | Показать/скрыть indicator |
 | `classNames` | — | Слоты (см. ниже) |
-| `motion` | — | Карта слотов; хост — `Tooltip.Content` (`content.enter` / `leave`) |
+| `motion` | — | Карта слотов; хост — `Tooltip.Content` (`content.enter` / `leave`). `events` — app-команды |
 
 ### Compound-подчасти
 
@@ -123,6 +124,35 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 `leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Nested `enter` — следующий кадр после host (`scheduleNestedEnterBroadcast`).
 
 **Где в коде:** типы — `tooltipTypes.ts`; scope — `tooltipContext.tsx`; defaults + host — `tooltipAnimations.ts`; Content-provider — `tooltipParts.tsx`; карта на корне — `Tooltip.tsx`.
+
+Проп `motionController` на **`Tooltip.Content`**. `play()` skip — нет `root`; `playSlot("content")`. Controlled `open` оставляет слоты живыми. playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Tooltip, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "tooltip:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "tooltip:nudge")}>
+        Nudge
+      </Button>
+      <Tooltip open delayShowMs={0}>
+        <Tooltip.Trigger>
+          <Button size="small" variant="outline">Trigger</Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content motionController={controller} motion={{ events }}>
+          <Tooltip.Title>Title</Tooltip.Title>
+        </Tooltip.Content>
+      </Tooltip>
+    </>
+  );
+}
+```
 
 ```tsx
 <Tooltip motion={{ content: { leave: false } }}>…</Tooltip>

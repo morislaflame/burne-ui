@@ -1,23 +1,5 @@
 import { DialogClassNamesFullDemo } from "../demos/dialog/DialogClassNamesFull.demo";
 import dialogClassNamesFullSource from "../demos/dialog/DialogClassNamesFull.demo.tsx?raw";
-import { DialogMotionBouncePanelDemo } from "../demos/dialog/DialogMotionBouncePanel.demo";
-import dialogMotionBouncePanelSource from "../demos/dialog/DialogMotionBouncePanel.demo.tsx?raw";
-import { DialogMotionInstantPanelDemo } from "../demos/dialog/DialogMotionInstantPanel.demo";
-import dialogMotionInstantPanelSource from "../demos/dialog/DialogMotionInstantPanel.demo.tsx?raw";
-import { DialogMotionPanelTimelineDemo } from "../demos/dialog/DialogMotionPanelTimeline.demo";
-import dialogMotionPanelTimelineSource from "../demos/dialog/DialogMotionPanelTimeline.demo.tsx?raw";
-import { DialogMotionPerPartDemo } from "../demos/dialog/DialogMotionPerPart.demo";
-import dialogMotionPerPartSource from "../demos/dialog/DialogMotionPerPart.demo.tsx?raw";
-import { DialogMotionTitleHoverColorDemo } from "../demos/dialog/DialogMotionTitleHoverColor.demo";
-import dialogMotionTitleHoverColorSource from "../demos/dialog/DialogMotionTitleHoverColor.demo.tsx?raw";
-import { DialogMotionTitleStaggerDemo } from "../demos/dialog/DialogMotionTitleStagger.demo";
-import dialogMotionTitleStaggerSource from "../demos/dialog/DialogMotionTitleStagger.demo.tsx?raw";
-import { DialogMotionBodyStaggerDemo } from "../demos/dialog/DialogMotionBodyStagger.demo";
-import dialogMotionBodyStaggerSource from "../demos/dialog/DialogMotionBodyStagger.demo.tsx?raw";
-import { DialogMotionHeadingBlockDemo } from "../demos/dialog/DialogMotionHeadingBlock.demo";
-import dialogMotionHeadingBlockSource from "../demos/dialog/DialogMotionHeadingBlock.demo.tsx?raw";
-import { DialogMotionTriggerPressDemo } from "../demos/dialog/DialogMotionTriggerPress.demo";
-import dialogMotionTriggerPressSource from "../demos/dialog/DialogMotionTriggerPress.demo.tsx?raw";
 import { DialogAsChildMergedPropsDemo } from "../demos/dialog/DialogAsChildMergedProps.demo";
 import dialogAsChildMergedPropsSource from "../demos/dialog/DialogAsChildMergedProps.demo.tsx?raw";
 import { DialogBasicDemo } from "../demos/dialog/DialogBasic.demo";
@@ -34,6 +16,8 @@ import { DialogSettingsModalDemo } from "../demos/dialog/DialogSettingsModal.dem
 import dialogSettingsModalSource from "../demos/dialog/DialogSettingsModal.demo.tsx?raw";
 import { DialogSizesDemo } from "../demos/dialog/DialogSizes.demo";
 import dialogSizesSource from "../demos/dialog/DialogSizes.demo.tsx?raw";
+import { DialogSlotMotionGalleryDemo } from "../demos/dialog/slotMotion/gallery";
+import { DialogMotionControllerGalleryDemo } from "../demos/dialog/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -73,19 +57,15 @@ export function DialogShowcase() {
         <ShowcaseDemoFromFile Demo={DialogAsChildMergedPropsDemo} source={dialogAsChildMergedPropsSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Slot motion" description="One gallery: custom trigger press, instant panel, bounce factory, title stagger, headingBlock, per-part enter/leave, hover color, panel timeline.">
+        <DialogSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
       <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — custom trigger press, instant panel, bounce factory, title stagger, headingBlock, per-part enter/leave, hover color, panel timeline."
+        title="MotionController"
+        description="Handle on Dialog.Panel (portal host). play() skips — use playSlot(&quot;panel&quot;). Panel stays open in a contained portal."
       >
-        <ShowcaseDemoFromFile Demo={DialogMotionTriggerPressDemo} source={dialogMotionTriggerPressSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionInstantPanelDemo} source={dialogMotionInstantPanelSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionBouncePanelDemo} source={dialogMotionBouncePanelSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionTitleStaggerDemo} source={dialogMotionTitleStaggerSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionBodyStaggerDemo} source={dialogMotionBodyStaggerSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionHeadingBlockDemo} source={dialogMotionHeadingBlockSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionPerPartDemo} source={dialogMotionPerPartSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionTitleHoverColorDemo} source={dialogMotionTitleHoverColorSource} />
-        <ShowcaseDemoFromFile Demo={DialogMotionPanelTimelineDemo} source={dialogMotionPanelTimelineSource} />
+        <DialogMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

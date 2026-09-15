@@ -100,6 +100,32 @@ Motion item ToggleButton остаётся на пункте.
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
+Проп `motionController` + ключ `events` на `motion` — app-команды (`group:nudge`), не фазы. `createMotionEvents`. `play` ищет слот `root`. `waitForComplete` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, ToggleButton, ToggleButtonGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "group:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("group:nudge")}>
+        Nudge
+      </Button>
+      <ToggleButtonGroup type="single" defaultValue="list" aria-label="View" motionController={controller} motion={{ events }}>
+        <ToggleButton value="list">List</ToggleButton>
+        <ToggleButton value="grid">Grid</ToggleButton>
+      </ToggleButtonGroup>
+    </>
+  );
+}
+```
+
+Сырой GSAP в Slot motion: **Flip** — pill под выбранным пунктом (`Flip.fit`), kit fill на кнопках выключен. Не в ките и не в MotionController.
 
 `toggleButtonGroupAnimations.ts` играет `enter` / `change` на `root` группы. Motion item остаётся на `ToggleButton`:
 
@@ -138,10 +164,10 @@ configureMotion({
 });
 ```
 
-### Чего нет
+### Чего нет в ките
 
-- Group-level FLIP при смене selection
-- Отдельный motion-scope у группы — карта `motion` на каждом `ToggleButton`
+- Group-level FLIP pill — только demo Slot motion (`Flip.fit`), не публичный слот
+- Item hosts остаются на каждом `ToggleButton` (группа не оборачивает их scope)
 
 ### Сводка: что настраивается где
 

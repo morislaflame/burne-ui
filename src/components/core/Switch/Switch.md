@@ -64,7 +64,8 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 | `iconOff` / `iconOn` | — | Иконки в thumb для off/on. **Исключение словаря иконок:** у Checkbox / SelectionIndicator одна иконка отмеченного состояния — `icon`; у Switch две независимые иконки состояний — `iconOn` / `iconOff` (+ `Switch.Icon when`). |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Карта слотов. Хост — `Switch.Track` |
+| `motion` | — | Карта слотов. Хост — `Switch.Track`. `events` — app-команды `MotionController` |
+| `motionController` | — | Simple API: форвардится на Track. Compound: Root chrome (`label` / `hint` / `error`); Track — второй handle |
 
 ### `SwitchClassNames`
 
@@ -122,6 +123,30 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 | `label` / `hint` / `error` | `check` / `uncheck` (+ `enter` / pointer если задать) | нет; Root scope, не Track |
 
 Travel thumb — `measureSwitchTravel(track, thumbShell)` (+ ResizeObserver). Factory на `thumb` читает `ctx.params.getTravelPx()`. `false` на фазе **не** ставит состояние — хост сам делает instant (`applySwitchThumbInstant` / fill / icon). First layout / reduced / `enableSwitchThumb: false` — тоже instant.
+
+У Track нет слота `root`: `play()` skip. Simple API — `playSlot("track", …)`. Compound chrome — handle на Root (`playSlot("label")`); thumb-хост — отдельный handle на `Switch.Track`. Явный `<Switch.Track motionController>` побеждает форвард с корня. SelectionThumb внутри Switch **не** получает этот handle.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`switch:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("track", event)` (карта `events` с корня мержится в Track). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Switch, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "switch:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("track", "switch:nudge")}>
+        Nudge
+      </Button>
+      <Switch label="Notify" defaultChecked motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 **Где в коде:** типы — `switchTypes.ts`; scope — `switchContext.tsx`; defaults + host play — `switchAnimations.ts`; Track-provider — `switchParts.tsx`; карта на корне — `Switch.tsx`.
 

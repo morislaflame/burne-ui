@@ -1,13 +1,14 @@
 /**
  * Slot motion for Disclosure — look here first.
  *
- * DOM slots: `titleLift`, `title`, `chevron`, `contentShell`, `icon`
+ * DOM slots: `titleLift`, `title`, `chevron`, `contentShell`, `icon`, `body`
  * (`panelInner` is an internal target for the height recipe, not a public slot)
  *
  * Hosts:
  * - Trigger (`useDisclosureTriggerMotion`) plays hover/press on `titleLift` and
  *   `enter`/`leave` on `chevron` when `open` changes.
  * - Content (`useDisclosureContentMotion`) plays `enter`/`leave` on `contentShell`.
+ *   The panel `<section>` registers public slot `body`.
  *
  * Handle-drag is kit-internal: it sets `skipContentAnimRef` before `setOpen` so
  * neither host plays (instant apply only). Defaults: `resolveDisclosureMotionDefaults`.

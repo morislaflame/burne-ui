@@ -1,6 +1,6 @@
 import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type BreadcrumbsClassNames = {
   /** Root `<nav>`. */
@@ -57,7 +57,9 @@ export type BreadcrumbItem = {
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
   current?: boolean;
   className?: string;
-};
+  motion?: Prettify<BreadcrumbsPartMotion>;
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 /** @internal */
 export type BreadcrumbItemData = BreadcrumbItem;
@@ -74,9 +76,21 @@ export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   /** Simple API: chain items. Ignored in compound mode (`Breadcrumbs.List`). */
   items?: BreadcrumbItem[];
   children?: ReactNode;
-  /** Per-slot motion (`list`, `separator`, `itemLink`, `itemLinkText`, `ellipsisLiftWrapper`). `Breadcrumbs.Item` is data-only (not a slot). */
-  motion?: Prettify<BreadcrumbsMotion>;
-};
+  /**
+   * Per-slot motion (`list`, `separator`, `itemLink`, `itemLinkText`, `ellipsisLiftWrapper`).
+   * `Breadcrumbs.Item` is data-only (not a slot).
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * There is no `root` slot — `play()` skips; use `playSlot("list")` / `playAll`.
+   */
+  motion?: Prettify<MotionMapWithEvents<BreadcrumbsMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * One handle → this breadcrumbs chrome scope (`list` / `separator`).
+   * Nested crumbs are separate scopes — pass a handle on `Breadcrumbs.Item`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type BreadcrumbsListProps = OlHTMLAttributes<HTMLOListElement> & {
   classNames?: Prettify<BreadcrumbsClassNames>;
@@ -90,7 +104,13 @@ export type BreadcrumbsItemProps = {
   current?: boolean;
   className?: string;
   children?: ReactNode;
-};
+  motion?: Prettify<BreadcrumbsPartMotion>;
+  /**
+   * Handle for this crumb's nested scope. `play()` looks for `root` (skip) —
+   * use `playSlot("itemLink")`. Current/static segments have no scope.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type InteractiveCrumbProps = {
   href?: string;
@@ -100,7 +120,9 @@ export type InteractiveCrumbProps = {
   innerClassName?: string;
   textClassName?: string;
   "aria-current"?: "page" | undefined;
-};
+  motion?: Prettify<BreadcrumbsPartMotion>;
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type BreadcrumbsEllipsisMenuProps = {
   hiddenItems: BreadcrumbItemData[];

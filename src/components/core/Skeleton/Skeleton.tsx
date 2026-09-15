@@ -42,6 +42,10 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
     style,
     children,
     motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     ...rest
   },
   ref,
@@ -53,7 +57,10 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
   const motionDefaults = useMemo(() => resolveSkeletonMotionDefaults(), []);
 
   return (
-    <SkeletonMotionProvider motion={motion} defaults={motionDefaults}>
+    <SkeletonMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
       <SkeletonRootSurface
         animation={animation}
         radius={radius}
@@ -101,6 +108,7 @@ function SkeletonRootSurface({
     | "style"
     | "children"
     | "motion"
+    | "motionController"
   >;
 }) {
   const part = useSkeletonSlotMotion<HTMLDivElement>({

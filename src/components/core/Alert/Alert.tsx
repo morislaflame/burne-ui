@@ -146,6 +146,9 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     classNames,
     motion,
     motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     hoverLift = true,
     shadow = "base",
     className = "",
@@ -198,6 +201,9 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           defaults={motionDefaults}
           params={motionParams}
           controller={motionController}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
         >
           <AlertSurface
             ref={ref}

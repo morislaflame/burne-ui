@@ -58,7 +58,8 @@ const options = [
 | `menuMaxHeight` | `min(24rem, 70vh)` | ListBox scroll |
 | `name` | — | Form binding |
 | `classNames` | — | см. ниже |
-| `motion` | — | per-slot motion (`inputGroup`, `input`, `trigger`, `triggerIcon`) |
+| `motion` | — | Root / simple: карта слотов + `events`. На `ComboBox.InputGroup` — part motion слота `inputGroup` |
+| `motionController` | — | Simple: форвардится на InputGroup (хост `inputGroup`). Compound: Root chrome; для shell — второй handle на `ComboBox.InputGroup`. Не на DOM |
 
 ### `ComboBoxClassNames`
 
@@ -109,6 +110,30 @@ const options = [
 ```
 
 Compound: `motion` на `ComboBox.InputGroup` — part motion слота `inputGroup`; на `ComboBox.Input` / `ComboBox.Trigger` — свои слоты. На `ComboBox.Label` / `Hint` / `Error` — chrome Root scope.
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("inputGroup", …)` / `playSlot("input", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `ComboBox.InputGroup`. Один handle ≠ два scope. Меню — Popover, не этот scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`combo:nudge`, `combo:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("inputGroup", event)` (карта `events` с корня мержится в InputGroup). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, ComboBox, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "combo:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("inputGroup", "combo:nudge")}>
+        Nudge
+      </Button>
+      <ComboBox label="Framework" options={options} motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
 
 **ButtonGroup:** при `groupSegment` shell hover/press выключены.
 
@@ -257,4 +282,4 @@ ComboBox/
 
 ## Storybook
 
-`Core Components/ComboBox` — simple/compound, filter, gloss, status, Form, `classNames`, slot motion gallery.
+`Core Components/ComboBox` — simple/compound, filter, gloss, status, Form, `classNames`, Slot motion, MotionController.

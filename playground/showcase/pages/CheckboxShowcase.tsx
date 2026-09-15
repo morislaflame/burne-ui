@@ -2,24 +2,6 @@ import { CheckboxClassNamesFullDemo } from "../demos/checkbox/CheckboxClassNames
 import checkboxClassNamesFullSource from "../demos/checkbox/CheckboxClassNamesFull.demo.tsx?raw";
 import { CheckboxClassNamesSimpleLabelDemo } from "../demos/checkbox/CheckboxClassNamesSimpleLabel.demo";
 import checkboxClassNamesSimpleLabelSource from "../demos/checkbox/CheckboxClassNamesSimpleLabel.demo.tsx?raw";
-import { CheckboxMotionCornerFillDemo } from "../demos/checkbox/CheckboxMotionCornerFill.demo";
-import checkboxMotionCornerFillSource from "../demos/checkbox/CheckboxMotionCornerFill.demo.tsx?raw";
-import { CheckboxMotionCornerFillCompoundDemo } from "../demos/checkbox/CheckboxMotionCornerFillCompound.demo";
-import checkboxMotionCornerFillCompoundSource from "../demos/checkbox/CheckboxMotionCornerFillCompound.demo.tsx?raw";
-import { CheckboxMotionFillMarkStaggerDemo } from "../demos/checkbox/CheckboxMotionFillMarkStagger.demo";
-import checkboxMotionFillMarkStaggerSource from "../demos/checkbox/CheckboxMotionFillMarkStagger.demo.tsx?raw";
-import { CheckboxMotionLabelColorDemo } from "../demos/checkbox/CheckboxMotionLabelColor.demo";
-import checkboxMotionLabelColorSource from "../demos/checkbox/CheckboxMotionLabelColor.demo.tsx?raw";
-import { CheckboxMotionSpinningMarkDemo } from "../demos/checkbox/CheckboxMotionSpinningMark.demo";
-import checkboxMotionSpinningMarkSource from "../demos/checkbox/CheckboxMotionSpinningMark.demo.tsx?raw";
-import { CheckboxGroupMotionChangeTintDemo } from "../demos/checkboxGroup/CheckboxGroupMotionChangeTint.demo";
-import checkboxGroupMotionChangeTintSource from "../demos/checkboxGroup/CheckboxGroupMotionChangeTint.demo.tsx?raw";
-import { CheckboxGroupMotionHintEnterDemo } from "../demos/checkboxGroup/CheckboxGroupMotionHintEnter.demo";
-import checkboxGroupMotionHintEnterSource from "../demos/checkboxGroup/CheckboxGroupMotionHintEnter.demo.tsx?raw";
-import { CheckboxGroupMotionInstantEnterDemo } from "../demos/checkboxGroup/CheckboxGroupMotionInstantEnter.demo";
-import checkboxGroupMotionInstantEnterSource from "../demos/checkboxGroup/CheckboxGroupMotionInstantEnter.demo.tsx?raw";
-import { CheckboxGroupMotionRootWaveDemo } from "../demos/checkboxGroup/CheckboxGroupMotionRootWave.demo";
-import checkboxGroupMotionRootWaveSource from "../demos/checkboxGroup/CheckboxGroupMotionRootWave.demo.tsx?raw";
 import { CheckboxConsentCardDemo } from "../demos/checkbox/CheckboxConsentCard.demo";
 import checkboxConsentCardSource from "../demos/checkbox/CheckboxConsentCard.demo.tsx?raw";
 import { CheckboxFeatureFlagsDemo } from "../demos/checkbox/CheckboxFeatureFlags.demo";
@@ -36,6 +18,10 @@ import { CheckboxTaskListDemo } from "../demos/checkbox/CheckboxTaskList.demo";
 import checkboxTaskListSource from "../demos/checkbox/CheckboxTaskList.demo.tsx?raw";
 import { CheckboxTermsDemo } from "../demos/checkbox/CheckboxTerms.demo";
 import checkboxTermsSource from "../demos/checkbox/CheckboxTerms.demo.tsx?raw";
+import { CheckboxSlotMotionGalleryDemo } from "../demos/checkbox/slotMotion/gallery";
+import { CheckboxMotionControllerGalleryDemo } from "../demos/checkbox/motionController/gallery";
+import { CheckboxGroupSlotMotionGalleryDemo } from "../demos/checkboxGroup/slotMotion/gallery";
+import { CheckboxGroupMotionControllerGalleryDemo } from "../demos/checkboxGroup/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -61,25 +47,26 @@ export function CheckboxShowcase() {
         <ShowcaseDemoFromFile Demo={CheckboxGlossDemo} source={checkboxGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Slot motion"
-        description="Each card is a separate copyable example — corner fill, spinning mark, label color, fill→mark timeline."
-      >
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionCornerFillDemo} source={checkboxMotionCornerFillSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionCornerFillCompoundDemo} source={checkboxMotionCornerFillCompoundSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionSpinningMarkDemo} source={checkboxMotionSpinningMarkSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionLabelColorDemo} source={checkboxMotionLabelColorSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionFillMarkStaggerDemo} source={checkboxMotionFillMarkStaggerSource} />
+      <ShowcaseSection title="Slot motion" description="One gallery: corner fill, spinning mark, label color, fill→mark timeline.">
+        <CheckboxSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="CheckboxGroup slot motion"
-        description="Group scope: instant enter skip, root wave, change tint on single selection, chrome enter on legend / hint."
+        title="MotionController"
+        description="Simple API forwards the handle to SelectionIndicator. Compound Root is chrome (label / hint / error)."
       >
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionInstantEnterDemo} source={checkboxGroupMotionInstantEnterSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionRootWaveDemo} source={checkboxGroupMotionRootWaveSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionChangeTintDemo} source={checkboxGroupMotionChangeTintSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxGroupMotionHintEnterDemo} source={checkboxGroupMotionHintEnterSource} />
+        <CheckboxMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="CheckboxGroup slot motion" description="Group scope: instant enter skip, root wave, change tint on single selection, chrome enter on legend / hint.">
+        <CheckboxGroupSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (CheckboxGroup)"
+        description="One gallery: play vs playSlot on group chrome, cancel loop, checks events. Item Checkbox keeps its own scope."
+      >
+        <CheckboxGroupMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

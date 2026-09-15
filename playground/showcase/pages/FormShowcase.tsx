@@ -12,6 +12,8 @@ import { FormSearchToolbarDemo } from "../demos/form/FormSearchToolbar.demo";
 import formSearchToolbarSource from "../demos/form/FormSearchToolbar.demo.tsx?raw";
 import { FormSizesDemo } from "../demos/form/FormSizes.demo";
 import formSizesSource from "../demos/form/FormSizes.demo.tsx?raw";
+import { FormSlotMotionGalleryDemo } from "../demos/form/slotMotion/gallery";
+import { FormMotionControllerGalleryDemo } from "../demos/form/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -60,6 +62,17 @@ export function FormShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={FormInlineSubscribeDemo} source={formInlineSubscribeSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FormLoginPanelDemo} source={formLoginPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FormSearchToolbarDemo} source={formSearchToolbarSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root/title timeline, change on validation errors.">
+        <FormSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play vs playSlot on Form chrome, Form.Field is a nested scope, cancel loop, form events."
+      >
+        <FormMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseDoc>

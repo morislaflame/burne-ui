@@ -9,7 +9,8 @@ import { Dropdown } from "@/components/core/Dropdown";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import { ButtonGroup } from "./index";
-import { ButtonGroupMotionDemo } from "../../../../playground/showcase/demos/buttonGroup/ButtonGroupMotion.demo";
+import { ButtonGroupMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/buttonGroup/motionController/gallery";
+import { ButtonGroupSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/buttonGroup/slotMotion/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -209,5 +210,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <ButtonGroupMotionDemo />,
+  render: () => <ButtonGroupSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on root/text, stagger, toolbar events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <ButtonGroupMotionControllerGalleryDemo />,
 };

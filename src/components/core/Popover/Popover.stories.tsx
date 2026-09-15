@@ -11,7 +11,8 @@ import { MotionConfigProvider } from "@/components/core/utils/motionConfigContex
 import { cn } from "@/utils/cn";
 
 import { Popover } from "@/components/core/Popover";
-import { PopoverMotionDemo } from "../../../../playground/showcase/demos/popover/PopoverMotion.demo";
+import { PopoverSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/popover/slotMotion/gallery";
+import { PopoverMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/popover/motionController/gallery";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -543,5 +544,18 @@ export const CustomClassNames: Story = {
 
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
-  render: () => <PopoverMotionDemo />,
+  render: () => <PopoverSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `Popover.Content` — `playSlot(\"content\")`. `play()` skips (no `root`). Panel stays `open`.",
+      },
+    },
+  },
+  render: () => <PopoverMotionControllerGalleryDemo />,
 };

@@ -7,7 +7,7 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
 export type DialogVariant = "default" | "gloss";
 
@@ -65,7 +65,7 @@ export type DialogPartMotion = DialogLifecycleMotion & {
 
 export type DialogMotion = {
   overlay?: DialogLifecycleMotion;
-  panel?: DialogLifecycleMotion;
+  panel?: DialogPartMotion;
   title?: DialogPartMotion;
   description?: DialogPartMotion;
   close?: DialogLifecycleMotion;
@@ -87,9 +87,19 @@ export type DialogProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DialogClassNames>;
-  /** Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`) plus `trigger` press on Root. Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`. */
-  motion?: Prettify<DialogMotion>;
-};
+  /**
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`) plus `trigger` press on Root.
+   * Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Root has no portal DOM — portal slots live on `Dialog.Panel`.
+   */
+  motion?: Prettify<MotionMapWithEvents<DialogMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Portal slots need a separate handle on `Dialog.Panel`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: DialogVariant;
@@ -97,8 +107,13 @@ export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
   themeAnchor?: HTMLElement | null;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  motion?: Prettify<DialogMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<DialogMotion>>;
+  /**
+   * Handle for the portal host (`panel`, `overlay`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("panel")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
 
 export type DialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */

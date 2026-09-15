@@ -240,16 +240,20 @@ export const SliderError = forwardRef<HTMLElement, SliderErrorProps>(
 SliderError.displayName = "Slider.Error";
 
 export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function SliderTrack(
-  props,
+  { motion, motionController, motionState, motionPayload, playInitialState, ...props },
   ref,
 ) {
   const parent = useOptionalSliderMotionScope();
-  const host = <SliderTrackHost {...props} forwardedRef={ref} />;
+  const host = <SliderTrackHost {...props} motion={motion} forwardedRef={ref} />;
   if (parent) return host;
   return (
     <SliderMotionProvider
-      motion={props.motion}
+      motion={motion}
       defaults={resolveSliderMotionDefaults({ disabled: props.disabled })}
+      controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
     >
       {host}
     </SliderMotionProvider>

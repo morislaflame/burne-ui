@@ -1,7 +1,7 @@
 /**
  * Slot motion for Expandable — look here first.
  *
- * DOM slots: `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`
+ * DOM slots: `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`, `body`
  * (`panelInner` is an internal target for the height recipe, not a public slot;
  * `message` / `content` are `display: contents`)
  *
@@ -10,7 +10,8 @@
  *   `enter`/`leave` on `chevron` when `open` changes (`skipFirst` — mount is instant
  *   via refs, not a second enter).
  * - Panel (`useExpandablePanelMotion`) plays `enter`/`leave` on `panelShell`
- *   the same way. Accordion embeds this host.
+ *   the same way. The panel `<section>` registers public slot `body`.
+ *   Accordion embeds this host.
  *
  * Defaults: `EXPANDABLE_MOTION_DEFAULTS`.
  */

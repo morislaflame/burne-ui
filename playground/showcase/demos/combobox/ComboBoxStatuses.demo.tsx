@@ -24,7 +24,7 @@ const COMBOBOX_STATUSES: InputStatus[] = [
 
 export function ComboBoxStatusesDemo() {
   return (
-    <div className="flex w-full flex-col gap-2xlarge">
+    <div className="flex flex-col gap-2xlarge">
       {COMBOBOX_STATUSES.map((status) => (
         <div key={status} className="flex flex-col gap-base">
           <span className="text-xsmall font-w-mid uppercase tracking-wide text-muted">
