@@ -6,7 +6,6 @@ import { expect, screen, waitFor } from "storybook/test";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/mockImages";
-import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Avatar } from ".";
 import { AvatarSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/avatar/slotMotion/gallery";
@@ -32,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "User avatar. **Simple** — `label`, `src`, `nickname` on root; **Compound** — `<Avatar.Image>` / `<Avatar.Fallback>`. `variant=\"gloss\"` — glass border.",
+          "User avatar. **Simple** — `label`, `src`, `nickname` on root; **Compound** — `<Avatar.Image>` / `<Avatar.Fallback>`. ",
       },
     },
   },
@@ -180,8 +179,7 @@ export const HoverInteraction: Story = {
     await userEvent.hover(canvas.getByRole("group", { name: "Amelia Clarke" }));
     await waitFor(
       () => expect(screen.getByRole("tooltip")).toHaveTextContent("starlight.muse"),
-      { timeout: 1000 },
-    );
+      { timeout: 1000 });
   },
 };
 
@@ -194,57 +192,12 @@ export const CompoundCustomFallback: Story = {
   ),
 };
 
-function GlossDemo() {
-  return (
-    <div className="flex flex-col items-center gap-2xlarge">
-      <div className="flex flex-row flex-wrap items-center justify-center gap-2xlarge">
-        <Avatar variant="gloss" size="small" label="Ada Lovelace" src={PIN_IMAGE1} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="base" label="Grace Hopper" src={PIN_IMAGE2} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="mid" label="Alan Turing" src={PIN_IMAGE4} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="large" label="Katherine Johnson" src={PIN_IMAGE3} alt="" loading="lazy" />
-      </div>
-      <div className="flex flex-row flex-wrap items-center justify-center gap-xlarge">
-        <Avatar variant="gloss" size="base" label="Burne Team" />
-        <Avatar variant="gloss" size="large" label="北京" />
-      </div>
-      <Avatar.Group>
-        <Avatar variant="gloss" size="base" label="One" src={PIN_IMAGE1} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="base" label="Two" src={PIN_IMAGE2} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="base" label="Three" src={PIN_IMAGE3} alt="" loading="lazy" />
-      </Avatar.Group>
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
-};
-
 export const CustomClassNames: Story = {
-  name: "Gloss — classNames root and glossWrap",
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "In variant gloss, the root slot and className prop apply to the avatar circle; glossWrap — to the outer glass shell.",
-      },
-    },
-  },
-  decorators: [glossDottedDecorator(false)],
+  name: "Custom classNames",
   render: () => (
     <div className="flex flex-wrap items-center gap-2xlarge">
       <Avatar
-        variant="gloss"
+        variant="default"
         size="base"
         label="Root"
         src={PIN_IMAGE1}
@@ -252,11 +205,10 @@ export const CustomClassNames: Story = {
         loading="lazy"
         classNames={{
           root: "ring-2 ring-primary ring-offset-2 ring-offset-background",
-          glossWrap: "rounded-full",
         }}
       />
       <Avatar
-        variant="gloss"
+        variant="default"
         size="mid"
         label="Wrap"
         src={PIN_IMAGE2}
@@ -264,17 +216,15 @@ export const CustomClassNames: Story = {
         loading="lazy"
         classNames={{
           root: "border border-info/40",
-          glossWrap: "p-0.5 ring-1 ring-info/30 rounded-full",
         }}
       />
       <Avatar
-        variant="gloss"
+        variant="default"
         size="large"
         label="Fallback"
         className="text-primary"
         classNames={{
           root: "bg-primary/10 text-primary font-semibold",
-          glossWrap: "shadow-token-mid",
         }}
       />
     </div>

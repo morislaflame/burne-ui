@@ -7,27 +7,27 @@
  * Hosts play optional `enter`. Defaults are empty — does not steal child Input motion.
  */
 import type { ForwardedRef, PointerEventHandler } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import {
   useOptionalFieldMotionScope,
   useOptionalFieldSetMotionScope,
 } from "./fieldContext";
 import type { FieldMotion, FieldPartMotion, FieldSetMotion } from "./fieldTypes";
-
+ 
 export function resolveFieldMotionDefaults(): FieldMotion {
   return {};
 }
-
+ 
 export function resolveFieldSetMotionDefaults(): FieldSetMotion {
   return {};
 }
-
+ 
 export function useFieldSlotMotion<T extends HTMLElement>(
   slot: keyof FieldMotion,
   {
@@ -63,7 +63,7 @@ export function useFieldSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useFieldSetSlotMotion<T extends HTMLElement>(
   slot: keyof FieldSetMotion,
   {
@@ -99,3 +99,4 @@ export function useFieldSetSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

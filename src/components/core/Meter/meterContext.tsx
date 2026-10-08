@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   MeterClassNames,
   MeterClassNamesProviderProps,
   MeterFieldContextValue,
 } from "./meterTypes";
-
+ 
 const MeterFieldContext = createContext<MeterFieldContextValue | null>(null);
 const MeterClassNamesContext = createContext<MeterClassNames>({});
-
+ 
 export function MeterFieldProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function MeterFieldProvider({
     <MeterFieldContext.Provider value={value}>{children}</MeterFieldContext.Provider>
   );
 }
-
+ 
 export function MeterClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function MeterClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <MeterClassNamesContext.Provider value={merged}>
       {children}
     </MeterClassNamesContext.Provider>
   );
 }
-
+ 
 export function useMeterFieldContext(): MeterFieldContextValue {
   const ctx = useContext(MeterFieldContext);
   if (!ctx) {
@@ -47,20 +47,21 @@ export function useMeterFieldContext(): MeterFieldContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalMeterFieldContext() {
   return useContext(MeterFieldContext);
 }
-
+ 
 export function useMeterClassNames(): MeterClassNames {
   return useContext(MeterClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults + params + fill play live on Track (nested provider). */
 export const {
   MotionScopeProvider: MeterMotionProvider,
   useMotionScope: useMeterMotionScope,
   useOptionalMotionScope: useOptionalMeterMotionScope,
 } = createMotionScope("Meter");
-
+ 
 export { MeterFieldContext };
+ 

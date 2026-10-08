@@ -1,8 +1,8 @@
 import { forwardRef, useMemo } from "react";
-
+ 
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
-
+ 
 import { RADIO_GROUP_USES_NATIVE_FIELDSET } from "./radioGroupA11y";
 import { resolveRadioGroupMotionDefaults, useRadioGroupRootMotion } from "./radioGroupAnimations";
 import {
@@ -21,7 +21,7 @@ import {
 } from "./radioGroupParts";
 import type { RadioGroupProps } from "./radioGroupTypes";
 import { useRadioGroupRootState } from "./useRadioGroupRootState";
-
+ 
 export type {
   RadioGroupProps,
   RadioGroupOrientation,
@@ -35,7 +35,7 @@ export type {
   RadioGroupMotion,
   RadioGroupPartMotion,
 } from "./radioGroupTypes";
-
+ 
 const RadioGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroupFieldsetProps, "classNames">>(
   function RadioGroupFieldsetShell(
     {
@@ -48,7 +48,7 @@ const RadioGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroup
     ref,
   ) {
     const slotClassNames = useRadioGroupClassNames();
-    const { selectedValue } = useRadioGroupContext();
+    const { selectedValue, required } = useRadioGroupContext();
     const part = useRadioGroupRootMotion({
       forwardedRef: ref,
       selectionIdentity: selectedValue ?? "",
@@ -57,18 +57,19 @@ const RadioGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroup
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <OptionGroupFieldset
         ref={part.setRef}
         classNames={slotClassNames}
         {...props}
         {...part.pointerHandlers}
+        aria-required={required || undefined}
       />
     );
   },
 );
-
+ 
 export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
   function RadioGroupRoot(props, ref) {
     const {
@@ -89,7 +90,7 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useRadioGroupRootState(props);
     const motionDefaults = useMemo(() => resolveRadioGroupMotionDefaults(), []);
-
+ 
     const fieldset = RADIO_GROUP_USES_NATIVE_FIELDSET ? (
       <RadioGroupFieldsetShell
         ref={ref}
@@ -103,7 +104,7 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         {children}
       </RadioGroupFieldsetShell>
     ) : null;
-
+ 
     return (
       <RadioGroupProvider value={contextValue}>
         <RadioGroupClassNamesProvider classNames={classNames}>
@@ -117,9 +118,9 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     );
   },
 );
-
+ 
 RadioGroupRoot.displayName = "RadioGroup";
-
+ 
 export {
   RadioGroupLegend,
   RadioGroupHint,
@@ -127,3 +128,4 @@ export {
   RadioGroupActions,
   RadioGroupList,
 };
+ 

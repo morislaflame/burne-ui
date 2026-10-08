@@ -7,12 +7,14 @@ import type { PanelSize } from "@/components/core/utils/sizeLayout";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 export type PopoverSide = TooltipSide;
 export type PopoverSize = PanelSize;
-export type PopoverVariant = "default" | "gloss";
+export const KIT_POPOVER_VARIANTS = ["default"] as const;
+export type KitPopoverVariant = (typeof KIT_POPOVER_VARIANTS)[number];
+export type PopoverVariant = KitPopoverVariant | (string & {});
 export type PopoverContentGap = PanelSize;
-
+ 
 export type PopoverClassNames = {
   root?: string;
   trigger?: string;
@@ -20,27 +22,27 @@ export type PopoverClassNames = {
   /** Inner wrapper between content portal and panel (`relative overflow-visible`). */
   panelRelative?: string;
   panel?: string;
-  glossPanel?: string;
-  glossContent?: string;
   arrow?: string;
   header?: string;
-  label?: string;
-  hint?: string;
+  /** `Popover.Title`. */
+  title?: string;
+  /** `Popover.Description`. */
+  description?: string;
   body?: string;
 };
-
+ 
 export type PopoverLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type PopoverPartMotion = PopoverLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type PopoverMotion = {
   content?: PopoverPartMotion;
   header?: PopoverLifecycleMotion;
@@ -60,7 +62,7 @@ export type PopoverMotion = {
   /** Open squeeze on `Popover.Trigger` (Root scope — outside Content). */
   trigger?: PopoverPartMotion;
 };
-
+ 
 export type PopoverContextValue = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -78,7 +80,7 @@ export type PopoverContextValue = {
   /** Portal mount node from Root; Content may override via its own prop. */
   portalContainer?: HTMLElement | null;
 };
-
+ 
 export type PopoverProps = {
   children?: ReactNode;
   size?: PopoverSize;
@@ -89,6 +91,11 @@ export type PopoverProps = {
   onOpenChange?: (open: boolean) => void;
   anchorRef?: RefObject<HTMLElement | null>;
   shouldDismiss?: (target: Node) => boolean;
+  /**
+   * Move focus back to the trigger when the panel closes.
+   * HoverCard sets this to false so a pointer leave does not focus the trigger.
+   */
+  restoreFocus?: boolean;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<PopoverClassNames>;
@@ -105,40 +112,40 @@ export type PopoverProps = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type PopoverClassNamesProviderProps = {
   classNames?: Prettify<PopoverClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
-
+ 
 export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   /** Merge props onto the single child (Button, etc.) instead of rendering a `<button>` wrapper. */
   asChild?: boolean;
   motion?: Prettify<PopoverPartMotion>;
 };
-
+ 
 export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<PopoverPartMotion>;
 };
-
+ 
 export type PopoverHeaderProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<PopoverLifecycleMotion>;
 };
-
+ 
 export type PopoverTitleProps = HTMLAttributes<HTMLHeadingElement> & {
   motion?: Prettify<PopoverPartMotion>;
 };
-
+ 
 export type PopoverDescriptionProps = Omit<FieldHintProps, "id" | "as"> & {
   motion?: Prettify<PopoverPartMotion>;
 };
-
+ 
 export type PopoverBodyProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<PopoverLifecycleMotion>;
 };
-
+ 
 export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   showArrow?: boolean;
   offset?: number;
@@ -156,7 +163,7 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UsePopoverContentLifecycleProps = {
   open: boolean;
   side: PopoverSide;
@@ -164,10 +171,10 @@ export type UsePopoverContentLifecycleProps = {
   align: FloatingAlign;
   matchAnchorWidth: boolean;
   showArrow: boolean;
-  isGloss: boolean;
   forwardedRef: React.ForwardedRef<HTMLDivElement>;
   contentRef: RefObject<HTMLDivElement | null>;
   triggerRef: RefObject<HTMLElement | null>;
   anchorRef?: RefObject<HTMLElement | null>;
   portalContainer?: HTMLElement | null;
 };
+ 

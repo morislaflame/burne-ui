@@ -1,7 +1,8 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { PopoverSide, PopoverVariant } from "@/components/core/Popover";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 import type {
   MotionController,
@@ -13,14 +14,9 @@ import type {
   SelectionIndicatorSize,
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
-
-export type DropdownItemStatus =
-  | "default"
-  | "danger"
-  | "warning"
-  | "info"
-  | "success";
-
+ 
+export type DropdownItemStatus = SemanticStatus;
+ 
 export type DropdownClassNames = {
   root?: string;
   trigger?: string;
@@ -42,22 +38,21 @@ export type DropdownClassNames = {
   subTriggerLabelWrap?: string;
   subTriggerIcon?: string;
   subPopover?: string;
-  subPopoverGlossPanel?: string;
   subPopoverBody?: string;
 };
-
+ 
 export type DropdownLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type DropdownPartMotion = DropdownLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 /**
  * Main menu slots (`content` / `title` / `description` / `body`) are forwarded
  * to the inner Popover. `subContent` is the submenu portal host. `trigger` lives
@@ -78,7 +73,7 @@ export type DropdownMotion = {
   subContent?: DropdownLifecycleMotion;
   trigger?: DropdownPartMotion;
 };
-
+ 
 export type DropdownPopoverMotion = Pick<
   DropdownMotion,
   | "content"
@@ -93,7 +88,7 @@ export type DropdownPopoverMotion = Pick<
   | "subTrigger"
   | "separator"
 >;
-
+ 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
   open?: boolean;
@@ -121,7 +116,7 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type DropdownContextValue = {
   open: boolean;
   setOpen: (next: boolean) => void;
@@ -138,7 +133,7 @@ export type DropdownContextValue = {
   /** Portal mount node from Root; Popover / SubContent may override. */
   portalContainer?: HTMLElement | null;
 };
-
+ 
 export type DropdownSubContextValue = {
   open: boolean;
   setOpen: (next: boolean) => void;
@@ -146,17 +141,17 @@ export type DropdownSubContextValue = {
   scheduleClose: () => void;
   cancelClose: () => void;
 };
-
+ 
 export type DropdownClassNamesProviderProps = {
   classNames?: Prettify<DropdownClassNames>;
   children: ReactNode;
 };
-
+ 
 export type DropdownTriggerProps = HTMLAttributes<HTMLElement> & {
   asChild?: boolean;
   motion?: Prettify<DropdownPartMotion>;
 };
-
+ 
 export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   variant?: PopoverVariant;
   bodyClassName?: string;
@@ -166,6 +161,16 @@ export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   align?: FloatingAlign;
   /** Distance from the trigger in px. Default: Popover default offset. */
   offset?: number;
+  /**
+   * Position the panel against this node instead of the trigger.
+   * ContextMenu points it at the cursor. Default: the trigger.
+   */
+  anchorRef?: React.RefObject<HTMLElement | null>;
+  /**
+   * Stretch the panel to the anchor width. Default: `true`.
+   * ContextMenu passes `false` so a zero-size cursor anchor does not collapse the menu.
+   */
+  matchAnchorWidth?: boolean;
   /** Overrides Root `portalContainer` for the main menu panel. */
   portalContainer?: HTMLElement | null;
   /**
@@ -179,11 +184,11 @@ export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
   selectionIndicator?: boolean;
 };
-
+ 
 export type DropdownLabelProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DropdownPartMotion>;
 };
@@ -191,14 +196,14 @@ export type DropdownSeparatorProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<DropdownPartMotion>;
 };
 export type DropdownSubProps = HTMLAttributes<HTMLDivElement>;
-
+ 
 export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
   asChild?: boolean;
   /** Replaces the default submenu chevron. Pass `null` to hide. */
   icon?: ReactNode;
   motion?: Prettify<DropdownPartMotion>;
 };
-
+ 
 export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
   /** Overrides Root `portalContainer` for the submenu panel. */
   portalContainer?: HTMLElement | null;
@@ -209,7 +214,7 @@ export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<DropdownPartMotion>;
 };
@@ -219,7 +224,7 @@ export type DropdownItemHintProps = HTMLAttributes<HTMLSpanElement> & {
 export type DropdownItemIconProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<DropdownPartMotion>;
 };
-
+ 
 export type DropdownItemIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<
     Pick<
@@ -227,7 +232,7 @@ export type DropdownItemIndicatorClassNames = SelectionIndicatorClassNames &
       "itemIndicator" | "itemIndicatorShell" | "itemIndicatorFill" | "itemIndicatorMark"
     >
   >;
-
+ 
 export type DropdownItemIndicatorProps = Omit<
   HTMLAttributes<HTMLSpanElement>,
   "children"
@@ -238,7 +243,7 @@ export type DropdownItemIndicatorProps = Omit<
   children?: ReactNode;
   classNames?: Prettify<DropdownItemIndicatorClassNames>;
 };
-
+ 
 export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
   value?: string;
   href?: string;
@@ -249,7 +254,7 @@ export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
   indicator?: boolean;
   motion?: Prettify<DropdownLifecycleMotion>;
 };
-
+ 
 export type UseDropdownRootStateProps = Pick<
   DropdownProps,
   | "open"
@@ -263,14 +268,14 @@ export type UseDropdownRootStateProps = Pick<
   | "popoverVariant"
   | "portalContainer"
 >;
-
+ 
 export type UseDropdownPopoverMenuProps = {
   open: boolean;
   setOpen: (next: boolean) => void;
   contentRef: React.RefObject<HTMLDivElement | null>;
   triggerRef: React.RefObject<HTMLElement | null>;
 };
-
+ 
 export type UseDropdownSubContentPortalProps = {
   portalContainer?: HTMLElement | null;
   subOpen: boolean;
@@ -280,7 +285,7 @@ export type UseDropdownSubContentPortalProps = {
   popoverVariant: PopoverVariant;
   motionScope?: MotionScopeValue | null;
 };
-
+ 
 export type UseDropdownSubmenuKeyboardProps = {
   subOpen: boolean;
   /** Panel must be mounted in the portal before focusing items. */
@@ -289,3 +294,4 @@ export type UseDropdownSubmenuKeyboardProps = {
   triggerRef: React.RefObject<HTMLDivElement | null>;
   setOpen: (next: boolean) => void;
 };
+ 

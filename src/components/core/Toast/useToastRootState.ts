@@ -1,10 +1,10 @@
 import { useId, useMemo } from "react";
-
+ 
 import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/sizeLayout";
-
+ 
 import { resolveToastGridSlots } from "./toastAPI";
 import type { ToastItemContextValue, UseToastRootStateProps } from "./toastTypes";
-
+ 
 export function useToastRootState({
   status = "default",
   size: sizeProp,
@@ -21,7 +21,7 @@ export function useToastRootState({
   const isCompound = Boolean(children);
   const size = resolveMessageBannerSize(sizeProp);
   const sizePreset = messageBannerSizePreset(size);
-
+ 
   const gridSlots = useMemo(
     () =>
       resolveToastGridSlots(
@@ -36,7 +36,7 @@ export function useToastRootState({
       ),
     [action, children, description, isCompound, loading, onClose, status, title],
   );
-
+ 
   const itemCtx: ToastItemContextValue = useMemo(
     () => ({
       status,
@@ -50,7 +50,7 @@ export function useToastRootState({
     }),
     [descriptionId, gridSlots, loading, onClose, size, sizePreset, status, titleId],
   );
-
+ 
   return {
     isCompound,
     titleId,
@@ -59,3 +59,4 @@ export function useToastRootState({
     gridSlots,
   };
 }
+ 

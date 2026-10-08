@@ -1,12 +1,12 @@
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabledFor, motionContentFadeFor } from "@/components/core/utils/motionConfig";
-
+ 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
-
+ 
 export function applyContentFadeInstant(el: HTMLElement, visible: boolean): void {
   gsap.set(el, { autoAlpha: visible ? 1 : 0 });
 }
-
+ 
 /** Fade `autoAlpha` 0 ↔ 1. `enter` shows, `leave` hides. */
 export function contentFadeRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const visible = ctx.phase === "enter";
@@ -21,3 +21,4 @@ export function contentFadeRecipe(ctx: MotionContext): MotionAnimation | undefin
     force3D: false,
   }) as unknown as MotionAnimation;
 }
+ 

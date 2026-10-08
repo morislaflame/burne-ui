@@ -1,8 +1,8 @@
 import { forwardRef, type ForwardedRef, type ReactNode } from "react";
-
+ 
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
-
+ 
 import { useOptionalSliderMotionScope, useSliderClassNames, useSliderTrackContext } from "./sliderContext";
 import { SLIDER_MARK_CLASS, sliderMarkStyle } from "./sliderStyles";
 import { SliderThumbButton } from "./sliderThumbParts";
@@ -13,13 +13,13 @@ import type {
   SliderRailProps,
   SliderThumbKind,
 } from "./sliderTypes";
-
+ 
 export function SliderTrackMarks() {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
-
+ 
   if (!ctx.markItems.length) return null;
-
+ 
   return (
     <>
       {ctx.markItems.map((item) => (
@@ -33,9 +33,9 @@ export function SliderTrackMarks() {
     </>
   );
 }
-
+ 
 SliderTrackMarks.displayName = "SliderTrackMarks";
-
+ 
 export function SliderFill({ className, ...rest }: SliderFillProps) {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
@@ -45,7 +45,7 @@ export function SliderFill({ className, ...rest }: SliderFillProps) {
     forwardedRef: ctx.fillRef,
     pointerPhases: true,
   });
-
+ 
   return (
     <span
       ref={setRef}
@@ -55,9 +55,9 @@ export function SliderFill({ className, ...rest }: SliderFillProps) {
     />
   );
 }
-
+ 
 SliderFill.displayName = "SliderFill";
-
+ 
 export function SliderRail({ className, children, ...rest }: SliderRailProps) {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
@@ -66,7 +66,7 @@ export function SliderRail({ className, children, ...rest }: SliderRailProps) {
     slot: "rail",
     pointerPhases: true,
   });
-
+ 
   return (
     <div
       ref={setRef}
@@ -84,9 +84,9 @@ export function SliderRail({ className, children, ...rest }: SliderRailProps) {
     </div>
   );
 }
-
+ 
 SliderRail.displayName = "SliderRail";
-
+ 
 function SliderTrackThumb({
   kind,
   icon,
@@ -101,14 +101,14 @@ function SliderTrackThumb({
   forwardedRef?: ForwardedRef<HTMLButtonElement>;
 } & Omit<SliderCompoundThumbProps, "thumb" | "children">) {
   const ctx = useSliderTrackContext();
-
+ 
   if (kind === "start") {
     return (
       <SliderThumbButton
         ref={forwardedRef}
         size={ctx.size}
         icon={icon}
-        gloss={ctx.gloss}
+        variant={ctx.variant}
         thumbClassName={ctx.thumbClassName}
         className={className}
         style={style}
@@ -128,14 +128,14 @@ function SliderTrackThumb({
       />
     );
   }
-
+ 
   if (kind === "end") {
     return (
       <SliderThumbButton
         ref={forwardedRef}
         size={ctx.size}
         icon={icon}
-        gloss={ctx.gloss}
+        variant={ctx.variant}
         thumbClassName={ctx.thumbClassName}
         className={className}
         style={style}
@@ -155,13 +155,13 @@ function SliderTrackThumb({
       />
     );
   }
-
+ 
   return (
     <SliderThumbButton
       ref={forwardedRef}
       size={ctx.size}
       icon={icon}
-      gloss={ctx.gloss}
+      variant={ctx.variant}
       thumbClassName={ctx.thumbClassName}
       className={className}
       style={style}
@@ -181,7 +181,7 @@ function SliderTrackThumb({
     />
   );
 }
-
+ 
 export const SliderCompoundThumb = forwardRef<HTMLButtonElement, SliderCompoundThumbProps>(
   function SliderCompoundThumb(
     { thumb = "single", children, className, style, motion, ...rest },
@@ -201,11 +201,12 @@ export const SliderCompoundThumb = forwardRef<HTMLButtonElement, SliderCompoundT
     );
   },
 );
-
+ 
 SliderCompoundThumb.displayName = "SliderThumb";
-
+ 
 export const SliderIcon = forwardRef<HTMLSpanElement, SliderIconProps>(
   function SliderIcon({ children, className, ...rest }, ref) {
+    const slotClassNames = useSliderClassNames();
     const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalSliderMotionScope(),
       slot: "icon",
@@ -213,15 +214,20 @@ export const SliderIcon = forwardRef<HTMLSpanElement, SliderIconProps>(
       pointerPhases: true,
     });
     return (
-      <span ref={setRef} className={className} {...rest} {...pointerHandlers}>
+      <span
+        ref={setRef}
+        className={cn(slotClassNames.icon, className)}
+        {...rest}
+        {...pointerHandlers}
+      >
         {children}
       </span>
     );
   },
 );
-
+ 
 SliderIcon.displayName = "SliderIcon";
-
+ 
 export function SliderTrackDefaultBody({
   range,
   icon,
@@ -249,3 +255,4 @@ export function SliderTrackDefaultBody({
     </>
   );
 }
+ 

@@ -8,7 +8,7 @@
  * map and trigger defaults. Overlay/panel defaults wrap the portal host (`DIALOG_MOTION_DEFAULTS` on the Panel provider).
  */
 import { useCallback } from "react";
-
+ 
 import { useModalMotion } from "@/components/core/utils/useModalMotion";
 import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
 import {
@@ -19,50 +19,57 @@ import {
   applyModalOverlayInstant,
   applyModalPanelInstant,
 } from "@/components/core/utils/slotMotion/recipes/modalSurface";
+ 
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
-import type { DialogMotion, UseDialogModalMotionProps } from "./dialogTypes";
-
+import type { DialogMotion, DialogVariant, UseDialogModalMotionProps } from "./dialogTypes";
+import { KIT_DIALOG_VARIANTS } from "./dialogTypes";
+ 
 export const DIALOG_MOTION_HOST_SLOTS = ["overlay", "panel"] as const;
-
+ 
 export const DIALOG_MOTION_DEFAULTS: DialogMotion = {
   overlay: { enter: "modalOverlayEnter", leave: "modalOverlayLeave" },
   panel: { enter: "modalPanelEnter", leave: "modalPanelLeave" },
 };
 
+export function resolveDialogMotionDefaults(variant: DialogVariant): DialogMotion {
+  return overlaySkinMotion(DIALOG_MOTION_DEFAULTS, variant, KIT_DIALOG_VARIANTS, "dialog");
+}
+ 
 function applyDialogHostInstant(slot: ModalHostSlot, el: HTMLElement, phase: "enter" | "leave"): void {
   const open = phase === "enter";
   if (slot === "overlay") applyModalOverlayInstant(el, open);
   else applyModalPanelInstant(el, open);
 }
-
+ 
 export function useDialogModalMotion({
   open,
   onOpenChange,
-  variant,
   dismissOnBackdrop = true,
+  onInteractOutside,
   contained = false,
   motionScope,
 }: UseDialogModalMotionProps & { motionScope?: MotionScopeValue | null }) {
   const applyInstant = useCallback(applyDialogHostInstant, []);
   const slotMotion = useModalSlotMotionController({ motionScope, applyInstant });
-
+ 
   const motion = useModalMotion({
     open,
-    gloss: variant === "gloss",
     contained,
     onOpenChange,
     dismissOnBackdrop,
+    onInteractOutside,
     enableContainedEscape: true,
     slotMotion,
   });
-
+ 
   return {
     mounted: motion.mounted,
     showPortal: motion.showPortal,
     dialogRef: motion.dialogRef,
     overlayRef: motion.overlayRef,
     panelRef: motion.panelRef,
-    bindGlossPanelRef: motion.bindGlossPanelRef,
     handleBackdropPointerDown: motion.handleBackdropPointerDown,
   };
 }
+ 

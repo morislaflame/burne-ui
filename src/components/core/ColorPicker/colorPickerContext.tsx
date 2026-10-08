@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   ColorPickerClassNames,
   ColorPickerClassNamesProviderProps,
   ColorPickerContextValue,
 } from "./colorPickerTypes";
-
+ 
 const ColorPickerContext = createContext<ColorPickerContextValue | null>(null);
 const ColorPickerClassNamesContext = createContext<ColorPickerClassNames>({});
-
+ 
 export function ColorPickerProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function ColorPickerProvider({
     <ColorPickerContext.Provider value={value}>{children}</ColorPickerContext.Provider>
   );
 }
-
+ 
 export function ColorPickerClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function ColorPickerClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <ColorPickerClassNamesContext.Provider value={merged}>
       {children}
     </ColorPickerClassNamesContext.Provider>
   );
 }
-
+ 
 export function useColorPicker(): ColorPickerContextValue {
   const ctx = useContext(ColorPickerContext);
   if (!ctx) {
@@ -47,14 +47,15 @@ export function useColorPicker(): ColorPickerContextValue {
   }
   return ctx;
 }
-
+ 
 export function useColorPickerClassNames(): ColorPickerClassNames {
   return useContext(ColorPickerClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `colorPickerAnimations.ts`. */
 export const {
   MotionScopeProvider: ColorPickerMotionProvider,
   useMotionScope: useColorPickerMotionScope,
   useOptionalMotionScope: useOptionalColorPickerMotionScope,
 } = createMotionScope("ColorPicker");
+ 

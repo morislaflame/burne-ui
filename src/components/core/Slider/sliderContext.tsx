@@ -1,18 +1,18 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   SliderClassNames,
   SliderClassNamesProviderProps,
   SliderFieldContextValue,
   SliderTrackContextValue,
 } from "./sliderTypes";
-
+ 
 const SliderFieldContext = createContext<SliderFieldContextValue | null>(null);
 const SliderClassNamesContext = createContext<SliderClassNames>({});
 const SliderTrackContext = createContext<SliderTrackContextValue | null>(null);
-
+ 
 export function SliderFieldProvider({
   value,
   children,
@@ -24,7 +24,7 @@ export function SliderFieldProvider({
     <SliderFieldContext.Provider value={value}>{children}</SliderFieldContext.Provider>
   );
 }
-
+ 
 export function useSliderFieldContext(): SliderFieldContextValue {
   const ctx = useContext(SliderFieldContext);
   if (!ctx) {
@@ -32,13 +32,13 @@ export function useSliderFieldContext(): SliderFieldContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalSliderFieldContext(): SliderFieldContextValue | null {
   return useContext(SliderFieldContext);
 }
-
+ 
 export { SliderFieldContext };
-
+ 
 export function SliderClassNamesProvider({
   classNames,
   children,
@@ -48,18 +48,18 @@ export function SliderClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <SliderClassNamesContext.Provider value={merged}>
       {children}
     </SliderClassNamesContext.Provider>
   );
 }
-
+ 
 export function useSliderClassNames(): SliderClassNames {
   return useContext(SliderClassNamesContext);
 }
-
+ 
 export function SliderTrackProvider({
   value,
   children,
@@ -71,7 +71,7 @@ export function SliderTrackProvider({
     <SliderTrackContext.Provider value={value}>{children}</SliderTrackContext.Provider>
   );
 }
-
+ 
 export function useSliderTrackContext(): SliderTrackContextValue {
   const ctx = useContext(SliderTrackContext);
   if (!ctx) {
@@ -81,10 +81,11 @@ export function useSliderTrackContext(): SliderTrackContextValue {
   }
   return ctx;
 }
-
+ 
 /** Scope only. Defaults live in `sliderAnimations.ts`. */
 export const {
   MotionScopeProvider: SliderMotionProvider,
   useMotionScope: useSliderMotionScope,
   useOptionalMotionScope: useOptionalSliderMotionScope,
 } = createMotionScope("Slider");
+ 

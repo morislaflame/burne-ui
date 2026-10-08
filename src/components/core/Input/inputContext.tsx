@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   InputClassNames,
   InputClassNamesProviderProps,
   InputFieldContextValue,
 } from "./inputTypes";
-
+ 
 const InputFieldContext = createContext<InputFieldContextValue | null>(null);
 const InputClassNamesContext = createContext<InputClassNames>({});
-
+ 
 export function InputFieldProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function InputFieldProvider({
     <InputFieldContext.Provider value={value}>{children}</InputFieldContext.Provider>
   );
 }
-
+ 
 export function InputClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function InputClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <InputClassNamesContext.Provider value={merged}>
       {children}
     </InputClassNamesContext.Provider>
   );
 }
-
+ 
 export function useInputFieldContext(): InputFieldContextValue {
   const ctx = useContext(InputFieldContext);
   if (!ctx) {
@@ -47,18 +47,19 @@ export function useInputFieldContext(): InputFieldContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalInputFieldContext() {
   return useContext(InputFieldContext);
 }
-
+ 
 export function useInputClassNames(): InputClassNames {
   return useContext(InputClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `inputAnimations.ts`. */
 export const {
   MotionScopeProvider: InputMotionProvider,
   useMotionScope: useInputMotionScope,
   useOptionalMotionScope: useOptionalInputMotionScope,
 } = createMotionScope("Input");
+ 

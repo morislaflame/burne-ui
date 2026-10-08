@@ -2,7 +2,7 @@
  * Escape hatch for burne-ui internals (devtools, theme editors, kit authors).
  * App code should import from `burne-ui`, not `burne-ui/internal`.
  */
-
+ 
 export {
   CONTROL_SIZE_LAYOUT,
   type ControlSizeLayout,
@@ -25,7 +25,7 @@ export {
   buttonGroupTextSurfaceClasses,
   buttonGroupTextFrameClass,
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
-
+ 
 export { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 export { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 export {
@@ -36,12 +36,10 @@ export {
 export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
-  buildTokenBoxShadow,
   isInteractivePressKey,
   initElementShadow,
   readShadowSize,
   readShadowVar,
-  resolveConcreteBoxShadow,
   shadowCssVar,
   shadowLarge,
   shadowLift,
@@ -97,7 +95,7 @@ export {
   SHADOW_LIFT_CSS_VAR,
   SHADOW_OPACITY_BASE,
 } from "@/tokens/shadows";
-
+ 
 export {
   applyThemeTokens,
   clearThemeInlineTokens,
@@ -156,3 +154,33 @@ export {
   type BurneThemeConfig,
   type BurneThemeMode,
 } from "@/theme";
+
+export {
+  SKIN_FORBIDDEN_TOKENS,
+  SKIN_SLOTS,
+  isForbiddenSkinToken,
+  type SkinForbiddenToken,
+} from "@/skins/skinTypes";
+export {
+  resolveSkinTokens,
+  applySkinVars,
+  releaseSkinVars,
+  captureBaseline,
+  baselineFor,
+  skinSurfaceStyle,
+  isPaletteSkinToken,
+  type SkinTokenMap,
+} from "@/skins/resolveSkinTokens";
+export {
+  parseSkinDocument,
+  renderSkinPackage,
+  renderSkinStylesheet,
+  skinExportName,
+  skinToJson,
+  shadowLayerCount,
+  SKIN_DOCUMENT_SCHEMA,
+  SKIN_EDITOR_EXAMPLE,
+  type SkinDocument,
+  type SkinParseResult,
+} from "@/skins/skinDocument";
+ 

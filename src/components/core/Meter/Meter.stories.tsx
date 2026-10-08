@@ -251,7 +251,7 @@ export const CustomClassNames: Story = {
       value={72}
       color="var(--color-info)"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         header: "text-primary",
         value: "text-info font-semibold",
         track: "ring-1 ring-primary/15",

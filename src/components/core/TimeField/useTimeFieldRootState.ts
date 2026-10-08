@@ -1,26 +1,29 @@
 import { useId, useMemo } from "react";
-
+ 
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
+import { useSkinVariant } from "@/skins/skinContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+ 
 import type {
   TimeFieldFieldContextValue,
   UseTimeFieldRootStateProps,
 } from "./timeFieldTypes";
-
+ 
 export function useTimeFieldRootState({
   children,
   label,
   hint,
   error,
+  invalid,
   id: idProp,
   required = false,
   status = "default",
   size = "base",
-  variant = "default",
+  variant: variantProp,
   compact = false,
 }: UseTimeFieldRootStateProps) {
+  const variant = useSkinVariant(variantProp);
   const autoId = useId();
   const fieldId = idProp ?? `timefield-${autoId}`;
   const hintId = fieldHintId(fieldId);
@@ -35,7 +38,7 @@ export function useTimeFieldRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "TimeFieldError")),
     };
   }, [children, error, hint, label]);
-
+ 
   const fieldCtx: TimeFieldFieldContextValue = useMemo(
     () => ({
       fieldId,
@@ -45,6 +48,7 @@ export function useTimeFieldRootState({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      invalid,
       required,
       status,
       size,
@@ -57,6 +61,7 @@ export function useTimeFieldRootState({
       fieldId,
       hasError,
       hasHint,
+      invalid,
       hasLabel,
       hintId,
       required,
@@ -66,12 +71,12 @@ export function useTimeFieldRootState({
       variant,
     ],
   );
-
+ 
   const fieldLabelCtx = useMemo(
     () => ({ labelId, required }),
     [labelId, required],
   );
-
+ 
   return {
     fieldCtx,
     fieldLabelCtx,
@@ -86,3 +91,4 @@ export function useTimeFieldRootState({
     compact,
   };
 }
+ 

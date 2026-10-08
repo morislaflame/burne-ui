@@ -1,42 +1,45 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { useSkinVariant } from "@/skins/skinContext";
+ 
 import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
-
+ 
 import { createToggleButtonGroupKeyDownHandler, resolveToggleButtonTabIndex } from "./toggleButtonGroupA11y";
 import { countToggleButtonChildren, extractToggleItemValues, flattenFragmentChildren, isToggleButtonGroupItemSelected, normalizeMultipleDefault, normalizeSingleDefault, resolveToggleButtonGroupSelectionChange } from "./toggleButtonGroupAPI";
 import type {
   ToggleButtonGroupContextValue,
   UseToggleButtonGroupRootStateProps,
 } from "./toggleButtonGroupTypes";
-
+ 
 export function useToggleButtonGroupRootState({
   children,
   type = "multiple",
   disabled = false,
   size = "base",
-  variant = "default",
+  variant: variantProp,
   value: valueProp,
   defaultValue,
   onValueChange,
   onKeyDown,
   orientation = "horizontal",
 }: UseToggleButtonGroupRootStateProps) {
+  const variant = useSkinVariant(variantProp);
   const isSingle = type === "single";
   const isControlled = valueProp !== undefined;
-
+ 
   const [internalSingle, setInternalSingle] = useState<string | undefined>(() =>
     normalizeSingleDefault(defaultValue),
   );
   const [internalMultiple, setInternalMultiple] = useState<string[]>(() =>
     normalizeMultipleDefault(defaultValue),
   );
-
+ 
   const singleValue = isSingle
     ? isControlled
       ? normalizeSingleDefault(valueProp)
       : internalSingle
     : undefined;
-
+ 
   const multipleValues = useMemo(
     () =>
       !isSingle
@@ -47,27 +50,28 @@ export function useToggleButtonGroupRootState({
     [internalMultiple, isControlled, isSingle, valueProp],
   );
   const latestMultipleRef = useRef(multipleValues);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   latestMultipleRef.current = multipleValues;
-
+ 
   const flat = useMemo(() => flattenFragmentChildren(children), [children]);
   const segmentCount = useMemo(() => countToggleButtonChildren(flat), [flat]);
   const firstToggleValue = useMemo(() => extractToggleItemValues(flat)[0], [flat]);
-
+ 
   // Roving tab stop — independent of selection (arrows move focus only).
   const [rovingValue, setRovingValue] = useState<string | undefined>(undefined);
   const resolvedRovingValue =
     rovingValue ?? (isSingle ? singleValue : undefined) ?? firstToggleValue;
-
+ 
   const isSelected = useCallback(
     (itemValue: string) =>
       isToggleButtonGroupItemSelected(type, itemValue, singleValue, multipleValues),
     [multipleValues, singleValue, type],
   );
-
+ 
   const select = useCallback(
     (itemValue: string) => {
       if (disabled) return;
-
+ 
       if (isSingle) {
         const change = resolveToggleButtonGroupSelectionChange(
           type,
@@ -80,7 +84,7 @@ export function useToggleButtonGroupRootState({
         onValueChange?.(change.value);
         return;
       }
-
+ 
       const next = toggleOptionListSelection(latestMultipleRef.current, itemValue, true);
       latestMultipleRef.current = next;
       if (!isControlled) setInternalMultiple(next);
@@ -88,13 +92,13 @@ export function useToggleButtonGroupRootState({
     },
     [disabled, isControlled, isSingle, multipleValues, onValueChange, singleValue, type],
   );
-
+ 
   const tabIndexFor = useCallback(
     (itemValue: string) =>
       resolveToggleButtonTabIndex(itemValue, resolvedRovingValue, firstToggleValue),
     [firstToggleValue, resolvedRovingValue],
   );
-
+ 
   const contextValue = useMemo<ToggleButtonGroupContextValue>(
     () => ({
       type,
@@ -108,7 +112,7 @@ export function useToggleButtonGroupRootState({
     }),
     [disabled, isSelected, select, setRovingValue, size, tabIndexFor, type, variant],
   );
-
+ 
   const handleKeyDown = useMemo(
     () =>
       createToggleButtonGroupKeyDownHandler({
@@ -119,11 +123,11 @@ export function useToggleButtonGroupRootState({
       }),
     [disabled, onKeyDown, orientation],
   );
-
+ 
   const selectionIdentity = isSingle
     ? (singleValue ?? "")
     : multipleValues.join("\0");
-
+ 
   return {
     flat,
     segmentCount,
@@ -132,3 +136,4 @@ export function useToggleButtonGroupRootState({
     selectionIdentity,
   };
 }
+ 

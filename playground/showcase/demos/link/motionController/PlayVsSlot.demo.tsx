@@ -39,7 +39,7 @@ export function LinkMotionControllerPlayVsSlotDemo() {
             hoverIn: { x: 6, duration: 0.22, replay: "rest" },
             hoverOut: { x: 0, duration: 0.16 },
           },
-          icon: {
+          iconEnd: {
             hoverIn: (ctx) => ctx.fromRest({ rotation: 18, duration: 0.22 }),
             hoverOut: (ctx) => ctx.to({ rotation: 0, duration: 0.18 }),
           },

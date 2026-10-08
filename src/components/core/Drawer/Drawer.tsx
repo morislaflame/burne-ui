@@ -1,11 +1,10 @@
-import "../utils/glossInteractive.css";
-
+ 
 import { DrawerClassNamesProvider, DrawerMotionProvider, DrawerProvider } from "./drawerContext";
 import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerTitle, DrawerTrigger } from "./drawerParts";
 import type { DrawerProps } from "./drawerTypes";
 import { useDrawerRootState } from "./useDrawerRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
-
+ 
 export type {
   DrawerProps,
   DrawerPanelProps,
@@ -29,7 +28,7 @@ export type {
   DrawerLifecycleMotion,
   DrawerPartMotion,
 } from "./drawerTypes";
-
+ 
 export function DrawerRoot({
   open,
   defaultOpen = false,
@@ -53,7 +52,7 @@ export function DrawerRoot({
     size,
     portalContainer,
   });
-
+ 
   return (
     <DrawerProvider value={state.contextValue}>
       <DrawerClassNamesProvider classNames={classNames}>
@@ -67,9 +66,9 @@ export function DrawerRoot({
     </DrawerProvider>
   );
 }
-
+ 
 DrawerRoot.displayName = "Drawer";
-
+ 
 export {
   DrawerBackdropInner,
   DrawerHandleInner,
@@ -84,3 +83,4 @@ export {
   DrawerPanel,
   DrawerTrigger,
 };
+ 

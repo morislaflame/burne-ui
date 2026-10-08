@@ -63,7 +63,7 @@ export function SliderMotionThumbInertiaDemo() {
         <div
           ref={bubbleRef}
           aria-hidden
-          className="pointer-events-none absolute top-0 left-0 z-tooltip min-w-control-small rounded-mid border-token bg-surface px-small py-xsmall text-center text-small font-w-mid text-foreground shadow-token-large tabular-nums"
+          className="pointer-events-none absolute top-0 left-0 z-tooltip min-w-control-small rounded-large border-token bg-surface px-small py-xsmall text-center text-small font-w-mid text-foreground shadow-token-large tabular-nums"
         >
           {value}
         </div>

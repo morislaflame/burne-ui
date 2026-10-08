@@ -185,8 +185,7 @@ export const PromiseToast: Story = {
 
     const handleError = () => {
       const p = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Network error")), 2000),
-      );
+        setTimeout(() => reject(new Error("Network error")), 2000));
       toast.promise(p, {
         loading: "Uploading file…",
         success: "File uploaded",
@@ -388,12 +387,13 @@ export const CustomClassNames: Story = {
           toast.show({
             status: "info",
             title: "Full Toast customization",
-            description: "Slots root, title, description via classNames.",
+            description: "Slots root, title, description, and stackItem via classNames.",
             classNames: {
               root: "rounded-large border-info/50 bg-info/10 ring-1 ring-info/20",
               indicator: "text-info",
               title: "font-semibold text-info",
               description: "text-foreground/80",
+              stackItem: "ring-1 ring-info/20",
             },
           })
         }
@@ -478,7 +478,7 @@ export const PortalContainer: Story = {
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-64 flex-col items-center justify-center gap-large overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative flex h-64 flex-col items-center justify-center gap-large overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
           style={{ transform: "translateZ(0)" }}
         >
           <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>

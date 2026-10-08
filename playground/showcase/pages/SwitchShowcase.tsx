@@ -8,8 +8,6 @@ import { SwitchClassNamesSimpleLabelDemo } from "../demos/switch/SwitchClassName
 import switchClassNamesSimpleLabelSource from "../demos/switch/SwitchClassNamesSimpleLabel.demo.tsx?raw";
 import { SwitchDisabledDemo } from "../demos/switch/SwitchDisabled.demo";
 import switchDisabledSource from "../demos/switch/SwitchDisabled.demo.tsx?raw";
-import { SwitchGlossDemo } from "../demos/switch/SwitchGloss.demo";
-import switchGlossSource from "../demos/switch/SwitchGloss.demo.tsx?raw";
 import { SwitchNotificationsDemo } from "../demos/switch/SwitchNotifications.demo";
 import switchNotificationsSource from "../demos/switch/SwitchNotifications.demo.tsx?raw";
 import { SwitchSizesDemo } from "../demos/switch/SwitchSizes.demo";
@@ -42,12 +40,7 @@ export function SwitchShowcase() {
       <ShowcaseSection title="Disabled" description="Inactive switch.">
         <ShowcaseDemoFromFile Demo={SwitchDisabledDemo} source={switchDisabledSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="gloss — glass track and circle (prop gloss on the root).">
-        <ShowcaseDemoFromFile Demo={SwitchGlossDemo} source={switchGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: default thumb, instant snap, bounce factory, fill fade, icon spin, track pulse.">
+<ShowcaseSection title="Slot motion" description="One gallery: default thumb, instant snap, bounce factory, fill fade, icon spin, track pulse.">
         <SwitchSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -90,16 +83,16 @@ export function SwitchShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, hint, checked, onChange, disabled, gloss at the root - without children."
+            description="label, hint, checked, onChange, disabled, default at the root - without children."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
             description="Switch.Label, Switch.Hint, Switch.Track — custom switch layout."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss="gloss">
+        <ShowcaseDoc.Customization>
           <p>
-            Boolean <code>gloss</code> — glass track. Active state colors — CSS-topic variables.
+            Boolean <code>default</code> — glass track. Active state colors — CSS-topic variables.
             Slot motion thumb — <code>motion.thumb</code> / <code>switchThumb</code> recipe
             (<code>configureMotion</code>: <code>switchThumbDuration</code>,{" "}
             <code>switchThumbEase</code>).

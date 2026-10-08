@@ -1,10 +1,10 @@
 import { forwardRef, useMemo } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import {
   progressScaleFromPercent,
   resolveMeterMotionDefaults,
@@ -29,9 +29,9 @@ import type {
   MeterValueProps,
 } from "./meterTypes";
 import { useMeterTrackState } from "./useMeterTrackState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function MeterSimpleBody({
   label,
   showValue,
@@ -41,7 +41,7 @@ export function MeterSimpleBody({
   trackProps,
 }: MeterSimpleBodyProps) {
   const showHeader = label != null || showValue || valueText != null;
-
+ 
   return (
     <>
       {showHeader ? (
@@ -64,7 +64,7 @@ export function MeterSimpleBody({
     </>
   );
 }
-
+ 
 export const MeterLabel = forwardRef<HTMLElement, MeterLabelProps>(
   function MeterLabel(
     {
@@ -88,7 +88,7 @@ export const MeterLabel = forwardRef<HTMLElement, MeterLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Label
         ref={part.setRef}
@@ -103,9 +103,9 @@ export const MeterLabel = forwardRef<HTMLElement, MeterLabelProps>(
     );
   },
 );
-
+ 
 MeterLabel.displayName = "MeterLabel";
-
+ 
 export function MeterHeader({ children, className, motion, ...rest }: MeterHeaderProps) {
   const { orientation } = useMeterFieldContext();
   const slotClassNames = useMeterClassNames();
@@ -115,7 +115,7 @@ export function MeterHeader({ children, className, motion, ...rest }: MeterHeade
     motion,
     pointerPhases: false,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -130,9 +130,9 @@ export function MeterHeader({ children, className, motion, ...rest }: MeterHeade
     </div>
   );
 }
-
+ 
 MeterHeader.displayName = "Meter.Header";
-
+ 
 export function MeterValue({ children, className, motion, ...rest }: MeterValueProps) {
   const { display } = useMeterFieldContext();
   const slotClassNames = useMeterClassNames();
@@ -143,9 +143,9 @@ export function MeterValue({ children, className, motion, ...rest }: MeterValueP
     motion,
     pointerPhases: false,
   });
-
+ 
   if (text == null) return null;
-
+ 
   return (
     <Text
       as="span"
@@ -161,9 +161,9 @@ export function MeterValue({ children, className, motion, ...rest }: MeterValueP
     </Text>
   );
 }
-
+ 
 MeterValue.displayName = "Meter.Value";
-
+ 
 export const MeterHint = forwardRef<HTMLElement, MeterHintProps>(
   function MeterHint(
     {
@@ -189,7 +189,7 @@ export const MeterHint = forwardRef<HTMLElement, MeterHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -203,9 +203,9 @@ export const MeterHint = forwardRef<HTMLElement, MeterHintProps>(
     );
   },
 );
-
+ 
 MeterHint.displayName = "Meter.Hint";
-
+ 
 export const MeterError = forwardRef<HTMLElement, MeterErrorProps>(
   function MeterError(
     {
@@ -231,7 +231,7 @@ export const MeterError = forwardRef<HTMLElement, MeterErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -245,9 +245,9 @@ export const MeterError = forwardRef<HTMLElement, MeterErrorProps>(
     );
   },
 );
-
+ 
 MeterError.displayName = "Meter.Error";
-
+ 
 export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
   function MeterTrack(
     {
@@ -301,7 +301,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       }),
       [isHorizontal, percent],
     );
-
+ 
     return (
       <MeterMotionProvider
         motion={merged}
@@ -322,9 +322,9 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
     );
   },
 );
-
+ 
 MeterTrack.displayName = "Meter.Track";
-
+ 
 const MeterTrackHost = forwardRef<
   HTMLDivElement,
   Omit<
@@ -373,7 +373,7 @@ const MeterTrackHost = forwardRef<
     fillRef: fillPart.targetRef,
   });
   useMeterTrackSlotMotion(scope, String(percent));
-
+ 
   return (
     <div
       ref={trackPart.setRef}
@@ -411,3 +411,4 @@ const MeterTrackHost = forwardRef<
     </div>
   );
 });
+ 

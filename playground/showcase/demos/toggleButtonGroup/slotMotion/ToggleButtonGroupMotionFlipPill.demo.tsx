@@ -46,7 +46,7 @@ export function ToggleButtonGroupMotionFlipPillDemo() {
       <span
         ref={pillRef}
         aria-hidden
-        className="pointer-events-none absolute left-0 top-0 z-0 rounded-mid bg-primary/20"
+        className="pointer-events-none absolute left-0 top-0 z-0 rounded-large bg-primary/20"
       />
       <ToggleButtonGroup
         type="single"

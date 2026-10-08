@@ -9,7 +9,7 @@
  * `useBarFillMotion` (layout cleanup replays in Strict Mode).
  */
 import { type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
@@ -19,12 +19,12 @@ import {
 } from "@/components/core/utils/slotMotion";
 import { useBarFillMotion } from "@/components/core/utils/slotMotion/useBarFillMotion";
 import { progressScaleFromPercent } from "@/components/core/utils/slotMotion/recipes/progressFill";
-
+ 
 import { useOptionalMeterMotionScope } from "./meterContext";
 import type { MeterMotion, MeterPartMotion } from "./meterTypes";
-
+ 
 export { progressScaleFromPercent };
-
+ 
 export function resolveMeterMotionDefaults(): MeterMotion {
   return {
     fill: {
@@ -32,7 +32,7 @@ export function resolveMeterMotionDefaults(): MeterMotion {
     },
   };
 }
-
+ 
 export function useMeterTrackSlotMotion(
   scope: MotionScopeValue | null,
   identity: string,
@@ -44,7 +44,7 @@ export function useMeterTrackSlotMotion(
     broadcast: true,
   });
 }
-
+ 
 export function useMeterFillMotion({
   scope,
   percent,
@@ -58,9 +58,9 @@ export function useMeterFillMotion({
 }) {
   return useBarFillMotion({ scope, percent, isHorizontal, fillRef });
 }
-
+ 
 export type MeterChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useMeterChromeSlot(
   slot: MeterChromeSlot,
   {
@@ -96,3 +96,4 @@ export function useMeterChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

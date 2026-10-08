@@ -1,9 +1,12 @@
-import "../utils/glossPanel.css";
+ 
+import { forwardRef, useMemo, type HTMLAttributes } from "react";
 
-import type { HTMLAttributes } from "react";
-
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+ 
 import { selectionIndicatorDecorativeProps } from "./selectionIndicatorA11y";
 import {
   SelectionIndicatorMotionProvider,
@@ -11,35 +14,40 @@ import {
   useOptionalSelectionIndicatorMotionScope,
 } from "./selectionIndicatorContext";
 import {
-  SELECTION_INDICATOR_MOTION_DEFAULTS,
+  resolveSelectionIndicatorMotionDefaults,
   SelectionIndicatorMotionSync,
 } from "./selectionIndicatorAnimations";
 import { SelectionIndicatorFill, SelectionIndicatorMark } from "./selectionIndicatorParts";
 import type { SelectionIndicatorCheckMotion, SelectionIndicatorProps } from "./selectionIndicatorTypes";
 import { useSelectionIndicatorRootState } from "./useSelectionIndicatorRootState";
-
-function SelectionIndicatorRootSlot({
-  className,
-  motion,
-  children,
-  ...rest
-}: HTMLAttributes<HTMLSpanElement> & { motion?: SelectionIndicatorCheckMotion }) {
+ 
+const SelectionIndicatorRootSlot = forwardRef<
+  HTMLSpanElement,
+  HTMLAttributes<HTMLSpanElement> & { motion?: SelectionIndicatorCheckMotion }
+>(function SelectionIndicatorRootSlot({ className, motion, children, ...rest }, ref) {
   const { setRef } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalSelectionIndicatorMotionScope(),
     slot: "root",
     motion,
   });
   return (
-    <span ref={setRef} className={className} {...selectionIndicatorDecorativeProps()} {...rest}>
+    <span
+      ref={mergeRefs(setRef, ref)}
+      className={className}
+      {...selectionIndicatorDecorativeProps()}
+      {...rest}
+    >
       {children}
     </span>
   );
-}
-
-export function SelectionIndicator({
+});
+ 
+export const SelectionIndicator = forwardRef<HTMLSpanElement, SelectionIndicatorProps>(
+  function SelectionIndicator({
   size = "base",
-  variant = "default",
+  variant,
   selected,
+  indeterminate = false,
   check = false,
   dot = false,
   icon,
@@ -52,12 +60,13 @@ export function SelectionIndicator({
   motionPayload,
   playInitialState,
   ...rest
-}: SelectionIndicatorProps) {
-  const { shellClassName, contextValue, usesCompound, fillSlot, markSlot, hasMark, markContent, showsFill } =
+}, ref) {
+  const { shellClassName, contextValue, usesCompound, fillSlot, markSlot, hasMark, markContent, showsFill, state } =
     useSelectionIndicatorRootState({
       size,
       variant,
       selected,
+      indeterminate,
       check,
       dot,
       icon,
@@ -65,6 +74,13 @@ export function SelectionIndicator({
       className,
       classNames,
     });
+ 
+  const skinVariant = useSkinVariant(variant);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveSelectionIndicatorMotionDefaults(skinVariant);
+  }, [skinRevision, skinVariant]);
 
   const body = usesCompound ? (
     <>
@@ -77,14 +93,22 @@ export function SelectionIndicator({
       {hasMark ? <SelectionIndicatorMark>{markContent}</SelectionIndicatorMark> : null}
     </>
   );
-
+ 
   return (
     <SelectionIndicatorProvider value={contextValue}>
-      <SelectionIndicatorMotionProvider motion={motion} defaults={SELECTION_INDICATOR_MOTION_DEFAULTS} controller={motionController}
+      <SelectionIndicatorMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
-        <SelectionIndicatorRootSlot className={shellClassName} motion={motion?.root} {...rest}>
+        <SelectionIndicatorRootSlot
+          ref={ref}
+          className={shellClassName}
+          motion={motion?.root}
+          {...rest}
+          {...dataVariantProps({ size, variant: skinVariant })}
+          data-selected={selected ? "true" : undefined}
+          data-state={state}
+        >
           {body}
         </SelectionIndicatorRootSlot>
         <SelectionIndicatorMotionSync
@@ -95,6 +119,6 @@ export function SelectionIndicator({
       </SelectionIndicatorMotionProvider>
     </SelectionIndicatorProvider>
   );
-}
-
+});
+ 
 SelectionIndicator.displayName = "SelectionIndicator";

@@ -6,9 +6,8 @@ export function SliderClassNamesFullDemo() {
       defaultValue={62}
       min={0}
       max={100}
-      gloss
       classNames={{
-        root: "max-w-md rounded-mid border border-info/25 p-base",
+        root: "max-w-md rounded-large border border-info/25 p-base",
         value: "text-info font-semibold",
         track: "ring-1 ring-info/20",
         rail: "bg-info/10",

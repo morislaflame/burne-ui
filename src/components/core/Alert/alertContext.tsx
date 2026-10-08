@@ -1,21 +1,21 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type { AlertClassNames, AlertContextValue } from "./alertTypes";
-
+ 
 const AlertContext = createContext<AlertContextValue | null>(null);
 const AlertClassNamesContext = createContext<AlertClassNames>({});
-
+ 
 /** Scope only. Defaults and host play live in `alertAnimations.ts`. */
 export const {
   MotionScopeProvider: AlertMotionProvider,
   useMotionScope: useAlertMotionScope,
   useOptionalMotionScope: useOptionalAlertMotionScope,
 } = createMotionScope("Alert");
-
-
+ 
+ 
 function useAlertContext() {
   const ctx = useContext(AlertContext);
   if (!ctx) {
@@ -23,11 +23,11 @@ function useAlertContext() {
   }
   return ctx;
 }
-
+ 
 function useOptionalAlertContext() {
   return useContext(AlertContext);
 }
-
+ 
 export function AlertClassNamesProvider({
   classNames,
   children,
@@ -40,19 +40,20 @@ export function AlertClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <AlertClassNamesContext.Provider value={merged}>
       {children}
     </AlertClassNamesContext.Provider>
   );
 }
-
+ 
 export function useAlertClassNames(): AlertClassNames {
   return useContext(AlertClassNamesContext);
 }
-
+ 
 export { AlertContext };
-
+ 
 void useAlertContext;
 void useOptionalAlertContext;
+ 

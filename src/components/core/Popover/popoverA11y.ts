@@ -1,5 +1,5 @@
 export const POPOVER_TRIGGER_HASPOPUP = "dialog" as const;
-
+ 
 export function popoverTriggerA11y(open: boolean, popoverId: string) {
   return {
     "aria-haspopup": POPOVER_TRIGGER_HASPOPUP,
@@ -7,15 +7,15 @@ export function popoverTriggerA11y(open: boolean, popoverId: string) {
     "aria-controls": open ? popoverId : undefined,
   } as const;
 }
-
+ 
 export function popoverLabelId(popoverId: string): string {
   return `${popoverId}-label`;
 }
-
+ 
 export function popoverHintId(popoverId: string): string {
   return `${popoverId}-hint`;
 }
-
+ 
 export function resolvePopoverDescribedBy({
   contentRole,
   labelConnected,
@@ -34,7 +34,7 @@ export function resolvePopoverDescribedBy({
   if (hintConnected) return hintId;
   return undefined;
 }
-
+ 
 export function resolvePopoverLabelledBy({
   contentRole,
   labelConnected,
@@ -47,5 +47,6 @@ export function resolvePopoverLabelledBy({
   if (contentRole === "dialog" && labelConnected) return labelId;
   return undefined;
 }
-
+ 
 export { getFirstFocusable as getFirstFocusableInPopover } from "@/components/core/utils/focusElement";
+ 

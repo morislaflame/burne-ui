@@ -1,6 +1,6 @@
 # Select
 
-Выпадающий список выбора одного значения. Без фильтрации (в отличие от ComboBox): отображаемое значение — кнопка `Select.Value`. Simple API (`options` на root) и compound (`TriggerGroup` / `Value` / `Trigger` / `Popover`).
+Выпадающий список. Одно значение или несколько (`multiple`). Без фильтрации (в отличие от ComboBox): отображаемое значение — кнопка `Select.Value`. Simple API (`options` на root) и compound (`TriggerGroup` / `Value` / `Trigger` / `Popover`).
 
 ## Импорт
 
@@ -48,14 +48,19 @@ const options = [
 | `options` | `[]` | `{ value, label, hint?, icon?, disabled? }` |
 | `value` / `defaultValue` | — | Controlled / uncontrolled значение |
 | `onValueChange` | — | Колбэк выбора |
+| `multiple` | `false` | Несколько значений. Выбор переключает пункт и не закрывает меню |
+| `values` / `defaultValues` | — | Controlled / uncontrolled список при `multiple` |
+| `onValuesChange` | — | `(values: string[]) => void` |
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled попап |
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `variant` | `default` / gloss из ButtonGroup | как Input |
-| `status` | `default` | danger/success/warning/info — постоянный статусный ring |
+| `status` | `default` | Только цвет: danger/success/warning/info — постоянный статусный ring. Не ставит `aria-invalid` |
+| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `size` | `base` | размер trigger shell и пунктов ListBox в Popover |
 | `disabled` | `false` | |
 | `placeholder` | `"Выберите значение"` | muted-текст без выбора |
-| `menuMaxHeight` | `min(24rem, 70vh)` | scroll ListBox |
+| `menuMaxHeight` | `min(24rem, 70dvh)` | scroll ListBox |
+| `virtualized` | `false` | В DOM только видимые options. Строки одной высоты |
 | `name` | — | Form binding |
 | `classNames` | — | см. стилизацию |
 | `motion` | — | Root / simple: карта слотов + `events`. На `Select.TriggerGroup` — part motion слота `triggerGroup` |
@@ -63,29 +68,30 @@ const options = [
 
 ### `SelectClassNames`
 
-`root`, `label`, `triggerGroup`, `value`, `trigger`, `triggerIcon`, `popover`, `popoverBody`, `listBox`, `listBoxItem`, `listBoxLabel`, `listBoxHint`, `listBoxIcon`, `listBoxEmpty`, `listBoxHeader`, `listBoxHeaderText`, `hint`, `error`.
+`root`, `label`, `triggerGroup`, `value`, `trigger`, `triggerIcon`, `triggerIconWrap`, `popover`, `popoverBody`, `listBox`, `listBoxItem`, `listBoxLabel`, `listBoxHint`, `listBoxIcon`, `listBoxEmpty`, `listBoxHeader`, `listBoxHeaderText`, `hint`, `error`.
 
-`Select.Popover` принимает `listBoxProps` (пропы внутреннего `ListBox`, кроме controlled `value` / `onValueChange` / `activeValue` / `listId` / `children`) и мержит вложенные `listBox*` слоты в `ListBox.classNames`.
+`Select.Popover` принимает `listBoxProps` (пропы внутреннего `ListBox`, кроме controlled `value` / `onValueChange` / `activeValue` / `listId` / `multiple` / `children`) и мержит вложенные `listBox*` слоты в `ListBox.classNames`.
 
 ### Compound-подчасти
 
 | Часть | Роль |
 |-------|------|
-| `Select.TriggerGroup` | Shell anchor, `role="combobox"`, open squeeze |
-| `Select.Value` | Кнопка с label выбранной опции + keyboard |
+| `Select.TriggerGroup` | Shell anchor, open squeeze |
+| `Select.Value` | Кнопка `role="combobox"` + keyboard |
 | `Select.Trigger` | Chevron, toggle open |
 | `Select.Popover` | `Popover` + `ListBox` |
 
 ## Поведение
 
-- Закрыт: `Select.Value` показывает `label` выбранной опции или `placeholder` (muted)
+- Закрыт: `Select.Value` показывает `label` выбранной опции или `placeholder` (muted). При `multiple` — подписи в порядке `options`, через запятую
 - Открыт: `ListBox` с `activeValue`, keyboard navigation
 - Клавиатура на Value: ArrowDown/Up, Enter, Space — open; в списке — navigate + Enter выбирает; Escape закрывает; typeahead по первым буквам (string `label` / `value`)
+- `multiple`: Enter и клик переключают пункт и оставляют меню открытым
 - Нет type-ahead / filter (см. ComboBox)
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `Select.TriggerGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `triggerGroup.pressIn` (non-gloss) или kit gloss squeeze. Chevron rotation — kit-internal. Menu enter — на Popover, не дублируется.
+Публичный slot motion. Root передаёт карту `motion`; хост — `Select.TriggerGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `triggerGroup.pressIn` (non-gloss) или kit gloss squeeze. Шеврон — слот `triggerIcon`, фазы `enter` / `leave`, рецепт `chevronRotate`. Menu enter — на Popover, не дублируется.
 
 ### Slot motion
 
@@ -139,7 +145,7 @@ function Nudge() {
 
 ### Chevron / Popover / ListBox
 
-- Chevron: `useChevronRotation` — kit-internal
+- Chevron: слот `triggerIcon`, рецепт `chevronRotate` (`enter` / `leave`)
 - Popover enter/leave — публичный slot motion Popover
 - ListBox items — slot motion ListBox (если подключён)
 
@@ -152,16 +158,23 @@ function Nudge() {
 
 Подчасти принимают **`className`** поверх слота контекста.
 
+`Select.Trigger` и `Select.Value` публикуют `data-state="open" | "closed"`. Поворот шеврона без JS — класс на кнопке, у которой есть атрибут:
+
+```tsx
+<Select.Trigger className="data-[state=open]:rotate-180" />
+```
+
 ### Слоты `SelectClassNames`
 
 | Слот | DOM | Назначение |
 |------|-----|------------|
 | `root` | `Field` | Max-width, gap поля |
 | `label` | `Label` | Типографика |
-| `triggerGroup` | Shell combobox | Border, hover, squeeze target |
-| `value` | `Select.Value` button | Текст значения, muted placeholder |
+| `triggerGroup` | Shell | Border, hover, squeeze target |
+| `value` | `Select.Value` `role="combobox"` | Текст значения, muted placeholder |
 | `trigger` | Chevron button | Hit-area триггера |
 | `triggerIcon` | `IoChevronDown` | Размер/цвет шеврона |
+| `triggerIconWrap` | Обёртка шеврона | Отступ, motion-хост |
 | `popover` | `Popover.Content` | Shadow, `z-popover` |
 | `popoverBody` | `Popover.Body` | Padding меню |
 | `listBox` | `ListBox` | Scroll area |
@@ -234,8 +247,8 @@ function Nudge() {
 
 ## Доступность
 
-- `TriggerGroup`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-activedescendant` при open, `aria-labelledby` (при Label) / `aria-label` (placeholder), `tabIndex={-1}`, `focus-within-ring` на shell
-- `Select.Value`: единственный tab-stop; без собственного `focus-ring` (ring через shell)
+- `Select.Value`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-activedescendant` при open, `aria-invalid` / `aria-required` / `aria-describedby`, `aria-labelledby` (при Label) / `aria-label` (placeholder). Единственный tab-stop. `disabled` — нативный, без `aria-disabled`. Ring — `focus-within-ring` на shell
+- `error` или `invalid` ставят `aria-invalid` на `Select.Value` и пустой `data-invalid` на корне. `status` этого не делает
 - `Select.Trigger`: `aria-label`, `tabIndex={-1}`, `focus-ring-inset`
 - `ListBox`: `aria-labelledby` / `aria-label`
 

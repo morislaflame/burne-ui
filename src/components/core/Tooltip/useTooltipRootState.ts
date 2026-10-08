@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useId, useMemo, useRef } from "react";
-
+ 
 import { useControllableState } from "@/components/core/utils/useControllableState";
-
+import { useSkinVariant } from "@/skins/skinContext";
+ 
 import type { TooltipContextValue, TooltipProps } from "./tooltipTypes";
-
+ 
 export type UseTooltipRootStateProps = Omit<
   TooltipProps,
   "classNames" | "children" | "motion"
 >;
-
+ 
 export function useTooltipRootState({
   size = "base",
-  variant = "default",
+  variant: variantProp,
   status = "default",
   delayShowMs = 240,
   side = "top",
@@ -22,6 +23,7 @@ export function useTooltipRootState({
   onOpenChange,
   portalContainer,
 }: UseTooltipRootStateProps) {
+  const variant = useSkinVariant(variantProp);
   const [open, setOpen] = useControllableState({
     value: openProp,
     defaultValue: defaultOpen,
@@ -30,14 +32,14 @@ export function useTooltipRootState({
   const triggerRef = useRef<HTMLElement | null>(null);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
-
+ 
   const clearTimer = useCallback(() => {
     if (showTimerRef.current != null) {
       clearTimeout(showTimerRef.current);
       showTimerRef.current = null;
     }
   }, []);
-
+ 
   const scheduleShow = useCallback(() => {
     clearTimer();
     showTimerRef.current = globalThis.setTimeout(() => {
@@ -45,14 +47,14 @@ export function useTooltipRootState({
       setOpen(true);
     }, delayShowMs);
   }, [clearTimer, delayShowMs, setOpen]);
-
+ 
   const hide = useCallback(() => {
     clearTimer();
     setOpen(false);
   }, [clearTimer, setOpen]);
-
+ 
   useEffect(() => () => clearTimer(), [clearTimer]);
-
+ 
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -61,7 +63,7 @@ export function useTooltipRootState({
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [hide, open]);
-
+ 
   const contextValue = useMemo<TooltipContextValue>(
     () => ({
       open,
@@ -91,6 +93,7 @@ export function useTooltipRootState({
       variant,
     ],
   );
-
+ 
   return { contextValue };
 }
+ 

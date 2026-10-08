@@ -1,0 +1,10 @@
+/* Tokens must match src/skin.json. Reset writes initial for every declared key. */
+[data-skin="__SKIN_NAME__"] {
+  --color-surface: #ffffff;
+  --color-foreground: #111111;
+}
+
+[data-skin="none"] {
+  --color-surface: initial;
+  --color-foreground: initial;
+}

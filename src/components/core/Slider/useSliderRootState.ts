@@ -1,9 +1,11 @@
 import { useCallback, useId, useMemo, useState } from "react";
-
+ 
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+ 
+import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
+import { useFieldInvalid } from "@/components/core/Field/fieldContext";
 import { sliderDisplayEqual } from "./sliderAPI";
 import { sliderLabelId } from "./sliderA11y";
 import type {
@@ -12,7 +14,7 @@ import type {
   SliderTrackProps,
   UseSliderRootStateProps,
 } from "./sliderTypes";
-
+ 
 export function useSliderRootState({
   children,
   id: idProp,
@@ -22,6 +24,7 @@ export function useSliderRootState({
   valueText,
   hint,
   error,
+  invalid,
   range,
   value,
   defaultValue,
@@ -36,7 +39,7 @@ export function useSliderRootState({
   icon,
   disabled,
   ariaLabel,
-  gloss,
+  variant,
   thumbClassName,
 }: UseSliderRootStateProps) {
   const autoId = useId();
@@ -44,12 +47,12 @@ export function useSliderRootState({
   const hintId = fieldHintId(sliderId);
   const errorId = fieldErrorId(sliderId);
   const labelId = sliderLabelId(sliderId);
-
+ 
   const [display, setDisplayState] = useState<SliderDisplayState | null>(null);
   const setDisplay = useCallback((next: SliderDisplayState | null) => {
     setDisplayState((prev) => (sliderDisplayEqual(prev, next) ? prev : next));
   }, []);
-
+ 
   const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
@@ -59,7 +62,13 @@ export function useSliderRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "Slider.Error")),
     };
   }, [children, error, hint, label]);
-
+ 
+  const inheritedInvalid = useFieldInvalid();
+  const isInvalid = resolveFieldInvalid({
+    invalid,
+    error: hasError ? true : undefined,
+    inheritedInvalid,
+  });
   const fieldCtx = useMemo<SliderFieldContextValue>(
     () => ({
       sliderId,
@@ -68,19 +77,20 @@ export function useSliderRootState({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      isInvalid,
       labelConnected: hasLabel,
       orientation,
       display,
       setDisplay,
     }),
-    [display, errorId, hasError, hasHint, hasLabel, hintId, labelId, orientation, setDisplay, sliderId],
+    [display, errorId, hasError, hasHint, hasLabel, hintId, isInvalid, labelId, orientation, setDisplay, sliderId],
   );
-
+ 
   const fieldLabelCtx = useMemo(
     () => ({ labelId, required: false as const }),
     [labelId],
   );
-
+ 
   const trackProps = {
     range,
     value,
@@ -96,11 +106,11 @@ export function useSliderRootState({
     icon,
     disabled,
     ariaLabel,
-    gloss,
+    variant,
     thumbClassName,
     orientation,
   } as SliderTrackProps;
-
+ 
   return {
     sliderId,
     isCompound,
@@ -118,3 +128,4 @@ export function useSliderRootState({
     errorId,
   };
 }
+ 

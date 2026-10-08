@@ -1,5 +1,5 @@
 import { forwardRef, useMemo } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
@@ -28,9 +28,9 @@ import type {
   ProgressBarValueProps,
 } from "./progressBarTypes";
 import { useProgressBarTrackState } from "./useProgressBarTrackState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function ProgressBarSimpleBody({
   label,
   showValue,
@@ -40,7 +40,7 @@ export function ProgressBarSimpleBody({
   trackProps,
 }: ProgressBarSimpleBodyProps) {
   const showHeader = label != null || showValue || valueText != null;
-
+ 
   return (
     <>
       {showHeader ? (
@@ -61,7 +61,7 @@ export function ProgressBarSimpleBody({
     </>
   );
 }
-
+ 
 export const ProgressBarLabel = forwardRef<HTMLElement, ProgressBarLabelProps>(
   function ProgressBarLabel(
     {
@@ -85,7 +85,7 @@ export const ProgressBarLabel = forwardRef<HTMLElement, ProgressBarLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Label
         ref={part.setRef}
@@ -100,9 +100,9 @@ export const ProgressBarLabel = forwardRef<HTMLElement, ProgressBarLabelProps>(
     );
   },
 );
-
+ 
 ProgressBarLabel.displayName = "ProgressBarLabel";
-
+ 
 export function ProgressBarHeader({
   children,
   className,
@@ -117,7 +117,7 @@ export function ProgressBarHeader({
     motion,
     pointerPhases: false,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -132,9 +132,9 @@ export function ProgressBarHeader({
     </div>
   );
 }
-
+ 
 ProgressBarHeader.displayName = "ProgressBar.Header";
-
+ 
 export function ProgressBarValue({
   children,
   className,
@@ -150,9 +150,9 @@ export function ProgressBarValue({
     motion,
     pointerPhases: false,
   });
-
+ 
   if (text == null) return null;
-
+ 
   return (
     <Text
       as="span"
@@ -168,9 +168,9 @@ export function ProgressBarValue({
     </Text>
   );
 }
-
+ 
 ProgressBarValue.displayName = "ProgressBar.Value";
-
+ 
 export const ProgressBarHint = forwardRef<HTMLElement, ProgressBarHintProps>(
   function ProgressBarHint(
     {
@@ -196,7 +196,7 @@ export const ProgressBarHint = forwardRef<HTMLElement, ProgressBarHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -210,9 +210,9 @@ export const ProgressBarHint = forwardRef<HTMLElement, ProgressBarHintProps>(
     );
   },
 );
-
+ 
 ProgressBarHint.displayName = "ProgressBar.Hint";
-
+ 
 export const ProgressBarError = forwardRef<HTMLElement, ProgressBarErrorProps>(
   function ProgressBarError(
     {
@@ -238,7 +238,7 @@ export const ProgressBarError = forwardRef<HTMLElement, ProgressBarErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -252,9 +252,9 @@ export const ProgressBarError = forwardRef<HTMLElement, ProgressBarErrorProps>(
     );
   },
 );
-
+ 
 ProgressBarError.displayName = "ProgressBar.Error";
-
+ 
 export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps>(
   function ProgressBarTrack(
     {
@@ -315,7 +315,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       }),
       [isHorizontal, isIndeterminate, percent],
     );
-
+ 
     return (
       <ProgressBarMotionProvider
         motion={merged}
@@ -336,9 +336,9 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     );
   },
 );
-
+ 
 ProgressBarTrack.displayName = "ProgressBar.Track";
-
+ 
 const ProgressBarTrackHost = forwardRef<
   HTMLDivElement,
   Omit<
@@ -393,7 +393,7 @@ const ProgressBarTrackHost = forwardRef<
     scope,
     isIndeterminate ? "indeterminate" : String(percent),
   );
-
+ 
   return (
     <div
       ref={trackPart.setRef}
@@ -446,3 +446,4 @@ const ProgressBarTrackHost = forwardRef<
     </div>
   );
 });
+ 

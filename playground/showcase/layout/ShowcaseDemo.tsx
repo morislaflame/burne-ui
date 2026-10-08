@@ -85,7 +85,7 @@ export function ShowcaseDemo({
   return (
     <div
       className={cn(
-        "w-full overflow-hidden rounded-mid border-token",
+        "w-full overflow-hidden rounded-large border-token",
         className,
       )}
     >

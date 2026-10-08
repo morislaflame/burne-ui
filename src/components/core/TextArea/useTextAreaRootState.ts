@@ -1,16 +1,17 @@
 import { useId, useMemo } from "react";
-
+ 
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+ 
 import type { TextAreaFieldContextValue, UseTextAreaRootStateProps } from "./textAreaTypes";
-
+ 
 export function useTextAreaRootState({
   children,
   label,
   hint,
   error,
+  invalid,
   id: idProp,
   required = false,
   status = "default",
@@ -29,7 +30,7 @@ export function useTextAreaRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "TextAreaError")),
     };
   }, [children, error, hint]);
-
+ 
   const fieldCtx: TextAreaFieldContextValue = useMemo(
     () => ({
       textareaId,
@@ -38,18 +39,19 @@ export function useTextAreaRootState({
       labelId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      invalid,
       required,
       status,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, required, labelId, size, status, textareaId],
+    [errorId, hasError, hasHint, hintId, invalid, required, labelId, size, status, textareaId],
   );
-
+ 
   const fieldLabelCtx = useMemo(
     () => ({ controlId: textareaId, labelId, required }),
     [required, labelId, textareaId],
   );
-
+ 
   return {
     fieldCtx,
     fieldLabelCtx,
@@ -62,3 +64,4 @@ export function useTextAreaRootState({
     size,
   };
 }
+ 

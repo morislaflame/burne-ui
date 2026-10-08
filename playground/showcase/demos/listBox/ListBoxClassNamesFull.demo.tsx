@@ -6,7 +6,7 @@ export function ListBoxClassNamesFullDemo() {
       defaultValue="ru"
       aria-label="Interface language"
       classNames={{
-        root: "rounded-mid border border-primary/25 p-base",
+        root: "rounded-large border border-primary/25 p-base",
         headerText: "text-primary font-medium",
         item: "rounded-lg",
         label: "font-semibold text-foreground",

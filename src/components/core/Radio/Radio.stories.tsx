@@ -160,12 +160,12 @@ export const IndicatorShape: Story = {
       <Radio.Control>
         <Radio.Indicator
           classNames={{
-            root: "rounded-mid",
+            root: "rounded-large",
           }}
         />
       </Radio.Control>
       <Radio.Content>
-        <Radio.Label>rounded-mid</Radio.Label>
+        <Radio.Label>rounded-large</Radio.Label>
         <Radio.Hint>Fill follows shell radius automatically.</Radio.Hint>
       </Radio.Content>
     </Radio>
@@ -222,12 +222,12 @@ export const CustomClassNames: Story = {
       name="classnames"
       value="custom"
       defaultChecked
-      variant="gloss"
+      variant="default"
       classNames={{
         root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-mid",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
-        indicator: "rounded-mid",
+        indicator: "rounded-large",
         labelText: "text-primary font-semibold",
         hint: "text-foreground/80",
       }}

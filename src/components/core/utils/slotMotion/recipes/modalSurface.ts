@@ -6,14 +6,14 @@ import {
 } from "@/components/core/utils/gsapMotion";
 import { motionModalFor } from "@/components/core/utils/motionConfig";
 import { MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
-
+ 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
-
+ 
 export function applyModalOverlayInstant(el: HTMLElement, open: boolean): void {
   killMotion(el);
   el.style.opacity = open ? "1" : "0";
 }
-
+ 
 export function applyModalPanelInstant(el: HTMLElement, open: boolean): void {
   killMotion(el);
   if (open) {
@@ -24,7 +24,7 @@ export function applyModalPanelInstant(el: HTMLElement, open: boolean): void {
   }
   gsap.set(el, { autoAlpha: 0, scale: MODAL_PANEL_SCALE_FROM });
 }
-
+ 
 function modalVars(ctx: MotionContext) {
   const fallback = motionModalFor(ctx.config);
   return {
@@ -33,7 +33,7 @@ function modalVars(ctx: MotionContext) {
     overwrite: "auto" as const,
   };
 }
-
+ 
 export function modalOverlayEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
   if (ctx.reduced) {
     ctx.el.style.opacity = "1";
@@ -46,7 +46,7 @@ export function modalOverlayEnterRecipe(ctx: MotionContext): MotionAnimation | u
     { opacity: 1, ...modalVars(ctx) },
   ) as unknown as MotionAnimation;
 }
-
+ 
 export function modalOverlayLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
   if (ctx.reduced) {
     ctx.el.style.opacity = "0";
@@ -58,7 +58,7 @@ export function modalOverlayLeaveRecipe(ctx: MotionContext): MotionAnimation | u
     ...modalVars(ctx),
   }) as unknown as MotionAnimation;
 }
-
+ 
 export function modalPanelEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
   if (ctx.reduced) {
     ctx.el.style.opacity = "1";
@@ -79,7 +79,7 @@ export function modalPanelEnterRecipe(ctx: MotionContext): MotionAnimation | und
     },
   ) as unknown as MotionAnimation;
 }
-
+ 
 export function modalPanelLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
   if (ctx.reduced) {
     gsap.set(ctx.el, { autoAlpha: 0, scale: MODAL_PANEL_SCALE_FROM });
@@ -95,3 +95,4 @@ export function modalPanelLeaveRecipe(ctx: MotionContext): MotionAnimation | und
     onComplete: clearWillChangeOnComplete(ctx.el),
   }) as unknown as MotionAnimation;
 }
+ 

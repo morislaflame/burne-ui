@@ -1,14 +1,14 @@
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { DEFAULT_BURNE_LABELS } from "@/theme/burneLabels";
-
+ 
 export function selectLabelId(selectId: string): string {
   return `${selectId}-label`;
 }
-
+ 
 export function selectListId(selectId: string): string {
   return `${selectId}-listbox`;
 }
-
+ 
 export function selectFieldIds(selectId: string) {
   return {
     hintId: fieldHintId(selectId),
@@ -17,7 +17,7 @@ export function selectFieldIds(selectId: string) {
     listId: selectListId(selectId),
   };
 }
-
+ 
 export function selectActiveOptionId(
   listId: string,
   open: boolean,
@@ -25,7 +25,7 @@ export function selectActiveOptionId(
 ): string | undefined {
   return open && activeValue ? `${listId}-opt-${activeValue}` : undefined;
 }
-
+ 
 export function selectTriggerAriaLabel(
   open: boolean,
   labels: { openList: string; closeList: string } = {
@@ -35,3 +35,4 @@ export function selectTriggerAriaLabel(
 ): string {
   return open ? labels.closeList : labels.openList;
 }
+ 

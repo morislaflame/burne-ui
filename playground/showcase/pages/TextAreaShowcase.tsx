@@ -12,8 +12,6 @@ import { TextAreaNotResizableDemo } from "../demos/textarea/TextAreaNotResizable
 import textAreaNotResizableSource from "../demos/textarea/TextAreaNotResizable.demo.tsx?raw";
 import { TextAreaCommentThreadDemo } from "../demos/textarea/TextAreaCommentThread.demo";
 import textAreaCommentThreadSource from "../demos/textarea/TextAreaCommentThread.demo.tsx?raw";
-import { TextAreaGlossDemo } from "../demos/textarea/TextAreaGloss.demo";
-import textAreaGlossSource from "../demos/textarea/TextAreaGloss.demo.tsx?raw";
 import { TextAreaReleaseNotesDemo } from "../demos/textarea/TextAreaReleaseNotes.demo";
 import textAreaReleaseNotesSource from "../demos/textarea/TextAreaReleaseNotes.demo.tsx?raw";
 import { TextAreaSupportTicketDemo } from "../demos/textarea/TextAreaSupportTicket.demo";
@@ -46,7 +44,7 @@ export function TextAreaShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={TextAreaNotResizableDemo} source={textAreaNotResizableSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+      <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={TextAreaVariantsDemo} source={textAreaVariantsSource} />
       </ShowcaseSection>
       <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
@@ -57,15 +55,10 @@ export function TextAreaShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={TextAreaSizesDemo} source={textAreaSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="With an error" description="status danger and prop error for validation message.">
+      <ShowcaseSection title="With an error" description="Validation message via error. status is color only and is not required.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaWithErrorDemo} source={textAreaWithErrorSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">
-        <ShowcaseDemoFromFile align="center" Demo={TextAreaGlossDemo} source={textAreaGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor.">
+<ShowcaseSection title="Slot motion" description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor.">
         <TextAreaSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -114,7 +107,7 @@ export function TextAreaShowcase() {
             default on; <code>resizable=&#123;false&#125;</code> removes the corner handle.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

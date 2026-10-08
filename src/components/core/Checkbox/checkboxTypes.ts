@@ -9,17 +9,19 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-
-export type CheckboxVariant = "default" | "secondary" | "outline" | "gloss";
-
+ 
+export const KIT_CHECKBOX_VARIANTS = ["default", "secondary", "outline"] as const;
+export type KitCheckboxVariant = (typeof KIT_CHECKBOX_VARIANTS)[number];
+export type CheckboxVariant = KitCheckboxVariant | (string & {});
+ 
 export type CheckboxSize = "small" | "base" | "mid" | "large";
-
+ 
 export type CheckboxClassNames = {
   root?: string;
   control?: string;
@@ -37,14 +39,14 @@ export type CheckboxClassNames = {
   simpleLabelText?: string;
   input?: string;
 };
-
+ 
 export type CheckboxCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 /** Root map. Indicator keys → SelectionIndicator; chrome (`label` / `hint` / `error`) is Checkbox's own scope. */
 export type CheckboxMotion = {
   indicator?: CheckboxCheckMotion;
@@ -54,7 +56,7 @@ export type CheckboxMotion = {
   hint?: CheckboxCheckMotion;
   error?: CheckboxCheckMotion;
 };
-
+ 
 export type CheckboxProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
@@ -64,6 +66,10 @@ export type CheckboxProps = Omit<
     label?: ReactNode;
     hint?: ReactNode;
     error?: ReactNode;
+    /** Danger label, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. */
+    invalid?: boolean;
+    /** Mixed selection. Sets `input.indeterminate` and `data-state="indeterminate"`. */
+    indeterminate?: boolean;
     size?: CheckboxSize;
     variant?: CheckboxVariant;
     status?: SemanticStatus;
@@ -85,8 +91,8 @@ export type CheckboxProps = Omit<
     motionController?: MotionController;
     onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
   } & MotionStateHostProps;
-
-
+ 
+ 
 export type CheckboxControlProps = HTMLAttributes<HTMLSpanElement> & {
   /**
    * Forwarded to an auto-created `Checkbox.Indicator` (simple / Control without an Indicator child).
@@ -94,10 +100,10 @@ export type CheckboxControlProps = HTMLAttributes<HTMLSpanElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type CheckboxIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<Pick<CheckboxClassNames, "indicator" | "indicatorFill" | "indicatorMark">>;
-
+ 
 export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: CheckboxSize;
@@ -109,23 +115,24 @@ export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type CheckboxContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
-
+ 
 export type CheckboxLabelProps = Omit<LabelProps, "htmlFor"> & {
   motion?: Prettify<CheckboxCheckMotion>;
 };
-
+ 
 export type CheckboxHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
   motion?: Prettify<CheckboxCheckMotion>;
 };
-
+ 
 export type CheckboxErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
   motion?: Prettify<CheckboxCheckMotion>;
 };
-
+ 
 export type CheckboxFieldContextValue = {
   inputId: string;
   hintId: string;
@@ -134,6 +141,7 @@ export type CheckboxFieldContextValue = {
   size: CheckboxSize;
   variant: CheckboxVariant;
   mergedChecked: boolean;
+  indeterminate: boolean;
   isDisabled: boolean;
   isControlled: boolean;
   isCompound: boolean;
@@ -163,23 +171,23 @@ export type CheckboxFieldContextValue = {
     ariaInvalid?: boolean | "false" | "true" | "grammar" | "spelling";
   };
 };
-
+ 
 export type CheckboxClassNamesProviderProps = {
   classNames?: Prettify<CheckboxClassNames>;
   children: ReactNode;
 };
-
+ 
 export type CheckboxMotionProviderProps = {
   motion?: Prettify<MotionMapWithEvents<CheckboxMotion>>;
   controller?: MotionController;
   children: ReactNode;
 };
-
+ 
 export type UseCheckboxRootStateProps = Omit<
   CheckboxProps,
   "children" | "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
-
+ 
 export type UseCheckboxAnimationsProps = {
   isDisabled: boolean;
   enableTextMotion: boolean;
@@ -187,3 +195,4 @@ export type UseCheckboxAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLElement>) => void;
 };
+ 

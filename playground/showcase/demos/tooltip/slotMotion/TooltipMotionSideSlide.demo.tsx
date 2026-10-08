@@ -12,7 +12,7 @@ export function TooltipMotionSideSlideDemo() {
       side="bottom"
       classNames={{
         panel: "border-token-primary bg-secondary",
-        glossContent: "gap-y-xsmall",
+        content: "gap-y-xsmall",
       }}
       motion={{
         content: {

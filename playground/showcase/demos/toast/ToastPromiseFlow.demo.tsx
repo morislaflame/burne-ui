@@ -28,11 +28,11 @@ export function ToastPromiseFlowDemo() {
             title: "No connection",
             description: "Check your network and try again.",
             status: "danger",
-            variant: "gloss",
+            variant: "default",
           })
         }
       >
-        Gloss error
+        Error
       </Button>
     </div>
   );

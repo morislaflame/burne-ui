@@ -43,7 +43,8 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `outline` \| `gloss` |
-| `status` | `default` | постоянный статусный ring |
+| `status` | `default` | Только цвет: постоянный статусный ring. Не ставит `aria-invalid` |
+| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `size` | `base` | размер padding / min-height |
 | `rows` | `1` | Нативные rows |
 | `resizable` | `true` | Drag-handle в углу |
@@ -160,7 +161,7 @@ configureMotion({
 <TextArea
   className="max-w-md"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     shell: "min-h-[12rem] ring-1 ring-primary/15",
     control: "text-primary placeholder:text-primary/50 leading-relaxed",
     resizeHandle: "opacity-60 hover:opacity-100",
@@ -171,7 +172,6 @@ configureMotion({
   placeholder="Ваш отзыв…"
   rows={3}
   resizable
-  status="danger"
   hint="До 500 символов."
   error="Текст слишком короткий."
 />
@@ -219,7 +219,7 @@ configureMotion({
 
 - `aria-describedby` через hint/error ids
 - Resize handle: `aria-label` («Изменить высоту»); ArrowUp/Down (±16px), Home/End при фокусе на handle
-- `aria-invalid`, `aria-required` как у Input
+- `error` или `invalid` ставят `aria-invalid` и пустой `data-invalid` на корне. `status` этого не делает. `aria-required` — из `required`
 
 ## Структура файлов
 

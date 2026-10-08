@@ -13,14 +13,14 @@ export function CheckboxIndicatorShapeDemo() {
           <Checkbox.Control>
             <Checkbox.Indicator
               classNames={{
-                root: "rounded-mid",
+                root: "rounded-large",
               }}
             />
           </Checkbox.Control>
           <Checkbox.Content>
-            <Checkbox.Label>rounded-mid</Checkbox.Label>
+            <Checkbox.Label>rounded-large</Checkbox.Label>
             <Checkbox.Hint>
-              classNames.root with rounded-mid — fill follows via rounded-[inherit].
+              classNames.root with rounded-large — fill follows via rounded-[inherit].
             </Checkbox.Hint>
           </Checkbox.Content>
         </Checkbox>

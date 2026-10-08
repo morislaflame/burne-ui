@@ -28,7 +28,7 @@ export function TooltipFormHintDemo() {
       </div>
       <Input
         id="api-key"
-        variant="gloss"
+        variant="default"
         value="sk_live_••••••••"
       />
     </div>

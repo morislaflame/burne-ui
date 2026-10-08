@@ -2,7 +2,7 @@ import { InputControl } from "./inputControlParts";
 import { useInputClassNames } from "./inputContext";
 import { InputError, InputHint, InputLabel } from "./inputFieldParts";
 import type { InputSimpleBodyProps } from "./inputTypes";
-
+ 
 export function InputSimpleBody({
   label,
   hint,
@@ -14,7 +14,7 @@ export function InputSimpleBody({
   controlProps,
 }: InputSimpleBodyProps) {
   const slotClassNames = useInputClassNames();
-
+ 
   return (
     <>
       {label != null ? (
@@ -28,3 +28,4 @@ export function InputSimpleBody({
     </>
   );
 }
+ 

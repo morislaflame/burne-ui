@@ -1,11 +1,11 @@
 import { RadioContent, RadioControl, RadioError, RadioHint, RadioIndicator, RadioLabel, RadioRoot } from "./Radio";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-
+ 
 const RadioIndicatorCompound = Object.assign(RadioIndicator, {
   Fill: SelectionIndicator.Fill,
   Mark: SelectionIndicator.Mark,
 });
-
+ 
 export const Radio = Object.assign(RadioRoot, {
   Control: RadioControl,
   Indicator: RadioIndicatorCompound,
@@ -14,7 +14,7 @@ export const Radio = Object.assign(RadioRoot, {
   Hint: RadioHint,
   Error: RadioError,
 });
-
+ 
 export type {
   RadioProps,
   RadioControlProps,
@@ -29,3 +29,4 @@ export type {
   RadioMotion,
   RadioCheckMotion,
 } from "./radioTypes";
+ 

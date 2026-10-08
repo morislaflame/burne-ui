@@ -8,20 +8,20 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useLabelMotionScope } from "./labelContext";
 import type { LabelMotion, LabelPartMotion } from "./labelTypes";
-
+ 
 export function resolveLabelMotionDefaults(): LabelMotion {
   return {};
 }
-
+ 
 export function useLabelRootMotion({
   forwardedRef,
   motion,
@@ -54,3 +54,4 @@ export function useLabelRootMotion({
   useOptionalEnterOnMount(scope, "root", part.targetRef);
   return part;
 }
+ 

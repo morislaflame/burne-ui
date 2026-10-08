@@ -32,7 +32,7 @@ export function SkeletonMotionRegionGrayscaleDemo() {
       }}
     >
       <div className="flex gap-base">
-        <Skeleton.Circle size="h-control-mid w-control-mid" />
+        <Skeleton.Circle size="min-h-control-mid w-control-mid" />
         <div className="flex min-w-0 flex-1 flex-col gap-small">
           <Skeleton className="h-4 w-32" />
           <Skeleton.Text lines={2} />

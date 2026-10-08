@@ -1,13 +1,13 @@
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import { cn } from "@/utils/cn";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { RadioClassNames, RadioIndicatorClassNames, RadioVariant } from "./radioTypes";
-
+ 
 export function radioVariantToIndicator(variant: RadioVariant): SelectionIndicatorVariant {
   return variant;
 }
-
+ 
 export function resolveRadioIndicatorClassNames({
   slotClassNames,
   classNames,
@@ -36,7 +36,8 @@ export function resolveRadioIndicatorClassNames({
     ),
   };
 }
-
+ 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {
   return !/\bflex-col\b/.test(className ?? "");
 }
+ 

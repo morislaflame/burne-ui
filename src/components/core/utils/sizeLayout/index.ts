@@ -8,7 +8,7 @@
  * - `panel` — Dialog, AlertDialog, Popover, Card, Drawer
  * - `collapsible` — Disclosure, Expandable (Accordion)
  */
-
+ 
 export {
   type ComponentSize,
   COMPONENT_SIZES,
@@ -16,15 +16,22 @@ export {
 } from "./componentSize";
 
 export {
+  type IconSlotStep,
+  ICON_SLOT_CLASS,
+  iconSlotSizeClass,
+  iconSlotClass,
+} from "./iconSlot";
+ 
+export {
   type ControlSizeLayout,
   CONTROL_SIZE_LAYOUT,
 } from "./control";
-
+ 
 export {
   type OptionControlSizeLayout,
   OPTION_CONTROL_SIZE_LAYOUT,
 } from "./option";
-
+ 
 export {
   type MessageBannerSize,
   type MessageBannerLoadingSize,
@@ -35,7 +42,7 @@ export {
   alertRootShellClass,
   toastViewportWidthPx,
 } from "./banner";
-
+ 
 export {
   type PanelSize,
   type PanelSizeLayout,
@@ -47,7 +54,7 @@ export {
   panelSizeLayout,
   cardSizeLayout,
 } from "./panel";
-
+ 
 export {
   type CollapsibleSize,
   type CollapsibleSizeLayout,
@@ -55,3 +62,4 @@ export {
   resolveCollapsibleSize,
   collapsibleSizeLayout,
 } from "./collapsible";
+ 

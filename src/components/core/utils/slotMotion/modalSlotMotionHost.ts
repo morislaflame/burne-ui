@@ -1,5 +1,6 @@
 /**
- * Shared Dialog / Drawer slot-motion host: enter/leave on overlay+panel,
+ * Shared Dialog / Drawer slot-motion host: enter/leave on scrim+panel
+ * (`overlay` by default; Drawer public slot is `backdrop`).
  * nested broadcast, instant closed/open when a host slot is `false`.
  *
  * Engine `false` skips without changing visuals — the modal host must apply
@@ -7,15 +8,15 @@
  * holds the portal open with the panel still on screen.
  */
 import { useCallback, useEffect, useMemo, useRef } from "react";
-
+ 
 import { killMotionScope, hideNestedEnterSlots, type MotionScopeValue } from "./createMotionScope";
 import { invalidateEnterFrame, scheduleNestedEnterBroadcast } from "./scheduleNestedEnterBroadcast";
 import { waitForLeaveGeneration } from "./waitForLeaveGeneration";
-
+ 
 export const MODAL_MOTION_HOST_SLOTS = ["overlay", "panel"] as const;
-
-export type ModalHostSlot = (typeof MODAL_MOTION_HOST_SLOTS)[number];
-
+ 
+export type ModalHostSlot = string;
+ 
 export type ModalSlotMotionController = {
   playEnter: (overlay: HTMLElement, panel: HTMLElement) => void;
   playLeave: (
@@ -26,7 +27,7 @@ export type ModalSlotMotionController = {
   /** Cancel a pending nested-enter rAF (unmount / superseded play). */
   cancelEnterFrame: () => void;
 };
-
+ 
 function playHostPhase(
   scope: MotionScopeValue,
   slot: ModalHostSlot,
@@ -41,24 +42,27 @@ function playHostPhase(
   }
   return scope.play(slot, phase, { el, waitForComplete });
 }
-
+ 
 export function useModalSlotMotionController({
   motionScope,
   applyInstant,
+  hostSlots = MODAL_MOTION_HOST_SLOTS,
 }: {
   motionScope?: MotionScopeValue | null;
   applyInstant?: (slot: ModalHostSlot, el: HTMLElement, phase: "enter" | "leave") => void;
+  /** Scrim + panel slot names. Drawer uses `backdrop` (compound `Drawer.Backdrop`). */
+  hostSlots?: readonly [scrim: string, panel: string];
 }): ModalSlotMotionController | undefined {
   const enterFrameRef = useRef(0);
   const enterGenRef = useRef(0);
-
+ 
   const cancelEnterFrame = useCallback(
     () => invalidateEnterFrame(enterFrameRef, enterGenRef),
     [],
   );
-
+ 
   useEffect(() => cancelEnterFrame, [cancelEnterFrame, motionScope, applyInstant]);
-
+ 
   return useMemo(() => {
     if (!motionScope) return undefined;
     const scope = motionScope;
@@ -67,10 +71,11 @@ export function useModalSlotMotionController({
       playEnter: (overlay: HTMLElement, panel: HTMLElement) => {
         cancelEnterFrame();
         const gen = enterGenRef.current;
-        playHostPhase(scope, "overlay", overlay, "enter", applyInstant, false);
-        playHostPhase(scope, "panel", panel, "enter", applyInstant, false);
-        hideNestedEnterSlots(scope, MODAL_MOTION_HOST_SLOTS);
-        enterFrameRef.current = scheduleNestedEnterBroadcast(scope, MODAL_MOTION_HOST_SLOTS, () => {
+        const [scrimSlot, panelSlot] = hostSlots;
+        playHostPhase(scope, scrimSlot, overlay, "enter", applyInstant, false);
+        playHostPhase(scope, panelSlot, panel, "enter", applyInstant, false);
+        hideNestedEnterSlots(scope, hostSlots);
+        enterFrameRef.current = scheduleNestedEnterBroadcast(scope, hostSlots, () => {
           if (gen !== enterGenRef.current) return false;
           enterFrameRef.current = 0;
           return true;
@@ -82,17 +87,18 @@ export function useModalSlotMotionController({
         onComplete: () => void,
       ) => {
         cancelEnterFrame();
+        const [scrimSlot, panelSlot] = hostSlots;
         const overlayRun = playHostPhase(
           scope,
-          "overlay",
+          scrimSlot,
           overlay,
           "leave",
           applyInstant,
           true,
         );
-        const panelRun = playHostPhase(scope, "panel", panel, "leave", applyInstant, true);
+        const panelRun = playHostPhase(scope, panelSlot, panel, "leave", applyInstant, true);
         const extra = scope.playBroadcast("leave", {
-          exclude: [...MODAL_MOTION_HOST_SLOTS],
+          exclude: [...hostSlots],
           waitForComplete: true,
         });
         return waitForLeaveGeneration({
@@ -103,5 +109,6 @@ export function useModalSlotMotionController({
         });
       },
     };
-  }, [applyInstant, cancelEnterFrame, motionScope]);
+  }, [applyInstant, cancelEnterFrame, hostSlots, motionScope]);
 }
+ 

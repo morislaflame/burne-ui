@@ -10,8 +10,6 @@ import { RadioSizesDemo } from "../demos/radioGroup/RadioSizes.demo";
 import radioSizesSource from "../demos/radioGroup/RadioSizes.demo.tsx?raw";
 import { RadioGroupCustomIndicatorDemo } from "../demos/radioGroup/RadioGroupCustomIndicator.demo";
 import radioGroupCustomIndicatorSource from "../demos/radioGroup/RadioGroupCustomIndicator.demo.tsx?raw";
-import { RadioGroupGlossDemo } from "../demos/radioGroup/RadioGroupGloss.demo";
-import radioGroupGlossSource from "../demos/radioGroup/RadioGroupGloss.demo.tsx?raw";
 import { RadioGroupHorizontalSizesDemo } from "../demos/radioGroup/RadioGroupHorizontalSizes.demo";
 import radioGroupHorizontalSizesSource from "../demos/radioGroup/RadioGroupHorizontalSizes.demo.tsx?raw";
 import { RadioGroupPlanCardsDemo } from "../demos/radioGroup/RadioGroupPlanCards.demo";
@@ -39,12 +37,7 @@ export function RadioGroupShowcase() {
       <ShowcaseSection title="Dimensions" description="size on Radio: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={RadioSizesDemo} source={radioSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss on Radio — glass indicator.">
-        <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupGlossDemo} source={radioGroupGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: corner fill, spinning mark, fill→mark timeline.">
+<ShowcaseSection title="Slot motion" description="One gallery: corner fill, spinning mark, fill→mark timeline.">
         <RadioSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -106,7 +99,7 @@ export function RadioGroupShowcase() {
             <code>value</code> and <code>label</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

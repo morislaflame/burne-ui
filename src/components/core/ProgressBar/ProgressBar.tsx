@@ -1,12 +1,13 @@
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
-
+ 
 import { ProgressBarClassNamesProvider, ProgressBarFieldProvider, ProgressBarMotionProvider } from "./progressBarContext";
 import { ProgressBarSimpleBody } from "./progressBarParts";
 import { progressBarRootClass } from "./progressBarStyles";
 import type { ProgressBarProps } from "./progressBarTypes";
 import { useProgressBarRootState } from "./useProgressBarRootState";
-
+ 
 export type {
   ProgressBarClassNames,
   ProgressBarErrorProps,
@@ -21,7 +22,7 @@ export type {
   ProgressBarMotion,
   ProgressBarPartMotion,
 } from "./progressBarTypes";
-
+ 
 export {
   ProgressBarError,
   ProgressBarHeader,
@@ -31,12 +32,12 @@ export {
   ProgressBarTrack,
   ProgressBarValue,
 } from "./progressBarParts";
-
+ 
 export {
   useProgressBarFieldContext,
   useOptionalProgressBarFieldContext,
 } from "./progressBarContext";
-
+ 
 export function ProgressBarRoot({
   children,
   className,
@@ -81,7 +82,7 @@ export function ProgressBarRoot({
     color,
     formatValue,
   });
-
+ 
   const body = state.isCompound ? (
     children
   ) : (
@@ -94,7 +95,7 @@ export function ProgressBarRoot({
       trackProps={{ ...state.trackProps, motionController, motionState, motionPayload, playInitialState }}
     />
   );
-
+ 
   return (
     <ProgressBarFieldProvider value={state.fieldCtx}>
       <ProgressBarClassNamesProvider classNames={classNames}>
@@ -114,6 +115,7 @@ export function ProgressBarRoot({
                 className,
               })}
               {...divRest}
+              {...dataVariantProps({ size: size ?? "base" })}
             >
               {body}
             </Field>
@@ -123,5 +125,6 @@ export function ProgressBarRoot({
     </ProgressBarFieldProvider>
   );
 }
-
+ 
 ProgressBarRoot.displayName = "ProgressBar";
+ 

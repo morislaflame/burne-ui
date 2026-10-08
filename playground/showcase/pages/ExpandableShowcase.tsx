@@ -2,8 +2,6 @@ import { ExpandableClassNamesFullDemo } from "../demos/expandable/ExpandableClas
 import expandableClassNamesFullSource from "../demos/expandable/ExpandableClassNamesFull.demo.tsx?raw";
 import { ExpandableCompoundDemo } from "../demos/expandable/ExpandableCompound.demo";
 import expandableCompoundSource from "../demos/expandable/ExpandableCompound.demo.tsx?raw";
-import { ExpandableGlossDemo } from "../demos/expandable/ExpandableGloss.demo";
-import expandableGlossSource from "../demos/expandable/ExpandableGloss.demo.tsx?raw";
 import { ExpandableMotionControllerGalleryDemo } from "../demos/expandable/motionController/gallery";
 import { ExpandableOrderDetailsDemo } from "../demos/expandable/ExpandableOrderDetails.demo";
 import expandableOrderDetailsSource from "../demos/expandable/ExpandableOrderDetails.demo.tsx?raw";
@@ -36,12 +34,7 @@ export function ExpandableShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableSizesDemo} source={expandableSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass panel with hover-lift.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableGlossDemo} source={expandableGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Compound API" description="Trigger, Message, Icon, Title, Description and Panel.">
+<ShowcaseSection title="Compound API" description="Trigger, Message, Icon, Title, Description and Panel.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableCompoundDemo} source={expandableCompoundSource} />
       </ShowcaseSection>
 
@@ -95,7 +88,7 @@ export function ExpandableShowcase() {
             Pass it on React-element in <code>icon</code> (Simple) or <code>Expandable.Icon</code> (Compound).
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

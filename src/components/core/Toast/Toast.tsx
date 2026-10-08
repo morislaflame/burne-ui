@@ -1,10 +1,10 @@
 import { forwardRef, useCallback, useMemo, useRef, type ForwardedRef } from "react";
-
-import { createGlossInteractiveRefCallback, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-
-import "@/components/core/utils/glossInteractive.css";
-
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+ 
+import { resolveToastMotionDefaults } from "./toastMotionDefaults";
 import { toastFallbackAriaLabel } from "./toastA11y";
 import {
   ToastClassNamesProvider,
@@ -17,7 +17,7 @@ import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator
 import { toastRootClass } from "./toastStyles";
 import type { ToastProps } from "./toastTypes";
 import { useToastRootState } from "./useToastRootState";
-
+ 
 export type {
   ToastClassNames,
   ToastStatus,
@@ -39,32 +39,36 @@ export type {
   ToastLifecycleMotion,
   ToastPartMotion,
 } from "./toastTypes";
-
-export { ToastProviderRoot } from "./toastProvider";
-
+ 
 export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRoot(
-  { motion, motionController, motionState, motionPayload, playInitialState, ...props },
+  { motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props },
   ref,
 ) {
   const parentScope = useOptionalToastMotionScope();
+  const variant = useSkinVariant(variantProp);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveToastMotionDefaults(variant);
+  }, [skinRevision, variant]);
   if (parentScope) {
-    return <ToastRootInner {...props} forwardedRef={ref} registerRoot={false} />;
+    return <ToastRootInner {...props} variant={variant} forwardedRef={ref} registerRoot={false} />;
   }
   return (
-    <ToastMotionProvider motion={motion} controller={motionController}
+    <ToastMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
-      <ToastRootInner {...props} forwardedRef={ref} registerRoot />
+      <ToastRootInner {...props} variant={variant} forwardedRef={ref} registerRoot />
     </ToastMotionProvider>
   );
 });
-
+ 
 ToastRoot.displayName = "ToastRoot";
-
+ 
 function ToastRootInner({
   status = "default",
-  variant = "default",
+  variant: variantProp,
   size = "base",
   title,
   description,
@@ -83,6 +87,8 @@ function ToastRootInner({
   registerRoot: boolean;
   forwardedRef?: ForwardedRef<HTMLDivElement>;
 }) {
+  const variant = useSkinVariant(variantProp);
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const state = useToastRootState({
     status,
     size,
@@ -93,32 +99,23 @@ function ToastRootInner({
     onClose,
     children,
   });
-
-  const isGloss = variant === "gloss";
+ 
   const rootRef = useRef<HTMLDivElement | null>(null);
   const scope = useOptionalToastMotionScope();
   const { setRef: setRootPartRef } = useMotionPart<HTMLDivElement>({
     scope: registerRoot ? scope : null,
     slot: "root",
   });
-
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, isGloss),
-    [isGloss],
-  );
-
+ 
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
-      bindGlossRef(node);
       rootRef.current = node;
       setRootPartRef(node);
       if (typeof forwardedRef === "function") forwardedRef(node);
       else if (forwardedRef) forwardedRef.current = node;
     },
-    [bindGlossRef, forwardedRef, setRootPartRef],
+    [forwardedRef, setRootPartRef],
   );
-
-  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
   const slotClassNames = useToastClassNames();
   const hasTitle = state.gridSlots.hasTitle;
   const {
@@ -130,7 +127,7 @@ function ToastRootInner({
   const ariaLabel = hasTitle
     ? undefined
     : (restAriaLabel ?? toastFallbackAriaLabel(title, description));
-
+ 
   return (
     <ToastItemProvider value={state.itemCtx}>
       <ToastClassNamesProvider classNames={classNames}>
@@ -148,14 +145,14 @@ function ToastRootInner({
           })}
           onPointerOver={(e) => {
             onPointerOverProp?.(e);
-            if (e.defaultPrevented) return;
-            if (isGloss) glossPointerHandlers.onPointerOver(e);
           }}
           onPointerOut={(e) => {
             onPointerOutProp?.(e);
-            if (isGloss) glossPointerHandlers.onPointerOut(e);
           }}
           {...domRest}
+          style={mergeSkinSurfaceStyle(surfaceStyle, domRest.style)}
+          {...dataVariantProps({ size: state.size, variant, status })}
+          data-state="open"
         >
           {state.isCompound ? (
             children
@@ -173,7 +170,7 @@ function ToastRootInner({
     </ToastItemProvider>
   );
 }
-
+ 
 export {
   ToastIndicator,
   ToastMessage,
@@ -183,3 +180,4 @@ export {
   ToastAction,
   ToastClose,
 };
+ 

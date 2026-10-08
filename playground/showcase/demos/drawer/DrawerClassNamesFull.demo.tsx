@@ -13,6 +13,7 @@ export function DrawerClassNamesFullDemo() {
         onOpenChange={setOpen}
         classNames={{
           trigger: "font-medium",
+          backdrop: "backdrop-blur-2xl",
           panel: "border-primary/40 shadow-token-large",
           header: "border-b border-primary/20 pb-small",
           title: "text-primary font-w-strong",

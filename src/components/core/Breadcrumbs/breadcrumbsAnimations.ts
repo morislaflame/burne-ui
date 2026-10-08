@@ -11,16 +11,16 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalBreadcrumbsMotionScope } from "./breadcrumbsContext";
 import type { BreadcrumbsMotion, BreadcrumbsPartMotion } from "./breadcrumbsTypes";
-
+ 
 export function resolveBreadcrumbsItemMotionDefaults(): BreadcrumbsMotion {
   return {
     itemLink: {
@@ -29,7 +29,7 @@ export function resolveBreadcrumbsItemMotionDefaults(): BreadcrumbsMotion {
     },
   };
 }
-
+ 
 export function resolveBreadcrumbsEllipsisMotionDefaults(): BreadcrumbsMotion {
   return {
     ellipsisLiftWrapper: {
@@ -38,7 +38,7 @@ export function resolveBreadcrumbsEllipsisMotionDefaults(): BreadcrumbsMotion {
     },
   };
 }
-
+ 
 export function useBreadcrumbsSlotMotion<T extends HTMLElement>(
   slot: "list" | "separator",
   {
@@ -74,3 +74,4 @@ export function useBreadcrumbsSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

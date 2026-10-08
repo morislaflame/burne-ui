@@ -23,7 +23,7 @@ export function TooltipSidesDemo() {
           <Tooltip.Content>side=left</Tooltip.Content>
         </Tooltip>
 
-        <div className="flex h-control-base min-w-[7rem] items-center justify-center rounded-base border-token bg-secondary px-base">
+        <div className="flex min-h-control-base min-w-[7rem] items-center justify-center rounded-base border-token bg-secondary px-base">
           <span className="text-small text-muted">anchor</span>
         </div>
 

@@ -1,14 +1,15 @@
 import { forwardRef } from "react";
-
+ 
 import { useRadioTextMotion } from "./radioAnimations";
 import { RadioClassNamesProvider, RadioFieldProvider, RadioMotionProvider } from "./radioContext";
 import { RadioSimpleBody } from "./radioParts";
 import { RADIO_ROOT_DISABLED_CLASS, radioGridClass } from "./radioStyles";
 import type { RadioProps } from "./radioTypes";
 import { useRadioRootState } from "./useRadioRootState";
-
+ 
+import { dataCheckedState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   RadioProps,
   RadioControlProps,
@@ -23,13 +24,14 @@ export type {
   RadioMotion,
   RadioCheckMotion,
 } from "./radioTypes";
-
+ 
 export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function RadioRoot(
   {
     children,
     label,
     hint,
     error,
+    invalid,
     size,
     variant,
     danger,
@@ -83,12 +85,13 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
       label,
       hint,
       error,
+      invalid,
     },
     children,
     className,
     onClick,
   );
-
+ 
   const { handlePointerDown, handleKeyDown } = useRadioTextMotion({
     isDisabled: state.isDisabled,
     enableTextMotion: state.enableTextMotion,
@@ -96,13 +99,13 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     onPointerDown,
     onKeyDown,
   });
-
+ 
   const gridClass = cn(
     radioGridClass(state.secondaryLines, state.sz.gridGap, className),
     state.isDisabled && RADIO_ROOT_DISABLED_CLASS,
     classNames?.root,
   );
-
+ 
   return (
     <RadioFieldProvider value={state.contextValue}>
       <RadioClassNamesProvider classNames={classNames}>
@@ -112,11 +115,16 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
           playInitialState={playInitialState}>
           <label
             ref={ref}
-            data-selected={state.mergedChecked ? true : undefined}
             className={gridClass}
             {...rest}
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
+            {...dataVariantProps({
+              size: state.contextValue.size,
+              variant: state.contextValue.variant,
+            })}
+            data-selected={state.mergedChecked ? "true" : undefined}
+            data-state={dataCheckedState(state.mergedChecked)}
           >
             {state.isCompound ? (
               children
@@ -146,9 +154,9 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     </RadioFieldProvider>
   );
 });
-
+ 
 RadioRoot.displayName = "RadioRoot";
-
+ 
 export {
   RadioControl,
   RadioIndicator,
@@ -157,3 +165,4 @@ export {
   RadioHint,
   RadioError,
 } from "./radioParts";
+ 

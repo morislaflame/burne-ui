@@ -2,8 +2,6 @@ import { ToggleButtonClassNamesFullDemo } from "../demos/toggle-button/ToggleBut
 import toggleButtonClassNamesFullSource from "../demos/toggle-button/ToggleButtonClassNamesFull.demo.tsx?raw";
 import { ToggleButtonControlledDemo } from "../demos/toggle-button/ToggleButtonControlled.demo";
 import toggleButtonControlledSource from "../demos/toggle-button/ToggleButtonControlled.demo.tsx?raw";
-import { ToggleButtonGlossDemo } from "../demos/toggle-button/ToggleButtonGloss.demo";
-import toggleButtonGlossSource from "../demos/toggle-button/ToggleButtonGloss.demo.tsx?raw";
 import { ToggleButtonReactionBarDemo } from "../demos/toggle-button/ToggleButtonReactionBar.demo";
 import toggleButtonReactionBarSource from "../demos/toggle-button/ToggleButtonReactionBar.demo.tsx?raw";
 import { ToggleButtonSizesDemo } from "../demos/toggle-button/ToggleButtonSizes.demo";
@@ -43,19 +41,14 @@ export function ToggleButtonShowcase() {
         <ShowcaseDemoFromFile Demo={ToggleButtonUncontrolledDemo} source={toggleButtonUncontrolledSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Options" description="variant: default, outline, ghost, gloss.">
+      <ShowcaseSection title="Options" description="variant: default, outline, ghost, default.">
         <ShowcaseDemoFromFile Demo={ToggleButtonVariantsDemo} source={toggleButtonVariantsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={ToggleButtonSizesDemo} source={toggleButtonSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="Glass surface in pressed and resting state.">
-        <ShowcaseDemoFromFile Demo={ToggleButtonGlossDemo} source={toggleButtonGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="Default recipes, instant fill, fill from bottom, icon/text factories, MorphSVG heart.">
+<ShowcaseSection title="Slot motion" description="Default recipes, instant fill, fill from bottom, icon/text factories, MorphSVG heart.">
         <ToggleButtonSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -97,7 +90,7 @@ export function ToggleButtonShowcase() {
             <code>ToggleButtonGroup</code> from <code>@/components/composite/ToggleButtonGroup</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

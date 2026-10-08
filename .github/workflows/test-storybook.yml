@@ -1,3 +1,5 @@
+# Interaction + axe-core via @storybook/addon-a11y (parameters.a11y.test).
+# Default is "todo" (baseline). Stories with a11y.test: "error" fail this job.
 name: Storybook Tests
 
 on:
@@ -22,6 +24,11 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: bun run playwright:install
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: 0
 
       - name: Run Storybook tests with coverage
         run: bun run test-storybook:coverage

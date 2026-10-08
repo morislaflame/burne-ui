@@ -8,8 +8,6 @@ import { DropdownActionMenuDemo } from "../demos/dropdown/DropdownActionMenu.dem
 import dropdownActionMenuSource from "../demos/dropdown/DropdownActionMenu.demo.tsx?raw";
 import { DropdownCustomSubTriggerIconDemo } from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo";
 import dropdownCustomSubTriggerIconSource from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo.tsx?raw";
-import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
-import dropdownGlossSource from "../demos/dropdown/DropdownGloss.demo.tsx?raw";
 import { DropdownMultipleDemo } from "../demos/dropdown/DropdownMultiple.demo";
 import dropdownMultipleSource from "../demos/dropdown/DropdownMultiple.demo.tsx?raw";
 import { DropdownPopoverSideDemo } from "../demos/dropdown/DropdownPopoverSide.demo";
@@ -41,10 +39,6 @@ export function DropdownShowcase() {
 
       <ShowcaseSection title="Multi-select" description="multiple and array defaultValue.">
         <ShowcaseDemoFromFile Demo={DropdownMultipleDemo} source={dropdownMultipleSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description='popoverVariant="gloss" — glass drop down menu.'>
-        <ShowcaseDemoFromFile Demo={DropdownGlossDemo} source={dropdownGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="One gallery: custom trigger press, instant leave, body stagger, label + subTrigger, separator, submenu slide, origin scale.">
@@ -115,7 +109,7 @@ export function DropdownShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Dropdown.Trigger, Dropdown.Popover (variant gloss), Group, Item, ItemLabel, ItemHint, ItemIcon, Sub."
+            description="Dropdown.Trigger, Dropdown.Popover (variant default), Group, Item, ItemLabel, ItemHint, ItemIcon, Sub."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Choice">
@@ -124,9 +118,9 @@ export function DropdownShowcase() {
             <code>multiple</code> switches to an array of values.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
-            <code>variant=&quot;gloss&quot;</code> on <code>Dropdown.Popover</code>. Items with{" "}
+            <code>variant=&quot;default&quot;</code> on <code>Dropdown.Popover</code>. Items with{" "}
             <code>href</code> rendered as links with a role menuitem. Slot motion —{" "}
             <code>motion.content</code> forwarded to Popover; <code>subContent</code> on{" "}
             <code>Dropdown.SubContent</code>.

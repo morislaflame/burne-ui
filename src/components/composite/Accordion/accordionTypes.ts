@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   ExpandableContentProps,
   ExpandableDescriptionProps,
@@ -14,7 +14,7 @@ import type {
   ExpandableTriggerLiftMotion,
   ExpandableTriggerProps,
 } from "@/components/core/Expandable";
-
+ 
 export type AccordionClassNames = {
   root?: string;
   item?: string;
@@ -29,14 +29,13 @@ export type AccordionClassNames = {
   chevron?: string;
   panelShell?: string;
   panel?: string;
-  glossContent?: string;
   body?: string;
 };
-
+ 
 export type AccordionMotion = ExpandableMotion;
 export type AccordionLifecycleMotion = ExpandableLifecycleMotion;
 export type AccordionTriggerLiftMotion = ExpandableTriggerLiftMotion;
-
+ 
 export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue"> & {
   /** Controlled: id of the open item (`null` = all closed). */
   value?: string | null;
@@ -56,7 +55,7 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "
   motion?: Prettify<MotionMapWithEvents<AccordionMotion>>;
   children?: ReactNode;
 };
-
+ 
 export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /** Explicit item id; if not provided, the index among siblings is used. */
   value?: string;
@@ -72,32 +71,32 @@ export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"
   motionController?: MotionController;
   children?: ReactNode;
 } & MotionStateHostProps;
-
+ 
 export type AccordionHeadingProps = HTMLAttributes<HTMLHeadingElement>;
-
+ 
 export type AccordionTriggerProps = ExpandableTriggerProps;
-
+ 
 export type AccordionMessageProps = ExpandableMessageProps;
-
+ 
 export type AccordionIconProps = ExpandableIconProps;
-
+ 
 export type AccordionContentProps = ExpandableContentProps;
-
+ 
 export type AccordionTitleProps = ExpandableTitleProps;
-
+ 
 export type AccordionDescriptionProps = ExpandableDescriptionProps;
-
+ 
 export type AccordionChevronProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<AccordionLifecycleMotion>;
 };
-
+ 
 export type AccordionPanelProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AccordionLifecycleMotion>;
 };
-
+ 
 export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
-
+ 
 export type AccordionContextValue = {
   value: string | null;
   setValue: (value: string | null) => void;
@@ -106,10 +105,11 @@ export type AccordionContextValue = {
   size: ExpandableSize;
   motion?: MotionMapWithEvents<AccordionMotion>;
 };
-
+ 
 export type AccordionClassNamesProviderProps = {
   classNames?: Prettify<AccordionClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseAccordionRootStateProps = AccordionProps;
+ 

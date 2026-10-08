@@ -3,8 +3,6 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
-import { Badge } from "@/components/core/Badge";
-import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
 
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
@@ -37,7 +35,7 @@ const lightDecorator = [
   ),
 ] as const;
 
-const VARIANTS: SurfaceVariant[] = ["default", "secondary", "tertiary", "gloss"];
+const VARIANTS: SurfaceVariant[] = ["default", "secondary", "tertiary"];
 
 const meta = {
   title: "Core Components/Surface",
@@ -48,14 +46,14 @@ const meta = {
     docs: {
       description: {
         component:
-          "Base panel with theme tokens (`bg-surface`, `bg-secondary`, `bg-tertiary`, `gloss`) — fill only, no border. `variant=\"gloss\"` — glass CSS panel with conic border and highlight. Primitive for menus and sections — no Card compound API.",
+          "Base panel with theme tokens (`bg-surface`, `bg-secondary`, `bg-tertiary`) — fill only, no border.  Primitive for menus and sections — no Card compound API.",
       },
     },
   },
   decorators: [...framedDecorator],
   argTypes: {
     variant: { control: "select", options: VARIANTS },
-    shadow: { control: "select", options: ["none", "small", "base", "mid", "large"] },
+    shadow: { control: "select", options: ["none", "small", "base", "mid", "large", "xlarge"] },
     padding: { control: "select", options: ["none", "small", "base", "mid", "large"] },
     radius: { control: "select", options: ["base", "mid", "large"] },
     motionController: {
@@ -119,9 +117,8 @@ export const MenuPanel: Story = {
             <button
               type="button"
               className={cn(
-                "w-full rounded-mid px-base py-small text-left text-base",
-                hoverVariant(),
-              )}
+                "w-full rounded-large px-base py-small text-left text-base",
+                hoverVariant())}
             >
               {label}
             </button>
@@ -142,9 +139,8 @@ export const MenuInteraction: Story = {
             <button
               type="button"
               className={cn(
-                "w-full rounded-mid px-base py-small text-left text-base",
-                hoverVariant(),
-              )}
+                "w-full rounded-large px-base py-small text-left text-base",
+                hoverVariant())}
             >
               {label}
             </button>
@@ -191,95 +187,6 @@ export const LightTheme: Story = {
   },
 };
 
-const dottedGridStyle = {
-  backgroundImage: "radial-gradient(rgb(0 0 0 / 0.15) 1px, transparent 1px)",
-  backgroundSize: "30px 30px",
-  backgroundPosition: "2px 2px",
-} as const;
-
-function GlossPanels() {
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-2xlarge">
-      <Surface variant="gloss" padding="mid" radius="large" className="w-56">
-        <Text as="p" variant="base" className="font-medium">
-          Gloss surface
-        </Text>
-        <Text as="p" variant="small" className="text-muted">
-          variant=&quot;gloss&quot;
-        </Text>
-      </Surface>
-      <Surface variant="gloss" padding="large" radius="mid" className="w-40">
-        <Text as="p" variant="small" className="font-medium">
-          Compact
-        </Text>
-      </Surface>
-    </div>
-  );
-}
-
-function GlossUnderlay() {
-  return (
-    <Surface variant="default" padding="mid" radius="mid" className="w-full max-w-md">
-      <div className="flex flex-wrap items-center gap-base">
-        <Button variant="primary" size="base">
-          Generate
-        </Button>
-        <Button variant="outline" size="base">
-          Cancel
-        </Button>
-        <Badge variant="secondary" status="success">
-          Ready
-        </Badge>
-      </div>
-    </Surface>
-  );
-}
-
-function GlossStoryLayout() {
-  return (
-    <div className="flex w-full max-w-lg flex-col items-center gap-2xlarge">
-      <GlossPanels />
-      <GlossUnderlay />
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  decorators: [
-    (Story: ComponentType) => (
-      <div
-        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
-        style={{
-          backgroundColor: "var(--color-background)",
-          ...dottedGridStyle,
-        }}
-      >
-        <Story />
-      </div>
-    ),
-  ],
-  render: () => <GlossStoryLayout />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  decorators: [
-    (Story: ComponentType) => (
-      <div
-        data-theme="light"
-        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
-        style={{
-          backgroundColor: "var(--color-background)",
-          ...dottedGridStyle,
-        }}
-      >
-        <Story />
-      </div>
-    ),
-  ],
-  render: () => <GlossStoryLayout />,
-};
 
 export const CustomClassNames: Story = {
   name: "Full classNames customization",
@@ -292,14 +199,13 @@ export const CustomClassNames: Story = {
         Default surface slots
       </Surface>
       <Surface
-        variant="gloss"
+        variant="default"
         padding="base"
         classNames={{
           root: "ring-1 ring-primary/20",
-          glossContent: "gap-small text-primary",
         }}
       >
-        Gloss surface slots
+        Surface surface slots
       </Surface>
     </div>
   ),

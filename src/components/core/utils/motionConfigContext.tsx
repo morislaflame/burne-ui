@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
-
+ 
 import {
   getMotionConfig,
   getMotionConfigRevision,
@@ -7,9 +7,9 @@ import {
   subscribeMotionConfig,
   type MotionConfig,
 } from "./motionConfig";
-
+ 
 const MotionConfigContext = createContext<MotionConfig | null>(null);
-
+ 
 export type MotionConfigProviderProps = {
   /**
    * Overlay on the parent scope (or the global `configureMotion` default).
@@ -18,7 +18,7 @@ export type MotionConfigProviderProps = {
   motion?: Partial<MotionConfig> | null;
   children: ReactNode;
 };
-
+ 
 /**
  * Scoped GSAP motion config for a React tree (including portals).
  * `BurneUIProvider` / `ThemeProvider` wrap the app with this. Use it directly
@@ -33,15 +33,18 @@ export function MotionConfigProvider({ motion, children }: MotionConfigProviderP
     getMotionConfigRevision,
   );
   const value = useMemo(() => {
+    // `revision` is not read: it invalidates this memo when `configureMotion()`
+    // changes the global snapshot that `getMotionConfig()` returns.
+    void revision;
     const base = parent ?? getMotionConfig();
     return overlayMotionConfig(base, motion);
   }, [parent, motion, revision]);
-
+ 
   return (
     <MotionConfigContext.Provider value={value}>{children}</MotionConfigContext.Provider>
   );
 }
-
+ 
 /**
  * Resolved motion config for the current tree: innermost provider overlay
  * (`BurneUIProvider` / `ThemeProvider` / `MotionConfigProvider`), else global
@@ -60,3 +63,4 @@ export function useMotionConfig(): Readonly<MotionConfig> {
   void revision;
   return getMotionConfig();
 }
+ 

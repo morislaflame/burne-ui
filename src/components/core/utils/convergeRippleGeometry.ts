@@ -1,7 +1,7 @@
 import type { PointerEvent } from "react";
-
+ 
 export type ConvergeRipple = { id: number; x: number; y: number; size: number };
-
+ 
 function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
   const corners: [number, number][] = [
     [0, 0],
@@ -11,7 +11,7 @@ function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
   ];
   return Math.max(...corners.map(([cx, cy]) => Math.hypot(cx - px, cy - py)));
 }
-
+ 
 export function createConvergeRippleAtPointer(
   target: HTMLElement,
   clientX: number,
@@ -24,7 +24,7 @@ export function createConvergeRippleAtPointer(
   const size = maxDistanceToCorners(x, y, r.width, r.height) * 2;
   return { id, x, y, size };
 }
-
+ 
 /** Only in synchronous handler phase: later React `e.currentTarget` may be `null`. */
 export function createConvergeRippleFromPointer(
   e: PointerEvent<HTMLElement>,
@@ -34,3 +34,4 @@ export function createConvergeRippleFromPointer(
   if (!target) return null;
   return createConvergeRippleAtPointer(target, e.clientX, e.clientY, id);
 }
+ 

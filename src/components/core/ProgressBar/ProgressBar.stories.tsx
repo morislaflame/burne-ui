@@ -191,13 +191,11 @@ export const ValueChange: Story = {
   play: async ({ canvas, userEvent }) => {
     await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
       "aria-valuenow",
-      "20",
-    );
+      "20");
     await userEvent.click(canvas.getByRole("button", { name: "Set 80" }));
     await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
       "aria-valuenow",
-      "80",
-    );
+      "80");
   },
 };
 
@@ -227,8 +225,7 @@ export const Accessibility: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
       "aria-valuenow",
-      "48",
-    );
+      "48");
   },
 };
 
@@ -249,7 +246,7 @@ export const CustomClassNames: Story = {
       value={62}
       color="var(--color-info)"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         value: "text-info font-semibold",
         track: "bg-primary/10",
         fill: "opacity-95",

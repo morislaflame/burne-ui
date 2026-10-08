@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   DrawerClassNames,
   DrawerClassNamesProviderProps,
   DrawerContextValue,
 } from "./drawerTypes";
-
+ 
 const DrawerContext = createContext<DrawerContextValue | null>(null);
 const DrawerClassNamesContext = createContext<DrawerClassNames>({});
-
+ 
 export function DrawerProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function DrawerProvider({
     <DrawerContext.Provider value={value}>{children}</DrawerContext.Provider>
   );
 }
-
+ 
 export function DrawerClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function DrawerClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <DrawerClassNamesContext.Provider value={merged}>
       {children}
     </DrawerClassNamesContext.Provider>
   );
 }
-
+ 
 export function useDrawer(): DrawerContextValue {
   const ctx = useContext(DrawerContext);
   if (!ctx) {
@@ -47,14 +47,15 @@ export function useDrawer(): DrawerContextValue {
   }
   return ctx;
 }
-
+ 
 export function useDrawerClassNames(): DrawerClassNames {
   return useContext(DrawerClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `drawerAnimations.ts`. */
 export const {
   MotionScopeProvider: DrawerMotionProvider,
   useMotionScope: useDrawerMotionScope,
   useOptionalMotionScope: useOptionalDrawerMotionScope,
 } = createMotionScope("Drawer");
+ 

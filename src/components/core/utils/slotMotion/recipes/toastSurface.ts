@@ -7,13 +7,13 @@ import {
 } from "@/components/core/utils/modalSurfaceMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractiveFor, motionToastDismissFor } from "@/components/core/utils/motionConfig";
-
+ 
 import { isMotionRunActive, type MotionAnimation, type MotionContext } from "../slotMotionTypes";
-
+ 
 function slideDirOf(ctx: MotionContext): number {
   return ctx.params.slideDir ?? 24;
 }
-
+ 
 function toastVars(ctx: MotionContext, kind: "enter" | "leave") {
   const fallback = kind === "leave" ? motionToastDismissFor(ctx.config) : motionInteractiveFor(ctx.config);
   return {
@@ -22,7 +22,7 @@ function toastVars(ctx: MotionContext, kind: "enter" | "leave") {
     overwrite: "auto" as const,
   };
 }
-
+ 
 export function applyToastRootInstant(el: HTMLElement, open: boolean, slideDir: number): void {
   killMotion(el);
   if (open) {
@@ -31,7 +31,7 @@ export function applyToastRootInstant(el: HTMLElement, open: boolean, slideDir: 
   }
   gsap.set(el, { autoAlpha: 0, y: slideDir, scale: MODAL_PANEL_SCALE_FROM });
 }
-
+ 
 export function toastSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const slideDir = slideDirOf(ctx);
   if (ctx.reduced || isReducedModalMotion(ctx.config)) {
@@ -45,7 +45,7 @@ export function toastSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | u
     to: { y: 0, scale: 1 },
   }) as unknown as MotionAnimation;
 }
-
+ 
 export function toastSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const slideDir = slideDirOf(ctx);
   if (ctx.reduced || isReducedModalMotion(ctx.config)) {
@@ -63,3 +63,4 @@ export function toastSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | u
     },
   }) as unknown as MotionAnimation;
 }
+ 

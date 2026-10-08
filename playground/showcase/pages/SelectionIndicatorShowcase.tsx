@@ -1,7 +1,5 @@
 import { SelectionIndicatorGalleryDemo } from "../demos/selectionIndicator/SelectionIndicatorGallery.demo";
 import selectionIndicatorGallerySource from "../demos/selectionIndicator/SelectionIndicatorGallery.demo.tsx?raw";
-import { SelectionIndicatorGlossDemo } from "../demos/selectionIndicator/SelectionIndicatorGloss.demo";
-import selectionIndicatorGlossSource from "../demos/selectionIndicator/SelectionIndicatorGloss.demo.tsx?raw";
 import { SelectionIndicatorClassNamesDemo } from "../demos/selectionIndicator/SelectionIndicatorClassNames.demo";
 import selectionIndicatorClassNamesSource from "../demos/selectionIndicator/SelectionIndicatorClassNames.demo.tsx?raw";
 import { SelectionIndicatorShapeCompareDemo } from "../demos/selectionIndicator/SelectionIndicatorShapeCompare.demo";
@@ -11,6 +9,8 @@ import selectionIndicatorThumbGallerySource from "../demos/selectionIndicator/Se
 import { SelectionIndicatorVariantMixDemo } from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo";
 import selectionIndicatorVariantMixSource from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo.tsx?raw";
 import { SelectionIndicatorMotionControllerGalleryDemo } from "../demos/selectionIndicator/motionController/gallery";
+import { SelectionThumbClassNamesFullDemo } from "../demos/selectionThumb/SelectionThumbClassNamesFull.demo";
+import selectionThumbClassNamesFullSource from "../demos/selectionThumb/SelectionThumbClassNamesFull.demo.tsx?raw";
 import { SelectionThumbMotionControllerGalleryDemo } from "../demos/selectionThumb/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
@@ -31,12 +31,7 @@ export function SelectionIndicatorShowcase() {
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGalleryDemo} source={selectionIndicatorGallerySource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass indicator.">
-        <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGlossDemo} source={selectionIndicatorGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="MotionController"
         description="One gallery: play(check) on root, play vs playSlot, stagger, exclude fill, inside Fill, cancel, indicator events. Do not put the handle on Checkbox."
       >
@@ -52,13 +47,17 @@ export function SelectionIndicatorShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Slots shell, fill and mark on SelectionIndicator."
+        description="Slots root, fill and mark on SelectionIndicator."
       >
         <ShowcaseDemoFromFile
           align="stretch"
           Demo={SelectionIndicatorClassNamesDemo}
           source={selectionIndicatorClassNamesSource}
         />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="classNames (SelectionThumb)" description="Slots root on the thumb, root and icon on SelectionThumb.Icon.">
+        <ShowcaseDemoFromFile Demo={SelectionThumbClassNamesFullDemo} source={selectionThumbClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -86,7 +85,7 @@ export function SelectionIndicatorShowcase() {
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

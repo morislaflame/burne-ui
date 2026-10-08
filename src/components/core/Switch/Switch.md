@@ -1,6 +1,6 @@
 # Switch
 
-Переключатель on/off с анимированным thumb по track. Simple API (`label` + props control) и compound (`Control` / `Track` / `Thumb` / `Content`). Поддержка `gloss`, кастомного `color`, иконок on/off.
+Переключатель on/off с анимированным thumb по track. Simple API (`label` + props control) и compound (`Control` / `Track` / `Thumb` / `Content`). Поддержка `variant` (скин), кастомного `color`, иконок on/off.
 
 ## Импорт
 
@@ -17,18 +17,18 @@ import { Switch, SWITCH_LAYOUT, type SwitchProps, type SwitchSimpleProps, type S
   label="Тёмная тема"
   hint="Сохраняется в профиле"
   defaultChecked
-  gloss
+  variant="default"
   iconOff={<IoMoon aria-hidden />}
   iconOn={<IoSunny aria-hidden />}
 />
 ```
 
-Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно передать на root в simple mode.
+Props control (`checked`, `iconOff`, `color`, `variant`, …) можно передать на root в simple mode.
 
 ### Compound API
 
 ```tsx
-<Switch defaultChecked gloss labelPosition="right">
+<Switch defaultChecked variant="default" labelPosition="right">
   <Switch.Control iconOff={<IoMoon aria-hidden />} iconOn={<IoSunny aria-hidden />} />
   <Switch.Content>
     <Switch.Label>Push-уведомления</Switch.Label>
@@ -41,7 +41,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 
 ```tsx
 <Switch.Control>
-  <Switch.Track size="base" gloss>
+  <Switch.Track size="base" variant="default">
     <Switch.Fill />
     <Switch.Thumb>
       <Switch.Icon when="off">…</Switch.Icon>
@@ -58,7 +58,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `labelPosition` | `right` | `left` \| `right` — control vs text column |
 | `disabled` | `false` | opacity track + block input |
-| `gloss` | `false` | gloss track/fill/thumb |
+| `variant` | `default` | Kit surface или имя скина |
 | `color` | — | CSS custom fill (`switchFillColorStyle`) |
 | `thickness` | — | Кастомная высота thumb (px/rem) |
 | `iconOff` / `iconOn` | — | Иконки в thumb для off/on. **Исключение словаря иконок:** у Checkbox / SelectionIndicator одна иконка отмеченного состояния — `icon`; у Switch две независимые иконки состояний — `iconOn` / `iconOff` (+ `Switch.Icon when`). |
@@ -69,21 +69,22 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 
 ### `SwitchClassNames`
 
-`root`, `control`, `input`, `track`, `fill`, `thumb`, `thumbShell`, `icon`, `content`, `label`, `labelText`, `hint`, `error`, `simpleLabelWrap`, `simpleLabelText`.
+`root`, `control`, `input`, `track`, `fill`, `thumb`, `thumbShell`, `iconOff`, `iconOn`, `content`, `label`, `labelText`, `hint`, `error`, `simpleLabelWrap`, `simpleLabelText`.
 
-`Switch.Control` принимает локальный `classNames` pick: `control`, `input`, `track`, `fill`, `thumb`, `thumbShell`, `icon` — мержится с root.
+`Switch.Control` принимает локальный `classNames` pick: `control`, `input`, `track`, `fill`, `thumb`, `thumbShell`, `iconOff`, `iconOn` — мержится с root.
 
 ### Compound-подчасти
 
 | Часть | Роль |
 |-------|------|
-| `Switch.Control` | `<label htmlFor>` + hidden checkbox + track |
+| `Switch.Control` | Compound: wrapping `<label>` around hidden checkbox + track. Simple: `<span>` внутри root `<label htmlFor>` |
 | `Switch.Track` | Rail, animations host |
 | `Switch.Fill` | Цветная заливка track при checked |
 | `Switch.Thumb` | `SelectionThumb` + slide |
 | `Switch.Icon` | `when="off"|"on"` + crossfade |
-| `Switch.Content` | Label column |
-| `Switch.Label` / `Hint` / `Error` | Текст |
+| `Switch.Content` | Колонка текста (`display: contents` — padding, border, background и width не рисуются). Без `Switch.Label` — сам `<label htmlFor>` |
+| `Switch.Label` | `<label htmlFor={switchId}>` из контекста (не simple API) |
+| `Switch.Hint` / `Error` | Вторичный текст |
 
 ## Размеры
 
@@ -100,15 +101,17 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 **DOM:**
 
 ```
-<label root>
-  Switch.Control (label htmlFor)
-    <input type=checkbox hidden />
+<fieldset root>                         ← compound
+  Switch.Control (<label> wraps input+track)
+    <input id type=checkbox hidden />
     <span track>                         ← хост play check/uncheck
       <span fill>                        ← слот `fill`
       <span thumb>                       ← слот `thumb` (translateX)
         SelectionThumb (thumbShell)      ← press squeeze, не слот
         Switch.Icon off/on               ← слоты `iconOff` / `iconOn`
-  Switch.Label / Hint / Error          ← Root scope: `label` / `hint` / `error`
+  Switch.Label (<label htmlFor={switchId}>) / Hint / Error
+<label root htmlFor>                    ← simple
+  Control <span> + label text
 ```
 
 ### Slot motion
@@ -206,21 +209,21 @@ Track opacity `0.48` instant на `trackRef`.
 
 ### Два уровня
 
-1. **`className` на root** — grid `<label>` (в `switchRootGridClass`).
+1. **`className` на root** — grid: simple — `<label htmlFor>`, compound — `<fieldset>`.
 2. **`classNames` на root** — все слоты; `Switch.Control` может переопределить track-слоты локально.
 
 ### Слоты `SwitchClassNames`
 
 | Слот | DOM | Назначение |
 |------|-----|------------|
-| `root` | Root label grid | Padding, border, gap |
+| `root` | Root label / fieldset grid | Padding, border, gap |
 | `control` | Control label cell | Alignment |
 | `input` | Hidden checkbox | Hit overlay |
-| `track` | Track rail | Ring, gloss surface |
+| `track` | Track rail | Ring, track surface |
 | `fill` | Track fill layer | Checked color (`color` prop) |
 | `thumb` | Thumb wrapper | Position (не ломайте transform) |
-| `thumbShell` | SelectionThumb shell | Border, gloss |
-| `icon` | Icon wrapper in thumb | Color on/off |
+| `thumbShell` | SelectionThumb shell | Border / skin shell |
+| `iconOff` / `iconOn` | Glyph inside the thumb | Off and on icons |
 | `content` | Content column | Label stack |
 | `label` / `labelText` | Label | Typography |
 | `hint` / `error` | Secondary | Muted/error |
@@ -234,7 +237,7 @@ Track opacity `0.48` instant на `trackRef`.
   label="Push-уведомления"
   hint="classNames.label на ячейке подписи"
   classNames={{
-    root: "rounded-mid border border-primary/25 p-base",
+    root: "rounded-large border border-primary/25 p-base",
     track: "ring-1 ring-primary/20",
     fill: "bg-primary/90",
     label: "text-success",
@@ -249,9 +252,9 @@ Track opacity `0.48` instant на `trackRef`.
 ```tsx
 <Switch
   defaultChecked
-  gloss
+  variant="default"
   classNames={{
-    root: "rounded-mid border border-primary/25 p-base",
+    root: "rounded-large border border-primary/25 p-base",
     track: "ring-1 ring-primary/20",
     fill: "bg-primary/90",
     labelText: "text-primary font-semibold",
@@ -275,9 +278,13 @@ Track opacity `0.48` instant на `trackRef`.
 
 ## Доступность
 
-- Native `input type="checkbox"` + `role="switch"` semantics via label
+- Native `input type="checkbox"` + `role="switch"`
+- Simple: root `<label htmlFor={switchId}>`
+- Compound: `Switch.Label` / `Switch.Content` — `<label htmlFor>` из `switchId` в контексте (не вложенный label в root)
 - `aria-describedby` hint/error
+- `required` — нативный `required` и `aria-required` на input
 - Иконки: `aria-hidden`
+- Forced colors (Windows HCM): checked track — `Highlight` (`[role="switch"][aria-checked="true"] + *`)
 
 ## Структура файлов
 
@@ -299,4 +306,4 @@ Switch/
 
 ## Storybook
 
-`Core Components/Switch` — simple/compound, gloss, icons, color, `labelPosition`, `classNames`, slot motion gallery.
+`Core Components/Switch` — simple/compound, variants, icons, color, `labelPosition`, `classNames`, slot motion gallery.

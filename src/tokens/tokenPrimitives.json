@@ -6,7 +6,7 @@
     "small": { "size": 0.75, "line": 1 },
     "base": { "size": 0.875, "line": 1.25 },
     "mid": { "size": 1, "line": 1.5 },
-    "large": { "size": 1.15, "line": 1.75 },
+    "large": { "size": 1.125, "line": 1.75 },
     "xlarge": { "size": 1.5, "line": 2 },
     "2xlarge": { "size": 1.875, "line": 2.25 },
     "3xlarge": { "size": 2.25, "line": 2.5 }
@@ -17,6 +17,7 @@
       "base": { "rest": 0.15, "hover": 0.19, "press": 0.1 },
       "mid": { "rest": 0.2, "hover": 0.24, "press": 0.14 },
       "large": { "rest": 0.24, "hover": 0.28, "press": 0.17 },
+      "xlarge": { "rest": 0.28, "hover": 0.32, "press": 0.2 },
       "lift": { "hover": 0.15 }
     },
     "light": {
@@ -24,6 +25,7 @@
       "base": { "rest": 0.08, "hover": 0.11, "press": 0.05 },
       "mid": { "rest": 0.12, "hover": 0.15, "press": 0.08 },
       "large": { "rest": 0.16, "hover": 0.2, "press": 0.11 },
+      "xlarge": { "rest": 0.2, "hover": 0.24, "press": 0.14 },
       "lift": { "hover": 0.08 }
     }
   },
@@ -39,17 +41,29 @@
       "press": [0, 1, 1, 0]
     },
     "mid": {
-      "rest": [2, 4, 3, -2],
-      "hover": [2, 5, 4, -2],
-      "press": [1, 2, 2, -1]
+      "rest": [0, 4, 3, -2],
+      "hover": [0, 5, 4, -2],
+      "press": [0, 2, 2, -1]
     },
     "large": {
-      "rest": [3, 6, 5, -3],
-      "hover": [3, 7, 6, -3],
-      "press": [2, 4, 3, -2]
+      "rest": [0, 6, 5, -3],
+      "hover": [0, 7, 6, -3],
+      "press": [0, 4, 3, -2]
+    },
+    "xlarge": {
+      "rest": [0, 12, 20, -4],
+      "hover": [0, 16, 25, -4],
+      "press": [0, 8, 12, -2]
     },
     "lift": {
       "hover": [0, 2, 2, -1]
     }
+  },
+  "breakpoints": {
+    "sm": 640,
+    "md": 768,
+    "lg": 1024,
+    "xl": 1280,
+    "2xl": 1536
   }
 }

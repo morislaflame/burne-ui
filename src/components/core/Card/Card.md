@@ -70,7 +70,7 @@ Simple API (props `title` на root) нет — только compound children.
 
 ### `CardClassNames`
 
-`root`, `glossContent`, `content`, `header`, `headingBlock`, `title`, `description`, `body`, `footer`.
+`root`, `content`, `header`, `headingBlock`, `title`, `description`, `body`, `footer`.
 
 ### Compound-подчасти
 
@@ -91,7 +91,7 @@ Simple API (props `title` на root) нет — только compound children.
 |------|--------|--------|------|--------|-------|-------------|
 | `small` | `rounded-small` | `px-mid pt-base` + `gap-xsmall` | `px-mid py-small` | `px-mid pb-base` | `small` | `xsmall` |
 | `base` | `rounded-base` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `base` | `small` |
-| `mid` | `rounded-mid` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `mid` | `base` |
+| `mid` | `rounded-large` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `mid` | `base` |
 | `large` | `rounded-large` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `large` | `base` |
 
 ```tsx
@@ -136,7 +136,7 @@ Simple API (props `title` на root) нет — только compound children.
 
 Сырой follow мыши (`gsap.quickTo` на `x`/`y`, не фаза `hoverIn`) — слайд **Mouse follow** в галерее Slot motion.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`checkout:saving`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent` (фазы и namespaced events без дженерика). Хореография Alert + Card — `MotionGroup`. Задержки в factory — `ctx.wait` / `sequence`. См. [Motion](/docs/motion#motionevents), [MotionGroup](/docs/motion#motiongroup) и [async helpers](/docs/motion#async-helpers).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`checkout:saving`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent` (фазы и namespaced events без дженерика). Хореография Alert + Card — `MotionGroup`. Задержки в factory — `ctx.wait` / `sequence`. См. [Motion](/docs/motion-events), [MotionGroup](/docs/motion-group) и [async helpers](/docs/motion-async).
 
 Режимы checkout — `motionState` + `motion.states` (`createMotionStates`). Тот же `paying` ещё раз не переигрывает. Не класть `idle` в `MOTION_PHASE_NAMES`. См. [Motion and state managers](/docs/motion-state).
 
@@ -207,7 +207,7 @@ Ripple **не встроен** — передайте `<Ripple />` первым 
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `CARD_ROOT_BASE_CLASS` | `overflow-hidden flex-col` (+ size `rounded-*`) |
+| `CARD_ROOT_BASE_CLASS` | `flex-col` (+ size `rounded-*`). `overflow-hidden` на корне только у passive; у pressable клип на внутренней оболочке |
 | `PANEL_SIZE_LAYOUT` | Radius / padding / title+description (shared panel grid) |
 | `CARD_STATIC_SHADOW_CLASS` | Map `shadow` → `shadow-token-*` |
 | `CARD_PRESSABLE_ROOT_CLASS` | `cursor-pointer focus-ring` |
@@ -231,7 +231,6 @@ Compound-подчасти не принимают отдельный `classNames
 | Слот | DOM | Когда использовать |
 |------|-----|-------------------|
 | `root` | `<div>` или `<button>` shell | Border, radius, outer shadow override |
-| `glossContent` | Inner gloss wrapper | Padding/layout в gloss variant |
 | `content` | Pressable inner wrapper | z-index для Ripple + children |
 | `header` | Header block | Top bg strip, extra padding |
 | `headingBlock` | Title group flex | Gap title/description |

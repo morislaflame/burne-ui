@@ -103,13 +103,11 @@ export const SwitchTabInteraction: Story = {
   play: async ({ canvas, userEvent }) => {
     await expect(canvas.getByRole("tab", { name: "Account" })).toHaveAttribute(
       "aria-selected",
-      "true",
-    );
+      "true");
     await userEvent.click(canvas.getByRole("tab", { name: "Documents" }));
     await expect(canvas.getByRole("tab", { name: "Documents" })).toHaveAttribute(
       "aria-selected",
-      "true",
-    );
+      "true");
     await expect(canvas.getByRole("tabpanel")).toHaveTextContent("Documents");
   },
 };
@@ -214,7 +212,7 @@ export const CustomClassNames: Story = {
     <Tabs
       defaultValue="account"
       classNames={{
-        root: "max-w-xl rounded-mid border border-info/25 p-base",
+        root: "max-w-xl rounded-large border border-info/25 p-base",
         list: "bg-info/5 ring-1 ring-info/15",
         indicator: "bg-info/30",
         tab: "font-medium",

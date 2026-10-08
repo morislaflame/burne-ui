@@ -79,7 +79,7 @@ const meta = {
   decorators: [...darkThemeDecorator],
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
-    variant: { control: "select", options: ["default", "outline", "secondary", "gloss"] },
+    variant: { control: "select", options: ["default", "outline", "secondary"] },
     status: {
       control: "select",
       options: ["default", "danger", "success", "warning"],
@@ -323,6 +323,19 @@ export const Disabled: Story = {
   ),
 };
 
+export const Virtualized: Story = {
+  name: "Virtualized",
+  args: {
+    virtualized: true,
+    label: "Item",
+    defaultValue: "1",
+    options: Array.from({ length: 200 }, (_, index) => ({
+      value: String(index + 1),
+      label: `Item ${index + 1}`,
+    })),
+  },
+};
+
 export const LongList: Story = {
   name: "Long list",
   render: function LongList() {
@@ -341,7 +354,7 @@ export const LongList: Story = {
         options={many}
         value={value}
         onValueChange={setValue}
-        menuMaxHeight="min(12rem, 50vh)"
+        menuMaxHeight="min(12rem, 50dvh)"
       />
     );
   },
@@ -357,7 +370,7 @@ export const LightTheme: Story = {
 export const Validation: Story = {
   name: "Validation",
   render: () => (
-    <ComboBox status="danger" required options={sampleOptions}>
+    <ComboBox required options={sampleOptions}>
       <ComboBox.Label>Interface language</ComboBox.Label>
       <ComboBox.InputGroup>
         <ComboBox.Input placeholder="Select language" />
@@ -376,7 +389,7 @@ export const CustomTriggerIcon: Story = {
     docs: {
       description: {
         story:
-          "`ComboBox.Trigger` children replace the default chevron (`children ?? <IoChevronDown />`).",
+          "`ComboBox.Trigger` children replace the default chevron.",
       },
     },
   },
@@ -426,7 +439,7 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-controls</code>,{" "}
         <code className="text-primary">aria-activedescendant</code>. Listbox inside Popover.
       </p>
-      <ComboBox status="danger" required options={sampleOptions}>
+      <ComboBox required options={sampleOptions}>
         <ComboBox.Label>Interface language</ComboBox.Label>
         <ComboBox.InputGroup>
           <ComboBox.Input placeholder="Select language" />

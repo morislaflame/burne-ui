@@ -3,12 +3,12 @@ import { PRESS_RIPPLE_DOT_CLASS } from "./pressRippleStyles";
 import type { ConvergeRipple } from "./convergeRippleGeometry";
 import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
 import { useMotionConfig } from "./motionConfigContext";
-
+ 
 /** Minimum ripple "core" scale — intentional visual constant, not in `configureMotion`. */
 const RIPPLE_MIN_SCALE = 0.12;
-
+ 
 export type RippleDirection = "in" | "out";
-
+ 
 function ConvergeRippleDot({
   id,
   x,
@@ -30,8 +30,9 @@ function ConvergeRippleDot({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const onDoneRef = useRef(onDone);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onDoneRef.current = onDone;
-
+ 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -58,7 +59,7 @@ function ConvergeRippleDot({
       killMotion(el);
     };
   }, [id, x, y, size, durationMs, opacityFrom, background, direction, easeCss]);
-
+ 
   return (
     <span
       ref={ref}
@@ -76,7 +77,7 @@ function ConvergeRippleDot({
     />
   );
 }
-
+ 
 export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
   ripples,
   tone,
@@ -112,3 +113,4 @@ export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
     </>
   );
 });
+ 

@@ -1,10 +1,14 @@
-import { forwardRef } from "react";
+import { forwardRef, useRef } from "react";
+ 
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { useFirstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
+import { cn } from "@/utils/cn";
 
 import { DisclosureClassNamesProvider, DisclosureGroupProvider } from "./disclosureContext";
-import { disclosureGroupClass } from "./disclosureStyles";
+import { DISCLOSURE_GROUP_CARD_CLIP_CLASS, disclosureGroupClass } from "./disclosureStyles";
 import type { DisclosureGroupProps } from "./disclosureTypes";
 import { useDisclosureGroupRootState } from "./useDisclosureGroupRootState";
-
+ 
 export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
   function DisclosureGroup(
     {
@@ -33,26 +37,46 @@ export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
       onValueChange,
       motion,
     });
-
+    const rootRef = useRef<HTMLDivElement>(null);
+    const elevationCard = !state.separated && state.variant === "card";
+    const shadow = useFirstLevelHoverShadow(rootRef, elevationCard);
+    const { onPointerOver, onPointerOut, ...domRest } = rest;
+ 
     return (
       <DisclosureGroupProvider value={state.contextValue}>
         <DisclosureClassNamesProvider classNames={classNames}>
           <div
-            ref={ref}
-            className={disclosureGroupClass({
-              separated: state.separated,
-              variant: state.variant,
-              className,
-              slotClass: classNames?.group,
-            })}
-            {...rest}
+            ref={mergeRefs(rootRef, ref)}
+            className={cn(
+              disclosureGroupClass({
+                separated: state.separated,
+                variant: state.variant,
+                className,
+                slotClass: classNames?.group,
+              }),
+              shadow.motionClass,
+            )}
+            {...domRest}
+            onPointerOver={(event) => {
+              onPointerOver?.(event);
+              shadow.onPointerOver(event);
+            }}
+            onPointerOut={(event) => {
+              onPointerOut?.(event);
+              shadow.onPointerOut(event);
+            }}
           >
-            {children}
+            {elevationCard ? (
+              <div className={DISCLOSURE_GROUP_CARD_CLIP_CLASS}>{children}</div>
+            ) : (
+              children
+            )}
           </div>
         </DisclosureClassNamesProvider>
       </DisclosureGroupProvider>
     );
   },
 );
-
+ 
 DisclosureGroup.displayName = "DisclosureGroup";
+ 

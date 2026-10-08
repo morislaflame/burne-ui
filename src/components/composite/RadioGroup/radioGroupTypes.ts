@@ -1,7 +1,7 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionValue } from "@/components/core/utils/slotMotion";
-
+ 
 import type { FieldErrorProps, FieldSetActionsProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -12,11 +12,11 @@ import type {
   OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
 import type { OptionGroupClassNames } from "@/components/composite/utils/optionGroupClassNames";
-
+ 
 export type RadioGroupOrientation = OptionGroupOrientation;
-
+ 
 export type RadioGroupClassNames = OptionGroupClassNames;
-
+ 
 export type RadioGroupContextValue = {
   name: string;
   disabled: boolean;
@@ -28,7 +28,7 @@ export type RadioGroupContextValue = {
   /** First option in the group claims native `required` when `required`. */
   claimRequiredAnchor: () => boolean;
 };
-
+ 
 export type RadioGroupPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -38,7 +38,7 @@ export type RadioGroupPartMotion = {
   leave?: MotionValue;
   change?: MotionValue;
 };
-
+ 
 export type RadioGroupMotion = {
   root?: RadioGroupPartMotion;
   list?: RadioGroupPartMotion;
@@ -47,12 +47,14 @@ export type RadioGroupMotion = {
   error?: RadioGroupPartMotion;
   actions?: RadioGroupPartMotion;
 };
-
+ 
 export type RadioGroupProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children" | "onChange"
 > & {
   required?: boolean;
+  /** `aria-invalid` on the group without an error message. `RadioGroup.Error` does the same. */
+  invalid?: boolean;
   value?: string | null;
   defaultValue?: string;
   onValueChange?: (value: string | undefined) => void;
@@ -70,9 +72,9 @@ export type RadioGroupProps = Omit<
    */
   motion?: Prettify<RadioGroupMotion>;
 };
-
+ 
 export type UseRadioGroupRootStateProps = RadioGroupProps;
-
+ 
 export type RadioGroupHintProps = OptionGroupHintProps & {
   motion?: Prettify<RadioGroupPartMotion>;
 };
@@ -89,3 +91,4 @@ export type RadioGroupActionsProps = Omit<FieldSetActionsProps, "motion"> & {
   motion?: Prettify<RadioGroupPartMotion>;
 };
 export type RadioGroupLabelProps = LabelProps;
+ 

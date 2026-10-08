@@ -19,7 +19,7 @@ function ValidatedEmailCompoundDemo({ initialValue = "bad@" }: { initialValue?: 
   const invalid = value.length > 0 && !isValidEmail(value);
 
   return (
-    <Input status={invalid ? "danger" : "default"} required>
+    <Input required>
       <Input.Label>Email</Input.Label>
       <Input.Control
         value={value}
@@ -41,7 +41,6 @@ function ValidatedEmailSimpleDemo({ initialValue = "bad@" }: { initialValue?: st
       label="Email"
       hint="Format: name@domain.tld"
       error={invalid ? "Enter a valid address." : undefined}
-      status={invalid ? "danger" : "default"}
       required
       value={value}
       onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
@@ -86,7 +85,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Text field. **Simple** — `label`, `hint`, `error`, and control props on root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`. `variant=\"gloss\"` — glass field shell. **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` when `status=\"danger\"`, `aria-required`.",
+          "Text field. **Simple** — `label`, `hint`, `error`, and control props on root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`.  **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` from `invalid` / `error`, `aria-required`.",
       },
     },
   },
@@ -170,7 +169,7 @@ export const WithAffixes: Story = {
 export const Danger: Story = {
   name: "Danger",
   render: () => (
-    <Input status="danger">
+    <Input>
       <Input.Label>Email</Input.Label>
       <Input.Control defaultValue="invalid" />
       <Input.Error>Fix the value before submitting the form.</Input.Error>
@@ -282,9 +281,10 @@ export const Accessibility: Story = {
       <p className="text-sm text-muted">
         <code className="text-primary">&lt;Label htmlFor&gt;</code> via{" "}
         <code className="text-primary">FieldLabelContext</code>. Hint and error — via{" "}
-        <code className="text-primary">aria-describedby</code> (both ids when set). When{" "}
-        <code className="text-primary">status=&quot;danger&quot;</code> —{" "}
-        <code className="text-primary">aria-invalid</code> on the control; error —{" "}
+        <code className="text-primary">aria-describedby</code> (both ids when set).{" "}
+        <code className="text-primary">error</code> or <code className="text-primary">invalid</code> set{" "}
+        <code className="text-primary">aria-invalid</code> and <code className="text-primary">data-invalid</code>.{" "}
+        <code className="text-primary">status=&quot;danger&quot;</code> is color only. The error is{" "}
         <code className="text-primary">Input.Error</code>, not a tinted hint.
       </p>
       <ValidatedEmailCompoundDemo />
@@ -292,93 +292,7 @@ export const Accessibility: Story = {
   ),
 };
 
-// ─── Gloss variant ───────────────────────────────────────────────────────────
 
-const dottedGridStyle = {
-  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
-  backgroundSize: "30px 30px",
-  backgroundPosition: "2px 2px",
-} as const;
-
-function glossDottedDecorator(light = false) {
-  return (Story: ComponentType) => (
-    <div
-      data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
-      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
-    >
-      <div className="mx-auto w-full max-w-md">
-        <Story />
-      </div>
-    </div>
-  );
-}
-
-function GlossDemo() {
-  return (
-    <div className="flex w-full flex-col gap-mid">
-      <Input>
-        <Input.Label>Email</Input.Label>
-        <Input.Control variant="gloss" placeholder="you@example.com" autoComplete="email" />
-        <Input.Hint>variant=&quot;gloss&quot; — glass field shell.</Input.Hint>
-      </Input>
-      <Input>
-        <Input.Label>Domain</Input.Label>
-        <Input.Control variant="gloss" prefix="https://" suffix=".com" placeholder="example" />
-      </Input>
-      <Input>
-        <Input.Label>Password</Input.Label>
-        <Input.Control
-          variant="gloss"
-          inputType="password"
-          placeholder="••••••••"
-          autoComplete="current-password"
-        />
-      </Input>
-      <div className="flex flex-col gap-base">
-        <Input size="small">
-          <Input.Label>Small</Input.Label>
-          <Input.Control variant="gloss" placeholder="small" />
-        </Input>
-        <Input size="base">
-          <Input.Label>Base</Input.Label>
-          <Input.Control variant="gloss" placeholder="base" />
-        </Input>
-        <Input size="mid">
-          <Input.Label>Mid</Input.Label>
-          <Input.Control variant="gloss" placeholder="mid" />
-        </Input>
-        <Input size="large">
-          <Input.Label>Large</Input.Label>
-          <Input.Control variant="gloss" placeholder="large" />
-        </Input>
-      </div>
-      <Input status="danger">
-        <Input.Label>Email</Input.Label>
-        <Input.Control variant="gloss" defaultValue="bad@" />
-        <Input.Error>Enter a valid address.</Input.Error>
-      </Input>
-      <Input disabled>
-        <Input.Label>Disabled</Input.Label>
-        <Input.Control variant="gloss" defaultValue="readonly@example.com" />
-      </Input>
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
-};
 
 export const CustomClassNames: Story = {
   name: "Full classNames customization",
@@ -393,7 +307,7 @@ export const CustomClassNames: Story = {
     <Input
       className="max-w-sm"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
         control: "text-primary placeholder:text-primary/50",
         hint: "text-foreground/70",
@@ -401,7 +315,6 @@ export const CustomClassNames: Story = {
       }}
       label="Email"
       placeholder="you@example.com"
-      status="danger"
       hint="We do not share your address with third parties."
       error="Enter a valid email."
     />

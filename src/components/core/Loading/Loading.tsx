@@ -1,19 +1,23 @@
 import { forwardRef, useMemo } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
+ 
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
-import { LOADING_DEFAULT_LABEL, loadingStatusProps } from "./loadingA11y";
+import { loadingStatusProps } from "./loadingA11y";
 import { resolveLoadingMotionDefaults } from "./loadingAnimations";
+import { LOADING_DOTS_LAYOUT } from "./loadingStyles";
 import { LoadingMotionProvider, useLoadingMotionScope } from "./loadingContext";
 import { LoadingDots, LoadingSpinner } from "./loadingParts";
 import { LOADING_ROOT_CLASS } from "./loadingStyles";
 import type { LoadingPartMotion, LoadingProps } from "./loadingTypes";
-
+ 
 export type {
   LoadingClassNames,
   LoadingColor,
@@ -23,13 +27,13 @@ export type {
   LoadingSize,
   LoadingType,
 } from "./loadingTypes";
-
+ 
 export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
     type = "spinner",
     size = "base",
     color = "primary",
-    label = LOADING_DEFAULT_LABEL,
+    label: labelProp,
     className = "",
     classNames,
     motion,
@@ -45,10 +49,20 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
   },
   ref,
 ) {
+  const fallbackLabel = useBurneLabel("loading");
+  const label = labelProp ?? fallbackLabel;
   const motionDefaults = useMemo(() => resolveLoadingMotionDefaults(), []);
+  const dotLayout = type === "dots" ? LOADING_DOTS_LAYOUT[size] : undefined;
+  const motionParams = useMemo(
+    () =>
+      dotLayout
+        ? { loadingDot: { jumpPx: dotLayout.jumpPx, scalePeak: dotLayout.scalePeak } }
+        : undefined,
+    [dotLayout],
+  );
 
   return (
-    <LoadingMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+    <LoadingMotionProvider motion={motion} defaults={motionDefaults} params={motionParams} controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
@@ -70,7 +84,7 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
     </LoadingMotionProvider>
   );
 });
-
+ 
 function LoadingSurface({
   type,
   size,
@@ -129,7 +143,7 @@ function LoadingSurface({
     onPointerUp,
   });
   useOptionalEnterOnMount(scope, "root", part.targetRef);
-
+ 
   return (
     <span
       ref={part.setRef}
@@ -137,6 +151,7 @@ function LoadingSurface({
       className={cn(LOADING_ROOT_CLASS, classNames?.root, className)}
       {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ size })}
     >
       {type === "dots" ? (
         <LoadingDots
@@ -151,5 +166,6 @@ function LoadingSurface({
     </span>
   );
 }
-
+ 
 Loading.displayName = "Loading";
+ 

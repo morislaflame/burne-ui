@@ -191,7 +191,7 @@ Label — leaf-компонент без compound API; используется 
   required
   className="mb-small"
   classNames={{
-    root: "rounded-mid border border-primary/30 px-base py-xsmall",
+    root: "rounded-large border border-primary/30 px-base py-xsmall",
     text: "text-primary font-semibold",
     required: "text-warning",
   }}

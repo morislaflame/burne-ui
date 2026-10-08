@@ -1,11 +1,12 @@
 import { useCallback, useId, useMemo, useRef, useState } from "react";
-
+ 
 import { focusElement } from "@/components/core/utils/focusElement";
+import { useSkinVariant } from "@/skins/skinContext";
 import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
-
+ 
 import { normalizeDropdownValues } from "./dropdownAPI";
 import type { DropdownContextValue, UseDropdownRootStateProps } from "./dropdownTypes";
-
+ 
 export function useDropdownRootState({
   open: openProp,
   defaultOpen = false,
@@ -15,19 +16,19 @@ export function useDropdownRootState({
   defaultValue,
   onValueChange,
   closeOnSelect: closeOnSelectProp,
-  popoverVariant = "default",
+  popoverVariant: popoverVariantProp,
   portalContainer,
 }: UseDropdownRootStateProps) {
+  const popoverVariant = useSkinVariant(popoverVariantProp);
   const isControlledOpen = openProp !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = isControlledOpen ? openProp! : internalOpen;
-
+ 
   const triggerRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const subPanelRootsRef = useRef<Set<HTMLElement>>(null!);
-  if (!subPanelRootsRef.current) subPanelRootsRef.current = new Set();
+  const subPanelRootsRef = useRef<Set<HTMLElement>>(new Set());
   const contentId = useId();
-
+ 
   const setOpen = useCallback(
     (next: boolean) => {
       if (!isControlledOpen) setInternalOpen(next);
@@ -40,19 +41,20 @@ export function useDropdownRootState({
     },
     [isControlledOpen, onOpenChange],
   );
-
+ 
   const isControlledValue = valueProp !== undefined;
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
     normalizeDropdownValues(defaultValue),
   );
-
+ 
   const selectedArr = isControlledValue
     ? normalizeDropdownValues(valueProp)
     : internalSelected;
   const selected = useMemo(() => new Set(selectedArr), [selectedArr]);
   const latestSelectedRef = useRef(selectedArr);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   latestSelectedRef.current = selectedArr;
-
+ 
   const setSelectedArr = useCallback(
     (next: string[]) => {
       if (!isControlledValue) setInternalSelected(next);
@@ -60,7 +62,7 @@ export function useDropdownRootState({
     },
     [isControlledValue, multiple, onValueChange],
   );
-
+ 
   const selectItem = useCallback(
     (itemValue: string) => {
       const next = toggleOptionListSelection(
@@ -75,9 +77,9 @@ export function useDropdownRootState({
     },
     [closeOnSelectProp, multiple, setOpen, setSelectedArr],
   );
-
+ 
   const indicatorMode: "radio" | "multi" = multiple ? "multi" : "radio";
-
+ 
   const contextValue: DropdownContextValue = useMemo(
     () => ({
       open,
@@ -108,6 +110,7 @@ export function useDropdownRootState({
       subPanelRootsRef,
     ],
   );
-
+ 
   return { contextValue };
 }
+ 

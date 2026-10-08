@@ -1,12 +1,13 @@
 import { forwardRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-
+ 
 import { radioInputAriaLabel } from "./radioA11y";
 import { radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
 import { resolveRadioIndicatorMotion, useRadioChromeSlot, useRadioControlTrackAnimation, useRadioLabelSlot } from "./radioAnimations";
@@ -22,15 +23,16 @@ import type {
   RadioSize,
 } from "./radioTypes";
 import type { MotionController, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
   function RadioControl({ className, children, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
+    const unnamedLabel = useBurneLabel("radioOption");
     const ctx = useRadioFieldContext();
     const slotClassNames = useRadioClassNames();
     const trackRef = useRadioControlTrackAnimation();
-
+ 
     return (
       <span
         ref={ref}
@@ -42,6 +44,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
         )}
         {...rest}
       >
+        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- ARIA 1.2 global states on radio */}
         <input
           id={ctx.inputId}
           type="radio"
@@ -54,6 +57,9 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
           name={ctx.inputName}
           value={ctx.inputProps.value}
           required={ctx.inputProps.required}
+          aria-required={ctx.inputProps.required || undefined}
+          aria-invalid={ctx.isInvalid ? true : undefined}
+          data-invalid={ctx.isInvalid ? "" : undefined}
           form={ctx.inputProps.form}
           autoFocus={ctx.inputProps.autoFocus}
           tabIndex={ctx.inputProps.tabIndex}
@@ -64,7 +70,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
             ctx.hintConnected ? ctx.hintId : undefined,
             ctx.errorConnected ? ctx.errorId : undefined,
           )}
-          aria-label={radioInputAriaLabel(ctx.inputProps.value, ctx.hasLabel)}
+          aria-label={radioInputAriaLabel(ctx.inputProps.value, ctx.hasLabel, unnamedLabel)}
           onChange={ctx.onChange}
           onClick={ctx.onActivate}
         />
@@ -84,9 +90,9 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
     );
   },
 );
-
+ 
 RadioControl.displayName = "RadioControl";
-
+ 
 export function RadioIndicator({
   children,
   className,
@@ -109,7 +115,7 @@ export function RadioIndicator({
   const parentEvents = useOptionalRadioMotionScope()?.getEvents();
   const events = mapped?.events ?? parentEvents;
   const motion = events ? { ...mapped, events } : mapped;
-
+ 
   return (
     <SelectionIndicator
       size={sizeProp ?? ctx.size}
@@ -132,14 +138,14 @@ export function RadioIndicator({
     </SelectionIndicator>
   );
 }
-
+ 
 RadioIndicator.displayName = "RadioIndicator";
-
+ 
 export const RadioContent = forwardRef<HTMLDivElement, RadioContentProps>(
   function RadioContent({ className, children, ...rest }, ref) {
     const ctx = useRadioFieldContext();
     const slotClassNames = useRadioClassNames();
-
+ 
     return (
       <div
         ref={ref}
@@ -156,9 +162,9 @@ export const RadioContent = forwardRef<HTMLDivElement, RadioContentProps>(
     );
   },
 );
-
+ 
 RadioContent.displayName = "RadioContent";
-
+ 
 export function RadioLabel({
   children,
   className,
@@ -172,7 +178,7 @@ export function RadioLabel({
   const required = requiredProp ?? labelCtx?.required ?? false;
   const sz = RADIO_SIZE_LAYOUT[field.size];
   const { setRef } = useRadioLabelSlot(motion);
-
+ 
   return (
     <span
       ref={mergeRefs(setRef, (node) => {
@@ -218,14 +224,14 @@ export function RadioLabel({
     </span>
   );
 }
-
+ 
 RadioLabel.displayName = "RadioLabel";
-
+ 
 export function RadioHint({ children, className, variant, motion, ...rest }: RadioHintProps) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const { setRef } = useRadioChromeSlot("hint", motion);
-
+ 
   return (
     <Field.Hint
       ref={setRef}
@@ -244,14 +250,14 @@ export function RadioHint({ children, className, variant, motion, ...rest }: Rad
     </Field.Hint>
   );
 }
-
+ 
 RadioHint.displayName = "RadioHint";
-
+ 
 export function RadioError({ children, className, motion, ...rest }: RadioErrorProps) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const { setRef } = useRadioChromeSlot("error", motion);
-
+ 
   return (
     <Field.Error
       ref={setRef}
@@ -270,9 +276,9 @@ export function RadioError({ children, className, motion, ...rest }: RadioErrorP
     </Field.Error>
   );
 }
-
+ 
 RadioError.displayName = "RadioError";
-
+ 
 export function RadioSimpleBody({
   label,
   hint,
@@ -310,7 +316,7 @@ export function RadioSimpleBody({
   const { setRef: setLabelMotionRef } = useRadioLabelSlot();
   const { setRef: setHintMotionRef } = useRadioChromeSlot("hint");
   const { setRef: setErrorMotionRef } = useRadioChromeSlot("error");
-
+ 
   return (
     <>
       <RadioControl motionController={motionController}
@@ -374,3 +380,4 @@ export function RadioSimpleBody({
     </>
   );
 }
+ 

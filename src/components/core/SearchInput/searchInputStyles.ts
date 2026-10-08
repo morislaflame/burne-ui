@@ -13,122 +13,122 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { cn } from "@/utils/cn";
-
+import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { KIT_SEARCH_INPUT_VARIANTS } from "./searchInputTypes";
+ 
 import type {
   SearchInputSize,
   SearchInputVariant,
   SearchSizeLayout,
 } from "./searchInputTypes";
-
+ 
 export const SEARCH_INPUT_EXPAND_TRIGGER_CLASS =
   "absolute inset-0 z-[2] m-0 cursor-pointer border-0 bg-transparent p-0 outline-none focus-ring-inset rounded-[inherit]";
-
+ 
 export const SEARCH_INPUT_ICON_WRAP_CLASS =
   "pointer-events-none absolute inset-y-0 z-[1] flex shrink-0 items-center justify-center text-muted";
-
+ 
 export const SEARCH_INPUT_ICON_CLASS = "shrink-0";
-
+ 
 export const SEARCH_INPUT_CONTROL_BASE_CLASS =
   "box-border min-h-0 w-full border-0 bg-transparent text-foreground outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none disabled:cursor-not-allowed disabled:opacity-100";
-
+ 
 export const SEARCH_INPUT_CONTROL_EXPANDED_CLASS =
   "pointer-events-auto absolute inset-0 z-[2] opacity-100";
-
+ 
 export const SEARCH_INPUT_CONTROL_COLLAPSED_CLASS =
   "pointer-events-none absolute inset-0 z-[2] opacity-0";
-
+ 
 export const SEARCH_INPUT_CLEAR_BUTTON_CLASS =
   "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none focus-ring-inset cursor-pointer";
-
+ 
 export const SEARCH_INPUT_CLEAR_ICON_CLASS = "shrink-0";
-
+ 
 export const SEARCH_INPUT_ROOT_BASE_CLASS =
-  "relative box-border inline-block overflow-hidden text-left";
-
-export const SEARCH_INPUT_ROOT_GLOSS_CLASS = "gloss-control border-0";
-
+  "relative box-border inline-block overflow-hidden text-start";
+ 
 export const SEARCH_INPUT_ROOT_BORDER_CLASS = "border-1 border-token";
-
+ 
 export const SEARCH_INPUT_ROOT_COLLAPSED_ROUNDED_CLASS = "rounded-full";
-
+ 
 export const SEARCH_INPUT_CURSOR_TEXT_CLASS = "cursor-text";
-
+ 
 export const SEARCH_INPUT_CURSOR_POINTER_CLASS = "cursor-pointer";
-
+ 
 export const SEARCH_INPUT_BLOCKED_CLASS = "pointer-events-none opacity-55";
-
+ 
 type SearchExpandedRadiusStep = "small" | "base" | "mid" | "large";
-
+ 
 const SEARCH_EXPANDED_RADIUS_VALUE_VAR: Record<SearchExpandedRadiusStep, string> = {
   small: "--radius-small",
   base: "--radius-base",
   mid: "--radius-mid",
   large: "--radius-large",
 };
-
+ 
 const SEARCH_EXPANDED_RADIUS_STEP: Record<ComponentSize, SearchExpandedRadiusStep> = {
   small: "small",
   base: "base",
   mid: "mid",
   large: "large",
 };
-
+ 
 const SEARCH_EXPANDED_RADIUS_FALLBACK_MULT: Record<SearchExpandedRadiusStep, number> = {
   small: 0.875,
   base: 1,
   mid: 1.125,
   large: 1.25,
 };
-
+ 
 export const SEARCH_EXPANDED_ROUNDED_CLASS: Record<ComponentSize, string> = {
   small: "rounded-small",
   base: "rounded-base",
   mid: "rounded-mid",
   large: "rounded-large",
 };
-
+ 
 const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
   small: "w-control-small",
   base: "w-control-base",
   mid: "w-control-mid",
   large: "w-control-large",
 };
-
+ 
 const SHELL_H: Record<ComponentSize, string> = {
-  small: "h-control-small",
-  base: "h-control-base",
-  mid: "h-control-mid",
-  large: "h-control-large",
+  small: "min-h-control-small",
+  base: "min-h-control-base",
+  mid: "min-h-control-mid",
+  large: "min-h-control-large",
 };
-
+ 
 const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
   small: 8,
   base: 12,
   mid: 16,
   large: 20,
 };
-
+ 
 const SEARCH_ICON_BOX_PX: Record<ComponentSize, number> = {
   small: 14,
   base: 16,
   mid: 20,
   large: 20,
 };
-
+ 
 const SEARCH_CLEAR_TAP_PX: Record<ComponentSize, number> = {
   small: 20,
   base: 24,
   mid: 28,
   large: 32,
 };
-
+ 
 const SEARCH_DEFAULT_EXPANDED_WIDTH: Record<ComponentSize, number> = {
   small: 240,
   base: 280,
   mid: 320,
   large: 360,
 };
-
+ 
 function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
   const control = CONTROL_SIZE_LAYOUT[size];
   return {
@@ -144,18 +144,18 @@ function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
     textGapClear: size === "small" ? 4 : 6,
   };
 }
-
+ 
 const SIZE_LAYOUT: Record<SearchInputSize, SearchSizeLayout> = {
   small: buildSearchLayout("small"),
   base: buildSearchLayout("base"),
   mid: buildSearchLayout("mid"),
   large: buildSearchLayout("large"),
 };
-
+ 
 export function resolveSearchLayout(size: ComponentSize): SearchSizeLayout {
   return SIZE_LAYOUT[size];
 }
-
+ 
 function parseCssLengthPx(raw: string, rootPx: number): number | undefined {
   const remMatch = /^([\d.]+)rem$/i.exec(raw);
   if (remMatch) return Number.parseFloat(remMatch[1]!) * rootPx;
@@ -163,7 +163,7 @@ function parseCssLengthPx(raw: string, rootPx: number): number | undefined {
   if (pxMatch) return Number.parseFloat(pxMatch[1]!);
   return undefined;
 }
-
+ 
 /** Border radius in px for expanded SearchInput — reads `--radius-*` from `:root`. */
 export function readSearchExpandedRadiusPx(size: ComponentSize, rootPx = 16): number {
   const step = SEARCH_EXPANDED_RADIUS_STEP[size];
@@ -176,23 +176,21 @@ export function readSearchExpandedRadiusPx(size: ComponentSize, rootPx = 16): nu
   }
   return rootPx * 0.5 * SEARCH_EXPANDED_RADIUS_FALLBACK_MULT[step];
 }
-
+ 
 export function searchInputGroupShellClass(segment: ButtonGroupSegment): string {
   return cn(
     buttonGroupRoundingClasses(segment),
     buttonGroupSegmentSurfaceClasses(segment),
   );
 }
-
+ 
 export function searchInputRootClass({
   size,
   variant,
   expanded,
   blocked,
-  isGloss,
   groupSegment,
   shellHoverMotionClass,
-  standardMotionClass,
   className,
   slotRoot,
 }: {
@@ -200,16 +198,17 @@ export function searchInputRootClass({
   variant: SearchInputVariant;
   expanded: boolean;
   blocked: boolean;
-  isGloss: boolean;
   groupSegment?: ButtonGroupSegment;
   shellHoverMotionClass?: string;
-  standardMotionClass?: string | false | null;
   className?: string;
   slotRoot?: string;
 }): string {
   const layout = resolveSearchLayout(size);
-  const filledVariant: FieldShellFilledVariant =
-    variant === "gloss" ? "default" : variant;
+  let filledVariant: FieldShellFilledVariant = "default";
+  if (variant === "outline") filledVariant = "outline";
+  else if (variant === "secondary") filledVariant = "secondary";
+  const visual = resolveVariantVisual(variant, KIT_SEARCH_INPUT_VARIANTS, "searchInput.root");
+  const kitSurface = isKitVariant(variant, KIT_SEARCH_INPUT_VARIANTS);
 
   return cn(
     groupSegment
@@ -219,15 +218,12 @@ export function searchInputRootClass({
         : SEARCH_INPUT_ROOT_COLLAPSED_ROUNDED_CLASS,
     layout.shellH,
     SEARCH_INPUT_ROOT_BASE_CLASS,
-    isGloss
-      ? SEARCH_INPUT_ROOT_GLOSS_CLASS
-      : cn(SEARCH_INPUT_ROOT_BORDER_CLASS, FIELD_SHELL_VARIANT_BG_CLASS[filledVariant]),
+    visual.className,
+    kitSurface && cn(SEARCH_INPUT_ROOT_BORDER_CLASS, FIELD_SHELL_VARIANT_BG_CLASS[filledVariant]),
     FIELD_SHELL_TRANSITION_CLASS,
     FIELD_SHELL_FOCUS_CLASS,
-    isGloss
-      ? shellHoverMotionClass
-      : fieldShellHoverClass(!blocked, "default", filledVariant),
-    !isGloss && !blocked && standardMotionClass,
+    kitSurface && fieldShellHoverClass(!blocked, "default", filledVariant),
+    shellHoverMotionClass,
     expanded ? SEARCH_INPUT_CURSOR_TEXT_CLASS : "",
     !expanded && !blocked ? SEARCH_INPUT_CURSOR_POINTER_CLASS : "",
     blocked ? SEARCH_INPUT_BLOCKED_CLASS : "",
@@ -236,15 +232,15 @@ export function searchInputRootClass({
     !expanded && !groupSegment && layout.shellWCollapsed,
   );
 }
-
+ 
 export function searchInputIconWrapClass(slotIcon?: string): string {
   return cn(SEARCH_INPUT_ICON_WRAP_CLASS, slotIcon);
 }
-
+ 
 export function searchInputIconClass(layoutIconClass: string): string {
   return cn(SEARCH_INPUT_ICON_CLASS, layoutIconClass);
 }
-
+ 
 export function searchInputControlClass({
   controlPad,
   expanded,
@@ -264,7 +260,7 @@ export function searchInputControlClass({
     slotInput,
   );
 }
-
+ 
 export function searchInputClearClass(slotClear?: string): string {
   return cn(
     SEARCH_INPUT_CLEAR_BUTTON_CLASS,
@@ -273,7 +269,8 @@ export function searchInputClearClass(slotClear?: string): string {
     slotClear,
   );
 }
-
+ 
 export function searchInputClearIconClass(layoutClearIconClass: string): string {
   return cn(SEARCH_INPUT_CLEAR_ICON_CLASS, layoutClearIconClass);
 }
+ 

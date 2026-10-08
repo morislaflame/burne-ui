@@ -1,27 +1,27 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   ToggleButtonGroupOrientation,
   ToggleButtonGroupType,
   ToggleButtonSize,
   ToggleButtonVariant,
 } from "@/components/core/ToggleButton/toggleButtonTypes";
-
+ 
 export type {
   ToggleButtonGroupType,
   ToggleButtonGroupOrientation,
   ToggleButtonGroupContextValue,
 } from "@/components/core/ToggleButton/toggleButtonTypes";
-
+ 
 export type ToggleButtonGroupClassNames = {
   /** Root `<div role="toolbar">`. */
   root?: string;
   /** Separator between glued segments — layout only, no compound part. */
   separator?: string;
 };
-
+ 
 export type ToggleButtonGroupPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -31,11 +31,11 @@ export type ToggleButtonGroupPartMotion = {
   leave?: MotionValue;
   change?: MotionValue;
 };
-
+ 
 export type ToggleButtonGroupMotion = {
   root?: ToggleButtonGroupPartMotion;
 };
-
+ 
 export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
   /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
@@ -63,12 +63,12 @@ export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defau
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ToggleButtonGroupClassNamesProviderProps = {
   classNames?: Prettify<ToggleButtonGroupClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseToggleButtonGroupRootStateProps = Pick<
   ToggleButtonGroupProps,
   | "children"
@@ -82,3 +82,4 @@ export type UseToggleButtonGroupRootStateProps = Pick<
   | "onKeyDown"
   | "orientation"
 >;
+ 

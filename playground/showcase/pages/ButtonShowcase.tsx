@@ -1,3 +1,5 @@
+import { ButtonClassNamesFullDemo } from "../demos/button/ButtonClassNamesFull.demo";
+import buttonClassNamesFullSource from "../demos/button/ButtonClassNamesFull.demo.tsx?raw";
 import { ButtonAsChildDemo } from "../demos/button/ButtonAsChild.demo";
 import buttonAsChildSource from "../demos/button/ButtonAsChild.demo.tsx?raw";
 import { ButtonMotionStateSaveDemo } from "../demos/button/ButtonMotionStateSave.demo";
@@ -8,8 +10,6 @@ import { ButtonDangerBannerDemo } from "../demos/button/ButtonDangerBanner.demo"
 import buttonDangerBannerSource from "../demos/button/ButtonDangerBanner.demo.tsx?raw";
 import { ButtonFabClusterDemo } from "../demos/button/ButtonFabCluster.demo";
 import buttonFabClusterSource from "../demos/button/ButtonFabCluster.demo.tsx?raw";
-import { ButtonGlossDemo } from "../demos/button/ButtonGloss.demo";
-import buttonGlossSource from "../demos/button/ButtonGloss.demo.tsx?raw";
 import { ButtonMotionControllerGalleryDemo } from "../demos/button/motionController/gallery";
 import { ButtonSizesDemo } from "../demos/button/ButtonSizes.demo";
 import buttonSizesSource from "../demos/button/ButtonSizes.demo.tsx?raw";
@@ -27,7 +27,7 @@ export function ButtonShowcase() {
   return (
     <ShowcasePage
       title="Button"
-      description="Main action button: fill options, sizes, statuses, icons, gloss and motionState save."
+      description="Main action button: fill options, sizes, statuses, icons, default and motionState save."
       importPath='import { Button } from "@/components/core/Button";'
       tags={["core", "actions"]}
     >
@@ -46,11 +46,10 @@ export function ButtonShowcase() {
         <ShowcaseDemoFromFile Demo={ButtonSizesDemo} source={buttonSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion and optional ripple.">
-        <ShowcaseDemoFromFile Demo={ButtonGlossDemo} source={buttonGlossSource} />
+      <ShowcaseSection title="classNames" description="Slots root, content, label, icon and text.">
+        <ShowcaseDemoFromFile Demo={ButtonClassNamesFullDemo} source={buttonClassNamesFullSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: disable a phase, vars, factory, or motion + classNames.">
+<ShowcaseSection title="Slot motion" description="One gallery: disable a phase, vars, factory, or motion + classNames.">
         <ButtonSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -91,7 +90,7 @@ export function ButtonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, status, icon, iconOnly, ripple, disabled, asChild, variant gloss, motionState."
+            description="variant, size, status, icon, iconOnly, ripple, disabled, asChild, variant default, motionState."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Ripple">
@@ -103,7 +102,7 @@ export function ButtonShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Customization">
           <p>
-            Additional styles — <code>className</code>. <code>variant=&quot;gloss&quot;</code> — glass
+            Additional styles — <code>className</code>. <code>variant=&quot;default&quot;</code> — glass
             surface (tokens <code>--color-surface</code>, <code>--color-border</code>). In{" "}
             <code>ButtonGroup</code> segments are rounded through group context. Ripple and hover/press —{" "}
             <code>configureMotion()</code> and <code>buttonRippleTone(variant, status)</code> from the package.

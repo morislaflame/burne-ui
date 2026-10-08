@@ -1,9 +1,7 @@
-export const LISTBOX_EMPTY_DEFAULT_CHILDREN = "No matches";
-
 export function listBoxOptionId(listId: string, value: string): string {
   return `${listId}-opt-${value}`;
 }
-
+ 
 export function resolveListBoxAriaLabel({
   ariaLabel,
   ariaLabelledBy,
@@ -19,14 +17,14 @@ export function resolveListBoxAriaLabel({
     "aria-labelledby": ariaLabelledBy,
   };
 }
-
+ 
 export function listBoxActiveOptionId(
   listId: string,
   activeValue: string | null,
 ): string | undefined {
   return activeValue ? listBoxOptionId(listId, activeValue) : undefined;
 }
-
+ 
 export function listBoxEnabledOptionElements(
   root: HTMLElement,
 ): HTMLElement[] {
@@ -36,7 +34,8 @@ export function listBoxEnabledOptionElements(
     ),
   );
 }
-
+ 
 export function listBoxOptionValue(el: HTMLElement): string | null {
   return el.dataset.value ?? null;
 }
+ 

@@ -443,7 +443,7 @@ function SearchToolbarForm() {
   return (
     <Form
       aria-label="Search"
-      className="flex w-full max-w-xl flex-row items-center gap-small rounded-mid border-token bg-tertiary p-xsmall"
+      className="flex w-full max-w-xl flex-row items-center gap-small rounded-large border-token bg-tertiary p-xsmall"
       onSubmit={(values) => {
         void values;
       }}
@@ -562,21 +562,24 @@ function ClassNamesForm() {
     <Form
       aria-label="classNames customization"
       classNames={{
-        root: "rounded-mid border border-primary/20 bg-tertiary/50 p-large",
+        root: "rounded-large border border-primary/20 bg-tertiary/50 p-large",
         header: "gap-xsmall",
         title: "text-primary",
         description: "text-info",
         section: "gap-small",
         actions: "justify-start border-t border-token pt-large",
         field: "rounded-base bg-background/40 p-small",
+        errorSummary: "not-sr-only mb-base rounded-base border border-danger/30 bg-danger/5 p-base text-danger",
+        announce: "not-sr-only mt-small text-small text-info",
       }}
+      rules={{ topic: { required: "Topic is required" } }}
       onSubmit={(values) => {
         void values;
       }}
     >
       <Form.Header>
         <Form.Title>classNames</Form.Title>
-        <Form.Description>Slots root, header, section, field, actions.</Form.Description>
+        <Form.Description>Slots include errorSummary and announce.</Form.Description>
       </Form.Header>
       <Form.Section>
         <Form.Field name="topic">
@@ -590,8 +593,8 @@ function ClassNamesForm() {
   );
 }
 
-export const ClassNames: Story = {
-  name: "classNames customization",
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
   render: () => <ClassNamesForm />,
 };
 
@@ -708,7 +711,7 @@ function FormSizesStory() {
           key={size}
           size={size}
           aria-label={`Form size ${size}`}
-          className="rounded-mid border-token bg-tertiary/40 p-large"
+          className="rounded-large border-token bg-tertiary/40 p-large"
           onSubmit={() => undefined}
         >
           <Form.Header>

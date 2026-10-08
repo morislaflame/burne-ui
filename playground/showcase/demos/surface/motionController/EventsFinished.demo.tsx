@@ -16,9 +16,12 @@ export function SurfaceMotionEventsFinishedDemo() {
 
   async function bounce() {
     setBusy(true);
-    await controller.play("panel:up", { waitForComplete: true }).finished;
-    await controller.play("panel:down", { waitForComplete: true }).finished;
-    setBusy(false);
+    try {
+      await controller.play("panel:up", { waitForComplete: true }).finished;
+      await controller.play("panel:down", { waitForComplete: true }).finished;
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

@@ -19,7 +19,7 @@ Simple API — один `<span role="status">`.
 | `variant` | `spinner` \| `dots` | `spinner` | Тип индикатора |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер |
 | `color` | см. ниже | `primary` | Семантический цвет |
-| `label` | `string` | `"Loading"` | `aria-label` для screen reader |
+| `label` | `string` | из `BurneLabels` (`"Loading"`) | `aria-label` для screen reader |
 | `className` | `string` | — | На root |
 | `motion` | — | — | Per-slot (`root`, `spinner`, `dots`). `events` — app-команды `MotionController` |
 | `motionController` | — | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
@@ -73,7 +73,7 @@ Simple API — один `<span role="status">`.
 |-------|------|--------|
 | `root`, `spinner`, `dots` | `enter` (opt-in) | empty |
 
-Волна точек остаётся kit-internal GSAP, не публичный layout-tween.
+Волна точек — рецепт `loadingDots` на слоте `dot` (`dot.enter`). Это не layout-tween.
 
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет индикатор видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
@@ -99,7 +99,7 @@ function Nudge() {
 }
 ```
 
-Сырой GSAP в Slot motion: **filter blur** на `spinner` (кольцо проявляется из размытия). Волна точек — kit-internal, не демонить как кастом. Не в ките и не в MotionController.
+Сырой GSAP в Slot motion: **filter blur** на `spinner` (кольцо проявляется из размытия). Волна точек — рецепт `loadingDots`; в галерее только `dot.enter: false`, не геометрия волны. Не в MotionController.
 
 
 ### 1. Spinner (`type="spinner"`)
@@ -127,9 +127,9 @@ function Nudge() {
     <span data-loading-dot /> × 3
 ```
 
-`useLoadingDotsAnimation(trackRef, size)` в `loadingAnimations.ts`.
+`useLoadingDotsAnimation` в `loadingAnimations.ts` играет рецепт `loadingDots` на слоте `dot` (`dot.enter`). `dot.enter: false` оставляет точки неподвижными.
 
-**Цикл на каждой точке** (`runLoadingDotsWave`):
+**Цикл на каждой точке** (рецепт `loadingDots`):
 
 1. Keyframes GSAP:
    - **up:** `y: 0 → -jumpPx`, `scale: 1 → scalePeak`, `halfCycleSec`, `easeUp`

@@ -84,7 +84,7 @@ type SelectionIndicatorClassNames = {
 ## Размеры
 
 CSS-переменные: `--selection-indicator-xsmall` … `--selection-indicator-large` (диаметр),
-`--selection-indicator-radius-*` = `--radius-*` × 0.618 (углы shell/dot — не `rounded-full`; fill — `rounded-[inherit]` + `-inset` под бордер, без отдельного радиуса в API).
+`--selection-indicator-radius-*` = `--radius-nested`: шаг radius минус `--space-xsmall` (углы shell/dot — не `rounded-full`; fill — `rounded-[inherit]` + `-inset` под бордер, без отдельного радиуса в API). `xsmall` берёт `--radius-small`, `small` и `base` — `--radius-base`, `mid` — `--radius-mid`, `large` — `--radius-large`.
 
 | size | CSS class | Mark icon |
 |------|-----------|-----------|
@@ -274,6 +274,7 @@ configureMotion({
 
 - Root: `aria-hidden` — семантика на нативном input родителя
 - Mark/fill: decorative
+- Forced colors (Windows HCM): `data-selected` на root; Fill — `data-selection-fill` + `data-pressed`; Mark — `data-selection-mark`. Kit CSS показывает `Highlight` / `HighlightText`, когда GSAP прячет fill.
 
 ## Экспортируемые утилиты
 
@@ -290,8 +291,8 @@ useSelectionIndicatorAnimation(active, fillRef?, iconRef?)
 SelectionIndicator/
 ├── SelectionIndicator.tsx              # Provider + defaults
 ├── index.ts
-├── selectionIndicatorTypes.ts          # SelectionIndicatorMotion
-├── selectionIndicatorTokens.ts         # размеры, variant CSS
+├── selectionIndicatorTypes.ts          # SelectionIndicatorMotion, size / variant
+├── selectionIndicatorStyles.ts         # размеры, variant CSS
 ├── selectionIndicatorAPI.ts            # compound partition, mark resolve
 ├── selectionIndicatorA11y.ts
 ├── selectionIndicatorParts.tsx         # Fill, Mark + first-paint

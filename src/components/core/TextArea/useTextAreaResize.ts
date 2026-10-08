@@ -1,12 +1,12 @@
 import { useCallback, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
-
+ 
 const MAX_HEIGHT_PX = 640;
 /** Keyboard step for ArrowUp / ArrowDown on the resize handle. */
 const KEYBOARD_RESIZE_STEP_PX = 16;
-
+ 
 export function useTextAreaResize(
   shellRef: RefObject<HTMLElement | null>,
   enabled: boolean,
@@ -25,7 +25,7 @@ export function useTextAreaResize(
     },
     [shellRef],
   );
-
+ 
   const adjustHeightBy = useCallback(
     (delta: number) => {
       const shell = shellRef.current;
@@ -37,23 +37,23 @@ export function useTextAreaResize(
     },
     [setHeight, shellRef, size],
   );
-
+ 
   const onResizePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLButtonElement>) => {
       if (blocked || !enabled) return;
       e.preventDefault();
       e.stopPropagation();
-
+ 
       const shell = shellRef.current;
       const handle = e.currentTarget;
       if (!shell) return;
-
+ 
       const startY = e.clientY;
       const startHeight = shell.getBoundingClientRect().height;
       const minHeight = readControlHeightPx(size);
-
+ 
       handle.setPointerCapture(e.pointerId);
-
+ 
       const onMove = (ev: globalThis.PointerEvent) => {
         if (ev.pointerId !== e.pointerId) return;
         const next = Math.min(
@@ -62,7 +62,7 @@ export function useTextAreaResize(
         );
         setHeight(next);
       };
-
+ 
       const onUp = (ev: globalThis.PointerEvent) => {
         if (ev.pointerId !== e.pointerId) return;
         handle.releasePointerCapture(e.pointerId);
@@ -70,14 +70,14 @@ export function useTextAreaResize(
         handle.removeEventListener("pointerup", onUp);
         handle.removeEventListener("pointercancel", onUp);
       };
-
+ 
       handle.addEventListener("pointermove", onMove);
       handle.addEventListener("pointerup", onUp);
       handle.addEventListener("pointercancel", onUp);
     },
     [blocked, enabled, setHeight, shellRef, size],
   );
-
+ 
   const onResizeKeyDown = useCallback(
     (e: ReactKeyboardEvent<HTMLButtonElement>) => {
       if (blocked || !enabled) return;
@@ -103,6 +103,7 @@ export function useTextAreaResize(
     },
     [adjustHeightBy, blocked, enabled, setHeight, size],
   );
-
+ 
   return { onResizePointerDown, onResizeKeyDown };
 }
+ 

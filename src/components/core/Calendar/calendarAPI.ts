@@ -1,3 +1,5 @@
+import { formatCalendarMonthYear } from "@/components/core/utils/intlFormat";
+
 import type { CalendarLocale } from "./calendarTypes";
 import { calendarDayAriaLabel } from "./calendarA11y";
 import type {
@@ -8,7 +10,7 @@ import type {
   CalendarView,
   CalendarYearCellModel,
 } from "./calendarTypes";
-
+ 
 export function isSameDay(a: Date, b: Date): boolean {
   return (
     a.getFullYear() === b.getFullYear() &&
@@ -16,33 +18,32 @@ export function isSameDay(a: Date, b: Date): boolean {
     a.getDate() === b.getDate()
   );
 }
-
+ 
 export function startOfDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
-
+ 
 export function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
 }
-
+ 
 export function getMonthStartOffset(year: number, month: number): number {
   return (new Date(year, month, 1).getDay() + 6) % 7;
 }
-
+ 
 export function formatCalendarHeaderTitle(
   view: CalendarView,
   viewDate: Date,
   locale: CalendarLocale,
 ): string {
   const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
 
-  if (view === "days") return `${locale.months[month]} ${year}`;
+  if (view === "days") return formatCalendarMonthYear(viewDate, locale.locale);
   if (view === "months") return String(year);
   const decadeStart = Math.floor(year / 10) * 10;
   return `${decadeStart}\u2013${decadeStart + 9}`;
 }
-
+ 
 export function createInitialViewDate(
   defaultMonth: Date | undefined,
   mode: CalendarMode,
@@ -50,16 +51,16 @@ export function createInitialViewDate(
   today: Date,
 ): Date {
   if (defaultMonth) return new Date(defaultMonth.getFullYear(), defaultMonth.getMonth(), 1);
-
+ 
   let anchor: Date | null = null;
   if (mode === "single" && resolvedValue instanceof Date) anchor = resolvedValue;
   else if (mode === "range") anchor = (resolvedValue as CalendarRangeValue)?.start ?? null;
   else if (mode === "multiple") anchor = (resolvedValue as Date[])?.[0] ?? null;
-
+ 
   if (anchor) return new Date(anchor.getFullYear(), anchor.getMonth(), 1);
   return new Date(today.getFullYear(), today.getMonth(), 1);
 }
-
+ 
 export function resolveSelectedDates(
   mode: CalendarMode,
   resolvedValue: unknown,
@@ -74,7 +75,7 @@ export function resolveSelectedDates(
   }
   return [];
 }
-
+ 
 export function resolveRangeStart(
   mode: CalendarMode,
   rangePending: Date | null,
@@ -84,7 +85,7 @@ export function resolveRangeStart(
   if (rangePending) return rangePending;
   return (resolvedValue as CalendarRangeValue)?.start ?? null;
 }
-
+ 
 export function resolveRangeEnd(
   mode: CalendarMode,
   rangePending: Date | null,
@@ -94,7 +95,7 @@ export function resolveRangeEnd(
   if (rangePending) return null;
   return (resolvedValue as CalendarRangeValue)?.end ?? null;
 }
-
+ 
 export function navigateViewDate(
   prev: Date,
   view: CalendarView,
@@ -104,7 +105,7 @@ export function navigateViewDate(
   if (view === "months") return new Date(prev.getFullYear() + delta, prev.getMonth(), 1);
   return new Date(prev.getFullYear() + delta * 10, prev.getMonth(), 1);
 }
-
+ 
 export function buildDayCellModels({
   viewDate,
   selectedDates,
@@ -132,9 +133,9 @@ export function buildDayCellModels({
   const month = viewDate.getMonth();
   const daysInMonth = getDaysInMonth(year, month);
   const offset = getMonthStartOffset(year, month);
-
+ 
   const effectiveRangeEnd = rangeEnd ?? (rangeStart && hoverDate ? hoverDate : null);
-
+ 
   const rLow =
     rangeStart && effectiveRangeEnd
       ? rangeStart <= effectiveRangeEnd
@@ -147,42 +148,42 @@ export function buildDayCellModels({
         ? effectiveRangeEnd
         : rangeStart
       : null;
-
+ 
   const rawCells: (number | null)[] = [
     ...Array<null>(offset).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
   const rem = rawCells.length % 7;
   if (rem !== 0) rawCells.push(...Array<null>(7 - rem).fill(null));
-
+ 
   return rawCells.map((day, idx) => {
     if (day === null) {
       return { key: `empty-${year}-${month}-${idx}`, day: null };
     }
-
+ 
     const date = new Date(year, month, day);
     const dayKey = `${year}-${month}-${day}`;
     const isToday = isSameDay(date, today);
     const isSel = mode !== "range" && selectedDates.some((s) => isSameDay(s, date));
-
+ 
     const isRangeStart = mode === "range" && !!rangeStart && isSameDay(date, rangeStart);
     const isRangeEnd =
       mode === "range" && !!effectiveRangeEnd && isSameDay(date, effectiveRangeEnd);
     const inRange =
       mode === "range" && !!rLow && !!rHigh ? date > rLow && date < rHigh : false;
-
+ 
     const sameStartEnd =
       mode === "range" &&
       !!rangeStart &&
       !!effectiveRangeEnd &&
       isSameDay(rangeStart, effectiveRangeEnd);
-
+ 
     const showLeftBg = !sameStartEnd && (inRange || isRangeEnd);
     const showRightBg = !sameStartEnd && (inRange || isRangeStart);
-
+ 
     const isDisabled = (!!minDate && date < minDate) || (!!maxDate && date > maxDate);
     const circleActive = isSel || isRangeStart || isRangeEnd;
-
+ 
     return {
       key: dayKey,
       day,
@@ -199,7 +200,7 @@ export function buildDayCellModels({
     };
   });
 }
-
+ 
 export function buildMonthCellModels(
   viewDate: Date,
   selectedDates: Date[],
@@ -207,7 +208,7 @@ export function buildMonthCellModels(
   today: Date,
 ): CalendarMonthCellModel[] {
   const year = viewDate.getFullYear();
-
+ 
   return locale.monthsShort.map((name, month) => ({
     month,
     name,
@@ -217,7 +218,7 @@ export function buildMonthCellModels(
     ),
   }));
 }
-
+ 
 export function buildYearCellModels(
   viewDate: Date,
   selectedDates: Date[],
@@ -225,7 +226,7 @@ export function buildYearCellModels(
 ): CalendarYearCellModel[] {
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
   const years = Array.from({ length: 12 }, (_, i) => decadeStart - 1 + i);
-
+ 
   return years.map((year) => ({
     year,
     isCurrentYear: today.getFullYear() === year,
@@ -233,7 +234,7 @@ export function buildYearCellModels(
     outOfDecade: year < decadeStart || year > decadeStart + 9,
   }));
 }
-
+ 
 export function createDefaultCalendarValue(
   mode: CalendarMode,
   defaultValue: unknown,
@@ -243,12 +244,12 @@ export function createDefaultCalendarValue(
   if (mode === "multiple") return [] as Date[];
   return null;
 }
-
+ 
 export function addCalendarDays(date: Date, delta: number): Date {
   const next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + delta);
   return startOfDay(next);
 }
-
+ 
 export function addCalendarMonths(date: Date, delta: number): Date {
   const targetMonth = new Date(date.getFullYear(), date.getMonth() + delta, 1);
   const maxDay = getDaysInMonth(targetMonth.getFullYear(), targetMonth.getMonth());
@@ -260,7 +261,7 @@ export function addCalendarMonths(date: Date, delta: number): Date {
     ),
   );
 }
-
+ 
 export function addCalendarYears(date: Date, delta: number): Date {
   const target = new Date(date.getFullYear() + delta, date.getMonth(), 1);
   const maxDay = getDaysInMonth(target.getFullYear(), target.getMonth());
@@ -268,7 +269,7 @@ export function addCalendarYears(date: Date, delta: number): Date {
     new Date(target.getFullYear(), target.getMonth(), Math.min(date.getDate(), maxDay)),
   );
 }
-
+ 
 export function isCalendarDateDisabled(
   date: Date,
   minDate?: Date,
@@ -276,7 +277,7 @@ export function isCalendarDateDisabled(
 ): boolean {
   return (!!minDate && date < minDate) || (!!maxDate && date > maxDate);
 }
-
+ 
 export function clampCalendarDate(
   date: Date,
   minDate?: Date,
@@ -287,7 +288,7 @@ export function clampCalendarDate(
   if (maxDate && next > maxDate) next = startOfDay(maxDate);
   return next;
 }
-
+ 
 export function resolveInitialFocusDate({
   mode,
   resolvedValue,
@@ -303,15 +304,15 @@ export function resolveInitialFocusDate({
 }): Date {
   const selected = resolveSelectedDates(mode, resolvedValue)[0];
   if (selected) return clampCalendarDate(selected, minDate, maxDate);
-
+ 
   if (mode === "range") {
     const start = resolveRangeStart(mode, null, resolvedValue);
     if (start) return clampCalendarDate(start, minDate, maxDate);
   }
-
+ 
   return clampCalendarDate(today, minDate, maxDate);
 }
-
+ 
 /**
  * APG Date Picker day-grid keyboard move.
  * Arrow ±day / ±week, Home/End week bounds, PageUp/Down ±month (Shift = ±year).
@@ -324,7 +325,7 @@ export function moveCalendarFocusDate(
   maxDate?: Date,
 ): Date | null {
   let next: Date | null = null;
-
+ 
   switch (key) {
     case "ArrowLeft":
       next = addCalendarDays(current, -1);
@@ -361,9 +362,9 @@ export function moveCalendarFocusDate(
     default:
       return null;
   }
-
+ 
   next = clampCalendarDate(next, minDate, maxDate);
-
+ 
   if (isCalendarDateDisabled(next, minDate, maxDate)) {
     const direction =
       key === "ArrowLeft" || key === "ArrowUp" || key === "Home" || key === "PageUp"
@@ -383,10 +384,10 @@ export function moveCalendarFocusDate(
     }
     return current;
   }
-
+ 
   return next;
 }
-
+ 
 /** Month picker (3×4): arrows move selection index. */
 export function moveCalendarMonthFocusIndex(
   current: number,
@@ -409,7 +410,7 @@ export function moveCalendarMonthFocusIndex(
       return null;
   }
 }
-
+ 
 /** Year picker (3×4 of 12 cells): arrows move selection index. */
 export function moveCalendarYearFocusIndex(
   current: number,
@@ -432,7 +433,7 @@ export function moveCalendarYearFocusIndex(
       return null;
   }
 }
-
+ 
 export function chunkCalendarCells<T>(cells: T[], size: number): T[][] {
   const rows: T[][] = [];
   for (let i = 0; i < cells.length; i += size) {
@@ -440,5 +441,6 @@ export function chunkCalendarCells<T>(cells: T[], size: number): T[][] {
   }
   return rows;
 }
-
-
+ 
+ 
+ 

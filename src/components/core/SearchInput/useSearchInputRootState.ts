@@ -9,14 +9,15 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
-
+ 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useControllableState } from "@/components/core/utils/useControllableState";
+import { useSkinVariant } from "@/skins/skinContext";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import {
   searchInputCollapseA11yLabel,
   searchInputControlAriaLabel,
@@ -26,7 +27,7 @@ import type {
   SearchInputVariant,
   UseSearchInputRootStateProps,
 } from "./searchInputTypes";
-
+ 
 export function useSearchInputRootState({
   size: sizeProp = "base",
   variant: variantProp,
@@ -57,38 +58,40 @@ export function useSearchInputRootState({
   const groupSegment = layoutCtx?.segmented
     ? undefined
     : (groupSegmentProp ?? groupCtx?.segment);
-  const variant: SearchInputVariant =
+  const variant: SearchInputVariant = useSkinVariant(
     variantProp ??
-    (groupCtx?.variant != null
-      ? fieldShellVariantFromButtonGroup(groupCtx.variant)
-      : "default");
-
+      (groupCtx?.variant != null
+        ? fieldShellVariantFromButtonGroup(groupCtx.variant)
+        : undefined),
+  );
+ 
   const genId = useId();
   const inputId = idProp ?? genId;
-
+ 
   const [expanded, setExpanded] = useControllableState({
     value: expandedProp,
     defaultValue: defaultExpanded,
     onChange: onExpandedChange,
   });
-
+ 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLSpanElement>(null);
-
+  const expandTriggerRef = useRef<HTMLButtonElement>(null);
+ 
   const isValueControlled = valueProp !== undefined;
   const [hasQuery, setHasQuery] = useState(
     () =>
       (defaultValue != null && String(defaultValue).trim().length > 0) ||
       (valueProp != null && String(valueProp).trim().length > 0),
   );
-
+ 
   useEffect(() => {
     if (isValueControlled) {
       setHasQuery(String(valueProp ?? "").trim().length > 0);
     }
   }, [isValueControlled, valueProp]);
-
+ 
   const setInputRef = useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
@@ -96,12 +99,11 @@ export function useSearchInputRootState({
     },
     [forwardedRef],
   );
-
+ 
   const blocked = Boolean(disabled || readOnly);
   const layout = resolveSearchLayout(sizeProp);
   const targetW = expandedWidth ?? layout.defaultExpandedW;
-  const isGloss = variant === "gloss";
-
+ 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       onChange?.(e);
@@ -111,7 +113,7 @@ export function useSearchInputRootState({
     },
     [isValueControlled, onChange],
   );
-
+ 
   const handleClearClick = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -136,18 +138,18 @@ export function useSearchInputRootState({
     },
     [blocked, isValueControlled, onChange],
   );
-
+ 
   const focusInput = useCallback(() => {
     requestAnimationFrame(() => focusElement(inputRef.current));
   }, []);
-
+ 
   const openFromInteraction = useCallback(async (awaitPressSqueeze: () => Promise<void>) => {
     if (blocked || expanded) return;
     await awaitPressSqueeze();
     setExpanded(true);
     focusInput();
   }, [blocked, expanded, focusInput, setExpanded]);
-
+ 
   const handleRootClick = useCallback(
     (e: MouseEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
       if (blocked) return;
@@ -156,7 +158,7 @@ export function useSearchInputRootState({
     },
     [blocked, openFromInteraction],
   );
-
+ 
   const handleInputBlur = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
       onBlur?.(e);
@@ -172,7 +174,7 @@ export function useSearchInputRootState({
     },
     [blocked, collapseOnBlur, onBlur, rootRef, setExpanded],
   );
-
+ 
   const handleRootKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
       if (blocked) return;
@@ -183,7 +185,7 @@ export function useSearchInputRootState({
     },
     [blocked, openFromInteraction],
   );
-
+ 
   const handleInputKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
@@ -196,26 +198,23 @@ export function useSearchInputRootState({
         e.stopPropagation();
         setExpanded(false);
         requestAnimationFrame(() => {
-          focusElement(
-            rootRef.current?.querySelector<HTMLElement>("[data-search-expand]"),
-          );
+          focusElement(expandTriggerRef.current);
         });
       }
     },
-    [collapseOnBlur, onKeyDown, rootRef, setExpanded],
+    [collapseOnBlur, expandTriggerRef, onKeyDown, setExpanded],
   );
-
+ 
   const paddingInputLeft = layout.padX + layout.iconBox + 6;
   const showClear = expanded && hasQuery && !blocked;
   const paddingInputRight =
     layout.padX + (showClear ? layout.clearTap + layout.textGapClear : 0);
-
+ 
   return {
     size: sizeProp,
     variant,
     expanded,
     blocked,
-    isGloss,
     groupSegment,
     layout,
     targetW,
@@ -246,5 +245,7 @@ export function useSearchInputRootState({
     handleInputKeyDown,
     rootRef,
     iconRef,
+    expandTriggerRef,
   };
 }
+ 

@@ -12,8 +12,6 @@ import { ColorPickerSizesDemo } from "../demos/colorPicker/ColorPickerSizes.demo
 import colorPickerSizesSource from "../demos/colorPicker/ColorPickerSizes.demo.tsx?raw";
 import { ColorPickerBrandPaletteDemo } from "../demos/colorPicker/ColorPickerBrandPalette.demo";
 import colorPickerBrandPaletteSource from "../demos/colorPicker/ColorPickerBrandPalette.demo.tsx?raw";
-import { ColorPickerGlossDemo } from "../demos/colorPicker/ColorPickerGloss.demo";
-import colorPickerGlossSource from "../demos/colorPicker/ColorPickerGloss.demo.tsx?raw";
 import { ColorPickerSettingsRowDemo } from "../demos/colorPicker/ColorPickerSettingsRow.demo";
 import colorPickerSettingsRowSource from "../demos/colorPicker/ColorPickerSettingsRow.demo.tsx?raw";
 import { ColorPickerSidesDemo } from "../demos/colorPicker/ColorPickerSides.demo";
@@ -70,12 +68,7 @@ export function ColorPickerShowcase() {
       <ShowcaseSection title="ColorSlider" description="Individual sliders Hue and Saturation.">
         <ShowcaseDemoFromFile align="stretch" Demo={ColorSlidersDemo} source={colorSlidersSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass trigger and panel.">
-        <ShowcaseDemoFromFile Demo={ColorPickerGlossDemo} source={colorPickerGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="classNames"
         description="Customization of panel slots via classNames on root (incl. slidersStack)."
       >
@@ -150,7 +143,7 @@ export function ColorPickerShowcase() {
             Meaning — hex-line (<code>#rrggbb</code>). <code>hsvaToHex</code> to convert from HSVA.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

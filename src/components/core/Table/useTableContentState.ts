@@ -1,7 +1,7 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+ 
 import { useControllableState } from "@/components/core/utils/useControllableState";
-
+ 
 import { EMPTY_TABLE_SELECTION, selectionEquals, toggleSelectionKey } from "./tableAPI";
 import type {
   Selection,
@@ -10,7 +10,7 @@ import type {
   TableContentContextValue,
   TableRowSelectionStore,
 } from "./tableTypes";
-
+ 
 function createRowSelectionStore(
   initialSelected: Selection,
 ): TableRowSelectionStore {
@@ -18,7 +18,7 @@ function createRowSelectionStore(
   let focusedRowKey: string | number | null = null;
   const selectionListeners = new Set<() => void>();
   const focusListeners = new Set<() => void>();
-
+ 
   return {
     subscribeSelection(onStoreChange) {
       selectionListeners.add(onStoreChange);
@@ -61,7 +61,7 @@ function createRowSelectionStore(
     },
   };
 }
-
+ 
 export function useTableContentState({
   selectionMode = "none",
   selectedKeys: selectedKeysProp,
@@ -79,27 +79,27 @@ export function useTableContentState({
   defaultSortDescriptor?: SortDescriptor;
   onSortChange?: (descriptor: SortDescriptor) => void;
 }): TableContentContextValue {
-  const storeRef = useRef<TableRowSelectionStore | null>(null);
-  if (storeRef.current == null) {
-    storeRef.current = createRowSelectionStore(
+  const [store] = useState(() =>
+    createRowSelectionStore(
       selectedKeysProp ?? defaultSelectedKeys ?? EMPTY_TABLE_SELECTION,
-    );
-  }
-  const store = storeRef.current;
-
+    ),
+  );
+ 
   const isControlledSelection = selectedKeysProp !== undefined;
   const onSelectionChangeRef = useRef(onSelectionChange);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onSelectionChangeRef.current = onSelectionChange;
   const selectionModeRef = useRef(selectionMode);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   selectionModeRef.current = selectionMode;
-
+ 
   // Controlled: keep the external store in sync without putting `selectedKeys`
   // into React context (which would re-render every row).
   useLayoutEffect(() => {
     if (selectedKeysProp === undefined) return;
     store.setSelectedKeys(selectedKeysProp);
   }, [selectedKeysProp, store]);
-
+ 
   const [sortDescriptor, setSortDescriptor] = useControllableState<
     SortDescriptor | undefined
   >({
@@ -111,7 +111,7 @@ export function useTableContentState({
         }
       : undefined,
   });
-
+ 
   const onRowSelect = useCallback(
     (key: string | number) => {
       const next = toggleSelectionKey({
@@ -127,21 +127,21 @@ export function useTableContentState({
     },
     [isControlledSelection, store],
   );
-
+ 
   const setFocusedRowKey = useCallback(
     (key: string | number) => {
       store.setFocusedRowKey(key);
     },
     [store],
   );
-
+ 
   const claimFocusedRowKey = useCallback(
     (key: string | number) => {
       store.claimFocusedRowKey(key);
     },
     [store],
   );
-
+ 
   return useMemo(
     () => ({
       selectionMode,
@@ -163,3 +163,4 @@ export function useTableContentState({
     ],
   );
 }
+ 

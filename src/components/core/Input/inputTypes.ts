@@ -8,17 +8,19 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { LabelProps } from "@/components/core/Label";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
-export type InputVariant = "default" | "outline" | "secondary" | "gloss";
+ 
+export const KIT_INPUT_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitInputVariant = (typeof KIT_INPUT_VARIANTS)[number];
+export type InputVariant = KitInputVariant | (string & {});
 export type InputStatus = SemanticStatus;
 export type InputSize = ComponentSize;
-
+ 
 export type InputClassNames = {
   root?: string;
   label?: string;
@@ -36,7 +38,7 @@ export type InputClassNames = {
   hint?: string;
   error?: string;
 };
-
+ 
 export type InputPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -45,7 +47,7 @@ export type InputPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type InputMotion = {
   shell?: InputPartMotion;
   control?: InputPartMotion;
@@ -58,7 +60,7 @@ export type InputMotion = {
   hint?: InputPartMotion;
   error?: InputPartMotion;
 };
-
+ 
 export type InputControlProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type" | "prefix" | "onPointerDown"
@@ -80,7 +82,7 @@ export type InputControlProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type InputFieldContextValue = {
   inputId: string;
   hintId: string;
@@ -88,21 +90,24 @@ export type InputFieldContextValue = {
   labelId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  invalid?: boolean;
   required: boolean;
   status: InputStatus;
   size: InputSize;
 };
-
+ 
 export type InputClassNamesProviderProps = {
   classNames?: Prettify<InputClassNames>;
   children: ReactNode;
 };
-
+ 
 export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** Danger visual, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. */
+  invalid?: boolean;
   id?: string;
   required?: boolean;
   status?: InputStatus;
@@ -125,9 +130,9 @@ export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type InputSimpleProps = InputProps & Omit<InputControlProps, "motion">;
-
+ 
 export type UseInputShellAnimationsProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   blocked: boolean;
@@ -137,26 +142,26 @@ export type UseInputShellAnimationsProps = {
   pointerInsideRef: MutableRefObject<boolean>;
   onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
 };
-
+ 
 export type InputLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<InputPartMotion>;
 };
-
+ 
 export type InputHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: Exclude<InputStatus, "danger"> | "default";
+  status?: InputStatus;
   motion?: Prettify<InputPartMotion>;
 };
-
+ 
 export type InputErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<InputPartMotion>;
 };
-
+ 
 export type UseInputRootStateProps = InputSimpleProps;
-
+ 
 export type PickedFileEntry = { file: File; previewUrl: string | null };
-
+ 
 export type InputSimpleBodyProps = {
   label?: ReactNode;
   hint?: ReactNode;
@@ -167,3 +172,4 @@ export type InputSimpleBodyProps = {
   status: InputStatus;
   controlProps: InputControlProps;
 };
+ 

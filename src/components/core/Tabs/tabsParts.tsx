@@ -1,10 +1,7 @@
 import { forwardRef, useCallback, useRef, type KeyboardEvent } from "react";
-
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+ 
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-
-import "@/components/core/utils/glossInteractive.css";
-
+ 
 import { collectTabButtons, focusTabAt } from "./tabsA11y";
 import { useTabsListEnter } from "./tabsAnimations";
 import {
@@ -15,64 +12,66 @@ import {
 import { tabsIndicatorClass, tabsListClass } from "./tabsStyles";
 import type { TabsListProps } from "./tabsTypes";
 import { useSlidingTabIndicator } from "./useSlidingTabIndicator";
-
+ 
 export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
   { className, children, onKeyDown, motion, ...rest },
   ref,
 ) {
+  void ref;
   const { value, setValue, orientation, variant, disabled, tabElementsRef, layoutEpoch } =
     useTabsContext();
   const slotClassNames = useTabsClassNames();
   const listRef = useRef<HTMLDivElement>(null);
-  const indicatorRef = useRef<HTMLSpanElement>(null);
-  const isGloss = variant === "gloss";
   const scope = useOptionalTabsMotionScope();
-  const listPart = useMotionPart<HTMLDivElement>({
+  const indicatorPart = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "indicator",
+    pointerPhases: false,
+  });
+  const { setRef: setListRef } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "list",
     motion,
     pointerPhases: false,
   });
-
-  const bindGlossRef = useMergedGlossPanelRef(ref, isGloss);
-
+ 
   const setRefs = useCallback(
     (node: HTMLDivElement | null) => {
-      bindGlossRef(node);
       listRef.current = node;
-      listPart.setRef(node);
+      setListRef(node);
     },
-    [bindGlossRef, listPart.setRef],
+    [setListRef],
   );
-
+ 
   useTabsListEnter(scope);
-
+ 
   useSlidingTabIndicator(
     listRef,
-    indicatorRef,
+    indicatorPart.targetRef,
     value,
     orientation,
     variant,
     tabElementsRef,
     layoutEpoch,
+    scope,
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
       if (e.defaultPrevented || disabled) return;
-
+ 
       const list = listRef.current;
       if (!list) return;
-
+ 
       const tabs = collectTabButtons(list);
       if (tabs.length === 0) return;
-
+ 
       const currentIndex = tabs.findIndex((tab) => tab === document.activeElement);
       const horizontal = orientation === "horizontal";
-
+ 
       let nextIndex: number | null = null;
-
+ 
       switch (e.key) {
         case "ArrowRight":
           if (horizontal) nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % tabs.length;
@@ -101,7 +100,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
         default:
           return;
       }
-
+ 
       if (nextIndex == null) return;
       e.preventDefault();
       const nextTab = focusTabAt(list, nextIndex);
@@ -110,7 +109,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     },
     [disabled, onKeyDown, orientation, setValue],
   );
-
+ 
   return (
     <div
       ref={setRefs}
@@ -127,7 +126,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
       {...rest}
     >
       <span
-        ref={indicatorRef}
+        ref={indicatorPart.setRef}
         aria-hidden
         className={tabsIndicatorClass({
           variant,
@@ -139,8 +138,9 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     </div>
   );
 });
-
+ 
 TabsList.displayName = "TabsList";
-
+ 
 export { TabsTab } from "./tabsTabPart";
 export { TabsPanel } from "./tabsPanelPart";
+ 

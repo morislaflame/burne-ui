@@ -1,3 +1,5 @@
+import { RippleClassNamesFullDemo } from "../demos/ripple/RippleClassNamesFull.demo";
+import rippleClassNamesFullSource from "../demos/ripple/RippleClassNamesFull.demo.tsx?raw";
 import { RippleColorTilesDemo } from "../demos/ripple/RippleColorTiles.demo";
 import rippleColorTilesSource from "../demos/ripple/RippleColorTiles.demo.tsx?raw";
 import { RippleColorsDemo } from "../demos/ripple/RippleColors.demo";
@@ -32,6 +34,10 @@ export function RippleShowcase() {
 
       <ShowcaseSection title="Colors" description="color from RIPPLE_COLOR or arbitrary CSS-line.">
         <ShowcaseDemoFromFile Demo={RippleColorsDemo} source={rippleColorsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="className" description="Ripple is one layer. className styles that layer.">
+        <ShowcaseDemoFromFile Demo={RippleClassNamesFullDemo} source={rippleClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

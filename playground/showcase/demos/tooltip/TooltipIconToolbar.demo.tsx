@@ -5,7 +5,7 @@ import { Tooltip } from "@/components/core/Tooltip";
 
 export function TooltipIconToolbarDemo() {
   return (
-    <div className="flex items-center gap-xsmall rounded-mid border-token bg-surface p-xsmall">
+    <div className="flex items-center gap-xsmall rounded-large border-token bg-surface p-xsmall">
       <Tooltip side="top">
         <Tooltip.Trigger asChild>
           <Button variant="ghost" size="small" type="button" aria-label="Edit">

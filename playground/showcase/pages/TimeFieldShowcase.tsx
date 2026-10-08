@@ -2,8 +2,6 @@ import { TimeFieldClassNamesCompoundDemo, TimeFieldClassNamesFullDemo } from "..
 import timeFieldClassNamesFullSource from "../demos/time-field/TimeFieldClassNamesFull.demo.tsx?raw";
 import { TimeFieldCompoundSegmentedDemo } from "../demos/time-field/TimeFieldCompoundSegmented.demo";
 import timeFieldCompoundSegmentedSource from "../demos/time-field/TimeFieldCompoundSegmented.demo.tsx?raw";
-import { TimeFieldGlossDemo } from "../demos/time-field/TimeFieldGloss.demo";
-import timeFieldGlossSource from "../demos/time-field/TimeFieldGloss.demo.tsx?raw";
 import { TimeFieldReminderCardDemo } from "../demos/time-field/TimeFieldReminderCard.demo";
 import timeFieldReminderCardSource from "../demos/time-field/TimeFieldReminderCard.demo.tsx?raw";
 import { TimeFieldSegmentedRowDemo } from "../demos/time-field/TimeFieldSegmentedRow.demo";
@@ -29,7 +27,7 @@ export function TimeFieldShowcase() {
   return (
     <ShowcasePage
       title="TimeField"
-      description="Time input field in HH:MM s format prefix and options segmented/gloss."
+      description="Time input field in HH:MM s format prefix and options segmented/default."
       importPath='import { TimeField } from "@/components/core/TimeField";'
       tags={["core", "forms"]}
     >
@@ -37,7 +35,7 @@ export function TimeFieldShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldSimpleDemo} source={timeFieldSimpleSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Variants" description="default, outline, secondary, segmented and gloss — all field shells side by side.">
+      <ShowcaseSection title="Variants" description="default, outline, secondary, segmented and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldVariantsDemo} source={timeFieldVariantsSource} />
       </ShowcaseSection>
       <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
@@ -47,12 +45,7 @@ export function TimeFieldShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldSizesDemo} source={timeFieldSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass shell.">
-        <ShowcaseDemoFromFile align="center" Demo={TimeFieldGlossDemo} source={timeFieldGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="Full customization classNames"
         description="Slots root, shell, prefix, suffix, segments, segment, hint, error through classNames on the root."
       >
@@ -91,7 +84,7 @@ export function TimeFieldShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="value, onValueChange, label, hint, prefix, variant (default | gloss | segmented)."
+            description="value, onValueChange, label, hint, prefix, variant (default | default | segmented)."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -104,7 +97,7 @@ export function TimeFieldShowcase() {
             (usually a time icon).
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

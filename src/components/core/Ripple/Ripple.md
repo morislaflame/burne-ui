@@ -21,6 +21,7 @@ Simple API — один самозакрывающийся слой без compo
 | `duration` | `number` | `rippleDefaultDuration` (700 ms) | Длительность анимации волны |
 | `direction` | `"in"` \| `"out"` | `"out"` | `in` — схлопывание к точке; `out` — расход от точки |
 | `className` | `string` | — | Клип-слой (`rounded-[inherit]` для наследования скругления) |
+| `ref` | `Ref<HTMLSpanElement>` | — | Клип-обёртка слоя |
 
 ### `RIPPLE_COLOR` — именованные тона
 
@@ -40,7 +41,7 @@ Simple API — один самозакрывающийся слой без compo
 
 ```tsx
 // Ручная интеграция
-<div className="relative overflow-hidden rounded-mid">
+<div className="relative rounded-large">
   <Ripple color="neutral" className="rounded-[inherit]" />
   <div className="relative z-[1]">Контент поверх ripple</div>
 </div>
@@ -54,10 +55,10 @@ Simple API — один самозакрывающийся слой без compo
 
 ## Монтирование и слои
 
-1. **Позиция** — `<Ripple />` первым ребёнком внутри `relative overflow-hidden` области.
+1. **Позиция** — `<Ripple />` первым ребёнком внутри `relative` области.
 2. **Слушатель** — `pointerdown` вешается на ближайший интерактивный предок (`button`, `a[href]`, `[role='button']`) или на `parentElement` слоя.
 3. **Контент** — с `relative z-[1]`, чтобы оставаться кликабельным и видимым поверх волны.
-4. **Скругление** — `className="rounded-[inherit]"` на Ripple, чтобы клип совпадал с родителем.
+4. **Скругление** — `className="rounded-[inherit]"` на Ripple, чтобы клип совпадал с родителем. Сам слой уже `overflow-hidden` — не клипайте хост с `box-shadow` / hover-элевацией.
 
 ### Expandable / Accordion
 
@@ -169,12 +170,12 @@ CSS-переменные `--color-converge-ripple-*` (светлая/тёмна�
 
 ## Стилизация и кастомизация
 
-Ripple — overlay-слой: **только `className` на клип-обёртке**. `classNames` нет. Simple/compound не применим — компонент вставляется внутрь interactive surface.
+Ripple — overlay-слой: **`className` и `ref` на клип-обёртке**. `classNames` нет. Simple/compound не применим — компонент вставляется внутрь interactive surface.
 
 ### Единственный слот
 
 ```tsx
-<div className="relative overflow-hidden rounded-base">
+<div className="relative rounded-base">
   <Ripple color="info" className="rounded-[inherit]" />
   <button type="button">Нажми</button>
 </div>
@@ -193,11 +194,11 @@ Ripple — overlay-слой: **только `className` на клип-обёрт
 | `Button` | `ripple={true}` | Тон auto (`buttonRippleTone`); отдельного слота нет |
 | `CloseButton` | `ripple={true}` | `classNames.ripple` на CloseButton |
 | `Expandable.Trigger` | `<Ripple />` child | `classNames.triggerRippleOverlay` на Expandable |
-| `Card`, `Alert` | Ручной `<Ripple />` | `className` на Ripple + `overflow-hidden` на parent |
+| `Card`, `Alert` | Ручной `<Ripple />` | `className` на Ripple (`rounded-[inherit]`) |
 
 ### Практические заметки
 
-- **Parent:** обязательны `relative` + `overflow-hidden` на интерактивной поверхности.
+- **Parent:** `relative`. Клип волны — на Ripple (`overflow-hidden rounded-[inherit]`). Не ставьте `overflow-hidden` на хост с `box-shadow` / hover-элевацией.
 - **Не заменяет focus ring** — ripple только press feedback.
 - **Кнопки:** цвет подбирается из `variant`/`status` — для кастома используйте явный `color` prop на Ripple.
 

@@ -1,15 +1,15 @@
 import type { PointerEventHandler, ReactNode } from "react";
 import { forwardRef, useMemo, useRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
-
-import "@/components/core/utils/glossInteractive.css";
-
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import {
   resolveTimeFieldMotionDefaults,
   resolveTimeFieldMotionParams,
@@ -21,6 +21,7 @@ import {
   TimeFieldMotionProvider,
   useOptionalTimeFieldMotionScope,
   useTimeFieldClassNames,
+  useOptionalTimeFieldContext,
   useTimeFieldContext,
 } from "./timeFieldContext";
 import { TIME_FIELD_KEYBOARD_INPUT_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentGroupClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
@@ -33,9 +34,9 @@ import type {
   TimeFieldSimpleBodyProps,
 } from "./timeFieldTypes";
 import { useTimeFieldControlState } from "./useTimeFieldControlState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 function TimeFieldAffixSlot({
   side,
   status,
@@ -54,7 +55,7 @@ function TimeFieldAffixSlot({
     slot: side,
     pointerPhases: true,
   });
-
+ 
   return (
     <span
       ref={setRef}
@@ -65,7 +66,7 @@ function TimeFieldAffixSlot({
     </span>
   );
 }
-
+ 
 export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControlProps>(
   function TimeFieldControl(props, ref) {
     const {
@@ -94,22 +95,23 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       ...rest
     } = props;
     const resolvedDisabled = disabled ?? false;
-    const resolvedVariant = variant ?? "default";
-    const isGloss = resolvedVariant === "gloss";
+    const fieldCtx = useOptionalTimeFieldContext();
+    const resolvedVariant = useSkinVariant(variant ?? fieldCtx?.variant);
     const pointerInsideRef = useRef(false);
     const parentScope = useOptionalTimeFieldMotionScope();
-    const motionDefaults = useMemo(
-      () => resolveTimeFieldMotionDefaults({ isGloss, disabled: resolvedDisabled }),
-      [isGloss, resolvedDisabled],
-    );
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveTimeFieldMotionDefaults({ variant: resolvedVariant, disabled: resolvedDisabled });
+    }, [resolvedDisabled, resolvedVariant, skinRevision]);
     const motionParams = useMemo(
       () =>
         resolveTimeFieldMotionParams({
+          variant: resolvedVariant,
           disabled: resolvedDisabled,
-          isGloss,
           pointerInside: pointerInsideRef,
         }),
-      [isGloss, resolvedDisabled],
+      [resolvedDisabled, resolvedVariant],
     );
     const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -120,7 +122,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       states: parentScope?.getStates(),
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
-
+ 
     return (
       <TimeFieldMotionProvider
         motion={mergedMotion}
@@ -158,9 +160,9 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     );
   },
 );
-
+ 
 TimeFieldControl.displayName = "TimeFieldControl";
-
+ 
 function TimeFieldControlSurface({
   forwardedRef,
   value,
@@ -247,11 +249,7 @@ function TimeFieldControlSurface({
     shellPointerUp,
     shellPointerEnter,
     shellPointerLeave,
-    shellFocusCapture,
-    shellBlurCapture,
-    glossShellHoverMotionClass,
-    standardShellHoverMotionClass,
-    glossDisabledAttr,
+    shellHoverMotionClass,
   } = useTimeFieldShellAnimations({
     shellRef: state.shellRef,
     disabled: state.disabled,
@@ -265,7 +263,7 @@ function TimeFieldControlSurface({
     slot: "segments",
     pointerPhases: true,
   });
-
+ 
   return (
     <fieldset
       ref={(node) => {
@@ -277,6 +275,8 @@ function TimeFieldControlSurface({
       aria-label={state.shellAria["aria-label"]}
       aria-labelledby={state.shellAria["aria-labelledby"]}
       aria-describedby={state.ariaDescribedBy}
+      aria-required={state.required || undefined}
+      aria-invalid={state.isInvalid ? true : undefined}
       data-slot="timefield-shell"
       onPointerDown={shellPointerDown}
       onPointerUp={shellPointerUp}
@@ -290,9 +290,6 @@ function TimeFieldControlSurface({
         if (e.defaultPrevented) return;
         shellPointerLeave?.(e);
       }}
-      onFocusCapture={shellFocusCapture}
-      onBlurCapture={shellBlurCapture}
-      {...glossDisabledAttr}
       className={timeFieldShellClass({
         variant: state.variant,
         status: state.status,
@@ -300,12 +297,17 @@ function TimeFieldControlSurface({
         size: state.size,
         compact: state.compact,
         shellSurface: state.shellSurface,
-        glossShellHoverMotionClass,
-        standardShellHoverMotionClass,
+        shellHoverMotionClass,
         slotClass: slotClassNames.shell,
         className,
       })}
       {...rest}
+      {...dataVariantProps({
+        size: state.size,
+        variant: state.variant,
+        status: state.status,
+      })}
+      data-invalid={state.isInvalid ? "" : undefined}
     >
       <div
         className={timeFieldShellInnerClass({
@@ -324,7 +326,7 @@ function TimeFieldControlSurface({
             {prefix}
           </TimeFieldAffixSlot>
         ) : null}
-
+ 
         <div
           ref={setSegmentsRef}
           className={timeFieldSegmentsClass({
@@ -398,7 +400,7 @@ function TimeFieldControlSurface({
             </span>
           ))}
         </div>
-
+ 
         {suffix != null ? (
           <TimeFieldAffixSlot
             side="suffix"
@@ -413,7 +415,7 @@ function TimeFieldControlSurface({
     </fieldset>
   );
 }
-
+ 
 export const TimeFieldLabel = forwardRef<HTMLElement, TimeFieldLabelProps>(
   function TimeFieldLabel(
     {
@@ -437,7 +439,7 @@ export const TimeFieldLabel = forwardRef<HTMLElement, TimeFieldLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Label
         ref={part.setRef}
@@ -452,9 +454,9 @@ export const TimeFieldLabel = forwardRef<HTMLElement, TimeFieldLabelProps>(
     );
   },
 );
-
+ 
 TimeFieldLabel.displayName = "TimeFieldLabel";
-
+ 
 export const TimeFieldHint = forwardRef<HTMLElement, TimeFieldHintProps>(
   function TimeFieldHint(
     {
@@ -480,7 +482,7 @@ export const TimeFieldHint = forwardRef<HTMLElement, TimeFieldHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -495,9 +497,9 @@ export const TimeFieldHint = forwardRef<HTMLElement, TimeFieldHintProps>(
     );
   },
 );
-
+ 
 TimeFieldHint.displayName = "TimeFieldHint";
-
+ 
 export const TimeFieldError = forwardRef<HTMLElement, TimeFieldErrorProps>(
   function TimeFieldError(
     {
@@ -523,7 +525,7 @@ export const TimeFieldError = forwardRef<HTMLElement, TimeFieldErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -538,9 +540,9 @@ export const TimeFieldError = forwardRef<HTMLElement, TimeFieldErrorProps>(
     );
   },
 );
-
+ 
 TimeFieldError.displayName = "TimeFieldError";
-
+ 
 export function TimeFieldSimpleBody({
   label,
   hint,
@@ -557,3 +559,4 @@ export function TimeFieldSimpleBody({
     </>
   );
 }
+ 

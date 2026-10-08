@@ -1,15 +1,13 @@
 import type { RefObject } from "react";
-
+ 
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import type { ShadowSize } from "@/tokens/shadows";
-
+ 
 /** Built-in recipe names. Custom names via `registerMotionRecipe` are also valid (kit names need `{ override: true }`). */
 export const KIT_MOTION_RECIPES = [
   "hoverLiftSecondLevel",
-  "hoverLiftGloss",
   "hoverLiftFirstLevel",
   "pressSqueeze",
-  "pressSqueezeGloss",
   "collapsibleHeight",
   "chevronRotate",
   "portalSurfaceEnter",
@@ -34,13 +32,17 @@ export const KIT_MOTION_RECIPES = [
   "fileRowExit",
   "progressFill",
   "progressIndeterminate",
+  "toastStackShift",
+  "toastScrimFade",
+  "tabsIndicatorMove",
+  "loadingDots",
 ] as const;
-
+ 
 export type KitRecipeName = (typeof KIT_MOTION_RECIPES)[number];
-
+ 
 /** Autocomplete kit names; custom registered strings still type-check. */
 export type MotionRecipeName = KitRecipeName | (string & {});
-
+ 
 /**
  * `MotionConfig` duration key a recipe reads by default (`ctx.config[token]`).
  * Host params (`ctx.params.duration`) may still override.
@@ -54,17 +56,18 @@ export type MotionDurationToken =
   | "expandDuration"
   | "toastDismissDuration"
   | "progressFillDuration"
-  | "progressIndeterminateDuration";
-
+  | "progressIndeterminateDuration"
+  | "loadingDotsDuration";
+ 
 /**
  * Tween delay: seconds, or a `MotionConfig` duration key (milliseconds → seconds).
  * `"expand"` is `expandDuration` — start after `collapsibleHeight` on Expandable / Disclosure / Accordion.
  */
 export type MotionDelay = number | MotionDurationToken | "expand";
-
+ 
 /** Reduced-motion / `enable*` off: snap to the end state, or skip the effect. */
 export type MotionReducedStrategy = "instant" | "skip";
-
+ 
 /**
  * Passport for a named recipe. Kit recipes fill every field (`KIT_MOTION_RECIPE_META`).
  * App `registerMotionRecipe(name, fn, { hidesFirstPaint: true })` overlays these.
@@ -84,7 +87,7 @@ export type MotionRecipeMetadata = {
   interactive: boolean;
   defaultDurationToken: MotionDurationToken;
 };
-
+ 
 export const MOTION_RECIPE_METADATA_DEFAULTS: MotionRecipeMetadata = {
   hidesFirstPaint: false,
   supportsReducedMotion: true,
@@ -94,26 +97,32 @@ export const MOTION_RECIPE_METADATA_DEFAULTS: MotionRecipeMetadata = {
   interactive: false,
   defaultDurationToken: "interactiveDuration",
 };
-
+ 
 /** Canonical lifecycle phases. App events are a separate W3 API — do not add them here. */
 export const MOTION_PHASE_NAMES = [
   "hoverIn",
   "hoverOut",
   "pressIn",
   "pressOut",
+  "mount",
   "enter",
   "leave",
   "check",
   "uncheck",
   "change",
 ] as const;
-
+ 
 export type MotionPhaseName = (typeof MOTION_PHASE_NAMES)[number];
-
+ 
 export function isMotionPhaseName(value: string): value is MotionPhaseName {
   return (MOTION_PHASE_NAMES as readonly string[]).includes(value);
 }
-
+ 
+/** Host open/close. Other plays must not evict an in-flight `leave`. */
+export function isMotionHostLifecyclePhase(phase: string | undefined): phase is "enter" | "leave" {
+  return phase === "enter" || phase === "leave";
+}
+ 
 /**
  * Compositor vars for `MotionController.set` and kit recipes.
  * Layout (`width` / `height` / `top` / `left` / `margin`) is forbidden — no index signature.
@@ -133,14 +142,14 @@ export type MotionTransformVars = {
   duration?: number;
   ease?: string;
 };
-
+ 
 /**
  * Where a declarative tween starts. `"current"` continues from the live pose
  * (hover / press). `"rest"` restarts from identity (`x`/`y` `0`, `scale` `1`, …)
  * so a retriggered ping does not freeze at the peak.
  */
 export type MotionReplay = "rest" | "current";
-
+ 
 /**
  * Transform / opacity vars for the public motion API (safe subset of compositor props).
  * Duration is seconds (GSAP). Do not pass layout props (`width`, `height`, `top`, `left`).
@@ -176,17 +185,17 @@ export type MotionVars = {
    */
   firstPaint?: "hidden" | "visible";
 };
-
+ 
 /** Compositor tween vars for `ctx.to` / `ctx.fromRest` (includes `rotation` / `scaleX`). */
 export type MotionTweenVars = MotionTransformVars & {
   yoyo?: boolean;
   repeat?: number;
   delay?: MotionDelay;
 };
-
+ 
 /** GSAP timeline position (`0`, `"+=0.05"`, `"<"`). */
 export type MotionTimelinePosition = number | string;
-
+ 
 /**
  * Kit timeline: `overwrite` / `force3D` are already in defaults.
  * `fromRest` restarts listed transform keys from identity.
@@ -195,27 +204,23 @@ export type MotionTimeline = MotionAnimation & {
   to: (
     el: HTMLElement | null | undefined,
     vars: MotionTweenVars,
-    position?: MotionTimelinePosition,
-  ) => MotionTimeline;
+    position?: MotionTimelinePosition) => MotionTimeline;
   fromTo: (
     el: HTMLElement | null | undefined,
     from: MotionTweenVars,
     vars: MotionTweenVars,
-    position?: MotionTimelinePosition,
-  ) => MotionTimeline;
+    position?: MotionTimelinePosition) => MotionTimeline;
   fromRest: (
     el: HTMLElement | null | undefined,
     vars: MotionTweenVars,
-    position?: MotionTimelinePosition,
-  ) => MotionTimeline;
+    position?: MotionTimelinePosition) => MotionTimeline;
   add: (
     child: Pick<MotionAnimation, "kill"> | undefined,
-    position?: MotionTimelinePosition,
-  ) => MotionTimeline;
+    position?: MotionTimelinePosition) => MotionTimeline;
   /** Gap on the timeline (seconds / duration token). Prefer this over an empty tween. */
   wait: (delay: MotionDelay, position?: MotionTimelinePosition) => MotionTimeline;
 };
-
+ 
 /**
  * One step of `ctx.sequence` / `ctx.parallel`. A number or duration token is
  * `ctx.wait`. A function may return a tween (wait for complete), a Promise, or void.
@@ -223,7 +228,7 @@ export type MotionTimeline = MotionAnimation & {
 export type MotionSequenceStep =
   | MotionDelay
   | (() => void | Promise<void> | Pick<MotionAnimation, "kill"> | undefined);
-
+ 
 /**
  * Closed kit host params (`MotionContext.params`). App data belongs on
  * `motionPayload` / `ctx.payload` (`MotionPayload`, `createMotionFactory`) — not
@@ -231,6 +236,11 @@ export type MotionSequenceStep =
  */
 export type MotionRecipeParams = {
   pointerInside?: boolean | RefObject<boolean | null> | (() => boolean);
+  /**
+   * Press release while the pointer stays. `false` when this slot's `hoverIn`
+   * is off, so the control returns to rest instead of the hover-lift scale.
+   */
+  restoreHover?: boolean;
   hasHoverShadow?: boolean;
   shadow?: {
     idle?: string;
@@ -240,7 +250,6 @@ export type MotionRecipeParams = {
   liftScale?: number;
   onReleaseStart?: () => void;
   shadowSize?: ShadowSize;
-  isGloss?: boolean;
   variant?: string;
   duration?: number;
   ease?: string;
@@ -261,8 +270,33 @@ export type MotionRecipeParams = {
   padX?: number;
   iconBox?: number;
   iconLeftCollapsedCss?: string;
+  /** Toast stack card peek. Measured by the item host and passed on `play`. */
+  toastStack?: {
+    peekY: number;
+    scale: number;
+    opacity: number;
+  };
+  /** Toast scrim opacity. `dismiss` uses the dismiss duration. */
+  toastScrim?: {
+    opacity: number;
+    dismiss?: boolean;
+    /** First paint of a viewport: fade in from 0. */
+    fromZero?: boolean;
+  };
+  /** Tabs indicator FLIP delta. Layout box is already written; this is the compositor from-pose. */
+  tabsIndicator?: {
+    x: number;
+    y: number;
+    scaleX: number;
+    scaleY: number;
+  };
+  /** Loading dots wave. Index is read from the dot node. */
+  loadingDot?: {
+    jumpPx: number;
+    scalePeak: number;
+  };
 };
-
+ 
 /**
  * Suggested snapshot for `motionPayload` / `ctx.payload`. All fields optional —
  * extend with app keys (`MotionPayload & { cartId: string }`).
@@ -284,36 +318,39 @@ export type MotionPayload = {
   error?: unknown;
   attempt?: number;
 };
-
+ 
 /** `Readonly` on objects/arrays; primitives and `unknown` stay as-is. */
 type MotionPayloadSnapshot<T> = T extends object ? Readonly<T> : T;
-
+ 
 /** Handle stored on `MotionRun`. GSAP tweens/timelines satisfy this via `kill`. */
 export type MotionAnimation = {
   kill: () => void;
   eventCallback?: (type: string, callback?: ((...args: unknown[]) => unknown) | null) => unknown;
   repeat?: (value?: number) => number;
 };
-
-export type MotionRunStatus = "running" | "finished" | "cancelled" | "failed";
-
+ 
+export type MotionRunStatus = "running" | "finished" | "cancelled" | "failed" | "skipped";
+ 
 export type MotionCancelReason = "superseded" | "killed" | "host" | "unmount";
-
+ 
 /**
  * One play on one target. `finished` always settles (success, cancel, or fail)
  * so portal hosts never hang on a killed tween.
  */
 export type MotionRun = {
   readonly id: number;
+  readonly phase: MotionPhaseName | (string & {});
   readonly status: MotionRunStatus;
   readonly finished: Promise<void>;
   readonly animation: MotionAnimation | undefined;
   readonly cancelReason?: MotionCancelReason;
-  cancel: (reason?: MotionCancelReason) => void;
+  /** Phase that replaced this run when `cancelReason` is `superseded`. */
+  readonly supersededBy?: string;
+  cancel: (reason?: MotionCancelReason, supersededBy?: string) => void;
   cleanup: () => void;
   isCurrent: () => boolean;
 };
-
+ 
 export type MotionContext<TPayload = unknown> = {
   el: HTMLElement;
   phase: MotionPhaseName | (string & {});
@@ -342,6 +379,17 @@ export type MotionContext<TPayload = unknown> = {
   kill: () => void;
   reduced: boolean;
   config: Readonly<MotionConfig>;
+  /**
+   * Cross-fade the shadow layers on `ctx.el`. `kind` defaults to `"elevation"`.
+   * A plugin kind owns its own host and does not rewrite the kit host.
+   * Omit `duration` to snap.
+   */
+  shadowFade: (
+    state: "rest" | "hover" | "press",
+    options?: { kind?: string; duration?: number; ease?: string },
+  ) => void;
+  /** Hover-lift or press-squeeze scale for `ctx.el`, from `ctx.config`. */
+  adaptiveScale: (which: "hover" | "press") => number;
   params: MotionRecipeParams;
   runId: number;
   isCurrent: () => boolean;
@@ -390,27 +438,25 @@ export type MotionContext<TPayload = unknown> = {
     (
       el: HTMLElement | null | undefined,
       from: MotionTweenVars,
-      vars: MotionTweenVars,
-    ): MotionAnimation | undefined;
+      vars: MotionTweenVars): MotionAnimation | undefined;
   };
   /** Multi-slot sequence; children inherit kit tween defaults. */
   timeline: () => MotionTimeline;
 };
-
+ 
 /**
  * Prefer returning a GSAP tween/timeline (`kill`) so the kit can interrupt and wait for `leave`.
  * A `Promise` is not cancellable — check `ctx.signal` / `isMotionRunActive(ctx)` before delayed DOM writes.
  * Package return type is `Pick<MotionAnimation, "kill">`, not `gsap.core.Animation` (peer).
  */
 export type MotionFactory<TPayload = unknown> = (
-  ctx: MotionContext<TPayload>,
-) => void | Promise<void> | Pick<MotionAnimation, "kill">;
-
+  ctx: MotionContext<TPayload>) => void | Promise<void> | Pick<MotionAnimation, "kill">;
+ 
 /** This run still owns the target and has not been cancelled. */
 export function isMotionRunActive(ctx: MotionContext): boolean {
   return !ctx.signal.aborted && ctx.isCurrent();
 }
-
+ 
 /** `ctx.wait` / `sequence` / `parallel` reject this when the run is cancelled. */
 export function isMotionAbortError(error: unknown): boolean {
   return (
@@ -420,20 +466,26 @@ export function isMotionAbortError(error: unknown): boolean {
     (error as { name: unknown }).name === "AbortError"
   );
 }
-
+ 
 export type MotionRecipe = MotionFactory;
-
+ 
 export type MotionValue =
   | false
   | MotionRecipeName
   | (MotionVars & { recipe?: MotionRecipeName | false })
   | MotionFactory;
-
+ 
 export type MotionPartPhases = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  /**
+   * Runs once when this DOM node is registered. `ctx.onCleanup` lives until
+   * the node unmounts — a later hover / press / enter does not flush it.
+   * Not broadcast with `enter`. A new resolved value rebinds.
+   */
+  mount?: MotionValue;
   enter?: MotionValue;
   leave?: MotionValue;
   check?: MotionValue;
@@ -445,19 +497,19 @@ export type MotionPartPhases = {
    */
   change?: MotionValue;
 };
-
+ 
 export type MotionSlotMap = {
   [slot: string]: MotionPartPhases | undefined;
 };
-
+ 
 export const LEAVE_COMPLETE_FALLBACK_MS = 500;
-
+ 
 export function isMotionFactory(value: MotionValue): value is MotionFactory {
   return typeof value === "function";
 }
-
+ 
 export function isMotionVarsObject(
-  value: MotionValue,
-): value is MotionVars & { recipe?: MotionRecipeName | false } {
+  value: MotionValue): value is MotionVars & { recipe?: MotionRecipeName | false } {
   return typeof value === "object" && value !== null;
 }
+ 

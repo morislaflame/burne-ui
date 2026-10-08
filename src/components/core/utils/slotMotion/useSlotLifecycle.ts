@@ -1,16 +1,16 @@
 import { useLayoutEffect, useRef, type RefObject } from "react";
-
+ 
 import { gsap } from "@/components/core/utils/gsapMotion";
-
+ 
 import type { MotionScopeValue } from "./createMotionScope";
 import type { MotionPartPhases, MotionPhaseName, MotionSlotMap } from "./slotMotionTypes";
-
+ 
 /** `enter: false` must not leave a first-paint `visibility: hidden`. */
 function revealEnterSkip(el: HTMLElement): void {
   if (el.style.visibility !== "hidden") return;
   gsap.set(el, { autoAlpha: 1, force3D: false });
 }
-
+ 
 function resolveLifecycleEl(
   scope: MotionScopeValue,
   slot: string,
@@ -20,7 +20,7 @@ function resolveLifecycleEl(
   if (target instanceof HTMLElement) return target;
   return target.current;
 }
-
+ 
 export function hasPointerPhases(part?: MotionPartPhases): boolean {
   if (!part) return false;
   return (
@@ -30,14 +30,14 @@ export function hasPointerPhases(part?: MotionPartPhases): boolean {
     part.pressOut != null
   );
 }
-
+ 
 export function slotHasPointerPhases(
   motion: MotionSlotMap | undefined,
   slot: string,
 ): boolean {
   return hasPointerPhases(motion?.[slot]);
 }
-
+ 
 /**
  * Play `enter` once the slot target is registered (`useMotionPart` ref).
  * Pass the part `targetRef` for repeated slots so this instance plays, not the first.
@@ -50,7 +50,7 @@ export function useOptionalEnterOnMount(
   target?: RefObject<HTMLElement | null> | HTMLElement | null,
 ) {
   const playedRef = useRef(false);
-
+ 
   useLayoutEffect(() => {
     if (!scope || playedRef.current) return;
     const el = resolveLifecycleEl(scope, slot, target);
@@ -69,7 +69,7 @@ export function useOptionalEnterOnMount(
     scope.play(slot, "enter", { el });
   });
 }
-
+ 
 /**
  * Play a phase when `identity` changes.
  * First commit is skipped by default so mount stays `enter`-only.
@@ -93,7 +93,7 @@ export function useSlotPhaseOnChange(
   const broadcast = options?.broadcast ?? false;
   const excludeKey = options?.exclude?.join("\0") ?? "";
   const prevRef = useRef<unknown>(SENTINEL);
-
+ 
   useLayoutEffect(() => {
     if (!scope) return;
     if (prevRef.current === SENTINEL) {
@@ -102,7 +102,7 @@ export function useSlotPhaseOnChange(
     }
     if (Object.is(prevRef.current, identity)) return;
     prevRef.current = identity;
-
+ 
     const el = resolveLifecycleEl(scope, slot, options?.target);
     if (el) {
       const value = scope.resolve(slot, phase);
@@ -110,11 +110,12 @@ export function useSlotPhaseOnChange(
         scope.play(slot, phase, { el });
       }
     }
-
+ 
     if (!broadcast) return;
     const exclude = excludeKey.length > 0 ? excludeKey.split("\0") : [];
     void scope.playBroadcast(phase, { exclude: [slot, ...exclude] });
   }, [broadcast, excludeKey, identity, options?.target, phase, scope, skipFirst, slot]);
 }
-
+ 
 const SENTINEL: unique symbol = Symbol("slot-phase-uninit");
+ 

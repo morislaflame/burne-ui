@@ -9,14 +9,16 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-
+ 
 export type SearchInputSize = ComponentSize;
-
-export type SearchInputVariant = "default" | "outline" | "secondary" | "gloss";
-
+ 
+export const KIT_SEARCH_INPUT_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitSearchInputVariant = (typeof KIT_SEARCH_INPUT_VARIANTS)[number];
+export type SearchInputVariant = KitSearchInputVariant | (string & {});
+ 
 export type SearchInputClassNames = {
   root?: string;
   icon?: string;
@@ -25,7 +27,7 @@ export type SearchInputClassNames = {
   /** Collapsed expand control (`role=button` overlay). */
   expandTrigger?: string;
 };
-
+ 
 export type SearchInputPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -34,7 +36,7 @@ export type SearchInputPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type SearchInputMotion = {
   root?: SearchInputPartMotion;
   icon?: Pick<SearchInputPartMotion, "enter" | "leave" | "hoverIn" | "hoverOut">;
@@ -42,7 +44,7 @@ export type SearchInputMotion = {
   input?: SearchInputPartMotion;
   expandTrigger?: SearchInputPartMotion;
 };
-
+ 
 export type SearchSizeLayout = {
   defaultExpandedW: number;
   iconBox: number;
@@ -55,7 +57,7 @@ export type SearchSizeLayout = {
   clearIconClass: string;
   textGapClear: number;
 };
-
+ 
 export type SearchInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type"
@@ -70,6 +72,8 @@ export type SearchInputProps = Omit<
   ripple?: boolean;
   groupSegment?: ButtonGroupSegment;
   "aria-label"?: string;
+  /** `aria-invalid` and `data-invalid` without a message. Native `aria-invalid` still wins when it is true. */
+  invalid?: boolean;
   classNames?: Prettify<SearchInputClassNames>;
   /**
    * Per-slot motion (`root`, `icon`, `clear`, `input`, `expandTrigger`).
@@ -78,7 +82,7 @@ export type SearchInputProps = Omit<
    */
   motion?: Prettify<SearchInputMotion>;
 };
-
+ 
 export type UseSearchInputRootStateProps = {
   size?: SearchInputSize;
   variant?: SearchInputVariant;
@@ -103,12 +107,12 @@ export type UseSearchInputRootStateProps = {
   classNames?: Prettify<SearchInputClassNames>;
   forwardedRef: ForwardedRef<HTMLInputElement>;
 };
-
+ 
 export type UseSearchInputAnimationsProps = {
   size: SearchInputSize;
   expanded: boolean;
   blocked: boolean;
-  isGloss: boolean;
+  variant: SearchInputVariant;
   groupSegment?: ButtonGroupSegment;
   layout: SearchSizeLayout;
   targetW: number;
@@ -117,3 +121,4 @@ export type UseSearchInputAnimationsProps = {
   iconRef: RefObject<HTMLSpanElement | null>;
   pointerInsideRef: MutableRefObject<boolean>;
 };
+ 

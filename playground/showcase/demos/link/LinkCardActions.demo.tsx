@@ -14,7 +14,7 @@ export function LinkCardActionsDemo() {
           Release 1.2.0
         </Text>
         <Text as="p" variant="xsmall" className="text-muted">
-          Updating form components and gloss-options.
+          Updating form components and theme options.
         </Text>
       </div>
       <div className="flex flex-wrap gap-large">

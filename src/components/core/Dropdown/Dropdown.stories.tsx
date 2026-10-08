@@ -551,7 +551,7 @@ export const PortalContainer: Story = {
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative flex h-64 items-start justify-center overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
           style={{ transform: "translateZ(0)" }}
         >
           <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
@@ -661,7 +661,7 @@ export const CustomClassNames: Story = {
         defaultValue="ru"
         classNames={{
           popoverBody: "border border-primary/20",
-          subPopoverBody: "rounded-mid border border-primary/20 bg-surface",
+          subPopoverBody: "rounded-large border border-primary/20 bg-surface",
           label: "text-primary",
           item: "rounded-lg",
         }}

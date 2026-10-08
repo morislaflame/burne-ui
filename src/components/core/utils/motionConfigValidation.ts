@@ -4,7 +4,7 @@
  * Does not mutate the live config — returns only accepted fields.
  */
 import type { MotionConfig } from "./motionConfig";
-
+ 
 export const MOTION_CONFIG_LIMITS = {
   durationMs: { min: 0, max: 60_000 },
   scale: { min: 0.5, max: 2 },
@@ -12,7 +12,7 @@ export const MOTION_CONFIG_LIMITS = {
   factor: { min: 0, max: 4 },
   opacity: { min: 0, max: 1 },
 } as const;
-
+ 
 const DURATION_KEYS = [
   "interactiveDuration",
   "tooltipDuration",
@@ -28,7 +28,7 @@ const DURATION_KEYS = [
   "progressIndeterminateDuration",
   "loadingDotsDuration",
 ] as const satisfies readonly (keyof MotionConfig)[];
-
+ 
 const EASE_KEYS = [
   "interactiveEase",
   "hoverLiftEase",
@@ -41,7 +41,7 @@ const EASE_KEYS = [
   "loadingDotsEaseUp",
   "loadingDotsEaseDown",
 ] as const satisfies readonly (keyof MotionConfig)[];
-
+ 
 const FLAG_KEYS = [
   "enableAnimations",
   "enableHoverLift",
@@ -59,30 +59,30 @@ const FLAG_KEYS = [
   "enablePaginationFlip",
   "enableSelectionFill",
 ] as const satisfies readonly (keyof MotionConfig)[];
-
+ 
 const SCALE_KEYS = ["hoverLiftScale", "badgeAnchorHoverLiftScale"] as const satisfies readonly (keyof MotionConfig)[];
-
+ 
 const OPACITY_KEYS = [
   "rippleDefaultOpacityFrom",
   "rippleExpandableOpacityFrom",
 ] as const satisfies readonly (keyof MotionConfig)[];
-
+ 
 const CUBIC_BEZIER_RE =
   /^cubic-bezier\(\s*(-?(?:\d+(?:\.\d+)?|\.\d+))\s*,\s*(-?(?:\d+(?:\.\d+)?|\.\d+))\s*,\s*(-?(?:\d+(?:\.\d+)?|\.\d+))\s*,\s*(-?(?:\d+(?:\.\d+)?|\.\d+))\s*\)$/i;
-
+ 
 function warnMotionConfig(message: string): void {
   if (process.env.NODE_ENV === "production") return;
   console.warn(`[burne-ui] configureMotion: ${message}`);
 }
-
+ 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
-
+ 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
-
+ 
 function acceptClamped(
   key: string,
   value: unknown,
@@ -99,7 +99,7 @@ function acceptClamped(
   }
   return next;
 }
-
+ 
 /**
  * Parse `rippleEaseCss` (`cubic-bezier(x1, y1, x2, y2)`).
  * Allows negatives, leading-dot (`.25`), values > 1, and flexible whitespace.
@@ -114,7 +114,7 @@ export function parseRippleEaseCss(
   if (points.some((n) => !Number.isFinite(n))) return null;
   return points;
 }
-
+ 
 function acceptEase(key: string, value: unknown): string | undefined {
   if (typeof value !== "string" || value.trim() === "") {
     warnMotionConfig(
@@ -124,7 +124,7 @@ function acceptEase(key: string, value: unknown): string | undefined {
   }
   return value;
 }
-
+ 
 function acceptPressSqueezeScale(
   value: unknown,
 ): MotionConfig["pressSqueezeScale"] | undefined {
@@ -154,7 +154,7 @@ function acceptPressSqueezeScale(
   }
   return tuple;
 }
-
+ 
 function acceptRippleEaseCss(value: unknown): string | undefined {
   if (typeof value !== "string" || parseRippleEaseCss(value) == null) {
     warnMotionConfig(
@@ -164,7 +164,7 @@ function acceptRippleEaseCss(value: unknown): string | undefined {
   }
   return value;
 }
-
+ 
 /**
  * Validate a `Partial<MotionConfig>` without touching live state.
  * Returns only accepted fields; invalid keys are omitted.
@@ -177,31 +177,31 @@ export function normalizeMotionConfig(
   const scaleLimit = MOTION_CONFIG_LIMITS.scale;
   const opacityLimit = MOTION_CONFIG_LIMITS.opacity;
   const factorLimit = MOTION_CONFIG_LIMITS.factor;
-
+ 
   for (const key of DURATION_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(overrides, key)) continue;
     const accepted = acceptClamped(key, overrides[key], durationLimit.min, durationLimit.max);
     if (accepted !== undefined) next[key] = accepted;
   }
-
+ 
   for (const key of EASE_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(overrides, key)) continue;
     const accepted = acceptEase(key, overrides[key]);
     if (accepted !== undefined) next[key] = accepted;
   }
-
+ 
   for (const key of SCALE_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(overrides, key)) continue;
     const accepted = acceptClamped(key, overrides[key], scaleLimit.min, scaleLimit.max);
     if (accepted !== undefined) next[key] = accepted;
   }
-
+ 
   for (const key of OPACITY_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(overrides, key)) continue;
     const accepted = acceptClamped(key, overrides[key], opacityLimit.min, opacityLimit.max);
     if (accepted !== undefined) next[key] = accepted;
   }
-
+ 
   for (const key of FLAG_KEYS) {
     if (!Object.prototype.hasOwnProperty.call(overrides, key)) continue;
     const value = overrides[key];
@@ -211,7 +211,7 @@ export function normalizeMotionConfig(
     }
     next[key] = value;
   }
-
+ 
   if (Object.prototype.hasOwnProperty.call(overrides, "pressSqueezeDurationFactor")) {
     const accepted = acceptClamped(
       "pressSqueezeDurationFactor",
@@ -221,16 +221,17 @@ export function normalizeMotionConfig(
     );
     if (accepted !== undefined) next.pressSqueezeDurationFactor = accepted;
   }
-
+ 
   if (Object.prototype.hasOwnProperty.call(overrides, "pressSqueezeScale")) {
     const accepted = acceptPressSqueezeScale(overrides.pressSqueezeScale);
     if (accepted !== undefined) next.pressSqueezeScale = accepted;
   }
-
+ 
   if (Object.prototype.hasOwnProperty.call(overrides, "rippleEaseCss")) {
     const accepted = acceptRippleEaseCss(overrides.rippleEaseCss);
     if (accepted !== undefined) next.rippleEaseCss = accepted;
   }
-
+ 
   return next;
 }
+ 

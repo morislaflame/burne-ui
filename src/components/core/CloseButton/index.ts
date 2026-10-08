@@ -1,5 +1,5 @@
 export { CloseButton } from "./CloseButton";
-
+ 
 export type {
   CloseButtonProps,
   CloseButtonSize,
@@ -8,3 +8,4 @@ export type {
   CloseButtonMotion,
   CloseButtonPartMotion,
 } from "./closeButtonTypes";
+ 

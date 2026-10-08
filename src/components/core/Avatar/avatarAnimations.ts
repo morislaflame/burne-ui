@@ -1,7 +1,7 @@
 /**
  * Slot motion for Avatar — look here first.
  *
- * DOM slots: `root` (circle / gloss wrap), `image`, `fallback`,
+ * DOM slots: `root` (circle / wrap), `image`, `fallback`,
  * `groupItem` (`Avatar.Group` item wrap — nested scope per item)
  *
  * Hosts:
@@ -9,24 +9,32 @@
  * - `Avatar.Group` item wrap plays `hoverIn` / `hoverOut`.
  *
  * Defaults: `resolveAvatarMotionDefaults` / `resolveAvatarGroupItemMotionDefaults`.
- * `glossWrap` is a layout wrapper, not a public motion slot.
+ * `Wrap` is a layout wrapper, not a public motion slot.
  */
 import { useLayoutEffect, useRef } from "react";
-
+ 
 import { applyContentFadeInstant } from "@/components/core/utils/slotMotion/recipes/contentFade";
 import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
+ 
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
-import type { AvatarMotion } from "./avatarTypes";
-
+import type { AvatarMotion, AvatarVariant } from "./avatarTypes";
+import { KIT_AVATAR_VARIANTS } from "./avatarTypes";
+ 
 export const AVATAR_GROUP_HOVER_TRANSLATE_Y = -10;
 export const AVATAR_GROUP_HOVER_SCALE = 1.08;
-
-export function resolveAvatarMotionDefaults(): AvatarMotion {
-  return {
-    image: { enter: "contentFade", leave: "contentFade" },
-  };
+ 
+export function resolveAvatarMotionDefaults(variant: AvatarVariant = "default"): AvatarMotion {
+  return overlaySkinMotion(
+    {
+      image: { enter: "contentFade", leave: "contentFade" },
+    },
+    variant,
+    KIT_AVATAR_VARIANTS,
+    "avatar",
+  );
 }
-
+ 
 export function resolveAvatarGroupItemMotionDefaults(): AvatarMotion {
   return {
     groupItem: {
@@ -35,18 +43,18 @@ export function resolveAvatarGroupItemMotionDefaults(): AvatarMotion {
     },
   };
 }
-
+ 
 export function useAvatarImageMotion(
   scope: MotionScopeValue | null,
   visible: boolean,
   imgRef: React.RefObject<HTMLImageElement | null>,
 ) {
   const prevVisibleRef = useRef<boolean | undefined>(undefined);
-
+ 
   useLayoutEffect(() => {
     const el = imgRef.current;
     if (!el || !scope) return;
-
+ 
     if (prevVisibleRef.current === undefined) {
       prevVisibleRef.current = visible;
       const value = scope.resolve("image", visible ? "enter" : "leave");
@@ -60,7 +68,7 @@ export function useAvatarImageMotion(
       }
       return;
     }
-
+ 
     if (prevVisibleRef.current === visible) return;
     prevVisibleRef.current = visible;
     const phase = visible ? "enter" : "leave";
@@ -72,3 +80,4 @@ export function useAvatarImageMotion(
     scope.play("image", phase, { el });
   }, [imgRef, scope, visible]);
 }
+ 

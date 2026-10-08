@@ -91,6 +91,23 @@ export const Single: Story = {
   },
 };
 
+export const Locale: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-start gap-2xlarge">
+      <Calendar locale="en-GB" defaultMonth={new Date(2026, 9, 1)}>
+        <Calendar.Header />
+        <Calendar.Grid />
+        <Calendar.Footer />
+      </Calendar>
+      <Calendar locale="ru" defaultMonth={new Date(2026, 9, 1)}>
+        <Calendar.Header />
+        <Calendar.Grid />
+        <Calendar.Footer />
+      </Calendar>
+    </div>
+  ),
+};
+
 export const Range: Story = {
   name: "Date range",
   render: function RangeStory() {
@@ -149,8 +166,7 @@ export const WithFooter: Story = {
     await userEvent.click(canvas.getByRole("button", { name: "Today" }));
     await waitFor(() => {
       expect(canvas.getByText("Selected:").parentElement?.textContent).toContain(
-        String(today.getDate()),
-      );
+        String(today.getDate()));
     });
   },
 };
@@ -293,6 +309,7 @@ export const CustomClassNames: Story = {
         header: "gap-small",
         navPrev: "text-primary",
         navNext: "text-primary",
+        navIconWrap: "text-primary",
         navIcon: "icon-small",
         headerTitle: "font-semibold text-primary",
         grid: "mt-small",

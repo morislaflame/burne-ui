@@ -1,7 +1,10 @@
 import { forwardRef, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { resolveSkinLayer } from "@/skins/resolveSkinLayer";
+import { SkinShell } from "@/skins/skinShell";
 import { cn } from "@/utils/cn";
 
 import { cardTitleHeadingTag } from "./cardA11y";
@@ -10,12 +13,10 @@ import { useCardClassNames, useCardSize, useOptionalCardMotionScope } from "./ca
 import {
   CARD_BUTTON_SHELL_CLASS,
   CARD_DESCRIPTION_CLASS,
-  CARD_GLOSS_CONTENT_CLASS,
   CARD_PRESSABLE_CONTENT_CLASS,
   CARD_TITLE_CLASS,
   cardBodyClass,
   cardFooterClass,
-  cardGlossPressableClass,
   cardHeaderClass,
   cardHeadingBlockClass,
   panelSizeLayout,
@@ -79,8 +80,7 @@ export function CardHeadingBlock({
       ref={setRef}
       className={cardHeadingBlockClass(
         size,
-        cn(slotClassNames.headingBlock, className),
-      )}
+        cn(slotClassNames.headingBlock, className))}
       {...rest}
       {...pointerHandlers}
     />
@@ -117,8 +117,7 @@ export function CardBody({
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   function CardTitle(
     { className = "", motion, onPointerOver, onPointerOut, ...rest },
-    ref,
-  ) {
+    ref) {
     const slotClassNames = useCardClassNames();
     const size = useCardSize();
     const { setRef, pointerHandlers } = useMotionPart<HTMLHeadingElement>({
@@ -139,20 +138,17 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
           CARD_TITLE_CLASS,
           panelSizeLayout(size).titleClassName,
           slotClassNames.title,
-          className,
-        )}
+          className)}
         {...rest}
         {...pointerHandlers}
       />
     );
-  },
-);
+  });
 
 export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
   function CardDescription(
     { className = "", motion, onPointerOver, onPointerOut, ...rest },
-    ref,
-  ) {
+    ref) {
     const slotClassNames = useCardClassNames();
     const size = useCardSize();
     const { setRef, pointerHandlers } = useMotionPart<HTMLParagraphElement>({
@@ -172,14 +168,12 @@ export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionP
         className={cn(
           CARD_DESCRIPTION_CLASS,
           slotClassNames.description,
-          className,
-        )}
+          className)}
         {...rest}
         {...pointerHandlers}
       />
     );
-  },
-);
+  });
 
 export function CardFooter({
   className = "",
@@ -210,13 +204,13 @@ export function CardFooter({
 
 export function CardRootShell({
   pressable,
-  isGloss,
   renderAsButton,
-  glossPanelClass,
   rootClassName,
   setRootRef,
   rest,
   children,
+  variant,
+  size,
   onPointerOver,
   onPointerOut,
   onPointerDown,
@@ -225,124 +219,45 @@ export function CardRootShell({
   onKeyDown,
 }: CardRootShellProps) {
   const slotClassNames = useCardClassNames();
+  const scope = useOptionalCardMotionScope();
+  const pressableClass = cn(CARD_PRESSABLE_CONTENT_CLASS, slotClassNames.content);
+  const hasLayerContent = Boolean(
+    resolveSkinLayer(variant, "card.root")?.declarative?.content);
 
-  if (isGloss) {
-    const glossChildren = (
-      <div className={cn(CARD_GLOSS_CONTENT_CLASS, slotClassNames.glossContent)}>
-        {children}
-      </div>
-    );
-
-    if (pressable) {
-      return (
-        <button
-          type="button"
-          {...rest}
-          ref={setRootRef}
-          className={cn(
-            CARD_BUTTON_SHELL_CLASS,
-            glossPanelClass,
-            cardGlossPressableClass(pressable),
-          )}
-          onPointerOver={onPointerOver}
-          onPointerOut={onPointerOut}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          onClick={onClick}
-          onKeyDown={onKeyDown}
-        >
-          {glossChildren}
-        </button>
-      );
-    }
-
-    if (renderAsButton) {
-      return (
-        <button
-          type="button"
-          {...rest}
-          ref={setRootRef}
-          className={cn(CARD_BUTTON_SHELL_CLASS, glossPanelClass)}
-          onPointerOver={onPointerOver}
-          onPointerOut={onPointerOut}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          onClick={onClick}
-          onKeyDown={onKeyDown}
-        >
-          {glossChildren}
-        </button>
-      );
-    }
-
-    return (
-      <div
-        {...rest}
-        ref={setRootRef}
-        className={glossPanelClass}
-        onPointerOver={onPointerOver}
-        onPointerOut={onPointerOut}
-      >
-        {glossChildren}
-      </div>
-    );
-  }
-
-  if (pressable) {
-    return (
+  const fallback =
+    pressable || renderAsButton ? (
       <button
         type="button"
-        {...rest}
-        ref={setRootRef}
         className={cn(CARD_BUTTON_SHELL_CLASS, rootClassName)}
-        onPointerOver={onPointerOver}
-        onPointerOut={onPointerOut}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
         onClick={onClick}
         onKeyDown={onKeyDown}
-      >
-        <div
-          className={cn(
-            CARD_PRESSABLE_CONTENT_CLASS,
-            slotClassNames.content,
-          )}
-        >
-          {children}
-        </div>
-      </button>
+      />
+    ) : (
+      <div className={rootClassName} />
     );
-  }
-
-  if (renderAsButton) {
-    return (
-      <button
-        type="button"
-        {...rest}
-        ref={setRootRef}
-        className={cn(CARD_BUTTON_SHELL_CLASS, rootClassName)}
-        onPointerOver={onPointerOver}
-        onPointerOut={onPointerOut}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-      >
-        {children}
-      </button>
-    );
-  }
 
   return (
-    <div
+    <SkinShell
       {...rest}
+      {...dataVariantProps({ size, variant })}
+      part="card.root"
+      variant={variant}
+      scope={scope}
+      slot="root"
       ref={setRootRef}
-      className={rootClassName}
+      contentClassName={hasLayerContent && pressable ? pressableClass : undefined}
+      fallback={fallback}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
     >
-      {children}
-    </div>
+      {pressable && !hasLayerContent ? (
+        <div className={pressableClass}>{children}</div>
+      ) : (
+        children
+      )}
+    </SkinShell>
   );
 }
 

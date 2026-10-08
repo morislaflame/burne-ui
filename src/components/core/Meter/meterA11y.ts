@@ -1,11 +1,11 @@
 import { fieldErrorId, fieldHintId, joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-
+ 
 import type { MeterTrackAriaProps } from "./meterTypes";
-
+ 
 export function meterLabelId(meterId: string): string {
   return `${meterId}-label`;
 }
-
+ 
 export function resolveMeterTrackAria({
   clampedValue,
   min,
@@ -33,7 +33,7 @@ export function resolveMeterTrackAria({
     "aria-label": labelConnected ? undefined : statusText,
   };
 }
-
+ 
 export function resolveMeterDescribedBy({
   ariaDescribedByProp,
   hintConnected,
@@ -55,5 +55,6 @@ export function resolveMeterDescribedBy({
     )
   );
 }
-
+ 
 export { fieldErrorId, fieldHintId };
+ 

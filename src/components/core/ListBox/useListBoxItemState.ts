@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-
+ 
 import { listBoxOptionId } from "./listBoxA11y";
 import { resolveListBoxItemLayout } from "./listBoxAPI";
 import { useListBox } from "./listBoxContext";
 import type { UseListBoxItemStateProps } from "./listBoxTypes";
-
+ 
 export function useListBoxItemState({
   children,
   label,
@@ -23,11 +23,11 @@ export function useListBoxItemState({
     selectItem,
     setActiveValue,
   } = useListBox("ListBox.Item");
-
+ 
   const disabled = disabledProp || Boolean(listDisabled);
   const isSelected = selected.has(value);
   const optionId = listBoxOptionId(listId, value);
-
+ 
   const layout = useMemo(
     () =>
       resolveListBoxItemLayout({
@@ -39,7 +39,7 @@ export function useListBoxItemState({
       }),
     [children, hint, icon, indicator, label],
   );
-
+ 
   return {
     size,
     disabled,
@@ -51,3 +51,4 @@ export function useListBoxItemState({
     ...layout,
   };
 }
+ 

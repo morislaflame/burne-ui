@@ -2,13 +2,16 @@ import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useMemo } from "react";
 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
+ 
 import { resolveSliderMotionDefaults } from "./sliderAnimations";
 import { SliderClassNamesProvider, SliderFieldProvider, SliderMotionProvider } from "./sliderContext";
 import { SliderSimpleBody } from "./sliderParts";
 import { sliderRootClass } from "./sliderStyles";
 import type { SliderProps } from "./sliderTypes";
 import { useSliderRootState } from "./useSliderRootState";
-
+ 
 export type {
   SliderClassNames,
   SliderErrorProps,
@@ -30,8 +33,12 @@ export type {
   SliderThumbKind,
   SliderMotion,
   SliderPartMotion,
+  SliderVariant,
+  KitSliderVariant,
 } from "./sliderTypes";
 
+export { KIT_SLIDER_VARIANTS } from "./sliderTypes";
+ 
 export {
   SliderTrack,
   SliderFill,
@@ -44,7 +51,7 @@ export {
   SliderHint,
   SliderError,
 } from "./sliderParts";
-
+ 
 export function SliderRoot({
   children,
   className,
@@ -56,6 +63,7 @@ export function SliderRoot({
   valueText,
   hint,
   error,
+  invalid,
   range,
   value,
   defaultValue,
@@ -70,7 +78,7 @@ export function SliderRoot({
   icon,
   disabled,
   ariaLabel,
-  gloss,
+  variant,
   thumbClassName,
   motion,
   motionController,
@@ -88,6 +96,7 @@ export function SliderRoot({
     valueText,
     hint,
     error,
+    invalid,
     range,
     value,
     defaultValue,
@@ -102,10 +111,10 @@ export function SliderRoot({
     icon,
     disabled,
     ariaLabel,
-    gloss,
+    variant,
     thumbClassName,
   });
-
+ 
   const body = state.isCompound ? (
     children
   ) : (
@@ -120,12 +129,14 @@ export function SliderRoot({
       trackProps={state.trackProps}
     />
   );
-
-  const motionDefaults = useMemo(
-    () => resolveSliderMotionDefaults({ disabled }),
-    [disabled],
-  );
-
+ 
+  const resolvedVariant = useSkinVariant(variant);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveSliderMotionDefaults({ disabled, variant });
+  }, [disabled, skinRevision, variant]);
+ 
   return (
     <SliderFieldProvider value={state.fieldCtx}>
       <SliderClassNamesProvider classNames={classNames}>
@@ -146,6 +157,8 @@ export function SliderRoot({
                 className,
               })}
               {...divRest}
+              {...dataVariantProps({ size: size ?? "base", variant: resolvedVariant })}
+              data-orientation={state.fieldCtx.orientation}
             >
               {body}
             </Field>
@@ -155,5 +168,6 @@ export function SliderRoot({
     </SliderFieldProvider>
   );
 }
-
+ 
 SliderRoot.displayName = "Slider";
+ 

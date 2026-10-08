@@ -6,7 +6,7 @@ import type {
   MotionTransformVars,
   MotionValue,
 } from "./slotMotionTypes";
-
+ 
 export type MotionPlayOptions = {
   /** Unique / first instance. Default for `play()` is `"root"`. */
   slot?: string;
@@ -18,7 +18,7 @@ export type MotionPlayOptions = {
   /** Override the resolved phase value (tests / W3.2 events). */
   value?: MotionValue;
 };
-
+ 
 export type MotionBroadcastOptions = {
   exclude?: readonly string[];
   waitForComplete?: boolean;
@@ -29,11 +29,11 @@ export type MotionBroadcastOptions = {
    */
   stagger?: number;
 };
-
+ 
 export type MotionRunResult = {
   runs: readonly MotionRun[];
 };
-
+ 
 /**
  * Argument to `play` / `playSlot` / `playAll`.
  * Default `TEvent` is `string & {}`: lifecycle phases stay in autocomplete, and
@@ -44,7 +44,7 @@ export type MotionRunResult = {
 export type MotionPlayEvent<TEvent extends string = string & {}> = [TEvent] extends [never]
   ? MotionPhaseName | (string & {})
   : MotionPhaseName | TEvent;
-
+ 
 /**
  * App handle over a live motion scope.
  * Built-in phases (`MotionPhaseName`) are always accepted; namespaced app events
@@ -63,5 +63,6 @@ export type MotionController<TEvent extends string = string & {}> = {
   getTarget(slot: string): HTMLElement | null;
   getTargets(slot: string): readonly HTMLElement[];
 };
-
+ 
 export type MotionControllerStatus = MotionRunStatus;
+ 

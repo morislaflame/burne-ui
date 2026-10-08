@@ -15,9 +15,12 @@ export function AlertMotionEventsFinishedDemo() {
 
   async function bounce() {
     setBusy(true);
-    await controller.play("notify:up", { waitForComplete: true }).finished;
-    await controller.play("notify:down", { waitForComplete: true }).finished;
-    setBusy(false);
+    try {
+      await controller.play("notify:up", { waitForComplete: true }).finished;
+      await controller.play("notify:down", { waitForComplete: true }).finished;
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

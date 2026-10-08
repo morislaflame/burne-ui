@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNames, type LinkMotion, type LinkPartMotion } from "burne-ui";
+import { Link, type LinkProps, type LinkSize, type IconPosition, type LinkClassNames, type LinkMotion, type LinkPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -23,8 +23,8 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNa
 | `showDefaultIcon` | `boolean` | `false` | `IoArrowForward` ↗ (только без `icon`) |
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
 | `className` | `string` | — | На `<a>` (или child при `asChild`) |
-| `classNames` | `LinkClassNames` | — | `root`, `text`, `icon` |
-| `motion` | `MotionMapWithEvents<LinkMotion>` | — | Slot map `root` / `text` / `icon`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
+| `classNames` | `LinkClassNames` | — | `root`, `text`, `iconStart`, `iconEnd` |
+| `motion` | `MotionMapWithEvents<LinkMotion>` | — | Slot map `root` / `text` / `iconStart` / `iconEnd`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
 | `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
 | `motionState` | `string` | — | App-режим (`idle` / `sharing` / `copied`). Тот же ещё раз — тишина |
 | `motionPayload` | `unknown` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Объекты копируются и freeze; без смены `motionState` не переигрывает |
@@ -37,7 +37,8 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNa
 type LinkClassNames = {
   root?: string;
   text?: string;
-  icon?: string;
+  iconStart?: string;
+  iconEnd?: string;
 };
 ```
 
@@ -102,7 +103,7 @@ import NextLink from "next/link";
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel`, `pressSqueeze` (`pressOut: false`) |
-| `text` / `icon` | hover/press | нет |
+| `text` / `iconStart` / `iconEnd` | hover/press | нет |
 
 `false` на фазе — skip без kill. Не анимируйте layout в публичных MotionVars.
 
@@ -114,7 +115,7 @@ import NextLink from "next/link";
 </Link>
 ```
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`nav:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`nav:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 ```tsx
 import { Button, Link, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -138,7 +139,7 @@ function Nudge() {
 }
 ```
 
-`play()` ищет слот `root`. `playSlot("icon")` / `playSlot("text")` — доменные слоты. `playAll` + `stagger` / `exclude`, timeline `nav:copied` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
+`play()` ищет слот `root`. `playSlot("iconStart")` / `playSlot("iconEnd")` / `playSlot("text")` — доменные слоты. `playAll` + `stagger` / `exclude`, timeline `nav:copied` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
 
 `motionState` + `motion.states` — поза ссылки из React/store (`idle` / `sharing` / `copied`). Не путать с `nav:copied` events. Слот `text` — **SplitText** по символам (плагин в приложении, `overflow-visible` на `classNames.text`). `revert()` в `onCleanup` только если char-ноды ещё в слоте (React мог уже сменить подпись). Если фабрика читает снимок — `createMotionFactory` / `motionPayload`. Живой слайд — галерея MotionController. Рецепт: [Motion and state managers](/docs/motion-state#плагины--текст-на-state).
 
@@ -164,7 +165,7 @@ const states = createMotionStates({
 |-------|------------|
 | `text-foreground` | цвет ссылки |
 | `focus-ring` | focus visible |
-| `rounded-mid` | hit area |
+| `rounded-large` | hit area |
 | `underline decoration-current/70` | при `underline` |
 | `gap-xsmall` | между иконкой и текстом |
 
@@ -173,7 +174,7 @@ const states = createMotionStates({
 ### Два уровня
 
 1. **`className`** — доп. классы на `<a>` (мерж с `classNames.root`).
-2. **`classNames`** — слоты `root`, `text`, `icon`.
+2. **`classNames`** — слоты `root`, `text`, `iconStart`, `iconEnd`.
 
 Link — один компонент; «compound» меняет только разметку иконок внутри якоря.
 
@@ -183,7 +184,7 @@ Link — один компонент; «compound» меняет только р�
 |------|---------------|-------------------|
 | `root` | `<a>` | Gap, padding, border, hover-lift target |
 | `text` | `Text` (children) | Шрифт, underline override |
-| `icon` | Обёртка иконки (start/end) | Размер, muted/hover цвет |
+| `iconStart` / `iconEnd` | Обёртка иконки до и после текста | Размер, muted/hover цвет |
 
 `size`, `underline` — базовая типографика и подчёркивание из `linkStyles.ts`.
 
@@ -196,16 +197,16 @@ Link — один компонент; «compound» меняет только р�
   icon={<IoDocument aria-hidden />}
   className="max-w-xs"
   classNames={{
-    root: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
+    root: "gap-small rounded-large border border-primary/20 p-xsmall text-info",
     text: "font-semibold",
-    icon: "text-warning",
+    iconStart: "text-warning",
   }}
 >
   Документация
 </Link>
 ```
 
-Иконки через props `icon` / `iconPosition` / `showDefaultIcon` — стили обёрток через `icon`.
+Иконки через props `icon` / `iconPosition` / `showDefaultIcon` — стили обёрток через `iconStart` и `iconEnd`.
 
 ### Compound API
 
@@ -215,7 +216,8 @@ Link — один компонент; «compound» меняет только р�
   classNames={{
     root: "gap-large",
     text: "text-primary",
-    icon: "text-muted group-hover:text-foreground",
+    iconStart: "text-muted group-hover:text-foreground",
+    iconEnd: "text-muted group-hover:text-foreground",
   }}
 >
   <Link.Icon iconPosition="start">
@@ -226,9 +228,9 @@ Link — один компонент; «compound» меняет только р�
 </Link>
 ```
 
-Пустой `<Link.Icon iconPosition="end" />` — дефолтная ↗; `muted` до hover задаётся стилями `icon`.
+Пустой `<Link.Icon iconPosition="end" />` — дефолтная ↗; `muted` до hover задаётся стилями `iconEnd`.
 
-`Link.Icon` не имеет отдельного слота в `LinkClassNames` — стилизуйте иконку через `icon` или оберните children.
+`Link.Icon` — маркер позиции. Стили обёртки: `classNames.iconStart` и `classNames.iconEnd`.
 
 ### Практические заметки
 

@@ -1,5 +1,5 @@
 import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogRoot, DialogTitle, DialogTrigger } from "./Dialog";
-
+ 
 export const Dialog = Object.assign(DialogRoot, {
   Trigger: DialogTrigger,
   Panel: DialogPanel,
@@ -12,7 +12,7 @@ export const Dialog = Object.assign(DialogRoot, {
   Body: DialogBody,
   Footer: DialogFooter,
 });
-
+ 
 export type {
   DialogProps,
   DialogPanelProps,
@@ -32,5 +32,6 @@ export type {
   DialogLifecycleMotion,
   DialogPartMotion,
 } from "./dialogTypes";
-
+ 
 export { DialogContent };
+ 

@@ -1,7 +1,7 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { FieldErrorProps, FieldSetActionsProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -12,11 +12,11 @@ import type {
   OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
 import type { OptionGroupClassNames } from "@/components/composite/utils/optionGroupClassNames";
-
+ 
 export type CheckboxGroupSelection = "multiple" | "single";
-
+ 
 export type CheckboxGroupClassNames = OptionGroupClassNames;
-
+ 
 export type CheckboxGroupContextValue = {
   selection: CheckboxGroupSelection;
   disabled: boolean;
@@ -27,10 +27,8 @@ export type CheckboxGroupContextValue = {
   selectedValue: string | undefined;
   /** Only for `selection="single"`. */
   selectSingleValue: (value: string, checked: boolean) => void;
-  /** First option claims native `required` when `required` (single selection only). */
-  claimRequiredAnchor: () => boolean;
 };
-
+ 
 export type CheckboxGroupPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -40,7 +38,7 @@ export type CheckboxGroupPartMotion = {
   leave?: MotionValue;
   change?: MotionValue;
 };
-
+ 
 export type CheckboxGroupMotion = {
   root?: CheckboxGroupPartMotion;
   list?: CheckboxGroupPartMotion;
@@ -49,12 +47,14 @@ export type CheckboxGroupMotion = {
   error?: CheckboxGroupPartMotion;
   actions?: CheckboxGroupPartMotion;
 };
-
+ 
 export type CheckboxGroupProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children" | "onChange"
 > & {
   required?: boolean;
+  /** `aria-invalid` on the group without an error message. `CheckboxGroup.Error` does the same. */
+  invalid?: boolean;
   selection?: CheckboxGroupSelection;
   value?: string | null;
   defaultValue?: string;
@@ -81,9 +81,9 @@ export type CheckboxGroupProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UseCheckboxGroupRootStateProps = CheckboxGroupProps;
-
+ 
 export type CheckboxGroupHintProps = OptionGroupHintProps & {
   motion?: Prettify<CheckboxGroupPartMotion>;
 };
@@ -101,3 +101,4 @@ export type CheckboxGroupActionsProps = Omit<FieldSetActionsProps, "motion"> & {
   motion?: Prettify<CheckboxGroupPartMotion>;
 };
 export type CheckboxGroupLabelProps = LabelProps;
+ 

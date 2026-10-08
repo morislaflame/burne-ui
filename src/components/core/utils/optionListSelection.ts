@@ -10,6 +10,7 @@ export function toggleOptionListSelection(
     else next.push(itemValue);
     return next;
   }
-
+ 
   return current.includes(itemValue) ? [] : [itemValue];
 }
+ 

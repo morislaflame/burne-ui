@@ -10,7 +10,7 @@ export function LinkMotionControllerIconTextDemo() {
   return (
     <div className="flex flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("icon", "hoverIn")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("iconEnd", "hoverIn")}>
           Icon
         </Button>
         <Button size="small" variant="outline" onClick={() => controller.playSlot("text", "hoverIn")}>
@@ -32,7 +32,7 @@ export function LinkMotionControllerIconTextDemo() {
             hoverIn: { y: -6, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },
           },
-          icon: {
+          iconEnd: {
             hoverIn: (ctx) => ctx.fromRest({ rotation: 22, duration: 0.24, ease: "back.out(1.8)" }),
             hoverOut: (ctx) => ctx.to({ rotation: 0, duration: 0.18 }),
           },

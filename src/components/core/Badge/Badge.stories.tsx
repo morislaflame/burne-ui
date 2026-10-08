@@ -12,7 +12,6 @@ import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import { Badge, type BadgePlacement, type BadgeStatus, type BadgeVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
-import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 import { BadgeSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/badge/slotMotion/gallery";
 import { BadgeMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/badge/motionController/gallery";
 
@@ -51,7 +50,6 @@ const BADGE_VARIANTS: BadgeVariant[] = [
   "primary",
   "outline",
   "secondary",
-  "gloss",
 ];
 
 const BADGE_STATUSES: BadgeStatus[] = [
@@ -78,7 +76,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Compact status badge. **Simple** — `icon` + text in `children`; **inline icons** — `data-icon=\"inline-start\" | \"inline-end\"` on child. `variant=\"gloss\"` — glass surface. For overlay — `Badge.Anchor`. Slots are configured via `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
+          "Compact status badge. **Simple** — `icon` + text in `children`; **inline icons** — `data-icon=\"inline-start\" | \"inline-end\"` on child.  For overlay — `Badge.Anchor`. Slots are configured via `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
       },
     },
   },
@@ -552,6 +550,7 @@ export const CustomClassNames: Story = {
         aria-label="icon-only slot"
         classNames={{
           root: "rounded-large",
+          icon: "icon-slot-large",
           iconOnly: "border-success/40 bg-success/10 text-success",
         }}
       />
@@ -563,54 +562,15 @@ export const CustomClassNames: Story = {
         }}
       >
         <Avatar size="base" label="Demo" />
-        <Badge dot status="success" aria-label="Online" />
+        <Badge
+          dot
+          status="success"
+          aria-label="Online"
+          classNames={{ splitShell: "ring-2 ring-primary/20" }}
+        />
       </Badge.Anchor>
     </div>
   ),
-};
-
-function GlossDemo() {
-  return (
-    <div className="flex flex-col items-center gap-2xlarge">
-      <div className="flex flex-wrap items-center justify-center gap-mid">
-        <Badge variant="gloss">Gloss</Badge>
-        {BADGE_STATUSES.filter((s) => s !== "default").map((status) => (
-          <Badge key={status} variant="gloss" status={status} className="capitalize">
-            {status}
-          </Badge>
-        ))}
-      </div>
-      <div className="flex flex-wrap items-center justify-center gap-mid">
-        <Badge variant="gloss" icon={<IoCheckmarkCircleOutline aria-hidden />}>
-          Verified
-        </Badge>
-        <Badge variant="gloss" status="info" icon={<IoRocketOutline aria-hidden />}>
-          Launch
-        </Badge>
-        <Badge variant="gloss" dot status="success" aria-label="Online" />
-      </div>
-      <Badge.Anchor>
-        <Avatar size="large" label="Jordan Doe" src={GREEN_AVATAR_URL} alt="" loading="lazy" />
-        <Badge variant="gloss" status="danger" size="small">
-          5
-        </Badge>
-      </Badge.Anchor>
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
 };
 
 export const SlotMotionGallery: Story = {

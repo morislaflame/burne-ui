@@ -17,7 +17,7 @@ export function DrawerMotionDefaultDemo() {
           <Drawer.Header>
             <Drawer.HeadingBlock>
               <Drawer.Title>Default</Drawer.Title>
-              <Drawer.Description>Kit overlay fade + drawerSlide recipes.</Drawer.Description>
+              <Drawer.Description>Kit backdrop fade + drawerSlide recipes.</Drawer.Description>
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>

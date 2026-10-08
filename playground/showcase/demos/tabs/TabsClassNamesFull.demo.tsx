@@ -12,7 +12,7 @@ export function TabsClassNamesFullDemo() {
     <Tabs
       defaultValue="account"
       classNames={{
-        root: "max-w-xl rounded-mid border border-info/25 p-base",
+        root: "max-w-xl rounded-large border border-info/25 p-base",
         list: "bg-info/5 ring-1 ring-info/15",
         indicator: "bg-info/30",
         tab: "font-medium",

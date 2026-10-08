@@ -1,11 +1,11 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type { LinkClassNames, LinkClassNamesProviderProps } from "./linkTypes";
-
+ 
 const LinkClassNamesContext = createContext<LinkClassNames>({});
-
+ 
 export function LinkClassNamesProvider({
   classNames,
   children,
@@ -15,21 +15,22 @@ export function LinkClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <LinkClassNamesContext.Provider value={merged}>
       {children}
     </LinkClassNamesContext.Provider>
   );
 }
-
+ 
 export function useLinkClassNames(): LinkClassNames {
   return useContext(LinkClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `linkAnimations.ts`. */
 export const {
   MotionScopeProvider: LinkMotionProvider,
   useMotionScope: useLinkMotionScope,
   useOptionalMotionScope: useOptionalLinkMotionScope,
 } = createMotionScope("Link");
+ 

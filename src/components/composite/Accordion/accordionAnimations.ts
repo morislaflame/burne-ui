@@ -17,9 +17,9 @@
  */
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, splitMotionRootMap } from "@/components/core/utils/slotMotion";
 import type { MotionMapWithEvents } from "@/components/core/utils/slotMotion";
-
+ 
 import type { AccordionMotion } from "./accordionTypes";
-
+ 
 export function resolveAccordionItemMotion({
   rootMotion,
   itemMotion,
@@ -35,3 +35,4 @@ export function resolveAccordionItemMotion({
   if (!slots && !siblings.events && !siblings.states) return undefined;
   return { ...slots, ...siblings };
 }
+ 

@@ -1,7 +1,7 @@
 import { forwardRef, type ForwardedRef } from "react";
-
+ 
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { tabsPanelA11y, tabsPanelId, tabsTabId } from "./tabsA11y";
 import { useTabsPanelLifecycle } from "./tabsAnimations";
 import {
@@ -13,7 +13,7 @@ import {
 } from "./tabsContext";
 import { tabsPanelClass } from "./tabsStyles";
 import type { TabsPanelProps } from "./tabsTypes";
-
+ 
 export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function TabsPanel(
   { motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
@@ -23,7 +23,7 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function Tab
     parentScope?.getRootMotion(),
     motion ? { panel: motion } : undefined,
   );
-
+ 
   return (
     <TabsMotionProvider motion={mergedMotion} defaults={{}} controller={motionController}
         motionState={motionState}
@@ -33,7 +33,7 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function Tab
     </TabsMotionProvider>
   );
 });
-
+ 
 function TabsPanelSurface({
   value: panelValue,
   children,
@@ -61,7 +61,7 @@ function TabsPanelSurface({
   });
   const { leaving } = useTabsPanelLifecycle(scope, isSelected);
   const hidden = a11y.hidden && !leaving;
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -80,5 +80,6 @@ function TabsPanelSurface({
     </div>
   );
 }
-
+ 
 TabsPanel.displayName = "TabsPanel";
+ 

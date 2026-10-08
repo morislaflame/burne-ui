@@ -1,21 +1,16 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
-
-import { prefersReducedMotion, usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
-import {
-  getMotionConfig,
-  isMotionFeatureEnabledFor,
-  motionSelectionFillFor,
-  type MotionConfig,
-} from "@/components/core/utils/motionConfig";
+ 
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-
+ 
 /** Marks ToggleButton / Calendar cell fill for SSR CSS in `styles.css`. */
 export const SELECTION_FILL_DATA_ATTR = "data-selection-fill";
-
+ 
 /** Set by GSAP init — removes SSR hide rule so animations own visibility. */
 export const SELECTION_FILL_READY_ATTR = "data-selection-fill-ready";
-
+ 
 /**
  * Fill for ToggleButton / CalendarInteractiveCell.
  * Do not set `style={{ transform, opacity }}` on fill — React will overwrite GSAP on parent re-render.
@@ -30,7 +25,7 @@ export function applyToggleButtonFillInstant(fill: HTMLElement, pressed: boolean
   fill.dataset.pressed = pressed ? "true" : "false";
   gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
 }
-
+ 
 export function createToggleButtonFillRefCallback(
   ref: RefObject<HTMLElement | null>,
   initialPressed: boolean,
@@ -42,52 +37,7 @@ export function createToggleButtonFillRefCallback(
     }
   };
 }
-
-export function animateToggleButtonFill(
-  fill: HTMLElement,
-  pressed: boolean,
-  reduceMotion?: boolean,
-  config?: Readonly<MotionConfig>,
-): void {
-  const cfg = config ?? getMotionConfig();
-  const resolvedReduceMotion =
-    reduceMotion ??
-    (prefersReducedMotion() || !isMotionFeatureEnabledFor(cfg, "enableToggleButtonFill"));
-  killMotion(fill);
-  fill.setAttribute(SELECTION_FILL_READY_ATTR, "");
-  fill.dataset.pressed = pressed ? "true" : "false";
-  if (resolvedReduceMotion) {
-    gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
-    return;
-  }
-
-  const fillVars = motionSelectionFillFor(cfg);
-
-  if (pressed) {
-    setWillChangeTransform(fill, true);
-    gsap.fromTo(
-      fill,
-      { scale: 0, autoAlpha: 0 },
-      {
-        scale: 1,
-        autoAlpha: 1,
-        ...fillVars,
-        overwrite: "auto",
-        onComplete: clearWillChangeOnComplete(fill),
-      },
-    );
-  } else {
-    setWillChangeTransform(fill, true);
-    gsap.to(fill, {
-      scale: 0,
-      autoAlpha: 0,
-      ...fillVars,
-      overwrite: "auto",
-      onComplete: clearWillChangeOnComplete(fill),
-    });
-  }
-}
-
+ 
 export function useToggleButtonFillAnimation(
   pressed: boolean,
   fillRef: RefObject<HTMLElement | null>,
@@ -95,7 +45,7 @@ export function useToggleButtonFillAnimation(
     /** While true — `useLayoutEffect` does not start fill (waiting for press-release). */
     deferFillFromPressRef?: RefObject<boolean>;
     onFillStart?: (pressed: boolean) => void;
-    /** Host slot-motion play. Calendar keeps the default GSAP fill. */
+    /** Plays `selectionFill` on `check` / `uncheck`. Without it the fill snaps. */
     playFill?: (fill: HTMLElement, next: boolean, reduceMotion: boolean) => void;
   },
 ) {
@@ -110,12 +60,12 @@ export function useToggleButtonFillAnimation(
     !isMotionFeatureEnabledFor(config, "enableToggleButtonFill");
   /** Visual pressed — updates when fill actually starts, not on raw selection click. */
   const [displayPressed, setDisplayPressed] = useState(pressed);
-
+ 
   const bindFillRef = useMemo(
     () => createToggleButtonFillRefCallback(fillRef, initialPressedRef.current),
     [fillRef],
   );
-
+ 
   const animateTo = useCallback(
     (next: boolean) => {
       const fill = fillRef.current;
@@ -125,34 +75,35 @@ export function useToggleButtonFillAnimation(
       setDisplayPressed(next);
       onFillStart?.(next);
       if (playFill) playFill(fill, next, reduceMotion);
-      else animateToggleButtonFill(fill, next, reduceMotion, config);
+      else applyToggleButtonFillInstant(fill, next);
     },
-    [config, fillRef, onFillStart, playFill, reduceMotion],
+    [fillRef, onFillStart, playFill, reduceMotion],
   );
-
+ 
   useLayoutEffect(() => {
     const fill = fillRef.current;
     if (!fill) return;
-
+ 
     if (prevPressedRef.current === undefined) {
       prevPressedRef.current = pressed;
       setDisplayPressed(pressed);
       applyToggleButtonFillInstant(fill, pressed);
       return;
     }
-
+ 
     if (prevPressedRef.current === pressed) return;
-
+ 
     if (deferFillFromPressRef?.current) {
       return;
     }
-
+ 
     prevPressedRef.current = pressed;
     setDisplayPressed(pressed);
     onFillStart?.(pressed);
     if (playFill) playFill(fill, pressed, reduceMotion);
-    else animateToggleButtonFill(fill, pressed, reduceMotion, config);
-  }, [config, deferFillFromPressRef, onFillStart, playFill, pressed, fillRef, reduceMotion]);
-
+    else applyToggleButtonFillInstant(fill, pressed);
+  }, [deferFillFromPressRef, onFillStart, playFill, pressed, fillRef, reduceMotion]);
+ 
   return { animateTo, bindFillRef, displayPressed };
 }
+ 

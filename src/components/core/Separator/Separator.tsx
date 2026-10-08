@@ -1,18 +1,18 @@
 import { forwardRef, useMemo, type Ref } from "react";
-
+ 
 import { separatorAriaOrientation } from "./separatorA11y";
 import { resolveSeparatorMotionDefaults, useSeparatorRootMotion } from "./separatorAnimations";
 import { SeparatorMotionProvider } from "./separatorContext";
 import { separatorRootClass } from "./separatorStyles";
 import type { SeparatorPartMotion, SeparatorProps } from "./separatorTypes";
-
+ 
 export type {
   SeparatorOrientation,
   SeparatorProps,
   SeparatorMotion,
   SeparatorPartMotion,
 } from "./separatorTypes";
-
+ 
 export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separator(
   {
     orientation = "horizontal",
@@ -31,7 +31,7 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveSeparatorMotionDefaults(), []);
-
+ 
   return (
     <SeparatorMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -51,7 +51,7 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
     </SeparatorMotionProvider>
   );
 });
-
+ 
 function SeparatorSurface({
   orientation,
   className,
@@ -92,7 +92,7 @@ function SeparatorSurface({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   if (orientation === "horizontal") {
     return (
       <hr
@@ -100,10 +100,11 @@ function SeparatorSurface({
         className={sharedClassName}
         {...part.pointerHandlers}
         {...rest}
+        data-orientation={orientation}
       />
     );
   }
-
+ 
   return (
     <div
       ref={part.setRef as Ref<HTMLDivElement>}
@@ -112,8 +113,10 @@ function SeparatorSurface({
       className={sharedClassName}
       {...part.pointerHandlers}
       {...rest}
+      data-orientation={orientation}
     />
   );
 }
-
+ 
 Separator.displayName = "Separator";
+ 

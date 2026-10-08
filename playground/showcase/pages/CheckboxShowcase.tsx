@@ -6,8 +6,6 @@ import { CheckboxConsentCardDemo } from "../demos/checkbox/CheckboxConsentCard.d
 import checkboxConsentCardSource from "../demos/checkbox/CheckboxConsentCard.demo.tsx?raw";
 import { CheckboxFeatureFlagsDemo } from "../demos/checkbox/CheckboxFeatureFlags.demo";
 import checkboxFeatureFlagsSource from "../demos/checkbox/CheckboxFeatureFlags.demo.tsx?raw";
-import { CheckboxGlossDemo } from "../demos/checkbox/CheckboxGloss.demo";
-import checkboxGlossSource from "../demos/checkbox/CheckboxGloss.demo.tsx?raw";
 import { CheckboxIndicatorShapeDemo } from "../demos/checkbox/CheckboxIndicatorShape.demo";
 import checkboxIndicatorShapeSource from "../demos/checkbox/CheckboxIndicatorShape.demo.tsx?raw";
 import { CheckboxIndicatorCompoundDemo } from "../demos/checkbox/CheckboxIndicatorCompound.demo";
@@ -42,12 +40,7 @@ export function CheckboxShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={CheckboxSizesDemo} source={checkboxSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass indicator with motion.">
-        <ShowcaseDemoFromFile Demo={CheckboxGlossDemo} source={checkboxGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: corner fill, spinning mark, label color, fill→mark timeline.">
+<ShowcaseSection title="Slot motion" description="One gallery: corner fill, spinning mark, label color, fill→mark timeline.">
         <CheckboxSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -120,7 +113,7 @@ export function CheckboxShowcase() {
             <code>@/components/composite/CheckboxGroup</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

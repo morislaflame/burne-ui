@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type BadgeIconPosition, type BadgeInlineIconPosition, type BadgeClassNames, type BadgeMotion, type BadgePartMotion } from "burne-ui";
+import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type IconPosition, type BadgeInlineIconPosition, type BadgeClassNames, type BadgeMotion, type BadgePartMotion } from "burne-ui";
 ```
 
 ## API
@@ -68,7 +68,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `variant` | `default` | `default` \| `primary` \| `outline` \| `secondary` \| `gloss` |
 | `status` | `default` | `default` \| `danger` \| `success` \| `info` \| `warning` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `icon` | — | Иконка из `react-icons/io5` или ReactNode |
+| `icon` | — | Любой `ReactNode` (в т.ч. `react-icons/io5`) |
 | `iconPosition` | `start` | `start` \| `end` |
 | `iconOnly` | `false` | Принудительный icon-only layout |
 | `dot` | `false` | Только круглый индикатор |
@@ -95,7 +95,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 ### `BadgeClassNames`
 
-`root`, `text`, `iconOnly`, `dot`, `anchor`.
+`root`, `text`, `icon`, `iconOnly`, `dot`, `anchor`, `splitShell`.
 
 ## Variant / status / размеры
 
@@ -119,7 +119,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `primary` | `bg-primary` | fill (`bg-danger` / … + `*-foreground`) |
 | `outline` | transparent + outline border | `border-token-*` + `text-*` |
 | `secondary` | `bg-secondary` | тот же surface; `text-*` |
-| `gloss` | `gloss-panel` | `gloss-text-*` |
+| `gloss` | `gloss-panel` | `text-*` (стекло без `bg-surface-tint-*`) |
 
 `dot` — заливка точки следует status/variant (индикатор).
 
@@ -154,7 +154,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss`; `false` внутри `Badge.Anchor` split-lift |
 | `anchor` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` с `params.liftScale` = `badgeAnchorHoverLiftScale` |
 
-`hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). На `Badge.Anchor` то же для `motion.anchor`. Явный `motion.root.hoverIn` важнее `hoverLift`.
+`hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). На `Badge.Anchor` то же для `motion.anchor`. Явный `motion.root.hoverIn` важнее `hoverLift`. Не `motion={{ hoverIn }}` на корне — в dev это `console.error` и игнор.
 
 **Где в коде:** типы — `badgeTypes.ts`; scope — `badgeContext.tsx`; defaults + host — `badgeAnimations.ts`; `Badge.Anchor` — `badgeParts.tsx`; Provider — `Badge.tsx` / Anchor.
 
@@ -169,7 +169,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 Split-lift: pointer на Anchor, цель — `data-badge-lift-target`. Кастомизируйте `motion.anchor`, не `motion.root` у вложенного Badge.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`notify:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`notify:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 `motionState` + `motion.states` — поза из React/store (`idle` / `syncing` / `live`). Тот же режим ещё раз — тишина. Слот `root` (отдельного `text` нет): фабрика может крутить GSAP-плагин на внутреннем `Text`. Подпись для ScrambleText — `motionPayload` (`from` / `to`) + `createMotionFactory`. Плагины — в приложении; живой **ScrambleText** — слайд `motionState` в галерее MotionController. Рецепт: [Motion and state managers](/docs/motion-state#плагины--текст-на-state).
 
@@ -240,9 +240,11 @@ configureMotion({ enableHoverLift: false, badgeAnchorHoverLiftScale: 1.04 });
 |------|-----|-------------------|
 | `root` | Все layouts | Общий radius/border |
 | `text` | Text badge row | Surface/text, inline icons |
+| `icon` | Обёртка `icon` и inline `data-icon` | Размер и цвет иконки |
 | `iconOnly` | Icon-only / single-digit layout | Fixed `--chip-size-*` square → circle |
 | `dot` | Dot layout | Ring/fill online indicator |
 | `anchor` | `Badge.Anchor` root | Overlay grid на Avatar/Card |
+| `splitShell` | Outer shell when lift splits from the anchor | Placement; `root` остаётся на внутреннем бейдже |
 
 ### Text badge (simple)
 
@@ -297,7 +299,7 @@ configureMotion({ enableHoverLift: false, badgeAnchorHoverLiftScale: 1.04 });
 
 ### Практические заметки
 
-- Иконки: `react-icons/io5`.
+- Иконки: любой `ReactNode`. Дефолтных глифов у Badge нет.
 - Icon-only/dot: обязательный `aria-label` если несут смысл.
 - Inline icons: `data-icon="start"|"end"`, decorative без `aria-label`.
 - **Не pointer handlers на badge внутри Anchor** — events на anchor.

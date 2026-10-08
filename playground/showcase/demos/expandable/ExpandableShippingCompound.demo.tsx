@@ -9,7 +9,7 @@ export function ExpandableShippingCompoundDemo() {
       <Expandable.Trigger>
         <Expandable.Message>
           <Expandable.Icon>
-            <IoCubeOutline aria-hidden className="size-full" />
+            <IoCubeOutline aria-hidden />
           </Expandable.Icon>
           <Expandable.Content>
             <Expandable.Title>Delivery and returns</Expandable.Title>

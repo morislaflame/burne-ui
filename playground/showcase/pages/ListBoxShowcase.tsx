@@ -4,10 +4,10 @@ import { ListBoxCommandPaletteDemo } from "../demos/listBox/ListBoxCommandPalett
 import listBoxCommandPaletteSource from "../demos/listBox/ListBoxCommandPalette.demo.tsx?raw";
 import { ListBoxCompoundDemo } from "../demos/listBox/ListBoxCompound.demo";
 import listBoxCompoundSource from "../demos/listBox/ListBoxCompound.demo.tsx?raw";
-import { ListBoxGlossDemo } from "../demos/listBox/ListBoxGloss.demo";
-import listBoxGlossSource from "../demos/listBox/ListBoxGloss.demo.tsx?raw";
 import { ListBoxPermissionsDemo } from "../demos/listBox/ListBoxPermissions.demo";
 import listBoxPermissionsSource from "../demos/listBox/ListBoxPermissions.demo.tsx?raw";
+import { ListBoxVirtualizedDemo } from "../demos/listBox/ListBoxVirtualized.demo";
+import listBoxVirtualizedSource from "../demos/listBox/ListBoxVirtualized.demo.tsx?raw";
 import { ListBoxSimpleApiDemo } from "../demos/listBox/ListBoxSimpleApi.demo";
 import listBoxSimpleApiSource from "../demos/listBox/ListBoxSimpleApi.demo.tsx?raw";
 import { ListBoxSizesDemo } from "../demos/listBox/ListBoxSizes.demo";
@@ -37,15 +37,14 @@ export function ListBoxShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxSimpleApiDemo} source={listBoxSimpleApiSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Virtualized" description="virtualized on a flat list of ListBox.Item. Arrow keys walk every value.">
+        <ShowcaseDemoFromFile align="center" Demo={ListBoxVirtualizedDemo} source={listBoxVirtualizedSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxSizesDemo} source={listBoxSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass list panel with hover-lift.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxGlossDemo} source={listBoxGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="classNames"
         description="Slots root, section, header, item, label, hint and icon — through prop classNames."
       >
@@ -91,7 +90,7 @@ export function ListBoxShowcase() {
             Single mode - line in <code>value</code>. <code>multiple</code> — array of strings.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

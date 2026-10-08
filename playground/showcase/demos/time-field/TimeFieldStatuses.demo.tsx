@@ -13,7 +13,6 @@ const TIMEFIELD_VARIANTS: TimeFieldVariant[] = [
   "outline",
   "secondary",
   "segmented",
-  "gloss",
 ];
 
 const TIMEFIELD_STATUSES: TimeFieldStatus[] = [

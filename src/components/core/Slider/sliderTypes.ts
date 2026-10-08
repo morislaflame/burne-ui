@@ -9,15 +9,19 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type SliderOrientation = "horizontal" | "vertical";
 
 export type SliderSize = "small" | "base" | "mid" | "large";
 
+export const KIT_SLIDER_VARIANTS = ["default"] as const;
+export type KitSliderVariant = (typeof KIT_SLIDER_VARIANTS)[number];
+export type SliderVariant = KitSliderVariant | (string & {});
+
 export type SliderThickness = number | string;
-
+ 
 export type SliderThumbKind = "single" | "start" | "end";
-
+ 
 export type SliderClassNames = {
   root?: string;
   label?: string;
@@ -30,9 +34,11 @@ export type SliderClassNames = {
   fill?: string;
   thumb?: string;
   thumbShell?: string;
+  /** `Slider.Icon` inside the thumb. */
+  icon?: string;
   mark?: string;
 };
-
+ 
 export type SliderPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -43,7 +49,7 @@ export type SliderPartMotion = {
   /** Plays when value / range identity updates. Fill geometry stays kit-internal. */
   change?: MotionValue;
 };
-
+ 
 export type SliderMotion = {
   track?: SliderPartMotion;
   rail?: SliderPartMotion;
@@ -56,7 +62,7 @@ export type SliderMotion = {
   hint?: SliderPartMotion;
   error?: SliderPartMotion;
 };
-
+ 
 export type SliderDisplayState = {
   valueLabel: string;
   min: number;
@@ -66,7 +72,7 @@ export type SliderDisplayState = {
   rangeValue: [number, number];
   label?: string;
 };
-
+ 
 export type SliderFieldContextValue = {
   sliderId: string;
   labelId: string;
@@ -74,23 +80,24 @@ export type SliderFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  isInvalid: boolean;
   labelConnected: boolean;
   orientation: SliderOrientation;
   display: SliderDisplayState | null;
   setDisplay: (next: SliderDisplayState | null) => void;
 };
-
+ 
 export type SliderThumbA11y = {
   ariaLabel?: string;
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
 };
-
+ 
 export type SliderMarkItem = {
   value: number;
   percent: number;
 };
-
+ 
 export type SliderTrackContextValue = {
   fillRef: RefObject<HTMLSpanElement | null>;
   fillClassResolved: string;
@@ -102,7 +109,7 @@ export type SliderTrackContextValue = {
   disabled?: boolean;
   icon?: ReactNode;
   range: boolean;
-  gloss: boolean;
+  variant: SliderVariant;
   thumbClassName?: string;
   activeThumb: SliderThumbKind | null;
   singleValue: number;
@@ -120,7 +127,7 @@ export type SliderTrackContextValue = {
     thumb: SliderThumbKind,
   ) => (e: KeyboardEvent<HTMLButtonElement>) => void;
 };
-
+ 
 type SliderCommonProps = {
   orientation?: SliderOrientation;
   size?: SliderSize;
@@ -131,7 +138,7 @@ type SliderCommonProps = {
   marks?: number[];
   formatValue?: (value: number) => string;
   icon?: ReactNode;
-  gloss?: boolean;
+  variant?: SliderVariant;
   thumbClassName?: string;
   disabled?: boolean;
   className?: string;
@@ -150,21 +157,21 @@ type SliderCommonProps = {
   | "value"
   | "dangerouslySetInnerHTML"
 >;
-
+ 
 export type SliderSingleProps = SliderCommonProps & {
   range?: false;
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
 };
-
+ 
 export type SliderRangeProps = SliderCommonProps & {
   range: true;
   value?: [number, number];
   defaultValue?: [number, number];
   onValueChange?: (value: [number, number]) => void;
 };
-
+ 
 export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
   motion?: Prettify<MotionMapWithEvents<SliderMotion>>;
   /**
@@ -173,7 +180,7 @@ export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   children?: ReactNode;
   id?: string;
@@ -183,6 +190,8 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
   valueText?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** `aria-invalid`, `data-invalid`, and a danger label. `error` does the same and shows the message. */
+  invalid?: boolean;
   classNames?: Prettify<SliderClassNames>;
     /**
      * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`, `label`, `hint`, `error`).
@@ -202,38 +211,38 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
     | Partial<Omit<SliderSingleProps, "orientation" | "className" | "classNames">>
     | Partial<Omit<SliderRangeProps, "orientation" | "className" | "classNames">>
   );
-
+ 
 export type SliderClassNamesProviderProps = {
   classNames?: Prettify<SliderClassNames>;
   children: ReactNode;
 };
-
+ 
 export type SliderHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
-
+ 
 export type SliderValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
-
+ 
 export type SliderLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<SliderPartMotion>;
 };
-
+ 
 export type SliderHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<SliderPartMotion>;
 };
-
+ 
 export type SliderErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<SliderPartMotion>;
 };
-
+ 
 export type SliderFillProps = HTMLAttributes<HTMLSpanElement>;
-
+ 
 export type SliderRailProps = HTMLAttributes<HTMLDivElement>;
-
+ 
 export type SliderCompoundThumbProps = Omit<
   HTMLAttributes<HTMLButtonElement>,
   "children"
@@ -242,17 +251,17 @@ export type SliderCompoundThumbProps = Omit<
   children?: ReactNode;
   motion?: Prettify<SliderPartMotion>;
 };
-
+ 
 export type SliderIconProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
-
+ 
 export type SliderThumbProps = SliderCompoundThumbProps;
-
+ 
 export type SliderThumbButtonProps = {
   size: SliderSize;
   icon?: ReactNode;
-  gloss?: boolean;
+  variant?: SliderVariant;
   thumbClassName?: string;
   className?: string;
   style?: CSSProperties;
@@ -282,10 +291,11 @@ export type SliderThumbButtonProps = {
   | "type"
   | "active"
 >;
-
+ 
 export type UseSliderRootStateProps = Omit<
   SliderProps,
   "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
-
+ 
 export type FillSpan = { start: number; end: number };
+ 

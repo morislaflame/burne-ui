@@ -9,23 +9,23 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalRadioGroupMotionScope } from "./radioGroupContext";
 import type { RadioGroupMotion, RadioGroupPartMotion } from "./radioGroupTypes";
-
+ 
 export type RadioGroupMotionSlot = keyof RadioGroupMotion;
-
+ 
 export function resolveRadioGroupMotionDefaults(): RadioGroupMotion {
   return {};
 }
-
+ 
 function useRadioGroupPartMotion<T extends HTMLElement>(
   slot: RadioGroupMotionSlot,
   {
@@ -61,7 +61,7 @@ function useRadioGroupPartMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useRadioGroupRootMotion({
   motion,
   forwardedRef,
@@ -94,7 +94,7 @@ export function useRadioGroupRootMotion({
   });
   return part;
 }
-
+ 
 export function useRadioGroupSlotMotion<T extends HTMLElement>(
   slot: Exclude<RadioGroupMotionSlot, "root">,
   options?: {
@@ -108,3 +108,4 @@ export function useRadioGroupSlotMotion<T extends HTMLElement>(
 ) {
   return useRadioGroupPartMotion<T>(slot, options);
 }
+ 

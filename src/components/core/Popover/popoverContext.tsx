@@ -1,20 +1,20 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   PopoverClassNames,
   PopoverClassNamesProviderProps,
   PopoverContextValue,
   PopoverSide,
 } from "./popoverTypes";
-
+ 
 const PopoverContext = createContext<PopoverContextValue | null>(null);
 const PopoverClassNamesContext = createContext<PopoverClassNames>({});
 const PopoverResolvedSideContext = createContext<PopoverSide>("bottom");
 /** Content chrome — Header/Body skip panel paddings when `unstyled`. */
 const PopoverContentChromeContext = createContext({ unstyled: false });
-
+ 
 export function PopoverProvider({
   value,
   children,
@@ -26,7 +26,7 @@ export function PopoverProvider({
     <PopoverContext.Provider value={value}>{children}</PopoverContext.Provider>
   );
 }
-
+ 
 export function usePopoverContext(who: string): PopoverContextValue {
   const ctx = useContext(PopoverContext);
   if (!ctx) {
@@ -34,7 +34,7 @@ export function usePopoverContext(who: string): PopoverContextValue {
   }
   return ctx;
 }
-
+ 
 export function PopoverClassNamesProvider({
   classNames,
   children,
@@ -44,18 +44,18 @@ export function PopoverClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <PopoverClassNamesContext.Provider value={merged}>
       {children}
     </PopoverClassNamesContext.Provider>
   );
 }
-
+ 
 export function usePopoverClassNames(): PopoverClassNames {
   return useContext(PopoverClassNamesContext);
 }
-
+ 
 export function PopoverResolvedSideProvider({
   value,
   children,
@@ -69,11 +69,11 @@ export function PopoverResolvedSideProvider({
     </PopoverResolvedSideContext.Provider>
   );
 }
-
+ 
 export function usePopoverResolvedSide(): PopoverSide {
   return useContext(PopoverResolvedSideContext);
 }
-
+ 
 export function PopoverContentChromeProvider({
   unstyled,
   children,
@@ -88,14 +88,15 @@ export function PopoverContentChromeProvider({
     </PopoverContentChromeContext.Provider>
   );
 }
-
+ 
 export function usePopoverContentChrome(): { unstyled: boolean } {
   return useContext(PopoverContentChromeContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `popoverAnimations.ts`. */
 export const {
   MotionScopeProvider: PopoverMotionProvider,
   useMotionScope: usePopoverMotionScope,
   useOptionalMotionScope: useOptionalPopoverMotionScope,
 } = createMotionScope("Popover");
+ 

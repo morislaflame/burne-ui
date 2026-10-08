@@ -7,9 +7,9 @@ export function LinkClassNamesFullDemo() {
       showDefaultIcon
       underline
       classNames={{
-        root: "gap-small rounded-mid border border-primary/25 p-xsmall text-primary",
+        root: "gap-small rounded-large border border-primary/25 p-xsmall text-primary",
         text: "font-semibold tracking-wide",
-        icon: "text-warning",
+        iconEnd: "icon-slot-large text-warning",
       }}
     >
       Documentation

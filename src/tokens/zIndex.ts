@@ -14,9 +14,9 @@ export const burneZIndexScale = [
   "toast",
   "tooltip",
 ] as const;
-
+ 
 export type ZIndexLayer = (typeof burneZIndexScale)[number];
-
+ 
 export const Z_INDEX_CSS_VAR: Record<ZIndexLayer, `--z-${ZIndexLayer}`> = {
   dialog: "--z-dialog",
   dropdown: "--z-dropdown",
@@ -25,7 +25,7 @@ export const Z_INDEX_CSS_VAR: Record<ZIndexLayer, `--z-${ZIndexLayer}`> = {
   toast: "--z-toast",
   tooltip: "--z-tooltip",
 };
-
+ 
 /** Default numeric values (`dropdown-sub` resolves via CSS `calc(var(--z-dropdown) + 10)`). */
 export const Z_INDEX_DEFAULTS: Record<ZIndexLayer, number> = {
   dialog: 100,
@@ -35,8 +35,9 @@ export const Z_INDEX_DEFAULTS: Record<ZIndexLayer, number> = {
   toast: 300,
   tooltip: 400,
 };
-
+ 
 /** CSS `var(--z-dialog|…)` for inline styles and documentation. */
 export function zIndexToken<L extends ZIndexLayer>(layer: L): `var(--z-${L})` {
   return `var(--z-${layer})` as `var(--z-${L})`;
 }
+ 

@@ -2,11 +2,11 @@
 export type HSVA = { h: number; s: number; v: number; a: number };
 /** RGBA in 0-255 range; alpha 0-100. */
 export type RGBA = { r: number; g: number; b: number; a: number };
-
+ 
 export function clampN(n: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, n));
 }
-
+ 
 export function hsvaToRgba({ h, s, v, a }: HSVA): RGBA {
   const S = s / 100;
   const V = v / 100;
@@ -28,7 +28,7 @@ export function hsvaToRgba({ h, s, v, a }: HSVA): RGBA {
   }
   return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), a };
 }
-
+ 
 export function rgbaToHsva({ r, g, b, a }: RGBA): HSVA {
   const nr = r / 255;
   const ng = g / 255;
@@ -36,7 +36,7 @@ export function rgbaToHsva({ r, g, b, a }: RGBA): HSVA {
   const max = Math.max(nr, ng, nb);
   const min = Math.min(nr, ng, nb);
   const delta = max - min;
-
+ 
   let h = 0;
   if (delta > 0) {
     if (max === nr) h = ((ng - nb) / delta + 6) % 6;
@@ -44,7 +44,7 @@ export function rgbaToHsva({ r, g, b, a }: RGBA): HSVA {
     else h = (nr - ng) / delta + 4;
     h = Math.round(h * 60);
   }
-
+ 
   return {
     h,
     s: max === 0 ? 0 : Math.round((delta / max) * 100),
@@ -52,14 +52,14 @@ export function rgbaToHsva({ r, g, b, a }: RGBA): HSVA {
     a,
   };
 }
-
+ 
 export function rgbaToHex({ r, g, b, a }: RGBA): string {
   const toHex = (n: number) => Math.round(clampN(n, 0, 255)).toString(16).padStart(2, "0");
   const base = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   if (a < 100) return base + toHex(Math.round((a / 100) * 255));
   return base;
 }
-
+ 
 export function hexToRgba(hex: string): RGBA | null {
   const s = hex.replace(/^#/, "");
   if (s.length === 3) {
@@ -88,11 +88,11 @@ export function hexToRgba(hex: string): RGBA | null {
   }
   return null;
 }
-
+ 
 export function hsvaToHex(hsva: HSVA): string {
   return rgbaToHex(hsvaToRgba(hsva));
 }
-
+ 
 /** Lowercase `#rrggbb` / `#rrggbbaa` for equality checks (hue 360 vs 0 share RGB). */
 export function normalizeHex(hex: string): string {
   const s = hex.trim().replace(/^#/, "").toLowerCase();
@@ -101,25 +101,25 @@ export function normalizeHex(hex: string): string {
   }
   return `#${s}`;
 }
-
+ 
 export function hexToHsva(hex: string): HSVA | null {
   const rgba = hexToRgba(hex);
   return rgba ? rgbaToHsva(rgba) : null;
 }
-
+ 
 /** CSS color string from HSVA */
 export function hsvaToColorString(hsva: HSVA): string {
   const { r, g, b } = hsvaToRgba(hsva);
   if (hsva.a < 100) return `rgba(${r},${g},${b},${(hsva.a / 100).toFixed(2)})`;
   return `rgb(${r},${g},${b})`;
 }
-
+ 
 /** Pure hue color at s=100, v=100 for gradient display */
 export function hueToRgbString(hue: number): string {
   const { r, g, b } = hsvaToRgba({ h: hue, s: 100, v: 100, a: 100 });
   return `rgb(${r},${g},${b})`;
 }
-
+ 
 export function alphaSliderGradientStyle(color: HSVA, horizontal: boolean): React.CSSProperties {
   const dir = horizontal ? "to right" : "to top";
   const { r, g, b } = hsvaToRgba(color);
@@ -127,3 +127,4 @@ export function alphaSliderGradientStyle(color: HSVA, horizontal: boolean): Reac
     background: `linear-gradient(${dir}, rgba(${r},${g},${b},0), rgb(${r},${g},${b}))`,
   };
 }
+ 

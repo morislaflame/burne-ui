@@ -46,6 +46,7 @@ Root **не рендерит DOM** — только контекст и `classNa
 |------|-----|--------------|----------|
 | `variant` | `default` \| `gloss` | `default` | Поверхность панели |
 | `dismissOnBackdrop` | `boolean` | `true` | Закрытие по клику на overlay |
+| `onInteractOutside` | `(event) => void` | — | Клик по overlay. `event.preventDefault()` оставляет диалог открытым. `return false` **не** отменяет закрытие |
 | `className` | `string` | — | На focusable panel wrapper |
 | `themeAnchor` | `HTMLElement` | auto | Якорь для светлой темы портала |
 | `motionController` | `MotionController` | — | Handle портального хоста (`panel` / `overlay` / chrome). `play()` skip — нет `root`. `playSlot("panel")` |
@@ -59,8 +60,6 @@ type DialogClassNames = {
   dialog?: string;       // <dialog>
   overlay?: string;
   panel?: string;
-  glossPanel?: string;
-  glossContent?: string;
   content?: string;
   header?: string;
   headingBlock?: string;
@@ -108,11 +107,21 @@ const [open, setOpen] = useState(false);
 
 Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы подавить собственную анимацию `Button`, затем `runOpenAfterSqueeze` открывает диалог после `motion.trigger.pressIn` (дефолт `pressSqueeze`; другой рецепт или factory — на карте `trigger`).
 
+Грязная форма — не выключайте `dismissOnBackdrop` целиком, а отмените конкретный клик:
+
+```tsx
+<Dialog.Panel
+  onInteractOutside={(event) => {
+    if (dirty) event.preventDefault();
+  }}
+>
+```
+
 ## variant
 
 | variant | Панель |
 |---------|--------|
-| `default` | `bg-surface border-token shadow-token-large` + radius из `PANEL_SIZE_LAYOUT` |
+| `default` | `bg-surface border-token shadow-token-xlarge` + radius из `PANEL_SIZE_LAYOUT` |
 | `gloss` | `gloss-panel gloss-deep` + `gloss-content` |
 
 Размеры (`size`) — общий пресет `PANEL_SIZE_LAYOUT` (вместе с AlertDialog / Popover / Card): max-width, max-height, section padding, title/desc/body, radius.
@@ -172,7 +181,7 @@ Nested `enter` — следующий кадр после host, без layout fl
 
 **Где в коде:** типы — `dialogTypes.ts`; scope — `dialogContext.tsx`; defaults + host play — `dialogAnimations.ts` (`DIALOG_MOTION_DEFAULTS`, `useDialogModalMotion`); слоты и Panel-provider — `dialogParts.tsx`; карта `motion` на корне — `Dialog.tsx`.
 
-Проп `motionController` на **`Dialog.Panel`** (портальный хост). Root handle — только `trigger`. `play()` skip — нет `root`; `playSlot("panel")`. `events` / `states` на Panel (или на Root — мерж в Panel). `motionState` тоже на Panel, если режимы играют слоты панели. См. [Motion](/docs/motion#motioncontroller).
+Проп `motionController` на **`Dialog.Panel`** (портальный хост). Root handle — только `trigger`. `play()` skip — нет `root`; `playSlot("panel")`. `events` / `states` на Panel (или на Root — мерж в Panel). `motionState` тоже на Panel, если режимы играют слоты панели. См. [Motion](/docs/motion-controller).
 
 ```tsx
 import { Button, Dialog, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -270,7 +279,7 @@ import { Dialog, tweenCssColor } from "burne-ui";
 
 **Важно:** scale только на panel, **не** `autoAlpha` на panel при open — gloss `backdrop-filter` на детях не ломается.
 
-**Scroll lock:** `body.overflow = hidden` на время `mounted`.
+**Scroll lock:** синглтон `bodyScrollLock` на время `showPortal` (`open || mounted`). Первая блокировка ставит `position: fixed; top: -scrollY` (iOS), `overflow: hidden` и компенсирует ширину скроллбара; вложенные Dialog / Drawer / AlertDialog держат счётчик и не снимают lock, пока открыт хотя бы один. `contained` не блокирует. `Dialog.Body` — `overscroll-contain`, чтобы touch-скролл не цеплялся к фону.
 
 #### Кастомизация open/close
 
@@ -367,7 +376,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 
 | Класс | Назначение |
 |-------|------------|
-| `shadow-token-large` | Тень панели |
+| `shadow-token-xlarge` | Тень панели |
 | `border-token`, `bg-surface` | Default surface |
 | `max-w-component-*` | Ширина панели (`PANEL_SIZE_LAYOUT`) |
 | `rounded-*` | Скругление по `size` (как Button / Card) |
@@ -392,9 +401,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 | `dialog` | Нативный `<dialog>` | Редко — глобальные правки dialog-элемента |
 | `overlay` | Backdrop | Blur, opacity, цвет затемнения |
 | `panel` | Surface панели | Max-width, border, shadow, gloss/default |
-| `glossPanel` | Gloss-обёртка панели | При `variant="gloss"` |
 | `content` | `Dialog.Content` | Padding/gap внутри панели |
-| `glossContent` | Gloss content wrap | Внутренний gloss-слой |
 | `header` | `Dialog.Header` | Раскладка title + close |
 | `headingBlock` | `Dialog.HeadingBlock` | Title + description stack |
 | `title` | `Dialog.Title` | Типографика заголовка |
@@ -484,4 +491,4 @@ Dialog/
 
 ## Storybook
 
-`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`, slot motion gallery, `motionController`.
+`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`, `onInteractOutside` + `preventDefault()`, slot motion gallery, `motionController`.

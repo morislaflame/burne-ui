@@ -5,7 +5,7 @@
  * Pass a partial override via `BurneUIProvider` `labels` / `config.labels`,
  * or wrap with `BurneLabelsProvider`. Templates use `{name}` placeholders.
  */
-
+ 
 export type BurneLabels = {
   close: string;
   openSearch: string;
@@ -44,10 +44,23 @@ export type BurneLabels = {
   colorPickerAlpha: string;
   /** Template: `{hex}` */
   colorPickerSelected: string;
+  formErrorOne: string;
+  /** Template: `{count}` */
+  formErrorMany: string;
+  formSubmitted: string;
+  sliderMinimum: string;
+  sliderMaximum: string;
+  sliderValue: string;
+  switch: string;
+  radioOption: string;
+  calendarPrevious: string;
+  calendarNext: string;
+  listBoxEmpty: string;
+  loading: string;
 };
-
+ 
 export type BurneLabelsKey = keyof BurneLabels;
-
+ 
 /** English defaults shipped with the library. */
 export const DEFAULT_BURNE_LABELS: BurneLabels = {
   close: "Close",
@@ -82,8 +95,20 @@ export const DEFAULT_BURNE_LABELS: BurneLabels = {
   colorPickerHex: "Hex code of the color",
   colorPickerAlpha: "Transparency (%)",
   colorPickerSelected: "Selected color: {hex}",
+  formErrorOne: "Fix the error in the form",
+  formErrorMany: "Fix {count} errors in the form",
+  formSubmitted: "Form submitted successfully",
+  sliderMinimum: "Minimum range",
+  sliderMaximum: "Maximum range",
+  sliderValue: "Value",
+  switch: "Switch",
+  radioOption: "Option",
+  calendarPrevious: "Previous",
+  calendarNext: "Next",
+  listBoxEmpty: "No matches",
+  loading: "Loading",
 };
-
+ 
 /** Russian preset — pass to `BurneUIProvider` `labels={BURNE_LABELS_RU}`. */
 export const BURNE_LABELS_RU: BurneLabels = {
   close: "Закрыть",
@@ -118,13 +143,25 @@ export const BURNE_LABELS_RU: BurneLabels = {
   colorPickerHex: "HEX-код цвета",
   colorPickerAlpha: "Прозрачность (%)",
   colorPickerSelected: "Выбранный цвет: {hex}",
+  formErrorOne: "Исправьте ошибку в форме",
+  formErrorMany: "Исправьте ошибки в форме: {count}",
+  formSubmitted: "Форма успешно отправлена",
+  sliderMinimum: "Минимум диапазона",
+  sliderMaximum: "Максимум диапазона",
+  sliderValue: "Значение",
+  switch: "Переключатель",
+  radioOption: "Вариант",
+  calendarPrevious: "Назад",
+  calendarNext: "Вперёд",
+  listBoxEmpty: "Нет совпадений",
+  loading: "Загрузка",
 };
-
+ 
 export function mergeBurneLabels(partial?: Partial<BurneLabels> | null): BurneLabels {
   if (!partial) return DEFAULT_BURNE_LABELS;
   return { ...DEFAULT_BURNE_LABELS, ...partial };
 }
-
+ 
 /** Replace `{name}` placeholders in a label template. */
 export function formatBurneLabel(
   template: string,
@@ -135,3 +172,4 @@ export function formatBurneLabel(
     return value === undefined ? match : String(value);
   });
 }
+ 

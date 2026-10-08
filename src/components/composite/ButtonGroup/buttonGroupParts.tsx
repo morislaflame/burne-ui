@@ -1,13 +1,14 @@
 import { forwardRef } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
+import { dataGroupSegment } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 import { useButtonGroupSlotMotion } from "./buttonGroupAnimations";
 import { useButtonGroupClassNames, useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "./buttonGroupContext";
 import { BUTTON_GROUP_TEXT_LABEL_CLASS, BUTTON_GROUP_TEXT_VARIANT, buttonGroupTextClass } from "./buttonGroupStyles";
 import type { ButtonGroupTextProps } from "./buttonGroupTypes";
-
+ 
 export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>(
   function ButtonGroupText(
     {
@@ -40,7 +41,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <span
         ref={part.setRef}
@@ -52,6 +53,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
           className: cn(slotClassNames.text, className),
         })}
         {...part.pointerHandlers}
+        data-group-segment={dataGroupSegment(groupSegment != null)}
       >
         <Text
           variant={BUTTON_GROUP_TEXT_VARIANT[buttonSize]}
@@ -65,5 +67,6 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
     );
   },
 );
-
+ 
 ButtonGroupText.displayName = "ButtonGroupText";
+ 

@@ -104,7 +104,7 @@ export const Statuses: Story = {
   name: "Statuses",
   render: () => (
     <div className="flex w-full flex-col gap-xlarge">
-      <TextArea status="danger" label="Danger" error="Text is too short." defaultValue="OK" />
+      <TextArea label="Danger" error="Text is too short." defaultValue="OK" />
       <TextArea status="success" label="Success" hint="Text saved." defaultValue="Done" />
       <TextArea status="warning" label="Warning" hint="Review the wording." defaultValue="Draft" />
     </div>
@@ -154,7 +154,7 @@ export const CustomClassNames: Story = {
     <TextArea
       className="max-w-md"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
         control: "text-primary placeholder:text-primary/50",
         hint: "text-foreground/70",
@@ -163,7 +163,6 @@ export const CustomClassNames: Story = {
       label="Comment"
       placeholder="Your review…"
       rows={3}
-      status="danger"
       hint="Up to 500 characters."
       error="Text is too short."
     />

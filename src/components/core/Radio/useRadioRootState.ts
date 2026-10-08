@@ -1,18 +1,21 @@
+import { useSkinVariant } from "@/skins/skinContext";
 import { useOptionalRadioGroupContext } from "@/components/composite/RadioGroup/radioGroupContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type MouseEvent, type ReactNode } from "react";
-
+ 
+import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
+import { useFieldInvalid } from "@/components/core/Field/fieldContext";
 import { radioErrorId, radioHintId, radioInputId } from "./radioA11y";
 import { compoundUsesInlineMotion } from "./radioAPI";
 import { RADIO_SIZE_LAYOUT } from "./radioStyles";
 import type { RadioFieldContextValue, UseRadioRootStateProps } from "./radioTypes";
-
+ 
 export function useRadioRootState(
   {
     size = "base",
-    variant = "default",
+    variant: variantProp,
     danger = false,
     disabled,
     checked,
@@ -31,20 +34,22 @@ export function useRadioRootState(
     label,
     hint,
     error,
+    invalid,
   }: UseRadioRootStateProps,
   children: ReactNode | undefined,
   className?: string,
   onClick?: (e: MouseEvent<HTMLInputElement>) => void,
 ) {
+  const variant = useSkinVariant(variantProp);
   const group = useOptionalRadioGroupContext();
   const optionValueStr = value !== undefined && value !== null ? String(value) : undefined;
   const inGroup = group != null && optionValueStr != null;
-
+ 
   const autoId = useId();
   const inputId = radioInputId(idProp, autoId);
   const hintId = radioHintId(inputId);
   const errorId = radioErrorId(inputId);
-
+ 
   const isExplicitlyControlled = checked !== undefined;
   const groupChecked = inGroup ? group.selectedValue === optionValueStr : undefined;
   const resolvedChecked = isExplicitlyControlled
@@ -52,12 +57,12 @@ export function useRadioRootState(
     : groupChecked !== undefined
       ? groupChecked
       : undefined;
-
+ 
   const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
     value: resolvedChecked,
     defaultValue: Boolean(inGroup || isExplicitlyControlled ? undefined : defaultChecked),
   });
-
+ 
   const inputName = name ?? group?.name;
   const isDisabled = Boolean(disabled ?? group?.disabled);
   const { isCompound, hasCompoundLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
@@ -75,12 +80,18 @@ export function useRadioRootState(
   const sz = RADIO_SIZE_LAYOUT[size];
   const hasHint = hint != null;
   const hasError = error != null;
+  const isInvalid = resolveFieldInvalid({
+    invalid,
+    error: (isCompound ? hasCompoundError : hasError) ? true : undefined,
+    inheritedInvalid: useFieldInvalid(),
+  });
+  const showDanger = danger || isInvalid;
   const secondaryLines = isCompound
     ? (hasCompoundHint ? 1 : 0) + (hasCompoundError ? 1 : 0)
     : (hasHint ? 1 : 0) + (hasError ? 1 : 0);
-
+ 
   const textColRef = useRef<HTMLElement>(null);
-
+ 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (!isExplicitlyControlled && !inGroup) setMergedChecked(e.target.checked);
@@ -92,25 +103,25 @@ export function useRadioRootState(
     },
     [group, inGroup, isExplicitlyControlled, onChange, optionValueStr, setMergedChecked],
   );
-
+ 
   const canClearSelection =
     !isDisabled && !readOnly && !required && !(inGroup && group.required);
-
+ 
   const inputRequired =
     required ?? (inGroup && group.required ? group.claimRequiredAnchor() : undefined);
-
+ 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLInputElement>) => {
       onClick?.(e);
       if (e.defaultPrevented || !canClearSelection || !mergedChecked) return;
-
+ 
       e.preventDefault();
-
+ 
       if (inGroup) {
         group.selectValue(undefined);
         return;
       }
-
+ 
       if (!isExplicitlyControlled) {
         setMergedChecked(false);
       }
@@ -125,7 +136,7 @@ export function useRadioRootState(
       setMergedChecked,
     ],
   );
-
+ 
   const contextValue: RadioFieldContextValue = useMemo(
     () => ({
       inputId,
@@ -141,10 +152,11 @@ export function useRadioRootState(
       hasCompoundError,
       hintConnected: isCompound ? hasCompoundHint : hasHint,
       errorConnected: isCompound ? hasCompoundError : hasError,
+      isInvalid,
       hasLabel,
       useInlineCompoundMotion,
       textMotionRef: textColRef,
-      danger,
+      danger: showDanger,
       inputName,
       onChange: handleChange,
       onActivate: handleClick,
@@ -161,7 +173,8 @@ export function useRadioRootState(
       },
     }),
     [
-      danger,
+      showDanger,
+      isInvalid,
       defaultChecked,
       form,
       autoFocus,
@@ -191,7 +204,7 @@ export function useRadioRootState(
       variant,
     ],
   );
-
+ 
   return {
     contextValue,
     isCompound,
@@ -211,3 +224,4 @@ export function useRadioRootState(
     danger,
   };
 }
+ 

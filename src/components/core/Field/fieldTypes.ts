@@ -1,22 +1,24 @@
 import type { FieldsetHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { LabelProps } from "@/components/core/Label";
 import type { TextVariant } from "@/components/core/Text";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-
+ 
 export type FieldHintStatus = SemanticStatus;
 export type FieldSize = ComponentSize;
 export type FieldSetSize = FieldSize;
-
+ 
 export type FieldClassNames = {
   root?: string;
+  /** `Field.Label`. */
+  label?: string;
   hint?: string;
   error?: string;
 };
-
+ 
 export type FieldPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -25,14 +27,14 @@ export type FieldPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type FieldMotion = {
   root?: FieldPartMotion;
   label?: FieldPartMotion;
   hint?: FieldPartMotion;
   error?: FieldPartMotion;
 };
-
+ 
 export type FieldSetMotion = {
   root?: FieldPartMotion;
   stack?: FieldPartMotion;
@@ -41,7 +43,7 @@ export type FieldSetMotion = {
   group?: FieldPartMotion;
   actions?: FieldPartMotion;
 };
-
+ 
 export type FieldSetClassNames = {
   root?: string;
   stack?: string;
@@ -50,9 +52,11 @@ export type FieldSetClassNames = {
   group?: string;
   actions?: string;
 };
-
+ 
 export type FieldProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  /** Marks the field invalid (`data-invalid`, descendant controls) without an error message. `Field.Error` does the same. */
+  invalid?: boolean;
   classNames?: Prettify<FieldClassNames>;
   /**
    * Scales Field chrome (gap, Label / Hint / Error type).
@@ -73,17 +77,17 @@ export type FieldProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type FieldClassNamesProviderProps = {
   classNames?: Prettify<FieldClassNames>;
   children: ReactNode;
 };
-
+ 
 export type FieldSetClassNamesProviderProps = {
   classNames?: Prettify<FieldSetClassNames>;
   children: ReactNode;
 };
-
+ 
 export type FieldHintProps = HTMLAttributes<HTMLElement> & {
   children?: ReactNode;
   status?: FieldHintStatus;
@@ -91,34 +95,36 @@ export type FieldHintProps = HTMLAttributes<HTMLElement> & {
   variant?: TextVariant;
   motion?: Prettify<FieldPartMotion>;
 };
-
+ 
 export type FieldLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<FieldPartMotion>;
 };
 export type FieldErrorProps = Omit<FieldHintProps, "status">;
-
+ 
 export type FieldLegendProps = HTMLAttributes<HTMLLegendElement> & {
   children?: ReactNode;
   motion?: Prettify<FieldPartMotion>;
 };
-
+ 
 export type FieldLegendHeaderProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<FieldPartMotion>;
 };
-
+ 
 export type FieldSetGroupProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   motion?: Prettify<FieldPartMotion>;
 };
-
+ 
 export type FieldSetActionsProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   motion?: Prettify<FieldPartMotion>;
 };
-
+ 
 export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "children"> & {
   children?: ReactNode;
+  /** `aria-invalid` on the fieldset and descendant controls, without an error message. `Field.Error` does the same. */
+  invalid?: boolean;
   hintId?: string;
   errorId?: string;
   /**
@@ -139,10 +145,13 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UseFieldSetRootStateResult = {
   legend: ReactNode;
   loose: ReactNode[];
   groups: ReactNode[];
   actions: ReactNode | null;
+  hasHint: boolean;
+  hasError: boolean;
 };
+ 

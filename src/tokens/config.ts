@@ -8,7 +8,7 @@
  * |---|---|---|---|---|
  * | Spacing | `--space` | `--space-*` | `--spacing-*` (Tailwind spacing ns) | `gap-*`, `p-*`, `m-*` |
  * | Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
- * | Control box | — | `--control-height-*` | — | `h-control-*`, `min-h-control-*` |
+ * | Control box | — | `--control-height-*` | — | `min-h-control-*` |
  * | Control square | — | `--control-size-*` (= height) | — | `w-control-*`, `min/max-w-control-*` |
  * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
  * | Indicators | `--size` / `--radius` | `--selection-indicator-*` + `--selection-indicator-radius-*` (`--radius-*` × 0.618) | — | `selection-indicator-*` |
@@ -17,7 +17,7 @@
  * ## Typography
  *
  * `--text-scale-*` steps (rem) align with semantic roles / utilities of the same name:
- * `xsmall` 0.6875 · `small` 0.75 · `base` 0.875 · `mid` 1 · `large` 1.15 ·
+ * `xsmall` 0.6875 · `small` 0.75 · `base` 0.875 · `mid` 1 · `large` 1.125 ·
  * `xlarge` 1.5 · `2xlarge` 1.875 · `3xlarge` 2.25.
  * Headers: `text-header-2` → `xlarge`, `text-header-1` → `2xlarge`, `text-accent-header` → `3xlarge`.
  *
@@ -129,7 +129,7 @@ export const tokensConfig = {
     "icon-3xlarge": "icon-size-3xlarge",
   },
 } as const;
-
+ 
 /** `--spacing-*` steps → `gap-*`, `p-*`, `m-*`, `space-*`, … utilities */
 export const burneSpacingScale = [
   "xsmall",
@@ -141,7 +141,7 @@ export const burneSpacingScale = [
   "2xlarge",
   "3xlarge",
 ] as const;
-
+ 
 /** `--radius-*` steps → `rounded-*` utilities */
 export const burneRadiusScale = [
   "xsmall",
@@ -150,7 +150,7 @@ export const burneRadiusScale = [
   "mid",
   "large",
 ] as const;
-
+ 
 /**
  * Icon utilities `icon-*` — 1:1 with `--size-scale-*` / `--icon-size-*`.
  * SelectionIndicator marks use `--icon-size-*` × 0.75 in component tokens.
@@ -165,7 +165,7 @@ export const burneIconScale = [
   "2xlarge",
   "3xlarge",
 ] as const;
-
+ 
 /**
  * `@utility text-*` roles (size/weight); not to be confused with `text-foreground` and other colors.
  * `text-base` — Tailwind default override; maps 1:1 to `--text-scale-base` (0.875rem).
@@ -180,7 +180,7 @@ export const burneTextScale = [
   "header-2",
   "large",
 ] as const;
-
+ 
 export {
   burneShadowScale,
   type ShadowSize,
@@ -194,5 +194,6 @@ export {
   toastScrimToken,
   type ToastScrimCssVar,
 } from "./toastScrim";
-
+ 
 export type TokensConfig = typeof tokensConfig;
+ 

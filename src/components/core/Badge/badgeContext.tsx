@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   BadgeClassNames,
   BadgeClassNamesProviderProps,
@@ -9,22 +9,22 @@ import type {
   BadgeLiftContextValue,
   BadgeLiftTargetProviderProps,
 } from "./badgeTypes";
-
+ 
 /** Scope only. Defaults and host play live in `badgeAnimations.ts`. */
 export const {
   MotionScopeProvider: BadgeMotionProvider,
   useMotionScope: useBadgeMotionScope,
   useOptionalMotionScope: useOptionalBadgeMotionScope,
 } = createMotionScope("Badge");
-
+ 
 const BadgeLiftTargetContext = createContext<BadgeLiftContextValue | null>(null);
 const BadgeDirectAnchorChildContext = createContext(false);
 const BadgeClassNamesContext = createContext<BadgeClassNames>({});
-
+ 
 export function useBadgeLiftContext() {
   return useContext(BadgeLiftTargetContext);
 }
-
+ 
 export function BadgeLiftTargetProvider({
   value,
   children,
@@ -35,11 +35,11 @@ export function BadgeLiftTargetProvider({
     </BadgeLiftTargetContext.Provider>
   );
 }
-
+ 
 export function useBadgeDirectAnchorChild() {
   return useContext(BadgeDirectAnchorChildContext);
 }
-
+ 
 export function BadgeDirectAnchorChildProvider({ children }: BadgeDirectAnchorChildProviderProps) {
   return (
     <BadgeDirectAnchorChildContext.Provider value={true}>
@@ -47,7 +47,7 @@ export function BadgeDirectAnchorChildProvider({ children }: BadgeDirectAnchorCh
     </BadgeDirectAnchorChildContext.Provider>
   );
 }
-
+ 
 export function BadgeClassNamesProvider({
   classNames,
   children,
@@ -57,14 +57,15 @@ export function BadgeClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <BadgeClassNamesContext.Provider value={merged}>
       {children}
     </BadgeClassNamesContext.Provider>
   );
 }
-
+ 
 export function useBadgeClassNames(): BadgeClassNames {
   return useContext(BadgeClassNamesContext);
 }
+ 

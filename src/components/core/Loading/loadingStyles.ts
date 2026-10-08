@@ -1,8 +1,8 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
-
+ 
 import type { LoadingColor, LoadingDotsLayout, LoadingSize } from "./loadingTypes";
-
+ 
 export const LOADING_SPINNER_RING: Record<
   LoadingSize,
   { icon: string; border: string }
@@ -24,7 +24,7 @@ export const LOADING_SPINNER_RING: Record<
     border: CONTROL_SIZE_LAYOUT.large.spinnerBorder,
   },
 };
-
+ 
 export const LOADING_SPINNER_COLOR: Record<LoadingColor, string> = {
   primary: "text-primary",
   foreground: "text-foreground",
@@ -35,16 +35,16 @@ export const LOADING_SPINNER_COLOR: Record<LoadingColor, string> = {
   info: "text-info",
   warning: "text-warning",
 };
-
+ 
 export const LOADING_ROOT_CLASS = "inline-flex shrink-0 items-center justify-center";
-
+ 
 export const LOADING_SPINNER_RING_CLASS =
   "box-border inline-block rounded-full border-current border-t-transparent animate-spin motion-reduce:animate-none";
-
+ 
 export const LOADING_DOTS_TRACK_CLASS = "flex items-end";
-
+ 
 export const LOADING_DOT_CLASS = "block shrink-0 rounded-full origin-bottom";
-
+ 
 export const LOADING_DOTS_LAYOUT: Record<LoadingSize, LoadingDotsLayout> = {
   small: {
     dotClass: "size-[calc(var(--icon-size-xsmall)*0.45)]",
@@ -75,7 +75,7 @@ export const LOADING_DOTS_LAYOUT: Record<LoadingSize, LoadingDotsLayout> = {
     scalePeak: 1.4,
   },
 };
-
+ 
 export const LOADING_DOTS_COLOR: Record<LoadingColor, string> = {
   primary: "bg-primary",
   foreground: "bg-foreground",
@@ -86,7 +86,7 @@ export const LOADING_DOTS_COLOR: Record<LoadingColor, string> = {
   info: "bg-info",
   warning: "bg-warning",
 };
-
+ 
 export function loadingSpinnerRingClass(size: LoadingSize, color: LoadingColor, className?: string) {
   const ring = LOADING_SPINNER_RING[size];
   return cn(
@@ -97,12 +97,12 @@ export function loadingSpinnerRingClass(size: LoadingSize, color: LoadingColor, 
     className,
   );
 }
-
+ 
 export function loadingDotsTrackClass(size: LoadingSize, className?: string) {
   const layout = LOADING_DOTS_LAYOUT[size];
   return cn(LOADING_DOTS_TRACK_CLASS, layout.gapClass, className);
 }
-
+ 
 export function loadingDotClass(
   size: LoadingSize,
   color: LoadingColor,
@@ -115,8 +115,9 @@ export function loadingDotClass(
     className,
   );
 }
-
+ 
 export function loadingDotsTrackStyle(size: LoadingSize): { height: string } {
   const { jumpPx, dotSizeVar } = LOADING_DOTS_LAYOUT[size];
   return { height: `calc(${dotSizeVar} + ${jumpPx}px)` };
 }
+ 

@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, waitFor } from "storybook/test";
+import { expect, fireEvent, screen, waitFor } from "storybook/test";
 import gsap from "gsap";
 
 import { Form, type FormValues } from "@/components/composite/Form";
@@ -52,7 +52,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Modal dialog (portal to `document.body`). Panel: shared `p-xlarge` and `gap-large` between `Header` / `Body` / `Footer`; scroll lives in `Body`. Sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `Dialog.Footer`, direct `Button` children without `size` inherit the modal button size.\n\n`Dialog.Trigger` — built-in trigger that opens the dialog after the press animation.",
+          "Modal dialog (portal to `document.body`). Panel: shared `p-xlarge` and `gap-large` between `Header` / `Body` / `Footer`; scroll lives in `Body`. Sizes `small`–`large`.  In `Dialog.Footer`, direct `Button` children without `size` inherit the modal button size.\n\n`Dialog.Trigger` — built-in trigger that opens the dialog after the press animation.",
       },
     },
   },
@@ -266,6 +266,57 @@ export const OpenCloseInteraction: Story = {
       openName: "Open dialog",
       closeName: "Cancel",
       dialogName: "Export settings",
+    });
+  },
+};
+
+export const InteractOutsidePreventDefault: Story = {
+  name: "Interaction: onInteractOutside preventDefault",
+  render: function InteractOutsideDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dirty form
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel
+            onInteractOutside={(event) => {
+              event.preventDefault();
+            }}
+          >
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Unsaved changes</Dialog.Title>
+                <Dialog.Description>
+                  Backdrop click is cancelled with preventDefault.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Returning false from the handler does not keep the dialog open.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Discard
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Open dirty form" }));
+    const dialog = await screen.findByRole("dialog", { name: "Unsaved changes" });
+    const overlay = dialog.querySelector("[aria-hidden='true']");
+    await expect(overlay).toBeTruthy();
+    fireEvent.mouseDown(overlay as HTMLElement);
+    await expect(dialog).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Discard" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "Unsaved changes" })).toBeNull();
     });
   },
 };
@@ -484,86 +535,7 @@ export const OnLightTheme: Story = {
   render: Default.render,
 };
 
-// ─── Gloss variant ───────────────────────────────────────────────────────────
 
-const dottedGridStyle = {
-  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
-  backgroundSize: "30px 30px",
-  backgroundPosition: "2px 2px",
-} as const;
-
-function glossDottedDecorator(light = false) {
-  return (Story: ComponentType) => (
-    <div
-      data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
-      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
-    >
-      <div className="mx-auto max-w-xl">
-        <Story />
-      </div>
-    </div>
-  );
-}
-
-function GlossDemo() {
-  const [open, setOpen] = useState(false);
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
-        <Button type="button" variant="gloss">Open gloss dialog</Button>
-      </Dialog.Trigger>
-      <Dialog.Panel variant="gloss">
-        <Dialog.Header>
-          <Dialog.HeadingBlock>
-            <Dialog.Title>Glass dialog</Dialog.Title>
-            <Dialog.Description>
-              variant=&quot;gloss&quot; — modal panel with conic border and highlight.
-            </Dialog.Description>
-          </Dialog.HeadingBlock>
-          <Dialog.Close />
-        </Dialog.Header>
-        <Dialog.Body className="flex flex-col gap-large">
-          <Input>
-            <Input.Label>Name</Input.Label>
-            <Input.Control variant="gloss" name="name" placeholder="Ivan" autoComplete="name" />
-          </Input>
-          <Input>
-            <Input.Label>Email</Input.Label>
-            <Input.Control
-              variant="gloss"
-              name="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-            />
-          </Input>
-        </Dialog.Body>
-        <Dialog.Footer>
-          <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button type="button" size="base" variant="gloss" onClick={() => setOpen(false)}>
-            Save
-          </Button>
-        </Dialog.Footer>
-      </Dialog.Panel>
-    </Dialog>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
-};
 
 function DialogTemplate({
   size = "base",
@@ -651,7 +623,7 @@ export const PortalContainer: Story = {
         </Button>
         <div
           ref={setContainer}
-          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative h-72 overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="text-xs text-muted">Custom portal host</p>
           {container ? (
@@ -825,8 +797,7 @@ export const SlotMotion: Story = {
                 gsap.fromTo(
                   ctx.el,
                   { y: 12, autoAlpha: 0 },
-                  { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.08 },
-                ),
+                  { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.08 }),
               leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
             },
           }}

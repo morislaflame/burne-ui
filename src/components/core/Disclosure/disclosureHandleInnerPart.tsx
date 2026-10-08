@@ -1,10 +1,10 @@
 import { cn } from "@/utils/cn";
-
+ 
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
 import { DISCLOSURE_HANDLE_BASE_CLASS, DISCLOSURE_HANDLE_DISABLED_CLASS, DISCLOSURE_HANDLE_GRIP_CLASS } from "./disclosureStyles";
 import type { DisclosureHandleProps } from "./disclosureTypes";
 import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
-
+ 
 export function DisclosureHandleInner({
   className,
   onPointerDown,
@@ -22,7 +22,7 @@ export function DisclosureHandleInner({
     setOpen,
     skipContentAnimRef,
   } = useDisclosureContext();
-
+ 
   const { onPointerDown: dragPD } = useDisclosureContentDrag(
     shellRef,
     innerRef,
@@ -32,9 +32,9 @@ export function DisclosureHandleInner({
     disabled,
     skipContentAnimRef,
   );
-
+ 
   if (!dragHandle || variant !== "card") return null;
-
+ 
   return (
     <div
       aria-hidden
@@ -54,5 +54,6 @@ export function DisclosureHandleInner({
     </div>
   );
 }
-
+ 
 DisclosureHandleInner.displayName = "DisclosureHandle";
+ 

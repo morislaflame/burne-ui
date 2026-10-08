@@ -4,17 +4,20 @@ import type {
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type ToastSize = MessageBannerSize;
-
-export type ToastStatus = "default" | "success" | "danger" | "info" | "warning";
-
-export type ToastVariant = "default" | "gloss";
-
+ 
+export type ToastStatus = SemanticStatus;
+ 
+export const KIT_TOAST_VARIANTS = ["default"] as const;
+export type KitToastVariant = (typeof KIT_TOAST_VARIANTS)[number];
+export type ToastVariant = KitToastVariant | (string & {});
+ 
 export type ToastPlacement =
   | "top-left"
   | "top-center"
@@ -22,15 +25,27 @@ export type ToastPlacement =
   | "bottom-left"
   | "bottom-center"
   | "bottom-right";
-
+ 
 export type ToastLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type ToastPartMotion = ToastLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
+};
+
+export type ToastStackItemMotion = {
+  /** New kit toast: opacity only. */
+  enter?: MotionValue;
+  /** Peek y / scale when the stack index changes. */
+  change?: MotionValue;
+};
+
+export type ToastScrimMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
 };
 
 export type ToastMotion = {
@@ -40,8 +55,10 @@ export type ToastMotion = {
   description?: ToastPartMotion;
   action?: ToastLifecycleMotion;
   close?: ToastLifecycleMotion;
+  stackItem?: ToastStackItemMotion;
+  scrim?: ToastScrimMotion;
 };
-
+ 
 export type ToastClassNames = {
   root?: string;
   indicator?: string;
@@ -54,10 +71,11 @@ export type ToastClassNames = {
   viewport?: string;
   scrim?: string;
   stack?: string;
+  stackItem?: string;
 };
-
+ 
 export type ToastLiveRole = "status" | "alert";
-
+ 
 export type AddToastOpts = {
   status?: ToastStatus;
   variant?: ToastVariant;
@@ -77,7 +95,7 @@ export type AddToastOpts = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type PromiseToastOpts<T> = {
   loading?: ReactNode;
   success: ReactNode | ((value: T) => ReactNode);
@@ -88,7 +106,7 @@ export type PromiseToastOpts<T> = {
   motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ToastEntry = {
   id: string;
   status: ToastStatus;
@@ -105,14 +123,14 @@ export type ToastEntry = {
   motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ToastLiveAnnouncement = {
   text: string;
   assertive: boolean;
   /** Bumps on each announce so identical messages still fire. */
   nonce: number;
 };
-
+ 
 export type ToastContextValue = {
   add: (opts: AddToastOpts) => string;
   update: (
@@ -121,7 +139,7 @@ export type ToastContextValue = {
   ) => void;
   dismiss: (id: string) => void;
 };
-
+ 
 export type ToastItemContextValue = {
   status: ToastStatus;
   size: ToastSize;
@@ -132,12 +150,12 @@ export type ToastItemContextValue = {
   dismiss: () => void;
   gridSlots: MessageBannerGridSlots;
 };
-
+ 
 export type ToastClassNamesProviderProps = {
   classNames?: Prettify<ToastClassNames>;
   children: ReactNode;
 };
-
+ 
 export type ToastProviderProps = {
   children: ReactNode;
   defaultPlacement?: ToastPlacement;
@@ -148,7 +166,7 @@ export type ToastProviderProps = {
   classNames?: Prettify<ToastClassNames>;
   motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
 };
-
+ 
 export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   status?: ToastStatus;
   variant?: ToastVariant;
@@ -171,16 +189,18 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UseToastRootStateProps = Pick<
   ToastProps,
   "status" | "size" | "title" | "description" | "action" | "loading" | "onClose" | "children"
 >;
-
+ 
 export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ToastLifecycleMotion>;
 };
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type ToastMessageProps = HTMLAttributes<HTMLDivElement>;
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type ToastContentProps = HTMLAttributes<HTMLDivElement>;
 export type ToastTitleProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ToastPartMotion>;
@@ -195,7 +215,7 @@ export type ToastCloseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   "aria-label"?: string;
   motion?: Prettify<ToastLifecycleMotion>;
 };
-
+ 
 export type ToastSimpleBodyProps = {
   gridSlots: MessageBannerGridSlots;
   title?: ReactNode;
@@ -203,7 +223,7 @@ export type ToastSimpleBodyProps = {
   action?: ReactNode;
   onClose?: () => void;
 };
-
+ 
 export type ToastItemWrapperProps = {
   entry: ToastEntry;
   reverseIdx: number;
@@ -216,7 +236,7 @@ export type ToastItemWrapperProps = {
   providerClassNames?: ToastClassNames;
   providerMotion?: Prettify<MotionMapWithEvents<ToastMotion>>;
 };
-
+ 
 export type ToastViewportProps = {
   placement: ToastPlacement;
   sorted: ToastEntry[];
@@ -227,3 +247,4 @@ export type ToastViewportProps = {
   motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
   defaultSize?: ToastSize;
 };
+ 

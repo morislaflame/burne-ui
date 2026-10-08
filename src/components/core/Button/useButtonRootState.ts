@@ -1,15 +1,16 @@
 import { useMemo } from "react";
-
+ 
+import { useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
-
+ 
 import { hasButtonCompoundChildren } from "./buttonAPI";
 import type { UseButtonRootStateProps } from "./buttonTypes";
 import { BUTTON_BASE_INTERACTIVE_CLASS, BUTTON_CURSOR_CLASS, BUTTON_DISABLED_OPACITY_CLASS, BUTTON_STATUS_FOCUS_OUTLINE, buttonConvergeRippleColor, buttonLoaderTextClass, buttonRootClass, buttonSurfaceMotionClass } from "./buttonStyles";
-
+ 
 export function useButtonRootState({
   variant: variantProp,
   status = "default",
@@ -33,30 +34,30 @@ export function useButtonRootState({
     ? undefined
     : (groupSegmentProp ?? groupCtx?.segment);
   const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
-  const variant = variantProp ?? groupCtx?.variant ?? "default";
+  const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const userDisabled = Boolean(disabledProp ?? formCtx?.disabled ?? formCtx?.isSubmitting);
-  const isGloss = variant === "gloss";
   const blocked = userDisabled;
-
+ 
   const sizeRounded = CONTROL_SIZE_LAYOUT[size].rounded;
   const roundingClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)
     : sizeRounded;
-
+ 
   const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
-
+ 
   const clipClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)
     : sizeRounded;
-
+ 
   const isCompound = useMemo(() => hasButtonCompoundChildren(children), [children]);
   const labelLayoutClass = !isCompound ? className : undefined;
-
+ 
   const buttonClass = cn(
     BUTTON_BASE_INTERACTIVE_CLASS,
     BUTTON_STATUS_FOCUS_OUTLINE[status],
     buttonRootClass(size, iconOnly),
-    buttonSurfaceMotionClass(isGloss, status, variant, !!groupSegment, blocked),
+    buttonSurfaceMotionClass(status, variant, !!groupSegment, blocked),
     userDisabled ? BUTTON_DISABLED_OPACITY_CLASS : "",
     roundingClass,
     groupGlue,
@@ -64,19 +65,19 @@ export function useButtonRootState({
     classNames?.root,
     className,
   );
-
+ 
   const convergeRippleColor = buttonConvergeRippleColor(variant, status);
   const loaderTextClass = buttonLoaderTextClass(variant, status);
-
+ 
   return {
     type,
     size,
     variant,
+    surfaceStyle,
     status,
     ripple,
     blocked,
     userDisabled,
-    isGloss,
     groupSegment,
     clipClass,
     buttonClass,
@@ -91,3 +92,4 @@ export function useButtonRootState({
     onClick,
   };
 }
+ 

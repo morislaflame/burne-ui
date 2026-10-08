@@ -1,18 +1,18 @@
 import { createContext, useContext, type ReactNode } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type { SelectionIndicatorContextValue } from "./selectionIndicatorTypes";
-
+ 
 const SelectionIndicatorContext = createContext<SelectionIndicatorContextValue | null>(null);
-
+ 
 /** Scope only. Defaults and host play live in `selectionIndicatorAnimations.ts`. */
 export const {
   MotionScopeProvider: SelectionIndicatorMotionProvider,
   useMotionScope: useSelectionIndicatorMotionScope,
   useOptionalMotionScope: useOptionalSelectionIndicatorMotionScope,
 } = createMotionScope("SelectionIndicator");
-
+ 
 export function SelectionIndicatorProvider({
   value,
   children,
@@ -24,7 +24,7 @@ export function SelectionIndicatorProvider({
     <SelectionIndicatorContext.Provider value={value}>{children}</SelectionIndicatorContext.Provider>
   );
 }
-
+ 
 export function useSelectionIndicatorContext(): SelectionIndicatorContextValue {
   const ctx = useContext(SelectionIndicatorContext);
   if (!ctx) {
@@ -32,3 +32,4 @@ export function useSelectionIndicatorContext(): SelectionIndicatorContextValue {
   }
   return ctx;
 }
+ 

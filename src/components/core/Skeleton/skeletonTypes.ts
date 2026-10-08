@@ -1,36 +1,36 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type SkeletonAnimation = "pulse" | "wave" | "shimmer" | "none";
-
+ 
 export type SkeletonRadius = "none" | "small" | "mid" | "full";
-
+ 
 export type SkeletonClassNames = {
   root?: string;
   wave?: string;
 };
-
+ 
 export type SkeletonCircleClassNames = {
   root?: string;
   wave?: string;
 };
-
+ 
 export type SkeletonTextClassNames = {
   root?: string;
   line?: string;
   wave?: string;
 };
-
+ 
 export type SkeletonBlockClassNames = {
   root?: string;
   wave?: string;
 };
-
+ 
 export type SkeletonRegionClassNames = {
   root?: string;
 };
-
+ 
 export type SkeletonPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -39,12 +39,12 @@ export type SkeletonPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type SkeletonMotion = {
   root?: SkeletonPartMotion;
   region?: SkeletonPartMotion;
 };
-
+ 
 export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   radius?: SkeletonRadius;
@@ -61,9 +61,9 @@ export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UseSkeletonRootStateProps = Pick<SkeletonProps, "animation" | "radius">;
-
+ 
 export type SkeletonCircleProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   size?: string;
@@ -75,7 +75,7 @@ export type SkeletonCircleProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SkeletonTextProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   lines?: number;
@@ -88,7 +88,7 @@ export type SkeletonTextProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SkeletonBlockProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   classNames?: Prettify<SkeletonBlockClassNames>;
@@ -99,7 +99,7 @@ export type SkeletonBlockProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 /** Semantic parent for loading placeholders — sets `aria-busy` / `aria-live`. */
 export type SkeletonRegionProps = HTMLAttributes<HTMLDivElement> & {
   /** When true, region is loading (`aria-busy`). Default `true`. */
@@ -113,8 +113,9 @@ export type SkeletonRegionProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SkeletonWaveProps = {
   className?: string;
   style?: CSSProperties;
 };
+ 

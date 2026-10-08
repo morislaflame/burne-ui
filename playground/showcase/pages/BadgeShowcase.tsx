@@ -2,8 +2,6 @@ import { BadgeAnchorDemo } from "../demos/badge/BadgeAnchor.demo";
 import badgeAnchorSource from "../demos/badge/BadgeAnchor.demo.tsx?raw";
 import { BadgeClassNamesFullDemo } from "../demos/badge/BadgeClassNamesFull.demo";
 import badgeClassNamesFullSource from "../demos/badge/BadgeClassNamesFull.demo.tsx?raw";
-import { BadgeGlossDemo } from "../demos/badge/BadgeGloss.demo";
-import badgeGlossSource from "../demos/badge/BadgeGloss.demo.tsx?raw";
 import { BadgeMotionControllerGalleryDemo } from "../demos/badge/motionController/gallery";
 import { BadgeInboxButtonDemo } from "../demos/badge/BadgeInboxButton.demo";
 import badgeInboxButtonSource from "../demos/badge/BadgeInboxButton.demo.tsx?raw";
@@ -38,12 +36,7 @@ export function BadgeShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={BadgeSizesDemo} source={badgeSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
-        <ShowcaseDemoFromFile Demo={BadgeGlossDemo} source={badgeGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: instant hover, root tilt, Anchor pop, dot pulse.">
+<ShowcaseSection title="Slot motion" description="One gallery: instant hover, root tilt, Anchor pop, dot pulse.">
         <BadgeSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -89,7 +82,7 @@ export function BadgeShowcase() {
           <p>
             <code>placement</code> For dot-mode in <code>Badge.Anchor</code>. Dimensions:{" "}
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.{" "}
-            <code>variant=&quot;gloss&quot;</code> — glass shell. Additional styles —{" "}
+            <code>variant=&quot;default&quot;</code> — glass shell. Additional styles —{" "}
             <code>className</code> and <code>classNames</code>; hover-lift at the subsidiary Badge in Anchor —{" "}
             <code>configureMotion()</code> (<code>badgeAnchorHoverLiftScale</code>).
           </p>

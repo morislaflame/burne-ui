@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Separator } from "@/components/core/Separator";
+import { Text } from "@/components/core/Text";
 import { SeparatorMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/separator/motionController/gallery";
 import { SeparatorSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/separator/slotMotion/gallery";
 
@@ -30,6 +31,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   render: () => <Separator className="w-full" />,
+};
+
+export const CustomClassNames: Story = {
+  name: "Custom className",
+  render: () => (
+    <div className="flex w-full max-w-sm flex-col gap-mid">
+      <Text variant="small">Above</Text>
+      <Separator className="border-t-danger" />
+      <Text variant="small">Below</Text>
+    </div>
+  ),
 };
 
 export const SlotMotionGallery: Story = {

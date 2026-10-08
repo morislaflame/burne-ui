@@ -1,9 +1,9 @@
 import { createContext, useContext, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
-
+ 
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
-
+ 
 import {
   createMotionRegistry,
   type MotionRegisterInput,
@@ -12,6 +12,7 @@ import {
 } from "./createMotionRegistry";
 import { resolveSlotPhase } from "./resolveMotionValue";
 import { killStoredMotion, runMotionPhase } from "./runMotionPhase";
+import { createSlotMounts, settledMountRun } from "./slotMount";
 import { enterHidesFirstPaint } from "./enterHidesFirstPaint";
 import {
   attachMotionController,
@@ -35,10 +36,10 @@ import {
   type MotionSlotMap,
   type MotionValue,
 } from "./slotMotionTypes";
-
+ 
 export type { MotionRegisterInput, MotionRegistration, MotionRegistry } from "./createMotionRegistry";
 export { createMotionRegistry } from "./createMotionRegistry";
-
+ 
 export type PlaySlotPhaseOptions = {
   partValue?: MotionValue;
   partMotion?: MotionPartPhases;
@@ -48,15 +49,17 @@ export type PlaySlotPhaseOptions = {
   fromState?: string;
   toState?: string;
   payload?: unknown;
+  /** Overlay for this run. Host-measured recipe inputs (FLIP, stack peek). */
+  params?: MotionRecipeParams;
 };
-
+ 
 export type PlayBroadcastOptions = {
   waitForComplete?: boolean;
   complete?: () => void;
   exclude?: string[];
   extraPartMotion?: MotionSlotMap;
 };
-
+ 
 export type MotionScopeValue = {
   getRootMotion: () => MotionSlotMap | undefined;
   getEvents: () => MotionEvents | undefined;
@@ -82,10 +85,12 @@ export type MotionScopeValue = {
   ) => MotionValue | undefined;
   play: (slot: string, name: string, options?: PlaySlotPhaseOptions) => MotionRun;
   playBroadcast: (phase: MotionPhaseName, options?: PlayBroadcastOptions) => Promise<void>;
+  /** Re-read `mount` on every live registration. Same value does not rebind. */
+  syncMounts: () => void;
   /** Bound controller for this scope (`createMotionControllerFromScope`). */
   controller: MotionController;
 };
-
+ 
 export type CreateMotionScopeControllerOptions = {
   getRootMotion: () => MotionRootInput | undefined;
   getDefaults: () => MotionSlotMap | undefined;
@@ -93,7 +98,7 @@ export type CreateMotionScopeControllerOptions = {
   getConfig?: () => Readonly<MotionConfig>;
   registry?: MotionRegistry;
 };
-
+ 
 /**
  * Scope methods without React. Provider holds refs and passes getters here.
  */
@@ -108,9 +113,30 @@ export function createMotionScopeController({
   const getSlots = () => splitMotionRootMap(getRootMotion()).slots;
   const getEvents = () => splitMotionRootMap(getRootMotion()).events;
   const getStates = () => splitMotionRootMap(getRootMotion()).states;
+ 
+  const mounts = createSlotMounts({
+    resolve: (slot, partMotion) => resolveSlotPhase(slot, "mount", partMotion, getSlots(), getDefaults()),
+    getParams,
+    getConfig,
+    getTarget: registry.getTarget,
+    getTargets: registry.getTargets,
+  });
 
-  const register = (input: MotionRegisterInput) => registry.register(input);
-
+  const register = (input: MotionRegisterInput) => {
+    const dispose = registry.register(input);
+    if (input.id) {
+      if (!input.node) mounts.release(input.id);
+      else {
+        const reg = registry.find(input.slot, input.node);
+        if (reg) mounts.sync(reg);
+      }
+    }
+    return () => {
+      dispose();
+      if (input.id) mounts.release(input.id);
+    };
+  };
+ 
   const registerTarget = (slot: string, node: HTMLElement | null) => {
     let id = hostIds.get(slot);
     if (!id) {
@@ -119,15 +145,21 @@ export function createMotionScopeController({
     }
     register({ id, slot, node });
   };
-
+ 
   const resolve = (slot: string, phase: MotionPhaseName, partMotion?: MotionPartPhases) =>
     resolveSlotPhase(slot, phase, partMotion, getSlots(), getDefaults());
-
+ 
   const play = (
     slot: string,
     name: string,
     options?: PlaySlotPhaseOptions,
   ): MotionRun => {
+    if (name === "mount") {
+      const el = options?.el ?? registry.getTarget(slot);
+      const reg = registry.find(slot, el);
+      if (reg) mounts.sync(reg);
+      return settledMountRun();
+    }
     const el = options?.el ?? registry.getTarget(slot);
     const reg = registry.find(slot, el);
     const partMotion = options?.partMotion ?? reg?.motion;
@@ -139,6 +171,10 @@ export function createMotionScopeController({
     } else {
       resolvedValue = getEvents()?.[name];
     }
+    const sharedParams = options?.params ? { ...getParams(), ...options.params } : getParams();
+    const hoverInOff =
+      name === "pressIn" &&
+      resolveSlotPhase(slot, "hoverIn", partMotion, getSlots(), getDefaults()) === false;
     return runMotionPhase({
       el,
       phase: name,
@@ -146,7 +182,7 @@ export function createMotionScopeController({
       targets: registry.snapshotTargets(),
       getTarget: registry.getTarget,
       getTargets: registry.getTargets,
-      params: getParams(),
+      params: hoverInOff ? { ...sharedParams, restoreHover: false } : sharedParams,
       complete: options?.complete,
       waitForComplete: options?.waitForComplete,
       slot,
@@ -156,7 +192,7 @@ export function createMotionScopeController({
       payload: options?.payload,
     });
   };
-
+ 
   const playBroadcast = async (phase: MotionPhaseName, options?: PlayBroadcastOptions) => {
     const exclude = new Set(options?.exclude ?? []);
     const extra = options?.extraPartMotion;
@@ -194,7 +230,7 @@ export function createMotionScopeController({
     }
     options?.complete?.();
   };
-
+ 
   const scope: MotionScopeValue = {
     getRootMotion: getSlots,
     getEvents,
@@ -209,15 +245,18 @@ export function createMotionScopeController({
     resolve,
     play,
     playBroadcast,
+    syncMounts: () => {
+      for (const reg of registry.getRegistrations()) mounts.sync(reg);
+    },
     controller: null as unknown as MotionController,
   };
   scope.controller = createMotionControllerFromScope(scope);
   return scope;
 }
-
+ 
 export function createMotionScope(debugName: string) {
   const MotionScopeContext = createContext<MotionScopeValue | null>(null);
-
+ 
   function MotionScopeProvider({
     motion,
     defaults,
@@ -242,14 +281,18 @@ export function createMotionScope(debugName: string) {
     const motionRef = useRef(motion);
     const defaultsRef = useRef(defaults);
     const paramsRef = useRef<MotionRecipeParams>(params ?? {});
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     motionRef.current = motion;
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     defaultsRef.current = defaults;
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     paramsRef.current = params ?? {};
-
+ 
     const config = useMotionConfig();
     const configRef = useRef(config);
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     configRef.current = config;
-
+ 
     const scope = useMemo(
       () =>
         createMotionScopeController({
@@ -260,15 +303,19 @@ export function createMotionScope(debugName: string) {
         }),
       [],
     );
-
+ 
     useLayoutEffect(() => {
       if (!appController) return;
       attachMotionController(appController, scope);
       return () => attachMotionController(appController, null);
     }, [appController, scope]);
-
+ 
     useMotionStatePlayback(scope, motionState, motionPayload, playInitialState);
 
+    useLayoutEffect(() => {
+      scope.syncMounts();
+    }, [defaults, motion, scope]);
+ 
     return (
       <MotionScopeContext.Provider value={scope}>
         <MotionControllerProvider controller={appController ?? scope.controller}>
@@ -277,7 +324,7 @@ export function createMotionScope(debugName: string) {
       </MotionScopeContext.Provider>
     );
   }
-
+ 
   function useMotionScope(): MotionScopeValue {
     const ctx = useContext(MotionScopeContext);
     if (!ctx) {
@@ -285,18 +332,18 @@ export function createMotionScope(debugName: string) {
     }
     return ctx;
   }
-
+ 
   function useOptionalMotionScope(): MotionScopeValue | null {
     return useContext(MotionScopeContext);
   }
-
+ 
   return {
     MotionScopeProvider,
     useMotionScope,
     useOptionalMotionScope,
   };
 }
-
+ 
 export function killMotionScope(scope: Pick<MotionScopeValue, "getRegistrations">): void {
   const seen = new Set<HTMLElement>();
   for (const reg of scope.getRegistrations()) {
@@ -305,7 +352,7 @@ export function killMotionScope(scope: Pick<MotionScopeValue, "getRegistrations"
     killStoredMotion(reg.node);
   }
 }
-
+ 
 /** Hide nested enter slots that start hidden so they do not FOUC. */
 export function hideNestedEnterSlots(
   scope: MotionScopeValue,
@@ -321,3 +368,4 @@ export function hideNestedEnterSlots(
     gsap.set(reg.node, { autoAlpha: 0, force3D: false });
   }
 }
+ 

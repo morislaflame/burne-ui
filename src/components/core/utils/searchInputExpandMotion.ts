@@ -1,6 +1,6 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractiveFor, resolveMotionConfig, type MotionConfig } from "@/components/core/utils/motionConfig";
-
+ 
 export type SearchExpandMetrics = {
   targetW: number;
   collapsedDim: number;
@@ -9,26 +9,26 @@ export type SearchExpandMetrics = {
   iconBox: number;
   iconLeftCollapsedCss: string;
 };
-
+ 
 /** Last committed layout width — React may drop `w-control-*` before the recipe runs. */
 const lastShellWidth = new WeakMap<HTMLElement, number>();
-
+ 
 function shellHorizontalBorderPx(shellEl: HTMLElement): number {
   return shellEl.offsetWidth - shellEl.clientWidth;
 }
-
+ 
 export function iconLeftCollapsedPx(
   metrics: SearchExpandMetrics,
   borderPx: number,
 ): number {
   return (metrics.collapsedDim - borderPx - metrics.iconBox) / 2;
 }
-
+ 
 function recordShellWidth(el: HTMLElement, open: boolean, metrics: SearchExpandMetrics): void {
   const w = el.getBoundingClientRect().width;
   lastShellWidth.set(el, w > 0 ? w : open ? metrics.targetW : metrics.collapsedDim);
 }
-
+ 
 /**
  * Prefer live inline width (mid-tween interrupt). If React already swapped
  * collapsed `w-control-*` for auto, fall back to the last committed box.
@@ -44,7 +44,7 @@ function readFromWidth(el: HTMLElement, open: boolean, metrics: SearchExpandMetr
   if (recorded && recorded > 0) return recorded;
   return rectW > 0 ? rectW : fallback;
 }
-
+ 
 /** Map current width onto the collapsed circle → expanded radius range. */
 export function searchShellRadiusForWidth(width: number, metrics: SearchExpandMetrics): number {
   const span = metrics.targetW - metrics.collapsedDim;
@@ -53,7 +53,7 @@ export function searchShellRadiusForWidth(width: number, metrics: SearchExpandMe
   const collapsedR = metrics.collapsedDim / 2;
   return collapsedR + clamped * (metrics.expandedRadius - collapsedR);
 }
-
+ 
 function applySearchShellLayout(el: HTMLElement, open: boolean, metrics: SearchExpandMetrics): void {
   if (open) {
     el.style.width = `${metrics.targetW}px`;
@@ -62,7 +62,7 @@ function applySearchShellLayout(el: HTMLElement, open: boolean, metrics: SearchE
   }
   el.style.removeProperty("height");
 }
-
+ 
 function clearShellMotion(el: HTMLElement): void {
   gsap.set(el, {
     x: 0,
@@ -73,11 +73,11 @@ function clearShellMotion(el: HTMLElement): void {
     force3D: false,
   });
 }
-
+ 
 function clearIconFlip(iconEl: HTMLElement): void {
   gsap.set(iconEl, { x: 0, scaleX: 1, force3D: false });
 }
-
+ 
 function applyIconLayout(
   iconEl: HTMLElement,
   open: boolean,
@@ -85,7 +85,7 @@ function applyIconLayout(
 ): void {
   iconEl.style.left = open ? `${metrics.padX}px` : metrics.iconLeftCollapsedCss;
 }
-
+ 
 /** Layout snap only. Visual transforms are cleared. */
 export function applySearchExpandInstant(
   el: HTMLElement,
@@ -103,7 +103,7 @@ export function applySearchExpandInstant(
     clearIconFlip(iconEl);
   }
 }
-
+ 
 /**
  * Layout exception: tween shell `width` + `borderRadius` (not `scaleX`).
  * `scaleX` on `rounded-full` turns the pill into an ellipse and stretches the icon.
@@ -120,7 +120,7 @@ export function animateSearchShellExpand(
   const fromRadius = searchShellRadiusForWidth(fromW, metrics);
   const toRadius = open ? metrics.expandedRadius : metrics.collapsedDim / 2;
   const vars = motionInteractiveFor(resolveMotionConfig(config));
-
+ 
   killMotion(el);
   gsap.set(el, {
     x: 0,
@@ -129,7 +129,7 @@ export function animateSearchShellExpand(
     scaleY: 1,
     force3D: false,
   });
-
+ 
   return gsap.fromTo(
     el,
     { width: fromW, borderRadius: fromRadius },
@@ -148,7 +148,7 @@ export function animateSearchShellExpand(
     },
   );
 }
-
+ 
 /**
  * Layout `left` snaps; visual interpolation is `x` only (no `scaleX` —
  * the shell no longer scales, so a counter-scale would stretch the glyph).
@@ -165,11 +165,11 @@ export function animateSearchIconShift(
   const toLeft = open ? metrics.padX : iconLeftCollapsedPx(metrics, borderPx);
   const x0 = fromLeft - toLeft;
   const vars = motionInteractiveFor(resolveMotionConfig(config));
-
+ 
   killMotion(iconEl);
   applyIconLayout(iconEl, open, metrics);
   gsap.set(iconEl, { x: x0, scaleX: 1, force3D: false });
-
+ 
   return gsap.to(iconEl, {
     x: 0,
     duration: vars.duration,
@@ -182,3 +182,4 @@ export function animateSearchIconShift(
     },
   });
 }
+ 

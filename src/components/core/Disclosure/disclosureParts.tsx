@@ -10,12 +10,12 @@ import {
   type ReactElement,
   type Ref,
 } from "react";
-import { IoChevronDown } from "react-icons/io5";
-
+import { KitChevronDown } from "@/components/core/utils/kitIcons";
+ 
 import { Text } from "@/components/core/Text";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { hasPointerPhases, useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
 import { resolveDisclosureTriggerBody } from "./disclosureAPI";
 import { useDisclosureClassNames, useDisclosureContext, useDisclosureMotionScope, useOptionalDisclosureMotionScope } from "./disclosureContext";
@@ -27,6 +27,7 @@ import {
   DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
   TEXT_COLOR_TRANSITION,
   disclosureTriggerClass,
+  disclosureTriggerTitleToneClass,
   disclosureTriggerIconClass,
   disclosureTriggerShell,
 } from "./disclosureStyles";
@@ -35,9 +36,9 @@ import type {
   DisclosureIconProps,
   DisclosureTriggerProps,
 } from "./disclosureTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function DisclosureIcon({
   className,
   children,
@@ -63,9 +64,9 @@ export function DisclosureIcon({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   if (children == null) return null;
-
+ 
   return (
     <span
       ref={setRef}
@@ -82,9 +83,9 @@ export function DisclosureIcon({
     </span>
   );
 }
-
+ 
 DisclosureIcon.displayName = "DisclosureIcon";
-
+ 
 export function DisclosureChevron({ className, children, motion, ...props }: DisclosureChevronProps) {
   const { open, size, chevronRef } = useDisclosureContext();
   const slotClassNames = useDisclosureClassNames();
@@ -107,7 +108,7 @@ export function DisclosureChevron({ className, children, motion, ...props }: Dis
     },
     [bindChevronInit, setChevronPartRef],
   );
-
+ 
   return (
     <span
       ref={setChevronRef}
@@ -122,13 +123,13 @@ export function DisclosureChevron({ className, children, motion, ...props }: Dis
       )}
       {...props}
     >
-      {children ?? <IoChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
+      {children ?? <KitChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
     </span>
   );
 }
-
+ 
 DisclosureChevron.displayName = "DisclosureChevron";
-
+ 
 export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTriggerProps>(
   function DisclosureTrigger(
     {
@@ -160,10 +161,10 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       chevronRef,
       skipContentAnimRef,
     } = useDisclosureContext();
-
+ 
     const triggerShell = disclosureTriggerShell(size);
     const body = resolveDisclosureTriggerBody(children);
-
+ 
     const triggerMotion = useDisclosureTriggerMotion({
       open,
       disabled,
@@ -178,7 +179,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       onPointerLeave,
       onPointerDown,
     });
-
+ 
     const titleScope = useDisclosureMotionScope();
     const titlePointer = hasPointerPhases(titleScope.getRootMotion()?.title);
     const titlePart = useMotionPart<HTMLElement>({
@@ -187,14 +188,14 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       pointerPhases: titlePointer,
       pressPhases: titlePointer,
     });
-
+ 
     const resolvedIcon =
       icon != null ? (
         <DisclosureIcon>{icon}</DisclosureIcon>
       ) : (
         body.icon
       );
-
+ 
     const hideChevron = chevron === null && !body.hasChevronPart;
     const chevronNode = hideChevron ? null : body.hasChevronPart ? (
       body.chevron
@@ -210,17 +211,21 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           slotClassNames.chevron,
         )}
       >
-        {chevron ?? <IoChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
+        {chevron ?? <KitChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
       </span>
     );
-
+ 
     const titleNode = body.title ?? children;
-
+ 
     if (asChild && isValidElement(children)) {
       const child = children as ReactElement<
-        HTMLAttributes<HTMLElement> & { ref?: Ref<HTMLElement>; disabled?: boolean }
+        HTMLAttributes<HTMLElement> & {
+          ref?: Ref<HTMLElement>;
+          disabled?: boolean;
+          "data-state"?: string;
+        }
       >;
-
+ 
       return cloneElement(child, {
         ...rest,
         id: triggerId,
@@ -229,6 +234,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         disabled: disabled || child.props.disabled,
         "aria-expanded": open,
         "aria-controls": panelId,
+        "data-state": open ? "expanded" : "collapsed",
         onClick: (e: React.MouseEvent<HTMLElement>) => {
           child.props.onClick?.(e);
           triggerMotion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
@@ -239,7 +245,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         },
       });
     }
-
+ 
     return (
       <button
         ref={triggerMotion.setRefs}
@@ -261,6 +267,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         onPointerLeave={triggerMotion.handlePointerLeave}
         onPointerDown={triggerMotion.handlePointerDown}
         {...rest}
+        data-state={open ? "expanded" : "collapsed"}
       >
         {resolvedIcon}
         {chevronPosition === "start" && chevronNode}
@@ -278,7 +285,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
             className={cn(
               DISCLOSURE_TRIGGER_TITLE_CLASS,
               triggerShell.titleClassName,
-              open ? "text-primary" : "text-foreground",
+              disclosureTriggerTitleToneClass(open),
               slotClassNames.title,
             )}
             {...titlePart.pointerHandlers}
@@ -291,8 +298,9 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     );
   },
 );
-
+ 
 DisclosureTrigger.displayName = "DisclosureTrigger";
-
+ 
 export { DisclosureHandleInner } from "./disclosureHandleInnerPart";
 export { DisclosureContent } from "./disclosureContentPart";
+ 

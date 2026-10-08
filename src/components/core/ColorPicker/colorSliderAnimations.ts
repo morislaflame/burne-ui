@@ -9,7 +9,7 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   mergeMotionSlotMaps,
@@ -17,16 +17,16 @@ import {
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalColorSliderMotionScope } from "./colorSliderContext";
 import type { ColorSliderMotion, ColorSliderPartMotion } from "./colorSliderTypes";
-
+ 
 export function resolveColorSliderMotionDefaults(): ColorSliderMotion {
   return {};
 }
-
+ 
 export { mergeMotionSlotMaps };
-
+ 
 export function useColorSliderTrackMotion({
   motion,
   forwardedRef,
@@ -65,7 +65,7 @@ export function useColorSliderTrackMotion({
   });
   return part;
 }
-
+ 
 export function useColorSliderRootMotion({
   motion,
   forwardedRef,
@@ -86,3 +86,4 @@ export function useColorSliderRootMotion({
   useOptionalEnterOnMount(scope, "root", part.targetRef);
   return part;
 }
+ 

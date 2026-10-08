@@ -1,40 +1,36 @@
 import type { ButtonHTMLAttributes, KeyboardEvent, MutableRefObject, PointerEvent } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type {
   MotionController,
   MotionMapWithEvents,
   MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
-
-export type CloseButtonVariant =
-  | "default"
-  | "primary"
-  | "outline"
-  | "secondary"
-  | "ghost"
-  | "gloss";
-
+ 
+export const KIT_CLOSE_BUTTON_VARIANTS = ["default", "primary", "outline", "secondary", "ghost"] as const;
+export type KitCloseButtonVariant = (typeof KIT_CLOSE_BUTTON_VARIANTS)[number];
+export type CloseButtonVariant = KitCloseButtonVariant | (string & {});
+ 
 export type CloseButtonSize = ComponentSize;
-
+ 
 export type CloseButtonClassNames = {
   root?: string;
   icon?: string;
   ripple?: string;
 };
-
+ 
 export type CloseButtonPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type CloseButtonMotion = {
   root?: CloseButtonPartMotion;
   icon?: CloseButtonPartMotion;
 };
-
+ 
 export type CloseButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children"
@@ -54,12 +50,12 @@ export type CloseButtonProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type CloseButtonClassNamesProviderProps = {
   classNames?: Prettify<CloseButtonClassNames>;
   children: React.ReactNode;
 };
-
+ 
 export type UseCloseButtonRootStateProps = Omit<
   CloseButtonProps,
   | "onPointerDown"
@@ -72,7 +68,7 @@ export type UseCloseButtonRootStateProps = Omit<
   | "motion"
   | "motionController"
 >;
-
+ 
 export type UseCloseButtonAnimationsProps = {
   variant: CloseButtonVariant;
   disabled: boolean;
@@ -87,3 +83,4 @@ export type UseCloseButtonAnimationsProps = {
   onPointerOut?: (e: PointerEvent<HTMLButtonElement>) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
 };
+ 

@@ -1,5 +1,6 @@
-import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastProviderRoot, ToastRoot, ToastTitle } from "./Toast";
-
+import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastRoot, ToastTitle } from "./Toast";
+import { ToastProviderRoot } from "./toastProvider";
+ 
 export const Toast = Object.assign(ToastRoot, {
   Provider: ToastProviderRoot,
   Message: ToastMessage,
@@ -10,10 +11,10 @@ export const Toast = Object.assign(ToastRoot, {
   Action: ToastAction,
   Close: ToastClose,
 });
-
+ 
 export { ToastContext, useToastContext, useToastClassNames } from "./toastContext";
 export { useToast } from "./useToast";
-
+ 
 export type {
   ToastClassNames,
   ToastStatus,
@@ -36,3 +37,4 @@ export type {
   ToastLifecycleMotion,
   ToastPartMotion,
 } from "./toastTypes";
+ 

@@ -1,18 +1,21 @@
 import { Fragment, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactNode } from "react";
-
+ 
 import { buildButtonGroupSegment, resolveButtonGroupSegmentPosition } from "@/components/composite/ButtonGroup/buttonGroupAPI";
 import { ButtonGroupSegmentProvider } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";
+import { KIT_TOGGLE_BUTTON_VARIANTS } from "@/components/core/ToggleButton/toggleButtonTypes";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 import { isToggleButtonChild } from "./toggleButtonGroupAPI";
 import { resolveToggleButtonGroupMotionDefaults, useToggleButtonGroupRootMotion } from "./toggleButtonGroupAnimations";
 import { ToggleButtonGroupClassNamesProvider, ToggleButtonGroupMotionProvider } from "./toggleButtonGroupContext";
 import { ToggleButtonGroupSeparator } from "./toggleButtonGroupParts";
 import type { ToggleButtonGroupProps } from "./toggleButtonGroupTypes";
 import { useToggleButtonGroupRootState } from "./useToggleButtonGroupRootState";
-
+ 
 export type {
   ToggleButtonGroupProps,
   ToggleButtonGroupType,
@@ -22,19 +25,19 @@ export type {
   ToggleButtonGroupMotion,
   ToggleButtonGroupPartMotion,
 } from "./toggleButtonGroupTypes";
-
+ 
 export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGroupProps>(
   function ToggleButtonGroupRoot(props, ref) {
     const {
-      children,
+      children: _children,
       className = "",
       classNames,
       orientation = "horizontal",
       segmented = false,
       disabled = false,
       size = "base",
-      variant = "default",
-      type = "multiple",
+      variant: _variant,
+      type: _type = "multiple",
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,
@@ -50,13 +53,13 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
       onPointerUp,
       ...rest
     } = props;
-
+ 
     const { flat, segmentCount, contextValue, handleKeyDown, selectionIdentity } =
       useToggleButtonGroupRootState(props);
     const motionDefaults = useMemo(() => resolveToggleButtonGroupMotionDefaults(), []);
-
+ 
     let segmentIndex = -1;
-
+ 
     return (
       <ToggleButtonGroupProvider value={contextValue}>
         <ToggleButtonGroupClassNamesProvider classNames={classNames}>
@@ -72,7 +75,8 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
               forwardedRef={ref}
               orientation={orientation}
               segmented={segmented}
-              variant={variant}
+              variant={contextValue.variant}
+              size={size}
               disabled={disabled}
               className={cn(classNames?.root, className)}
               handleKeyDown={handleKeyDown}
@@ -87,21 +91,23 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
                 if (!isToggleButtonChild(child)) {
                   return <Fragment key={child.key ?? `tbg-wrap-${i}`}>{child}</Fragment>;
                 }
-
+ 
                 if (segmented) {
                   return <Fragment key={child.key ?? `tbg-item-${i}`}>{child}</Fragment>;
                 }
-
+ 
                 segmentIndex += 1;
                 const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
                 const segment = buildButtonGroupSegment(orientation, position);
-
+ 
                 return (
                   <Fragment key={child.key ?? `tbg-seg-${i}`}>
                     <ButtonGroupSegmentProvider segment={segment} buttonSize={size}>
                       {child}
                     </ButtonGroupSegmentProvider>
-                    {variant !== "gloss" && position !== "last" && position !== "only" ? (
+                    {isKitVariant(contextValue.variant, KIT_TOGGLE_BUTTON_VARIANTS) &&
+                    position !== "last" &&
+                    position !== "only" ? (
                       <ToggleButtonGroupSeparator orientation={orientation} />
                     ) : null}
                   </Fragment>
@@ -114,12 +120,13 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
     );
   },
 );
-
+ 
 function ToggleButtonGroupRootSurface({
   forwardedRef,
   orientation,
   segmented,
   variant,
+  size,
   disabled,
   className,
   handleKeyDown,
@@ -135,6 +142,7 @@ function ToggleButtonGroupRootSurface({
   orientation: NonNullable<ToggleButtonGroupProps["orientation"]>;
   segmented: boolean;
   variant: NonNullable<ToggleButtonGroupProps["variant"]>;
+  size: NonNullable<ToggleButtonGroupProps["size"]>;
   disabled: boolean;
   className: string;
   handleKeyDown: ToggleButtonGroupProps["onKeyDown"];
@@ -164,7 +172,7 @@ function ToggleButtonGroupRootSurface({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -176,14 +184,18 @@ function ToggleButtonGroupRootSurface({
         segmented,
         variant,
         className,
+        kitVariants: KIT_TOGGLE_BUTTON_VARIANTS,
+        skinSlot: "toggleButtonGroup.root",
       })}
       onKeyDown={handleKeyDown}
       {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ size, variant })}
     >
       {children}
     </div>
   );
 }
-
+ 
 ToggleButtonGroupRoot.displayName = "ToggleButtonGroup";
+ 

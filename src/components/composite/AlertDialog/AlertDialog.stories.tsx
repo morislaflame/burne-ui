@@ -4,7 +4,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
-import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 import { AlertDialog, primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone, type AlertDialogSize } from "./index";
 import { useAlertDialog } from "./useAlertDialog";
 import type { AlertStatus } from "@/components/core/Alert";
@@ -30,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Confirmation modal (`alertdialog`): same semantic statuses and icons as `Alert`; sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `AlertDialog.Footer`, direct `Button` children without `size` inherit the modal button size (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Escape closes (Cancel); backdrop does not. Use `closeOnEscape={false}` to block Escape.",
+          "Confirmation modal (`alertdialog`): same semantic statuses and icons as `Alert`; sizes `small`–`large`.  In `AlertDialog.Footer`, direct `Button` children without `size` inherit the modal button size (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Escape closes (Cancel); backdrop does not. Use `closeOnEscape={false}` to block Escape.",
       },
     },
   },
@@ -42,7 +41,7 @@ const meta = {
     },
     variant: {
       control: "select",
-      options: ["default", "outline", "secondary", "gloss"],
+      options: ["default", "outline", "secondary"],
     },
     status: {
       control: "select",
@@ -64,7 +63,7 @@ function ConfirmTemplate({
   status?: AlertStatus;
   size?: AlertDialogSize;
   label?: string;
-  variant?: "default" | "outline" | "secondary" | "gloss";
+  variant?: "default" | "outline" | "secondary" ;
 }) {
   const [open, setOpen] = useState(false);
   const status = statusProp ?? "default";
@@ -105,8 +104,7 @@ export const ConfirmDelete: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Delete (danger)" }));
     await expect(
-      await screen.findByRole("alertdialog", { name: "Confirmation" }),
-    ).toBeVisible();
+      await screen.findByRole("alertdialog", { name: "Confirmation" })).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Continue" }));
     await waitFor(() => {
       expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
@@ -213,31 +211,6 @@ export const Sizes: Story = {
   },
 };
 
-function GlossDemo() {
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-mid">
-      <ConfirmTemplate variant="gloss" status="danger" label="Gloss danger" />
-      <ConfirmTemplate variant="gloss" status="success" label="Gloss success" />
-      <ConfirmTemplate variant="gloss" status="info" label="Gloss info" />
-      <ConfirmTemplate variant="gloss" status="warning" label="Gloss warning" />
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
-};
-
 // ─── portalContainer (3.1) ────────────────────────────────────────────────────
 
 export const PortalContainer: Story = {
@@ -264,7 +237,7 @@ export const PortalContainer: Story = {
         </Button>
         <div
           ref={setContainer}
-          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative h-72 overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="text-xs text-muted">Custom portal host</p>
           {container ? (

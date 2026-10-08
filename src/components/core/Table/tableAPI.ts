@@ -1,13 +1,13 @@
 import type { Selection, SelectionMode, SortDescriptor } from "./tableTypes";
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
-
+ 
 export const EMPTY_TABLE_SELECTION = new Set<string | number>();
-
+ 
 export const TONED_ROW_DEFAULT_TONE = "secondary" as const;
-
+ 
 export const TABLE_LABEL_DISPLAY_NAME = "Table.Label";
 export const TABLE_EMPTY_DISPLAY_NAME = "Table.Empty";
-
+ 
 export function hasTableLabel(children: ReactNode): boolean {
   return Children.toArray(children).some(
     (child) =>
@@ -15,19 +15,19 @@ export function hasTableLabel(children: ReactNode): boolean {
       (child.type as { displayName?: string }).displayName === TABLE_LABEL_DISPLAY_NAME,
   );
 }
-
+ 
 export function isTableEmptyElement(node: ReactNode): node is ReactElement {
   return (
     isValidElement(node) &&
     (node.type as { displayName?: string }).displayName === TABLE_EMPTY_DISPLAY_NAME
   );
 }
-
+ 
 export function isRowInSelection(selectedKeys: Selection, key: string | number): boolean {
   if (selectedKeys === "all") return true;
   return selectedKeys.has(key);
 }
-
+ 
 export function selectionEquals(a: Selection, b: Selection): boolean {
   if (Object.is(a, b)) return true;
   if (a === "all" || b === "all") return a === b;
@@ -37,7 +37,7 @@ export function selectionEquals(a: Selection, b: Selection): boolean {
   }
   return true;
 }
-
+ 
 export function toggleSelectionKey({
   selectionMode,
   selectedKeys,
@@ -55,7 +55,7 @@ export function toggleSelectionKey({
   else next.add(key);
   return next;
 }
-
+ 
 export function resolveColumnSortDirection(
   columnId: string | undefined,
   sortDescriptor: SortDescriptor | undefined,
@@ -63,7 +63,7 @@ export function resolveColumnSortDirection(
   if (!columnId || sortDescriptor?.column !== columnId) return undefined;
   return sortDescriptor.direction;
 }
-
+ 
 export function resolveNextSortDescriptor(
   columnId: string,
   sortDescriptor: SortDescriptor | undefined,
@@ -76,21 +76,45 @@ export function resolveNextSortDescriptor(
         : "ascending",
   };
 }
-
+ 
 export const TABLE_ROW_KEY_ATTR = "data-table-row-key";
-
+export const TABLE_VIRTUAL_INDEX_ATTR = "data-virtual-index";
+ 
 export function tableSelectableRows(table: HTMLElement): HTMLElement[] {
   return Array.from(
     table.querySelectorAll<HTMLElement>(`tbody tr[${TABLE_ROW_KEY_ATTR}]`),
   );
 }
-
+ 
 export function tableSortButtons(from: HTMLElement): HTMLButtonElement[] {
   const root = from.closest("table") ?? from.closest("[role='grid']");
   if (!root) return [];
   return Array.from(
     root.querySelectorAll<HTMLButtonElement>("thead button[type='button']"),
   );
+}
+ 
+export function moveVirtualTableRow(
+  key: string,
+  move: { index: number; count: number; step: (from: number, delta: number) => void; jump: (index: number) => void },
+): boolean {
+  if (key === "ArrowDown") {
+    move.step(move.index, 1);
+    return true;
+  }
+  if (key === "ArrowUp") {
+    move.step(move.index, -1);
+    return true;
+  }
+  if (key === "Home") {
+    move.jump(0);
+    return true;
+  }
+  if (key === "End") {
+    move.jump(Math.max(0, move.count - 1));
+    return true;
+  }
+  return false;
 }
 
 export function tableBumpRow(
@@ -105,7 +129,7 @@ export function tableBumpRow(
   if (next < 0 || next >= rows.length) return rows[idx] ?? null;
   return rows[next] ?? null;
 }
-
+ 
 export function tableBumpSortButton(
   buttons: HTMLButtonElement[],
   current: HTMLButtonElement,
@@ -118,3 +142,4 @@ export function tableBumpSortButton(
   if (next < 0 || next >= buttons.length) return buttons[idx] ?? null;
   return buttons[next] ?? null;
 }
+ 

@@ -210,7 +210,7 @@ export const CustomClassNames: Story = {
   },
   render: () => (
     <Breadcrumbs
-      className="rounded-mid border border-token p-small"
+      className="rounded-large border border-token p-small"
       classNames={{
         list: "gap-small",
         item: "gap-small",

@@ -6,8 +6,6 @@ import { TabsDefaultDemo } from "../demos/tabs/TabsDefault.demo";
 import tabsDefaultSource from "../demos/tabs/TabsDefault.demo.tsx?raw";
 import { TabsSizesDemo } from "../demos/tabs/TabsSizes.demo";
 import tabsSizesSource from "../demos/tabs/TabsSizes.demo.tsx?raw";
-import { TabsGlossDemo } from "../demos/tabs/TabsGloss.demo";
-import tabsGlossSource from "../demos/tabs/TabsGloss.demo.tsx?raw";
 import { TabsOutlineDemo } from "../demos/tabs/TabsOutline.demo";
 import tabsOutlineSource from "../demos/tabs/TabsOutline.demo.tsx?raw";
 import { TabsSecondaryDemo } from "../demos/tabs/TabsSecondary.demo";
@@ -46,12 +44,7 @@ export function TabsShowcase() {
       <ShowcaseSection title="Secondary" description="variant secondary — container surface-secondary.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsSecondaryDemo} source={tabsSecondarySource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass tab list with indicator.">
-        <ShowcaseDemoFromFile align="stretch" Demo={TabsGlossDemo} source={tabsGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="Full customization classNames"
         description="Slots root, list, indicator, tab, tabText, panel through classNames on the root."
       >
@@ -90,11 +83,11 @@ export function TabsShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Options">
           <p>
-            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — are set by prop{" "}
+            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>default</code> — are set by prop{" "}
             <code>variant</code> on the root Tabs.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

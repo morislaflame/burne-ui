@@ -46,7 +46,11 @@ Compound API нет.
 | `default` | `bg-surface` |
 | `secondary` | `bg-secondary` |
 | `tertiary` | `bg-tertiary` |
-| `gloss` | `gloss-panel` + inner `gloss-content` |
+| `gloss` | `gloss-panel gloss-wrap` + `gloss-shadow` + inner `gloss-content` |
+
+Слой скина для `surface.root` монтирует `SkinShell` на корне (`wrapper` / `before` / `content`). `variant="default"` слои не рисует.
+
+`tertiary` — **доменное исключение** `variant`: третий уровень поверхности (`bg-tertiary`), не канонический fill `default | outline | secondary | gloss`.
 
 Без border по умолчанию (в отличие от `Card`).
 
@@ -60,7 +64,7 @@ Compound API нет.
 
 ### Radius
 
-`rounded-base`, `rounded-mid`, `rounded-large`.
+`rounded-base`, `rounded-large`, `rounded-large`.
 
 ### Сравнение с `Card`
 
@@ -69,7 +73,7 @@ Compound API нет.
 | Border | нет по умолчанию | `border-token` |
 | Header/Body/Footer | нет | compound слоты |
 | Shadow hover | нет | pressable lift |
-| `classNames` | да (`root`, `glossContent`) | да |
+| `classNames` | да (`root`) | да |
 | Pressable | нет | `pressable` prop |
 
 ## Анимации
@@ -86,7 +90,7 @@ Spotlight через CSS-переменные `--spot-x` / `--spot-y` (`quickTo`
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`panel:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`panel:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 ```tsx
 import { Surface, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -113,7 +117,7 @@ function Ping() {
 **DOM (default):**
 
 ```
-<div class="bg-surface shadow-token-md p-mid rounded-mid">
+<div class="bg-surface shadow-token-md p-mid rounded-large">
   children
 </div>
 ```
@@ -121,7 +125,8 @@ function Ping() {
 **DOM (gloss):**
 
 ```
-<div class="gloss-panel" ref=glossRef>
+<div class="gloss-panel gloss-wrap" ref=glossRef>
+  <div class="gloss-shadow" aria-hidden="true"></div>
   <div class="gloss-content">
     children
   </div>
@@ -167,11 +172,11 @@ function Ping() {
 | `variant="default"` | `bg-surface` |
 | `variant="secondary"` | `bg-secondary` |
 | `variant="tertiary"` | `bg-tertiary` |
-| `variant="gloss"` | `gloss-panel` + inner `gloss-content` |
+| `variant="gloss"` | `gloss-panel gloss-wrap` + `gloss-shadow` + inner `gloss-content` |
 | `shadow="small"` | `shadow-token-small` |
 | `padding="mid"` | `p-mid` |
 | `padding="large"` | `p-large` |
-| `radius="mid"` | `rounded-mid` |
+| `radius="mid"` | `rounded-large` |
 | `hoverVariant()` | Для интерактивных children (не на Surface root) |
 
 ## Стилизация и кастомизация
@@ -182,7 +187,7 @@ function Ping() {
 
 ### `SurfaceClassNames`
 
-`root`, `glossContent`.
+`root`.
 
 `className` мержится в `root`. При `variant="gloss"` внутренний wrapper — слот `glossContent`.
 

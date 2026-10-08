@@ -7,28 +7,28 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-
+ 
 import { resolveLinkMotionDefaults, useLinkAnimations } from "./linkAnimations";
 import { LinkClassNamesProvider, LinkMotionProvider, useLinkClassNames } from "./linkContext";
 import { LinkAnchorBody, LinkBodyContent, LinkIcon } from "./linkParts";
 import { linkAnchorClass } from "./linkStyles";
 import type { LinkProps } from "./linkTypes";
 import { useLinkRootState } from "./useLinkRootState";
-
+ 
 export type {
   LinkProps,
   LinkSize,
-  LinkIconPos,
   LinkIconProps,
   LinkClassNames,
   LinkMotion,
   LinkPartMotion,
 } from "./linkTypes";
-
+ 
 export { LinkIcon };
-
+ 
 export const LinkRoot = forwardRef<
   HTMLAnchorElement,
   Omit<LinkProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">
@@ -63,7 +63,7 @@ export const LinkRoot = forwardRef<
     const contentChildren = asChildElement
       ? asChildElement.props.children
       : children;
-
+ 
     const state = useLinkRootState({
       size: sizeProp,
       underline: underlineProp,
@@ -73,7 +73,7 @@ export const LinkRoot = forwardRef<
       defaultIconPosition,
       children: contentChildren,
     });
-
+ 
     const animations = useLinkAnimations({
       forwardedRef,
       onPointerEnter,
@@ -84,7 +84,7 @@ export const LinkRoot = forwardRef<
       onPointerUp,
       onKeyDown,
     });
-
+ 
     const slotClassNames = useLinkClassNames();
     const bodyProps = {
       size: state.size,
@@ -98,7 +98,7 @@ export const LinkRoot = forwardRef<
       usesDefaultAtStart: state.usesDefaultAtStart,
       usesDefaultAtEnd: state.usesDefaultAtEnd,
     };
-
+ 
     if (asChildElement) {
       return cloneElement(
         asChildElement,
@@ -119,12 +119,13 @@ export const LinkRoot = forwardRef<
             onPointerUp: animations.pointerHandlers.onPointerUp,
             onKeyDown: animations.handleKeyDown,
             children: <LinkBodyContent {...bodyProps} />,
+            ...dataVariantProps({ size: state.size }),
           },
           animations.setAnchorRef,
         ),
       );
     }
-
+ 
     return (
       <LinkAnchorBody
         href={href!}
@@ -140,15 +141,15 @@ export const LinkRoot = forwardRef<
     );
   },
 );
-
+ 
 LinkRoot.displayName = "Link";
-
+ 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   { classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveLinkMotionDefaults(), []);
-
+ 
   return (
     <LinkClassNamesProvider classNames={classNames}>
       <LinkMotionProvider
@@ -164,5 +165,6 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     </LinkClassNamesProvider>
   );
 });
-
+ 
 Link.displayName = "Link";
+ 

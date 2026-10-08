@@ -1,9 +1,10 @@
 import { focusElement } from "@/components/core/utils/focusElement";
-
+import { DEFAULT_BURNE_LABELS, formatBurneLabel, type BurneLabels } from "@/theme/burneLabels";
+ 
 export function formFieldAriaInvalid(error?: string): boolean | undefined {
   return error ? true : undefined;
 }
-
+ 
 export function formRootDescribedBy({
   descriptionId,
   errorSummaryId,
@@ -16,21 +17,26 @@ export function formRootDescribedBy({
   const ids = [descriptionId, hasErrors ? errorSummaryId : undefined].filter(Boolean);
   return ids.length > 0 ? ids.join(" ") : undefined;
 }
-
+ 
 export function formRootLabelledBy(titleId?: string): string | undefined {
   return titleId;
 }
-
-export function buildFormErrorSummaryMessage(errorCount: number): string {
+ 
+export function buildFormErrorSummaryMessage(
+  errorCount: number,
+  labels: Pick<BurneLabels, "formErrorOne" | "formErrorMany"> = DEFAULT_BURNE_LABELS,
+): string {
   if (errorCount <= 0) return "";
-  if (errorCount === 1) return "Fix the error in the form";
-  return `Fix ${errorCount} errors in the form`;
+  if (errorCount === 1) return labels.formErrorOne;
+  return formatBurneLabel(labels.formErrorMany, { count: errorCount });
 }
 
-export function buildFormSuccessAnnounceMessage(): string {
-  return "Form submitted successfully";
+export function buildFormSuccessAnnounceMessage(
+  labels: Pick<BurneLabels, "formSubmitted"> = DEFAULT_BURNE_LABELS,
+): string {
+  return labels.formSubmitted;
 }
-
+ 
 export function focusFirstFormInvalidField(
   refs: Map<string, HTMLElement>,
   errors: Record<string, string>,
@@ -40,3 +46,4 @@ export function focusFirstFormInvalidField(
   const node = refs.get(firstName);
   focusElement(node);
 }
+ 

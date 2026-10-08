@@ -79,7 +79,7 @@ export function SurfaceMotionSpotlightDemo() {
       <div
         ref={spotRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-mid"
+        className="pointer-events-none absolute inset-0 rounded-large"
         style={{ backgroundImage: SPOTLIGHT }}
       />
       <div className="relative flex flex-col gap-xsmall">

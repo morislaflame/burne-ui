@@ -1,9 +1,9 @@
 import { forwardRef, useEffect, useMemo, type ForwardedRef, type Ref } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
 import { useOptionalFormBindingContext } from "./formContext";
-
+ 
 import { formErrorEntries } from "./formAPI";
 import { useFormSlotMotion } from "./formAnimations";
 import {
@@ -34,7 +34,7 @@ import type {
   FormSectionProps,
   FormTitleProps,
 } from "./formTypes";
-
+ 
 export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
   function FormSection({ className = "", classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parentScope = useOptionalFormMotionScope();
@@ -43,7 +43,7 @@ export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
       motion ? { section: motion } : undefined,
     );
     const motionDefaults = useMemo(() => ({}), []);
-
+ 
     return (
       <FormMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -60,7 +60,7 @@ export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
     );
   },
 );
-
+ 
 function FormSectionSurface({
   forwardedRef,
   className,
@@ -103,9 +103,9 @@ function FormSectionSurface({
     />
   );
 }
-
+ 
 FormSection.displayName = "Form.Section";
-
+ 
 export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
   function FormHeader(
     {
@@ -143,9 +143,9 @@ export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
     );
   },
 );
-
+ 
 FormHeader.displayName = "Form.Header";
-
+ 
 export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
   function FormTitle(
     {
@@ -184,9 +184,9 @@ export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
     );
   },
 );
-
+ 
 FormTitle.displayName = "Form.Title";
-
+ 
 export const FormDescription = forwardRef<HTMLParagraphElement, FormDescriptionProps>(
   function FormDescription(
     {
@@ -223,9 +223,9 @@ export const FormDescription = forwardRef<HTMLParagraphElement, FormDescriptionP
     );
   },
 );
-
+ 
 FormDescription.displayName = "Form.Description";
-
+ 
 export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
   function FormActions(
     {
@@ -259,9 +259,9 @@ export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
     );
   },
 );
-
+ 
 FormActions.displayName = "Form.Actions";
-
+ 
 export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps>(
   function FormErrorSummary(
     {
@@ -290,31 +290,43 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
       onPointerDown,
       onPointerUp,
     });
-
-    if (entries.length === 0) return null;
-
+ 
+    if (entries.length === 0 && children == null) {
+      return (
+        <div
+          ref={part.setRef}
+          id={id ?? shellIds?.errorSummaryId}
+          tabIndex={-1}
+          className={formErrorSummaryClass(className, rootClassNames)}
+          {...rest}
+          aria-live="polite"
+        />
+      );
+    }
+ 
     const content =
       typeof children === "function"
         ? children(entries)
         : (children ?? entries.map(([, message]) => message).join(". "));
-
+ 
     return (
       <div
         ref={part.setRef}
         id={id ?? shellIds?.errorSummaryId}
-        role="alert"
+        tabIndex={-1}
         className={formErrorSummaryClass(className, rootClassNames)}
         {...rest}
         {...part.pointerHandlers}
+        aria-live="polite"
       >
         {content}
       </div>
     );
   },
 );
-
+ 
 FormErrorSummary.displayName = "Form.ErrorSummary";
-
+ 
 export const FormAnnounce = forwardRef<HTMLDivElement, FormAnnounceProps>(
   function FormAnnounce(
     {
@@ -341,7 +353,7 @@ export const FormAnnounce = forwardRef<HTMLDivElement, FormAnnounceProps>(
       onPointerUp,
     });
     if (!message) return null;
-
+ 
     return (
       <div
         ref={part.setRef}
@@ -358,9 +370,9 @@ export const FormAnnounce = forwardRef<HTMLDivElement, FormAnnounceProps>(
     );
   },
 );
-
+ 
 FormAnnounce.displayName = "Form.Announce";
-
+ 
 export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
   function FormField({ name, rules, className = "", classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parentScope = useOptionalFormMotionScope();
@@ -369,7 +381,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
       motion ? { field: motion } : undefined,
     );
     const motionDefaults = useMemo(() => ({}), []);
-
+ 
     return (
       <FormMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -390,7 +402,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
     );
   },
 );
-
+ 
 function FormFieldSurface({
   name,
   rules,
@@ -422,13 +434,13 @@ function FormFieldSurface({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   useEffect(() => {
     if (!form || !rules) return;
     form.registerFieldRules(name, rules);
     return () => form.unregisterFieldRules(name);
   }, [form, name, rules]);
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -440,5 +452,6 @@ function FormFieldSurface({
     </div>
   );
 }
-
+ 
 FormField.displayName = "Form.Field";
+ 

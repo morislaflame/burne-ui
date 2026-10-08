@@ -1,26 +1,26 @@
 import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
-
+ 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-
+ 
 const OPEN_RATIO = 0.38;
 const OPEN_VELOCITY = 0.45;
 const CLOSE_VELOCITY = -0.45;
-
+ 
 import { measureCollapsibleContentHeight } from "@/components/core/utils/useCollapsibleHeight";
-
+ 
 function readShellHeight(shell: HTMLElement): number {
   return shell.getBoundingClientRect().height;
 }
-
+ 
 function syncChevron(chevron: HTMLElement | null, height: number, maxHeight: number) {
   if (!chevron || maxHeight <= 0) return;
   const progress = Math.min(Math.max(height / maxHeight, 0), 1);
   gsap.set(chevron, { rotation: progress * 180 });
 }
-
+ 
 export function useDisclosureContentDrag(
   shellRef: RefObject<HTMLElement | null>,
   innerRef: RefObject<HTMLElement | null>,
@@ -38,25 +38,25 @@ export function useDisclosureContentDrag(
       const inner = innerRef.current;
       if (!shell || !inner) return;
       if (prefersReducedMotion()) return;
-
+ 
       e.preventDefault();
-
+ 
       const maxHeight = measureCollapsibleContentHeight(inner);
       if (maxHeight <= 0) return;
-
+ 
       const handle = e.currentTarget;
       handle.setPointerCapture(e.pointerId);
-
+ 
       const startClientY = e.clientY;
       const startHeight = readShellHeight(shell);
       let lastClientY = startClientY;
       let lastTime = performance.now();
       let velocity = 0;
-
+ 
       killMotion(shell, chevronRef.current);
       shell.style.overflow = "hidden";
       shell.style.willChange = "height";
-
+ 
       const onMove = (ev: globalThis.PointerEvent) => {
         if (ev.pointerId !== e.pointerId) return;
         const clientY = ev.clientY;
@@ -66,32 +66,32 @@ export function useDisclosureContentDrag(
         if (dt > 0) velocity = (clientY - lastClientY) / dt;
         lastClientY = clientY;
         lastTime = now;
-
+ 
         const nextHeight = Math.max(0, Math.min(maxHeight, startHeight + delta));
         shell.style.height = `${nextHeight}px`;
         syncChevron(chevronRef.current, nextHeight, maxHeight);
       };
-
+ 
       const onUp = (ev: globalThis.PointerEvent) => {
         if (ev.pointerId !== e.pointerId) return;
         handle.releasePointerCapture(ev.pointerId);
         handle.removeEventListener("pointermove", onMove);
         handle.removeEventListener("pointerup", onUp);
         handle.removeEventListener("pointercancel", onUp);
-
+ 
         const clientY = ev.clientY;
         const delta = clientY - startClientY;
         const currentHeight = Math.max(0, Math.min(maxHeight, startHeight + delta));
         const ratio = currentHeight / maxHeight;
         const vars = { ...motionInteractiveFor(config), overwrite: "auto" as const };
-
+ 
         const shouldOpen =
           ratio >= OPEN_RATIO || velocity > OPEN_VELOCITY;
         const shouldClose =
           ratio <= 1 - OPEN_RATIO || velocity < CLOSE_VELOCITY;
-
+ 
         killMotion(shell, chevronRef.current);
-
+ 
         if (!open && shouldOpen) {
           const tl = gsap.timeline({
             onComplete: () => {
@@ -108,7 +108,7 @@ export function useDisclosureContentDrag(
           }
           return;
         }
-
+ 
         if (open && shouldClose) {
           const tl = gsap.timeline({
             onComplete: () => {
@@ -125,7 +125,7 @@ export function useDisclosureContentDrag(
           }
           return;
         }
-
+ 
         const snapOpen = ratio >= 0.5;
         const targetHeight = snapOpen ? maxHeight : 0;
         const tl = gsap.timeline({
@@ -147,13 +147,14 @@ export function useDisclosureContentDrag(
           tl.to(chevronRef.current, { rotation: snapOpen ? 180 : 0, ...vars }, 0);
         }
       };
-
+ 
       handle.addEventListener("pointermove", onMove);
       handle.addEventListener("pointerup", onUp);
       handle.addEventListener("pointercancel", onUp);
     },
     [chevronRef, config, disabled, innerRef, open, setOpen, shellRef, skipContentAnimRef],
   );
-
+ 
   return { onPointerDown };
 }
+ 

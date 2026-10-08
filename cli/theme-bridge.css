@@ -87,16 +87,23 @@
   --spacing-xlarge: var(--space-xlarge);
   --spacing-2xlarge: var(--space-2xlarge);
   --spacing-3xlarge: var(--space-3xlarge);
+  --spacing-4xlarge: var(--space-4xlarge);
+  --spacing-5xlarge: var(--space-5xlarge);
 
+  --radius-none: var(--radius-none);
   --radius-xsmall: var(--radius-xsmall);
   --radius-small: var(--radius-small);
   --radius-base: var(--radius-base);
-  --radius-mid: var(--radius-mid);
   --radius-large: var(--radius-large);
+  --radius-2xlarge: var(--radius-2xlarge);
+  --radius-3xlarge: var(--radius-3xlarge);
+  --radius-full: var(--radius-full);
+  --radius-nested: var(--radius-nested);
 
   --shadow-token-base: var(--shadow-base);
   --shadow-token-mid: var(--shadow-mid);
   --shadow-token-large: var(--shadow-large);
+  --shadow-token-xlarge: var(--shadow-xlarge);
 
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);

@@ -8,7 +8,6 @@ import { ListBox } from "@/components/core/ListBox";
 import { Button } from "@/components/core/Button";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
-import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import type { SelectOption } from "./selectTypes";
 import { Select } from ".";
@@ -65,7 +64,7 @@ const meta = {
   decorators: [...darkThemeDecorator],
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
-    variant: { control: "select", options: ["default", "outline", "secondary", "gloss"] },
+    variant: { control: "select", options: ["default", "outline", "secondary"] },
     status: {
       control: "select",
       options: ["default", "danger", "success", "warning"],
@@ -160,6 +159,41 @@ export const Controlled: Story = {
   },
 };
 
+export const Multiple: Story = {
+  name: "Multiple",
+  render: function MultipleStory() {
+    const [values, setValues] = useState<string[]>(["react", "vue"]);
+    const options: SelectOption[] = [
+      { value: "react", label: "React" },
+      { value: "svelte", label: "Svelte" },
+      { value: "vue", label: "Vue" },
+    ];
+    return (
+      <Select
+        multiple
+        label="Frameworks"
+        options={options}
+        values={values}
+        onValuesChange={setValues}
+        hint={values.length > 0 ? `Selected: ${values.join(", ")}` : "None selected"}
+      />
+    );
+  },
+};
+
+export const Virtualized: Story = {
+  name: "Virtualized",
+  args: {
+    virtualized: true,
+    label: "Item",
+    defaultValue: "1",
+    options: Array.from({ length: 200 }, (_, index) => ({
+      value: String(index + 1),
+      label: `Item ${index + 1}`,
+    })),
+  },
+};
+
 export const ControlledOpen: Story = {
   name: "Controlled open",
   parameters: {
@@ -234,47 +268,6 @@ export const Sizes: Story = {
   ),
 };
 
-function SelectGlossDemo() {
-  return (
-    <div className="flex w-full flex-col gap-mid">
-      <Select
-        variant="gloss"
-        label="Interface language"
-        hint='variant="gloss" — glass field shell.'
-        placeholder="Select language"
-        options={sampleOptions}
-        defaultValue="ru"
-      />
-      <Select variant="gloss" size="small" label="Small" options={sampleOptions} defaultValue="en" />
-      <Select variant="gloss" size="mid" label="Mid" options={sampleOptions} defaultValue="de" />
-      <Select options={sampleOptions} defaultValue="ru" variant="gloss">
-        <Select.Label>Compound gloss</Select.Label>
-        <Select.TriggerGroup>
-          <Select.Value placeholder="Select language" />
-          <Select.Trigger />
-        </Select.TriggerGroup>
-        <Select.Popover />
-        <Select.Hint>Popover is also in gloss variant.</Select.Hint>
-      </Select>
-      <Select variant="gloss" disabled label="Disabled" options={sampleOptions} defaultValue="en" />
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <SelectGlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <SelectGlossDemo />,
-};
-
 export const Keyboard: Story = {
   name: "Keyboard",
   render: () => (
@@ -303,6 +296,7 @@ export const CustomClassNames: Story = {
       defaultValue="ru"
       classNames={{
         triggerGroup: "ring-1 ring-primary/20",
+        triggerIconWrap: "text-primary",
         value: "text-primary",
         popover: "ring-1 ring-primary/15",
         listBoxItem: "rounded-lg",
@@ -349,7 +343,7 @@ export const CustomTriggerIcon: Story = {
     docs: {
       description: {
         story:
-          "`Select.Trigger` children replace the default chevron (`children ?? <IoChevronDown />`).",
+          "`Select.Trigger` children replace the default chevron.",
       },
     },
   },
@@ -390,12 +384,11 @@ export const PopoverSideTop: Story = {
   ),
 };
 
-export const StatusDanger: Story = {
-  name: "status danger",
+export const Validation: Story = {
+  name: "Validation",
   render: () => (
     <Select
       label="Required field"
-      status="danger"
       error="Select a value"
       options={sampleOptions}
       required

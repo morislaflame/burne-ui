@@ -1,20 +1,22 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useMemo, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useMemo, useRef, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
-
+ 
 import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
+import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { useApplySkinPortal, useSkinRegistryRevision } from "@/skins/skinContext";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
-
+ 
 import { resolvePopoverDescribedBy, resolvePopoverLabelledBy, popoverTriggerA11y } from "./popoverA11y";
 import { partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
-import { POPOVER_MOTION_DEFAULTS, resolvePopoverContentAlign, usePopoverContentLifecycle } from "./popoverAnimations";
+import { resolvePopoverContentAlign, resolvePopoverMotionDefaults, usePopoverContentLifecycle } from "./popoverAnimations";
 import { PopoverResolvedSideProvider, PopoverContentChromeProvider, PopoverMotionProvider, useOptionalPopoverMotionScope, usePopoverClassNames, usePopoverContext, usePopoverContentChrome, usePopoverMotionScope, usePopoverResolvedSide } from "./popoverContext";
-import { POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
+import { POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
 import type {
   PopoverArrowProps,
   PopoverBodyProps,
@@ -24,9 +26,9 @@ import type {
   PopoverTitleProps,
   PopoverTriggerProps,
 } from "./popoverTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
   function PopoverTrigger(
     {
@@ -57,7 +59,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       onPointerDown,
       onPointerUp,
     });
-
+ 
     const mergedRef = useCallback(
       (node: HTMLButtonElement | null) => {
         part.setRef(node);
@@ -65,7 +67,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       },
       [part.setRef, triggerRef],
     );
-
+ 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
@@ -74,7 +76,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       },
       [open, openingRef, openAfterSqueeze, setOpen],
     );
-
+ 
     const handleClick = useCallback(
       (event: ReactMouseEvent<HTMLElement>) => {
         onClick?.(event as ReactMouseEvent<HTMLButtonElement>);
@@ -83,7 +85,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       },
       [onClick, open, setOpen],
     );
-
+ 
     const handleKeyDown = useCallback(
       (event: ReactKeyboardEvent<HTMLButtonElement>) => {
         onKeyDown?.(event);
@@ -98,14 +100,14 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       },
       [onKeyDown, open, openAfterSqueeze, setOpen],
     );
-
+ 
     const onlyChild =
       Children.count(children) === 1 && isValidElement(children) ? children : null;
-
+ 
     if (asChild && onlyChild) {
       const child = onlyChild as ReactElement;
       const triggerA11y = popoverTriggerA11y(open, popoverId);
-
+ 
       return cloneElement(
         child,
         mergeAsChildProps(
@@ -135,9 +137,9 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         ),
       );
     }
-
+ 
     const triggerA11y = popoverTriggerA11y(open, popoverId);
-
+ 
     return (
       <button
         type="button"
@@ -162,9 +164,9 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
     );
   },
 );
-
+ 
 PopoverTrigger.displayName = "PopoverTrigger";
-
+ 
 export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
   function PopoverArrow(
     { className, motion, onPointerOver, onPointerOut, ...rest },
@@ -173,7 +175,6 @@ export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
     const resolvedSide = usePopoverResolvedSide();
     const { variant } = usePopoverContext("Popover.Arrow");
     const slotClassNames = usePopoverClassNames();
-    const isGloss = variant === "gloss";
     const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalPopoverMotionScope(),
       slot: "arrow",
@@ -189,7 +190,7 @@ export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
         ref={setRef}
         aria-hidden
         className={popoverArrowClass({
-          isGloss,
+          variant,
           resolvedSide,
           arrowSideClass: TOOLTIP_ARROW_CLASS[resolvedSide],
           slotClass: slotClassNames.arrow,
@@ -201,9 +202,9 @@ export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
     );
   },
 );
-
+ 
 PopoverArrow.displayName = POPOVER_ARROW_DISPLAY_NAME;
-
+ 
 export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
   function PopoverHeader({ className, children, motion, ...rest }, ref) {
     const { size } = usePopoverContext("Popover.Header");
@@ -215,7 +216,7 @@ export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -232,9 +233,9 @@ export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
     );
   },
 );
-
+ 
 PopoverHeader.displayName = "PopoverHeader";
-
+ 
 export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
   function PopoverTitle({ className, children, id: idProp, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { labelId, size } = usePopoverContext("Popover.Title");
@@ -248,7 +249,7 @@ export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
@@ -257,7 +258,7 @@ export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
         id={idProp ?? labelId}
         className={popoverTitleClass({
           size,
-          slotClass: slotClassNames.label,
+          slotClass: slotClassNames.title,
           className,
         })}
         {...pointerHandlers}
@@ -268,9 +269,9 @@ export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
     );
   },
 );
-
+ 
 PopoverTitle.displayName = "PopoverTitle";
-
+ 
 export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProps>(
   function PopoverDescription(
     { className, children, variant, motion, onPointerOver, onPointerOut, ...rest },
@@ -287,14 +288,14 @@ export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProp
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <Field.Hint
         ref={setRef}
         as="p"
         id={hintId}
         variant={variant ?? popoverDescriptionVariant(size)}
-        className={cn(slotClassNames.hint, className)}
+        className={cn(slotClassNames.description, className)}
         {...pointerHandlers}
         {...rest}
       >
@@ -303,9 +304,9 @@ export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProp
     );
   },
 );
-
+ 
 PopoverDescription.displayName = "PopoverDescription";
-
+ 
 export const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
   function PopoverBody({ className, children, motion, ...rest }, ref) {
     const { size } = usePopoverContext("Popover.Body");
@@ -317,7 +318,7 @@ export const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -334,12 +335,18 @@ export const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
     );
   },
 );
-
+ 
 PopoverBody.displayName = "PopoverBody";
-
+ 
 export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
   function PopoverContent({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
     const parentScope = useOptionalPopoverMotionScope();
+    const { variant } = usePopoverContext("Popover.Content");
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolvePopoverMotionDefaults(variant);
+    }, [skinRevision, variant]);
     const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
     const siblings = mergeMotionRootSiblings(
       { events: parentScope?.getEvents(), states: parentScope?.getStates() },
@@ -349,7 +356,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
     return (
       <PopoverMotionProvider
         motion={merged}
-        defaults={POPOVER_MOTION_DEFAULTS}
+        defaults={motionDefaults}
         controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
@@ -360,9 +367,9 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
     );
   },
 );
-
+ 
 PopoverContent.displayName = "PopoverContent";
-
+ 
 function PopoverContentHost({
   className = "",
   children,
@@ -393,7 +400,6 @@ function PopoverContentHost({
     portalContainer: portalContainerFromRoot,
   } = usePopoverContext("Popover.Content");
   const slotClassNames = usePopoverClassNames();
-  const isGloss = variant === "gloss";
   const align = resolvePopoverContentAlign({ alignProp, matchAnchorWidth });
   const gapPropSet = gapProp !== undefined;
   const contentGap = gapProp ?? "base";
@@ -410,7 +416,6 @@ function PopoverContentHost({
 
   const {
     setPanelRef,
-    bindGlossPanelRef,
     portalMounted,
     resolvedSide,
   } = usePopoverContentLifecycle({
@@ -420,7 +425,6 @@ function PopoverContentHost({
     align,
     matchAnchorWidth,
     showArrow,
-    isGloss,
     forwardedRef: forwardedRef ?? null,
     contentRef,
     triggerRef,
@@ -429,26 +433,29 @@ function PopoverContentHost({
     motionScope,
   });
 
+  const skinRef = useRef<HTMLDivElement>(null);
+  useApplySkinPortal(skinRef, portalMounted);
   const setSurfaceRef = useCallback(
     (node: HTMLDivElement | null) => {
+      skinRef.current = node;
       setPanelRef(node);
       setContentPartRef(node);
     },
     [setContentPartRef, setPanelRef],
   );
-
+ 
   if (!portalMounted) return null;
   if (typeof document === "undefined") return null;
-
+ 
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
   );
   if (!portalHost) return null;
-
+ 
   const portalTheme = burneLightThemePortalProps(
     anchorRef?.current ?? triggerRef.current,
   );
-
+ 
   const describedBy = resolvePopoverDescribedBy({
     contentRole,
     labelConnected,
@@ -456,13 +463,13 @@ function PopoverContentHost({
     labelId,
     hintId,
   });
-
+ 
   const labelledBy = resolvePopoverLabelledBy({
     contentRole,
     labelConnected,
     labelId,
   });
-
+ 
   const node = (
     <PopoverResolvedSideProvider value={resolvedSide}>
       <PopoverContentChromeProvider unstyled={unstyled}>
@@ -471,10 +478,9 @@ function PopoverContentHost({
           {...portalTheme}
           id={popoverId}
           role={contentRole}
-          aria-modal={contentRole === "dialog" ? "false" : undefined}
+          aria-modal={contentRole === "dialog" ? false : undefined}
           aria-labelledby={labelledBy}
           aria-describedby={describedBy}
-          data-side={resolvedSide}
           className={popoverContentClass({
             resolvedSide,
             showArrow,
@@ -482,6 +488,10 @@ function PopoverContentHost({
             className,
           })}
           {...rest}
+          {...dataVariantProps({ size, variant })}
+          data-side={resolvedSide}
+          data-align={align}
+          data-state={dataOpenState(open)}
         >
           <div
             className={cn(
@@ -490,44 +500,24 @@ function PopoverContentHost({
             )}
           >
             {showArrow ? (customArrow ?? <PopoverArrow />) : null}
-            {isGloss ? (
-              <div
-                ref={bindGlossPanelRef}
-                className={popoverGlossPanelClass({
-                  size,
-                  unstyled,
-                  slotClass: slotClassNames.glossPanel,
-                })}
-              >
-                <div
-                  className={popoverGlossContentClass({
-                    unstyled,
-                    contentGap,
-                    gapPropSet,
-                    slotClass: slotClassNames.glossContent,
-                  })}
-                >
-                  {panelChildren}
-                </div>
-              </div>
-            ) : (
-              <div
-                className={popoverDefaultPanelClass({
-                  size,
-                  unstyled,
-                  contentGap,
-                  gapPropSet,
-                  slotClass: slotClassNames.panel,
-                })}
-              >
-                {panelChildren}
-              </div>
-            )}
+            <div
+              className={popoverDefaultPanelClass({
+                variant,
+                size,
+                unstyled,
+                contentGap,
+                gapPropSet,
+                slotClass: slotClassNames.panel,
+              })}
+            >
+              {panelChildren}
+            </div>
           </div>
         </div>
       </PopoverContentChromeProvider>
     </PopoverResolvedSideProvider>
   );
-
+ 
   return createPortal(node, portalHost);
 }
+ 

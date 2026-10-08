@@ -1,12 +1,13 @@
 /**
  * Shared lifecycle for native `<dialog>` modals (Dialog, AlertDialog, Drawer):
- * mount while open/closing, body scroll lock, gloss panel bind, enter/leave GSAP,
+ * mount while open/closing, body scroll lock, enter/leave GSAP,
  * focus capture/restore, optional backdrop dismiss + Escape in contained portals.
  */
-
+ 
+import { lockBodyScroll, unlockBodyScroll } from "./bodyScrollLock";
+import { shouldHandleContainedEscape } from "./containedEscape";
 import { killMotion } from "./gsapMotion";
 import { focusPanelOnOpen, isFocusVisibleElement } from "./focusElement";
-import { createGlossInteractiveRefCallback } from "./glossInteractiveMotion";
 import {
   animateModalClose,
   animateModalOpen,
@@ -24,22 +25,27 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
   type MouseEvent,
   type RefObject,
 } from "react";
-
+ 
 export type UseModalMotionOptions = {
   open: boolean;
-  /** Enables gloss interactive bind on the gloss panel shell. */
-  gloss?: boolean;
   /** Custom portal host — `show()` instead of `showModal()`, absolute positioning. */
   contained?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** When true, pointerdown on the overlay (target === currentTarget) closes. */
+  /**
+   * When true, pointerdown on the overlay (target === currentTarget) closes.
+   */
   dismissOnBackdrop?: boolean;
+  /**
+   * Overlay pointerdown (backdrop). Call `event.preventDefault()` to keep the
+   * modal open. A `false` return value is ignored. `dismissOnBackdrop={false}`
+   * still skips close even if the handler does not prevent default.
+   */
+  onInteractOutside?: (event: MouseEvent<HTMLDivElement>) => void;
   /**
    * Contained portals use non-modal `show()` — Escape does not fire `cancel`.
    * When true, listen for Escape and call `onOpenChange(false)`.
@@ -75,7 +81,7 @@ export type UseModalMotionOptions = {
     cancelEnterFrame?: () => void;
   };
 };
-
+ 
 export type UseModalMotionResult = {
   mounted: boolean;
   /** `open || mounted` — keep portal in DOM for exit animation. */
@@ -84,16 +90,15 @@ export type UseModalMotionResult = {
   overlayRef: RefObject<HTMLDivElement | null>;
   panelRef: RefObject<HTMLDivElement | null>;
   skipCloseAnimRef: RefObject<boolean>;
-  bindGlossPanelRef: (node: HTMLElement | null) => void;
   handleBackdropPointerDown: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
 export function useModalMotion({
   open,
-  gloss = false,
   contained = false,
   onOpenChange,
   dismissOnBackdrop = false,
+  onInteractOutside,
   enableContainedEscape = false,
   focusOnOpen = true,
   getPanelOpen,
@@ -107,28 +112,26 @@ export function useModalMotion({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const glossPanelRef = useRef<HTMLDivElement>(null);
   const focusReturnRef = useRef<HTMLElement | null>(null);
   const openFromKeyboardRef = useRef(false);
   const skipCloseAnimRef = useRef(false);
   const enterPlayedKeyRef = useRef<string | null>(null);
-
+ 
   // Keep motion resolvers fresh without retriggering effects on identity churn.
   const getPanelOpenRef = useRef(getPanelOpen);
   const getPanelExitRef = useRef(getPanelExit);
   const preparePanelRef = useRef(preparePanel);
   const slotMotionRef = useRef(slotMotion);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   getPanelOpenRef.current = getPanelOpen;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   getPanelExitRef.current = getPanelExit;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   preparePanelRef.current = preparePanel;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   slotMotionRef.current = slotMotion;
-
+ 
   const showPortal = open || mounted;
-
-  const bindGlossPanelRef = useMemo(
-    () => createGlossInteractiveRefCallback(glossPanelRef, gloss),
-    [gloss],
-  );
 
   useLayoutEffect(() => {
     if (open) {
@@ -136,34 +139,33 @@ export function useModalMotion({
       setMounted(true);
     }
   }, [open]);
-
-  useEffect(() => {
+ 
+  useLayoutEffect(() => {
     if (!showPortal || contained) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    lockBodyScroll();
     return () => {
-      document.body.style.overflow = prev;
+      unlockBodyScroll();
     };
   }, [showPortal, contained]);
-
+ 
   useEffect(() => {
     if (!open || !contained || !enableContainedEscape || !onOpenChange) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
+      if (!shouldHandleContainedEscape(e, dialogRef.current)) return;
       e.preventDefault();
       onOpenChange(false);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, contained, enableContainedEscape, onOpenChange]);
-
+ 
   useLayoutEffect(() => {
     if (open || !mounted) return;
-
+ 
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     let cancelled = false;
-
+ 
     const finishClose = () => {
       if (cancelled) return;
       completeModalDialogClose({
@@ -173,18 +175,18 @@ export function useModalMotion({
       });
       focusReturnRef.current = null;
     };
-
+ 
     if (skipCloseAnimRef.current) {
       skipCloseAnimRef.current = false;
       finishClose();
       return undefined;
     }
-
+ 
     if (!overlay || !panel || isReducedModalMotion(config)) {
       finishClose();
       return undefined;
     }
-
+ 
     const customLeave = slotMotionRef.current;
     if (customLeave) {
       const handle = customLeave.playLeave(overlay, panel, finishClose);
@@ -194,7 +196,7 @@ export function useModalMotion({
         killMotion(overlay, panel);
       };
     }
-
+ 
     killMotion(overlay, panel);
     const vars = { ...motionModalFor(config), overwrite: "auto" as const };
     const panelExit = getPanelExitRef.current?.(panel);
@@ -205,21 +207,21 @@ export function useModalMotion({
       onComplete: finishClose,
       ...(panelExit ? { panelExit } : {}),
     });
-
+ 
     return () => {
       cancelled = true;
       tl.kill();
       killMotion(overlay, panel);
     };
   }, [config, open, mounted, panelMotionKey]);
-
+ 
   useLayoutEffect(() => {
     if (!open) {
       enterPlayedKeyRef.current = null;
       slotMotionRef.current?.cancelEnterFrame?.();
       return;
     }
-
+ 
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) {
       // Snapshot before showModal — focus moves into the dialog afterwards.
@@ -228,14 +230,14 @@ export function useModalMotion({
       openNativeDialog(dialog, { contained });
       flushDialogOpenLayout(dialog);
     }
-
+ 
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     if (!overlay || !panel) return;
-
+ 
     const enterKey = `${contained ? "c" : "m"}:${String(panelMotionKey ?? "")}`;
     if (enterPlayedKeyRef.current === enterKey) return;
-
+ 
     if (isReducedModalMotion(config)) {
       applyReducedModalMotion(overlay, panel, {
         focusPanel: focusOnOpen,
@@ -244,9 +246,9 @@ export function useModalMotion({
       enterPlayedKeyRef.current = enterKey;
       return;
     }
-
+ 
     enterPlayedKeyRef.current = enterKey;
-
+ 
     preparePanelRef.current?.(panel);
     const customEnter = slotMotionRef.current;
     if (customEnter) {
@@ -266,15 +268,18 @@ export function useModalMotion({
       focusPanelOnOpen(panel, { focusVisible: openFromKeyboardRef.current });
     }
   }, [config, open, mounted, contained, focusOnOpen, panelMotionKey]);
-
+ 
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
+      if (e.target !== e.currentTarget) return;
+      onInteractOutside?.(e);
+      if (e.defaultPrevented) return;
       if (!dismissOnBackdrop || !onOpenChange) return;
-      if (e.target === e.currentTarget) onOpenChange(false);
+      onOpenChange(false);
     },
-    [dismissOnBackdrop, onOpenChange],
+    [dismissOnBackdrop, onInteractOutside, onOpenChange],
   );
-
+ 
   return {
     mounted,
     showPortal,
@@ -282,7 +287,7 @@ export function useModalMotion({
     overlayRef,
     panelRef,
     skipCloseAnimRef,
-    bindGlossPanelRef,
     handleBackdropPointerDown,
   };
 }
+ 

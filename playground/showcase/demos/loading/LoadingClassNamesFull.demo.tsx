@@ -7,7 +7,7 @@ export function LoadingClassNamesFullDemo() {
         type="spinner"
         size="mid"
         classNames={{
-          root: "rounded-mid border border-primary/20 p-base",
+          root: "rounded-large border border-primary/20 p-base",
           spinner: "border-t-info",
         }}
       />
@@ -15,7 +15,7 @@ export function LoadingClassNamesFullDemo() {
         type="dots"
         size="mid"
         classNames={{
-          root: "rounded-mid border border-primary/20 p-base",
+          root: "rounded-large border border-primary/20 p-base",
           dots: "gap-small",
           dot: "bg-info",
         }}

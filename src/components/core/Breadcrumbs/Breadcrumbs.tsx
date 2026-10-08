@@ -1,17 +1,17 @@
 import { forwardRef } from "react";
-
+ 
 import { BreadcrumbsClassNamesProvider, BreadcrumbsCollapseProvider, BreadcrumbsMotionProvider } from "./breadcrumbsContext";
 import { BreadcrumbsItem, BreadcrumbsList, BreadcrumbsSeparator } from "./breadcrumbsParts";
 import { BreadcrumbsSimpleContent } from "./breadcrumbsSimpleContent";
 import { resolveBreadcrumbsAriaLabel } from "./breadcrumbsA11y";
-
+ 
 import { breadcrumbsRootClass } from "./breadcrumbsStyles";
 import type { BreadcrumbsProps } from "./breadcrumbsTypes";
 import { useBreadcrumbsRootState } from "./useBreadcrumbsRootState";
-
+ 
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   BreadcrumbsItemProps,
   BreadcrumbsListProps,
@@ -22,7 +22,7 @@ export type {
   BreadcrumbsPartMotion,
   BreadcrumbItem,
 } from "./breadcrumbsTypes";
-
+ 
 export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
   function BreadcrumbsRoot(
     {
@@ -43,7 +43,7 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
   ) {
     const { isCompound } = useBreadcrumbsRootState({ children });
     const breadcrumbsLabel = useBurneLabel("breadcrumbs");
-
+ 
     return (
       <BreadcrumbsCollapseProvider collapse={collapse}>
         <BreadcrumbsClassNamesProvider classNames={classNames}>
@@ -73,8 +73,9 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
     );
   },
 );
-
+ 
 BreadcrumbsRoot.displayName = "Breadcrumbs";
-
+ 
 export { BreadcrumbsItem, BreadcrumbsList, BreadcrumbsSeparator };
 export { BreadcrumbsSimpleContent } from "./breadcrumbsSimpleContent";
+ 

@@ -7,7 +7,7 @@ export function toggleButtonRole({
 }) {
   return inGroup && isSingleGroup ? ("radio" as const) : undefined;
 }
-
+ 
 export function toggleButtonAriaPressed({
   inGroup,
   isSingleGroup,
@@ -19,7 +19,7 @@ export function toggleButtonAriaPressed({
 }) {
   return !inGroup || !isSingleGroup ? pressed : undefined;
 }
-
+ 
 export function toggleButtonAriaChecked({
   inGroup,
   isSingleGroup,
@@ -31,3 +31,4 @@ export function toggleButtonAriaChecked({
 }) {
   return inGroup && isSingleGroup ? pressed : undefined;
 }
+ 

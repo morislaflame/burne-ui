@@ -4,7 +4,7 @@ import {
   type InputVariant,
 } from "@/components/core/Input";
 
-const INPUT_VARIANTS: InputVariant[] = ["default", "outline", "secondary", "gloss"];
+const INPUT_VARIANTS: InputVariant[] = ["default", "outline", "secondary"];
 
 const INPUT_STATUSES: InputStatus[] = [
   "default",

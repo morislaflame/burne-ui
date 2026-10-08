@@ -6,7 +6,6 @@ const BUTTON_VARIANTS: ButtonVariant[] = [
   "outline",
   "secondary",
   "ghost",
-  "gloss",
 ];
 
 const BUTTON_STATUSES: ButtonStatus[] = [

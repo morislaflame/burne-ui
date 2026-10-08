@@ -78,7 +78,7 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormHea
 | `Form.Description` | `<p>` | Описание |
 | `Form.Field` | `<div>` | Обёртка + регистрация `rules`; вложенный motion scope (`motionController`, `playSlot("field")`) |
 | `Form.Actions` | `<div>` | Кнопки submit/cancel |
-| `Form.ErrorSummary` | `role="alert"` sr-only | Сводка ошибок (auto в root). `children` или `Form` prop `errorSummary` — ReactNode / `(entries) => ReactNode` |
+| `Form.ErrorSummary` | sr-only, `tabIndex={-1}`, `aria-live="polite"` | Сводка ошибок (auto в root). Всегда в DOM, без `role="alert"`. Фокус после submit — на первом невалидном поле. `children` или `Form` prop `errorSummary` — ReactNode / `(entries) => ReactNode` |
 | `Form.Announce` | `role="status"` sr-only | Live region (auto в root) |
 
 ### `FormClassNames`
@@ -140,7 +140,7 @@ type FormFieldRules = {
 
 1. `preventDefault`, `validateForm()`
 2. `resolver(values)` — merge errors
-3. Ошибки → announce, `focusFirstInvalid`, `onSubmitError`
+3. Ошибки → announce, фокус на первом невалидном поле, `onSubmitError`
 4. Успех → `await onSubmit(values)`, announce «Форма успешно отправлена»
 5. `isSubmitting` блокирует поля и кнопки
 
@@ -149,7 +149,7 @@ type FormFieldRules = {
 | Ось | Form |
 |-----|------|
 | `variant` | Нет |
-| `status` | Нет (ошибки на полях через `status="danger"`) |
+| `status` | Нет. Ошибка поля — `invalid` / `error`: danger-визуал, `aria-invalid`, `data-invalid=""` |
 | `size` | Да — chrome формы; поля задают `size` сами |
 | `disabled` / `readOnly` | Да — контекст |
 
@@ -253,12 +253,14 @@ function Nudge() {
 ```tsx
 <Form
   classNames={{
-    root: "rounded-mid border border-primary/20 bg-tertiary/50 p-large",
+    root: "rounded-large border border-primary/20 bg-tertiary/50 p-large",
     title: "text-primary",
     description: "text-info",
     section: "gap-small",
     actions: "justify-start border-t border-token pt-large",
     field: "rounded-base bg-background/40 p-small",
+    errorSummary: "not-sr-only rounded-base border border-danger/30 bg-danger/5 p-base text-danger",
+    announce: "not-sr-only text-small text-info",
   }}
   onSubmit={handleSubmit}
 >
@@ -334,9 +336,9 @@ function Nudge() {
 | Form label | `aria-labelledby` → `Form.Title` id |
 | Description | `aria-describedby` → `Form.Description` |
 | Errors | `aria-describedby` + `Form.ErrorSummary` при ошибках |
-| `Form.ErrorSummary` | `role="alert"` (assertive live), sr-only; render-проп `children(entries)` для кастомного списка ошибок |
+| `Form.ErrorSummary` | Постоянный sr-only контейнер, `tabIndex={-1}`, `aria-live="polite"`, без `role="alert"`. Фокус после submit — первое невалидное поле. Короткое объявление счёта — `Form.Announce`. Render-проп `children(entries)` |
 | `Form.Announce` | `role="status"`, `aria-live="polite"`, `aria-atomic` |
-| Поля | `aria-invalid` через binding |
+| Поля | `aria-invalid` и `data-invalid=""` через `error` / `invalid`, не через `status` |
 | Focus | `focusFirstInvalid` на submit с ошибками |
 
 Сообщения (RU): «Исправьте ошибку в форме», «Форма успешно отправлена».

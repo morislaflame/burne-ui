@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
-
+ 
 import { PaginationClassNamesProvider, PaginationMotionProvider, PaginationProvider } from "./paginationContext";
 import { PaginationRootShell } from "./paginationParts";
 import type { PaginationProps } from "./paginationTypes";
 import { usePaginationRootState } from "./usePaginationRootState";
-
+ 
 export type {
   PaginationClassNames,
   PaginationContentProps,
@@ -19,7 +19,7 @@ export type {
   PaginationPartMotion,
   PaginationSummaryPartMotion,
 } from "./paginationTypes";
-
+ 
 export {
   PaginationContent,
   PaginationEllipsis,
@@ -33,7 +33,7 @@ export {
   PaginationRootShell,
   PaginationSummary,
 } from "./paginationParts";
-
+ 
 export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
   function PaginationRoot(
     {
@@ -63,7 +63,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
       siblingCount,
       "aria-label": ariaLabel,
     });
-
+ 
     return (
       <PaginationProvider value={contextValue}>
         <PaginationClassNamesProvider classNames={classNames}>
@@ -89,5 +89,6 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
     );
   },
 );
-
+ 
 PaginationRoot.displayName = "Pagination";
+ 

@@ -20,9 +20,11 @@ import {
   useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalSliderMotionScope } from "./sliderContext";
-import type { SliderMotion, SliderPartMotion } from "./sliderTypes";
+import type { SliderMotion, SliderPartMotion, SliderVariant } from "./sliderTypes";
+import { KIT_SLIDER_VARIANTS } from "./sliderTypes";
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 export const SLIDER_MOTION_DEFAULTS: SliderMotion = {
   thumb: {
@@ -31,18 +33,24 @@ export const SLIDER_MOTION_DEFAULTS: SliderMotion = {
   },
 };
 
-export function resolveSliderMotionDefaults({ disabled }: { disabled?: boolean }): SliderMotion {
-  if (disabled) {
-    return {
-      thumb: {
-        pressIn: false,
-        pressOut: false,
-      },
-    };
-  }
-  return SLIDER_MOTION_DEFAULTS;
+export function resolveSliderMotionDefaults({
+  disabled,
+  variant = "default",
+}: {
+  disabled?: boolean;
+  variant?: SliderVariant;
+}): SliderMotion {
+  const kitDefaults: SliderMotion = disabled
+    ? {
+        thumb: {
+          pressIn: false,
+          pressOut: false,
+        },
+      }
+    : SLIDER_MOTION_DEFAULTS;
+  return overlaySkinMotion(kitDefaults, variant, KIT_SLIDER_VARIANTS, "slider");
 }
-
+ 
 export function useSliderTrackSlotMotion(
   scope: MotionScopeValue | null,
   identity: string,
@@ -56,9 +64,9 @@ export function useSliderTrackSlotMotion(
     exclude: ["fill"],
   });
 }
-
+ 
 export type SliderChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useSliderChromeSlot(
   slot: SliderChromeSlot,
   {
@@ -94,20 +102,20 @@ export function useSliderChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useSliderThumbShellAnimation(disabled?: boolean) {
   const shellRef = useRef<HTMLSpanElement>(null);
-
+ 
   useLayoutEffect(() => {
     const shell = shellRef.current;
     if (!shell) return;
     killMotion(shell);
     shell.style.opacity = disabled ? "0.48" : "1";
   }, [disabled]);
-
+ 
   return shellRef;
 }
-
+ 
 export function useSliderFillCleanup(fillRef: React.RefObject<HTMLSpanElement | null>) {
   useLayoutEffect(() => {
     const fill = fillRef.current;
@@ -116,7 +124,7 @@ export function useSliderFillCleanup(fillRef: React.RefObject<HTMLSpanElement | 
     };
   }, [fillRef]);
 }
-
+ 
 export function applySliderFillStyle(
   fill: HTMLSpanElement,
   style: { left?: string; width?: string; bottom?: string; height?: string },
@@ -135,3 +143,4 @@ export function applySliderFillStyle(
     fill.style.width = "";
   }
 }
+ 

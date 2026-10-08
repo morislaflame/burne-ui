@@ -158,7 +158,7 @@ export const CustomClassNames: Story = {
       defaultValue="a"
       aria-label="Custom slots"
       classNames={{
-        root: "rounded-mid border-primary/25 p-xsmall",
+        root: "rounded-large border-primary/25 p-xsmall",
         separator: "border-primary/40",
       }}
     >

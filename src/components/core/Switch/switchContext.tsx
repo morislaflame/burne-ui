@@ -1,18 +1,18 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   SwitchClassNames,
   SwitchClassNamesProviderProps,
   SwitchFieldContextValue,
   SwitchTrackContextValue,
 } from "./switchTypes";
-
+ 
 const SwitchFieldContext = createContext<SwitchFieldContextValue | null>(null);
 const SwitchClassNamesContext = createContext<SwitchClassNames>({});
 const SwitchTrackContext = createContext<SwitchTrackContextValue | null>(null);
-
+ 
 export function SwitchFieldProvider({
   value,
   children,
@@ -24,7 +24,7 @@ export function SwitchFieldProvider({
     <SwitchFieldContext.Provider value={value}>{children}</SwitchFieldContext.Provider>
   );
 }
-
+ 
 export function useSwitchFieldContext(): SwitchFieldContextValue {
   const ctx = useContext(SwitchFieldContext);
   if (!ctx) {
@@ -32,13 +32,13 @@ export function useSwitchFieldContext(): SwitchFieldContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalSwitchFieldContext(): SwitchFieldContextValue | null {
   return useContext(SwitchFieldContext);
 }
-
+ 
 export { SwitchFieldContext };
-
+ 
 export function SwitchClassNamesProvider({
   classNames,
   children,
@@ -48,18 +48,18 @@ export function SwitchClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <SwitchClassNamesContext.Provider value={merged}>
       {children}
     </SwitchClassNamesContext.Provider>
   );
 }
-
+ 
 export function useSwitchClassNames(): SwitchClassNames {
   return useContext(SwitchClassNamesContext);
 }
-
+ 
 export function SwitchTrackProvider({
   value,
   children,
@@ -71,7 +71,7 @@ export function SwitchTrackProvider({
     <SwitchTrackContext.Provider value={value}>{children}</SwitchTrackContext.Provider>
   );
 }
-
+ 
 export function useSwitchTrackContext(): SwitchTrackContextValue {
   const ctx = useContext(SwitchTrackContext);
   if (!ctx) {
@@ -81,10 +81,11 @@ export function useSwitchTrackContext(): SwitchTrackContextValue {
   }
   return ctx;
 }
-
+ 
 /** Scope only. Defaults and host play live in `switchAnimations.ts`. */
 export const {
   MotionScopeProvider: SwitchMotionProvider,
   useMotionScope: useSwitchMotionScope,
   useOptionalMotionScope: useOptionalSwitchMotionScope,
 } = createMotionScope("Switch");
+ 

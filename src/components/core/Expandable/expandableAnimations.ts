@@ -1,7 +1,7 @@
 /**
  * Slot motion for Expandable — look here first.
  *
- * DOM slots: `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`, `body`
+ * DOM slots: `root`, `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`, `body`
  * (`panelInner` is an internal target for the height recipe, not a public slot;
  * `message` / `content` are `display: contents`)
  *
@@ -13,36 +13,49 @@
  *   the same way. The panel `<section>` registers public slot `body`.
  *   Accordion embeds this host.
  *
- * Defaults: `EXPANDABLE_MOTION_DEFAULTS`.
+ * Defaults: `resolveExpandableMotionDefaults` (kit map + skin overlay). `root` is the shell.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
+ 
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useCollapsibleShellRef, applyCollapsibleInstantState } from "@/components/core/utils/useCollapsibleHeight";
 import { applyChevronRotationInstant, createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart, type MotionScopeValue } from "@/components/core/utils/slotMotion";
-
+ 
 import { useExpandableMotionScope } from "./expandableContext";
 import type {
   ExpandableMotion,
+  ExpandableVariant,
   UseExpandablePanelMotionProps,
   UseExpandableTriggerMotionProps,
 } from "./expandableTypes";
-
+import { KIT_EXPANDABLE_VARIANTS } from "./expandableTypes";
+ 
 export const EXPANDABLE_MOTION_DEFAULTS: ExpandableMotion = {
   triggerLift: { pressIn: "pressSqueeze", pressOut: false },
   chevron: { enter: "chevronRotate", leave: "chevronRotate" },
   panelShell: { enter: "collapsibleHeight", leave: "collapsibleHeight" },
 };
 
+export function resolveExpandableMotionDefaults(variant: ExpandableVariant): ExpandableMotion {
+  return overlaySkinMotion(
+    EXPANDABLE_MOTION_DEFAULTS,
+    variant,
+    KIT_EXPANDABLE_VARIANTS,
+    "expandable",
+  );
+}
+ 
 const EXPANDABLE_TRIGGER_BROADCAST_EXCLUDE = [
   "triggerLift",
   "chevron",
   "panelShell",
   "panelInner",
 ] as const;
-
+ 
 function useOpenPhasePlay(
   scope: MotionScopeValue,
   slot: string,
@@ -70,7 +83,7 @@ function useOpenPhasePlay(
     }
   }, [broadcastExclude, onSkip, open, scope, slot]);
 }
-
+ 
 export function useExpandableTriggerMotion({
   open,
   disabled,
@@ -86,7 +99,7 @@ export function useExpandableTriggerMotion({
   const liftSpanRef = useRef<HTMLSpanElement | null>(null);
   const chevronRef = useRef<HTMLSpanElement | null>(null);
   const initialOpenRef = useRef(open);
-
+ 
   const liftPart = useMotionPart<HTMLSpanElement>({
     scope,
     slot: "triggerLift",
@@ -94,12 +107,12 @@ export function useExpandableTriggerMotion({
     pressPhases: false,
   });
   const { setRef: setLiftPartRef } = liftPart;
-
+ 
   const bindChevronInit = useMemo(
     () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
     [],
   );
-
+ 
   const setChevronRef = useCallback(
     (node: HTMLSpanElement | null) => {
       bindChevronInit(node);
@@ -107,7 +120,7 @@ export function useExpandableTriggerMotion({
     },
     [bindChevronInit, scope],
   );
-
+ 
   const setLiftRef = useCallback(
     (node: HTMLSpanElement | null) => {
       liftSpanRef.current = node;
@@ -115,34 +128,34 @@ export function useExpandableTriggerMotion({
     },
     [setLiftPartRef],
   );
-
+ 
   const skipChevron = useCallback((nextOpen: boolean) => {
     const el = scope.getTarget("chevron");
     if (el) applyChevronRotationInstant(el, nextOpen);
   }, [scope]);
-
+ 
   useOpenPhasePlay(scope, "chevron", open, skipChevron, EXPANDABLE_TRIGGER_BROADCAST_EXCLUDE);
-
+ 
   useEffect(() => {
     const el = liftSpanRef.current;
     return () => {
       if (el) killMotion(el);
     };
   }, []);
-
+ 
   useEffect(() => {
     if (!disabled) return;
     const el = liftSpanRef.current;
     if (el) killMotion(el);
   }, [disabled]);
-
+ 
   const setTriggerRef = useCallback(
     (node: HTMLButtonElement | null) => {
       mergeForwardedRef(forwardedRef, node);
     },
     [forwardedRef],
   );
-
+ 
   const playLiftPress = useCallback(
     (phase: "pressIn" | "pressOut") => {
       if (disabled) return;
@@ -154,7 +167,7 @@ export function useExpandableTriggerMotion({
     },
     [disabled, motion, scope],
   );
-
+ 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e);
@@ -163,7 +176,7 @@ export function useExpandableTriggerMotion({
     },
     [disabled, onClick, toggle],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
@@ -176,7 +189,7 @@ export function useExpandableTriggerMotion({
     },
     [disabled, onKeyDown, playLiftPress, toggle],
   );
-
+ 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLButtonElement>) => {
       if (!disabled) playLiftPress("pressIn");
@@ -184,7 +197,7 @@ export function useExpandableTriggerMotion({
     },
     [disabled, onPointerDown, playLiftPress],
   );
-
+ 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent<HTMLButtonElement>) => {
       if (!disabled) playLiftPress("pressOut");
@@ -192,7 +205,7 @@ export function useExpandableTriggerMotion({
     },
     [disabled, onPointerUp, playLiftPress],
   );
-
+ 
   return {
     liftSpanRef,
     setLiftRef,
@@ -204,7 +217,7 @@ export function useExpandableTriggerMotion({
     handlePointerUp,
   };
 }
-
+ 
 export function useExpandablePanelMotion({
   open,
   motion,
@@ -213,13 +226,13 @@ export function useExpandablePanelMotion({
   const shellRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
   const bindShellInit = useCollapsibleShellRef(shellRef, open);
-
+ 
   const { setRef: setShellPartRef } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "panelShell",
     motion,
   });
-
+ 
   const setShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       bindShellInit(node);
@@ -227,7 +240,7 @@ export function useExpandablePanelMotion({
     },
     [bindShellInit, setShellPartRef],
   );
-
+ 
   const setInnerRef = useCallback(
     (node: HTMLDivElement | null) => {
       innerRef.current = node;
@@ -235,13 +248,14 @@ export function useExpandablePanelMotion({
     },
     [scope],
   );
-
+ 
   const skipPanel = useCallback((nextOpen: boolean) => {
     const shell = shellRef.current;
     if (shell) applyCollapsibleInstantState(shell, nextOpen);
   }, []);
-
+ 
   useOpenPhasePlay(scope, "panelShell", open, skipPanel);
-
+ 
   return { shellRef, innerRef, setShellRef, setInnerRef };
 }
+ 

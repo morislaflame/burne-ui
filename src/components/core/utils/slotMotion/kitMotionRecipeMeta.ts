@@ -3,7 +3,7 @@ import {
   type KitRecipeName,
   type MotionRecipeMetadata,
 } from "./slotMotionTypes";
-
+ 
 const pointer: MotionRecipeMetadata = {
   hidesFirstPaint: false,
   supportsReducedMotion: true,
@@ -13,7 +13,7 @@ const pointer: MotionRecipeMetadata = {
   interactive: true,
   defaultDurationToken: "interactiveDuration",
 };
-
+ 
 const overlayEnter = (token: MotionRecipeMetadata["defaultDurationToken"]): MotionRecipeMetadata => ({
   hidesFirstPaint: false,
   supportsReducedMotion: true,
@@ -23,7 +23,7 @@ const overlayEnter = (token: MotionRecipeMetadata["defaultDurationToken"]): Moti
   interactive: false,
   defaultDurationToken: token,
 });
-
+ 
 const overlayLeave = (token: MotionRecipeMetadata["defaultDurationToken"]): MotionRecipeMetadata => ({
   hidesFirstPaint: false,
   supportsReducedMotion: true,
@@ -33,7 +33,7 @@ const overlayLeave = (token: MotionRecipeMetadata["defaultDurationToken"]): Moti
   interactive: false,
   defaultDurationToken: token,
 });
-
+ 
 const checkInstant = (token: MotionRecipeMetadata["defaultDurationToken"]): MotionRecipeMetadata => ({
   hidesFirstPaint: false,
   supportsReducedMotion: true,
@@ -43,17 +43,15 @@ const checkInstant = (token: MotionRecipeMetadata["defaultDurationToken"]): Moti
   interactive: false,
   defaultDurationToken: token,
 });
-
+ 
 /**
  * Kit recipe passport. Single source for first-paint hide, layout, leave, and duration token.
  * `registerKitMotionRecipe` reads this table — do not duplicate flags in `enterHidesFirstPaint`.
  */
 export const KIT_MOTION_RECIPE_META: Record<KitRecipeName, MotionRecipeMetadata> = {
   hoverLiftSecondLevel: pointer,
-  hoverLiftGloss: pointer,
   hoverLiftFirstLevel: pointer,
   pressSqueeze: pointer,
-  pressSqueezeGloss: pointer,
   collapsibleHeight: {
     hidesFirstPaint: false,
     supportsReducedMotion: true,
@@ -142,9 +140,46 @@ export const KIT_MOTION_RECIPE_META: Record<KitRecipeName, MotionRecipeMetadata>
     interactive: false,
     defaultDurationToken: "progressIndeterminateDuration",
   },
+  toastStackShift: {
+    hidesFirstPaint: false,
+    supportsReducedMotion: true,
+    reducedStrategy: "instant",
+    usesLayout: false,
+    supportsLeaveCompletion: false,
+    interactive: false,
+    defaultDurationToken: "interactiveDuration",
+  },
+  toastScrimFade: {
+    hidesFirstPaint: false,
+    supportsReducedMotion: true,
+    reducedStrategy: "instant",
+    usesLayout: false,
+    supportsLeaveCompletion: true,
+    interactive: false,
+    defaultDurationToken: "interactiveDuration",
+  },
+  tabsIndicatorMove: {
+    hidesFirstPaint: false,
+    supportsReducedMotion: true,
+    reducedStrategy: "instant",
+    usesLayout: false,
+    supportsLeaveCompletion: false,
+    interactive: false,
+    defaultDurationToken: "interactiveDuration",
+  },
+  /** Cycle (`repeat: -1`). Host replays `enter` when config or reduced motion changes. */
+  loadingDots: {
+    hidesFirstPaint: false,
+    supportsReducedMotion: true,
+    reducedStrategy: "instant",
+    usesLayout: false,
+    supportsLeaveCompletion: false,
+    interactive: false,
+    defaultDurationToken: "loadingDotsDuration",
+  },
 };
-
+ 
 /** Kit names whose nested enter must hide first paint (`contentFade`). Prefer live `getMotionRecipeMetadata`. */
 export const KIT_ENTER_HIDES_FIRST_PAINT: ReadonlySet<string> = new Set(
-  KIT_MOTION_RECIPES.filter((name) => KIT_MOTION_RECIPE_META[name].hidesFirstPaint),
-);
+  KIT_MOTION_RECIPES.filter((name) => KIT_MOTION_RECIPE_META[name].hidesFirstPaint));
+ 

@@ -1,16 +1,17 @@
 import { useId, useMemo } from "react";
-
+ 
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+ 
 import type { InputFieldContextValue, UseInputRootStateProps } from "./inputTypes";
-
+ 
 export function useInputRootState({
   children,
   label,
   hint,
   error,
+  invalid,
   id: idProp,
   required = false,
   status = "default",
@@ -29,7 +30,7 @@ export function useInputRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "InputError")),
     };
   }, [children, error, hint]);
-
+ 
   const fieldCtx: InputFieldContextValue = useMemo(
     () => ({
       inputId,
@@ -38,18 +39,19 @@ export function useInputRootState({
       labelId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      invalid,
       required,
       status,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, inputId, required, labelId, size, status],
+    [errorId, hasError, hasHint, hintId, inputId, invalid, required, labelId, size, status],
   );
-
+ 
   const fieldLabelCtx = useMemo(
     () => ({ controlId: inputId, labelId, required }),
     [inputId, required, labelId],
   );
-
+ 
   return {
     fieldCtx,
     fieldLabelCtx,
@@ -62,3 +64,4 @@ export function useInputRootState({
     size,
   };
 }
+ 

@@ -13,7 +13,7 @@ export function TooltipPortalContainerDemo() {
       </p>
       <div
         ref={setContainer}
-        className="relative flex h-48 items-center justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+        className="relative flex h-48 items-center justify-center overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
         <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
         {container ? (

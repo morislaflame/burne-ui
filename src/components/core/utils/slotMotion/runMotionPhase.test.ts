@@ -309,10 +309,44 @@ describe("runMotionPhase", () => {
     await expect(leave.finished).resolves.toBeUndefined();
     expect(leave.status).toBe("cancelled");
     expect(leave.cancelReason).toBe("superseded");
+    expect(leave.supersededBy).toBe("enter");
     expect(complete).not.toHaveBeenCalled();
     expect(leave.isCurrent()).toBe(false);
     expect(enter.isCurrent()).toBe(true);
     expect(enter.status).toBe("running");
+  });
+
+  it("does not let a foreign phase evict an in-flight leave", async () => {
+    const el = fakeEl();
+    const leaveAnim = fakeAnimation();
+    const pingAnim = fakeAnimation();
+    const complete = vi.fn();
+
+    const leave = runMotionPhase({
+      el,
+      phase: "leave",
+      value: () => leaveAnim,
+      targets: {},
+      waitForComplete: true,
+      complete,
+    });
+    const ping = runMotionPhase({
+      el,
+      phase: "app:ping",
+      value: () => pingAnim,
+      targets: {},
+    });
+
+    expect(leave.status).toBe("running");
+    expect(leaveAnim.kill).not.toHaveBeenCalled();
+    expect(ping.status).toBe("finished");
+    expect(pingAnim.kill).not.toHaveBeenCalled();
+    expect(leave.isCurrent()).toBe(true);
+
+    leaveAnim.triggerComplete();
+    await leave.finished;
+    expect(leave.status).toBe("finished");
+    expect(complete).toHaveBeenCalledTimes(1);
   });
 
   it("does not invoke complete when a stale leave tween completes after cancel", async () => {
@@ -625,8 +659,7 @@ describe("runMotionPhase", () => {
           () => {
             ctx.complete();
           },
-          { once: true },
-        );
+          { once: true });
         return fakeAnimation();
       },
       targets: {},
@@ -686,6 +719,56 @@ describe("waitForLeaveGeneration", () => {
     await Promise.resolve();
     expect(onComplete).not.toHaveBeenCalled();
     expect(leave.status).toBe("cancelled");
+    expect(leave.supersededBy).toBe("enter");
+  });
+
+  it("unmounts when leave is superseded by a foreign phase", async () => {
+    const onComplete = vi.fn();
+    const leaveAnim = fakeAnimation();
+    const leave = runMotionPhase({
+      el: fakeEl(),
+      phase: "leave",
+      value: () => leaveAnim,
+      targets: {},
+      waitForComplete: true,
+    });
+
+    waitForLeaveGeneration({ runs: [leave], onComplete });
+    leave.cancel("superseded", "app:ping");
+
+    await leave.finished;
+    await Promise.resolve();
+    expect(leave.status).toBe("cancelled");
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps leave running when an app event plays on the same node", async () => {
+    const el = fakeEl();
+    const onComplete = vi.fn();
+    const leaveAnim = fakeAnimation();
+    const leave = runMotionPhase({
+      el,
+      phase: "leave",
+      value: () => leaveAnim,
+      targets: {},
+      waitForComplete: true,
+    });
+
+    waitForLeaveGeneration({ runs: [leave], onComplete });
+    runMotionPhase({
+      el,
+      phase: "app:ping",
+      value: () => fakeAnimation(),
+      targets: {},
+    });
+
+    expect(leave.status).toBe("running");
+    expect(onComplete).not.toHaveBeenCalled();
+
+    leaveAnim.triggerComplete();
+    await leave.finished;
+    await Promise.resolve();
+    expect(onComplete).toHaveBeenCalledTimes(1);
   });
 
   it("does not unmount after host kill even if a stale tween later completes", async () => {

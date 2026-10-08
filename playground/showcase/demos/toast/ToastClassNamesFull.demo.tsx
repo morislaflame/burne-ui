@@ -1,6 +1,8 @@
 import { type FormEvent, useState } from "react";
 
-import { Button, Input, Toast, useToast } from "burne-ui";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/Input";
+import { Toast, useToast } from "@/components/core/Toast";
 
 function ToastRenameForm({ onSubmit }: { onSubmit: (name: string) => void }) {
   const [name, setName] = useState("");
@@ -51,6 +53,7 @@ export function ToastClassNamesFullDemo() {
             indicator: "text-primary",
             title: "font-semibold text-primary text-large",
             description: "text-foreground/80",
+            stackItem: "ring-1 ring-primary/20",
           },
         });
       }}

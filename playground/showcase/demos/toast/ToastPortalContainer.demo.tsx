@@ -33,7 +33,7 @@ export function ToastPortalContainerDemo() {
       </p>
       <div
         ref={setContainer}
-        className="relative flex h-64 flex-col items-center justify-center gap-large overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+        className="relative flex h-64 flex-col items-center justify-center gap-large overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
         <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
         {container ? (

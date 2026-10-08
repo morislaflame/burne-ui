@@ -1,25 +1,28 @@
 import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
-
+ 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
+import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+import { SkinShell } from "@/skins/skinShell";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import {
   drawerHandleAriaLabel,
   isDrawerHandleActivateKey,
 } from "./drawerA11y";
 import { partitionDrawerChildren, injectFooterButtonSize } from "./drawerAPI";
-import { DRAWER_MOTION_DEFAULTS, useDrawerModalMotion } from "./drawerAnimations";
+import { resolveDrawerMotionDefaults, useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerMotionProvider, DrawerProvider, useDrawer, useDrawerClassNames, useDrawerMotionScope, useOptionalDrawerMotionScope } from "./drawerContext";
-import { DRAWER_CLOSE_CLASS, DRAWER_FOOTER_CLASS, DRAWER_HEADER_CLASS, DRAWER_HEADING_BLOCK_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
+import { DRAWER_CLOSE_CLASS, DRAWER_FOOTER_CLASS, DRAWER_HEADER_CLASS, DRAWER_HEADING_BLOCK_CLASS, DRAWER_PANEL_LAYER_CONTENT_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
 import type {
   DrawerBackdropProps,
   DrawerBodyProps,
@@ -36,18 +39,17 @@ import type {
   DrawerPortalShellProps,
   DrawerTitleProps,
   DrawerTriggerProps,
-  DrawerVariant,
 } from "./drawerTypes";
 import { useDrawerHandleDrag } from "./useDrawerHandleDrag";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function DrawerBackdropInner(_props: DrawerBackdropProps) {
   return null;
 }
-
+ 
 DrawerBackdropInner.displayName = "DrawerBackdrop";
-
+ 
 export const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
   function DrawerContent({ className, motion, ...rest }, ref) {
     const slotClassNames = useDrawerClassNames();
@@ -57,7 +59,7 @@ export const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -69,28 +71,16 @@ export const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
     );
   },
 );
-
+ 
 DrawerContent.displayName = "DrawerContent";
-
+ 
 function DrawerPanelSegment({
   segment,
-  variant,
 }: {
   segment: DrawerPanelSegment;
-  variant: DrawerVariant;
 }) {
-  const slotClassNames = useDrawerClassNames();
-
   if (segment.kind === "handle") {
     return segment.node;
-  }
-
-  if (variant === "gloss") {
-    return (
-      <div className={drawerGlossContentWrapClass(slotClassNames.glossContent)}>
-        <DrawerContent>{segment.children}</DrawerContent>
-      </div>
-    );
   }
 
   return <DrawerContent>{segment.children}</DrawerContent>;
@@ -126,7 +116,7 @@ export function DrawerHandleInner({
     slot: "handle",
     motion,
   });
-
+ 
   return (
     <div
       ref={setRef}
@@ -160,9 +150,9 @@ export function DrawerHandleInner({
     </div>
   );
 }
-
+ 
 DrawerHandleInner.displayName = "DrawerHandle";
-
+ 
 export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
   function DrawerHeader({ className, motion, ...rest }, ref) {
     const { sizePreset } = useDrawer();
@@ -173,7 +163,7 @@ export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -189,9 +179,9 @@ export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
     );
   },
 );
-
+ 
 DrawerHeader.displayName = "DrawerHeader";
-
+ 
 export function DrawerHeadingBlock({
   className,
   motion,
@@ -209,7 +199,7 @@ export function DrawerHeadingBlock({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <div
       ref={setRef}
@@ -224,9 +214,9 @@ export function DrawerHeadingBlock({
     />
   );
 }
-
+ 
 DrawerHeadingBlock.displayName = "DrawerHeadingBlock";
-
+ 
 export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
   function DrawerTitle({ className, id, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { titleId, setHasTitle, sizePreset } = useDrawer();
@@ -240,12 +230,12 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     useLayoutEffect(() => {
       setHasTitle(true);
       return () => setHasTitle(false);
     }, [setHasTitle]);
-
+ 
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
@@ -264,9 +254,9 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
     );
   },
 );
-
+ 
 DrawerTitle.displayName = "DrawerTitle";
-
+ 
 export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescriptionProps>(
   function DrawerDescription(
     { className, id, motion, onPointerOver, onPointerOut, ...rest },
@@ -283,12 +273,12 @@ export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescript
       onPointerOver,
       onPointerOut,
     });
-
+ 
     useLayoutEffect(() => {
       setHasDescription(true);
       return () => setHasDescription(false);
     }, [setHasDescription]);
-
+ 
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
@@ -306,9 +296,9 @@ export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescript
     );
   },
 );
-
+ 
 DrawerDescription.displayName = "DrawerDescription";
-
+ 
 export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
   function DrawerClose(
     {
@@ -329,7 +319,7 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <CloseButton
         ref={setRef}
@@ -350,9 +340,9 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
     );
   },
 );
-
+ 
 DrawerClose.displayName = "DrawerClose";
-
+ 
 export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
   function DrawerBody({ className, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { sizePreset } = useDrawer();
@@ -366,7 +356,7 @@ export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -380,9 +370,9 @@ export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
     );
   },
 );
-
+ 
 DrawerBody.displayName = "DrawerBody";
-
+ 
 export const DrawerFooter = forwardRef<HTMLDivElement, DrawerFooterProps>(
   function DrawerFooter({ className, children, motion, ...rest }, ref) {
     const { sizePreset, footerButtonSize } = useDrawer();
@@ -397,7 +387,7 @@ export const DrawerFooter = forwardRef<HTMLDivElement, DrawerFooterProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -414,11 +404,11 @@ export const DrawerFooter = forwardRef<HTMLDivElement, DrawerFooterProps>(
     );
   },
 );
-
+ 
 DrawerFooter.displayName = "DrawerFooter";
-
+ 
 // ─── Drawer.Trigger ──────────────────────────────────────────────────────────
-
+ 
 export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
   function DrawerTrigger(
     {
@@ -448,7 +438,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
@@ -458,7 +448,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       },
       [open, openingRef, openAfterSqueeze, onOpenChange, part.targetRef],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: ReactKeyboardEvent<HTMLElement>) => {
         onKeyDown?.(e as ReactKeyboardEvent<HTMLButtonElement>);
@@ -469,7 +459,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       },
       [onKeyDown, open, openingRef, openAfterSqueeze, onOpenChange],
     );
-
+ 
     const handleClick = useCallback(
       (e: ReactMouseEvent<HTMLElement>) => {
         onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
@@ -480,7 +470,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       },
       [onClick, open, openingRef, onOpenChange],
     );
-
+ 
     if (asChild && isValidElement(children)) {
       const onlyChild = Children.count(children) === 1 ? children : null;
       if (onlyChild) {
@@ -503,6 +493,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
               onClick: handleClick,
               "aria-haspopup": "dialog",
               "aria-expanded": open,
+              "data-state": dataOpenState(open),
             },
             part.setRef,
             { runBeforeChild: ["onPointerDown", "onKeyDown"] },
@@ -510,7 +501,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         );
       }
     }
-
+ 
     return (
       <button
         type="button"
@@ -526,21 +517,28 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
           part.pointerHandlers.onPointerDown(e);
           handlePointerDown(e);
         }}
+        data-state={dataOpenState(open)}
       >
         {children}
       </button>
     );
   },
 );
-
+ 
 DrawerTrigger.displayName = "Drawer.Trigger";
-
+ 
 // ─── Drawer.Panel ─────────────────────────────────────────────────────────────
-
+ 
 export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
-  function DrawerPanel({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
+  function DrawerPanel({ motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props }, forwardedRef) {
     const parentScope = useOptionalDrawerMotionScope();
     const { placement } = useDrawer();
+    const variant = useSkinVariant(variantProp);
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveDrawerMotionDefaults(variant);
+    }, [skinRevision, variant]);
     const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
     const siblings = mergeMotionRootSiblings(
       { events: parentScope?.getEvents(), states: parentScope?.getStates() },
@@ -550,24 +548,24 @@ export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
     return (
       <DrawerMotionProvider
         motion={merged}
-        defaults={DRAWER_MOTION_DEFAULTS}
+        defaults={motionDefaults}
         params={{ placement }}
         controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}
       >
-        <DrawerPanelHost {...props} forwardedRef={forwardedRef} />
+        <DrawerPanelHost {...props} variant={variant} forwardedRef={forwardedRef} />
       </DrawerMotionProvider>
     );
   },
 );
-
+ 
 DrawerPanel.displayName = "Drawer.Panel";
-
+ 
 function DrawerPanelHost({
   extent = "default",
-  variant = "default",
+  variant: variantProp,
   className,
   style,
   themeAnchor,
@@ -576,6 +574,8 @@ function DrawerPanelHost({
   forwardedRef,
   ...rest
 }: Omit<DrawerPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
+  const variant = useSkinVariant(variantProp);
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const baseCtx = useDrawer();
   const {
     open,
@@ -584,17 +584,17 @@ function DrawerPanelHost({
     portalContainer: portalContainerFromRoot,
   } = baseCtx;
   const motionScope = useDrawerMotionScope();
-
+ 
   const { backdropIsDismissable, panelSegments } = useMemo(
     () => partitionDrawerChildren(children),
     [children],
   );
-
+ 
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
   );
   const contained = isContainedPortal(portalHost);
-
+ 
   const motion = useDrawerModalMotion({
     open,
     onOpenChange,
@@ -604,11 +604,11 @@ function DrawerPanelHost({
     contained,
     motionScope,
   });
-
+ 
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
   const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
-
+ 
   const fullContextValue: DrawerContextValue = useMemo(
     () => ({
       ...baseCtx,
@@ -618,14 +618,15 @@ function DrawerPanelHost({
     }),
     [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
   );
-
+ 
   if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
-
+ 
   return createPortal(
     <DrawerProvider value={fullContextValue}>
       <DrawerPortalShell
+        open={open}
         className={className}
-        style={style}
+        style={mergeSkinSurfaceStyle(surfaceStyle, style)}
         variant={variant}
         placement={placement}
         extent={extent}
@@ -642,7 +643,6 @@ function DrawerPanelHost({
         panelRef={motion.panelRef}
         panelForwardedRef={forwardedRef}
         panelRest={rest}
-        bindGlossPanelRef={motion.bindGlossPanelRef}
         onBackdropMouseDown={motion.handleBackdropMouseDown}
         onDialogClose={() => onOpenChange(false)}
         onDialogCancel={(e) => {
@@ -655,10 +655,11 @@ function DrawerPanelHost({
     portalHost,
   );
 }
-
+ 
 // ─── DrawerPortalShell ───────────────────────────────────────────────────────
-
+ 
 export function DrawerPortalShell({
+  open,
   className,
   style,
   variant,
@@ -677,7 +678,6 @@ export function DrawerPortalShell({
   panelRef,
   panelForwardedRef,
   panelRest,
-  bindGlossPanelRef,
   onBackdropMouseDown,
   onDialogClose,
   onDialogCancel,
@@ -686,39 +686,53 @@ export function DrawerPortalShell({
   const slotClassNames = useDrawerClassNames();
   const { size } = useDrawer();
   const motionScope = useOptionalDrawerMotionScope();
-
+  useApplySkinPortal(dialogRef);
+ 
   const panelNodes = panelSegments.map((segment, index) => (
     <DrawerPanelSegment
       key={segment.kind === "handle" ? `handle-${index}` : `content-${index}`}
       segment={segment}
-      variant={variant}
     />
   ));
-
+ 
   return (
-    <dialog
+      <dialog
       {...portalTheme}
       ref={dialogRef}
-      onClose={onDialogClose}
-      onCancel={onDialogCancel}
+      data-state={dataOpenState(open)}
+      onClose={(event) => {
+        if (!isOwnNativeDialogEvent(event)) return;
+        onDialogClose();
+      }}
+      onCancel={(event) => {
+        if (!isOwnNativeDialogEvent(event)) return;
+        onDialogCancel(event);
+      }}
       aria-labelledby={hasTitle ? titleId : undefined}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={cn(drawerNativeClass(contained), slotClassNames.dialog)}
     >
       <div
-        ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}
+        ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("backdrop", node))}
         className={drawerOverlayClass({
           lightUi,
           dismissable: backdropIsDismissable,
-          slotClass: slotClassNames.overlay,
+          slotClass: slotClassNames.backdrop,
         })}
         style={drawerOverlayEnterStyle()}
         aria-hidden
         onMouseDown={onBackdropMouseDown}
       />
-      <div
-        ref={mergeRefs(panelRef, panelForwardedRef, (node) => motionScope?.registerTarget("panel", node))}
+      <SkinShell
         tabIndex={-1}
+        style={style}
+        {...panelRest}
+        {...dataVariantProps({ size, variant })}
+        part="drawer.panel"
+        variant={variant}
+        scope={motionScope}
+        slot="panel"
+        enterOnMount={false}
         className={drawerPanelClass({
           variant,
           placement,
@@ -727,25 +741,12 @@ export function DrawerPortalShell({
           className,
           slotClass: slotClassNames.panel,
         })}
-        style={style}
-        {...panelRest}
+        contentClassName={DRAWER_PANEL_LAYER_CONTENT_CLASS}
+        ref={mergeRefs(panelRef, panelForwardedRef)}
       >
-        {variant === "gloss" ? (
-          <div
-            ref={bindGlossPanelRef}
-            className={drawerGlossPanelClass({
-              placement,
-              extent,
-              size,
-              slotClass: slotClassNames.glossPanel,
-            })}
-          >
-            {panelNodes}
-          </div>
-        ) : (
-          panelNodes
-        )}
-      </div>
+        {panelNodes}
+      </SkinShell>
     </dialog>
   );
 }
+ 

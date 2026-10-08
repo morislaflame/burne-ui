@@ -403,21 +403,30 @@ export const CustomClassNames: Story = {
   render: () => {
     const [color, setColor] = useState("#3b82f6");
     return (
-      <ColorPicker
-        value={color}
-        onValueChange={setColor}
-        defaultOpen
-        classNames={{
-          contentPanel: "border border-primary/30 bg-primary/5",
-          area: "rounded-base ring-1 ring-primary/20",
-          slidersStack: "gap-large",
-          hexInput: "border-primary/30 bg-primary/10",
-          hexInputField: "text-primary",
-        }}
-      >
-        <ColorPicker.Trigger />
-        <ColorPicker.Content showAlpha presets={["#3b82f6", "#22c55e", "#ef4444"]} />
-      </ColorPicker>
+      <div className="flex flex-col items-center gap-large">
+        <ColorPicker
+          value={color}
+          onValueChange={setColor}
+          defaultOpen
+          classNames={{
+            contentPanel: "border border-primary/30 bg-primary/5",
+            area: "rounded-base ring-1 ring-primary/20",
+            slidersStack: "gap-large",
+            hexInput: "border-primary/30 bg-primary/10",
+            hexInputField: "text-primary",
+          }}
+        >
+          <ColorPicker.Trigger />
+          <ColorPicker.Content showAlpha presets={["#3b82f6", "#22c55e", "#ef4444"]} />
+        </ColorPicker>
+        <ColorSwatch
+          color={color}
+          selected
+          aria-label="Current color"
+          onClick={() => undefined}
+          classNames={{ root: "shadow-token-base", selected: "ring-offset-4" }}
+        />
+      </div>
     );
   },
 };

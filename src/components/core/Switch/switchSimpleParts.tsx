@@ -1,7 +1,7 @@
 import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-
+ 
 import { useSwitchChromeSlot } from "./switchAnimations";
 import { SwitchControl } from "./switchControlParts";
 import { useSwitchClassNames } from "./switchContext";
@@ -17,9 +17,9 @@ import {
   switchSecondaryCellClass,
 } from "./switchStyles";
 import type { SwitchControlProps, SwitchSize } from "./switchTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function SwitchSimpleBody({
   label,
   hint,
@@ -56,7 +56,7 @@ export function SwitchSimpleBody({
   const { setRef: setLabelMotionRef } = useSwitchChromeSlot("label");
   const { setRef: setHintMotionRef } = useSwitchChromeSlot("hint");
   const { setRef: setErrorMotionRef } = useSwitchChromeSlot("error");
-
+ 
   return (
     <>
       <SwitchControl
@@ -125,3 +125,4 @@ export function SwitchSimpleBody({
     </>
   );
 }
+ 

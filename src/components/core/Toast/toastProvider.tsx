@@ -1,17 +1,17 @@
 import { createPortal } from "react-dom";
-
+ 
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
-
+ 
 import { TOAST_LIVE_REGION_CLASS } from "./toastA11y";
 import { ToastViewport } from "./toastAnimations";
 import { ToastContext } from "./toastContext";
 import type { ToastLiveAnnouncement, ToastProviderProps } from "./toastTypes";
 import { useToastProviderState } from "./useToastProviderState";
-
+ 
 function ToastLiveRegion({ announcement }: { announcement: ToastLiveAnnouncement }) {
   const polite = announcement.assertive ? "" : announcement.text;
   const assertive = announcement.assertive ? announcement.text : "";
-
+ 
   return (
     <>
       <div
@@ -33,7 +33,7 @@ function ToastLiveRegion({ announcement }: { announcement: ToastLiveAnnouncement
     </>
   );
 }
-
+ 
 export function ToastProviderRoot({
   children,
   defaultPlacement = "bottom-center",
@@ -49,7 +49,7 @@ export function ToastProviderRoot({
     defaultSize,
     classNames,
   });
-
+ 
   return (
     <ToastContext.Provider value={state.ctx}>
       {children}
@@ -76,3 +76,4 @@ export function ToastProviderRoot({
     </ToastContext.Provider>
   );
 }
+ 

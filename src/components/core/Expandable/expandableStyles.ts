@@ -1,22 +1,18 @@
-import { CONTROL_SIZE_LAYOUT, collapsibleSizeLayout } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT, collapsibleSizeLayout, iconSlotSizeClass } from "@/components/core/utils/sizeLayout";
 import { messageBannerGridClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 
-import type { ExpandableSize, ExpandableVariant } from "./expandableTypes";
-
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-left text-foreground";
+import type { ExpandableSize, ExpandableVariant } from "./expandableTypes";
+import { KIT_EXPANDABLE_VARIANTS } from "./expandableTypes";
 
-export const EXPANDABLE_ROOT_SURFACE_CLASS =
-  "border-token bg-surface shadow-token-base";
+export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-start text-foreground";
 
-export const EXPANDABLE_ROOT_GLOSS_CLASS = "gloss-panel gloss-deep border-0";
-
-export const EXPANDABLE_GLOSS_CONTENT_CLASS =
-  "gloss-content flex min-w-0 flex-col";
+export const EXPANDABLE_ROOT_SURFACE_CLASS = "border-token bg-surface";
 
 export const EXPANDABLE_TRIGGER_BASE_CLASS =
-  "relative w-full overflow-hidden rounded-[inherit] text-left outline-none focus-ring";
+  "relative w-full overflow-hidden rounded-[inherit] text-start outline-none focus-ring";
 
 export const EXPANDABLE_TRIGGER_DISABLED_CLASS =
   "cursor-not-allowed opacity-50";
@@ -32,10 +28,12 @@ export const EXPANDABLE_COMPOUND_CONTENTS_CLASS = "contents";
 export const EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS =
   "relative z-[1] flex shrink-0 origin-center self-center";
 
+export const EXPANDABLE_CHEVRON_SVG_CLASS = "shrink-0";
+
 export const EXPANDABLE_MESSAGE_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
 export const EXPANDABLE_ICON_BASE_CLASS =
-  "shrink-0 text-primary [&_svg]:size-full";
+  "icon-slot shrink-0 text-primary";
 
 export const EXPANDABLE_CONTENT_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
@@ -59,9 +57,10 @@ export function expandableRootClass({
   className?: string;
   slotClass?: string;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_EXPANDABLE_VARIANTS, "expandable.root");
   return cn(
     EXPANDABLE_ROOT_BASE_CLASS,
-    variant === "gloss" ? EXPANDABLE_ROOT_GLOSS_CLASS : EXPANDABLE_ROOT_SURFACE_CLASS,
+    visual.className !== undefined ? visual.className : EXPANDABLE_ROOT_SURFACE_CLASS,
     slotClass,
     className,
   );
@@ -112,7 +111,7 @@ export function expandableIconClass({
 }): string {
   return cn(
     EXPANDABLE_ICON_BASE_CLASS,
-    CONTROL_SIZE_LAYOUT[size].icon,
+    iconSlotSizeClass(size),
     slotClass,
     className,
   );
@@ -129,7 +128,7 @@ export function expandablePanelClass({
 }): string {
   return cn(
     collapsibleSizeLayout(size).contentPadding,
-    "text-left",
+    "text-start",
     slotClass,
     className,
   );

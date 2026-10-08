@@ -1,27 +1,30 @@
 import { forwardRef, useMemo, type HTMLAttributes, type ReactNode } from "react";
-
+ 
 import type { BadgeMotion, BadgeProps } from "./badgeTypes";
+import { KIT_BADGE_VARIANTS } from "./badgeTypes";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { resolveBadgeMotionDefaults, useBadgeAnimations } from "./badgeAnimations";
 import { BadgeClassNamesProvider, BadgeMotionProvider, useBadgeLiftContext } from "./badgeContext";
 import { BadgeDotView, BadgeIconOnlyView, BadgeTextView } from "./badgeParts";
 import { useBadgeRootState } from "./useBadgeRootState";
-
+ 
 export type {
   BadgeProps,
   BadgeVariant,
   BadgeStatus,
   BadgeSize,
   BadgePlacement,
-  BadgeIconPosition,
   BadgeInlineIconPosition,
   BadgeClassNames,
   BadgeMotion,
   BadgePartMotion,
 } from "./badgeTypes";
-
+ 
 export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {
-    variant = "default",
+    variant: variantProp,
     status = "default",
     size = "base",
     icon,
@@ -44,9 +47,10 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   },
   forwardedRef,
 ) {
+  const variant = useSkinVariant(variantProp);
   const dot = dotProp;
   const liftCtx = useBadgeLiftContext();
-
+ 
   const {
     surfaceClass,
     meaningChild,
@@ -66,19 +70,24 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     iconPosition,
     dot,
     placement,
+    iconSlotClass: classNames?.icon,
   });
-
-  const isGloss = variant === "gloss";
-  const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && !isGloss);
+ 
+  const kitSurface = isKitVariant(variant, KIT_BADGE_VARIANTS);
+  const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && kitSurface);
+  const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(
-    () => resolveBadgeMotionDefaults({ variant, hoverLift, splitLift }),
-    [hoverLift, splitLift, variant],
+    () => {
+      void skinRevision;
+      return resolveBadgeMotionDefaults({ variant, hoverLift, splitLift });
+    },
+    [hoverLift, skinRevision, splitLift, variant],
   );
   const motionParams = useMemo(
     () => ({ shadowSize: "base" as const, variant }),
     [variant],
   );
-
+ 
   return (
     <BadgeClassNamesProvider classNames={classNames}>
       <BadgeMotionProvider
@@ -116,9 +125,9 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     </BadgeClassNamesProvider>
   );
 });
-
+ 
 BadgeRoot.displayName = "BadgeRoot";
-
+ 
 function BadgeSurface({
   variant,
   status,
@@ -162,6 +171,8 @@ function BadgeSurface({
   className: string;
   rest: HTMLAttributes<HTMLSpanElement>;
 }) {
+  const surfaceStyle = useSkinSurfaceStyle(variant);
+  const paintedRest = { ...rest, style: mergeSkinSurfaceStyle(surfaceStyle, rest.style) };
   const lift = useBadgeAnimations({
     variant,
     hoverLift,
@@ -173,7 +184,7 @@ function BadgeSurface({
     onPointerOut,
     syncDeps: { meaningChild, icon, dot: layoutKind === "dot", iconOnly: layoutKind === "iconOnly", children: bodyContent },
   });
-
+ 
   const shell = {
     setMergedRef: lift.setMergedRef,
     splitLift: lift.splitLift,
@@ -181,12 +192,13 @@ function BadgeSurface({
     splitLiftMotionCls: lift.splitLiftMotionCls,
     selfLiftMotionCls: lift.selfLiftMotionCls,
     isDirectAnchorChild,
-    isGloss: lift.isGloss,
+    kitSurface: lift.kitSurface,
     innerLiftRef: lift.innerLiftRef,
     pointerHandlers: lift.pointerHandlers,
-    rest,
+    rest: paintedRest,
+    variantData: dataVariantProps({ size, variant, status }),
   };
-
+ 
   if (layoutKind === "dot") {
     return (
       <BadgeDotView
@@ -195,11 +207,11 @@ function BadgeSurface({
         status={status}
         shell={shell}
         className={className}
-        rest={rest}
+        rest={paintedRest}
       />
     );
   }
-
+ 
   if (layoutKind === "iconOnly") {
     return (
       <BadgeIconOnlyView
@@ -207,21 +219,22 @@ function BadgeSurface({
         surfaceClass={surfaceClass}
         shell={shell}
         className={className}
-        rest={rest}
+        rest={paintedRest}
         iconOnlyBody={iconOnlyBody}
       />
     );
   }
-
+ 
   return (
     <BadgeTextView
       size={size}
       surfaceClass={surfaceClass}
       shell={shell}
       className={className}
-      rest={rest}
+      rest={paintedRest}
       bodyContent={bodyContent}
       dataIcon={dataIcon}
     />
   );
 }
+ 

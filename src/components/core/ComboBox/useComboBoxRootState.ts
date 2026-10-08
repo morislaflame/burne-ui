@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-
+ 
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import type { InputVariant } from "@/components/core/Input";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
@@ -7,7 +7,8 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+import { useSkinVariant } from "@/skins/skinContext";
+ 
 import { comboBoxFieldIds } from "./comboBoxA11y";
 import { comboBoxFilteredValues, EMPTY_COMBOBOX_OPTIONS } from "./comboBoxAPI";
 import type {
@@ -15,12 +16,13 @@ import type {
   ComboBoxFieldContextValue,
   UseComboBoxRootStateProps,
 } from "./comboBoxTypes";
-
+ 
 export function useComboBoxRootState({
   children,
   label,
   hint,
   error,
+  invalid,
   id: idProp,
   name,
   required = false,
@@ -36,7 +38,9 @@ export function useComboBoxRootState({
   variant: variantProp,
   disabled: disabledProp = false,
   placeholder = "Select a value",
-  menuMaxHeight = "min(24rem, 70vh)",
+  menuMaxHeight = "min(24rem, 70dvh)",
+  virtualized = false,
+  virtualItemSize,
 }: UseComboBoxRootStateProps) {
   const formBinding = useFormFieldBinding({
     name,
@@ -47,14 +51,15 @@ export function useComboBoxRootState({
   const disabled = formBinding.disabled ?? disabledProp;
   const autoId = useId();
   const buttonGroupCtx = useOptionalButtonGroupSegment();
-  const variant: InputVariant =
+  const variant: InputVariant = useSkinVariant(
     variantProp ??
-    (buttonGroupCtx?.variant != null
-      ? fieldShellVariantFromButtonGroup(buttonGroupCtx.variant)
-      : "default");
+      (buttonGroupCtx?.variant != null
+        ? fieldShellVariantFromButtonGroup(buttonGroupCtx.variant)
+        : undefined),
+  );
   const comboBoxId = idProp ?? `combobox-${autoId}`;
   const { hintId, errorId, labelId, listId } = comboBoxFieldIds(comboBoxId);
-
+ 
   const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
@@ -64,7 +69,7 @@ export function useComboBoxRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "ComboBoxError")),
     };
   }, [children, error, hint, label]);
-
+ 
   const isControlled = valueProp !== undefined || formBound;
   const [internalValue, setInternalValue] = useState(defaultValue ?? "");
   const value = formBound
@@ -72,7 +77,7 @@ export function useComboBoxRootState({
     : isControlled
       ? (valueProp ?? "")
       : internalValue;
-
+ 
   const setValue = useCallback(
     (next: string) => {
       if (!isControlled) setInternalValue(next);
@@ -81,7 +86,7 @@ export function useComboBoxRootState({
     },
     [formBound, formBinding, isControlled, onValueChange],
   );
-
+ 
   const [open, setOpen] = useControllableState({
     value: openProp,
     defaultValue: defaultOpen,
@@ -89,20 +94,21 @@ export function useComboBoxRootState({
   });
   const [filterQuery, setFilterQuery] = useState("");
   const [activeValue, setActiveValue] = useState<string | null>(null);
-
+ 
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
+ 
   useEffect(() => {
     if (!open || !activeValue) return;
     document.getElementById(`${listId}-opt-${activeValue}`)?.scrollIntoView({ block: "nearest" });
   }, [activeValue, listId, open]);
-
+ 
   const filteredValues = useMemo(
     () => comboBoxFilteredValues(options, filterQuery),
     [filterQuery, options],
   );
-
+ 
+  const formInvalid = formBinding["aria-invalid"] === true;
   const fieldCtx: ComboBoxFieldContextValue = useMemo(
     () => ({
       comboBoxId,
@@ -112,14 +118,16 @@ export function useComboBoxRootState({
       labelConnected: hasLabel,
       hintConnected: hasHint,
       errorConnected: hasError,
+      invalid,
+      formInvalid,
       required,
       status,
       size,
       errorMessage: error,
     }),
-    [comboBoxId, error, errorId, hasError, hasHint, hasLabel, hintId, required, labelId, size, status],
+    [comboBoxId, error, errorId, formInvalid, hasError, hasHint, hasLabel, hintId, invalid, required, labelId, size, status],
   );
-
+ 
   const comboCtx: ComboBoxContextValue = useMemo(
     () => ({
       ...fieldCtx,
@@ -138,6 +146,8 @@ export function useComboBoxRootState({
       disabled,
       placeholder,
       menuMaxHeight,
+      virtualized,
+      virtualItemSize,
       options,
       filteredValues,
       formInputRef: formBound ? (formBinding.ref as (node: HTMLInputElement | null) => void) : undefined,
@@ -153,7 +163,10 @@ export function useComboBoxRootState({
       formBinding,
       listId,
       menuMaxHeight,
+      virtualized,
+      virtualItemSize,
       open,
+      setOpen,
       options,
       placeholder,
       setValue,
@@ -161,12 +174,12 @@ export function useComboBoxRootState({
       variant,
     ],
   );
-
+ 
   const fieldLabelCtx = useMemo(
     () => ({ controlId: comboBoxId, labelId, required }),
     [comboBoxId, required, labelId],
   );
-
+ 
   return {
     isCompound,
     label,
@@ -178,3 +191,4 @@ export function useComboBoxRootState({
     fieldLabelCtx,
   };
 }
+ 

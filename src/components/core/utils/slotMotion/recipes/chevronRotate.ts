@@ -1,8 +1,8 @@
 import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { animateChevronRotation } from "@/components/core/utils/useChevronRotation";
-
+ 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
-
+ 
 export function chevronRotateRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const open = ctx.phase === "enter";
   const reduced = ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableExpandable");
@@ -15,3 +15,4 @@ export function chevronRotateRecipe(ctx: MotionContext): MotionAnimation | undef
     config: ctx.config,
   }) as MotionAnimation | undefined;
 }
+ 

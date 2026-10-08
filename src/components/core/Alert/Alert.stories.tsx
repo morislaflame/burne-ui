@@ -6,14 +6,13 @@ import gsap from "gsap";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { Button } from "@/components/core/Button";
-import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 
 import { Alert, type AlertSize, type AlertStatus, type AlertVariant } from ".";
 import { AlertSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/alert/slotMotion/gallery";
 import { AlertMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/alert/motionController/gallery";
 
-const ALERT_VARIANTS: AlertVariant[] = ["default", "outline", "secondary", "gloss"];
+const ALERT_VARIANTS: AlertVariant[] = ["default", "outline", "secondary"];
 
 const ALERT_STATUSES: AlertStatus[] = [
   "default",
@@ -59,7 +58,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "User-facing message. **Simple** — `title`, `description`, `icon`, `action` on root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. `variant` — visual style (`default`, `outline`, `secondary`, `gloss`); `status` — semantics (`danger`, `success`, `info`, `warning`). `hoverLift={false}` — no hover lift animation. Slots can be customized via `classNames` on root (`root`, `indicator`, `message`, `content`, `title`, `description`, `action`). **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; for `status=\"danger\"`/`\"warning\"` — `role=\"alert\"`.",
+          "User-facing message. **Simple** — `title`, `description`, `icon`, `action` on root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. `variant` — visual style (`default`, `outline`, `secondary`); `status` — semantics (`danger`, `success`, `info`, `warning`). `hoverLift={false}` — no hover lift animation. Slots can be customized via `classNames` on root (`root`, `indicator`, `message`, `content`, `title`, `description`, `action`). **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; for `status=\"danger\"`/`\"warning\"` — `role=\"alert\"`.",
       },
     },
   },
@@ -67,7 +66,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "outline", "secondary", "gloss"],
+      options: ["default", "outline", "secondary"],
     },
     status: {
       control: "select",
@@ -387,43 +386,6 @@ export const Accessibility: Story = {
       />
     </div>
   ),
-};
-
-const GLOSS_ALERT_STATUSES = ["danger", "success", "info", "warning"] as const;
-
-function GlossDemo() {
-  return (
-    <div className="flex w-full max-w-md flex-col gap-mid">
-      {GLOSS_ALERT_STATUSES.map((status) => (
-        <Alert key={status} variant="gloss" status={status}>
-          <Alert.Message>
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title className="capitalize">{status}</Alert.Title>
-              <Alert.Description>
-                variant=&quot;gloss&quot; — status only in text and icon.
-              </Alert.Description>
-            </Alert.Content>
-          </Alert.Message>
-        </Alert>
-      ))}
-      <Alert variant="gloss" status="info" title="Simple API" description="Props title and description on root." />
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
 };
 
 export const NoHoverLift: Story = {

@@ -1,14 +1,14 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   DropdownClassNames,
   DropdownClassNamesProviderProps,
   DropdownContextValue,
   DropdownSubContextValue,
 } from "./dropdownTypes";
-
+ 
 const DropdownContext = createContext<DropdownContextValue | null>(null);
 const DropdownClassNamesContext = createContext<DropdownClassNames>({});
 const DropdownIndicatorPreferenceContext = createContext(false);
@@ -16,7 +16,7 @@ const DropdownGroupLabelRegisterContext = createContext<
   ((id: string | undefined) => void) | null
 >(null);
 const DropdownSubContext = createContext<DropdownSubContextValue | null>(null);
-
+ 
 export function DropdownProvider({
   value,
   children,
@@ -28,7 +28,7 @@ export function DropdownProvider({
     <DropdownContext.Provider value={value}>{children}</DropdownContext.Provider>
   );
 }
-
+ 
 export function DropdownClassNamesProvider({
   classNames,
   children,
@@ -38,14 +38,14 @@ export function DropdownClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <DropdownClassNamesContext.Provider value={merged}>
       {children}
     </DropdownClassNamesContext.Provider>
   );
 }
-
+ 
 export function DropdownIndicatorPreferenceProvider({
   value,
   children,
@@ -59,7 +59,7 @@ export function DropdownIndicatorPreferenceProvider({
     </DropdownIndicatorPreferenceContext.Provider>
   );
 }
-
+ 
 export function DropdownGroupLabelRegisterProvider({
   value,
   children,
@@ -73,7 +73,7 @@ export function DropdownGroupLabelRegisterProvider({
     </DropdownGroupLabelRegisterContext.Provider>
   );
 }
-
+ 
 export function DropdownSubProvider({
   value,
   children,
@@ -85,7 +85,7 @@ export function DropdownSubProvider({
     <DropdownSubContext.Provider value={value}>{children}</DropdownSubContext.Provider>
   );
 }
-
+ 
 export function useDropdown(): DropdownContextValue {
   const ctx = useContext(DropdownContext);
   if (!ctx) {
@@ -93,19 +93,19 @@ export function useDropdown(): DropdownContextValue {
   }
   return ctx;
 }
-
+ 
 export function useDropdownClassNames(): DropdownClassNames {
   return useContext(DropdownClassNamesContext);
 }
-
+ 
 export function useDropdownIndicatorPreference() {
   return useContext(DropdownIndicatorPreferenceContext);
 }
-
+ 
 export function useDropdownGroupLabelRegister() {
   return useContext(DropdownGroupLabelRegisterContext);
 }
-
+ 
 export function useDropdownSub(): DropdownSubContextValue {
   const ctx = useContext(DropdownSubContext);
   if (!ctx) {
@@ -113,10 +113,11 @@ export function useDropdownSub(): DropdownSubContextValue {
   }
   return ctx;
 }
-
+ 
 /** Scope only. Defaults and host play live in `dropdownAnimations.ts`. */
 export const {
   MotionScopeProvider: DropdownMotionProvider,
   useMotionScope: useDropdownMotionScope,
   useOptionalMotionScope: useOptionalDropdownMotionScope,
 } = createMotionScope("Dropdown");
+ 

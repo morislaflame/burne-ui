@@ -64,8 +64,6 @@ Simple API нет — всегда compound.
 | `dialog` | Native `<dialog>` |
 | `overlay` | Backdrop |
 | `panel` | Outer panel shell |
-| `glossPanel` | Gloss shell (`variant="gloss"`) |
-| `glossContent` | Inner gloss content |
 | `content` | Content wrapper |
 | `trigger` | `AlertDialog.Trigger` |
 | `header` | Header grid |
@@ -86,7 +84,7 @@ Simple API нет — всегда compound.
 | `AlertDialog.Content` | Inner padding wrapper |
 | `AlertDialog.Header` | Grid-шапка; auto `Indicator` + `Close` |
 | `AlertDialog.Indicator` | Status icon (`SEMANTIC_STATUS_ICONS`) |
-| `AlertDialog.HeadingBlock` | `display: contents` для grid |
+| `AlertDialog.HeadingBlock` | `display: contents` для grid (padding, border, background и width не рисуются) |
 | `AlertDialog.Title` | `Text as="h2"` → `aria-labelledby` |
 | `AlertDialog.Description` | Muted subtitle → `aria-describedby` |
 | `AlertDialog.Body` | Scrollable content |
@@ -141,7 +139,7 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 | `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
 | `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
 
-`body` — `AlertDialog.Body` (скролл), не слот `content`.
+`body` — `AlertDialog.Body` (скролл + `overscroll-contain`), не слот `content`. Body-scroll lock — тот же синглтон, что у Dialog.
 
 `leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется. Promise: `ctx.signal` / `isMotionRunActive(ctx)` до delayed DOM. Прерывание leave (повторный open) отменяет `MotionRun` без `complete`. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0`) — иначе после твина `dialog.close()` выглядит как рывок.
 

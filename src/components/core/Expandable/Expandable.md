@@ -34,9 +34,9 @@ import { Expandable, useExpandableContext, type ExpandableProps, type Expandable
 | Часть | Назначение |
 |-------|------------|
 | `Expandable.Trigger` | Кнопка заголовка; `hideChevron`, `asChild` |
-| `Expandable.Message` | Обёртка grid-слотов в триггере (`display: contents`) |
+| `Expandable.Message` | Обёртка grid-слотов в триггере (`display: contents` — padding, border, background и width не рисуются) |
 | `Expandable.Icon` | Иконка-индикатор слева |
-| `Expandable.Content` | Группа title + description |
+| `Expandable.Content` | Группа title + description (`display: contents` — padding, border, background и width не рисуются) |
 | `Expandable.Title` | Заголовок |
 | `Expandable.Description` | Подзаголовок (`text-muted`) |
 | `Expandable.Chevron` | Кастомный шеврон (вместо дефолтного) |
@@ -47,7 +47,6 @@ import { Expandable, useExpandableContext, type ExpandableProps, type Expandable
 ```tsx
 type ExpandableClassNames = {
   root?: string;
-  glossContent?: string;
   trigger?: string;
   triggerLift?: string;
   triggerRippleOverlay?: string;
@@ -58,6 +57,7 @@ type ExpandableClassNames = {
   description?: string;
   chevron?: string;
   panelShell?: string;
+  contentWrap?: string;
   panel?: string;
   body?: string;
 };
@@ -95,7 +95,7 @@ Compound определяется автоматически при наличи
 
 | variant | Стили корня |
 |---------|-------------|
-| `default` | `border-token bg-surface shadow-token-sm rounded-mid` |
+| `default` | `border-token bg-surface rounded-mid`. Тень только при наведении (`--shadow-lift`) |
 | `gloss` | `gloss-panel gloss-deep border-0` + внутренний `gloss-content` |
 
 ## Размеры
@@ -124,7 +124,7 @@ Compound определяется автоматически при наличи
 
 `false` на фазе → мгновенное состояние (height/rotation), без твина. Первый paint: `useCollapsibleShellRef` / `data-chevron-init`.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`faq:nudge`), не фазы. У Expandable нет слота `root`: `play()` ищите с `{ slot: "title" }` или `playSlot("title", …)`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`faq:nudge`), не фазы. Слот `root` — оболочка (скин вешает `mount`). Остальные команды — `playSlot("title", …)`. См. [Motion](/docs/motion-events).
 
 ```tsx
 import { Expandable, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -279,6 +279,8 @@ function Nudge() {
 </Expandable>
 ```
 
+### 1. Panel expand (height collapse)
+
 **DOM панели:**
 
 ```
@@ -302,9 +304,16 @@ configureMotion({
 
 Не задавайте фиксированную `height` на `panelShell` — ломает `collapsibleHeight`.
 
+### 2. Trigger — press squeeze
+
+`pressSqueeze` на внутреннем lift-span (`triggerLift`), не на весь `<button>`. Ripple overlay и chevron не «ломаются» на press. Токены: `interactiveDuration`, `pressSqueezeScale`, `enablePressSqueeze`. Disabled / reduced motion — skip.
+
+### 3. Chevron — rotation
+
+`chevronRotate` на слоте `chevron` (0° ↔ 180°). Кастом: `<Expandable.Chevron />` — тот же рецепт на своём ref. `enableExpandable: false` или reduced motion — instant.
+
 ### Gloss-корень
 
-`variant="gloss"` → `useMergedGlossPanelRef` на root + `glossInteractive.css`. Панель по высоте — тот же `collapsibleHeight`.
 
 ### Сводка: что настраивается где
 
@@ -331,10 +340,10 @@ configureMotion({
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `shadow-token-sm` | Тень корня (default) |
+| `--shadow-lift` | Тень корня только при наведении |
 | `border-token`, `bg-surface` | Поверхность |
 | `gloss-panel`, `gloss-deep`, `gloss-content` | Gloss variant |
-| `h-control-*`, `px-mid`, `py-base` | Размеры |
+| `min-h-control-*`, `px-mid`, `py-base` | Размеры |
 | `focus-ring` + `rounded-[inherit]` | Focus на триггере (скругление как у root) |
 
 ## Стилизация и кастомизация
@@ -351,7 +360,6 @@ configureMotion({
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
 | `root` | Корневой div | Border, max-width, внешний padding |
-| `glossContent` | Gloss inner wrap | При `variant="gloss"` |
 | `trigger` | `Expandable.Trigger` button | Фон, height, hover surface |
 | `triggerLift` | Motion target lift | Осторожно — GSAP shadow target |
 | `triggerRippleOverlay` | Ripple clip layer | Shape ripple на триггере |
@@ -362,6 +370,7 @@ configureMotion({
 | `description` | `Expandable.Description` | Подзаголовок muted |
 | `chevron` | Chevron / `Expandable.Chevron` | Размер, rotate target |
 | `panelShell` | Обёртка panel height anim | Overflow clip |
+| `contentWrap` | Внутренняя обёртка внутри `panelShell` | Padding; height анимируется на shell |
 | `panel` | `Expandable.Panel` section | Padding контента, typography |
 | `body` | тот же `<section>` | Motion-слот контента (`motion.body`) |
 
@@ -437,7 +446,7 @@ configureMotion({
 
 ```
 Expandable/
-├── Expandable.tsx              # Provider: motion + EXPANDABLE_MOTION_DEFAULTS
+├── Expandable.tsx              # Provider: motion + resolveExpandableMotionDefaults
 ├── index.ts
 ├── expandableTypes.ts          # ExpandableMotion
 ├── expandableStyles.ts

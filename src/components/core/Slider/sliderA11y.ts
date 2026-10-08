@@ -1,9 +1,10 @@
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-
+import { DEFAULT_BURNE_LABELS, type BurneLabels } from "@/theme/burneLabels";
+ 
 export function sliderLabelId(sliderId: string): string {
   return `${sliderId}-label`;
 }
-
+ 
 export function resolveSliderThumbA11y({
   kind,
   explicitLabel,
@@ -13,6 +14,7 @@ export function resolveSliderThumbA11y({
   hintId,
   errorConnected,
   errorId,
+  labels,
 }: {
   kind: "single" | "start" | "end";
   explicitLabel?: string;
@@ -22,16 +24,18 @@ export function resolveSliderThumbA11y({
   hintId: string;
   errorConnected: boolean;
   errorId: string;
+  labels?: Pick<BurneLabels, "sliderMinimum" | "sliderMaximum" | "sliderValue">;
 }): {
   ariaLabel?: string;
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
 } {
+  const names = labels ?? DEFAULT_BURNE_LABELS;
   const ariaDescribedBy = joinFieldDescribedBy(
     hintConnected ? hintId : undefined,
     errorConnected ? errorId : undefined,
   );
-
+ 
   if (explicitLabel) {
     if (kind === "start") {
       return {
@@ -53,23 +57,23 @@ export function resolveSliderThumbA11y({
       ariaDescribedBy,
     };
   }
-
+ 
   if (kind === "start") {
     return {
-      ariaLabel: "Minimum range",
+      ariaLabel: names.sliderMinimum,
       ariaLabelledBy: undefined,
       ariaDescribedBy,
     };
   }
-
+ 
   if (kind === "end") {
     return {
-      ariaLabel: "Maximum range",
+      ariaLabel: names.sliderMaximum,
       ariaLabelledBy: undefined,
       ariaDescribedBy,
     };
   }
-
+ 
   if (labelConnected && labelId) {
     return {
       ariaLabel: undefined,
@@ -77,10 +81,11 @@ export function resolveSliderThumbA11y({
       ariaDescribedBy,
     };
   }
-
+ 
   return {
-    ariaLabel: explicitLabel ?? "Value",
+    ariaLabel: explicitLabel ?? names.sliderValue,
     ariaLabelledBy: undefined,
     ariaDescribedBy,
   };
 }
+ 

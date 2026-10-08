@@ -8,12 +8,11 @@
  * `useMotionPart` (not shared-scope repeated). `section` / `header` / `empty` / `separator`
  * register on the root scope (repeated `header` / `section` / `separator` when several groups).
  *
- * Not slots: `root` / `headerText` (layout). Gloss panel ref stays kit-internal.
+ * Not slots: `root` / `headerText` (layout). panel ref stays kit-internal.
  */
 import { useLayoutEffect, type ForwardedRef, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+ 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   hasPointerPhases,
@@ -21,15 +20,11 @@ import {
   useOptionalEnterOnMount,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { listBoxOptionId } from "./listBoxA11y";
 import { useOptionalListBoxMotionScope } from "./listBoxContext";
 import type { ListBoxMotion, ListBoxPartMotion } from "./listBoxTypes";
-
-export function useListBoxRootGlossRef(isGloss: boolean) {
-  return useMergedGlossPanelRef(undefined, isGloss);
-}
-
+ 
 export function resolveListBoxMotionDefaults(): ListBoxMotion {
   return {
     item: {
@@ -38,9 +33,9 @@ export function resolveListBoxMotionDefaults(): ListBoxMotion {
     },
   };
 }
-
+ 
 export type ListBoxMotionSlot = keyof ListBoxMotion;
-
+ 
 export function useListBoxSlotMotion<T extends HTMLElement>(
   slot: Exclude<ListBoxMotionSlot, "item">,
   {
@@ -76,14 +71,14 @@ export function useListBoxSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function playListBoxItemPress(scope: MotionScopeValue, el: HTMLElement | null) {
   if (!el || prefersReducedMotion()) return;
   const value = scope.resolve("item", "pressIn");
   if (value === false || value === undefined) return;
   scope.play("item", "pressIn", { el });
 }
-
+ 
 /**
  * Sync `data-active` on the active option. Highlight CSS is the static
  * `data-active:bg-default-hover` class on every item — no React `isActive`.
@@ -100,13 +95,13 @@ export function useListBoxActiveOptionHighlight({
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-
+ 
     for (const el of root.querySelectorAll<HTMLElement>(
       '[role="option"][data-active]',
     )) {
       el.removeAttribute("data-active");
     }
-
+ 
     if (!activeValue) return;
     const option = document.getElementById(listBoxOptionId(listId, activeValue));
     if (option && root.contains(option)) {
@@ -114,3 +109,4 @@ export function useListBoxActiveOptionHighlight({
     }
   }, [activeValue, listId, rootRef]);
 }
+ 

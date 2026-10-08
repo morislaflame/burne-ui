@@ -1,15 +1,17 @@
-import { forwardRef, useCallback, useMemo } from "react";
-
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+import { forwardRef, useMemo } from "react";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { hasPointerPhases } from "@/components/core/utils/slotMotion";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+import { SkinShell } from "@/skins/skinShell";
 import { cn } from "@/utils/cn";
-
-import "../utils/glossInteractive.css";
+ 
 import { surfaceIsLandmark } from "./surfaceA11y";
-import { resolveSurfaceMotionDefaults, useSurfaceRootMotion } from "./surfaceAnimations";
-import { SurfaceMotionProvider } from "./surfaceContext";
-import { SURFACE_GLOSS_CONTENT_CLASS, surfaceRootClass } from "./surfaceStyles";
+import { resolveSurfaceMotionDefaults } from "./surfaceAnimations";
+import { SurfaceMotionProvider, useSurfaceMotionScope } from "./surfaceContext";
+import { surfaceRootClass } from "./surfaceStyles";
 import type { SurfacePartMotion, SurfaceProps } from "./surfaceTypes";
-
+ 
 export type {
   SurfaceClassNames,
   SurfaceMotion,
@@ -20,12 +22,12 @@ export type {
   SurfaceShadow,
   SurfaceVariant,
 } from "./surfaceTypes";
-
+ 
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   {
     className = "",
     classNames,
-    variant = "default",
+    variant: variantProp,
     shadow = "none",
     padding = "none",
     radius = "mid",
@@ -43,8 +45,13 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
   },
   ref,
 ) {
-  const motionDefaults = useMemo(() => resolveSurfaceMotionDefaults(), []);
-
+  const variant = useSkinVariant(variantProp);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveSurfaceMotionDefaults(variant);
+  }, [skinRevision, variant]);
+ 
   return (
     <SurfaceMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -70,7 +77,7 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
     </SurfaceMotionProvider>
   );
 });
-
+ 
 function SurfaceSurface({
   className,
   classNames,
@@ -117,24 +124,8 @@ function SurfaceSurface({
     | "onPointerUp"
   >;
 }) {
-  const isGloss = variant === "gloss";
-  const part = useSurfaceRootMotion({
-    forwardedRef: isGloss ? undefined : forwardedRef,
-    motion: rootMotion,
-    onPointerOver,
-    onPointerOut,
-    onPointerDown,
-    onPointerUp,
-  });
-  const setGlossRef = useMergedGlossPanelRef(forwardedRef, isGloss);
-  const setRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      part.setRef(node);
-      if (isGloss) setGlossRef(node);
-    },
-    [isGloss, part, setGlossRef],
-  );
-
+  const scope = useSurfaceMotionScope();
+  const pointer = hasPointerPhases(rootMotion);
   const rootClass = surfaceRootClass({
     variant,
     shadow,
@@ -143,34 +134,32 @@ function SurfaceSurface({
     className: cn(classNames?.root, className),
   });
   const landmarkRole = surfaceIsLandmark() ? ("region" as const) : undefined;
-
-  if (isGloss) {
-    return (
-      <div
-        ref={setRef}
-        role={landmarkRole}
-        className={rootClass}
-        {...part.pointerHandlers}
-        {...rest}
-      >
-        <div className={cn(SURFACE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
-          {children}
-        </div>
-      </div>
-    );
-  }
+  const surfaceStyle = useSkinSurfaceStyle(variant);
 
   return (
-    <div
-      ref={setRef}
+    <SkinShell
       role={landmarkRole}
-      className={rootClass}
-      {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ variant })}
+      part="surface.root"
+      variant={variant}
+      scope={scope}
+      slot="root"
+      motion={rootMotion}
+      pointerPhases={pointer}
+      pressPhases={pointer}
+      ref={forwardedRef}
+      className={rootClass}
+      style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
     >
       {children}
-    </div>
+    </SkinShell>
   );
 }
-
+ 
 Surface.displayName = "Surface";
+ 

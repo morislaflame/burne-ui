@@ -17,7 +17,7 @@ export function DrawerPortalContainerDemo() {
       </Button>
       <div
         ref={setContainer}
-        className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+        className="relative h-72 overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
         <p className="text-xs text-muted">Custom portal host</p>
         {container ? (

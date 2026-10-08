@@ -1,12 +1,12 @@
 import { forwardRef, type Ref } from "react";
-
+ 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
 import { messageBannerActionCellClass, messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { useToastClassNames, useToastItem, useOptionalToastMotionScope } from "./toastContext";
 import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, toastIndicatorClass, toastLoadingColor, toastTitleClass } from "./toastStyles";
 import type {
@@ -19,9 +19,9 @@ import type {
   ToastSimpleBodyProps,
   ToastTitleProps,
 } from "./toastTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
   function ToastIndicator({ className, children, motion, ...rest }, ref) {
     const { status, loading, gridSlots, sizePreset } = useToastItem();
@@ -33,7 +33,7 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     if (children !== undefined) {
       return (
         <span
@@ -50,7 +50,7 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
         </span>
       );
     }
-
+ 
     if (loading) {
       return (
         <span
@@ -67,12 +67,12 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
         </span>
       );
     }
-
+ 
     if (status === "default") return null;
-
+ 
     const Icon = SEMANTIC_STATUS_ICONS[status as keyof typeof SEMANTIC_STATUS_ICONS];
     if (!Icon) return null;
-
+ 
     return (
       <span
         ref={setRef}
@@ -89,9 +89,9 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
     );
   },
 );
-
+ 
 ToastIndicator.displayName = "ToastIndicator";
-
+ 
 export const ToastMessage = forwardRef<HTMLDivElement, ToastMessageProps>(
   function ToastMessage({ className, ...rest }, ref) {
     const slotClassNames = useToastClassNames();
@@ -104,9 +104,9 @@ export const ToastMessage = forwardRef<HTMLDivElement, ToastMessageProps>(
     );
   },
 );
-
+ 
 ToastMessage.displayName = "ToastMessage";
-
+ 
 export const ToastContent = forwardRef<HTMLDivElement, ToastContentProps>(
   function ToastContent({ className, ...rest }, ref) {
     const slotClassNames = useToastClassNames();
@@ -119,9 +119,9 @@ export const ToastContent = forwardRef<HTMLDivElement, ToastContentProps>(
     );
   },
 );
-
+ 
 ToastContent.displayName = "ToastContent";
-
+ 
 export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
   function ToastTitle({ className, id: idProp, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { titleId, gridSlots, sizePreset, status } = useToastItem();
@@ -135,7 +135,7 @@ export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
@@ -154,9 +154,9 @@ export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
     );
   },
 );
-
+ 
 ToastTitle.displayName = "ToastTitle";
-
+ 
 export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps>(
   function ToastDescription({ className, id: idProp, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { descriptionId, gridSlots, sizePreset } = useToastItem();
@@ -170,7 +170,7 @@ export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
@@ -189,9 +189,9 @@ export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps
     );
   },
 );
-
+ 
 ToastDescription.displayName = "ToastDescription";
-
+ 
 export const ToastAction = forwardRef<HTMLDivElement, ToastActionProps>(
   function ToastAction({ className, motion, ...rest }, ref) {
     const { gridSlots } = useToastItem();
@@ -202,7 +202,7 @@ export const ToastAction = forwardRef<HTMLDivElement, ToastActionProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -216,9 +216,9 @@ export const ToastAction = forwardRef<HTMLDivElement, ToastActionProps>(
     );
   },
 );
-
+ 
 ToastAction.displayName = "ToastAction";
-
+ 
 export const ToastClose = forwardRef<HTMLButtonElement, ToastCloseProps>(
   function ToastClose(
     { className, onClick, motion, "aria-label": ariaLabel, ...rest },
@@ -232,7 +232,7 @@ export const ToastClose = forwardRef<HTMLButtonElement, ToastCloseProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <CloseButton
         ref={setRef}
@@ -254,9 +254,9 @@ export const ToastClose = forwardRef<HTMLButtonElement, ToastCloseProps>(
     );
   },
 );
-
+ 
 ToastClose.displayName = "ToastClose";
-
+ 
 export function ToastSimpleBody({
   gridSlots,
   title,
@@ -274,3 +274,4 @@ export function ToastSimpleBody({
     </>
   );
 }
+ 

@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   FieldLabelContextValue,
   LabelClassNames,
   LabelClassNamesProviderProps,
 } from "./labelTypes";
-
+ 
 const FieldLabelContext = createContext<FieldLabelContextValue | null>(null);
 const LabelClassNamesContext = createContext<LabelClassNames>({});
-
+ 
 export function FieldLabelContextProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function FieldLabelContextProvider({
     <FieldLabelContext.Provider value={value}>{children}</FieldLabelContext.Provider>
   );
 }
-
+ 
 export function LabelClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function LabelClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <LabelClassNamesContext.Provider value={merged}>
       {children}
     </LabelClassNamesContext.Provider>
   );
 }
-
+ 
 function useFieldLabelContext() {
   const ctx = useContext(FieldLabelContext);
   if (!ctx) {
@@ -49,22 +49,23 @@ function useFieldLabelContext() {
   }
   return ctx;
 }
-
+ 
 export function useOptionalFieldLabelContext() {
   return useContext(FieldLabelContext);
 }
-
+ 
 export function useLabelClassNames(): LabelClassNames {
   return useContext(LabelClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `labelAnimations.ts`. */
 export const {
   MotionScopeProvider: LabelMotionProvider,
   useMotionScope: useLabelMotionScope,
   useOptionalMotionScope: useOptionalLabelMotionScope,
 } = createMotionScope("Label");
-
+ 
 export { FieldLabelContext };
-
+ 
 void useFieldLabelContext;
+ 

@@ -1,5 +1,5 @@
 import { PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationNextIcon, PaginationPage, PaginationPages, PaginationPrevious, PaginationPreviousIcon, PaginationRoot, PaginationSummary } from "./Pagination";
-
+ 
 export const Pagination = Object.assign(PaginationRoot, {
   Summary: PaginationSummary,
   Content: PaginationContent,
@@ -12,7 +12,7 @@ export const Pagination = Object.assign(PaginationRoot, {
   Pages: PaginationPages,
   Ellipsis: PaginationEllipsis,
 });
-
+ 
 export type {
   PaginationProps,
   PaginationClassNames,
@@ -27,3 +27,4 @@ export type {
   PaginationPartMotion,
   PaginationSummaryPartMotion,
 } from "./Pagination";
+ 

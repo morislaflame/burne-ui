@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useRef } from "react";
-
+ 
 import { mergeFormFieldRules } from "./formAPI";
 import { formFieldAriaInvalid } from "./formA11y";
 import { useOptionalFormBindingContext } from "./formContext";
 import type { UseFormFieldBindingOptions } from "./formTypes";
-
+ 
 export function useFormFieldBinding({
   name,
   value: valueProp,
@@ -16,7 +16,7 @@ export function useFormFieldBinding({
   const form = useOptionalFormBindingContext();
   const explicitValue = valueProp !== undefined;
   const bound = form != null && name != null && !explicitValue;
-
+ 
   const ref = useRef<HTMLElement | null>(null);
   const setRef = useCallback(
     (node: HTMLElement | null) => {
@@ -25,7 +25,7 @@ export function useFormFieldBinding({
     },
     [bound, form, name],
   );
-
+ 
   const disabled = disabledProp ?? form?.disabled ?? false;
   const readOnly = readOnlyProp ?? form?.readOnly ?? false;
   const formError = bound && name ? form.getError(name) : undefined;
@@ -33,11 +33,11 @@ export function useFormFieldBinding({
     () => mergeFormFieldRules(name ? form?.getFieldRules(name) : undefined, rulesProp),
     [form, name, rulesProp],
   );
-
+ 
   const rawValue = bound && name ? form.getValue(name) : valueProp;
   // Keep form-bound controls controlled from mount (undefined → "" would warn in React).
   const value = bound ? (rawValue ?? "") : rawValue;
-
+ 
   const setValue = useCallback(
     (next: unknown) => {
       onChangeProp?.(next);
@@ -48,7 +48,7 @@ export function useFormFieldBinding({
     },
     [bound, form, name, onChangeProp],
   );
-
+ 
   const onBlur = useCallback(() => {
     if (!bound || !name || !form) return;
     form.setTouched(name, true);
@@ -56,7 +56,7 @@ export function useFormFieldBinding({
       form.validateField(name);
     }
   }, [bound, form, name]);
-
+ 
   return {
     bound,
     name,
@@ -71,3 +71,4 @@ export function useFormFieldBinding({
     rules,
   };
 }
+ 

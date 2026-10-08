@@ -1,6 +1,6 @@
 import { gsap } from "@/components/core/utils/gsapMotion";
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
-
+ 
 import { isMotionPhaseName } from "./slotMotionTypes";
 import type {
   MotionAnimation,
@@ -14,7 +14,7 @@ import type {
   MotionTweenVars,
   MotionVars,
 } from "./slotMotionTypes";
-
+ 
 const TRANSFORM_KEYS = [
   "x",
   "y",
@@ -26,9 +26,9 @@ const TRANSFORM_KEYS = [
   "autoAlpha",
   "opacity",
 ] as const;
-
+ 
 const PUBLIC_TRANSFORM_KEYS = ["x", "y", "scale", "autoAlpha"] as const;
-
+ 
 export const MOTION_REST_POSE = {
   x: 0,
   y: 0,
@@ -40,7 +40,7 @@ export const MOTION_REST_POSE = {
   autoAlpha: 1,
   opacity: 1,
 } as const satisfies Record<(typeof TRANSFORM_KEYS)[number], number>;
-
+ 
 export type MotionTweenHost = {
   el: HTMLElement;
   phase: MotionPhaseName | (string & {});
@@ -50,7 +50,7 @@ export type MotionTweenHost = {
   setAnimation: (animation: MotionAnimation | undefined) => void;
   signal: AbortSignal;
 };
-
+ 
 export type MotionTweenApi = {
   to: {
     (vars: MotionTweenVars): MotionAnimation | undefined;
@@ -73,7 +73,7 @@ export type MotionTweenApi = {
   sequence: (...steps: MotionSequenceStep[]) => Promise<void>;
   parallel: (...steps: MotionSequenceStep[]) => Promise<void>;
 };
-
+ 
 export function resolveMotionReplay(
   phase: string,
   vars: { replay?: MotionReplay; yoyo?: boolean },
@@ -82,7 +82,7 @@ export function resolveMotionReplay(
   if (!isMotionPhaseName(phase) && vars.yoyo) return "rest";
   return "current";
 }
-
+ 
 export function motionRestVars(vars: MotionTweenVars): MotionTweenVars {
   const from: MotionTweenVars = {};
   for (const key of TRANSFORM_KEYS) {
@@ -90,11 +90,11 @@ export function motionRestVars(vars: MotionTweenVars): MotionTweenVars {
   }
   return from;
 }
-
+ 
 function overwriteFor(phase: string): "auto" | true {
   return isMotionPhaseName(phase) ? "auto" : true;
 }
-
+ 
 const MOTION_DURATION_TOKENS: readonly MotionDurationToken[] = [
   "interactiveDuration",
   "tooltipDuration",
@@ -105,12 +105,13 @@ const MOTION_DURATION_TOKENS: readonly MotionDurationToken[] = [
   "toastDismissDuration",
   "progressFillDuration",
   "progressIndeterminateDuration",
+  "loadingDotsDuration",
 ];
-
+ 
 function isMotionDurationToken(value: string): value is MotionDurationToken {
   return (MOTION_DURATION_TOKENS as readonly string[]).includes(value);
 }
-
+ 
 /** Seconds for GSAP `delay`. `"expand"` → `expandDuration`. Invalid / non-finite → omit. */
 export function resolveMotionDelay(
   delay: MotionDelay | undefined,
@@ -126,14 +127,14 @@ export function resolveMotionDelay(
   if (typeof ms !== "number" || !Number.isFinite(ms)) return undefined;
   return Math.max(0, ms / 1000);
 }
-
+ 
 /**
  * Timeline children must coexist on the same node (lift then scale then rest).
  * App-event `ctx.to` still uses `overwrite: true`; a timeline with that flag
  * kills earlier tweens at **add** time, so the last rest pose looks like a no-op.
  */
 const TIMELINE_OVERWRITE = "auto" as const;
-
+ 
 function pickTransform(vars: MotionTweenVars): MotionTweenVars {
   const out: MotionTweenVars = {};
   for (const key of TRANSFORM_KEYS) {
@@ -141,11 +142,11 @@ function pickTransform(vars: MotionTweenVars): MotionTweenVars {
   }
   return out;
 }
-
+ 
 function hasTransform(vars: MotionTweenVars): boolean {
   return TRANSFORM_KEYS.some((key) => vars[key] !== undefined);
 }
-
+ 
 function toGsapVars(
   vars: MotionTweenVars,
   cfg: Readonly<MotionConfig>,
@@ -164,11 +165,11 @@ function toGsapVars(
     force3D: false,
   };
 }
-
+ 
 function asAnimation(tween: object): MotionAnimation {
   return tween as unknown as MotionAnimation;
 }
-
+ 
 export function playDeclarativeMotion(
   el: HTMLElement,
   vars: MotionVars,
@@ -188,7 +189,7 @@ export function playDeclarativeMotion(
   if (vars.repeat !== undefined) tweenVars.repeat = vars.repeat;
   if (vars.delay !== undefined) tweenVars.delay = vars.delay;
   if (!hasTransform(tweenVars)) return undefined;
-
+ 
   const replay = resolveMotionReplay(options.phase, vars);
   return playTween(el, replay === "rest" ? motionRestVars(tweenVars) : undefined, tweenVars, {
     reduced: options.reduced,
@@ -196,7 +197,7 @@ export function playDeclarativeMotion(
     overwrite: overwriteFor(options.phase),
   });
 }
-
+ 
 function playTween(
   el: HTMLElement | null | undefined,
   from: MotionTweenVars | undefined,
@@ -221,10 +222,10 @@ function playTween(
   }
   return asAnimation(gsap.to(el, toVars));
 }
-
+ 
 export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
   const overwrite = overwriteFor(host.phase);
-
+ 
   const track = (animation: MotionAnimation | undefined): MotionAnimation | undefined => {
     if (!animation) return undefined;
     host.onCleanup(() => {
@@ -233,7 +234,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
     host.setAnimation(animation);
     return animation;
   };
-
+ 
   const play = (
     el: HTMLElement | null | undefined,
     from: MotionTweenVars | undefined,
@@ -246,7 +247,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
         overwrite,
       }),
     );
-
+ 
   const to: MotionTweenApi["to"] = (
     a: MotionTweenVars | HTMLElement | null | undefined,
     b?: MotionTweenVars,
@@ -255,7 +256,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
     const vars = (b === undefined ? a : b) as MotionTweenVars;
     return play(el as HTMLElement | null | undefined, undefined, vars);
   };
-
+ 
   const fromRest: MotionTweenApi["fromRest"] = (
     a: MotionTweenVars | HTMLElement | null | undefined,
     b?: MotionTweenVars,
@@ -264,7 +265,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
     const vars = (b === undefined ? a : b) as MotionTweenVars;
     return play(el as HTMLElement | null | undefined, motionRestVars(vars), vars);
   };
-
+ 
   const fromTo: MotionTweenApi["fromTo"] = (
     a: MotionTweenVars | HTMLElement | null | undefined,
     b: MotionTweenVars,
@@ -275,7 +276,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
     }
     return play(a as HTMLElement | null | undefined, b, c);
   };
-
+ 
   const timeline = (): MotionTimeline => {
     const tl = gsap.timeline({
       defaults: {
@@ -287,7 +288,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
     });
     const animation = asAnimation(tl);
     track(animation);
-
+ 
     const self: MotionTimeline = {
       kill: () => {
         tl.kill();
@@ -325,7 +326,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
         return self;
       },
     };
-
+ 
     function addTween(
       el: HTMLElement | null | undefined,
       from: MotionTweenVars | undefined,
@@ -341,17 +342,17 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
       if (from) tl.fromTo(el, pickTransform(from), { ...toVars, immediateRender: true }, position);
       else tl.to(el, toVars, position);
     }
-
+ 
     return self;
   };
-
+ 
   const wait = (delay: MotionDelay) => waitMotionDelay(host, delay);
   const sequence = (...steps: MotionSequenceStep[]) => runMotionSequence(host, steps);
   const parallel = (...steps: MotionSequenceStep[]) => runMotionParallel(host, steps);
-
+ 
   return { to, fromRest, fromTo, timeline, wait, sequence, parallel };
 }
-
+ 
 function motionAbortError(): Error {
   if (typeof DOMException === "function") {
     return new DOMException("Motion wait aborted", "AbortError");
@@ -360,15 +361,15 @@ function motionAbortError(): Error {
   error.name = "AbortError";
   return error;
 }
-
+ 
 function throwIfMotionAborted(signal: AbortSignal): void {
   if (signal.aborted) throw motionAbortError();
 }
-
+ 
 function isDelayStep(step: MotionSequenceStep): step is MotionDelay {
   return typeof step === "number" || typeof step === "string";
 }
-
+ 
 function waitForMotionAnimation(
   animation: MotionAnimation,
   signal: AbortSignal,
@@ -395,7 +396,7 @@ function waitForMotionAnimation(
     });
   });
 }
-
+ 
 async function settleMotionStep(
   host: MotionTweenHost,
   result: void | Promise<void> | Pick<MotionAnimation, "kill"> | undefined,
@@ -411,7 +412,7 @@ async function settleMotionStep(
     await waitForMotionAnimation(result, host.signal);
   }
 }
-
+ 
 export function waitMotionDelay(host: MotionTweenHost, delay: MotionDelay): Promise<void> {
   throwIfMotionAborted(host.signal);
   const seconds = resolveMotionDelay(delay, host.config) ?? 0;
@@ -441,7 +442,7 @@ export function waitMotionDelay(host: MotionTweenHost, delay: MotionDelay): Prom
     });
   });
 }
-
+ 
 export async function runMotionSequence(
   host: MotionTweenHost,
   steps: readonly MotionSequenceStep[],
@@ -456,7 +457,7 @@ export async function runMotionSequence(
     await settleMotionStep(host, step());
   }
 }
-
+ 
 export async function runMotionParallel(
   host: MotionTweenHost,
   steps: readonly MotionSequenceStep[],
@@ -464,3 +465,4 @@ export async function runMotionParallel(
   throwIfMotionAborted(host.signal);
   await Promise.all(steps.map((step) => runMotionSequence(host, [step])));
 }
+ 

@@ -1,46 +1,56 @@
 /**
  * Slot motion for Calendar — look here first.
  *
- * DOM slots: `navPrev` / `navNext` / `navPrevIcon` / `navNextIcon` (unique on
+ * DOM slots: `root` (shell), `navPrev` / `navNext` / `navPrevIcon` / `navNextIcon` (unique on
  * root scope), `header`, `headerTitle`, `grid`, `footer`, `footerToday`,
  * `footerClear` (root scope), `cell` / `cellText` (nested unique scope per cell
  * — not shared-scope repeated).
  *
- * Range half-fill GSAP and ToggleButton fill stay kit-internal.
- * Hover lift is first-level without shadow (adaptive scale via unset `liftScale`).
+ * `rangeHalfFill` fades with `contentFade`. `cellFill` checks with `selectionFill`.
+ * Panel hover is a second-level shadow (rest `--shadow-base`, grows on hover) with scale locked at 1. Nav and cells lift on their own.
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
+ 
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useOptionalCalendarMotionScope } from "./calendarContext";
-import type { CalendarMotion, CalendarPartMotion } from "./calendarTypes";
-
+import type { CalendarMotion, CalendarPartMotion, CalendarVariant } from "./calendarTypes";
+import { KIT_CALENDAR_VARIANTS } from "./calendarTypes";
+ 
 const NAV_OR_CELL = {
   hoverIn: "hoverLiftFirstLevel" as const,
   hoverOut: "hoverLiftFirstLevel" as const,
   pressIn: "pressSqueeze" as const,
   pressOut: false as const,
 };
-
-export function resolveCalendarMotionDefaults(): CalendarMotion {
-  return {
-    navPrev: { ...NAV_OR_CELL },
-    navNext: { ...NAV_OR_CELL },
-  };
+ 
+export function resolveCalendarMotionDefaults(variant: CalendarVariant = "default"): CalendarMotion {
+  return overlaySkinMotion(
+    {
+      navPrev: { ...NAV_OR_CELL },
+      navNext: { ...NAV_OR_CELL },
+      rangeHalfFill: { enter: "contentFade", leave: "contentFade" },
+    },
+    variant,
+    KIT_CALENDAR_VARIANTS,
+    "calendar",
+  );
 }
-
+ 
 export function resolveCalendarCellMotionDefaults(): CalendarMotion {
   return {
     cell: { ...NAV_OR_CELL },
+    cellFill: { check: "selectionFill", uncheck: "selectionFill" },
   };
 }
-
+ 
 export function useCalendarSlotMotion<T extends HTMLElement>(
   slot: "footerToday" | "footerClear",
   {
@@ -76,3 +86,4 @@ export function useCalendarSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

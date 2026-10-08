@@ -1,19 +1,24 @@
 import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-
+import { KitChevronBack, KitChevronForward } from "@/components/core/utils/kitIcons";
+ 
 import { focusKeyboard } from "@/components/core/utils/focusElement";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeMotionSlotMaps, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
-import { motionContentFadeFor } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-
+import { applyContentFadeInstant } from "@/components/core/utils/slotMotion/recipes/contentFade";
+ 
 import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
-import { useToggleButtonFillAnimation, SELECTION_FILL_DATA_ATTR } from "@/components/core/ToggleButton/useToggleButtonFillAnimation";
+import {
+  applyToggleButtonFillInstant,
+  createToggleButtonFillRefCallback,
+  SELECTION_FILL_DATA_ATTR,
+} from "@/components/core/ToggleButton/useToggleButtonFillAnimation";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import { cn } from "@/utils/cn";
-
+ 
 import {
   calendarDaysGridLabel,
   calendarFocusDayKey,
@@ -39,7 +44,7 @@ import {
   useCalendarClassNames,
   useOptionalCalendarMotionScope,
 } from "./calendarContext";
-import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_NAV_ICON_WRAP_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
+import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_CONTENTS_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_NAV_ICON_WRAP_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
 import type {
   CalendarDayProps,
   CalendarFooterProps,
@@ -53,60 +58,53 @@ import type {
   CalendarTitleProps,
 } from "./calendarTypes";
 import { useCalendarDayCellModels, useCalendarHeaderTitle, useCalendarMonthCellModels, useCalendarYearCellModels } from "./useCalendarViewModels";
-
+ 
 function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
-  const config = useMotionConfig();
   const slotClassNames = useCalendarClassNames();
-  const ref = useRef<HTMLDivElement>(null);
+  const scope = useOptionalCalendarMotionScope();
   const firstLayoutRef = useRef(true);
+  const part = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "rangeHalfFill",
+    pointerPhases: false,
+  });
 
   useLayoutEffect(() => {
-    const el = ref.current;
+    const el = part.targetRef.current;
     if (!el) return;
-
-    const applyInstant = (on: boolean) => {
-      el.style.opacity = on ? "1" : "0";
-    };
-
-    if (prefersReducedMotion()) {
-      killMotion(el);
-      applyInstant(visible);
-      return;
-    }
-
-    if (firstLayoutRef.current) {
+    const phase = visible ? "enter" : "leave";
+    if (firstLayoutRef.current || prefersReducedMotion() || !scope) {
       firstLayoutRef.current = false;
-      killMotion(el);
-      applyInstant(visible);
+      applyContentFadeInstant(el, visible);
       return;
     }
-
-    killMotion(el);
-    gsap.to(el, {
-      autoAlpha: visible ? 1 : 0,
-      ...motionContentFadeFor(config),
-      overwrite: "auto",
-    });
-  }, [config, visible]);
+    const value = scope.resolve("rangeHalfFill", phase);
+    if (value === false || value === undefined) {
+      applyContentFadeInstant(el, visible);
+      return;
+    }
+    scope.play("rangeHalfFill", phase, { el });
+  }, [part.targetRef, scope, visible]);
 
   return (
     <div
-      ref={ref}
+      ref={part.setRef}
       aria-hidden
+      data-state={visible ? "open" : "closed"}
       className={cn(
         cn(CALENDAR_RANGE_HALF_FILL_CLASS, calendarRangeHalfFillSideClass(side)),
         slotClassNames.rangeHalfFill,
       )}
-      style={CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE}
     />
   );
 }
-
+ 
 const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
   function CalendarNavButton(
     { direction, size, onClick, disabled, children, className, motion, onKeyDown, ...rest },
     ref,
   ) {
+    const labels = useBurneLabels();
     const { navPrevIcon, navNextIcon } = useCalendar();
     const slotClassNames = useCalendarClassNames();
     const navSlotName = direction === "prev" ? "navPrev" : "navNext";
@@ -127,22 +125,22 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
       pressPhases: !disabled,
     });
     useOptionalEnterOnMount(scope, iconSlotName, iconTargetRef);
-    const label = direction === "prev" ? calendarNavBackLabel() : calendarNavForwardLabel();
+    const label = direction === "prev" ? calendarNavBackLabel(labels) : calendarNavForwardLabel(labels);
     const navSlot =
       direction === "prev" ? slotClassNames.navPrev : slotClassNames.navNext;
     const contextIcon = direction === "prev" ? navPrevIcon : navNextIcon;
-
+ 
     const defaultIcon =
       direction === "prev" ? (
-        <IoChevronBack
+        <KitChevronBack
           className={cn(CALENDAR_NAV_ICON_CLASS, slotClassNames.navIcon)}
         />
       ) : (
-        <IoChevronForward
+        <KitChevronForward
           className={cn(CALENDAR_NAV_ICON_CLASS, slotClassNames.navIcon)}
         />
       );
-
+ 
     return (
       <button
         ref={setRef}
@@ -164,7 +162,7 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
         {children ?? (
           <span
             ref={setIconRef}
-            className={CALENDAR_NAV_ICON_WRAP_CLASS}
+            className={cn(CALENDAR_NAV_ICON_WRAP_CLASS, slotClassNames.navIconWrap)}
             {...iconPointerHandlers}
           >
             {contextIcon !== undefined ? contextIcon : defaultIcon}
@@ -174,9 +172,9 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
     );
   },
 );
-
+ 
 CalendarNavButton.displayName = "Calendar.NavButton";
-
+ 
 export const CalendarNavPrev = forwardRef<HTMLButtonElement, CalendarNavPrevProps>(
   function CalendarNavPrev({ size: sizeProp, onClick, ...rest }, ref) {
     const { navigate, size } = useCalendar();
@@ -194,9 +192,9 @@ export const CalendarNavPrev = forwardRef<HTMLButtonElement, CalendarNavPrevProp
     );
   },
 );
-
+ 
 CalendarNavPrev.displayName = "Calendar.NavPrev";
-
+ 
 export const CalendarNavNext = forwardRef<HTMLButtonElement, CalendarNavNextProps>(
   function CalendarNavNext({ size: sizeProp, onClick, ...rest }, ref) {
     const { navigate, size } = useCalendar();
@@ -214,9 +212,9 @@ export const CalendarNavNext = forwardRef<HTMLButtonElement, CalendarNavNextProp
     );
   },
 );
-
+ 
 CalendarNavNext.displayName = "Calendar.NavNext";
-
+ 
 const CalendarInteractiveCellInner = forwardRef<
   HTMLButtonElement,
   CalendarInteractiveCellProps
@@ -227,7 +225,7 @@ const CalendarInteractiveCellInner = forwardRef<
     parentScope?.getRootMotion(),
     motion ? { cell: motion } : undefined,
   );
-
+ 
   return (
     <CalendarMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -237,7 +235,7 @@ const CalendarInteractiveCellInner = forwardRef<
     </CalendarMotionProvider>
   );
 });
-
+ 
 function CalendarInteractiveCellSurface({
   selected,
   disabled = false,
@@ -259,16 +257,61 @@ function CalendarInteractiveCellSurface({
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
 }) {
   const fillRef = useRef<HTMLSpanElement>(null);
+  const config = useMotionConfig();
   const onPressRef = useRef(onPress);
   const onMouseEnterRef = useRef(onMouseEnter);
   const onMouseLeaveRef = useRef(onMouseLeave);
-
+ 
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onPressRef.current = onPress;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onMouseEnterRef.current = onMouseEnter;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onMouseLeaveRef.current = onMouseLeave;
-
-  const { bindFillRef } = useToggleButtonFillAnimation(selected, fillRef);
+ 
   const scope = useOptionalCalendarMotionScope();
+  const fillPart = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "cellFill",
+    pointerPhases: false,
+  });
+  const initialSelectedRef = useRef(selected);
+  const bindFillInit = useMemo(
+    () => createToggleButtonFillRefCallback(fillRef, initialSelectedRef.current),
+    [fillRef],
+  );
+  const setFillRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      bindFillInit(node);
+      fillRef.current = node;
+      fillPart.setRef(node);
+    },
+    [bindFillInit, fillPart.setRef],
+  );
+  const prevSelectedRef = useRef<boolean | undefined>(undefined);
+
+  useLayoutEffect(() => {
+    const fill = fillRef.current;
+    if (!fill) return;
+    if (prevSelectedRef.current === undefined) {
+      prevSelectedRef.current = selected;
+      return;
+    }
+    if (prevSelectedRef.current === selected) return;
+    prevSelectedRef.current = selected;
+    const phase = selected ? "check" : "uncheck";
+    const fillOff =
+      prefersReducedMotion() ||
+      !isMotionFeatureEnabledFor(config, "enableToggleButtonFill") ||
+      !scope ||
+      scope.resolve("cellFill", phase) === false ||
+      scope.resolve("cellFill", phase) === undefined;
+    if (fillOff) {
+      applyToggleButtonFillInstant(fill, selected);
+      return;
+    }
+    scope.play("cellFill", phase, { el: fill });
+  }, [config, fillRef, scope, selected]);
   const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
     scope,
     slot: "cell",
@@ -284,21 +327,21 @@ function CalendarInteractiveCellSurface({
   });
   useOptionalEnterOnMount(scope, "cellText", textTargetRef);
   const slotClassNames = useCalendarClassNames();
-
+ 
   const kindSlot =
     cellKind === "month"
       ? slotClassNames.monthCell
       : cellKind === "year"
         ? slotClassNames.yearCell
         : slotClassNames.dayCell;
-
+ 
   const textVariant = calendarInteractiveCellTextVariant(size, rounded);
-
+ 
   const handleClick = useCallback(() => {
     if (disabled) return;
     onPressRef.current();
   }, [disabled]);
-
+ 
   return (
     <button
       ref={setRef}
@@ -330,7 +373,7 @@ function CalendarInteractiveCellSurface({
       }}
     >
       <span
-        ref={bindFillRef}
+        ref={setFillRef}
         aria-hidden
         {...{ [SELECTION_FILL_DATA_ATTR]: "" }}
         data-pressed={selected ? "true" : "false"}
@@ -358,7 +401,7 @@ function CalendarInteractiveCellSurface({
     </button>
   );
 }
-
+ 
 function calendarCellPropsEqual(
   prev: CalendarInteractiveCellProps,
   next: CalendarInteractiveCellProps,
@@ -377,12 +420,15 @@ function calendarCellPropsEqual(
     prev.className === next.className &&
     prev.children === next.children &&
     prev.motion === next.motion &&
-    prev.motionController === next.motionController
+    prev.motionController === next.motionController &&
+    prev.onPress === next.onPress &&
+    prev.onMouseEnter === next.onMouseEnter &&
+    prev.onMouseLeave === next.onMouseLeave
   );
 }
-
+ 
 const CalendarInteractiveCell = memo(CalendarInteractiveCellInner, calendarCellPropsEqual);
-
+ 
 export const CalendarDay = forwardRef<HTMLButtonElement, CalendarDayProps>(
   function CalendarDay({ size: sizeProp, ...props }, ref) {
     const { size } = useCalendar();
@@ -391,9 +437,9 @@ export const CalendarDay = forwardRef<HTMLButtonElement, CalendarDayProps>(
     );
   },
 );
-
+ 
 CalendarDay.displayName = "Calendar.Day";
-
+ 
 function CalendarDaysView() {
   const slotClassNames = useCalendarClassNames();
   const {
@@ -425,7 +471,7 @@ function CalendarDaysView() {
   const fallbackRovingDate = hasFocusedInView
     ? null
     : (cells.find((c) => c.date && !c.isDisabled)?.date ?? null);
-
+ 
   useLayoutEffect(() => {
     if (restoreFocusRef.current) {
       restoreFocusRef.current = false;
@@ -435,7 +481,7 @@ function CalendarDaysView() {
       focusKeyboard(el);
       return;
     }
-
+ 
     // After month/year drill-down the previous cell unmounts and focus falls to
     // body — reclaim the roving day so keyboard users stay in the grid.
     const grid = gridRef.current;
@@ -461,7 +507,7 @@ function CalendarDaysView() {
     );
     focusKeyboard(el);
   }, [focusedKey, viewDate]);
-
+ 
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       const next = moveCalendarFocusDate(
@@ -478,7 +524,7 @@ function CalendarDaysView() {
     },
     [focusedDate, minDate, maxDate, moveDayFocus],
   );
-
+ 
   return (
     <div
       ref={gridRef}
@@ -500,10 +546,10 @@ function CalendarDaysView() {
           </div>
         ))}
       </div>
-
+ 
       <div className={cn(CALENDAR_DAYS_CELL_GRID_CLASS, slotClassNames.daysGrid)}>
         {rows.map((row, rowIndex) => (
-          <div key={`week-${rowIndex}`} role="row" className="contents">
+          <div key={`week-${rowIndex}`} role="row" className={CALENDAR_CONTENTS_CLASS}>
             {row.map((cell) => {
               if (cell.day === null) {
                 return (
@@ -517,7 +563,7 @@ function CalendarDaysView() {
                   />
                 );
               }
-
+ 
               const dayContent =
                 renderDay && cell.date
                   ? renderDay(cell.date, {
@@ -530,7 +576,7 @@ function CalendarDaysView() {
                       circleActive: !!cell.circleActive,
                     })
                   : cell.day;
-
+ 
               const isFocused =
                 !!cell.date && isSameDay(cell.date, focusedDate);
               const isRovingTarget =
@@ -538,7 +584,7 @@ function CalendarDaysView() {
                 (!!fallbackRovingDate &&
                   !!cell.date &&
                   isSameDay(cell.date, fallbackRovingDate));
-
+ 
               return (
                 <div
                   key={cell.key}
@@ -555,7 +601,7 @@ function CalendarDaysView() {
                   {cell.showRightBg ? (
                     <CalendarRangeHalfFill visible side="right" />
                   ) : null}
-
+ 
                   <CalendarInteractiveCell
                     selected={!!cell.circleActive}
                     disabled={cell.isDisabled}
@@ -588,7 +634,7 @@ function CalendarDaysView() {
     </div>
   );
 }
-
+ 
 function CalendarMonthsView() {
   const slotClassNames = useCalendarClassNames();
   const { onMonthPress, size, viewDate, focusedDate } = useCalendar();
@@ -599,7 +645,7 @@ function CalendarMonthsView() {
     Math.min(11, Math.max(0, focusedDate.getMonth())),
   );
   const rows = useMemo(() => chunkCalendarCells(months, 3), [months]);
-
+ 
   useLayoutEffect(() => {
     if (!restoreFocusRef.current) return;
     restoreFocusRef.current = false;
@@ -608,7 +654,7 @@ function CalendarMonthsView() {
     );
     focusKeyboard(el);
   }, [focusedMonth]);
-
+ 
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -624,7 +670,7 @@ function CalendarMonthsView() {
     },
     [focusedMonth, onMonthPress],
   );
-
+ 
   return (
     <div
       ref={gridRef}
@@ -634,13 +680,13 @@ function CalendarMonthsView() {
       onKeyDown={handleGridKeyDown}
     >
       {rows.map((row, rowIndex) => (
-        <div key={`months-${rowIndex}`} role="row" className="contents">
+        <div key={`months-${rowIndex}`} role="row" className={CALENDAR_CONTENTS_CLASS}>
           {row.map((cell) => (
             <div
               key={cell.month}
               role="gridcell"
               aria-selected={cell.isSelected ? true : undefined}
-              className="contents"
+              className={CALENDAR_CONTENTS_CLASS}
             >
               <CalendarInteractiveCell
                 selected={cell.isSelected}
@@ -665,7 +711,7 @@ function CalendarMonthsView() {
     </div>
   );
 }
-
+ 
 function CalendarYearsView() {
   const slotClassNames = useCalendarClassNames();
   const { onYearPress, size, viewDate, focusedDate } = useCalendar();
@@ -681,7 +727,7 @@ function CalendarYearsView() {
   );
   const rows = useMemo(() => chunkCalendarCells(years, 4), [years]);
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
-
+ 
   useLayoutEffect(() => {
     if (!restoreFocusRef.current) return;
     restoreFocusRef.current = false;
@@ -692,7 +738,7 @@ function CalendarYearsView() {
     );
     focusKeyboard(el);
   }, [focusedIndex, years]);
-
+ 
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       const year = years[focusedIndex]?.year;
@@ -709,7 +755,7 @@ function CalendarYearsView() {
     },
     [focusedIndex, onYearPress, years],
   );
-
+ 
   return (
     <div
       ref={gridRef}
@@ -719,7 +765,7 @@ function CalendarYearsView() {
       onKeyDown={handleGridKeyDown}
     >
       {rows.map((row, rowIndex) => (
-        <div key={`years-${rowIndex}`} role="row" className="contents">
+        <div key={`years-${rowIndex}`} role="row" className={CALENDAR_CONTENTS_CLASS}>
           {row.map((cell, cellIndex) => {
             const index = rowIndex * 4 + cellIndex;
             return (
@@ -727,7 +773,7 @@ function CalendarYearsView() {
                 key={cell.year}
                 role="gridcell"
                 aria-selected={cell.isSelected ? true : undefined}
-                className="contents"
+                className={CALENDAR_CONTENTS_CLASS}
               >
                 <CalendarInteractiveCell
                   selected={cell.isSelected}
@@ -754,7 +800,7 @@ function CalendarYearsView() {
     </div>
   );
 }
-
+ 
 export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
   function CalendarTitle(
     { className = "", children, onClick, motion, onPointerOver, onPointerOut, ...rest },
@@ -776,7 +822,7 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
       onPointerOut,
     });
     useOptionalEnterOnMount(scope, "headerTitle", targetRef);
-
+ 
     return (
       <button
         ref={setRef}
@@ -801,9 +847,9 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
     );
   },
 );
-
+ 
 CalendarTitle.displayName = "Calendar.Title";
-
+ 
 export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
   function CalendarHeader(
     { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
@@ -823,7 +869,7 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
       onPointerOut,
     });
     useOptionalEnterOnMount(scope, "header", targetRef);
-
+ 
     return (
       <div
         ref={setRef}
@@ -842,7 +888,7 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
     );
   },
 );
-
+ 
 export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
   function CalendarGrid({ className = "", motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
@@ -860,7 +906,7 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
       onPointerOut,
     });
     useOptionalEnterOnMount(scope, "grid", targetRef);
-
+ 
     return (
       <div
         ref={setRef}
@@ -875,7 +921,7 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
     );
   },
 );
-
+ 
 export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   function CalendarFooter({ className = "", motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
@@ -895,7 +941,7 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
     useOptionalEnterOnMount(scope, "footer", targetRef);
     const todayPart = useCalendarSlotMotion<HTMLButtonElement>("footerToday");
     const clearPart = useCalendarSlotMotion<HTMLButtonElement>("footerClear");
-
+ 
     return (
       <div
         ref={setRef}
@@ -931,12 +977,12 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
     );
   },
 );
-
+ 
 CalendarHeader.displayName = "Calendar.Header";
 CalendarGrid.displayName = "Calendar.Grid";
 CalendarFooter.displayName = "Calendar.Footer";
 CalendarInteractiveCell.displayName = "CalendarInteractiveCell";
-
+ 
 export function CalendarDefaultContent() {
   return (
     <>
@@ -945,3 +991,4 @@ export function CalendarDefaultContent() {
     </>
   );
 }
+ 

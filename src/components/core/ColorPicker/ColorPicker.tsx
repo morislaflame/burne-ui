@@ -1,6 +1,6 @@
 import { Popover } from "@/components/core/Popover";
 import { useMemo } from "react";
-
+ 
 import { resolveColorPickerMotionDefaults } from "./colorPickerAnimations";
 import { ColorPickerClassNamesProvider, ColorPickerMotionProvider, ColorPickerProvider } from "./colorPickerContext";
 import {
@@ -14,7 +14,7 @@ import {
 } from "./colorPickerParts";
 import type { ColorPickerProps } from "./colorPickerTypes";
 import { useColorPickerRootState } from "./useColorPickerRootState";
-
+ 
 export type {
   ColorPickerProps,
   ColorPickerTriggerProps,
@@ -30,9 +30,9 @@ export type {
   ColorPickerMotion,
   ColorPickerPartMotion,
 } from "./colorPickerTypes";
-
+ 
 export { useColorPicker } from "./colorPickerContext";
-
+ 
 export function ColorPickerRoot({
   children,
   value,
@@ -42,9 +42,11 @@ export function ColorPickerRoot({
   defaultOpen = false,
   onOpenChange,
   size = "base",
-  variant = "default",
+  variant,
   side = "bottom",
   disabled = false,
+  "aria-invalid": ariaInvalid,
+  invalid,
   classNames,
   motion,
   motionController,
@@ -58,9 +60,11 @@ export function ColorPickerRoot({
     onValueChange,
     size,
     disabled,
+    invalid,
+    "aria-invalid": ariaInvalid,
   });
   const motionDefaults = useMemo(() => resolveColorPickerMotionDefaults(), []);
-
+ 
   return (
     <ColorPickerProvider value={contextValue}>
       <ColorPickerClassNamesProvider classNames={classNames}>
@@ -74,7 +78,7 @@ export function ColorPickerRoot({
             onOpenChange={onOpenChange}
             size={size}
             side={side}
-            variant={variant === "gloss" ? "gloss" : "default"}
+            variant={variant}
             motion={{ trigger: motion?.trigger }}
           >
             {children}
@@ -84,9 +88,9 @@ export function ColorPickerRoot({
     </ColorPickerProvider>
   );
 }
-
+ 
 ColorPickerRoot.displayName = "ColorPicker";
-
+ 
 export {
   ColorPickerTrigger,
   ColorPickerContent,
@@ -96,3 +100,4 @@ export {
   ColorPickerPresets,
   ColorPickerPreview,
 };
+ 

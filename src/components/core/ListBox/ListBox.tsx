@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-
-import "../utils/glossInteractive.css";
-
+ 
+ 
 import { resolveListBoxAriaLabel } from "./listBoxA11y";
 import { resolveListBoxMotionDefaults } from "./listBoxAnimations";
 import {
@@ -13,7 +12,7 @@ import {
 import { ListBoxRootShell } from "./listBoxParts";
 import type { ListBoxProps } from "./listBoxTypes";
 import { useListBoxRootState } from "./useListBoxRootState";
-
+ 
 export type {
   ListBoxProps,
   ListBoxSectionProps,
@@ -31,7 +30,7 @@ export type {
   ListBoxMotion,
   ListBoxPartMotion,
 } from "./listBoxTypes";
-
+ 
 export {
   ListBoxRootShell,
   ListBoxSection,
@@ -44,15 +43,15 @@ export {
   ListBoxIcon,
   ListBoxItemIndicator,
 } from "./listBoxParts";
-
+ 
 export { useListBox, useListBoxActiveValue } from "./listBoxContext";
-
+ 
 export function ListBoxRoot({
   classNames,
   children,
   className,
   size,
-  variant = "default",
+  variant,
   multiple,
   value,
   defaultValue,
@@ -68,6 +67,8 @@ export function ListBoxRoot({
   motionState,
   motionPayload,
   playInitialState,
+  virtualized,
+  virtualItemSize,
   ...rest
 }: ListBoxProps) {
   const { listId, contextValue, activeValue: resolvedActiveValue } =
@@ -82,14 +83,14 @@ export function ListBoxRoot({
       onActiveValueChange,
       listId: listIdProp,
     });
-
+ 
   const aria = resolveListBoxAriaLabel({
     ariaLabel: ariaLabelProp,
     ariaLabelledBy: ariaLabelledByProp,
   });
-
+ 
   const motionDefaults = useMemo(() => resolveListBoxMotionDefaults(), []);
-
+ 
   return (
     <ListBoxProvider value={contextValue}>
       <ListBoxActiveValueProvider value={resolvedActiveValue}>
@@ -104,6 +105,8 @@ export function ListBoxRoot({
             className={className}
             ariaLabel={aria["aria-label"]}
             ariaLabelledBy={aria["aria-labelledby"]}
+            virtualized={virtualized}
+            virtualItemSize={virtualItemSize}
             {...rest}
           >
             {children}
@@ -114,5 +117,6 @@ export function ListBoxRoot({
     </ListBoxProvider>
   );
 }
-
+ 
 ListBoxRoot.displayName = "ListBox";
+ 

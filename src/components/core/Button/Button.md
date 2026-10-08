@@ -131,10 +131,10 @@ const states = createMotionStates({
 
 | size | Высота | min-width (кнопка) | Текст (`Text`) | Иконка в слоте | Радиус |
 |------|--------|--------------------|----------------|----------------|--------|
-| `small` | `h-control-small` | `min-w-button-small` | `small` | `icon-small` | `rounded-small` |
-| `base` | `h-control-base` | `min-w-button-base` | `base` | `icon-base` | `rounded-base` |
-| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-mid` | `rounded-mid` |
-| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-large` | `rounded-large` |
+| `small` | `min-h-control-small` | `min-w-button-small` | `small` | `icon-slot-small` | `rounded-small` |
+| `base` | `min-h-control-base` | `min-w-button-base` | `base` | `icon-slot-base` | `rounded-base` |
+| `mid` | `min-h-control-mid` | `min-w-button-mid` | `mid` | `icon-slot-mid` | `rounded-large` |
+| `large` | `min-h-control-large` | `min-w-button-large` | `mid` | `icon-slot-large` | `rounded-large` |
 
 При `iconOnly` минимальная ширина не применяется (`min-w-fit`).
 
@@ -166,7 +166,7 @@ const states = createMotionStates({
 | `label` / `icon` / `text` | hover / press | нет; хост **рассылает** |
 | `loader` / `success` / `error` | hover / press | нет; CSS rest скрыт, поза — `motion.states` |
 
-`pressOut: false` — kit squeeze сам отпускает. Клавиатура `Enter`/`Space` играет `pressIn`.
+`pressOut: false` — kit squeeze сам отпускает. Если курсор ещё на кнопке, отпуск возвращает hover-позу. `hoverIn: false` оставляет покой: масштаб hover не появляется после press. Клавиатура `Enter`/`Space` играет `pressIn`.
 
 **Где в коде:** типы — `buttonTypes.ts`; scope — `buttonContext.tsx`; defaults + host — `buttonAnimations.ts` (`resolveButtonMotionDefaults`, `useButtonAnimations`); слоты — `buttonParts.tsx`; Provider — `Button.tsx`.
 
@@ -185,7 +185,7 @@ const states = createMotionStates({
 </Button>
 ```
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`cta:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`cta:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 `motionState` + `motion.states` — поза кнопки из React/store (`idle` / `loading` / `success`). Слои `Button.Loader` / `Success` / `Error` **не** монтируются в simple API: приложение само ставит compound-части и перечисляет их в каждом режиме (слот без ключа в новом state не сбрасывается). Несколько слотов на одном режиме: `root` + `text` (перелив / фабрика с GSAP-плагином). Подпись для TextPlugin — `motionPayload` (`from` / `to`) + `createMotionFactory`. Плагины — в приложении, рецепт: [Motion and state managers](/docs/motion-state#плагины--текст-на-state).
 
@@ -279,7 +279,19 @@ function Nudge() {
 </Button>
 ```
 
-**Тень 1-го уровня:** `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount; hover → `--shadow-lift`. Класс `animate-shadow`. Gloss — без этой тени, рецепты `hoverLiftGloss` / `pressSqueezeGloss`.
+**Тень 1-го уровня:** `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount ставит токен `--el-shadow` и статичный rest-слой. Hover / press — отдельные слои (`--shadow-lift` / `--shadow-none`); GSAP кросс-фейдит только `opacity`. Класс `animate-shadow`. Gloss — свои три CSS-тени (`--gloss-shadow-rest|hover|press`), рецепты `hoverLiftGloss` / `pressSqueezeGloss`.
+
+**ButtonGroup:** lift/squeeze на content span, не на glue-корне.
+
+### 1. Hover lift + press squeeze
+
+`useButtonAnimations` — цель: root `<button>` или `contentMotionRef` при `groupSegment`.
+
+**Pointer enter (hover lift):** адаптивный `scale` (cap = `hoverLiftScale`), тень `firstLevelHoverShadow()` (`--shadow-none` → `--shadow-sm`).
+
+**Pointer down (press squeeze):** 3 keyframes scale `1 → adaptiveSqueeze → 1`. После release, если курсор внутри — возвращает hover lift.
+
+**Gloss:** вместо тени — `hoverLiftGloss` / `pressSqueezeGloss`.
 
 **ButtonGroup:** lift/squeeze на content span, не на glue-корне.
 
@@ -305,7 +317,7 @@ configureMotion({
 
 ### 2. Converge ripple (`ripple={true}`)
 
-Встроенный `<Ripple />` в clip-слое. Слушатель `pointerdown` на кнопке → волна от точки клика.
+Встроенный `<Ripple />` в clip-слое (`overflow-hidden rounded-[inherit]` на самом Ripple, не на корне кнопки — иначе обрежется hover-элевация). Слушатель `pointerdown` на кнопке → волна от точки клика.
 
 **Анимация точки** (`ConvergeRippleLayer`, `direction` default `"out"` у Ripple в Button):
 
@@ -329,7 +341,7 @@ configureMotion({
 
 Simple API монтирует только label. Overlay-части — compound: CSS rest = `invisible opacity-0`, показ — `motion.states` (`autoAlpha` / `scale`). В каждом режиме перечислите все четыре слота, иначе поза останется на пропущенном.
 
-`disabled` и `aria-busy` задаёт приложение (нативный атрибут), не кит.
+`disabled` задаёт приложение. `aria-busy` при `motionState="loading"` ставит кит.
 
 Живой пример — playground / Storybook **motionState save**.
 
@@ -370,7 +382,7 @@ Simple API монтирует только label. Overlay-части — compoun
 
 ### Размерные токены
 
-`--control-height-*`, `min-w-button-*`, spacing (`px-mid`, `py-small`, …), `icon-small` / `icon-base` / `icon-large`.
+`--control-height-*`, `min-w-button-*`, spacing (`px-mid`, `py-small`, …). Размер иконки в слоте — `icon-slot-small` … `icon-slot-large` (переменная `--icon-size` на обёртке). Свой размер: `classNames.icon="icon-slot-large"` или `icon-large` на самом `<svg>`.
 
 ## Стилизация и кастомизация
 
@@ -382,7 +394,7 @@ Simple API монтирует только label. Overlay-части — compoun
   status="danger"
   size="mid"
   className="min-w-button-mid"
-  classNames={{ icon: "text-danger", text: "font-w-strong" }}
+  classNames={{ icon: "icon-slot-large text-danger", text: "font-w-strong" }}
   icon={<IoSave aria-hidden />}
 >
   Сохранить
@@ -453,7 +465,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 ## Доступность
 
 - Нативный `<button>` с корректным `type`.
-- `aria-busy` — нативный атрибут приложения (например при `motionState === "loading"`).
+- `aria-busy` ставит кит, когда `motionState="loading"`.
 - При `iconOnly` — обязателен осмысленный `aria-label`.
 - Иконки в `icon` и overlay-слоях — `aria-hidden`.
 - Focus ring через `focus-ring` + status outline.

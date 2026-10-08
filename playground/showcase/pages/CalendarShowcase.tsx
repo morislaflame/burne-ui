@@ -8,10 +8,10 @@ import { CalendarCustomHeaderNavDemo } from "../demos/calendar/CalendarCustomHea
 import calendarCustomHeaderNavSource from "../demos/calendar/CalendarCustomHeaderNav.demo.tsx?raw";
 import { CalendarCustomNavIconsDemo } from "../demos/calendar/CalendarCustomNavIcons.demo";
 import calendarCustomNavIconsSource from "../demos/calendar/CalendarCustomNavIcons.demo.tsx?raw";
-import { CalendarGlossDemo } from "../demos/calendar/CalendarGloss.demo";
-import calendarGlossSource from "../demos/calendar/CalendarGloss.demo.tsx?raw";
 import { CalendarInlineWidgetDemo } from "../demos/calendar/CalendarInlineWidget.demo";
 import calendarInlineWidgetSource from "../demos/calendar/CalendarInlineWidget.demo.tsx?raw";
+import { CalendarLocaleDemo } from "../demos/calendar/CalendarLocale.demo";
+import calendarLocaleSource from "../demos/calendar/CalendarLocale.demo.tsx?raw";
 import { CalendarModesDemo } from "../demos/calendar/CalendarModes.demo";
 import calendarModesSource from "../demos/calendar/CalendarModes.demo.tsx?raw";
 import { CalendarRenderDayDemo } from "../demos/calendar/CalendarRenderDay.demo";
@@ -37,15 +37,14 @@ export function CalendarShowcase() {
         <ShowcaseDemoFromFile align="start" Demo={CalendarModesDemo} source={calendarModesSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Locale" description="locale is a BCP 47 tag. Month names, weekdays, and Today/Clear come from Intl.">
+        <ShowcaseDemoFromFile align="start" Demo={CalendarLocaleDemo} source={calendarLocaleSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarSizesDemo} source={calendarSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass calendar panel.">
-        <ShowcaseDemoFromFile align="start" Demo={CalendarGlossDemo} source={calendarGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="Custom nav icons"
         description="navPrevIcon / navNextIcon on root replace default chevrons."
       >
@@ -127,7 +126,7 @@ export function CalendarShowcase() {
             description="renderDay(date, state) customizes day cell content; classNames.dayEmpty for padding cells."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             Localization and restrictions — <code>minValue</code>, <code>maxValue</code>, <code>locale</code>.
             Fill selected cells — <code>configureMotion()</code> (<code>enableToggleButtonFill</code>).

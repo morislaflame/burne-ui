@@ -54,6 +54,10 @@ const meta = {
       control: "select",
       options: ["small", "base", "mid", "large"],
     },
+    variant: {
+      control: "select",
+      options: ["default", "outline", "secondary"],
+    },
     ripple: {
       control: "boolean",
       description: "Built-in `<Ripple color=\"neutral\" />` on the shell root.",
@@ -185,8 +189,7 @@ const DEMO_EVENTS = [
 function matchesQuery(
   q: string,
   title: string,
-  subtitle: string,
-): boolean {
+  subtitle: string): boolean {
   const n = q.trim().toLowerCase();
   if (!n) return true;
   return (
@@ -194,21 +197,28 @@ function matchesQuery(
   );
 }
 
-export const ClassNamesFull: Story = {
-  name: "classNames",
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
   render: () => (
-    <SearchInput
-      defaultExpanded
-      defaultValue="component"
-      placeholder="Search…"
-      aria-label="Search with custom slot styles"
-      classNames={{
-        root: "border-primary/40 ring-1 ring-primary/15",
-        icon: "text-primary",
-        input: "text-primary placeholder:text-primary/50",
-        clear: "text-primary hover:text-primary/70",
-      }}
-    />
+    <div className="flex flex-wrap items-center justify-center gap-large">
+      <SearchInput
+        defaultExpanded
+        defaultValue="component"
+        placeholder="Search…"
+        aria-label="Search with custom slot styles"
+        classNames={{
+          root: "border-primary/40 ring-1 ring-primary/15",
+          icon: "text-primary",
+          input: "text-primary placeholder:text-primary/50",
+          clear: "text-primary hover:text-primary/70",
+        }}
+      />
+      <SearchInput
+        placeholder="Find"
+        aria-label="Collapsed search"
+        classNames={{ expandTrigger: "text-primary" }}
+      />
+    </div>
   ),
 };
 
@@ -220,10 +230,8 @@ export const FilterList: Story = {
     const filtered = useMemo(
       () =>
         DEMO_EVENTS.filter((item) =>
-          matchesQuery(query, item.title, item.subtitle),
-        ),
-      [query],
-    );
+          matchesQuery(query, item.title, item.subtitle)),
+      [query]);
 
     return (
       <div className="mx-auto flex w-full max-w-lg flex-col gap-large">
@@ -242,7 +250,7 @@ export const FilterList: Story = {
         </p>
         <ul className="flex list-none flex-col gap-mid p-0">
           {filtered.length === 0 ? (
-            <li className="rounded-mid border-token border-dashed px-large py-2xlarge text-center text-sm text-muted">
+            <li className="rounded-large border-token border-dashed px-large py-2xlarge text-center text-sm text-muted">
               Nothing matched «{query.trim() || "…"}». Try another
               query.
             </li>

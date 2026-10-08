@@ -168,7 +168,7 @@ function Nudge() {
 
 ### Button в группе
 
-`useFirstLevelInteractiveMotion` с `useContentRef: !!groupSegment` — squeeze/lift на inner content, не на glue-корне. `SHADOW_LIFT_MOTION_CLASS` на корне отключается.
+`useButtonAnimations` (`buttonAnimations.ts`) + `hoverInteractiveLift` / slot motion `pressSqueeze` — squeeze/lift на inner content при `groupSegment`, не на glue-корне. Тень на корне сегмента отключается.
 
 ### Input / ComboBox / SearchInput
 
@@ -198,7 +198,7 @@ configureMotion({
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Button squeeze | `useFirstLevelInteractiveMotion` | `pressSqueezeScale` | `groupSegment` |
+| Button squeeze | slot motion `pressSqueeze` (`buttonAnimations.ts`) | `pressSqueezeScale` | `groupSegment` |
 | Input shell | field shell utils | hover tokens | `groupSegment` |
 | ButtonGroup.Text | slot motion `text` | — | `motion` / `ButtonGroup.Text motion` |
 
@@ -209,14 +209,13 @@ configureMotion({
 | Функция / константа | Назначение |
 |---------------------|------------|
 | `buttonGroupRootClass` | `inline-flex w-fit`, orientation; joined frame via `::after` (`rounded-[inherit]`, `border-inherit`) |
-| `buttonGroupSeparatorClass` | `border-r-token` / `border-b-token` |
+| `buttonGroupSeparatorClass` | `border-e-token` / `border-b-token` |
 | `buttonGroupRoundingClasses` | Скругления сегмента через `rounded-[inherit]` от root |
 | `buttonGroupOverlapBorderClasses` | `border-l-0` на стыках |
-| `buttonGroupSegmentSurfaceClasses` | `!border-0 !shadow-none`, z-index focus (без rounding — его даёт `buttonGroupRoundingClasses`) |
+| `buttonGroupSegmentSurfaceClasses` | `button-group-segment` и `data-group-segment`: `:where()` сбрасывает border и shadow; `className` с `border-*` / `shadow-*` перекрывает. Плагины читают атрибут, не класс |
 | `buttonGroupTextFrameClass` | Высота из `CONTROL_SIZE_LAYOUT` |
 | `BUTTON_GROUP_TEXT_LABEL_CLASS` | `truncate font-medium` |
 
-Gloss: `glossInteractive.css` на root.
 
 ## Стилизация и кастомизация
 
@@ -233,7 +232,7 @@ Gloss: `glossInteractive.css` на root.
 <ButtonGroup
   aria-label="Custom"
   classNames={{
-    root: "rounded-mid border-primary/25 p-xsmall",
+    root: "rounded-large border-primary/25 p-xsmall",
     separator: "border-primary/40",
     text: "bg-primary/5",
     textLabel: "text-primary font-w-mid",

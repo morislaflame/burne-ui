@@ -18,8 +18,8 @@ export function SelectionIndicatorThumbGalleryDemo() {
           </SelectionThumb>
         </div>
         <div className="selection-indicator-mid flex items-center justify-center">
-          <SelectionThumb size="mid" gloss>
-            <SelectionThumb.Icon size="mid" gloss>
+          <SelectionThumb size="mid">
+            <SelectionThumb.Icon size="mid">
               <IoEllipse aria-hidden />
             </SelectionThumb.Icon>
           </SelectionThumb>

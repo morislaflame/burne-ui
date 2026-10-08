@@ -1,8 +1,9 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabledFor, motionInteractiveFor, motionSwitchThumbFor } from "@/components/core/utils/motionConfig";
-
+import { inlineEndTravel } from "@/components/core/utils/readingDirection";
+ 
 import type { MotionAnimation, MotionContext, MotionTransformVars } from "../slotMotionTypes";
-
+ 
 function travelOf(ctx: MotionContext): number {
   const getter = ctx.params.getTravelPx;
   if (getter) {
@@ -11,23 +12,24 @@ function travelOf(ctx: MotionContext): number {
   }
   return ctx.params.travelPx ?? 0;
 }
-
+ 
 export function applySwitchThumbInstant(el: HTMLElement, checked: boolean, travelPx: number): void {
   killMotion(el);
-  el.style.transform = `translate(${checked ? travelPx : 0}px, 0)`;
+  const x = inlineEndTravel(el, checked ? travelPx : 0);
+  el.style.transform = `translate(${x}px, 0)`;
 }
-
+ 
 export function applySwitchFillInstant(el: HTMLElement, checked: boolean): void {
   killMotion(el);
   el.style.opacity = checked ? "1" : "0";
 }
-
+ 
 export function applySwitchIconInstant(el: HTMLElement, visible: boolean): void {
   killMotion(el);
   el.style.opacity = visible ? "1" : "0";
   el.style.transform = "scale(1)";
 }
-
+ 
 export function switchThumbRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const checked = ctx.phase === "check";
   const travelPx = travelOf(ctx);
@@ -37,7 +39,7 @@ export function switchThumbRecipe(ctx: MotionContext): MotionAnimation | undefin
   }
   killMotion(ctx.el);
   const vars: MotionTransformVars = {
-    x: checked ? travelPx : 0,
+    x: inlineEndTravel(ctx.el, checked ? travelPx : 0),
     ...motionSwitchThumbFor(ctx.config),
   };
   return gsap.to(ctx.el, {
@@ -46,7 +48,7 @@ export function switchThumbRecipe(ctx: MotionContext): MotionAnimation | undefin
     force3D: false,
   }) as unknown as MotionAnimation;
 }
-
+ 
 export function switchFillRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const checked = ctx.phase === "check";
   if (ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableSwitchThumb")) {
@@ -63,7 +65,7 @@ export function switchFillRecipe(ctx: MotionContext): MotionAnimation | undefine
   const hide: MotionTransformVars = { autoAlpha: 0, ...timing };
   return gsap.to(ctx.el, { ...hide, overwrite: "auto" }) as unknown as MotionAnimation;
 }
-
+ 
 function switchIconRecipe(ctx: MotionContext, visibleOnCheck: boolean): MotionAnimation | undefined {
   const visible = ctx.phase === "check" ? visibleOnCheck : !visibleOnCheck;
   if (ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableSwitchThumb")) {
@@ -81,11 +83,12 @@ function switchIconRecipe(ctx: MotionContext, visibleOnCheck: boolean): MotionAn
   }
   return gsap.to(ctx.el, { autoAlpha: 0, scale: 0.88, ...vars }) as unknown as MotionAnimation;
 }
-
+ 
 export function switchIconOnRecipe(ctx: MotionContext): MotionAnimation | undefined {
   return switchIconRecipe(ctx, true);
 }
-
+ 
 export function switchIconOffRecipe(ctx: MotionContext): MotionAnimation | undefined {
   return switchIconRecipe(ctx, false);
 }
+ 

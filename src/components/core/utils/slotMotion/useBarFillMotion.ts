@@ -1,16 +1,16 @@
 import { useLayoutEffect, type RefObject } from "react";
-
+ 
 import { gsap, killMotion, killMotionGeometry } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-
+ 
 import type { MotionScopeValue } from "./createMotionScope";
 import {
   applyProgressFillInstant,
   progressScaleFromPercent,
 } from "./recipes/progressFill";
-
+ 
 /**
  * Determinate first-paint + `fill.enter`, `change: false` / reduced snap,
  * and indeterminate `fill.change` loop (ResizeObserver replay).
@@ -38,7 +38,7 @@ export function useBarFillMotion({
   const reduceMotion = usePrefersReducedMotion();
   const scale = progressScaleFromPercent(percent);
   const fillEnabled = isMotionFeatureEnabledFor(config, "enableProgressFill");
-
+ 
   useLayoutEffect(() => {
     const fill = fillRef.current;
     if (!fill || indeterminate || !scope) return;
@@ -46,7 +46,7 @@ export function useBarFillMotion({
     if (enter == null || enter === false) return;
     const change = scope.resolve("fill", "change");
     if (change === false || reduceMotion || !fillEnabled) return;
-
+ 
     fill.style.width = "100%";
     fill.style.height = "100%";
     applyProgressFillInstant(fill, 0, isHorizontal);
@@ -55,7 +55,7 @@ export function useBarFillMotion({
       killMotion(fill);
     };
   }, [fillEnabled, fillRef, indeterminate, isHorizontal, reduceMotion, scope]);
-
+ 
   useLayoutEffect(() => {
     const fill = fillRef.current;
     if (!fill || indeterminate) return;
@@ -68,7 +68,7 @@ export function useBarFillMotion({
       applyProgressFillInstant(fill, scale, isHorizontal);
     }
   }, [fillEnabled, fillRef, indeterminate, isHorizontal, reduceMotion, scale, scope]);
-
+ 
   useLayoutEffect(() => {
     if (!indeterminate) return;
     const fill = fillRef.current;
@@ -90,6 +90,7 @@ export function useBarFillMotion({
     ro.observe(fill);
     return () => ro.disconnect();
   }, [fillEnabled, fillRef, indeterminate, isHorizontal, reduceMotion, scope]);
-
+ 
   return { reduceMotion };
 }
+ 

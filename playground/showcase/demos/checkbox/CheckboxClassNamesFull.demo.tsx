@@ -9,7 +9,7 @@ export function CheckboxClassNamesFullDemo() {
         root: "rounded-large border-info/40 p-large shadow-token-base",
         control: "ring-info/30",
         controlTrack: "border-info/50",
-        indicator: "text-info rounded-mid",
+        indicator: "text-info rounded-large",
         content: "gap-xsmall",
         label: "gap-xsmall",
         labelText: "text-info font-semibold",

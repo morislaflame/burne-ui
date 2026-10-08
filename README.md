@@ -1,12 +1,18 @@
 # Burne UI
 
-React-компоненты с Tailwind CSS v4, анимациями на **GSAP** и тёмной/светлой темой. Иконки рассчитаны на **react-icons** (Io5).
+React-компоненты с Tailwind CSS v4, анимациями на **GSAP** и тёмной/светлой темой. Дефолтные иконки — инлайн-SVG в ките; `react-icons` опционален для своих глифов.
 
 ## Установка
 
 ```bash
-npm install burne-ui react-icons gsap
+npm install burne-ui gsap
 # или: pnpm / yarn / bun
+```
+
+Опционально, если в приложении нужны иконки из Io5:
+
+```bash
+npm install react-icons
 ```
 
 **Полная пошаговая настройка** (Tailwind v4, Next.js, тема, motion, SSR, troubleshooting): **[docs/SETUP.md](./docs/SETUP.md)**.
@@ -30,8 +36,22 @@ npx burne-ui@latest init
 Убедитесь, что в приложении установлены совместимые версии:
 
 - `react`, `react-dom` (18 или 19)
-- `react-icons` (^5)
 - `gsap` (^3.12)
+- `react-icons` (^5) — **опционально**, только если передаёте свои иконки из Io5
+
+## Браузеры
+
+Опубликованный JS — **ES2020** (`build.target`). CSS и DOM-фичи кита требуют:
+
+| Браузер | Мин. версия | Почему |
+|---------|-------------|--------|
+| Chrome / Edge / Android Chrome | 111 | `color-mix()` |
+| Safari / iOS | 16.4 | `@property` |
+| Firefox / Android Firefox | 128 | `@property` |
+
+Также используются `:has()`, `dvh`, `inert`. Gloss-бордер — `mask-composite: exclude` и `-webkit-mask-composite: xor` (Chrome 111–119). `field-sizing: content` у TextArea — progressive enhancement (Chromium 123+); без него поле не авторастёт, остальное работает.
+
+Ниже этой планки ломаются тени и прозрачности (`color-mix()`). Раскладка остаётся. Матрица, `browserslist` и решение — в [docs/SETUP.md](./docs/SETUP.md#браузеры) и [docs/adr/0001-browser-floor.md](./docs/adr/0001-browser-floor.md).
 
 ## Стили
 
@@ -55,7 +75,7 @@ import "burne-ui/styles.css";
 |-------|------|---------------|---------------|---------|
 | Spacing | `--space` | `--space-*` (`xsmall`…`3xlarge`) | `--spacing-*` | `gap-*`, `p-*`, `m-*` |
 | Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
-| Control | — | `--control-height-*` / `--control-size-*` (= height) | — | `h-control-*`, `w-control-*` |
+| Control | — | `--control-height-*` / `--control-size-*` (= height) | — | `min-h-control-*`, `w-control-*` |
 | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
 
 `--space-*` и `--spacing-*` — разные имена **намеренно**: у Tailwind namespace отступов — `spacing`.
@@ -72,7 +92,7 @@ import "burne-ui/styles.css";
 | `small` / `text-small` | 0.75 |
 | `base` / `text-base` | 0.875 |
 | `mid` / `text-mid` | 1 |
-| `large` / `text-large` | 1.15 |
+| `large` / `text-large` | 1.125 |
 | `xlarge` → `text-header-2` | 1.5 |
 | `2xlarge` → `text-header-1` | 1.875 |
 | `3xlarge` → `text-accent-header` | 2.25 |
@@ -251,7 +271,7 @@ import { Field, Label } from "burne-ui";
 <Field>
   <Label htmlFor="custom-id">Подпись</Label>
   <input id="custom-id" />
-  <Field.Hint status="danger">Сообщение об ошибке</Field.Hint>
+  <Field.Error>Сообщение об ошибке</Field.Error>
 </Field>
 ```
 

@@ -1,12 +1,12 @@
 import { InputControl, InputError, InputHint, InputLabel, InputRoot } from "./Input";
-
+ 
 export const Input = Object.assign(InputRoot, {
   Label: InputLabel,
   Control: InputControl,
   Hint: InputHint,
   Error: InputError,
 });
-
+ 
 export type {
   InputClassNames,
   InputErrorProps,
@@ -21,3 +21,4 @@ export type {
   InputMotion,
   InputPartMotion,
 } from "./inputTypes";
+ 

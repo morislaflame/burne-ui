@@ -2,8 +2,6 @@ import { SliderBudgetPanelDemo } from "../demos/slider/SliderBudgetPanel.demo";
 import sliderBudgetPanelSource from "../demos/slider/SliderBudgetPanel.demo.tsx?raw";
 import { SliderClassNamesFullDemo } from "../demos/slider/SliderClassNamesFull.demo";
 import sliderClassNamesFullSource from "../demos/slider/SliderClassNamesFull.demo.tsx?raw";
-import { SliderGlossDemo } from "../demos/slider/SliderGloss.demo";
-import sliderGlossSource from "../demos/slider/SliderGloss.demo.tsx?raw";
 import { SliderOpacityStripDemo } from "../demos/slider/SliderOpacityStrip.demo";
 import sliderOpacityStripSource from "../demos/slider/SliderOpacityStrip.demo.tsx?raw";
 import { SliderPriceRangeDemo } from "../demos/slider/SliderPriceRange.demo";
@@ -48,12 +46,7 @@ export function SliderShowcase() {
       <ShowcaseSection title="Disabled and vertical" description="orientation vertical and disabled state.">
         <ShowcaseDemoFromFile align="center" Demo={SliderVariantsDemo} source={sliderVariantsSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="gloss — glass circle on rail (prop gloss on the root).">
-        <ShowcaseDemoFromFile align="center" Demo={SliderGlossDemo} source={sliderGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="Instant thumb press, change-phase pulse, inertia bubble (quickTo, not change), value pop timeline, range thumbs with different part motion, track hover glow, chrome enter on label / hint / error.">
+<ShowcaseSection title="Slot motion" description="Instant thumb press, change-phase pulse, inertia bubble (quickTo, not change), value pop timeline, range thumbs with different part motion, track hover glow, chrome enter on label / hint / error.">
         <SliderSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -92,7 +85,7 @@ export function SliderShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="value, onValueChange, min, max, step, range, marks, showValue, formatValue, orientation, gloss."
+            description="value, onValueChange, min, max, step, range, marks, showValue, formatValue, orientation, default."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -105,9 +98,9 @@ export function SliderShowcase() {
             type. <code>formatValue</code> formats the displayed value.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss="gloss">
+        <ShowcaseDoc.Customization>
           <p>
-            Boolean prop <code>gloss</code> on the root - glass thumb. Filling during change value —{" "}
+            Boolean prop <code>default</code> on the root - glass thumb. Filling during change value —{" "}
             <code>configureMotion()</code> not applicable; thumb drag uses interactive tokens.
           </p>
         </ShowcaseDoc.Customization>

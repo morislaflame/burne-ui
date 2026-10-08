@@ -16,9 +16,12 @@ export function ExpandableMotionEventsFinishedDemo() {
 
   async function bounce() {
     setBusy(true);
-    await controller.playSlot("title", "faq:up", { waitForComplete: true }).finished;
-    await controller.playSlot("title", "faq:down", { waitForComplete: true }).finished;
-    setBusy(false);
+    try {
+      await controller.playSlot("title", "faq:up", { waitForComplete: true }).finished;
+      await controller.playSlot("title", "faq:down", { waitForComplete: true }).finished;
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

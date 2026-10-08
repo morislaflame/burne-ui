@@ -8,18 +8,20 @@ import type {
   TextareaHTMLAttributes,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { LabelProps } from "@/components/core/Label";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
-export type TextAreaVariant = "default" | "outline" | "secondary" | "gloss";
-
+ 
+export const KIT_TEXT_AREA_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitTextAreaVariant = (typeof KIT_TEXT_AREA_VARIANTS)[number];
+export type TextAreaVariant = KitTextAreaVariant | (string & {});
+ 
 export type TextAreaStatus = SemanticStatus;
-
+ 
 export type TextAreaSize = ComponentSize;
-
+ 
 export type TextAreaClassNames = {
   root?: string;
   label?: string;
@@ -29,7 +31,7 @@ export type TextAreaClassNames = {
   hint?: string;
   error?: string;
 };
-
+ 
 export type TextAreaPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -38,7 +40,7 @@ export type TextAreaPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type TextAreaMotion = {
   shell?: TextAreaPartMotion;
   control?: TextAreaPartMotion;
@@ -47,7 +49,7 @@ export type TextAreaMotion = {
   hint?: TextAreaPartMotion;
   error?: TextAreaPartMotion;
 };
-
+ 
 export type TextAreaControlProps = Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
   "size"
@@ -66,7 +68,7 @@ export type TextAreaControlProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type TextAreaFieldContextValue = {
   textareaId: string;
   hintId: string;
@@ -74,21 +76,24 @@ export type TextAreaFieldContextValue = {
   labelId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  invalid?: boolean;
   required: boolean;
   status: TextAreaStatus;
   size: TextAreaSize;
 };
-
+ 
 export type TextAreaClassNamesProviderProps = {
   classNames?: Prettify<TextAreaClassNames>;
   children: ReactNode;
 };
-
+ 
 export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** Danger visual, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. */
+  invalid?: boolean;
   id?: string;
   required?: boolean;
   status?: TextAreaStatus;
@@ -110,9 +115,9 @@ export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type TextAreaSimpleProps = TextAreaProps & Omit<TextAreaControlProps, "motion">;
-
+ 
 export type UseTextAreaShellAnimationsProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   blocked: boolean;
@@ -122,24 +127,24 @@ export type UseTextAreaShellAnimationsProps = {
   pointerInsideRef: MutableRefObject<boolean>;
   onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
 };
-
+ 
 export type TextAreaLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<TextAreaPartMotion>;
 };
-
+ 
 export type TextAreaHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: Exclude<TextAreaStatus, "danger"> | "default";
+  status?: TextAreaStatus;
   motion?: Prettify<TextAreaPartMotion>;
 };
-
+ 
 export type TextAreaErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<TextAreaPartMotion>;
 };
-
+ 
 export type UseTextAreaRootStateProps = TextAreaSimpleProps;
-
+ 
 export type TextAreaSimpleBodyProps = {
   label?: ReactNode;
   hint?: ReactNode;
@@ -150,3 +155,4 @@ export type TextAreaSimpleBodyProps = {
   status: TextAreaStatus;
   controlProps: TextAreaControlProps;
 };
+ 

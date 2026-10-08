@@ -83,6 +83,17 @@ describe("splitMotionRootMap", () => {
     expect(error).toHaveBeenCalled();
     error.mockRestore();
   });
+
+  it("warns on root phase shorthand and does not lift it onto root", () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { slots } = splitMotionRootMap({
+      hoverIn: { y: -4 },
+    } as never);
+    expect(error).toHaveBeenCalled();
+    expect(slots?.root).toBeUndefined();
+    expect(slots?.hoverIn).toEqual({ y: -4 });
+    error.mockRestore();
+  });
 });
 
 describe("mergeMotionStates", () => {
@@ -90,9 +101,7 @@ describe("mergeMotionStates", () => {
     expect(
       mergeMotionStates(
         { loading: { root: { autoAlpha: 0.5 }, title: { y: -2 } } },
-        { loading: { root: { autoAlpha: 0.8 } }, success: { root: { y: 0 } } },
-      ),
-    ).toEqual({
+        { loading: { root: { autoAlpha: 0.8 } }, success: { root: { y: 0 } } })).toEqual({
       loading: { root: { autoAlpha: 0.8 }, title: { y: -2 } },
       success: { root: { y: 0 } },
     });
@@ -112,9 +121,7 @@ describe("mergeMotionRootSiblings", () => {
         {
           events: { "checkout:error": shake },
           states: { loading: { title: { y: -2 } } },
-        },
-      ),
-    ).toEqual({
+        })).toEqual({
       events: { "checkout:saving": ping, "checkout:error": shake },
       states: { loading: { root: { autoAlpha: 0.5 }, title: { y: -2 } } },
     });
@@ -132,9 +139,7 @@ describe("remapMotionStateSlots", () => {
             fill: { autoAlpha: 0.5 },
           },
         },
-        { indicator: "root", indicatorFill: "fill", indicatorMark: "mark" },
-      ),
-    ).toEqual({
+        { indicator: "root", indicatorFill: "fill", indicatorMark: "mark" })).toEqual({
       loading: { root: { scale: 1.04 }, fill: { autoAlpha: 0.5 } },
     });
   });

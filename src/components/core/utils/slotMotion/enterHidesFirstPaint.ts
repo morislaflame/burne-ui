@@ -5,15 +5,15 @@ import {
   isMotionVarsObject,
   type MotionValue,
 } from "./slotMotionTypes";
-
+ 
 export { KIT_ENTER_HIDES_FIRST_PAINT } from "./kitMotionRecipeMeta";
-
+ 
 function recipeHidesFirstPaint(name: string): boolean {
   const live = getMotionRecipeMetadata(name);
   if (live) return live.hidesFirstPaint;
   return KIT_ENTER_HIDES_FIRST_PAINT.has(name);
 }
-
+ 
 /**
  * Whether nested `enter` should `gsap.set(autoAlpha: 0)` before play.
  * Named recipes use `MotionRecipeMetadata.hidesFirstPaint` (kit: `contentFade`;
@@ -32,3 +32,4 @@ export function enterHidesFirstPaint(value: MotionValue | undefined): boolean {
   if (typeof value.recipe === "string") return recipeHidesFirstPaint(value.recipe);
   return false;
 }
+ 

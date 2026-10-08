@@ -1,11 +1,12 @@
 import { forwardRef, useContext } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { messageBannerActionCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { messageBannerSizePreset } from "@/components/core/utils/sizeLayout";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { useSkinVariant } from "@/skins/skinContext";
 import { cn } from "@/utils/cn";
-
+ 
 import { AlertContext, useAlertClassNames, useOptionalAlertMotionScope } from "./alertContext";
 import { alertDefaultIndicatorIcon, alertShowsDefaultIndicatorIcon } from "./alertAPI";
 import { alertIndicatorClass, ALERT_COMPOUND_CONTENTS_CLASS, ALERT_DESCRIPTION_CLASS, alertTitleClass } from "./alertStyles";
@@ -17,7 +18,7 @@ import type {
   AlertMessageProps,
   AlertTitleProps,
 } from "./alertTypes";
-
+ 
 export const AlertIndicator = forwardRef<HTMLSpanElement, AlertIndicatorProps>(
   function AlertIndicator(
     {
@@ -33,7 +34,7 @@ export const AlertIndicator = forwardRef<HTMLSpanElement, AlertIndicatorProps>(
   ) {
     const ctx = useContext(AlertContext);
     const slotClassNames = useAlertClassNames();
-    const variant = ctx?.variant ?? "default";
+    const variant = useSkinVariant(ctx?.variant);
     const status = statusProp ?? ctx?.status ?? "default";
     const sizePreset = ctx?.sizePreset ?? messageBannerSizePreset("base");
     const gridSlots = ctx?.gridSlots;
@@ -46,9 +47,9 @@ export const AlertIndicator = forwardRef<HTMLSpanElement, AlertIndicatorProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     if (children === null) return null;
-
+ 
     const DefaultIcon = alertDefaultIndicatorIcon(variant, status);
     const inner =
       children !== undefined
@@ -56,9 +57,9 @@ export const AlertIndicator = forwardRef<HTMLSpanElement, AlertIndicatorProps>(
         : alertShowsDefaultIndicatorIcon(variant, status) && DefaultIcon !== null
           ? <DefaultIcon aria-hidden />
           : null;
-
+ 
     if (inner === null) return null;
-
+ 
     return (
       <span
         ref={setRef}
@@ -76,16 +77,16 @@ export const AlertIndicator = forwardRef<HTMLSpanElement, AlertIndicatorProps>(
     );
   },
 );
-
+ 
 AlertIndicator.displayName = "AlertIndicator";
-
+ 
 export function AlertContent({ className = "", ...rest }: AlertContentProps) {
   const slotClassNames = useAlertClassNames();
   return <div className={cn(ALERT_COMPOUND_CONTENTS_CLASS, slotClassNames.content, className)} {...rest} />;
 }
-
+ 
 AlertContent.displayName = "AlertContent";
-
+ 
 export const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(function AlertMessage(
   { className = "", ...rest },
   ref,
@@ -99,9 +100,9 @@ export const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(functi
     />
   );
 });
-
+ 
 AlertMessage.displayName = "AlertMessage";
-
+ 
 export const AlertTitle = forwardRef<HTMLDivElement, AlertTitleProps>(function AlertTitle(
   { className = "", id: idProp, motion, onPointerOver, onPointerOut, ...rest },
   ref,
@@ -136,9 +137,9 @@ export const AlertTitle = forwardRef<HTMLDivElement, AlertTitleProps>(function A
     />
   );
 });
-
+ 
 AlertTitle.displayName = "AlertTitle";
-
+ 
 export const AlertDescription = forwardRef<HTMLDivElement, AlertDescriptionProps>(
   function AlertDescription(
     { className = "", id: idProp, motion, onPointerOver, onPointerOut, ...rest },
@@ -174,9 +175,9 @@ export const AlertDescription = forwardRef<HTMLDivElement, AlertDescriptionProps
     );
   },
 );
-
+ 
 AlertDescription.displayName = "AlertDescription";
-
+ 
 export const AlertAction = forwardRef<HTMLDivElement, AlertActionProps>(function AlertAction(
   { className = "", motion, onPointerOver, onPointerOut, ...rest },
   ref,
@@ -205,7 +206,8 @@ export const AlertAction = forwardRef<HTMLDivElement, AlertActionProps>(function
     />
   );
 });
-
+ 
 AlertAction.displayName = "AlertAction";
-
+ 
 export { AlertSimpleContent } from "./alertSimpleContent";
+ 

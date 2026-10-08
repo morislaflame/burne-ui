@@ -1,25 +1,25 @@
-import type { IconType } from "react-icons";
-import { IoHelpCircleOutline } from "react-icons/io5";
+import type { ComponentType } from "react";
+import { KitHelpCircleOutline, type KitIconProps } from "@/components/core/utils/kitIcons";
 import { Children, isValidElement, type ReactNode } from "react";
-
+ 
 import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
-
+ 
 import type { AlertStatus, AlertVariant } from "./alertTypes";
-
+ 
 export function resolveAlertVariant(variant?: AlertVariant): AlertVariant {
   return variant ?? "default";
 }
-
+ 
 export function resolveAlertStatus(status?: AlertStatus): AlertStatus {
   return status ?? "default";
 }
-
+ 
 function walkAlertChildren(
   node: ReactNode,
   match: (displayName: string | undefined) => boolean,
 ): boolean {
   let found = false;
-
+ 
   const walk = (current: ReactNode) => {
     if (found) return;
     for (const child of Children.toArray(current)) {
@@ -32,23 +32,23 @@ function walkAlertChildren(
       walk((child.props as { children?: ReactNode }).children);
     }
   };
-
+ 
   walk(node);
   return found;
 }
-
+ 
 export function alertHasTitle(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertTitle");
 }
-
+ 
 export function alertHasDescription(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertDescription");
 }
-
+ 
 export function alertHasIndicator(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertIndicator");
 }
-
+ 
 function walkAlertIndicatorProps(
   node: ReactNode,
   visit: (props: { children?: ReactNode; status?: AlertStatus }) => void,
@@ -62,7 +62,7 @@ function walkAlertIndicatorProps(
     walkAlertIndicatorProps((child.props as { children?: ReactNode }).children, visit);
   }
 }
-
+ 
 export function alertIndicatorWouldRender(
   variant: AlertVariant,
   status: AlertStatus,
@@ -75,7 +75,7 @@ export function alertIndicatorWouldRender(
   if (effectiveStatus !== "default") return true;
   return variant === "outline";
 }
-
+ 
 export function alertCompoundShowsIndicator(
   children: ReactNode,
   variant: AlertVariant,
@@ -90,11 +90,11 @@ export function alertCompoundShowsIndicator(
   });
   return visible;
 }
-
+ 
 export function alertHasAction(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertAction");
 }
-
+ 
 const ALERT_COMPOUND_SLOT_NAMES = new Set([
   "AlertMessage",
   "AlertIndicator",
@@ -103,13 +103,13 @@ const ALERT_COMPOUND_SLOT_NAMES = new Set([
   "AlertDescription",
   "AlertAction",
 ]);
-
+ 
 export function hasAlertCompoundChildren(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) =>
     name != null && ALERT_COMPOUND_SLOT_NAMES.has(name),
   );
 }
-
+ 
 export function alertShowsDefaultIndicatorIcon(
   variant: AlertVariant,
   status: AlertStatus,
@@ -117,16 +117,16 @@ export function alertShowsDefaultIndicatorIcon(
   if (status !== "default") return true;
   return variant === "outline";
 }
-
+ 
 export function alertDefaultIndicatorIcon(
   variant: AlertVariant,
   status: AlertStatus,
-): IconType | null {
+): ComponentType<KitIconProps> | null {
   if (status !== "default") return SEMANTIC_STATUS_ICONS[status];
-  if (variant === "outline") return IoHelpCircleOutline;
+  if (variant === "outline") return KitHelpCircleOutline;
   return null;
 }
-
+ 
 export function alertShowsIndicator(
   variant: AlertVariant,
   status: AlertStatus,
@@ -142,3 +142,4 @@ export function alertShowsIndicator(
     alertDefaultIndicatorIcon(variant, status) !== null
   );
 }
+ 

@@ -21,6 +21,7 @@ import {
   applySwitchIconInstant,
   applySwitchThumbInstant,
 } from "@/components/core/utils/slotMotion/recipes/switchThumb";
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 import {
@@ -39,9 +40,11 @@ import {
 import type {
   SwitchCheckMotion,
   SwitchMotion,
+  SwitchVariant,
   UseSwitchAnimationsProps,
   UseSwitchTrackAnimationsProps,
 } from "./switchTypes";
+import { KIT_SWITCH_VARIANTS } from "./switchTypes";
 
 export const SWITCH_MOTION_DEFAULTS: SwitchMotion = {
   thumb: { check: "switchThumb", uncheck: "switchThumb" },
@@ -50,8 +53,19 @@ export const SWITCH_MOTION_DEFAULTS: SwitchMotion = {
   iconOff: { check: "switchIconOff", uncheck: "switchIconOff" },
 };
 
+export function resolveSwitchMotionDefaults(
+  variant: SwitchVariant = "default",
+): SwitchMotion {
+  return overlaySkinMotion(
+    SWITCH_MOTION_DEFAULTS,
+    variant,
+    KIT_SWITCH_VARIANTS,
+    "switch",
+  );
+}
+ 
 export type SwitchChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useSwitchChromeSlot(
   slot: SwitchChromeSlot,
   motion?: SwitchCheckMotion,
@@ -75,7 +89,7 @@ export function useSwitchChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useSwitchTextMotion({
   isDisabled,
   enableTextMotion,
@@ -83,7 +97,7 @@ export function useSwitchTextMotion({
   onPointerDown,
   onKeyDown,
 }: UseSwitchAnimationsProps) {
-  return usePressableElementTextMotion<HTMLLabelElement>({
+  return usePressableElementTextMotion<HTMLElement>({
     isDisabled: !!isDisabled,
     enabled: enableTextMotion,
     textMotionRef,
@@ -91,7 +105,7 @@ export function useSwitchTextMotion({
     onKeyDown,
   });
 }
-
+ 
 export function useSwitchTrackAnimations({
   checked,
   disabled,
@@ -113,7 +127,7 @@ export function useSwitchTrackAnimations({
     reduceMotion || !isMotionFeatureEnabledFor(config, "enableSwitchThumb");
   const fallbackTravelPx = resolveFallbackThumbPx(thickness, size);
   const firstLayoutRef = useRef(true);
-
+ 
   const applyInstant = useCallback(
     (nextChecked: boolean, travelPx: number) => {
       if (thumbRef.current) applySwitchThumbInstant(thumbRef.current, nextChecked, travelPx);
@@ -123,7 +137,7 @@ export function useSwitchTrackAnimations({
     },
     [iconOffRef, iconOnRef, thumbRef, trackFillRef],
   );
-
+ 
   const playPhase = useCallback(
     (nextChecked: boolean, travelPx: number) => {
       const phase = nextChecked ? "check" : "uncheck";
@@ -140,7 +154,7 @@ export function useSwitchTrackAnimations({
         }
         scope.play(slot, phase, { el });
       };
-
+ 
       playSlot("track", trackRef.current, () => {});
       playSlot("thumb", thumbRef.current, () => {
         if (thumbRef.current) applySwitchThumbInstant(thumbRef.current, nextChecked, travelPx);
@@ -157,25 +171,25 @@ export function useSwitchTrackAnimations({
     },
     [iconOffRef, iconOnRef, scope, thumbRef, trackFillRef, trackRef],
   );
-
+ 
   const syncThumbPosition = useCallback(
     (nextChecked: boolean, travelPx: number) => {
       travelPxRef.current = travelPx;
       if (!thumbRef.current && !trackFillRef.current && !iconOffRef.current && !iconOnRef.current) {
         return;
       }
-
+ 
       if (firstLayoutRef.current || switchMotionOff) {
         firstLayoutRef.current = false;
         applyInstant(nextChecked, travelPx);
         return;
       }
-
+ 
       playPhase(nextChecked, travelPx);
     },
     [applyInstant, iconOffRef, iconOnRef, playPhase, switchMotionOff, thumbRef, trackFillRef, travelPxRef],
   );
-
+ 
   useLayoutEffect(() => {
     const track = trackRef.current;
     const shell = thumbShellRef.current;
@@ -186,11 +200,11 @@ export function useSwitchTrackAnimations({
         travelPxRef.current = fallbackTravelPx;
       }
     };
-
+ 
     measure();
     syncThumbPosition(checked, travelPxRef.current);
-
-    if (!track || !shell) return undefined;
+ 
+    if (!track || !shell || typeof ResizeObserver === "undefined") return undefined;
     const ro = new ResizeObserver(() => {
       measure();
       syncThumbPosition(checked, travelPxRef.current);
@@ -199,7 +213,7 @@ export function useSwitchTrackAnimations({
     ro.observe(shell);
     return () => ro.disconnect();
   }, [checked, fallbackTravelPx, syncThumbPosition, thickness, size, trackRef, thumbShellRef, travelPxRef]);
-
+ 
   useEffect(() => {
     const nodes = [
       trackFillRef.current,
@@ -215,14 +229,14 @@ export function useSwitchTrackAnimations({
       }
     };
   }, [iconOffRef, iconOnRef, thumbRef, thumbShellRef, trackFillRef, trackRef]);
-
+ 
   useLayoutEffect(() => {
     const track = trackRef.current;
     if (!track) return;
     killMotion(track);
     track.style.opacity = disabled ? "0.48" : "1";
   }, [disabled, trackRef]);
-
+ 
   useLayoutEffect(() => {
     if (squeezeToken === 0 || switchMotionOff) return;
     const shell = thumbShellRef.current;
@@ -230,3 +244,4 @@ export function useSwitchTrackAnimations({
     void animateInteractivePressSqueeze(shell, { config });
   }, [config, switchMotionOff, squeezeToken, thumbShellRef]);
 }
+ 

@@ -1,19 +1,24 @@
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 
-import type { ListBoxSize } from "./listBoxTypes";
-
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-export const LISTBOX_ROOT_CLASS =
-  "flex min-h-0 flex-col gap-xsmall text-left outline-none";
+import type { ListBoxSize, ListBoxVariant } from "./listBoxTypes";
+import { KIT_LIST_BOX_VARIANTS } from "./listBoxTypes";
 
-export const LISTBOX_ROOT_GLOSS_CLASS =
-  "gloss-panel gloss-deep rounded-mid p-mid text-foreground";
+export const LISTBOX_ROOT_CLASS =
+  "flex min-h-0 flex-col gap-xsmall text-start outline-none";
+
+export const LISTBOX_VIRTUAL_ROOT_CLASS = "overflow-y-auto overflow-x-hidden";
+
+export const LISTBOX_VIRTUAL_FRAME_CLASS = "relative w-full shrink-0";
+
+export const LISTBOX_VIRTUAL_WINDOW_CLASS = "absolute inset-x-0 top-0";
 
 export const LISTBOX_SECTION_CLASS = "flex min-w-0 flex-col gap-xsmall";
 
-export const LISTBOX_HEADER_CLASS = "px-mid text-left";
+export const LISTBOX_HEADER_CLASS = "px-mid text-start";
 
 export const LISTBOX_HEADER_TEXT_CLASS = "text-muted";
 
@@ -23,7 +28,7 @@ export const LISTBOX_SEPARATOR_CLASS =
 export const LISTBOX_EMPTY_CLASS = "px-large py-small text-center text-muted";
 
 export const LISTBOX_ITEM_BASE_CLASS =
-  "w-full min-w-0 rounded-mid text-left outline-none";
+  "w-full min-w-0 rounded-mid text-start outline-none";
 
 export const LISTBOX_ITEM_PAD: Record<ListBoxSize, string> = {
   small: cn(CONTROL_SIZE_LAYOUT.small.padX, CONTROL_SIZE_LAYOUT.small.padY),
@@ -41,17 +46,21 @@ export const LISTBOX_ITEM_DISABLED_CLASS =
 export const LISTBOX_ITEM_ACTIVE_CLASS = "data-active:bg-default-hover";
 
 export function listBoxRootClass({
-  isGloss,
+  variant,
   slotClass,
   className,
+  virtualized = false,
 }: {
-  isGloss: boolean;
+  variant: ListBoxVariant;
   slotClass?: string;
   className?: string;
+  virtualized?: boolean;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_LIST_BOX_VARIANTS, "listBox.root");
   return cn(
     LISTBOX_ROOT_CLASS,
-    isGloss && LISTBOX_ROOT_GLOSS_CLASS,
+    virtualized ? LISTBOX_VIRTUAL_ROOT_CLASS : null,
+    visual.className,
     slotClass,
     className,
   );

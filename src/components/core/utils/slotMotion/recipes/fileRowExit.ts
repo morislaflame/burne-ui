@@ -1,8 +1,8 @@
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { isMotionEnabledFor, motionInteractiveFor } from "@/components/core/utils/motionConfig";
-
+ 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
-
+ 
 export function applyFileRowExitInstant(el: HTMLElement, hidden: boolean): void {
   if (hidden) {
     gsap.set(el, { scale: 0.94, y: "-0.5rem", autoAlpha: 0, force3D: false });
@@ -10,7 +10,7 @@ export function applyFileRowExitInstant(el: HTMLElement, hidden: boolean): void 
   }
   gsap.set(el, { scale: 1, y: 0, autoAlpha: 1, force3D: false });
 }
-
+ 
 /** File chip leave: scale + y + autoAlpha. `leave` hides; other phases restore. */
 export function fileRowExitRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const hidden = ctx.phase === "leave";
@@ -37,3 +37,4 @@ export function fileRowExitRecipe(ctx: MotionContext): MotionAnimation | undefin
     force3D: false,
   }) as unknown as MotionAnimation;
 }
+ 

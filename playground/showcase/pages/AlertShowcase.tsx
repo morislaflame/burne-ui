@@ -4,8 +4,6 @@ import { AlertClassNamesFullDemo } from "../demos/alert/AlertClassNamesFull.demo
 import alertClassNamesFullSource from "../demos/alert/AlertClassNamesFull.demo.tsx?raw";
 import { AlertCompoundBannerDemo } from "../demos/alert/AlertCompoundBanner.demo";
 import alertCompoundBannerSource from "../demos/alert/AlertCompoundBanner.demo.tsx?raw";
-import { AlertGlossDemo } from "../demos/alert/AlertGloss.demo";
-import alertGlossSource from "../demos/alert/AlertGloss.demo.tsx?raw";
 import { AlertSizesDemo } from "../demos/alert/AlertSizes.demo";
 import alertSizesSource from "../demos/alert/AlertSizes.demo.tsx?raw";
 import { AlertStatusesDemo } from "../demos/alert/AlertStatuses.demo";
@@ -34,12 +32,7 @@ export function AlertShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={AlertSizesDemo} source={alertSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="Glass panel with hover-lift.">
-        <ShowcaseDemoFromFile align="stretch" Demo={AlertGlossDemo} source={alertGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: vars, part props, root orchestration, color, per-part hover, timeline.">
+<ShowcaseSection title="Slot motion" description="One gallery: vars, part props, root orchestration, color, per-part hover, timeline.">
         <AlertSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -67,7 +60,7 @@ export function AlertShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="title, description, status, variant (including. gloss), size, icon, action on the root."
+            description="title, description, status, variant (including. default), size, icon, action on the root."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -87,7 +80,7 @@ export function AlertShowcase() {
             so that they are called the same everywhere in China.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

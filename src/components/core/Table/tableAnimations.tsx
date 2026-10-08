@@ -4,17 +4,17 @@
  * DOM slots: `root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`,
  * `footer`, nested `row` (one scope per row); `column` (repeated on table scope),
  * `cell` (repeated on the row scope), `label` (`Table.Label`, repeated on table scope),
- * `empty` (`Table.Empty`).
+ * `caption` (`Table.Caption`), `empty` (`Table.Empty`).
  *
- * Not slots: `glossContent`, sort chevron (`useChevronRotation` kit-internal).
+ * `columnSortIcon` rotates with `chevronRotate` (`enter` open, `leave` closed).
  * `emptyCell` is CSS for `Table.Empty`, not a motion key.
  * Host: unique slots play optional `enter` via `useOptionalEnterOnMount` + `targetRef`.
  * Row selection is `check` / `uncheck` (`skipFirst` — not a second `enter`).
  */
 import { useRef, type ForwardedRef, type ReactNode, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { IoChevronUp } from "react-icons/io5";
-
+import { KitChevronUp } from "@/components/core/utils/kitIcons";
+ 
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import {
   hasPointerPhases,
@@ -23,17 +23,25 @@ import {
   useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
+ 
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useOptionalTableMotionScope, useTableClassNames } from "./tableContext";
 import { TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS, tableSortChevronClass } from "./tableStyles";
-import type { SortDirection, TableMotion, TablePartMotion } from "./tableTypes";
-
+import type { SortDirection, TableMotion, TablePartMotion, TableVariant } from "./tableTypes";
+import { KIT_TABLE_VARIANTS } from "./tableTypes";
+ 
 import { cn } from "@/utils/cn";
-
-export function resolveTableMotionDefaults(): TableMotion {
-  return {};
+ 
+export function resolveTableMotionDefaults(variant: TableVariant = "default"): TableMotion {
+  return overlaySkinMotion(
+    { columnSortIcon: { enter: "chevronRotate", leave: "chevronRotate" } },
+    variant,
+    KIT_TABLE_VARIANTS,
+    "table",
+  );
 }
-
+ 
 export function useTableSlotMotion<T extends HTMLElement>(
   slot: keyof TableMotion,
   {
@@ -69,7 +77,7 @@ export function useTableSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useTableRowSelectionMotion(
   scope: MotionScopeValue | null,
   selected: boolean,
@@ -81,7 +89,7 @@ export function useTableRowSelectionMotion(
     target,
   });
 }
-
+ 
 export function TableSortChevron({
   direction,
   children,
@@ -90,12 +98,29 @@ export function TableSortChevron({
   children?: ReactNode;
 }) {
   const slotClassNames = useTableClassNames();
+  const scope = useOptionalTableMotionScope();
   const chevronRef = useRef<HTMLSpanElement>(null);
-  const bindChevronRef = useChevronRotation(direction === "descending", chevronRef, () => true);
-
+  const bindChevronRef = useChevronRotation(
+    direction === "descending",
+    chevronRef,
+    undefined,
+    undefined,
+    scope,
+    "columnSortIcon",
+  );
+  const part = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "columnSortIcon",
+    pointerPhases: false,
+  });
+  const setChevronRef = (node: HTMLSpanElement | null) => {
+    bindChevronRef(node);
+    part.setRef(node);
+  };
+ 
   return (
     <span
-      ref={bindChevronRef}
+      ref={setChevronRef}
       aria-hidden
       className={cn(
         tableSortChevronClass(Boolean(direction)),
@@ -103,8 +128,9 @@ export function TableSortChevron({
       )}
     >
       {children ?? (
-        <IoChevronUp className={TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS} />
+        <KitChevronUp className={TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS} />
       )}
     </span>
   );
 }
+ 

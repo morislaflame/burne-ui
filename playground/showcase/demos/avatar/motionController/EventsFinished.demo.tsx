@@ -15,9 +15,12 @@ export function AvatarMotionEventsFinishedDemo() {
 
   async function bounce() {
     setBusy(true);
-    await controller.play("presence:up", { waitForComplete: true }).finished;
-    await controller.play("presence:down", { waitForComplete: true }).finished;
-    setBusy(false);
+    try {
+      await controller.play("presence:up", { waitForComplete: true }).finished;
+      await controller.play("presence:down", { waitForComplete: true }).finished;
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

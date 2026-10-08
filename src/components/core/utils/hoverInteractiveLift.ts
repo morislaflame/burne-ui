@@ -1,15 +1,15 @@
 /**
- * Hover lift and press squeeze — GSAP;
+ * Hover lift and press squeeze — GSAP.
  * Hover lift registry matches `Button` (`animateInteractiveHoverLift`, `shouldSkipInteractiveHoverLift`).
  *
- * Shadows (when configured): used `boxShadow` (probed from CSS `--shadow-*`) in the
- * **same** tween as scale — gloss-style timing, CSS cascade as the shadow SSOT.
+ * Shadows stay on static fade layers. GSAP tweens layer opacity and element scale.
  */
-
+ 
 import { useCallback, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
-import { gsap, killMotion } from "./gsapMotion";
+ 
+import { ensureShadowFadeHost, playShadowFade, snapShadowFade } from "./shadowFade";
+import { gsap } from "./gsapMotion";
 import { bindAbortSignal } from "./bindAbortSignal";
 import { useMotionConfig } from "./motionConfigContext";
 import {
@@ -27,7 +27,7 @@ import {
   type ShadowSize,
 } from "@/tokens/shadows";
 import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
-
+ 
 /**
  * Short interactive scale tweens stay on the 2D transform path.
  * Default GSAP `force3D` + dynamic `will-change` promote a compositor layer and
@@ -36,19 +36,11 @@ import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
 const INTERACTIVE_TRANSFORM_VARS = { force3D: false } as const;
 
 /**
- * Collapsed shadow GSAP can morph from/to (browser `none` is not interpolable).
- * Two layers — matches token `--shadow-none` (key + ambient).
- */
-const SHADOW_NONE_CONCRETE =
-  "0px 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px 0px rgba(0, 0, 0, 0)";
-
-/**
  * Shadow tiers for lift / press. Values are live `var(--shadow-*)` refs.
  *
  * **SSOT = CSS cascade** (`--shadow-*` + knobs in `tokens/styles.css` / theme).
  * Consumers tune via theme knobs or by overriding `--shadow-small|base|mid|large`.
- * GSAP never re-implements the formula — it probes the **used** `box-shadow`
- * so overrides and light/dark stay in sync (unlike gloss layers, which are JS-built).
+ * Fade layers paint those tokens; GSAP only cross-fades their opacity.
  */
 export interface HoverShadowConfig {
   /**
@@ -64,12 +56,12 @@ export interface HoverShadowConfig {
    */
   press?: string;
 }
-
+ 
 function resolveShadowReadRoot(from?: Element | null): Element {
   if (from) return from;
   return document.documentElement;
 }
-
+ 
 /** Reads a computed shadow CSS variable from `from`'s cascade (or document root). */
 export function readShadowVar(varName: string, from?: Element | null): string {
   if (typeof window === "undefined") return "none";
@@ -78,7 +70,7 @@ export function readShadowVar(varName: string, from?: Element | null): string {
     "none"
   );
 }
-
+ 
 /**
  * Live CSS `var(--shadow-*)` for `--el-shadow` / motion config.
  * - sized + `rest` → `--shadow-small|base|mid|large`
@@ -96,7 +88,7 @@ export function shadowCssVar(
   if (interaction === "rest") return `var(${SHADOW_CSS_VAR[size]})`;
   return `var(--shadow-${size}-${interaction})`;
 }
-
+ 
 export const shadowNone = () => shadowCssVar("none");
 export const shadowSmall = () => shadowCssVar("small");
 export const shadowBase = () => shadowCssVar("base");
@@ -104,179 +96,53 @@ export const shadowMid = () => shadowCssVar("mid");
 export const shadowLarge = () => shadowCssVar("large");
 /** First-level hover appear (Button) — `var(--shadow-lift)`. */
 export const shadowLift = () => shadowCssVar("none", "hover");
-
-function normalizePaintedBoxShadow(value: string): string {
-  const v = value.trim();
-  if (!v || v === "none") return SHADOW_NONE_CONCRETE;
-  return v;
-}
-
-/** Shared probe for resolving CSS `var()` / `calc()` box-shadow to a concrete used value. */
-let sharedShadowProbe: HTMLSpanElement | null = null;
-
-function getSharedShadowProbe(): HTMLSpanElement {
-  if (typeof document === "undefined") {
-    throw new Error("resolveConcreteBoxShadow requires a document");
-  }
-  if (!sharedShadowProbe) {
-    sharedShadowProbe = document.createElement("span");
-    sharedShadowProbe.setAttribute("aria-hidden", "true");
-    sharedShadowProbe.setAttribute("data-burne-shadow-probe", "");
-    sharedShadowProbe.style.cssText =
-      "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;visibility:hidden;";
-  }
-  return sharedShadowProbe;
-}
-
-/**
- * Resolve any `box-shadow` CSS value (token `var(--shadow-*)`, custom, or concrete)
- * to a used string GSAP can interpolate. Uses one shared probe under `element` so local
- * / root theme knobs and `--shadow-*` overrides apply.
- */
-export function resolveConcreteBoxShadow(element: HTMLElement, shadow: string): string {
-  if (typeof document === "undefined") return SHADOW_NONE_CONCRETE;
-
-  const trimmed = shadow.trim();
-  if (!trimmed || trimmed === "none") return SHADOW_NONE_CONCRETE;
-  if (!trimmed.includes("var(") && !trimmed.includes("calc(")) {
-    return trimmed;
-  }
-
-  const probe = getSharedShadowProbe();
-  probe.style.boxShadow = trimmed;
-  const host = element.isConnected ? element : document.documentElement;
-  if (probe.parentNode !== host) {
-    host.appendChild(probe);
-  }
-  const computed = getComputedStyle(probe).boxShadow;
-  // Keep probe in document for reuse; park on root so disconnected hosts do not leak.
-  if (host !== document.documentElement) {
-    document.documentElement.appendChild(probe);
-  }
-  return normalizePaintedBoxShadow(computed);
-}
-
-/**
- * Token tier → used box-shadow from the live CSS cascade (knobs / theme / overrides).
- */
-export function buildTokenBoxShadow(element: HTMLElement, size: ShadowSize): string {
-  return resolveConcreteBoxShadow(element, shadowCssVar(size));
-}
-
+ 
 /** Declared CSS custom-property value for a tier (docs / non-GSAP). */
 export function readShadowSize(size: ShadowSize, from?: Element | null): string {
   if (size === "none") return readShadowVar("--shadow-none", from);
   return readShadowVar(SHADOW_CSS_VAR[size], from);
 }
 
-/** Config / `--el-shadow` value → concrete box-shadow for GSAP. */
-function resolveShadowForGsap(element: HTMLElement, shadow: string): string {
-  return resolveConcreteBoxShadow(element, shadow);
-}
-
-/**
- * Drop GSAP/inline `boxShadow` so `animate-shadow` paints via
- * `box-shadow: var(--el-shadow)` and theme knobs update live at rest / after tween.
- */
-function releaseInlineBoxShadow(element: HTMLElement): void {
+/** Drop a leftover inline shadow so fade layers and `--el-shadow` own the paint. */
+function clearInlineBoxShadow(element: HTMLElement): void {
   element.style.removeProperty("box-shadow");
-  gsap.set(element, { clearProps: "boxShadow" });
 }
 
-/**
- * Current painted box-shadow before starting a tween.
- * Prefer live inline (interrupted tween), else probe `--el-shadow` / computed CSS.
- */
-function readPaintedBoxShadow(element: HTMLElement): string {
-  const inline = element.style.boxShadow.trim();
-  if (inline && !inline.includes("var(") && !inline.includes("calc(")) {
-    return normalizePaintedBoxShadow(inline);
-  }
-  const gsapValue = String(gsap.getProperty(element, "boxShadow") ?? "").trim();
-  if (
-    gsapValue &&
-    !gsapValue.includes("var(") &&
-    !gsapValue.includes("calc(") &&
-    gsapValue !== "none"
-  ) {
-    return normalizePaintedBoxShadow(gsapValue);
-  }
-  const elShadow = element.style.getPropertyValue("--el-shadow").trim();
-  if (elShadow) return resolveConcreteBoxShadow(element, elShadow);
-  return normalizePaintedBoxShadow(getComputedStyle(element).boxShadow);
-}
-
-type TweenScaleAndShadowOptions = {
-  timeline?: gsap.core.Timeline;
-  /**
-   * After the tween: write `--el-shadow` and clear inline so CSS tracks knobs.
-   * `false` for press-in (release segment commits).
-   */
-  commitShadow?: boolean;
-};
-
-/**
- * Scale + shadow in one `fromTo`. Concrete inline `boxShadow` only for the tween;
- * on commit, CSS `var(--el-shadow)` takes over again (live theme knobs).
- */
-function tweenScaleAndShadow(
+function tweenScale(
   element: HTMLElement,
   scale: number,
-  shadowVar: string | null,
   duration: number,
   ease: string,
-  options?: TweenScaleAndShadowOptions,
+  timeline?: gsap.core.Timeline,
 ): void {
-  const timeline = options?.timeline;
-  const commitShadow = options?.commitShadow !== false;
-  const transform = { ...INTERACTIVE_TRANSFORM_VARS, overwrite: "auto" as const };
-
-  if (!shadowVar) {
-    const vars = { scale, duration, ease, ...transform };
-    if (timeline) timeline.to(element, vars);
-    else gsap.to(element, vars);
-    return;
-  }
-
-  const fromShadow = readPaintedBoxShadow(element);
-  const toShadow = resolveShadowForGsap(element, shadowVar);
-  const fromScale = Number(gsap.getProperty(element, "scale")) || 1;
-
-  const from = { scale: fromScale, boxShadow: fromShadow };
-  const to = {
+  const vars = {
     scale,
-    boxShadow: toShadow,
     duration,
     ease,
-    ...transform,
-    onComplete: commitShadow
-      ? () => {
-          element.style.setProperty("--el-shadow", shadowVar);
-          releaseInlineBoxShadow(element);
-        }
-      : undefined,
+    ...INTERACTIVE_TRANSFORM_VARS,
+    overwrite: "auto" as const,
   };
-
-  if (timeline) timeline.fromTo(element, from, to);
-  else gsap.fromTo(element, from, to);
+  if (timeline) timeline.to(element, vars);
+  else gsap.to(element, vars);
 }
-
+ 
 /**
- * Persistent / idle shadow: only `--el-shadow` token ref — no concrete inline.
- * `animate-shadow` paints via CSS so theme knobs apply immediately.
- * GSAP probes a concrete from-value when a lift/press tween starts.
+ * Persistent / idle shadow: `--el-shadow` token ref, painted by the rest fade layer.
  */
 export function initElementShadow(element: HTMLElement | null, shadow: string): void {
   if (!element) return;
   element.style.setProperty("--el-shadow", shadow);
-  releaseInlineBoxShadow(element);
+  element.style.setProperty("--shadow-fade-rest", shadow);
+  clearInlineBoxShadow(element);
+  ensureShadowFadeHost(element);
+  snapShadowFade(element, "rest");
 }
-
+ 
 function isTouchOrNarrowViewport(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
   return window.matchMedia(TOUCH_OR_NARROW_VIEWPORT_MQL).matches;
 }
-
+ 
 /** Hover lift and shadow change: off for reduced-motion, touch and viewport ≤ tablet. */
 export function shouldSkipInteractiveHoverLift(config?: Readonly<MotionConfig>): boolean {
   return (
@@ -285,7 +151,7 @@ export function shouldSkipInteractiveHoverLift(config?: Readonly<MotionConfig>):
     !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableHoverLift")
   );
 }
-
+ 
 /** Absolute pixel offset — squeeze "feel" in px from each side. Intentional constant. */
 const ADAPTIVE_SQUEEZE_TARGET_PX = 2.4;
 /** Minimally noticeable squeeze (very large elements). Intentional constant. */
@@ -294,7 +160,7 @@ const ADAPTIVE_SQUEEZE_MIN_DELTA = 0.003;
 const ADAPTIVE_LIFT_TARGET_PX = 1.8;
 /** Minimally noticeable lift. Intentional constant. */
 const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
-
+ 
 function adaptiveSqueezeScale(element: HTMLElement, config?: Readonly<MotionConfig>): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
@@ -305,21 +171,21 @@ function adaptiveSqueezeScale(element: HTMLElement, config?: Readonly<MotionConf
   );
   return 1 - delta;
 }
-
+ 
 export function resolveAdaptiveHoverLiftScale(
   element: HTMLElement,
   config?: Readonly<MotionConfig>,
 ): number {
   return adaptiveHoverLiftScale(element, config);
 }
-
+ 
 export function resolveAdaptivePressSqueezeScale(
   element: HTMLElement,
   config?: Readonly<MotionConfig>,
 ): number {
   return adaptiveSqueezeScale(element, config);
 }
-
+ 
 function adaptiveHoverLiftScale(element: HTMLElement, config?: Readonly<MotionConfig>): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
@@ -329,9 +195,9 @@ function adaptiveHoverLiftScale(element: HTMLElement, config?: Readonly<MotionCo
   );
   return 1 + delta;
 }
-
+ 
 /**
- * Hover-lift + optional shadow in one GSAP tween (same structure as gloss).
+ * Hover-lift + optional shadow in one GSAP tween (same structure as ).
  * Replay while already inside is prevented by pointerover/out guards
  * (`cameFromOutsideContainer`) — not by a local lifted-state flag (that desynced
  * with press-squeeze release).
@@ -348,47 +214,62 @@ export function animateInteractiveHoverLift(
       ? shadow.hover
       : (shadow.idle ?? shadowNone())
     : null;
-
+ 
   if (shouldSkipInteractiveHoverLift(config)) {
     if (!lifted) {
-      killMotion(element);
       if (shadowVar) {
         element.style.setProperty("--el-shadow", shadowVar);
-        releaseInlineBoxShadow(element);
+        clearInlineBoxShadow(element);
       }
-      gsap.set(element, { scale: 1, ...INTERACTIVE_TRANSFORM_VARS });
+      gsap.set(element, { scale: 1, overwrite: "auto", ...INTERACTIVE_TRANSFORM_VARS });
     }
     return;
   }
 
-  killMotion(element);
   const resolvedScale = lifted
     ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element, config))
     : 1;
   const cfg = resolveMotionConfig(config);
+  const duration = cfg.interactiveDuration / 1000;
 
-  tweenScaleAndShadow(
-    element,
-    resolvedScale,
-    shadowVar,
-    cfg.interactiveDuration / 1000,
-    cfg.hoverLiftEase,
-  );
+  if (shadow) {
+    element.style.setProperty("--shadow-fade-hover", shadow.hover);
+    if (shadow.press) element.style.setProperty("--shadow-fade-press", shadow.press);
+    if (!lifted) {
+      const idle = shadow.idle ?? shadowNone();
+      element.style.setProperty("--el-shadow", idle);
+      element.style.setProperty("--shadow-fade-rest", idle);
+    }
+    playShadowFade(element, lifted ? "hover" : "rest", {
+      duration,
+      ease: cfg.hoverLiftEase,
+    });
+  }
+
+  gsap.to(element, {
+    scale: resolvedScale,
+    duration,
+    ease: cfg.hoverLiftEase,
+    ...INTERACTIVE_TRANSFORM_VARS,
+    overwrite: "auto",
+  });
 }
-
+ 
 export function isInteractivePressKey(e: {
   key: string;
   repeat?: boolean;
 }): boolean {
   return !e.repeat && (e.key === "Enter" || e.key === " ");
 }
-
+ 
 export type AnimateInteractivePressSqueezeOptions = {
   /**
    * Prefer a `RefObject` / getter — re-read at release so leave-during-press
    * does not restore hover shadow/scale after the cursor has left.
    */
   pointerInside?: boolean | RefObject<boolean | null> | (() => boolean);
+  /** `false` releases to rest scale even if the pointer is still inside. */
+  restoreHover?: boolean;
   liftScale?: number;
   shadow?: HoverShadowConfig;
   onReleaseStart?: () => void;
@@ -396,7 +277,7 @@ export type AnimateInteractivePressSqueezeOptions = {
   signal?: AbortSignal;
   config?: Readonly<MotionConfig>;
 };
-
+ 
 function resolvePointerInside(
   value: AnimateInteractivePressSqueezeOptions["pointerInside"],
 ): boolean {
@@ -406,8 +287,14 @@ function resolvePointerInside(
   return Boolean(value);
 }
 
+/** Owns the press timeline we started. A new press stops that timeline only. */
+const stopActivePress = new WeakMap<HTMLElement, () => void>();
+
 /**
- * Press-squeeze + optional shadow in the same tweens as scale (gloss-style timeline).
+ * Press-squeeze. Scale and the shadow fade share one timeline.
+ * Shadow layers stay static; only their opacity moves.
+ * Cancellation is the engine abort signal or the next press on this element —
+ * not `killTweensOf`, so a leave tween on the same node keeps running.
  */
 export function animateInteractivePressSqueeze(
   element: HTMLElement,
@@ -419,24 +306,33 @@ export function animateInteractivePressSqueeze(
     options?.onReleaseStart?.();
     return Promise.resolve();
   }
-  killMotion(element);
   const s = adaptiveSqueezeScale(element, cfg);
   const total = motionPressSqueezeTotalFor(cfg);
   // Intentional timeline split: press-in 30%; release = full total when restoring hover,
   // else 50% of total. See SETUP.md «Intentional motion constants».
   const pressIn = total * 0.3;
+  const pressEase = "power1.out";
   const canHoverLift = !shouldSkipInteractiveHoverLift(cfg);
   const shadow = options?.shadow;
   const idleShadowVar = shadow ? (shadow.idle ?? shadowNone()) : null;
   const pressShadowVar = shadow ? (shadow.press ?? idleShadowVar) : null;
   const signal = options?.signal;
 
+  if (shadow && idleShadowVar && pressShadowVar) {
+    element.style.setProperty("--shadow-fade-hover", shadow.hover);
+    element.style.setProperty("--shadow-fade-rest", idleShadowVar);
+    element.style.setProperty("--shadow-fade-press", pressShadowVar);
+    clearInlineBoxShadow(element);
+  }
+
   return new Promise((resolve) => {
     let settled = false;
     let unbind = () => {};
+    let stop = () => {};
     const done = () => {
       if (settled) return;
       settled = true;
+      if (stopActivePress.get(element) === stop) stopActivePress.delete(element);
       unbind();
       resolve();
     };
@@ -446,18 +342,28 @@ export function animateInteractivePressSqueeze(
         done();
       },
     });
-    unbind = bindAbortSignal(signal, () => {
+    stop = () => {
       tl.kill();
       done();
-    });
-    tweenScaleAndShadow(element, s, pressShadowVar, pressIn, "power1.out", {
-      timeline: tl,
-      commitShadow: false,
-    });
+    };
+    const previous = stopActivePress.get(element);
+    stopActivePress.set(element, stop);
+    previous?.();
+    unbind = bindAbortSignal(signal, stop);
+    tweenScale(element, s, pressIn, pressEase, tl);
+    if (shadow) {
+      playShadowFade(element, "press", {
+        duration: pressIn,
+        ease: pressEase,
+        timeline: tl,
+      });
+    }
     tl.add(() => {
       if (signal?.aborted) return;
       const releaseToHover =
-        resolvePointerInside(options?.pointerInside) && canHoverLift;
+        options?.restoreHover !== false &&
+        resolvePointerInside(options?.pointerInside) &&
+        canHoverLift;
       const releaseScale = releaseToHover
         ? options?.liftScale !== undefined
           ? options.liftScale
@@ -465,22 +371,23 @@ export function animateInteractivePressSqueeze(
         : 1;
       const releaseOut = releaseToHover ? total : total * 0.5;
       const releaseEase = releaseToHover ? cfg.hoverLiftEase : "sine.inOut";
-      const releaseShadowVar =
-        shadow && idleShadowVar != null
-          ? releaseToHover
-            ? shadow.hover
-            : idleShadowVar
-          : null;
-
       options?.onReleaseStart?.();
-      tweenScaleAndShadow(element, releaseScale, releaseShadowVar, releaseOut, releaseEase, {
-        timeline: tl,
-        commitShadow: true,
-      });
+      if (!releaseToHover && idleShadowVar) {
+        element.style.setProperty("--el-shadow", idleShadowVar);
+        element.style.setProperty("--shadow-fade-rest", idleShadowVar);
+      }
+      tweenScale(element, releaseScale, releaseOut, releaseEase, tl);
+      if (shadow) {
+        playShadowFade(element, releaseToHover ? "hover" : "rest", {
+          duration: releaseOut,
+          ease: releaseEase,
+          timeline: tl,
+        });
+      }
     });
   });
 }
-
+ 
 export function useInteractiveHoverLiftContainerHandlers<
   Element extends HTMLElement = HTMLElement,
 >(
@@ -500,14 +407,14 @@ export function useInteractiveHoverLiftContainerHandlers<
     },
     [config, liftScale, shadow],
   );
-
+ 
   const onLeave = useCallback(
     (el: HTMLElement) => {
       animateInteractiveHoverLift(el, false, liftScale, shadow, config);
     },
     [config, liftScale, shadow],
   );
-
+ 
   return useContainerPointerHoverHandlers<Element>({
     enabled,
     targetRef: liftedRef,
@@ -517,3 +424,4 @@ export function useInteractiveHoverLiftContainerHandlers<
     onLeave,
   });
 }
+ 

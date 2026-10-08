@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-
+ 
 export type UseOptionGroupSingleValueOptions = {
   value?: string | null;
   defaultValue?: string;
@@ -10,7 +10,7 @@ export type UseOptionGroupSingleValueOptions = {
    */
   allowClear?: boolean;
 };
-
+ 
 export function useOptionGroupSingleValue({
   value: valueProp,
   defaultValue,
@@ -19,13 +19,13 @@ export function useOptionGroupSingleValue({
 }: UseOptionGroupSingleValueOptions) {
   const controlled = valueProp !== undefined;
   const [internalValue, setInternalValue] = useState<string | undefined>(defaultValue);
-
+ 
   const selectedValue = controlled
     ? valueProp == null
       ? undefined
       : String(valueProp)
     : internalValue;
-
+ 
   const selectValue = useCallback(
     (next: string | undefined) => {
       if (!allowClear && next === undefined) return;
@@ -34,6 +34,7 @@ export function useOptionGroupSingleValue({
     },
     [allowClear, controlled, onValueChange],
   );
-
+ 
   return { selectedValue, selectValue };
 }
+ 

@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-
+ 
 import { accordionDefaultValue } from "./accordionAPI";
 import type { AccordionContextValue, UseAccordionRootStateProps } from "./accordionTypes";
-
+ 
 export function useAccordionRootState({
   defaultValue: defaultValueProp = null,
   defaultOpenIndex = null,
@@ -17,13 +17,13 @@ export function useAccordionRootState({
   const value = controlled ? valueProp : internalValue;
   /** Auto-ids for items without `value`. Never reset during render (Strict Mode / concurrent). */
   const itemIndexRef = useRef(0);
-
+ 
   const allocateAutoItemId = useCallback(() => {
     const id = String(itemIndexRef.current);
     itemIndexRef.current += 1;
     return id;
   }, []);
-
+ 
   const setValue = useCallback(
     (next: string | null) => {
       if (!controlled) setInternalValue(next);
@@ -31,7 +31,7 @@ export function useAccordionRootState({
     },
     [controlled, onValueChange],
   );
-
+ 
   const contextValue = useMemo<AccordionContextValue>(
     () => ({
       value,
@@ -42,6 +42,7 @@ export function useAccordionRootState({
     }),
     [allocateAutoItemId, motion, value, setValue, size],
   );
-
+ 
   return { contextValue };
 }
+ 

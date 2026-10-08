@@ -1,13 +1,13 @@
 import { forwardRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
-
+ 
 import { useInputChromeSlot } from "./inputAnimations";
 import { useInputClassNames, useInputFieldContext } from "./inputContext";
 import type { InputErrorProps, InputHintProps, InputLabelProps } from "./inputTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const InputLabel = forwardRef<HTMLElement, InputLabelProps>(
   function InputLabel(
     {
@@ -31,7 +31,7 @@ export const InputLabel = forwardRef<HTMLElement, InputLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Label
         ref={part.setRef}
@@ -46,9 +46,9 @@ export const InputLabel = forwardRef<HTMLElement, InputLabelProps>(
     );
   },
 );
-
+ 
 InputLabel.displayName = "InputLabel";
-
+ 
 export const InputHint = forwardRef<HTMLElement, InputHintProps>(
   function InputHint(
     {
@@ -67,13 +67,7 @@ export const InputHint = forwardRef<HTMLElement, InputHintProps>(
   ) {
     const field = useInputFieldContext();
     const slotClassNames = useInputClassNames();
-    const hintStatus =
-      status ??
-      (field.status === "danger"
-        ? "default"
-        : field.status === "default"
-          ? "default"
-          : field.status);
+    const hintStatus = status ?? field.status;
     const part = useInputChromeSlot("hint", {
       motion,
       forwardedRef: ref,
@@ -82,7 +76,7 @@ export const InputHint = forwardRef<HTMLElement, InputHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -97,9 +91,9 @@ export const InputHint = forwardRef<HTMLElement, InputHintProps>(
     );
   },
 );
-
+ 
 InputHint.displayName = "InputHint";
-
+ 
 export const InputError = forwardRef<HTMLElement, InputErrorProps>(
   function InputError(
     {
@@ -125,7 +119,7 @@ export const InputError = forwardRef<HTMLElement, InputErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -139,5 +133,6 @@ export const InputError = forwardRef<HTMLElement, InputErrorProps>(
     );
   },
 );
-
+ 
 InputError.displayName = "InputError";
+ 

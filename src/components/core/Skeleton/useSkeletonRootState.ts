@@ -1,5 +1,5 @@
 import type { UseSkeletonRootStateProps } from "./skeletonTypes";
-
+ 
 export function useSkeletonRootState({
   animation = "wave",
   radius = "small",
@@ -10,3 +10,4 @@ export function useSkeletonRootState({
     isWave: animation === "wave",
   };
 }
+ 

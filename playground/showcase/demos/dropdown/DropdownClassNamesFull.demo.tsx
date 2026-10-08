@@ -8,7 +8,7 @@ export function DropdownClassNamesFullDemo() {
       defaultValue="ru"
       classNames={{
         popoverBody: "border border-primary/20",
-        subPopoverBody: "rounded-mid border border-primary/20 bg-tertiary",
+        subPopoverBody: "rounded-large border border-primary/20 bg-tertiary",
         label: "text-primary",
         item: "rounded-lg",
       }}

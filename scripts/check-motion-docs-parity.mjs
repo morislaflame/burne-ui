@@ -17,6 +17,7 @@ const MOTION_PHASE_NAMES = [
   "hoverOut",
   "pressIn",
   "pressOut",
+  "mount",
   "enter",
   "leave",
   "check",
@@ -56,11 +57,14 @@ const PASS_THROUGH_MOTION_SLOTS = {
   ColorPicker: new Set(["hueSlider", "alphaSlider", "trigger"]),
   /** Dropdown (and similar) register repeated `item` / chrome on the Popover portal scope. */
   Popover: new Set(["item", "itemLabel", "itemHint", "itemIcon", "label", "subTrigger", "separator"]),
+  /** Card chrome is Popover's portal scope. HoverCard registers `trigger` itself. */
+  HoverCard: new Set(["content", "header", "title", "description", "body", "arrow"]),
 };
 
 const SLOT_REGISTER_RES = [
   /registerTarget\(\s*["']([A-Za-z]\w*)["']/g,
   /\bslot:\s*["']([A-Za-z]\w*)["']/g,
+  /\bslot=["']([A-Za-z]\w*)["']/g,
   /use[A-Za-z]+SlotMotion(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
   /use[A-Za-z]+PartMotion(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
   /use[A-Za-z]+ChromeSlot(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
@@ -80,10 +84,6 @@ function isPublicSlotMap(name) {
   if (name === "DropdownPopoverMotion") return false;
   if (!/^[A-Z][A-Za-z0-9]*Motion$/.test(name)) return false;
   return !SKIP_MAP_SUFFIX.test(name);
-}
-
-function mapComponentName(typeName) {
-  return typeName.replace(/Motion$/, "");
 }
 
 function toKebab(name) {
@@ -400,107 +400,158 @@ async function main() {
         continue;
       }
 
+      const level1Forbidden = [
+        "MotionController",
+        "MotionGroup",
+        "createMotionEvents",
+        "createMotionStates",
+        "motionState",
+        "MotionMapWithEvents",
+      ].filter((token) => motionMd.includes(token));
+      if (level1Forbidden.length > 0) {
+        errors.push(
+          `motion/${locale}.md: level 1 must not mention ${level1Forbidden.join(", ")}`,
+        );
+      }
+      if (
+        !/ThemeProvider/.test(motionMd) ||
+        !/MotionConfigProvider/.test(motionMd) ||
+        !/useMotionConfig/.test(motionMd) ||
+        !/Precedence/.test(motionMd) ||
+        !/configureMotion/.test(motionMd) ||
+        !/pressSqueeze/.test(motionMd) ||
+        !/enableAnimations/.test(motionMd)
+      ) {
+        errors.push(
+          `motion/${locale}.md: must document ThemeProvider, MotionConfigProvider, useMotionConfig, Precedence, configureMotion, pressSqueeze, and enableAnimations`,
+        );
+      }
+
+      const pages = {
+        "motion-recipes": null,
+        "motion-controller": null,
+        "motion-events": null,
+        "motion-group": null,
+        "motion-async": null,
+        "motion-authoring": null,
+      };
+      let missingPage = false;
+      for (const slug of Object.keys(pages)) {
+        try {
+          pages[slug] = await readFile(
+            path.join(siteRoot, "content/docs", slug, `${locale}.md`),
+            "utf8",
+          );
+        } catch {
+          errors.push(`site ${slug}/${locale}.md missing`);
+          missingPage = true;
+        }
+      }
+      if (missingPage) continue;
+
+      const recipesMd = pages["motion-recipes"];
       const missingPhases = MOTION_PHASE_NAMES.filter(
-        (phase) => !backtickHas(motionMd, phase),
+        (phase) => !backtickHas(recipesMd, phase),
       );
       if (missingPhases.length > 0) {
         errors.push(
-          `motion/${locale}.md: missing phase(s) ${missingPhases.map((p) => `\`${p}\``).join(", ")}`,
+          `motion-recipes/${locale}.md: missing phase(s) ${missingPhases.map((p) => `\`${p}\``).join(", ")}`,
         );
       }
-      if (!/`change`/.test(motionMd) || !/MOTION_PHASE_NAMES/.test(motionMd)) {
+      if (!/`change`/.test(recipesMd) || !/MOTION_PHASE_NAMES/.test(recipesMd)) {
         errors.push(
-          `motion/${locale}.md: must document \`change\` and MOTION_PHASE_NAMES`,
+          `motion-recipes/${locale}.md: must document \`change\` and MOTION_PHASE_NAMES`,
         );
       }
-      if (!/MotionRecipeMetadata/.test(motionMd) || !/`hidesFirstPaint`/.test(motionMd)) {
+      if (!/MotionRecipeMetadata/.test(recipesMd) || !/`hidesFirstPaint`/.test(recipesMd)) {
         errors.push(
-          `motion/${locale}.md: must document MotionRecipeMetadata and hidesFirstPaint`,
+          `motion-recipes/${locale}.md: must document MotionRecipeMetadata and hidesFirstPaint`,
+        );
+      }
+      if (!/`iconStart`/.test(recipesMd) || !/`iconEnd`/.test(recipesMd)) {
+        errors.push(
+          `motion-recipes/${locale}.md: must document iconStart/iconEnd slot names`,
+        );
+      }
+
+      const controllerMd = pages["motion-controller"];
+      if (
+        !/MotionController/.test(controllerMd) ||
+        !/`createMotionController`/.test(controllerMd) ||
+        !/`motionController`/.test(controllerMd) ||
+        !/`MotionPlayEvent`/.test(controllerMd)
+      ) {
+        errors.push(
+          `motion-controller/${locale}.md: must document MotionController, createMotionController, motionController, and MotionPlayEvent`,
+        );
+      }
+
+      const eventsMd = pages["motion-events"];
+      if (
+        !/`createMotionEvents`/.test(eventsMd) ||
+        !/`events`/.test(eventsMd) ||
+        !/MotionMapWithEvents/.test(eventsMd)
+      ) {
+        errors.push(
+          `motion-events/${locale}.md: must document createMotionEvents, events, and MotionMapWithEvents`,
         );
       }
       if (
-        !/MotionController/.test(motionMd) ||
-        !/`createMotionController`/.test(motionMd) ||
-        !/`motionController`/.test(motionMd) ||
-        !/`MotionPlayEvent`/.test(motionMd)
+        !/`motionState`/.test(eventsMd) ||
+        !/motion\.states/.test(eventsMd) ||
+        !/`createMotionStates`/.test(eventsMd)
       ) {
         errors.push(
-          `motion/${locale}.md: must document MotionController, createMotionController, motionController, and MotionPlayEvent`,
+          `motion-events/${locale}.md: must document motionState, states, and createMotionStates`,
         );
       }
+      if (!/`fromRest`/.test(eventsMd) || !/`replay`/.test(eventsMd)) {
+        errors.push(
+          `motion-events/${locale}.md: must document fromRest and replay`,
+        );
+      }
+
+      const groupMd = pages["motion-group"];
+      if (!/MotionGroup/.test(groupMd) || !/`createMotionGroup`/.test(groupMd)) {
+        errors.push(
+          `motion-group/${locale}.md: must document MotionGroup and createMotionGroup`,
+        );
+      }
+
+      const asyncMd = pages["motion-async"];
       if (
-        !/`createMotionEvents`/.test(motionMd) ||
-        !/`events`/.test(motionMd) ||
-        !/MotionMapWithEvents/.test(motionMd)
+        !/ctx\.wait/.test(asyncMd) ||
+        !/sequence/.test(asyncMd) ||
+        !/parallel/.test(asyncMd) ||
+        !/`onInterrupt`/.test(asyncMd) ||
+        !/`onError`/.test(asyncMd) ||
+        !/`registerMotionPlugins`/.test(asyncMd)
       ) {
         errors.push(
-          `motion/${locale}.md: must document createMotionEvents, events, and MotionMapWithEvents`,
+          `motion-async/${locale}.md: must document ctx.wait, sequence/parallel, onInterrupt/onError, and registerMotionPlugins`,
         );
       }
-      if (
-        !/`motionState`/.test(motionMd) ||
-        !/`states`/.test(motionMd) ||
-        !/`createMotionStates`/.test(motionMd)
-      ) {
+
+      const authorMd = pages["motion-authoring"];
+      if (!/useMotionPart/.test(authorMd) || !/\*Animations\.ts/.test(authorMd)) {
         errors.push(
-          `motion/${locale}.md: must document motionState, states, and createMotionStates`,
-        );
-      }
-      if (
-        !/MotionGroup/.test(motionMd) ||
-        !/`createMotionGroup`/.test(motionMd)
-      ) {
-        errors.push(
-          `motion/${locale}.md: must document MotionGroup and createMotionGroup`,
-        );
-      }
-      if (
-        !/`ctx.wait`/.test(motionMd) ||
-        !/`sequence`/.test(motionMd) ||
-        !/`parallel`/.test(motionMd) ||
-        !/`onInterrupt`/.test(motionMd) ||
-        !/`onError`/.test(motionMd) ||
-        !/`registerMotionPlugins`/.test(motionMd)
-      ) {
-        errors.push(
-          `motion/${locale}.md: must document ctx.wait, sequence/parallel, onInterrupt/onError, and registerMotionPlugins`,
-        );
-      }
-      if (
-        !/`ThemeProvider`/.test(motionMd) ||
-        !/`MotionConfigProvider`/.test(motionMd) ||
-        !/`useMotionConfig`/.test(motionMd) ||
-        !/Precedence/.test(motionMd) ||
-        !/`configureMotion`/.test(motionMd)
-      ) {
-        errors.push(
-          `motion/${locale}.md: must document ThemeProvider, MotionConfigProvider, useMotionConfig, Precedence, and configureMotion`,
-        );
-      }
-      if (!/`fromRest`/.test(motionMd) || !/`replay`/.test(motionMd)) {
-        errors.push(
-          `motion/${locale}.md: must document fromRest and replay`,
-        );
-      }
-      if (!/`iconStart`/.test(motionMd) || !/`iconEnd`/.test(motionMd)) {
-        errors.push(
-          `motion/${locale}.md: must document iconStart/iconEnd slot names`,
+          `motion-authoring/${locale}.md: must document useMotionPart and *Animations.ts`,
         );
       }
 
       const wired = parseWiredTable(
-        motionMd,
+        recipesMd,
         locale === "ru" ? /^## Сейчас подключено\s*$/m : /^## Wired today\s*$/m,
       );
       if (!wired || wired.length === 0) {
-        errors.push(`motion/${locale}.md: wired table is empty or missing`);
+        errors.push(`motion-recipes/${locale}.md: wired table is empty or missing`);
       }
-      const notWired = parseNotWiredSection(motionMd);
+      const notWired = parseNotWiredSection(recipesMd);
       if (wired && notWired.length > 0) {
         const overlap = wired.filter((name) => notWired.includes(name));
         if (overlap.length > 0) {
           errors.push(
-            `motion/${locale}.md: in both wired and not-wired: ${overlap.join(", ")}`,
+            `motion-recipes/${locale}.md: in both wired and not-wired: ${overlap.join(", ")}`,
           );
         }
       }
@@ -510,11 +561,11 @@ async function main() {
     let wiredRu;
     try {
       const en = await readFile(
-        path.join(siteRoot, "content/docs/motion/en.md"),
+        path.join(siteRoot, "content/docs/motion-recipes/en.md"),
         "utf8",
       );
       const ru = await readFile(
-        path.join(siteRoot, "content/docs/motion/ru.md"),
+        path.join(siteRoot, "content/docs/motion-recipes/ru.md"),
         "utf8",
       );
       wiredEn = parseWiredTable(en, /^## Wired today\s*$/m) ?? [];
@@ -525,7 +576,7 @@ async function main() {
       const onlyRu = wiredRu.filter((n) => !enSet.has(n));
       if (onlyEn.length || onlyRu.length) {
         errors.push(
-          `motion en/ru wired rows differ: en-only [${onlyEn.join(", ")}] ru-only [${onlyRu.join(", ")}]`,
+          `motion-recipes en/ru wired rows differ: en-only [${onlyEn.join(", ")}] ru-only [${onlyRu.join(", ")}]`,
         );
       }
     } catch {

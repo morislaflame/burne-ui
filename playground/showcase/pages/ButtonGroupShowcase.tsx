@@ -2,8 +2,6 @@ import { ButtonGroupButtonsOnlyDemo } from "../demos/button-group/ButtonGroupBut
 import buttonGroupButtonsOnlySource from "../demos/button-group/ButtonGroupButtonsOnly.demo.tsx?raw";
 import { ButtonGroupClassNamesFullDemo } from "../demos/button-group/ButtonGroupClassNamesFull.demo";
 import buttonGroupClassNamesFullSource from "../demos/button-group/ButtonGroupClassNamesFull.demo.tsx?raw";
-import { ButtonGroupGlossDemo } from "../demos/button-group/ButtonGroupGloss.demo";
-import buttonGroupGlossSource from "../demos/button-group/ButtonGroupGloss.demo.tsx?raw";
 import { ButtonGroupHorizontalDemo } from "../demos/button-group/ButtonGroupHorizontal.demo";
 import buttonGroupHorizontalSource from "../demos/button-group/ButtonGroupHorizontal.demo.tsx?raw";
 import { ButtonGroupPricingTierDemo } from "../demos/button-group/ButtonGroupPricingTier.demo";
@@ -41,12 +39,7 @@ export function ButtonGroupShowcase() {
       <ShowcaseSection title="Dimensions" description="buttonSize: small, base, mid, large — height of all segments.">
         <ShowcaseDemoFromFile Demo={ButtonGroupSizesDemo} source={buttonGroupSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — common glass surface of the group.">
-        <ShowcaseDemoFromFile Demo={ButtonGroupGlossDemo} source={buttonGroupGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="classNames" description="Slots root, separator, text, textLabel via classNames.">
+<ShowcaseSection title="classNames" description="Slots root, separator, text, textLabel via classNames.">
         <ShowcaseDemoFromFile Demo={ButtonGroupClassNamesFullDemo} source={buttonGroupClassNamesFullSource} />
       </ShowcaseSection>
 
@@ -83,7 +76,7 @@ export function ButtonGroupShowcase() {
             description="ButtonGroup.Text — segment signature; nested Input/ComboBox inherit variant groups."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             Segment positions: <code>first</code>, <code>middle</code>, <code>last</code>,{" "}
             <code>only</code>. For vertical group — <code>orientation=&quot;vertical&quot;</code> on

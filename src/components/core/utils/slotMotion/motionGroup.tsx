@@ -5,9 +5,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-
+ 
 import { gsap } from "@/components/core/utils/gsapMotion";
-
+ 
 import type { MotionController } from "./motionControllerTypes";
 import type {
   MotionGroup,
@@ -23,18 +23,19 @@ import type {
   MotionTimelinePosition,
   MotionTransformVars,
 } from "./slotMotionTypes";
-
+ 
 let idleRunId = 0;
-
+ 
 function warnDev(message: string): void {
   if (process.env.NODE_ENV !== "production") {
     console.error(`[burne-ui] MotionGroup: ${message}`);
   }
 }
-
+ 
 function settledRun(status: MotionRunStatus): MotionRun {
   return {
     id: --idleRunId,
+    phase: "",
     status,
     finished: Promise.resolve(),
     animation: undefined,
@@ -43,7 +44,7 @@ function settledRun(status: MotionRunStatus): MotionRun {
     isCurrent: () => false,
   };
 }
-
+ 
 function waitMs(ms: number, signal?: AbortSignal): Promise<boolean> {
   if (!(ms > 0)) return Promise.resolve(!signal?.aborted);
   return new Promise((resolve) => {
@@ -62,12 +63,12 @@ function waitMs(ms: number, signal?: AbortSignal): Promise<boolean> {
     );
   });
 }
-
+ 
 function createBoundGroup(): MotionGroup {
   const members = new Map<string, MotionController<string>>();
   let generation = 0;
   let activeGsap: gsap.core.Timeline | null = null;
-
+ 
   const bumpGeneration = () => {
     generation += 1;
     if (activeGsap) {
@@ -75,7 +76,7 @@ function createBoundGroup(): MotionGroup {
       activeGsap = null;
     }
   };
-
+ 
   const resolveMember = (id: string, action: string): MotionController<string> | null => {
     if (!id) {
       warnDev(`empty member id (${action})`);
@@ -88,25 +89,25 @@ function createBoundGroup(): MotionGroup {
     }
     return controller;
   };
-
+ 
   const playMember: MotionGroup["play"] = (id, event, options) => {
     const controller = resolveMember(id, "play");
     if (!controller) return settledRun("cancelled");
     return controller.play(event, options);
   };
-
+ 
   const playSlotMember: MotionGroup["playSlot"] = (id, slot, event, options) => {
     const controller = resolveMember(id, "playSlot");
     if (!controller) return settledRun("cancelled");
     return controller.playSlot(slot, event, options);
   };
-
+ 
   const setMember = (id: string, slot: string, vars: MotionTransformVars): void => {
     const controller = resolveMember(id, "set");
     if (!controller) return;
     controller.set(slot, vars);
   };
-
+ 
   const playAllMembers = async (
     event: Parameters<MotionGroup["playAll"]>[0],
     options: MotionGroupPlayAllOptions | undefined,
@@ -119,7 +120,7 @@ function createBoundGroup(): MotionGroup {
     if (staggerSec != null && !(Number.isFinite(staggerSec) && staggerSec >= 0)) {
       warnDev(`stagger=${String(staggerSec)} ignored (need a finite number ≥ 0, seconds)`);
     }
-
+ 
     const requested = options?.members;
     const ids = requested
       ? requested.filter((id) => {
@@ -134,7 +135,7 @@ function createBoundGroup(): MotionGroup {
           return true;
         })
       : [...members.keys()];
-
+ 
     const runs: MotionRun[] = [];
     let index = 0;
     for (const id of ids) {
@@ -156,13 +157,13 @@ function createBoundGroup(): MotionGroup {
       acc?.push(run);
       index += 1;
     }
-
+ 
     if (options?.waitForComplete) {
       await Promise.all(runs.map((run) => run.finished));
     }
     return { runs };
   };
-
+ 
   const register: MotionGroup["register"] = (id, controller) => {
     if (!id) {
       warnDev("empty member id (register)");
@@ -182,17 +183,17 @@ function createBoundGroup(): MotionGroup {
       if (members.get(id) === controller) members.delete(id);
     };
   };
-
+ 
   const play: MotionGroup["play"] = (id, event, options) => {
     bumpGeneration();
     return playMember(id, event, options);
   };
-
+ 
   const playSlot: MotionGroup["playSlot"] = (id, slot, event, options) => {
     bumpGeneration();
     return playSlotMember(id, slot, event, options);
   };
-
+ 
   const playAll: MotionGroup["playAll"] = async (event, options) => {
     const gen = ++generation;
     if (activeGsap) {
@@ -201,12 +202,12 @@ function createBoundGroup(): MotionGroup {
     }
     return playAllMembers(event, options, gen);
   };
-
+ 
   const set: MotionGroup["set"] = (id, slot, vars) => {
     bumpGeneration();
     setMember(id, slot, vars);
   };
-
+ 
   const cancel: MotionGroup["cancel"] = (
     id?: string,
     slot?: string,
@@ -223,27 +224,27 @@ function createBoundGroup(): MotionGroup {
     if (!controller) return;
     controller.cancel(slot, reason);
   };
-
+ 
   const timeline = (): MotionGroupTimeline => {
     bumpGeneration();
     const tl = gsap.timeline({ paused: true });
     activeGsap = tl;
     const gen = generation;
     const runs: MotionRun[] = [];
-
+ 
     queueMicrotask(() => {
       if (activeGsap === tl && generation === gen) tl.play();
     });
-
+ 
     const ifCurrent = (fn: () => void) => () => {
       if (generation !== gen) return;
       fn();
     };
-
+ 
     const track = (run: MotionRun) => {
       runs.push(run);
     };
-
+ 
     const api: MotionGroupTimeline = {
       play(id, event, options?: MotionGroupTimelinePlayOptions) {
         const { position, ...rest } = options ?? {};
@@ -301,10 +302,10 @@ function createBoundGroup(): MotionGroup {
         for (const run of runs) run.cancel("killed");
       },
     };
-
+ 
     return api;
   };
-
+ 
   return {
     register,
     unregister(id) {
@@ -333,16 +334,16 @@ function createBoundGroup(): MotionGroup {
     timeline,
   };
 }
-
+ 
 /** Registry handle. Register child `MotionController`s by id; no `motionId` on kit roots. */
 export function createMotionGroup(): MotionGroup;
 export function createMotionGroup<TEvent extends string>(): MotionGroup<TEvent>;
 export function createMotionGroup<TEvent extends string>(): MotionGroup<TEvent> {
   return createBoundGroup() as MotionGroup<TEvent>;
 }
-
+ 
 const MotionGroupContext = createContext<MotionGroup | null>(null);
-
+ 
 export function MotionGroupProvider({
   group,
   children,
@@ -352,7 +353,7 @@ export function MotionGroupProvider({
 }) {
   return <MotionGroupContext.Provider value={group}>{children}</MotionGroupContext.Provider>;
 }
-
+ 
 /** Nearest `MotionGroupProvider`. Throws outside a provider. */
 export function useMotionGroup(): MotionGroup {
   const ctx = useContext(MotionGroupContext);
@@ -361,11 +362,11 @@ export function useMotionGroup(): MotionGroup {
   }
   return ctx;
 }
-
+ 
 export function useOptionalMotionGroup(): MotionGroup | null {
   return useContext(MotionGroupContext);
 }
-
+ 
 /** Stable `createMotionGroup()` for the lifetime of the component. */
 export function useMotionGroupHandle(): MotionGroup;
 export function useMotionGroupHandle<TEvent extends string>(): MotionGroup<TEvent>;
@@ -373,7 +374,7 @@ export function useMotionGroupHandle<TEvent extends string>(): MotionGroup<TEven
   const [group] = useState(() => createMotionGroup<TEvent>());
   return group;
 }
-
+ 
 /**
  * Register `controller` on the group for this mount. Unregisters on unmount / id change.
  * Pass `group` or wrap with `MotionGroupProvider`.
@@ -385,7 +386,7 @@ export function useMotionGroupMember(
 ): void {
   const ctx = useOptionalMotionGroup();
   const target = group ?? ctx;
-
+ 
   useLayoutEffect(() => {
     if (!target) {
       if (process.env.NODE_ENV !== "production") {
@@ -398,7 +399,7 @@ export function useMotionGroupMember(
     return target.register(id, controller);
   }, [target, id, controller]);
 }
-
+ 
 export function MotionGroupMember({
   id,
   controller,
@@ -413,5 +414,6 @@ export function MotionGroupMember({
   useMotionGroupMember(id, controller, group);
   return children ?? null;
 }
-
+ 
 MotionGroupMember.displayName = "MotionGroupMember";
+ 

@@ -1,5 +1,5 @@
 import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRoot, CardTitle } from "./Card";
-
+ 
 export const Card = Object.assign(CardRoot, {
   Header: CardHeader,
   HeadingBlock: CardHeadingBlock,
@@ -8,7 +8,7 @@ export const Card = Object.assign(CardRoot, {
   Body: CardBody,
   Footer: CardFooter,
 });
-
+ 
 export type {
   CardPressEvent,
   CardProps,
@@ -24,3 +24,4 @@ export type {
   CardMotion,
   CardPartMotion,
 } from "./cardTypes";
+ 

@@ -1,38 +1,35 @@
 import { Children, createElement, isValidElement, type ReactNode } from "react";
-
+ 
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
+import { formatLocaleNumber } from "@/components/core/utils/intlFormat";
 import type {
   FillSpan,
   SliderDisplayState,
   SliderOrientation,
   SliderSize,
 } from "./sliderTypes";
-
-export function sliderThicknessToCss(thickness: number | string): string {
-  return typeof thickness === "number" ? `${thickness}px` : thickness;
-}
-
+ 
 export const SLIDER_THUMB_PX: Record<SliderSize, number> = {
   small: selectionIndicatorFallbackPx("small"),
   base: selectionIndicatorFallbackPx("base"),
   mid: selectionIndicatorFallbackPx("mid"),
   large: selectionIndicatorFallbackPx("large"),
 };
-
+ 
 export function clampSliderValue(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
 }
-
+ 
 export function sliderValueToPercent(value: number, min: number, max: number): number {
   if (max <= min) return 0;
   return ((value - min) / (max - min)) * 100;
 }
-
+ 
 export function sliderValueToRatio(value: number, min: number, max: number): number {
   if (max <= min) return 0;
   return (value - min) / (max - min);
 }
-
+ 
 export function sliderThumbCenterPercent(
   value: number,
   min: number,
@@ -47,7 +44,7 @@ export function sliderThumbCenterPercent(
   const centerPx = half + sliderValueToRatio(value, min, max) * travel;
   return (centerPx / trackPx) * 100;
 }
-
+ 
 export function sliderThumbCenterPx(
   value: number,
   min: number,
@@ -59,7 +56,7 @@ export function sliderThumbCenterPx(
   const half = thumbPx / 2;
   return half + sliderValueToRatio(value, min, max) * (trackPx - thumbPx);
 }
-
+ 
 export function sliderFillSpanForValues(
   trackPx: number,
   thumbPx: number,
@@ -72,9 +69,9 @@ export function sliderFillSpanForValues(
   if (trackPx <= 0) {
     return { start: 0, end: sliderValueToPercent(singleValue, min, max) };
   }
-
+ 
   const half = thumbPx / 2;
-
+ 
   if (range) {
     const loPx = sliderThumbCenterPx(rangeValue[0], min, max, trackPx, thumbPx);
     const hiPx = sliderThumbCenterPx(rangeValue[1], min, max, trackPx, thumbPx);
@@ -83,11 +80,11 @@ export function sliderFillSpanForValues(
       end: (Math.min(trackPx, hiPx + half) / trackPx) * 100,
     };
   }
-
+ 
   const centerPx = sliderThumbCenterPx(singleValue, min, max, trackPx, thumbPx);
   return { start: 0, end: (Math.min(trackPx, centerPx + half) / trackPx) * 100 };
 }
-
+ 
 export function sliderFillStyleFromSpan(
   span: FillSpan,
   orientation: SliderOrientation,
@@ -98,13 +95,13 @@ export function sliderFillStyleFromSpan(
   }
   return { bottom: `${span.start}%`, height: `${size}%` };
 }
-
+ 
 export function snapSliderToStep(value: number, min: number, max: number, step: number): number {
   if (step <= 0) return clampSliderValue(value, min, max);
   const steps = Math.round((value - min) / step);
   return clampSliderValue(min + steps * step, min, max);
 }
-
+ 
 export function snapSliderToMarks(value: number, marks: number[]): number {
   if (marks.length === 0) return value;
   let nearest = marks[0]!;
@@ -118,7 +115,7 @@ export function snapSliderToMarks(value: number, marks: number[]): number {
   }
   return nearest;
 }
-
+ 
 export function normalizeSliderMarks(
   marks: number[] | undefined,
   min: number,
@@ -129,7 +126,7 @@ export function normalizeSliderMarks(
     (a, b) => a - b,
   );
 }
-
+ 
 export function sliderPointerToValue(
   clientX: number,
   clientY: number,
@@ -142,17 +139,17 @@ export function sliderPointerToValue(
   const span = orientation === "horizontal" ? rect.width : rect.height;
   const half = thumbPx / 2;
   const travel = span - thumbPx;
-
+ 
   if (travel <= 0) return min;
-
+ 
   const ratio =
     orientation === "horizontal"
       ? clampSliderValue((clientX - rect.left - half) / travel, 0, 1)
       : clampSliderValue(1 - (clientY - rect.top - half) / travel, 0, 1);
-
+ 
   return min + ratio * (max - min);
 }
-
+ 
 export function sliderAdjacentMark(
   value: number,
   marks: number[],
@@ -169,7 +166,7 @@ export function sliderAdjacentMark(
   }
   return [...marks].reverse().find((mark) => mark < value) ?? marks[0]!;
 }
-
+ 
 export function sliderStepDelta(
   marks: number[] | undefined,
   step: number,
@@ -181,7 +178,7 @@ export function sliderStepDelta(
   // vertical uses ↑/↓ (and →/← as aliases).
   const increaseKeys = new Set(["ArrowRight", "ArrowUp", "PageUp"]);
   const decreaseKeys = new Set(["ArrowLeft", "ArrowDown", "PageDown"]);
-
+ 
   if (marks?.length) {
     if (key === "Home") return "home";
     if (key === "End") return "end";
@@ -189,7 +186,7 @@ export function sliderStepDelta(
     if (decreaseKeys.has(key)) return "mark-prev";
     return 0;
   }
-
+ 
   const big = step > 0 ? step * 10 : 10;
   if (key === "Home") return "home";
   if (key === "End") return "end";
@@ -199,11 +196,11 @@ export function sliderStepDelta(
   if (key === "ArrowLeft" || key === "ArrowDown") return -step;
   return 0;
 }
-
+ 
 export function defaultSliderFormatValue(value: number): string {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+  return formatLocaleNumber(value);
 }
-
+ 
 export function readSliderTrackMetrics(
   rect: DOMRect,
   orientation: SliderOrientation,
@@ -212,7 +209,7 @@ export function readSliderTrackMetrics(
   const thumbSpanPx = orientation === "horizontal" ? rect.height : rect.width;
   return { trackSpanPx, thumbSpanPx };
 }
-
+ 
 export function resolveSliderFallbackThumbPx(
   thickness: number | string | undefined,
   size: SliderSize,
@@ -230,7 +227,7 @@ export function resolveSliderFallbackThumbPx(
   }
   return SLIDER_THUMB_PX[size];
 }
-
+ 
 export function sliderDisplayEqual(
   a: SliderDisplayState | null,
   b: SliderDisplayState | null,
@@ -248,14 +245,14 @@ export function sliderDisplayEqual(
     a.label === b.label
   );
 }
-
+ 
 export function partitionSliderTrackChildren(children: ReactNode): {
   body: ReactNode | null;
   hasCompoundParts: boolean;
 } {
   let hasCompoundParts = false;
   const parts: ReactNode[] = [];
-
+ 
   for (const child of Children.toArray(children)) {
     if (!isValidElement(child)) {
       parts.push(child);
@@ -272,11 +269,11 @@ export function partitionSliderTrackChildren(children: ReactNode): {
     }
     parts.push(child);
   }
-
+ 
   if (!hasCompoundParts) return { body: null, hasCompoundParts: false };
   return { body: parts, hasCompoundParts: true };
 }
-
+ 
 export function resolveSliderThumbIcon(children: ReactNode, fallback?: ReactNode): ReactNode {
   if (children == null) return fallback;
   const nodes = Children.toArray(children);
@@ -302,3 +299,4 @@ export function resolveSliderThumbIcon(children: ReactNode, fallback?: ReactNode
   }
   return children;
 }
+ 

@@ -104,7 +104,7 @@ export const CardLayout: Story = {
           <Skeleton.Region
             busy
             aria-label="Loading card"
-            className="flex flex-col gap-mid rounded-mid border-token p-mid"
+            className="flex flex-col gap-mid rounded-large border-token p-mid"
           >
             <div className="flex items-center gap-mid">
               <Skeleton.Circle animation={variant} size="h-10 w-10" />
@@ -116,8 +116,8 @@ export const CardLayout: Story = {
             <Skeleton animation={variant} className="h-40 w-full rounded-small" />
             <Skeleton.Text animation={variant} lines={2} />
             <div className="flex gap-small">
-              <Skeleton animation={variant} className="h-control-base w-20 rounded-small" />
-              <Skeleton animation={variant} className="h-control-base w-20 rounded-small" />
+              <Skeleton animation={variant} className="min-h-control-base w-20 rounded-small" />
+              <Skeleton animation={variant} className="min-h-control-base w-20 rounded-small" />
             </div>
           </Skeleton.Region>
         </div>
@@ -219,8 +219,8 @@ export const CustomSizes: Story = {
       <Skeleton animation="wave" className="h-4 w-full rounded-full" />
       <Skeleton animation="wave" className="h-6 w-full rounded-small" />
       <Skeleton animation="wave" className="h-8 w-full rounded-small" />
-      <Skeleton animation="wave" className="h-12 w-full rounded-mid" />
-      <Skeleton animation="wave" className="h-24 w-full rounded-mid" />
+      <Skeleton animation="wave" className="h-12 w-full rounded-large" />
+      <Skeleton animation="wave" className="h-24 w-full rounded-large" />
     </div>
   ),
 };

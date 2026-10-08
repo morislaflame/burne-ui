@@ -22,7 +22,7 @@ export function DrawerMotionInstantPanelDemo() {
           <Drawer.Header>
             <Drawer.HeadingBlock>
               <Drawer.Title>Instant panel</Drawer.Title>
-              <Drawer.Description>Panel snaps off. Overlay still fades.</Drawer.Description>
+              <Drawer.Description>Panel snaps off. Backdrop still fades.</Drawer.Description>
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>

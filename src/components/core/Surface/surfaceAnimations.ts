@@ -3,55 +3,17 @@
  *
  * DOM slots: `root`
  *
- * Not a slot: `glossContent` (layout wrapper).
- * Host: root plays optional `enter`. Pointer phases only when set.
+ * Not a slot: `Content` (layout wrapper).
+ * Host: `SkinShell part="surface.root"` registers `root` (`useMotionPart` + enter).
+ * Pointer phases only when `motion.root` sets them.
  * Defaults: empty.
  */
-import type { ForwardedRef } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
-import {
-  hasPointerPhases,
-  useMotionPart,
-  useOptionalEnterOnMount,
-} from "@/components/core/utils/slotMotion";
+import type { SurfaceMotion, SurfaceVariant } from "./surfaceTypes";
+import { KIT_SURFACE_VARIANTS } from "./surfaceTypes";
 
-import { useSurfaceMotionScope } from "./surfaceContext";
-import type { SurfaceMotion, SurfacePartMotion } from "./surfaceTypes";
-
-export function resolveSurfaceMotionDefaults(): SurfaceMotion {
-  return {};
+export function resolveSurfaceMotionDefaults(variant: SurfaceVariant = "default"): SurfaceMotion {
+  return overlaySkinMotion({}, variant, KIT_SURFACE_VARIANTS, "surface");
 }
-
-export function useSurfaceRootMotion({
-  forwardedRef,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-}: {
-  forwardedRef?: ForwardedRef<HTMLDivElement>;
-  motion?: SurfacePartMotion;
-  onPointerOver?: (e: ReactPointerEvent<HTMLDivElement>) => void;
-  onPointerOut?: (e: ReactPointerEvent<HTMLDivElement>) => void;
-  onPointerDown?: (e: ReactPointerEvent<HTMLDivElement>) => void;
-  onPointerUp?: (e: ReactPointerEvent<HTMLDivElement>) => void;
-}) {
-  const scope = useSurfaceMotionScope();
-  const pointer = hasPointerPhases(motion);
-  const part = useMotionPart<HTMLDivElement>({
-    scope,
-    slot: "root",
-    motion,
-    forwardedRef,
-    pointerPhases: pointer,
-    pressPhases: pointer,
-    onPointerOver,
-    onPointerOut,
-    onPointerDown,
-    onPointerUp,
-  });
-  useOptionalEnterOnMount(scope, "root", part.targetRef);
-  return part;
-}
+ 

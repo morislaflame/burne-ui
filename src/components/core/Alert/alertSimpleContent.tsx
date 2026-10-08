@@ -1,6 +1,6 @@
 import { AlertAction, AlertDescription, AlertIndicator, AlertTitle } from "./alertParts";
 import type { AlertSimpleContentProps } from "./alertTypes";
-
+ 
 /** Simple API: assembles sub-parts from root props. */
 export function AlertSimpleContent({
   gridSlots,
@@ -20,3 +20,4 @@ export function AlertSimpleContent({
     </>
   );
 }
+ 

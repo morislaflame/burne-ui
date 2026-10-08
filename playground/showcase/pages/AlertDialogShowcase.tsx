@@ -6,8 +6,6 @@ import { AlertDialogClassNamesFullDemo } from "../demos/alertDialog/AlertDialogC
 import alertDialogClassNamesFullSource from "../demos/alertDialog/AlertDialogClassNamesFull.demo.tsx?raw";
 import { AlertDialogDeleteAccountDemo } from "../demos/alertDialog/AlertDialogDeleteAccount.demo";
 import alertDialogDeleteAccountSource from "../demos/alertDialog/AlertDialogDeleteAccount.demo.tsx?raw";
-import { AlertDialogGlossDemo } from "../demos/alertDialog/AlertDialogGloss.demo";
-import alertDialogGlossSource from "../demos/alertDialog/AlertDialogGloss.demo.tsx?raw";
 import { AlertDialogLogoutDemo } from "../demos/alertDialog/AlertDialogLogout.demo";
 import alertDialogLogoutSource from "../demos/alertDialog/AlertDialogLogout.demo.tsx?raw";
 import { AlertDialogStatusDemo } from "../demos/alertDialog/AlertDialogStatus.demo";
@@ -38,12 +36,7 @@ export function AlertDialogShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={AlertDialogSizesDemo} source={alertDialogSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass confirmation panel.">
-        <ShowcaseDemoFromFile Demo={AlertDialogGlossDemo} source={alertDialogGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: instant panel, indicator pop, header/footer split, headingBlock, overlay hold.">
+<ShowcaseSection title="Slot motion" description="One gallery: instant panel, indicator pop, header/footer split, headingBlock, overlay hold.">
         <AlertDialogSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -97,7 +90,7 @@ export function AlertDialogShowcase() {
             description="AlertDialog.Header, AlertDialog.Footer — fixed confirmation structure."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             Tone primary-buttons - helper <code>primaryButtonVariantForAlertTone</code> from the package.{" "}
             <code>status</code> fundamentally affects the icon and confirmation button. Slot motion —{" "}

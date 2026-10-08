@@ -18,8 +18,7 @@ function fakeEl(): HTMLElement {
 
 function fakeCtx(
   el: HTMLElement,
-  overrides: Partial<MotionContext> = {},
-): MotionContext {
+  overrides: Partial<MotionContext> = {}): MotionContext {
   return {
     el,
     phase: "change",
@@ -36,6 +35,7 @@ function fakeCtx(
 describe("progressFill recipes", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("clamps percent to a 0…1 scale", () => {
@@ -61,6 +61,14 @@ describe("progressFill recipes", () => {
       scaleY: 1,
       transformOrigin: "left center",
     });
+  });
+
+  it("grows a horizontal fill from the inline end when direction is rtl", () => {
+    vi.stubGlobal("getComputedStyle", () => ({ direction: "rtl" }));
+    const el = fakeEl();
+    const set = vi.spyOn(gsap, "set");
+    applyProgressFillInstant(el, 0.4, true);
+    expect(set.mock.calls[0]?.[1]).toMatchObject({ transformOrigin: "right center" });
   });
 
   it("uses fromTo on enter and to on change", () => {
@@ -95,8 +103,7 @@ describe("progressFill recipes", () => {
     const disabled = progressFillRecipe(
       fakeCtx(el, {
         config: { ...MOTION_CONFIG_DEFAULTS, enableProgressFill: false },
-      }),
-    );
+      }));
     expect(disabled).toBeUndefined();
     expect(set).toHaveBeenCalled();
   });
@@ -125,5 +132,20 @@ describe("progressFill recipes", () => {
     expect(fromTo).toHaveBeenCalledTimes(1);
     expect(fromTo.mock.calls[0]?.[1]).toMatchObject({ x: -50 });
     expect(fromTo.mock.calls[0]?.[2]).toMatchObject({ x: 200, repeat: -1 });
+  });
+
+  it("sweeps indeterminate travel toward the inline end in rtl", () => {
+    vi.stubGlobal("getComputedStyle", () => ({ direction: "rtl" }));
+    const track = fakeEl();
+    const fill = fakeEl();
+    Object.defineProperty(fill, "parentElement", { value: track });
+    Object.defineProperty(track, "offsetWidth", { value: 200 });
+    Object.defineProperty(fill, "offsetWidth", { value: 50 });
+    const fromTo = vi.spyOn(gsap, "fromTo");
+
+    const tween = progressIndeterminateRecipe(fakeCtx(fill));
+    expect(tween).toBeDefined();
+    expect(fromTo.mock.calls[0]?.[1]).toMatchObject({ x: 50 });
+    expect(fromTo.mock.calls[0]?.[2]).toMatchObject({ x: -200, repeat: -1 });
   });
 });

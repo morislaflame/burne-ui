@@ -342,10 +342,66 @@ describe("createMotionScopeController", () => {
     expect(setSpy).toHaveBeenCalledTimes(1);
     expect(setSpy.mock.calls[0][0]).toBe(title);
     expect(setSpy.mock.calls[0][1]).toEqual(
-      expect.objectContaining({ autoAlpha: 0, force3D: false }),
-    );
+      expect.objectContaining({ autoAlpha: 0, force3D: false }));
     expect(setSpy.mock.calls.some((call) => call[0] === overlay)).toBe(false);
     expect(setSpy.mock.calls.some((call) => call[0] === description)).toBe(false);
     setSpy.mockRestore();
+  });
+});
+
+describe("mount phase", () => {
+  it("keeps onCleanup across later plays and runs it when the node unregisters", () => {
+    const events: string[] = [];
+    const mount = (ctx: MotionContext) => {
+      events.push("mount");
+      ctx.onCleanup(() => events.push("cleanup"));
+    };
+    const hoverIn = (ctx: MotionContext) => {
+      events.push("hover");
+      ctx.onCleanup(() => events.push("hover-cleanup"));
+    };
+    const scope = createMotionScopeController({
+      getRootMotion: () => ({
+        root: { mount, hoverIn },
+      }),
+      getDefaults: () => undefined,
+      getParams: () => ({}),
+    });
+    const id = Symbol("root");
+    const el = fakeEl("root");
+    scope.register({ id, slot: "root", node: el });
+    scope.register({ id, slot: "root", node: el });
+    scope.play("root", "hoverIn", { el });
+    scope.play("root", "hoverIn", { el });
+    expect(events).toEqual(["mount", "hover", "hover-cleanup", "hover"]);
+    scope.register({ id, slot: "root", node: null });
+    expect(events).toEqual(["mount", "hover", "hover-cleanup", "hover", "cleanup"]);
+  });
+
+  it("rebinds when defaults gain a mount value", () => {
+    const events: string[] = [];
+    const first = (ctx: MotionContext) => {
+      events.push("a");
+      ctx.onCleanup(() => events.push("off-a"));
+    };
+    const second = (ctx: MotionContext) => {
+      events.push("b");
+      ctx.onCleanup(() => events.push("off-b"));
+    };
+    let defaults: { root: { mount: typeof first } } | undefined;
+    const scope = createMotionScopeController({
+      getRootMotion: () => undefined,
+      getDefaults: () => defaults,
+      getParams: () => ({}),
+    });
+    const id = Symbol("root");
+    scope.register({ id, slot: "root", node: fakeEl("root") });
+    expect(events).toEqual([]);
+    defaults = { root: { mount: first } };
+    scope.syncMounts();
+    expect(events).toEqual(["a"]);
+    defaults = { root: { mount: second } };
+    scope.syncMounts();
+    expect(events).toEqual(["a", "off-a", "b"]);
   });
 });

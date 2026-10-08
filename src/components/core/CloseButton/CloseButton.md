@@ -1,6 +1,6 @@
 # CloseButton
 
-Круглая кнопка закрытия с иконкой `IoClose` (react-icons/io5). Разделяет визуальную систему variant с `Button`, поддерживает GSAP hover/press и опциональный converge-ripple.
+Круглая кнопка закрытия с инлайн-иконкой close из кита. Разделяет визуальную систему variant с `Button`, поддерживает GSAP hover/press и опциональный converge-ripple.
 
 ## Импорт
 
@@ -93,10 +93,10 @@ type CloseButtonClassNames = {
 
 | size | Корень | Иконка |
 |------|--------|--------|
-| `small` | `h-control-xsmall w-control-xsmall min-w-control-xsmall` | `icon-small` |
-| `base` | `h-control-small w-control-small min-w-control-small` | `icon-base` |
-| `mid` | `h-control-base w-control-base min-w-control-base` | `icon-mid` |
-| `large` | `h-control-mid w-control-mid min-w-control-mid` | `icon-large` |
+| `small` | `min-h-control-xsmall w-control-xsmall min-w-control-xsmall` | `icon-small` |
+| `base` | `min-h-control-small w-control-small min-w-control-small` | `icon-base` |
+| `mid` | `min-h-control-base w-control-base min-w-control-base` | `icon-mid` |
+| `large` | `min-h-control-mid w-control-mid min-w-control-mid` | `icon-large` |
 
 Форма всегда `rounded-full` + `aspect-square` (`min-w-control-*` не даёт родителю с `w-fit` сжать круг в овал).
 
@@ -119,7 +119,7 @@ type CloseButtonClassNames = {
 <CloseButton aria-label="Close" motion={{ root: { hoverIn: false, hoverOut: false } }} />
 ```
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`dismiss:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`dismiss:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 ```tsx
 import { Button, CloseButton, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -163,7 +163,7 @@ function Nudge() {
 
 ### Размерные токены
 
-`h-control-*`, `w-control-*` (квадрат), `icon-small` / `icon-base` / `icon-mid` / `icon-large`.
+`min-h-control-*`, `w-control-*` (квадрат), `icon-small` / `icon-base` / `icon-mid` / `icon-large`.
 
 ## Стилизация и кастомизация
 

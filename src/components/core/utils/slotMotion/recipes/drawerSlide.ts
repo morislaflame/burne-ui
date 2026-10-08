@@ -11,13 +11,13 @@ import {
   getDrawerSlideRest,
   type DrawerSlidePlacement,
 } from "@/components/core/utils/drawerSlide";
-
+ 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
-
+ 
 function placementOf(ctx: MotionContext): DrawerSlidePlacement {
   return ctx.params.placement ?? "right";
 }
-
+ 
 function modalVars(ctx: MotionContext) {
   const fallback = motionModalFor(ctx.config);
   return {
@@ -26,11 +26,11 @@ function modalVars(ctx: MotionContext) {
     overwrite: "auto" as const,
   };
 }
-
+ 
 function reduced(ctx: MotionContext): boolean {
   return ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableModalMotion");
 }
-
+ 
 export function applyDrawerPanelInstant(
   el: HTMLElement,
   placement: DrawerSlidePlacement,
@@ -39,7 +39,7 @@ export function applyDrawerPanelInstant(
   killMotion(el);
   gsap.set(el, open ? { ...getDrawerSlideRest(), clearProps: "transform" } : getDrawerSlideCloseTo(el, placement));
 }
-
+ 
 export function drawerSlideEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const placement = placementOf(ctx);
   if (reduced(ctx)) {
@@ -55,7 +55,7 @@ export function drawerSlideEnterRecipe(ctx: MotionContext): MotionAnimation | un
     onComplete: clearWillChangeOnComplete(ctx.el),
   }) as unknown as MotionAnimation;
 }
-
+ 
 export function drawerSlideLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const placement = placementOf(ctx);
   if (reduced(ctx)) {
@@ -71,3 +71,4 @@ export function drawerSlideLeaveRecipe(ctx: MotionContext): MotionAnimation | un
     onComplete: clearWillChangeOnComplete(ctx.el),
   }) as unknown as MotionAnimation;
 }
+ 

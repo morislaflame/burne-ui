@@ -6,15 +6,17 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-
+ 
 export type TabsOrientation = "horizontal" | "vertical";
-
-export type TabsVariant = "default" | "outline" | "secondary" | "gloss";
-
+ 
+export const KIT_TABS_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitTabsVariant = (typeof KIT_TABS_VARIANTS)[number];
+export type TabsVariant = KitTabsVariant | (string & {});
+ 
 export type TabsSize = ComponentSize;
-
+ 
 export type TabsClassNames = {
   root?: string;
   list?: string;
@@ -23,7 +25,7 @@ export type TabsClassNames = {
   tabText?: string;
   panel?: string;
 };
-
+ 
 export type TabsPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -36,15 +38,17 @@ export type TabsPartMotion = {
   /** Plays on `root` when the selected tab value updates. */
   change?: MotionValue;
 };
-
+ 
 export type TabsMotion = {
   root?: TabsPartMotion;
   list?: TabsPartMotion;
+  /** FLIP move. Layout box stays on the host; the recipe tweens `x` / `y` / `scaleX` / `scaleY`. */
+  indicator?: TabsPartMotion;
   tab?: TabsPartMotion;
   tabText?: TabsPartMotion;
   panel?: TabsPartMotion;
 };
-
+ 
 export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
   value?: string;
@@ -56,8 +60,8 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   disabled?: boolean;
   classNames?: Prettify<TabsClassNames>;
   /**
-   * Per-slot motion (`root`, `list`, `tab`, `tabText`, `panel`).
-   * Indicator FLIP is kit-internal — not a public slot. Do not tween `width`/`left` of the indicator.
+   * Per-slot motion (`root`, `list`, `indicator`, `tab`, `tabText`, `panel`).
+   * `indicator.change` is the FLIP move (`tabsIndicatorMove`). Do not tween `width` / `left`.
    * Inactive tabs default to `hoverLiftFirstLevel` + `pressSqueeze` on `tabText`.
    * Phase `change` plays on `root` when the selected value updates.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
@@ -70,7 +74,7 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UseTabsRootStateProps = Pick<
   TabsProps,
   | "value"
@@ -81,11 +85,11 @@ export type UseTabsRootStateProps = Pick<
   | "variant"
   | "disabled"
 >;
-
+ 
 export type TabsListProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<TabsPartMotion>;
 };
-
+ 
 export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   children?: ReactNode;
@@ -97,7 +101,7 @@ export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
   value: string;
   children?: ReactNode;
@@ -108,7 +112,7 @@ export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type TabsContextValue = {
   value: string;
   setValue: (next: string) => void;
@@ -121,8 +125,9 @@ export type TabsContextValue = {
   layoutEpoch: number;
   notifyTabLayout: () => void;
 };
-
+ 
 export type TabsClassNamesProviderProps = {
   classNames?: Prettify<TabsClassNames>;
   children: ReactNode;
 };
+ 

@@ -11,7 +11,6 @@ export function SliderOpacityStripDemo() {
     <div className="flex w-full max-w-md flex-col gap-small">
       <Slider>
         <Slider.Track
-          gloss
           value={value}
           onValueChange={setValue}
           min={0}
@@ -31,7 +30,7 @@ export function SliderOpacityStripDemo() {
         </Slider.Track>
       </Slider>
       <Text as="p" variant="xsmall" className="text-center tabular-nums text-muted">
-        Gloss + thickness 1rem · {value}%
+        Thickness 1rem · {value}%
       </Text>
     </div>
   );

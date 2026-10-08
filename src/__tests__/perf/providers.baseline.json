@@ -1,0 +1,102 @@
+{
+  "recordedAt": "2026-09-21T14:21:12.319Z",
+  "runtime": "happy-dom",
+  "platform": "darwin arm64",
+  "reducedMotion": true,
+  "iterations": 6,
+  "warmup": 1,
+  "scenarios": [
+    {
+      "name": "table-200",
+      "size": 200,
+      "mount": {
+        "actualMs": 21.91,
+        "baseMs": 29.68,
+        "wallMs": 25.95,
+        "profilerCommits": 2
+      },
+      "update": {
+        "actualMs": 12.13,
+        "baseMs": 27.05,
+        "wallMs": 14.83,
+        "profilerCommits": 2
+      },
+      "hover": {
+        "actualMs": 0,
+        "baseMs": 0,
+        "wallMs": 0.13,
+        "profilerCommits": 0
+      },
+      "updateOverMount": 0.55
+    },
+    {
+      "name": "checkbox-group-100",
+      "size": 100,
+      "mount": {
+        "actualMs": 28.48,
+        "baseMs": 13.28,
+        "wallMs": 159.87,
+        "profilerCommits": 1
+      },
+      "update": {
+        "actualMs": 12.76,
+        "baseMs": 12.59,
+        "wallMs": 17.01,
+        "profilerCommits": 1
+      },
+      "hover": {
+        "actualMs": 0,
+        "baseMs": 0,
+        "wallMs": 0.12,
+        "profilerCommits": 0
+      },
+      "updateOverMount": 0.45
+    },
+    {
+      "name": "listbox-500",
+      "size": 500,
+      "mount": {
+        "actualMs": 40.75,
+        "baseMs": 21.88,
+        "wallMs": 50.61,
+        "profilerCommits": 1
+      },
+      "update": {
+        "actualMs": 18.12,
+        "baseMs": 22.52,
+        "wallMs": 26.28,
+        "profilerCommits": 1
+      },
+      "hover": {
+        "actualMs": 18.33,
+        "baseMs": 24.1,
+        "wallMs": 27.11,
+        "profilerCommits": 1
+      },
+      "updateOverMount": 0.44
+    },
+    {
+      "name": "toast-stack-20",
+      "size": 20,
+      "mount": {
+        "actualMs": 4.11,
+        "baseMs": 2.22,
+        "wallMs": 23.6,
+        "profilerCommits": 2
+      },
+      "update": {
+        "actualMs": 4.38,
+        "baseMs": 4.3,
+        "wallMs": 5.75,
+        "profilerCommits": 2
+      },
+      "hover": {
+        "actualMs": 0,
+        "baseMs": 0,
+        "wallMs": 0.08,
+        "profilerCommits": 0
+      },
+      "updateOverMount": 1.07
+    }
+  ]
+}

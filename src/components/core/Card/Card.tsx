@@ -1,15 +1,16 @@
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from "react";
 
-import "../utils/glossInteractive.css";
+import { useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { hasKitMember } from "@/skins/resolveVariantVisual";
+import { cn } from "@/utils/cn";
 
 import { resolveCardMotionDefaults, useCardAnimations } from "./cardAnimations";
 import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRootShell, CardTitle } from "./cardParts";
 import { CardMotionProvider, CardProvider } from "./cardContext";
-import { cardGlossPanelClass, cardRootClass } from "./cardStyles";
+import { cardRootClass } from "./cardStyles";
 import type { CardMotion, CardProps, CardVariant } from "./cardTypes";
+import { KIT_CARD_VARIANTS } from "./cardTypes";
 import { useCardRootState } from "./useCardRootState";
-
-import { cn } from "@/utils/cn";
 
 export type {
   CardPressEvent,
@@ -29,10 +30,16 @@ export type {
   CardPointerMotion,
 } from "./cardTypes";
 
+const CARD_VARIANT_HAS_HOVER_SHADOW = new Set<(typeof KIT_CARD_VARIANTS)[number]>([
+  "default",
+  "outline",
+  "secondary",
+]);
+
 export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   {
     className = "",
-    variant = "default",
+    variant,
     size = "base",
     shadow = "base",
     pressable = false,
@@ -52,8 +59,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     children,
     ...rest
   },
-  ref,
-) {
+  ref) {
   const state = useCardRootState({
     variant,
     size,
@@ -63,20 +69,24 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     onPointerDown: onPointerDownProp,
   });
 
+  const surfaceStyle = useSkinSurfaceStyle(state.variant);
   const hoverPointerInsideRef = useRef(false);
+  const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(
-    () => resolveCardMotionDefaults({ variant: state.variant, pressable }),
-    [pressable, state.variant],
-  );
+    () => {
+      void skinRevision;
+      return resolveCardMotionDefaults({ variant: state.variant, pressable });
+    },
+    [pressable, skinRevision, state.variant]);
   const motionParams = useMemo(
     () => ({
       pointerInside: hoverPointerInsideRef,
-      hasHoverShadow: pressable && !state.isGloss,
-      isGloss: state.isGloss,
+      hasHoverShadow:
+        pressable &&
+        hasKitMember(state.variant, KIT_CARD_VARIANTS, CARD_VARIANT_HAS_HOVER_SHADOW),
       shadowSize: shadow,
     }),
-    [pressable, shadow, state.isGloss],
-  );
+    [pressable, shadow, state.variant]);
 
   return (
     <CardProvider classNames={classNames} size={state.size}>
@@ -91,7 +101,6 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
       >
         <CardSurface
           pressable={pressable}
-          isGloss={state.isGloss}
           renderAsButton={state.renderAsButton}
           variant={state.variant}
           size={state.size}
@@ -108,7 +117,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
           onKeyDown={onKeyDownProp}
           hoverPointerInsideRef={hoverPointerInsideRef}
           forwardedRef={ref}
-          rest={rest}
+          rest={{ ...rest, style: { ...surfaceStyle, ...rest.style } }}
         >
           {children}
         </CardSurface>
@@ -121,7 +130,6 @@ CardRoot.displayName = "Card";
 
 function CardSurface({
   pressable,
-  isGloss,
   renderAsButton,
   variant,
   size,
@@ -142,7 +150,6 @@ function CardSurface({
   children,
 }: {
   pressable: boolean;
-  isGloss: boolean;
   renderAsButton: boolean;
   variant: CardVariant;
   size: ReturnType<typeof useCardRootState>["size"];
@@ -164,7 +171,7 @@ function CardSurface({
 }) {
   const animations = useCardAnimations({
     pressable,
-    isGloss,
+    variant,
     shadow,
     motion,
     onPress,
@@ -178,28 +185,20 @@ function CardSurface({
     forwardedRef,
   });
 
-  const glossPanelClass = cardGlossPanelClass(
+  const rootClassName = cardRootClass(
+    variant,
+    pressable,
+    animations.pressableLiftMotionClass,
     size,
-    cn(classNames?.root, className),
-  );
-
-  const rootClassName = isGloss
-    ? ""
-    : cardRootClass(
-        variant as Exclude<CardVariant, "gloss">,
-        pressable,
-        animations.pressableLiftMotionClass,
-        size,
-        shadow,
-        cn(classNames?.root, className),
-      );
+    shadow,
+    cn(classNames?.root, className));
 
   return (
     <CardRootShell
       pressable={pressable}
-      isGloss={isGloss}
       renderAsButton={renderAsButton}
-      glossPanelClass={glossPanelClass}
+      variant={variant}
+      size={size}
       rootClassName={rootClassName}
       setRootRef={animations.setRootRef}
       rest={rest}

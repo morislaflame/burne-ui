@@ -1,11 +1,11 @@
 import type { HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { SliderOrientation, SliderSize } from "@/components/core/Slider/sliderTypes";
-
+ 
 import type { HSVA } from "./colorUtils";
-
+ 
 export type ColorChannel =
   | "hue"
   | "saturation"
@@ -14,10 +14,10 @@ export type ColorChannel =
   | "red"
   | "green"
   | "blue";
-
+ 
 export type ColorSliderSize = SliderSize;
 export type ColorSliderOrientation = SliderOrientation;
-
+ 
 export type ColorSliderPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -27,12 +27,12 @@ export type ColorSliderPartMotion = {
   leave?: MotionValue;
   change?: MotionValue;
 };
-
+ 
 export type ColorSliderMotion = {
   root?: ColorSliderPartMotion;
   track?: ColorSliderPartMotion;
 };
-
+ 
 export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   channel: ColorChannel;
   color?: HSVA;
@@ -53,7 +53,7 @@ export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   channel: ColorChannel;
   color?: HSVA;
@@ -79,3 +79,4 @@ export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
+ 

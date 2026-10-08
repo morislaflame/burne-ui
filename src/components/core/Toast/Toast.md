@@ -90,7 +90,7 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 
 ## Анимации
 
-Хост карточки — `ToastItemWrapper` (`toastAnimations.tsx`): slot motion на `root` + рассылка `enter`/`leave` на `indicator` / `title` / `description` / `action` / `close`. Стек peek, высота viewport и scrim — kit-internal, не публичные слоты. `message` / `content` — `display: contents`. Standalone `<Toast />` без viewport не играет `enter`/`leave`.
+Хост карточки — `ToastItemWrapper` (`toastAnimations.tsx`): slot motion на `root` + рассылка `enter`/`leave` на `indicator` / `title` / `description` / `action` / `close`. `stackItem` играет `enter` и `change` (`toastStackShift`), `scrim` — `enter` / `leave` (`toastScrimFade`). Высота стека — `--toast-stack-height`, без твина. `message` / `content` — `display: contents` (padding, border, background и width не рисуются). Standalone `<Toast />` без viewport не играет `enter`/`leave`.
 
 ### Slot motion
 
@@ -249,9 +249,10 @@ configureMotion({
 
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
-| `viewport` | Fixed region | Позиция (`top-8`), z-index |
+| `viewport` | Fixed region | Позиция (`top-8`). Ширина кита — `--toast-viewport-width`, слот может задать `w-*` |
 | `scrim` | Gradient fade | Прозрачность под стеком |
 | `stack` | Контейнер peek-стека | Gap между карточками в стеке |
+| `stackItem` | Ячейка одной карточки | `z-index` / pointer-events / origin через CSS-переменные, слот их перекрывает |
 | `root` | Карточка toast | Border, ring, max-width |
 | `indicator` | Status / loading icon | Цвет иконки |
 | `message` | Grid сообщения | Layout indicator + content |

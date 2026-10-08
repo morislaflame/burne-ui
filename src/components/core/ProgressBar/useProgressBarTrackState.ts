@@ -1,13 +1,13 @@
 import { useLayoutEffect, useMemo } from "react";
-
+ 
 import { clampNumber } from "@/components/core/utils/clampNumber";
-
+ 
 import { defaultProgressBarFormatValue, progressBarValueToPercent } from "./progressBarAPI";
 import { PROGRESS_BAR_INDETERMINATE_STATUS_TEXT, progressBarLabelId, resolveProgressBarDescribedBy, resolveProgressBarTrackAria } from "./progressBarA11y";
 import { useOptionalProgressBarFieldContext } from "./progressBarContext";
 import { progressBarFillColorStyle, progressBarTrackCrossStyle } from "./progressBarStyles";
 import type { UseProgressBarTrackStateProps } from "./progressBarTypes";
-
+ 
 export function useProgressBarTrackState({
   value = 0,
   indeterminate = false,
@@ -26,7 +26,7 @@ export function useProgressBarTrackState({
   const labelId = progressId != null ? progressBarLabelId(progressId) : undefined;
   const hintConnected = fieldCtx?.hintConnected ?? false;
   const errorConnected = fieldCtx?.errorConnected ?? false;
-
+ 
   const clampedValue = useMemo(
     () => clampNumber(value, min, max),
     [max, min, value],
@@ -35,13 +35,13 @@ export function useProgressBarTrackState({
     () => progressBarValueToPercent(clampedValue, min, max),
     [clampedValue, max, min],
   );
-
+ 
   const isHorizontal = orientation === "horizontal";
   const statusText = useMemo(() => {
     if (indeterminate) return PROGRESS_BAR_INDETERMINATE_STATUS_TEXT;
     return formatValue(clampedValue);
   }, [clampedValue, formatValue, indeterminate]);
-
+ 
   const ariaDescribedBy = resolveProgressBarDescribedBy({
     ariaDescribedByProp,
     hintConnected,
@@ -49,7 +49,7 @@ export function useProgressBarTrackState({
     errorConnected,
     errorId: fieldCtx?.errorId,
   });
-
+ 
   const aria = resolveProgressBarTrackAria({
     clampedValue,
     min,
@@ -59,16 +59,16 @@ export function useProgressBarTrackState({
     labelId,
     ariaDescribedBy,
   });
-
+ 
   const trackCrossStyle = useMemo(
     () => progressBarTrackCrossStyle({ isHorizontal, thickness }),
     [isHorizontal, thickness],
   );
-
+ 
   const fillColorStyle = useMemo(() => progressBarFillColorStyle(color), [color]);
-
+ 
   const setDisplay = fieldCtx?.setDisplay;
-
+ 
   useLayoutEffect(() => {
     setDisplay?.({
       clampedValue,
@@ -78,7 +78,7 @@ export function useProgressBarTrackState({
       indeterminate,
     });
   }, [clampedValue, indeterminate, max, min, setDisplay, statusText]);
-
+ 
   return {
     size,
     thickness,
@@ -91,3 +91,4 @@ export function useProgressBarTrackState({
     fillColorStyle,
   };
 }
+ 

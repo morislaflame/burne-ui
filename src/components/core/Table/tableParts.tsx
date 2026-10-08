@@ -1,8 +1,8 @@
-import { Children, forwardRef, isValidElement, memo, useCallback, useLayoutEffect, useMemo, type ForwardedRef, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
-
+import { Children, forwardRef, isValidElement, memo, useCallback, useLayoutEffect, useMemo, useRef, type ForwardedRef, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+ 
 import { focusKeyboard } from "@/components/core/utils/focusElement";
 import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
-
+ 
 import {
   columnAriaSort,
   rowAriaSelected,
@@ -13,7 +13,7 @@ import {
   tableIsSelectableGrid,
   tableRowRole,
 } from "./tableA11y";
-import { hasTableLabel, isTableEmptyElement, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
+import { hasTableLabel, isTableEmptyElement, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, TABLE_VIRTUAL_INDEX_ATTR, moveVirtualTableRow, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
 import { TableSortChevron, useTableRowSelectionMotion, useTableSlotMotion } from "./tableAnimations";
 import {
   TableContentProvider,
@@ -27,14 +27,16 @@ import {
   useTableRowIsFocusTarget,
   useTableRowIsSelected,
   useTableVariant,
+  useTableVirtual,
 } from "./tableContext";
-import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, tableCellClass, tableColumnClass, tableColumnLabelClass, tableColumnSortButtonClass, tableContentClass, tableRowClass } from "./tableStyles";
+import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_CAPTION_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, tableCellClass, tableColumnClass, tableColumnLabelClass, tableColumnSortButtonClass, tableContentClass, tableRowClass } from "./tableStyles";
 import type {
   TableBodyProps,
   TableCellProps,
   TableColumnProps,
   TableColumnRenderProps,
   TableContentProps,
+  TableCaptionProps,
   TableEmptyProps,
   TableFooterProps,
   TableHeaderProps,
@@ -44,10 +46,11 @@ import type {
   TableRowProps,
   TableScrollContainerProps,
 } from "./tableTypes";
+import { TableVirtualRows } from "./tableVirtualRows";
 import { useTableContentState } from "./useTableContentState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 function hasTableHeaderRow(children: ReactNode): boolean {
   return Children.toArray(children).some(
     (child) =>
@@ -55,7 +58,7 @@ function hasTableHeaderRow(children: ReactNode): boolean {
       (child.type as { displayName?: string }).displayName === "Table.HeaderRow",
   );
 }
-
+ 
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
   function TableScrollContainer(
     {
@@ -79,7 +82,7 @@ export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContai
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <div
         ref={part.setRef}
@@ -95,9 +98,9 @@ export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContai
     );
   },
 );
-
+ 
 TableScrollContainer.displayName = "TableScrollContainer";
-
+ 
 export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
   function TableContent(
     {
@@ -138,7 +141,7 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <TableContentProvider value={ctx}>
         <table
@@ -159,9 +162,9 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
     );
   },
 );
-
+ 
 TableContent.displayName = "TableContent";
-
+ 
 export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProps>(
   function TableHeaderRow(
     {
@@ -187,13 +190,13 @@ export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProp
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <tr
         ref={part.setRef}
         role={tableRowRole(isGrid)}
         className={cn(
-          TABLE_HEADER_ROW_VARIANT_CLASS[variant],
+          TABLE_HEADER_ROW_VARIANT_CLASS[(variant in TABLE_HEADER_ROW_VARIANT_CLASS ? variant : "default") as keyof typeof TABLE_HEADER_ROW_VARIANT_CLASS],
           slotClassNames.headerRow,
           className,
         )}
@@ -203,9 +206,9 @@ export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProp
     );
   },
 );
-
+ 
 TableHeaderRow.displayName = "Table.HeaderRow";
-
+ 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
   function TableHeader(
     {
@@ -230,18 +233,18 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
       onPointerDown,
       onPointerUp,
     });
-
+ 
     const content =
       columns && typeof children === "function"
         ? columns.map((col) => (children as (c: unknown) => ReactNode)(col))
         : (children as ReactNode);
-
+ 
     const rows = hasTableHeaderRow(content) ? (
       content
     ) : (
       <TableHeaderRow>{content}</TableHeaderRow>
     );
-
+ 
     return (
       <thead
         ref={part.setRef}
@@ -254,9 +257,9 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
     );
   },
 );
-
+ 
 TableHeader.displayName = "TableHeader";
-
+ 
 export const TableLabel = forwardRef<HTMLSpanElement, TableLabelProps>(
   function TableLabel(
     {
@@ -279,7 +282,7 @@ export const TableLabel = forwardRef<HTMLSpanElement, TableLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <span
         ref={part.setRef}
@@ -293,9 +296,9 @@ export const TableLabel = forwardRef<HTMLSpanElement, TableLabelProps>(
     );
   },
 );
-
+ 
 TableLabel.displayName = "Table.Label";
-
+ 
 export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
   function TableColumn(
     {
@@ -327,9 +330,9 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     const sortDirection = resolveColumnSortDirection(id, sortDescriptor);
-
+ 
     const handleSortClick = useCallback(
       (e: MouseEvent<HTMLButtonElement>) => {
         onClick?.(e as unknown as MouseEvent<HTMLTableCellElement>);
@@ -338,7 +341,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       },
       [id, onClick, onSortChange, sortDescriptor],
     );
-
+ 
     const handleSortKeyDown = useCallback(
       (e: KeyboardEvent<HTMLButtonElement>) => {
         if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
@@ -354,25 +357,25 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       },
       [],
     );
-
+ 
     const handleThClick = useCallback(
       (e: MouseEvent<HTMLTableCellElement>) => {
         onClick?.(e);
       },
       [onClick],
     );
-
+ 
     const content =
       typeof children === "function"
         ? (children as (p: TableColumnRenderProps) => ReactNode)({ sortDirection })
         : children;
-
+ 
     const labelBody = hasTableLabel(content) ? (
       content
     ) : (
       <TableLabel>{content}</TableLabel>
     );
-
+ 
     let sortIndicator: ReactNode = null;
     if (allowsSorting) {
       if (sortIcon !== undefined) {
@@ -384,21 +387,20 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         sortIndicator = <TableSortChevron direction={sortDirection} />;
       }
     }
-
+ 
     const inner = (
       <>
         {labelBody}
         {sortIndicator}
       </>
     );
-
+ 
     return (
       <th
         ref={part.setRef}
         role={tableColumnHeaderRole(isGrid, isRowHeader)}
         scope={isRowHeader ? "row" : "col"}
         aria-sort={columnAriaSort(allowsSorting, sortDirection)}
-        data-allows-sorting={allowsSorting || undefined}
         className={tableColumnClass({
           variant,
           allowsSorting,
@@ -413,7 +415,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
           <button
             type="button"
             className={tableColumnSortButtonClass({
-              slotClass: slotClassNames.columnInner,
+              slotClass: cn(slotClassNames.columnInner, slotClassNames.columnButton),
             })}
             onClick={handleSortClick}
             onKeyDown={handleSortKeyDown}
@@ -434,15 +436,17 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
     );
   },
 );
-
+ 
 TableColumn.displayName = "TableColumn";
-
+ 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
   function TableBody(
     {
       items,
       children,
       renderEmptyState,
+      virtualized = false,
+      virtualItemSize,
       className,
       motion,
       onPointerOver,
@@ -456,6 +460,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
     const slotClassNames = useTableClassNames();
     const { selectionMode } = useTableContent();
     const isGrid = tableIsSelectableGrid(selectionMode);
+    const bodyRef = useRef<HTMLTableSectionElement | null>(null);
     const part = useTableSlotMotion<HTMLTableSectionElement>("body", {
       motion,
       forwardedRef: ref,
@@ -464,9 +469,27 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
       onPointerDown,
       onPointerUp,
     });
+    const setSlotRef = part.setRef;
+    const setBodyRef = useCallback(
+      (node: HTMLTableSectionElement | null) => {
+        bodyRef.current = node;
+        setSlotRef(node);
+      },
+      [setSlotRef],
+    );
+    const virtualOn = virtualized && items !== undefined && typeof children === "function";
     let content: ReactNode;
 
-    if (items !== undefined) {
+    if (virtualOn) {
+      content = (
+        <TableVirtualRows
+          items={items}
+          renderItem={children as (item: unknown) => ReactNode}
+          itemSizeProp={virtualItemSize}
+          bodyRef={bodyRef}
+        />
+      );
+    } else if (items !== undefined) {
       if (items.length === 0 && renderEmptyState) {
         const emptyState = renderEmptyState();
         content = (
@@ -493,10 +516,10 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
     } else {
       content = children as ReactNode;
     }
-
+ 
     return (
       <tbody
-        ref={part.setRef}
+        ref={setBodyRef}
         className={cn(slotClassNames.body, className)}
         {...rest}
         {...part.pointerHandlers}
@@ -506,9 +529,9 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
     );
   },
 );
-
+ 
 TableBody.displayName = "TableBody";
-
+ 
 export const TableEmpty = forwardRef<HTMLTableCellElement, TableEmptyProps>(
   function TableEmpty(
     {
@@ -534,7 +557,7 @@ export const TableEmpty = forwardRef<HTMLTableCellElement, TableEmptyProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <td
         ref={part.setRef}
@@ -551,9 +574,9 @@ export const TableEmpty = forwardRef<HTMLTableCellElement, TableEmptyProps>(
     );
   },
 );
-
+ 
 TableEmpty.displayName = "Table.Empty";
-
+ 
 const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
   { id, tone, children, className, onClick, onKeyDown, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
@@ -563,7 +586,7 @@ const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function Ta
     parentScope?.getRootMotion(),
     motion ? { row: motion } : undefined,
   );
-
+ 
   return (
     <TableMotionProvider motion={mergedMotion} defaults={{}} controller={motionController}
         motionState={motionState}
@@ -584,7 +607,7 @@ const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function Ta
     </TableMotionProvider>
   );
 });
-
+ 
 function TableRowSurface({
   id,
   tone,
@@ -630,20 +653,21 @@ function TableRowSurface({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   const isSelected = useTableRowIsSelected(id);
   const isRovingTarget = useTableRowIsFocusTarget(id);
+  const virtualMove = useTableVirtual();
   const isSelectable = selectionMode !== "none" && id !== undefined;
   const isGrid = tableIsSelectableGrid(selectionMode);
   const isToned = variant === "toned";
   const resolvedTone = tone ?? (isToned ? TONED_ROW_DEFAULT_TONE : undefined);
   useTableRowSelectionMotion(scope, isSelected, part.targetRef);
-
+ 
   useLayoutEffect(() => {
     if (!isSelectable || id === undefined) return;
     claimFocusedRowKey(id);
   }, [claimFocusedRowKey, id, isSelectable]);
-
+ 
   const rowCtx = useMemo(
     (): TableRowContextValue => ({
       tone: resolvedTone ?? TONED_ROW_DEFAULT_TONE,
@@ -651,7 +675,7 @@ function TableRowSurface({
     }),
     [isSelected, resolvedTone],
   );
-
+ 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLTableRowElement>) => {
       onClick?.(e);
@@ -661,12 +685,12 @@ function TableRowSurface({
     },
     [id, isSelectable, onClick, onRowSelect, setFocusedRowKey],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTableRowElement>) => {
       onKeyDown?.(e);
       if (e.defaultPrevented || !isSelectable || id === undefined) return;
-
+ 
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         setFocusedRowKey(id);
@@ -674,10 +698,15 @@ function TableRowSurface({
         return;
       }
 
+      if (virtualMove && moveVirtualTableRow(e.key, virtualMove)) {
+        e.preventDefault();
+        return;
+      }
+
       const table = e.currentTarget.closest("table");
       if (!table) return;
       const rows = tableSelectableRows(table);
-
+ 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
         const next = tableBumpRow(
@@ -692,7 +721,7 @@ function TableRowSurface({
         focusKeyboard(next);
         return;
       }
-
+ 
       if (e.key === "Home") {
         e.preventDefault();
         const first = rows[0];
@@ -703,7 +732,7 @@ function TableRowSurface({
         focusKeyboard(first);
         return;
       }
-
+ 
       if (e.key === "End") {
         e.preventDefault();
         const last = rows[rows.length - 1];
@@ -714,17 +743,15 @@ function TableRowSurface({
         focusKeyboard(last);
       }
     },
-    [id, isSelectable, onKeyDown, onRowSelect, setFocusedRowKey],
+    [id, isSelectable, onKeyDown, onRowSelect, setFocusedRowKey, virtualMove],
   );
-
+ 
   return (
     <TableRowProvider value={isToned || resolvedTone ? rowCtx : null}>
       <tr
         ref={part.setRef}
         role={tableRowRole(isGrid)}
         {...(id !== undefined ? { [TABLE_ROW_KEY_ATTR]: String(id) } : {})}
-        data-selected={isSelected || undefined}
-        data-tone={resolvedTone}
         aria-selected={rowAriaSelected(selectionMode, isSelected)}
         tabIndex={isSelectable ? (isRovingTarget ? 0 : -1) : undefined}
         className={tableRowClass({
@@ -739,17 +766,21 @@ function TableRowSurface({
         onKeyDown={handleKeyDown}
         {...domRest}
         {...part.pointerHandlers}
+        {...(virtualMove ? { [TABLE_VIRTUAL_INDEX_ATTR]: String(virtualMove.index) } : {})}
+        data-selected={isSelected || undefined}
+        data-tone={resolvedTone}
+        data-state={isSelected ? "selected" : undefined}
       >
         {children}
       </tr>
     </TableRowProvider>
   );
 }
-
+ 
 export const TableRow = memo(TableRowInner);
-
+ 
 TableRow.displayName = "TableRow";
-
+ 
 const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function TableCell(
   {
     className,
@@ -775,7 +806,7 @@ const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <td
       ref={part.setRef}
@@ -792,10 +823,46 @@ const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function
     />
   );
 });
-
+ 
 export const TableCell = memo(TableCellInner);
-
+ 
 TableCell.displayName = "TableCell";
+ 
+export const TableCaption = forwardRef<HTMLTableCaptionElement, TableCaptionProps>(
+  function TableCaption(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useTableClassNames();
+    const part = useTableSlotMotion<HTMLTableCaptionElement>("caption", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+
+    return (
+      <caption
+        ref={part.setRef}
+        className={cn(TABLE_CAPTION_CLASS, slotClassNames.caption, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
+
+TableCaption.displayName = "Table.Caption";
 
 export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(function TableFooter(
   {
@@ -818,7 +885,7 @@ export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(function
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -828,5 +895,6 @@ export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(function
     />
   );
 });
-
+ 
 TableFooter.displayName = "TableFooter";
+ 

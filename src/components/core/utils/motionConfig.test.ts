@@ -91,8 +91,7 @@ describe("normalizeMotionConfig", () => {
       1,
     ]);
     expect(
-      normalizeMotionConfig({ pressSqueezeScale: [1, Number.NaN, 1] }).pressSqueezeScale,
-    ).toBeUndefined();
+      normalizeMotionConfig({ pressSqueezeScale: [1, Number.NaN, 1] }).pressSqueezeScale).toBeUndefined();
   });
 });
 
@@ -137,9 +136,9 @@ describe("configureMotion", () => {
       surfaceTransitionDuration: Number.NaN,
     });
     expect(getMotionConfig().rippleEaseCss).toBe("cubic-bezier(.25,.55,.35,.95)");
+    expect(MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration).toBe(180);
     expect(getMotionConfig().surfaceTransitionDuration).toBe(
-      MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration,
-    );
+      MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration);
 
     const root = fakeRoot();
     applyMotionCssTokens(root as unknown as HTMLElement, {

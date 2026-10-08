@@ -8,8 +8,8 @@ export function SelectionIndicatorClassNamesDemo() {
 
   return (
     <div className="flex w-full max-w-lg flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
-        classNames: shell / fill / mark
+      <Text as="p" variant="small" className="font-w-strong">
+        classNames: root / fill / mark
       </Text>
       <div className="flex flex-wrap items-end gap-2xlarge">
         <SelectionIndicator
@@ -18,7 +18,7 @@ export function SelectionIndicatorClassNamesDemo() {
           selected={selected}
           check
           classNames={{
-            root: "rounded-mid ring-1 ring-primary/30",
+            root: "rounded-large ring-1 ring-primary/30",
             fill: "bg-danger",
             mark: "text-danger-foreground",
           }}

@@ -1,10 +1,9 @@
-import "../utils/glossInteractive.css";
-
+ 
 import { PopoverClassNamesProvider, PopoverMotionProvider, PopoverProvider } from "./popoverContext";
 import type { PopoverProps } from "./popoverTypes";
 import { usePopoverRootState } from "./usePopoverRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
-
+ 
 export type {
   PopoverArrowProps,
   PopoverBodyProps,
@@ -23,7 +22,7 @@ export type {
   PopoverLifecycleMotion,
   PopoverPartMotion,
 } from "./popoverTypes";
-
+ 
 export {
   PopoverArrow,
   PopoverBody,
@@ -33,18 +32,19 @@ export {
   PopoverTitle,
   PopoverTrigger,
 } from "./popoverParts";
-
+ 
 export function PopoverRoot({
   children,
   classNames,
   size = "base",
-  variant = "default",
+  variant,
   side = "bottom",
   open,
   defaultOpen = false,
   onOpenChange,
   anchorRef,
   shouldDismiss,
+  restoreFocus,
   portalContainer,
   motion,
   motionController,
@@ -62,9 +62,10 @@ export function PopoverRoot({
     onOpenChange,
     anchorRef,
     shouldDismiss,
+    restoreFocus,
     portalContainer,
   });
-
+ 
   return (
     <PopoverProvider value={contextValue}>
       <PopoverClassNamesProvider classNames={classNames}>
@@ -78,5 +79,6 @@ export function PopoverRoot({
     </PopoverProvider>
   );
 }
-
+ 
 PopoverRoot.displayName = "PopoverRoot";
+ 

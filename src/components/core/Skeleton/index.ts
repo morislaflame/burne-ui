@@ -5,14 +5,14 @@ import {
   SkeletonRoot,
   SkeletonText,
 } from "./Skeleton";
-
+ 
 export const Skeleton = Object.assign(SkeletonRoot, {
   Circle: SkeletonCircle,
   Text: SkeletonText,
   Block: SkeletonBlock,
   Region: SkeletonRegion,
 });
-
+ 
 export type {
   SkeletonProps,
   SkeletonCircleProps,
@@ -29,3 +29,4 @@ export type {
   SkeletonMotion,
   SkeletonPartMotion,
 } from "./skeletonTypes";
+ 

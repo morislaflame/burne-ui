@@ -12,7 +12,9 @@ import type { CardSize } from "./cardStyles";
 
 export type { CardSize } from "./cardStyles";
 
-export type CardVariant = "default" | "outline" | "secondary" | "gloss";
+export const KIT_CARD_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitCardVariant = (typeof KIT_CARD_VARIANTS)[number];
+export type CardVariant = KitCardVariant | (string & {});
 
 export type CardPressEvent =
   | MouseEvent<HTMLElement>
@@ -20,7 +22,6 @@ export type CardPressEvent =
 
 export type CardClassNames = {
   root?: string;
-  glossContent?: string;
   content?: string;
   header?: string;
   headingBlock?: string;
@@ -77,7 +78,7 @@ export type CardProps = Omit<
   classNames?: Prettify<CardClassNames>;
   /**
    * Per-slot motion (`root`, `title`, `description`, `header`, `headingBlock`, `body`, `footer`).
-   * Pressable defaults: second-level hover lift + squeeze (gloss recipes when gloss).
+   * Pressable defaults: second-level hover lift + squeeze.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    * `states` — app modes for `motionState` (not a DOM slot, not a phase).
    */
@@ -127,7 +128,7 @@ export type UseCardRootStateProps = Pick<
 
 export type UseCardAnimationsProps = {
   pressable: boolean;
-  isGloss: boolean;
+  variant: CardVariant;
   shadow?: ShadowLevel;
   motion?: CardMotion;
   onPress?: (event: CardPressEvent) => void;
@@ -143,13 +144,13 @@ export type UseCardAnimationsProps = {
 
 export type CardRootShellProps = {
   pressable: boolean;
-  isGloss: boolean;
   renderAsButton: boolean;
-  glossPanelClass: string;
   rootClassName: string;
   setRootRef: (node: HTMLElement | null) => void;
   rest: HTMLAttributes<HTMLElement>;
   children: ReactNode;
+  variant: CardVariant;
+  size: CardSize;
   /** Merged handlers (user prop + animation). Safe to use in all branches. */
   onPointerOver?: HTMLAttributes<HTMLElement>["onPointerOver"];
   onPointerOut?: HTMLAttributes<HTMLElement>["onPointerOut"];

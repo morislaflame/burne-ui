@@ -36,7 +36,7 @@ export function PopoverSidesDemo() {
           </Popover.Content>
         </Popover>
 
-        <div className="flex h-control-base min-w-[7rem] items-center justify-center rounded-base border-token bg-secondary px-base">
+        <div className="flex min-h-control-base min-w-[7rem] items-center justify-center rounded-base border-token bg-secondary px-base">
           <Text as="span" variant="small" className="text-muted">
             anchor
           </Text>

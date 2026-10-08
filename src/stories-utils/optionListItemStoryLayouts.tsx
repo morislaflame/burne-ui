@@ -1,11 +1,11 @@
 import type { ElementType } from "react";
 import { IoChevronForward, IoGlobeOutline } from "react-icons/io5";
-
+ 
 import { Avatar } from "@/components/core/Avatar";
 import { Badge } from "@/components/core/Badge";
 import { PIN_IMAGE1 } from "@/stories-utils/mockImages";
 import { cn } from "@/utils/cn";
-
+ 
 export type OptionListItemLayoutParts = {
   Item: ElementType;
   ItemLabel: ElementType;
@@ -13,7 +13,7 @@ export type OptionListItemLayoutParts = {
   ItemIcon: ElementType;
   ItemIndicator: ElementType;
 };
-
+ 
 /** Shared compound items for Dropdown / ListBox / ComboBox stories — shows how the grid changes. */
 export function OptionListItemLayoutShowcase({
   Item,
@@ -27,24 +27,24 @@ export function OptionListItemLayoutShowcase({
       <Item value="label-only">
         <ItemLabel>Label only</ItemLabel>
       </Item>
-
+ 
       <Item value="label-hint">
         <ItemLabel>Label + Hint</ItemLabel>
         <ItemHint>ItemHint → second line in the middle column</ItemHint>
       </Item>
-
+ 
       <Item value="label-icon">
         <ItemLabel>Label + Icon</ItemLabel>
         <ItemIcon>
           <kbd className="rounded-sm border-token px-xsmall font-mono text-xs opacity-70">⌘C</kbd>
         </ItemIcon>
       </Item>
-
+ 
       <Item value="indicator-label">
         <ItemIndicator />
         <ItemLabel>Indicator + Label</ItemLabel>
       </Item>
-
+ 
       <Item value="full-grid">
         <ItemIndicator />
         <ItemLabel>Indicator + Label + Hint + Icon</ItemLabel>
@@ -53,7 +53,7 @@ export function OptionListItemLayoutShowcase({
           <IoGlobeOutline aria-hidden />
         </ItemIcon>
       </Item>
-
+ 
       <Item value="member" className="gap-y-base">
         <ItemLabel>
           <span className="flex min-w-0 items-center gap-small">
@@ -87,7 +87,7 @@ export function OptionListItemLayoutShowcase({
           </Badge>
         </span>
       </Item>
-
+ 
       <Item value="action">
         <ItemLabel>More actions</ItemLabel>
         <ItemIcon>
@@ -97,3 +97,4 @@ export function OptionListItemLayoutShowcase({
     </>
   );
 }
+ 

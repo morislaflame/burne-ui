@@ -1,13 +1,14 @@
 import { createElement, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { resolveTextAs } from "./textA11y";
 import { resolveTextMotionDefaults, useTextRootMotion } from "./textAnimations";
 import { TextMotionProvider } from "./textContext";
 import { TEXT_VARIANT_DEFAULT_AS, textRootClass } from "./textStyles";
 import type { TextPartMotion, TextProps } from "./textTypes";
-
+ 
 export type { TextProps, TextVariant, TextMotion, TextPartMotion } from "./textTypes";
-
+ 
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   {
     variant,
@@ -29,7 +30,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveTextMotionDefaults(), []);
-
+ 
   return (
     <TextMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -53,7 +54,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
     </TextMotionProvider>
   );
 });
-
+ 
 function TextSurface({
   variant,
   as,
@@ -98,7 +99,7 @@ function TextSurface({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return createElement(
     Comp,
     {
@@ -106,7 +107,9 @@ function TextSurface({
       ref: part.setRef,
       className: textRootClass(variant, inheritColor, className),
       ...part.pointerHandlers,
+      ...dataVariantProps({ variant }),
     },
     children,
   );
 }
+ 

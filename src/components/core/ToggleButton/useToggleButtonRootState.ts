@@ -1,14 +1,15 @@
 import { useCallback, useMemo, type FocusEvent } from "react";
-
+ 
+import { useSkinVariant } from "@/skins/skinContext";
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-
+ 
 import { toggleButtonAriaChecked, toggleButtonAriaPressed, toggleButtonRole } from "./toggleButtonA11y";
 import { hasToggleButtonCompoundChildren } from "./toggleButtonAPI";
 import { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
 import { toggleButtonRoundingClass } from "./toggleButtonStyles";
 import type { UseToggleButtonRootStateProps } from "./toggleButtonTypes";
-
+ 
 export function useToggleButtonRootState({
   value: itemValue,
   groupSegment: groupSegmentProp,
@@ -29,19 +30,19 @@ export function useToggleButtonRootState({
   const groupCtx = useOptionalToggleButtonGroupContext();
   const segmentCtx = useOptionalButtonGroupSegment();
   const groupSegment = groupSegmentProp ?? segmentCtx?.segment;
-
+ 
   const inGroup = groupCtx != null && itemValue != null;
   const isSingleGroup = groupCtx?.type === "single";
-
+ 
   const size = sizeProp ?? groupCtx?.size ?? segmentCtx?.buttonSize ?? "base";
-  const variant = variantProp ?? groupCtx?.variant ?? "default";
+  const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
   const disabled = disabledProp || Boolean(groupCtx?.disabled);
-
+ 
   const [localPressed, setLocalPressed] = useControllableState({
     value: inGroup ? undefined : pressedProp,
     defaultValue: Boolean(inGroup ? false : defaultPressed),
   });
-
+ 
   const pressedFromGroup = inGroup ? groupCtx!.isSelected(itemValue!) : localPressed;
   const pressed = inGroup
     ? pressedProp !== undefined
@@ -50,17 +51,17 @@ export function useToggleButtonRootState({
     : pressedProp !== undefined
       ? Boolean(pressedProp)
       : localPressed;
-
+ 
   const roundingClass = toggleButtonRoundingClass(groupSegment, size);
-
+ 
   const isCompound = useMemo(() => hasToggleButtonCompoundChildren(children), [children]);
   const contentLayoutClass = !isCompound ? className : undefined;
-
+ 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>, queueFillOnClick: (next: boolean) => void) => {
       onClick?.(e);
       if (e.defaultPrevented || disabled) return;
-
+ 
       if (inGroup && itemValue != null) {
         // Single: clicked item ends selected (re-click is no-op). Multiple: toggle.
         const nextPressed =
@@ -69,7 +70,7 @@ export function useToggleButtonRootState({
         queueFillOnClick(nextPressed);
         return;
       }
-
+ 
       const next = !pressed;
       queueFillOnClick(next);
       setLocalPressed(next);
@@ -86,7 +87,7 @@ export function useToggleButtonRootState({
       setLocalPressed,
     ],
   );
-
+ 
   const handleFocus = useCallback(
     (e: FocusEvent<HTMLButtonElement>) => {
       onFocus?.(e);
@@ -95,7 +96,7 @@ export function useToggleButtonRootState({
     },
     [groupCtx, inGroup, itemValue, onFocus],
   );
-
+ 
   return {
     itemValue,
     groupCtx,
@@ -121,3 +122,4 @@ export function useToggleButtonRootState({
     handleFocus,
   };
 }
+ 

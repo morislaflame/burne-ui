@@ -7,13 +7,14 @@ export function FieldClassNamesFullDemo() {
     <Field
       className="max-w-sm"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
+        label: "text-primary",
         hint: "text-foreground/70",
         error: "font-medium",
       }}
     >
       <Field.Label htmlFor="field-demo-email">Email</Field.Label>
-      <Input.Control id="field-demo-email" placeholder="you@example.com" status="danger" />
+      <Input.Control id="field-demo-email" placeholder="you@example.com" />
       <Field.Hint>We do not share the address with third parties.</Field.Hint>
       <Field.Error>Please enter correct email.</Field.Error>
     </Field>

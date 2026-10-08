@@ -1,9 +1,9 @@
 import { useCallback, useId, useMemo, useState } from "react";
-
+ 
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+ 
 import { meterDisplayEqual } from "./meterAPI";
 import { meterLabelId } from "./meterA11y";
 import type {
@@ -11,7 +11,7 @@ import type {
   MeterFieldContextValue,
   UseMeterRootStateProps,
 } from "./meterTypes";
-
+ 
 export function useMeterRootState({
   children,
   id: idProp,
@@ -34,12 +34,12 @@ export function useMeterRootState({
   const hintId = fieldHintId(meterId);
   const errorId = fieldErrorId(meterId);
   const labelId = meterLabelId(meterId);
-
+ 
   const [display, setDisplayState] = useState<MeterDisplayState | null>(null);
   const setDisplay = useCallback((next: MeterDisplayState | null) => {
     setDisplayState((prev) => (meterDisplayEqual(prev, next) ? prev : next));
   }, []);
-
+ 
   const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
@@ -49,7 +49,7 @@ export function useMeterRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "Meter.Error")),
     };
   }, [children, error, hint, label]);
-
+ 
   const fieldCtx = useMemo<MeterFieldContextValue>(
     () => ({
       meterId,
@@ -64,9 +64,9 @@ export function useMeterRootState({
     }),
     [display, errorId, hasError, hasHint, hasLabel, hintId, meterId, orientation, setDisplay],
   );
-
+ 
   const fieldLabelCtx = useMemo(() => ({ labelId }), [labelId]);
-
+ 
   const trackProps = {
     value,
     min,
@@ -77,7 +77,7 @@ export function useMeterRootState({
     formatValue,
     orientation,
   };
-
+ 
   return {
     meterId,
     isCompound,
@@ -91,3 +91,4 @@ export function useMeterRootState({
     error,
   };
 }
+ 

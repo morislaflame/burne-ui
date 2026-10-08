@@ -16,7 +16,7 @@ export function FieldContactSetDemo() {
           <Input.Label>Telephone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
-        <Input status="danger">
+        <Input>
           <Input.Label>Email</Input.Label>
           <Input.Control defaultValue="bad@" />
           <Input.Error>Invalid address.</Input.Error>

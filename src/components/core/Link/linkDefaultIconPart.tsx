@@ -1,14 +1,14 @@
-import { IoArrowForward } from "react-icons/io5";
-
+import { KitArrowForward } from "@/components/core/utils/kitIcons";
+ 
 import { LINK_DEFAULT_ICON_ARIA_HIDDEN } from "./linkA11y";
 import { linkDefaultIconClass } from "./linkStyles";
-import type { LinkSize } from "./linkTypes";
 
-export function LinkDefaultIcon({ size }: { size: LinkSize }) {
+export function LinkDefaultIcon() {
   return (
-    <IoArrowForward
+    <KitArrowForward
       aria-hidden={LINK_DEFAULT_ICON_ARIA_HIDDEN}
-      className={linkDefaultIconClass(size)}
+      className={linkDefaultIconClass()}
     />
   );
 }
+ 

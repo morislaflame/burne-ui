@@ -1,5 +1,5 @@
 import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerRoot, DrawerTitle, DrawerTrigger } from "./Drawer";
-
+ 
 export const Drawer = Object.assign(DrawerRoot, {
   Trigger: DrawerTrigger,
   Panel: DrawerPanel,
@@ -14,7 +14,7 @@ export const Drawer = Object.assign(DrawerRoot, {
   Body: DrawerBody,
   Footer: DrawerFooter,
 });
-
+ 
 export type {
   DrawerProps,
   DrawerPanelProps,
@@ -38,3 +38,4 @@ export type {
   DrawerLifecycleMotion,
   DrawerPartMotion,
 } from "./drawerTypes";
+ 

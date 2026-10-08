@@ -1,3 +1,5 @@
+import { FormClassNamesFullDemo } from "../demos/form/FormClassNamesFull.demo";
+import formClassNamesFullSource from "../demos/form/FormClassNamesFull.demo.tsx?raw";
 import { FormInlineSubscribeDemo } from "../demos/form/FormInlineSubscribe.demo";
 import formInlineSubscribeSource from "../demos/form/FormInlineSubscribe.demo.tsx?raw";
 import { FormErrorSummaryDemo } from "../demos/form/FormErrorSummary.demo";
@@ -46,6 +48,13 @@ export function FormShowcase() {
         description="Form accepts onSubmit and aria-label; action buttons are placed inside the form."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FormMinimalSubscribeDemo} source={formMinimalSubscribeSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Layout slots, plus errorSummary and announce (visible after a failed submit)."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={FormClassNamesFullDemo} source={formClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

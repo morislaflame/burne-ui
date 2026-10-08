@@ -1,18 +1,17 @@
-import { IoChevronForward } from "react-icons/io5";
+import { KitChevronForward } from "@/components/core/utils/kitIcons";
 import { cloneElement, forwardRef, isValidElement, useCallback, type ForwardedRef, type HTMLAttributes, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
-
+ 
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { useApplySkinPortal } from "@/skins/skinContext";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownMenuSlotMotion, useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
 import { DropdownMotionProvider, useDropdown, useDropdownClassNames, useDropdownMotionScope, useDropdownSub, useOptionalDropdownMotionScope, DropdownSubProvider } from "./dropdownContext";
 import {
   DROPDOWN_SUB_CLASS,
-  DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS,
-  DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS,
   DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
   DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS,
   dropdownSubContentClass,
@@ -24,15 +23,15 @@ import type {
   DropdownSubTriggerProps,
 } from "./dropdownTypes";
 import { useDropdownSubState } from "./useDropdownSubState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const DropdownSub = forwardRef<HTMLDivElement, DropdownSubProps>(
   function DropdownSub({ className, children, ...rest }, ref) {
     const { open: menuOpen } = useDropdown();
     const slotClassNames = useDropdownClassNames();
     const { contextValue } = useDropdownSubState(menuOpen);
-
+ 
     return (
       <DropdownSubProvider value={contextValue}>
         <div
@@ -50,9 +49,9 @@ export const DropdownSub = forwardRef<HTMLDivElement, DropdownSubProps>(
     );
   },
 );
-
+ 
 DropdownSub.displayName = "Dropdown.Sub";
-
+ 
 export const DropdownSubTrigger = forwardRef<
   HTMLDivElement,
   DropdownSubTriggerProps
@@ -86,7 +85,7 @@ export const DropdownSubTrigger = forwardRef<
     onPointerDown,
     onPointerUp,
   });
-
+ 
   const setRowRef = useCallback(
     (node: HTMLDivElement | null) => {
       part.setRef(node);
@@ -94,7 +93,7 @@ export const DropdownSubTrigger = forwardRef<
     },
     [part.setRef, triggerRef],
   );
-
+ 
   const handleEnter = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerEnter?.(e);
@@ -104,7 +103,7 @@ export const DropdownSubTrigger = forwardRef<
     },
     [cancelClose, onPointerEnter, setOpen],
   );
-
+ 
   const handleLeave = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerLeave?.(e);
@@ -113,7 +112,7 @@ export const DropdownSubTrigger = forwardRef<
     },
     [onPointerLeave, scheduleClose],
   );
-
+ 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       onClick?.(e);
@@ -123,7 +122,7 @@ export const DropdownSubTrigger = forwardRef<
     },
     [cancelClose, onClick, setOpen],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
@@ -141,12 +140,12 @@ export const DropdownSubTrigger = forwardRef<
     },
     [cancelClose, onKeyDown, open, setOpen],
   );
-
+ 
   const rowClass = dropdownSubTriggerRowClass({
     className,
     slotClass: slotClassNames.subTrigger,
   });
-
+ 
   if (asChild && isValidElement(children)) {
     const child = children as ReactElement<
       HTMLAttributes<HTMLElement> & { ref?: Ref<HTMLElement> }
@@ -180,7 +179,7 @@ export const DropdownSubTrigger = forwardRef<
       "aria-haspopup": "menu",
     });
   }
-
+ 
   return (
     <div
       ref={setRowRef}
@@ -207,7 +206,7 @@ export const DropdownSubTrigger = forwardRef<
       {icon !== undefined ? (
         icon
       ) : (
-        <IoChevronForward
+        <KitChevronForward
           className={cn(
             DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
             slotClassNames.subTriggerIcon,
@@ -218,9 +217,9 @@ export const DropdownSubTrigger = forwardRef<
     </div>
   );
 });
-
+ 
 DropdownSubTrigger.displayName = "Dropdown.SubTrigger";
-
+ 
 export const DropdownSubContent = forwardRef<
   HTMLDivElement,
   DropdownSubContentProps
@@ -245,9 +244,9 @@ export const DropdownSubContent = forwardRef<
     </DropdownMotionProvider>
   );
 });
-
+ 
 DropdownSubContent.displayName = "Dropdown.SubContent";
-
+ 
 function DropdownSubContentHost({
   children,
   className,
@@ -274,7 +273,7 @@ function DropdownSubContentHost({
     scope: motionScope,
     slot: "subContent",
   });
-
+ 
   const portal = useDropdownSubContentPortal({
     subOpen,
     triggerRef,
@@ -284,7 +283,8 @@ function DropdownSubContentHost({
     portalContainer: portalContainerProp ?? portalContainerFromRoot,
     motionScope,
   });
-
+  useApplySkinPortal(portal.panelRef, portal.portalMounted);
+ 
   useDropdownSubmenuKeyboard({
     subOpen,
     portalMounted: portal.portalMounted,
@@ -292,7 +292,7 @@ function DropdownSubContentHost({
     triggerRef,
     setOpen,
   });
-
+ 
   const handleEnter = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerEnterProp?.(e);
@@ -301,7 +301,7 @@ function DropdownSubContentHost({
     },
     [cancelClose, onPointerEnterProp],
   );
-
+ 
   const handleLeave = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerLeaveProp?.(e);
@@ -310,11 +310,11 @@ function DropdownSubContentHost({
     },
     [onPointerLeaveProp, scheduleClose],
   );
-
+ 
   if (!portal.portalMounted) return null;
-
+ 
   const portalTheme = burneLightThemePortalProps(menuTriggerRef.current);
-
+ 
   const panel = (
     <div
       ref={(node) => {
@@ -325,13 +325,13 @@ function DropdownSubContentHost({
       {...portalTheme}
       role="menu"
       className={dropdownSubContentClass({
-        isGlossPanel: portal.isGlossPanel,
+        variant: portal.popoverVariant,
         subOpen,
         portalMounted: portal.portalMounted,
         className,
         slotClass: cn(
           slotClassNames.subPopover,
-          !portal.isGlossPanel && slotClassNames.subPopoverBody,
+          slotClassNames.subPopoverBody,
         ),
       })}
       style={{
@@ -345,33 +345,16 @@ function DropdownSubContentHost({
       onPointerEnter={handleEnter}
       onPointerLeave={handleLeave}
     >
-      {portal.isGlossPanel ? (
-        <div
-          className={cn(
-            DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS,
-            slotClassNames.subPopoverGlossPanel,
-          )}
-        >
-          <div
-            className={cn(
-              DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS,
-              slotClassNames.subPopoverBody,
-            )}
-          >
-            {children}
-          </div>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </div>
   );
-
+ 
   const portalHost =
     typeof document !== "undefined"
       ? resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot)
       : null;
-
+ 
   return portalHost ? createPortal(panel, portalHost) : null;
 }
-
+ 
+ 

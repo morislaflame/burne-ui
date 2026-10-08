@@ -1,5 +1,5 @@
 import { AlertAction, AlertContent, AlertDescription, AlertIndicator, AlertMessage, AlertRoot, AlertTitle } from "./Alert";
-
+ 
 export const Alert = Object.assign(AlertRoot, {
   Indicator: AlertIndicator,
   Message: AlertMessage,
@@ -8,9 +8,9 @@ export const Alert = Object.assign(AlertRoot, {
   Description: AlertDescription,
   Action: AlertAction,
 });
-
+ 
 export { resolveAlertStatus, resolveAlertVariant } from "./alertAPI";
-
+ 
 export type {
   AlertProps,
   AlertVariant,
@@ -28,3 +28,4 @@ export type {
 } from "./Alert";
 export { resolveAlertLiveRole } from "./alertA11y";
 export type { AlertLiveRole } from "./alertTypes";
+ 

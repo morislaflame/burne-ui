@@ -1,21 +1,23 @@
 import { useCallback, useId, useState } from "react";
-
+ 
 import { resolveAlertStatus, resolveAlertVariant } from "@/components/core/Alert/alertAPI";
+import { useSkinVariant } from "@/skins/skinContext";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-
+ 
 import { ALERT_DIALOG_SIZE, footerButtonSizeForAlertDialog } from "./alertDialogStyles";
 import type { AlertDialogContextValue, UseAlertDialogRootStateProps } from "./alertDialogTypes";
-
+ 
 export function useAlertDialogRootState({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
   status,
-  variant = "default",
+  variant: variantProp,
   size = "base",
   closeOnEscape = true,
   portalContainer,
 }: UseAlertDialogRootStateProps) {
+  const variant = useSkinVariant(variantProp);
   const [open, setOpen] = useControllableState({
     value: openProp,
     defaultValue: defaultOpen,
@@ -25,19 +27,19 @@ export function useAlertDialogRootState({
   const descriptionId = useId();
   const [hasTitle, setHasTitle] = useState(false);
   const [hasDescription, setHasDescription] = useState(false);
-
+ 
   const setHasTitleStable = useCallback((value: boolean) => {
     setHasTitle(value);
   }, []);
-
+ 
   const setHasDescriptionStable = useCallback((value: boolean) => {
     setHasDescription(value);
   }, []);
-
+ 
   const resolvedVariant = resolveAlertVariant(variant);
   const resolvedStatus = resolveAlertStatus(status);
   const sizePreset = ALERT_DIALOG_SIZE[size];
-
+ 
   const contextValue: AlertDialogContextValue = {
     open,
     titleId,
@@ -55,6 +57,7 @@ export function useAlertDialogRootState({
     footerButtonSize: footerButtonSizeForAlertDialog(size),
     portalContainer,
   };
-
+ 
   return { contextValue };
 }
+ 

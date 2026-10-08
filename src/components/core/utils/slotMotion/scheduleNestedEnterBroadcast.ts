@@ -1,5 +1,5 @@
 import type { MotionScopeValue } from "./createMotionScope";
-
+ 
 /**
  * After host enter + `hideNestedEnterSlots`, start nested enter on the next frame.
  *
@@ -18,7 +18,7 @@ export function scheduleNestedEnterBroadcast(
     void scope.playBroadcast("enter", { exclude: [...exclude] });
   });
 }
-
+ 
 /** Cancel a pending nested-enter rAF and invalidate its generation (unmount / next play). */
 export function invalidateEnterFrame(
   frameRef: { current: number },
@@ -30,3 +30,4 @@ export function invalidateEnterFrame(
     frameRef.current = 0;
   }
 }
+ 

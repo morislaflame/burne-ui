@@ -7,24 +7,26 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { FieldLabelProps } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type TimeFieldSize = ComponentSize;
-
+ 
 export type TimeFieldStatus = SemanticStatus;
-
-export type TimeFieldVariant = "default" | "outline" | "secondary" | "segmented" | "gloss";
-
+ 
+export const KIT_TIME_FIELD_VARIANTS = ["default", "outline", "secondary", "segmented"] as const;
+export type KitTimeFieldVariant = (typeof KIT_TIME_FIELD_VARIANTS)[number];
+export type TimeFieldVariant = KitTimeFieldVariant | (string & {});
+ 
 export type TimeFieldFormat = "HH:mm" | "HH:mm:ss";
-
+ 
 export type TimeFieldSegId = "h" | "m" | "s";
-
+ 
 export type TimeFieldHMS = { h: number; m: number; s: number };
-
+ 
 export type TimeFieldClassNames = {
   root?: string;
   label?: string;
@@ -40,7 +42,7 @@ export type TimeFieldClassNames = {
   hint?: string;
   error?: string;
 };
-
+ 
 export type TimeFieldPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -49,7 +51,7 @@ export type TimeFieldPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type TimeFieldMotion = {
   shell?: TimeFieldPartMotion;
   prefix?: TimeFieldPartMotion;
@@ -59,7 +61,7 @@ export type TimeFieldMotion = {
   hint?: TimeFieldPartMotion;
   error?: TimeFieldPartMotion;
 };
-
+ 
 export type TimeFieldFieldContextValue = {
   fieldId: string;
   labelId: string;
@@ -68,18 +70,19 @@ export type TimeFieldFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  invalid?: boolean;
   required: boolean;
   status: TimeFieldStatus;
   size: TimeFieldSize;
   variant: TimeFieldVariant;
   compact: boolean;
 };
-
+ 
 export type TimeFieldClassNamesProviderProps = {
   classNames?: Prettify<TimeFieldClassNames>;
   children: ReactNode;
 };
-
+ 
 export type TimeFieldControlProps = Omit<
   HTMLAttributes<HTMLFieldSetElement>,
   "onChange" | "prefix" | "suffix"
@@ -106,12 +109,14 @@ export type TimeFieldControlProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "suffix"> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** Danger visual, `aria-invalid` on the group, and `data-invalid`. `error` does the same and shows the message. */
+  invalid?: boolean;
   id?: string;
   required?: boolean;
   status?: TimeFieldStatus;
@@ -144,7 +149,7 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type UseTimeFieldShellAnimationsProps = {
   shellRef: RefObject<HTMLFieldSetElement | null>;
   disabled: boolean;
@@ -153,21 +158,21 @@ export type UseTimeFieldShellAnimationsProps = {
   pointerInsideRef: MutableRefObject<boolean>;
   onPointerDown?: (e: PointerEvent<HTMLFieldSetElement>) => void;
 };
-
+ 
 export type TimeFieldLabelProps = Omit<FieldLabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<TimeFieldPartMotion>;
 };
-
+ 
 export type TimeFieldHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<TimeFieldPartMotion>;
 };
-
+ 
 export type TimeFieldErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<TimeFieldPartMotion>;
 };
-
+ 
 export type TimeFieldSimpleBodyProps = {
   label?: ReactNode;
   hint?: ReactNode;
@@ -186,5 +191,6 @@ export type TimeFieldSimpleBodyProps = {
     suffix?: ReactNode;
   };
 };
-
+ 
 export type UseTimeFieldRootStateProps = Omit<TimeFieldProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
+ 

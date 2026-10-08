@@ -1,8 +1,8 @@
 import { useMemo, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import { useContainerPointerHoverHandlers } from "@/components/core/utils/useContainerPointerHoverHandlers";
-
+ 
 export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement>({
   enabled,
   targetRef,
@@ -33,7 +33,7 @@ export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement
     onEnter: (el, e) => onHoverIn?.(el, e),
     onLeave: (el, e) => onHoverOut?.(el, e),
   });
-
+ 
   return useMemo(
     () => ({
       onPointerOver: handlers.onPointerOver,
@@ -42,3 +42,4 @@ export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement
     [handlers.onPointerOver, handlers.onPointerOut],
   );
 }
+ 

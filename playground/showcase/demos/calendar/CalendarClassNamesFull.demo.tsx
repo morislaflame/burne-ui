@@ -10,6 +10,7 @@ export function CalendarClassNamesFullDemo() {
         headerTitle: "font-semibold text-info",
         navPrev: "text-info",
         navNext: "text-info",
+        navIconWrap: "text-info",
         weekdayCell: "text-info/70",
         dayEmpty: "opacity-40",
         dayCell: "rounded-full",

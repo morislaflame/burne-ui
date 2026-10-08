@@ -156,7 +156,7 @@ export const WithLabel: Story = {
 export const Centered: Story = {
   name: "Centered in block",
   render: () => (
-    <div className="flex h-40 w-72 items-center justify-center rounded-mid border-token bg-surface">
+    <div className="flex h-40 w-72 items-center justify-center rounded-large border-token bg-surface">
       <Loading size="large" color="primary" label="Loading content" />
     </div>
   ),
@@ -170,7 +170,7 @@ export const CustomClassNames: Story = {
         type="spinner"
         size="mid"
         classNames={{
-          root: "rounded-mid border border-primary/20 p-base",
+          root: "rounded-large border border-primary/20 p-base",
           spinner: "border-t-info",
         }}
       />
@@ -178,7 +178,7 @@ export const CustomClassNames: Story = {
         type="dots"
         size="mid"
         classNames={{
-          root: "rounded-mid border border-primary/20 p-base",
+          root: "rounded-large border border-primary/20 p-base",
           dots: "gap-small",
           dot: "bg-info",
         }}

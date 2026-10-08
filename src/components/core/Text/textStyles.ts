@@ -1,9 +1,9 @@
 import type { ElementType } from "react";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 import type { TextVariant } from "./textTypes";
-
+ 
 /**
  * Kit typography roles (`@utility text-*` / `@theme` `text-base`).
  * Full face (size + line-height + weight) so `cn(..., "text-large")` twMerges the variant.
@@ -19,7 +19,7 @@ export const TEXT_VARIANT_CLASS: Record<TextVariant, string> = {
   small: "text-small",
   xsmall: "text-xsmall",
 };
-
+ 
 export const TEXT_VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
   "accent-header": "h1",
   "header-1": "h2",
@@ -30,9 +30,9 @@ export const TEXT_VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
   small: "p",
   xsmall: "p",
 };
-
+ 
 export const TEXT_FOREGROUND_CLASS = "text-foreground";
-
+ 
 export function textRootClass(
   variant: TextVariant,
   inheritColor: boolean | undefined,
@@ -44,3 +44,4 @@ export function textRootClass(
     className,
   );
 }
+ 

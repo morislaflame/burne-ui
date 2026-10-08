@@ -14,7 +14,7 @@ export function FormSearchToolbarDemo() {
     <Form
       onSubmit={onSubmit}
       aria-label="Catalog search"
-      className="flex w-full max-w-xl items-center gap-small flex-row rounded-mid border-token bg-tertiary p-xsmall"
+      className="flex w-full max-w-xl items-center gap-small flex-row rounded-large border-token bg-tertiary p-xsmall"
     >
       <Form.Section className="min-w-0 flex-1">
         <Input

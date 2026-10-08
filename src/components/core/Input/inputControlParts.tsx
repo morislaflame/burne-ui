@@ -1,7 +1,10 @@
 import type { ChangeEvent, MouseEvent, MutableRefObject, Ref } from "react";
-import { forwardRef, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { IoFolderOpen } from "react-icons/io5";
-
+import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { KitFolderOpen } from "@/components/core/utils/kitIcons";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+ 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Text } from "@/components/core/Text";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
@@ -9,13 +12,13 @@ import { useFormControlProps } from "@/components/composite/Form/useFormControlP
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-
+ 
 import {
   resolveInputMotionDefaults,
   resolveInputMotionParams,
   useInputShellAnimations,
 } from "./inputAnimations";
-import { assignInputFiles, inputSizeFromButtonSize } from "./inputAPI";
+import { assignInputFiles, inputSizeFromButtonSize, isImageFile } from "./inputAPI";
 import {
   AffixSlot,
   FileGlyph,
@@ -41,17 +44,41 @@ import {
   INPUT_FILE_ROW_SINGLE_CLASS,
   inputFileEmptyAreaClass,
   inputFileFilledAreaClass,
+  inputFileEmptySurfaceClass,
   inputShellClass,
   inputShellSurfaceClass,
 } from "./inputStyles";
 import type { InputControlProps, InputPartMotion, PickedFileEntry } from "./inputTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
+function usePickedFileEntries(pickedFiles: File[]): PickedFileEntry[] {
+  const [previewByFile, setPreviewByFile] = useState<ReadonlyMap<File, string>>(
+    () => new Map(),
+  );
+ 
+  useLayoutEffect(() => {
+    const next = new Map<File, string>();
+    for (const file of pickedFiles) {
+      if (!isImageFile(file)) continue;
+      next.set(file, URL.createObjectURL(file));
+    }
+    setPreviewByFile((prev) => (next.size === 0 && prev.size === 0 ? prev : next));
+    return () => {
+      for (const url of next.values()) URL.revokeObjectURL(url);
+    };
+  }, [pickedFiles]);
+ 
+  return pickedFiles.map((file) => ({
+    file,
+    previewUrl: previewByFile.get(file) ?? null,
+  }));
+}
+ 
 export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
   function InputControl(
     {
-      variant = "default",
+      variant: variantProp,
       status: statusProp,
       size: sizeProp,
       inputType = "text",
@@ -78,6 +105,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     },
     ref,
   ) {
+    const variant = useSkinVariant(variantProp);
     const formBinding = useFormControlProps({
       name: typeof name === "string" ? name : undefined,
       value,
@@ -87,7 +115,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
       readOnly,
       type: inputType,
     });
-
+ 
     const resolvedName = formBinding.name ?? name;
     const resolvedValue = formBinding.bound ? formBinding.value : value;
     const resolvedOnChange = formBinding.onChange;
@@ -95,14 +123,19 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     const resolvedDisabled = formBinding.disabled ?? disabled;
     const resolvedReadOnly = formBinding.readOnly ?? readOnly;
     const resolvedRef = formBinding.ref;
-
+ 
     const fieldCtx = useOptionalInputFieldContext();
     const slotClassNames = useInputClassNames();
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
     const genId = useId();
     const id = idProp ?? fieldCtx?.inputId ?? genId;
-    const status = statusProp ?? fieldCtx?.status ?? "default";
+    const isInvalid = useResolvedFieldInvalid({
+      invalid: fieldCtx?.invalid,
+      errorConnected: fieldCtx?.errorConnected ?? false,
+      formInvalid: formBinding["aria-invalid"] === true,
+    });
+    const status = visualStatusForInvalid(statusProp ?? fieldCtx?.status, isInvalid, "default");
     const size =
       sizeProp ??
       fieldCtx?.size ??
@@ -124,7 +157,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     const shellRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const pointerInsideRef = useRef(false);
-
+ 
     const setInputRef = useCallback(
       (node: HTMLInputElement | null) => {
         inputRef.current = node;
@@ -134,24 +167,24 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
       },
       [ref, resolvedRef],
     );
-
+ 
     const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
-    const isGloss = variant === "gloss";
-
+ 
     const parentScope = useOptionalInputMotionScope();
-    const motionDefaults = useMemo(
-      () => resolveInputMotionDefaults({ isGloss, blocked, groupSegment }),
-      [blocked, groupSegment, isGloss],
-    );
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveInputMotionDefaults({ variant, blocked, groupSegment });
+    }, [blocked, groupSegment, skinRevision, variant]);
     const motionParams = useMemo(
       () =>
         resolveInputMotionParams({
+          variant,
           blocked,
-          isGloss,
           groupSegment,
           pointerInside: pointerInsideRef,
         }),
-      [blocked, groupSegment, isGloss],
+      [blocked, groupSegment, variant],
     );
     const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -162,73 +195,59 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
       states: parentScope?.getStates(),
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
-
+ 
     const isFile = inputType === "file";
     const isPassword = inputType === "password";
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [pickedFiles, setPickedFiles] = useState<File[]>([]);
-
+    const pickedFilesRef = useRef<File[]>([]);
+    const commitPickedFiles = useCallback((next: File[]) => {
+      pickedFilesRef.current = next;
+      setPickedFiles(next);
+    }, []);
+ 
     useEffect(() => {
       if (!isPassword) setPasswordVisible(false);
     }, [isPassword]);
-
-    const fileEntries: PickedFileEntry[] = useMemo(
-      () =>
-        pickedFiles.map((file) => ({
-          file,
-          previewUrl: file.type.startsWith("image/")
-            ? URL.createObjectURL(file)
-            : null,
-        })),
-      [pickedFiles],
-    );
-
-    useEffect(() => {
-      const urls = fileEntries
-        .map((e) => e.previewUrl)
-        .filter((u): u is string => u != null);
-      return () => {
-        for (const u of urls) URL.revokeObjectURL(u);
-      };
-    }, [fileEntries]);
-
+ 
+    const fileEntries = usePickedFileEntries(pickedFiles);
+ 
     useEffect(() => {
       if (!isFile) return;
       const el = inputRef.current;
       const form = el?.form;
       if (!form) return;
-      const onFormReset = () => setPickedFiles([]);
+      const onFormReset = () => commitPickedFiles([]);
       form.addEventListener("reset", onFormReset);
       return () => form.removeEventListener("reset", onFormReset);
-    }, [isFile]);
-
+    }, [commitPickedFiles, isFile]);
+ 
     const handleFileChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
         const list = e.target.files;
-        setPickedFiles(list ? Array.from(list) : []);
+        commitPickedFiles(list ? Array.from(list) : []);
         resolvedOnChange?.(e);
       },
-      [resolvedOnChange],
+      [commitPickedFiles, resolvedOnChange],
     );
-
+ 
     const commitRemoveFile = useCallback(
       (file: File) => {
-        setPickedFiles((prev) => {
-          const next = prev.filter((f) => f !== file);
-          const input = inputRef.current;
-          if (input) assignInputFiles(input, next);
-          if (input) {
-            onChange?.({
-              target: input,
-              currentTarget: input,
-            } as ChangeEvent<HTMLInputElement>);
-          }
-          return next;
-        });
+        const input = inputRef.current;
+        const fromInput = input?.files ? Array.from(input.files) : [];
+        const prev = fromInput.length > 0 ? fromInput : pickedFilesRef.current;
+        const next = prev.filter((f) => f !== file);
+        commitPickedFiles(next);
+        if (!input) return;
+        assignInputFiles(input, next);
+        resolvedOnChange?.({
+          target: input,
+          currentTarget: input,
+        } as ChangeEvent<HTMLInputElement>);
       },
-      [onChange],
+      [commitPickedFiles, resolvedOnChange],
     );
-
+ 
     return (
       <InputMotionProvider
         motion={mergedMotion}
@@ -272,7 +291,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
           handleFileChange={handleFileChange}
           resolvedOnBlur={resolvedOnBlur}
           required={required}
-          ariaInvalid={formBinding["aria-invalid"] ?? (status === "danger" ? true : undefined)}
+          ariaInvalid={ariaInvalidValue(isInvalid)}
           ariaDescribedBy={ariaDescribedBy}
           resolvedValue={resolvedValue}
           resolvedOnChange={resolvedOnChange}
@@ -282,9 +301,9 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     );
   },
 );
-
+ 
 InputControl.displayName = "InputControl";
-
+ 
 function InputTextControl({
   setInputRef,
   id,
@@ -352,7 +371,7 @@ function InputTextControl({
     forwardedRef: setInputRef as Ref<HTMLInputElement>,
     pointerPhases: true,
   });
-
+ 
   return (
     <input
       ref={setRef}
@@ -365,9 +384,6 @@ function InputTextControl({
       value={resolvedValue as string | number | readonly string[] | undefined}
       onChange={resolvedOnChange}
       onBlur={resolvedOnBlur}
-      aria-required={required || undefined}
-      aria-invalid={ariaInvalid}
-      aria-describedby={ariaDescribedBy}
       className={cn(
         INPUT_CONTROL_BASE_CLASS,
         INPUT_CONTROL_PAD[size],
@@ -376,10 +392,15 @@ function InputTextControl({
       )}
       {...rest}
       {...pointerHandlers}
+      aria-required={required || undefined}
+      aria-invalid={ariaInvalid}
+      aria-describedby={ariaDescribedBy}
+      data-invalid={ariaInvalid ? "" : undefined}
+      data-required={required ? "" : undefined}
     />
   );
 }
-
+ 
 function InputControlSurface({
   variant,
   status,
@@ -486,10 +507,7 @@ function InputControlSurface({
     shellPointerUp,
     shellPointerEnter,
     shellPointerLeave,
-    shellFocusCapture,
-    shellBlurCapture,
     shellHoverMotionClass,
-    glossDisabledAttr,
   } = useInputShellAnimations({
     shellRef,
     blocked,
@@ -499,7 +517,7 @@ function InputControlSurface({
     pointerInsideRef,
     onPointerDown,
   });
-
+ 
   const removePickedFile = useCallback(
     (file: File, rowEl: HTMLElement | null) => {
       if (blocked) return;
@@ -511,34 +529,31 @@ function InputControlSurface({
     },
     [blocked, commitRemoveFile, playFileRowLeave],
   );
-
+ 
   const onFileRowRemoveClick =
     (file: File) => (e: MouseEvent<HTMLButtonElement>) => {
       const row = e.currentTarget.closest("[data-file-row]");
       removePickedFile(file, row instanceof HTMLElement ? row : null);
     };
-
+ 
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const multipleFiles = pickedFilesLength > 1;
   const fileListEmpty = isFile && pickedFilesLength === 0;
-  const isGloss = variant === "gloss";
-
   const shellSurface = inputShellSurfaceClass({ variant, status });
   const shellFileEmptySurface = fileListEmpty
-    ? cn(shellSurface, !isGloss && "border-2 border-dashed")
+    ? inputFileEmptySurfaceClass(shellSurface)
     : null;
-
+ 
   return (
     <div
       ref={bindShellRef}
       data-slot="input-shell"
+      data-group-segment={dataGroupSegment(groupSegment != null)}
       role="presentation"
       onPointerDown={shellPointerDown}
       onPointerUp={shellPointerUp}
       onPointerEnter={shellPointerEnter}
       onPointerLeave={shellPointerLeave}
-      onFocusCapture={shellFocusCapture}
-      onBlurCapture={shellBlurCapture}
-      {...glossDisabledAttr}
       className={inputShellClass({
         variant,
         status,
@@ -552,6 +567,8 @@ function InputControlSurface({
         className,
         slotClass: slotClassNames.shell,
       })}
+      style={mergeSkinSurfaceStyle(surfaceStyle)}
+      {...dataVariantProps({ size, variant, status })}
     >
       {showAffixes && prefix != null ? (
         <AffixSlot side="prefix" status={status} controlSize={size}>
@@ -571,7 +588,7 @@ function InputControlSurface({
         >
           {fileListEmpty ? (
             <>
-              <IoFolderOpen
+              <KitFolderOpen
                 className={cn(
                   INPUT_FILE_EMPTY_ICON_CLASS,
                   slotClassNames.fileEmpty,
@@ -650,11 +667,13 @@ function InputControlSurface({
             readOnly={resolvedReadOnly}
             onChange={handleFileChange}
             onBlur={resolvedOnBlur}
+            className={INPUT_FILE_INPUT_CLASS}
+            {...rest}
             aria-required={required || undefined}
             aria-invalid={ariaInvalid}
             aria-describedby={ariaDescribedBy}
-            className={INPUT_FILE_INPUT_CLASS}
-            {...rest}
+            data-invalid={ariaInvalid ? "" : undefined}
+            data-required={required ? "" : undefined}
           />
         </div>
       ) : (
@@ -696,3 +715,4 @@ function InputControlSurface({
     </div>
   );
 }
+ 

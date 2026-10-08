@@ -186,7 +186,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
 
 ```tsx
 <Breadcrumbs
-  className="rounded-mid border border-token p-small"
+  className="rounded-large border border-token p-small"
   classNames={{
     separator: "text-primary opacity-100",
     itemLink: "text-info hover:text-info",

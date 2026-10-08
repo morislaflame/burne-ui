@@ -74,7 +74,7 @@ import { Avatar, type AvatarProps, type AvatarClassNames, type AvatarSize, type 
 
 ### `AvatarClassNames`
 
-`root`, `image`, `fallback`, `group`, `groupItem`, `glossWrap`.
+`root`, `image`, `fallback`, `group`, `groupItem`.
 
 ## Variant / размеры
 
@@ -126,7 +126,7 @@ Fallback typography:
 </Avatar.Group>
 ```
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`presence:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`presence:ping`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 ```tsx
 import { Avatar, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -189,7 +189,6 @@ configureMotion({ enableContentFade: false });
 | `fallback` | Fallback span | Initials bg/text |
 | `group` | `Avatar.Group` root | Gap, justify stack |
 | `groupItem` | Group item wrapper | Overlap margin, lift target |
-| `glossWrap` | Outer gloss wrapper | Ring/padding вокруг gloss circle |
 
 ### Simple (src + label)
 
@@ -202,7 +201,7 @@ configureMotion({ enableContentFade: false });
   alt=""
   classNames={{
     root: "border border-info/40",
-    glossWrap: "p-0.5 ring-1 ring-info/30 rounded-full",
+    image: "object-cover",
   }}
 />
 ```

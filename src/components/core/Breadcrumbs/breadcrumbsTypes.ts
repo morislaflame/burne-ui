@@ -1,7 +1,7 @@
 import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type BreadcrumbsClassNames = {
   /** Root `<nav>`. */
   root?: string;
@@ -34,7 +34,7 @@ export type BreadcrumbsClassNames = {
   /** Items in hidden crumbs dropdown. */
   dropdownItem?: string;
 };
-
+ 
 export type BreadcrumbsPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -42,7 +42,7 @@ export type BreadcrumbsPartMotion = {
   pressOut?: MotionValue;
   enter?: MotionValue;
 };
-
+ 
 export type BreadcrumbsMotion = {
   list?: BreadcrumbsPartMotion;
   separator?: BreadcrumbsPartMotion;
@@ -50,7 +50,7 @@ export type BreadcrumbsMotion = {
   itemLinkText?: BreadcrumbsPartMotion;
   ellipsisLiftWrapper?: BreadcrumbsPartMotion;
 };
-
+ 
 export type BreadcrumbItem = {
   label: ReactNode;
   href?: string;
@@ -60,16 +60,16 @@ export type BreadcrumbItem = {
   motion?: Prettify<BreadcrumbsPartMotion>;
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 /** @internal */
 export type BreadcrumbItemData = BreadcrumbItem;
-
+ 
 export type DisplayPiece =
   | { kind: "segment"; item: BreadcrumbItemData; isLast: boolean }
   | { kind: "ellipsis"; hiddenItems: BreadcrumbItemData[] };
-
+ 
 export type BreadcrumbSegmentPiece = Extract<DisplayPiece, { kind: "segment" }>;
-
+ 
 export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   collapse?: boolean;
   classNames?: Prettify<BreadcrumbsClassNames>;
@@ -91,13 +91,13 @@ export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type BreadcrumbsListProps = OlHTMLAttributes<HTMLOListElement> & {
   classNames?: Prettify<BreadcrumbsClassNames>;
   children?: ReactNode;
   motion?: Prettify<BreadcrumbsPartMotion>;
 };
-
+ 
 export type BreadcrumbsItemProps = {
   href?: string;
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
@@ -111,7 +111,7 @@ export type BreadcrumbsItemProps = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type InteractiveCrumbProps = {
   href?: string;
   onClick?: (e: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
@@ -123,48 +123,49 @@ export type InteractiveCrumbProps = {
   motion?: Prettify<BreadcrumbsPartMotion>;
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type BreadcrumbsEllipsisMenuProps = {
   hiddenItems: BreadcrumbItemData[];
 };
-
+ 
 export type BreadcrumbsSimpleContentProps = Omit<
   OlHTMLAttributes<HTMLOListElement>,
   "children"
 > & {
   items: BreadcrumbItem[];
 };
-
+ 
 export type BreadcrumbsPiecesListProps = OlHTMLAttributes<HTMLOListElement> & {
   pieces: DisplayPiece[];
   motion?: Prettify<BreadcrumbsPartMotion>;
 };
-
+ 
 export type BreadcrumbListItemProps = {
   piece: DisplayPiece;
   showSeparator: boolean;
 };
-
+ 
 export type BreadcrumbsSeparatorProps = HTMLAttributes<HTMLSpanElement> & {
   iconClassName?: string;
   motion?: Prettify<BreadcrumbsPartMotion>;
 };
-
+ 
 export type BreadcrumbSegmentProps = {
   piece: BreadcrumbSegmentPiece;
 };
-
+ 
 export type BreadcrumbsEllipsisDropdownItemProps = {
   item: BreadcrumbItemData;
   className?: string;
 };
-
+ 
 export type BreadcrumbsCollapseProviderProps = {
   collapse: boolean;
   children: ReactNode;
 };
-
+ 
 export type BreadcrumbsClassNamesProviderProps = {
   classNames?: Prettify<BreadcrumbsClassNames>;
   children: ReactNode;
 };
+ 

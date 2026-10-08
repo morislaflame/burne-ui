@@ -6,76 +6,76 @@ import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fiel
 import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/inputAffixLayout";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
-
+ 
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
-
+import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+ 
 import type { InputSize, InputStatus, InputVariant } from "./inputTypes";
-
+import { KIT_INPUT_VARIANTS } from "./inputTypes";
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const INPUT_AFFIX_SURFACE_CLASS = "bg-primary-tint";
-
+ 
 export const INPUT_SHELL_BASE_CLASS = "flex items-stretch overflow-hidden";
-
-export const INPUT_SHELL_GLOSS_CLASS = "relative";
-
+ 
 export const INPUT_CONTROL_BASE_CLASS =
   `min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
-
+ 
 export const INPUT_FILE_INPUT_CLASS =
   `absolute inset-0 cursor-pointer opacity-0 disabled:cursor-not-allowed ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
-
+ 
 export const INPUT_FILE_EMPTY_ICON_CLASS =
   "pointer-events-none size-12 shrink-0 text-muted";
-
+ 
 export const INPUT_FILE_GLYPH_SHELL_CLASS =
   "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token";
-
+ 
 export const INPUT_FILE_GLYPH_ICON_CLASS = "icon-mid shrink-0";
-
+ 
 export const INPUT_FILE_REMOVE_ICON_CLASS = "icon-mid shrink-0";
-
+ 
 export const INPUT_PASSWORD_TOGGLE_ICON_CLASS = "shrink-0";
-
+ 
 export const INPUT_FILE_EMPTY_TEXT_CLASS =
   "pointer-events-none max-w-[18rem] text-center text-muted";
-
+ 
 export const INPUT_FILE_PREVIEW_CLASS =
   "size-9 shrink-0 rounded-base border-token object-cover";
-
+ 
 export const INPUT_FILE_ROW_CLASS = "flex min-w-0 items-center gap-base";
-
+ 
 export const INPUT_FILE_ROW_SINGLE_CLASS =
   "flex h-full min-w-0 flex-1 items-center gap-base";
-
+ 
 export const INPUT_FILE_NAME_CLASS = "min-w-0 flex-1 truncate";
-
+ 
 export const INPUT_FILE_REMOVE_CLASS =
   "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none";
-
+ 
 export const INPUT_PASSWORD_TOGGLE_WRAP_CLASS =
-  "flex self-stretch shrink-0 items-stretch border-l-token";
-
+  "flex self-stretch shrink-0 items-stretch border-s-token";
+ 
 export const INPUT_PASSWORD_TOGGLE_BUTTON_CLASS =
   "relative z-10 flex h-full items-center justify-center text-muted outline-none hover:text-foreground focus-ring-inset";
-
-export const INPUT_AFFIX_PREFIX_EDGE_CLASS = "border-r-token";
-export const INPUT_AFFIX_SUFFIX_EDGE_CLASS = "border-l-token";
-
+ 
+export const INPUT_AFFIX_PREFIX_EDGE_CLASS = "border-e-token";
+export const INPUT_AFFIX_SUFFIX_EDGE_CLASS = "border-s-token";
+ 
 const AFFIX_PADDING: Record<InputSize, string> = {
   small: affixSlotClass("small"),
   base: affixSlotClass("base"),
   mid: affixSlotClass("mid"),
   large: affixSlotClass("large"),
 };
-
+ 
 export const INPUT_CONTROL_PAD: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.controlPad,
   base: CONTROL_SIZE_LAYOUT.base.controlPad,
   mid: CONTROL_SIZE_LAYOUT.mid.controlPad,
   large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
-
+ 
 export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
   InputSize,
   { icon: string; pad: string }
@@ -97,11 +97,11 @@ export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
     pad: "px-base",
   },
 };
-
+ 
 export function inputAffixSurfaceClass(_status: InputStatus = "default"): string {
   return INPUT_AFFIX_SURFACE_CLASS;
 }
-
+ 
 export function inputAffixSlotClass({
   side,
   status,
@@ -120,16 +120,18 @@ export function inputAffixSlotClass({
     slotClass,
   );
 }
-
+ 
 export function inputShellSurfaceClass({
   variant,
 }: {
   variant: InputVariant;
   status?: InputStatus;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "input.shell");
+  if (visual.className !== undefined) return visual.className;
   return resolveFieldShellSurfaceClass({ variant });
 }
-
+ 
 export function inputShellRoundingClass(
   groupSegment: ButtonGroupSegment | null | undefined,
 ): string {
@@ -140,8 +142,14 @@ export function inputShellRoundingClass(
       "relative focus-within:z-[2]",
     );
   }
-
+ 
   return "rounded-base";
+}
+ 
+export const INPUT_FILE_EMPTY_DASHED_CLASS = "border-2 border-dashed";
+
+export function inputFileEmptySurfaceClass(shellSurface: string): string {
+  return cn(shellSurface, INPUT_FILE_EMPTY_DASHED_CLASS);
 }
 
 export function inputShellClass({
@@ -168,34 +176,33 @@ export function inputShellClass({
   className?: string;
   slotClass?: string;
 }): string {
-  const isGloss = variant === "gloss";
-
+  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+ 
   return cn(
     INPUT_SHELL_BASE_CLASS,
-    isGloss && INPUT_SHELL_GLOSS_CLASS,
     groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
     fileListEmpty
       ? "min-h-[7.25rem]"
-      : cn(isGloss ? "" : "border-1"),
+      : cn(kitSurface && "border-1"),
     inputShellRoundingClass(groupSegment),
     shellFileEmptySurface ?? shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
     fieldShellFocusRingClass(status),
-    !isGloss && fieldShellHoverClass(!blocked, status, variant),
+    kitSurface && fieldShellHoverClass(!blocked, status, variant),
     shellHoverMotionClass,
     blocked && "cursor-not-allowed opacity-55 shadow-token-base",
     slotClass,
     className,
   );
 }
-
+ 
 export function inputFileEmptyAreaClass(slotClass?: string): string {
   return cn(
     "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-mid px-xlarge py-2xlarge",
     slotClass,
   );
 }
-
+ 
 export function inputFileFilledAreaClass({
   multipleFiles,
   slotClass,
@@ -211,7 +218,7 @@ export function inputFileFilledAreaClass({
     slotClass,
   );
 }
-
+ 
 export function inputPasswordToggleButtonClass({
   size,
   disabled,
@@ -222,7 +229,7 @@ export function inputPasswordToggleButtonClass({
   slotClass?: string;
 }): string {
   const pwd = INPUT_PASSWORD_TOGGLE_CONTROL[size];
-
+ 
   return cn(
     INPUT_PASSWORD_TOGGLE_BUTTON_CLASS,
     TEXT_COLOR_TRANSITION,
@@ -232,7 +239,7 @@ export function inputPasswordToggleButtonClass({
     slotClass,
   );
 }
-
+ 
 export function inputFileRemoveButtonClass({
   disabled,
   slotClass,
@@ -249,3 +256,4 @@ export function inputFileRemoveButtonClass({
     slotClass,
   );
 }
+ 

@@ -1,12 +1,13 @@
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
-
+ 
 import { MeterClassNamesProvider, MeterFieldProvider, MeterMotionProvider } from "./meterContext";
 import { MeterSimpleBody } from "./meterParts";
 import { meterRootClass } from "./meterStyles";
 import type { MeterProps } from "./meterTypes";
 import { useMeterRootState } from "./useMeterRootState";
-
+ 
 export type {
   MeterClassNames,
   MeterErrorProps,
@@ -21,7 +22,7 @@ export type {
   MeterMotion,
   MeterPartMotion,
 } from "./meterTypes";
-
+ 
 export {
   MeterError,
   MeterHeader,
@@ -31,12 +32,12 @@ export {
   MeterTrack,
   MeterValue,
 } from "./meterParts";
-
+ 
 export {
   useMeterFieldContext,
   useOptionalMeterFieldContext,
 } from "./meterContext";
-
+ 
 export function MeterRoot({
   children,
   className,
@@ -79,7 +80,7 @@ export function MeterRoot({
     color,
     formatValue,
   });
-
+ 
   const body = state.isCompound ? (
     children
   ) : (
@@ -92,7 +93,7 @@ export function MeterRoot({
       trackProps={{ ...state.trackProps, motionController, motionState, motionPayload, playInitialState }}
     />
   );
-
+ 
   return (
     <MeterFieldProvider value={state.fieldCtx}>
       <MeterClassNamesProvider classNames={classNames}>
@@ -112,6 +113,7 @@ export function MeterRoot({
                 className,
               })}
               {...divRest}
+              {...dataVariantProps({ size: size ?? "base" })}
             >
               {body}
             </Field>
@@ -121,5 +123,6 @@ export function MeterRoot({
     </MeterFieldProvider>
   );
 }
-
+ 
 MeterRoot.displayName = "Meter";
+ 

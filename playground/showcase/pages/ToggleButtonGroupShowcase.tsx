@@ -2,8 +2,6 @@ import { ToggleButtonGroupClassNamesFullDemo } from "../demos/toggleButtonGroup/
 import toggleButtonGroupClassNamesFullSource from "../demos/toggleButtonGroup/ToggleButtonGroupClassNamesFull.demo.tsx?raw";
 import { ToggleButtonGroupEditorBarDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupEditorBar.demo";
 import toggleButtonGroupEditorBarSource from "../demos/toggleButtonGroup/ToggleButtonGroupEditorBar.demo.tsx?raw";
-import { ToggleButtonGroupGlossDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupGloss.demo";
-import toggleButtonGroupGlossSource from "../demos/toggleButtonGroup/ToggleButtonGroupGloss.demo.tsx?raw";
 import { ToggleButtonGroupMultipleDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo";
 import toggleButtonGroupMultipleSource from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo.tsx?raw";
 import { ToggleButtonGroupSegmentedDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSegmented.demo";
@@ -49,12 +47,7 @@ export function ToggleButtonGroupShowcase() {
       >
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupSegmentedDemo} source={toggleButtonGroupSegmentedSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass switch group.">
-        <ShowcaseDemoFromFile Demo={ToggleButtonGroupGlossDemo} source={toggleButtonGroupGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="classNames" description="Slots root and separator via classNames.">
+<ShowcaseSection title="classNames" description="Slots root and separator via classNames.">
         <ShowcaseDemoFromFile
           Demo={ToggleButtonGroupClassNamesFullDemo}
           source={toggleButtonGroupClassNamesFullSource}
@@ -98,7 +91,7 @@ export function ToggleButtonGroupShowcase() {
             icon with <code>aria-hidden</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

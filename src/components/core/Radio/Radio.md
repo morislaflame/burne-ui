@@ -66,7 +66,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 |-------|------|
 | `Radio.Control` | Visually hidden input + track + indicator |
 | `Radio.Indicator` | `SelectionIndicator` с `dot` |
-| `Radio.Content` | Label column |
+| `Radio.Content` | Label column (`display: contents` — padding, border, background и width не рисуются) |
 | `Radio.Label` / `Hint` / `Error` | Текстовые слоты |
 
 `Radio.Indicator` compound: `.Fill`, `.Mark` (от `SelectionIndicator`).
@@ -225,7 +225,7 @@ function Nudge() {
   hint="Слот label в simple API."
   className="max-w-md"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     controlTrack: "border-primary/40",
     label: "text-info",
     labelText: "font-semibold underline decoration-info/30",
@@ -246,7 +246,7 @@ function Nudge() {
     root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-md",
     control: "ring-primary/30",
     controlTrack: "border-primary/50",
-    indicator: "rounded-mid",
+    indicator: "rounded-large",
     labelText: "text-primary font-semibold",
     hint: "text-foreground/80",
   }}
@@ -287,7 +287,9 @@ function Nudge() {
 - Native `<input type="radio">` — focus, arrow keys в группе
 - Имя из видимой подписи (обёртка `<label>` / `Radio.Label`); `aria-label` из `value` — только fallback без подписи
 - `aria-describedby` hint/error
+- `aria-required` на input, когда рисуется `*` (`required`)
 - `data-selected` на label при checked
+- Forced colors (Windows HCM): selected fill/dot через `Highlight` в `styles.css`
 
 ## Структура файлов
 

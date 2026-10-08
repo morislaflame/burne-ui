@@ -1,5 +1,5 @@
 import { useCallback, useRef, type ForwardedRef, type PointerEventHandler } from "react";
-
+ 
 import { animateInteractivePressSqueeze } from "./hoverInteractiveLift";
 import type { MotionConfig } from "./motionConfig";
 import { useMotionConfig } from "./motionConfigContext";
@@ -9,7 +9,7 @@ import {
   type MotionPartPhases,
   type MotionScopeValue,
 } from "./slotMotion";
-
+ 
 /** Defaults for overlay `trigger` — live on Root so Trigger (outside Panel) sees them. */
 export const OVERLAY_TRIGGER_MOTION_DEFAULTS = {
   trigger: {
@@ -17,7 +17,7 @@ export const OVERLAY_TRIGGER_MOTION_DEFAULTS = {
     pressOut: false as const,
   },
 };
-
+ 
 export async function playOverlayTriggerOpenSqueeze({
   scope,
   el,
@@ -41,7 +41,7 @@ export async function playOverlayTriggerOpenSqueeze({
   }
   await scope.play("trigger", "pressIn", { el, partMotion }).finished;
 }
-
+ 
 export function useOverlayTriggerSlot<T extends HTMLElement>({
   scope,
   slot = "trigger",
@@ -78,8 +78,9 @@ export function useOverlayTriggerSlot<T extends HTMLElement>({
   const openingRef = useOpeningRef();
   const config = useMotionConfig();
   const partMotionRef = useRef(motion);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   partMotionRef.current = motion;
-
+ 
   const openAfterSqueeze = useCallback(
     (setOpen: (open: boolean) => void) => {
       runOpenAfterSqueeze({
@@ -98,6 +99,7 @@ export function useOverlayTriggerSlot<T extends HTMLElement>({
     },
     [config, openingRef, part.targetRef, scope],
   );
-
+ 
   return { part, openingRef, openAfterSqueeze };
 }
+ 

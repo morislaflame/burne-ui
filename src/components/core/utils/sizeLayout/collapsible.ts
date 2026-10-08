@@ -1,10 +1,10 @@
 import type { TextVariant } from "@/components/core/Text";
-
+ 
 import type { ComponentSize } from "./componentSize";
 import { resolveComponentSize } from "./componentSize";
-
+ 
 export type CollapsibleSize = ComponentSize;
-
+ 
 /**
  * Shared size grid for collapsible surfaces:
  * Disclosure, Expandable (Accordion via Expandable).
@@ -24,7 +24,7 @@ export type CollapsibleSizeLayout = {
   titleClassName: string;
   descVariant: TextVariant;
 };
-
+ 
 export const COLLAPSIBLE_SIZE_LAYOUT: Record<
   CollapsibleSize,
   CollapsibleSizeLayout
@@ -58,13 +58,14 @@ export const COLLAPSIBLE_SIZE_LAYOUT: Record<
     descVariant: "base",
   },
 };
-
+ 
 export function resolveCollapsibleSize(size?: CollapsibleSize): CollapsibleSize {
   return resolveComponentSize(size);
 }
-
+ 
 export function collapsibleSizeLayout(
   size?: CollapsibleSize,
 ): CollapsibleSizeLayout {
   return COLLAPSIBLE_SIZE_LAYOUT[resolveCollapsibleSize(size)];
 }
+ 

@@ -47,7 +47,7 @@ export {
   TOUCH_OR_NARROW_VIEWPORT_MQL,
   TOUCH_OR_NARROW_VIEWPORT_MQL_ANY_POINTER,
 } from "./breakpoints";
-
+ 
 /** CSS variable names for type-safe access and generators */
 export const designTokenNames = [
   "--border-width",
@@ -123,7 +123,7 @@ export const designTokenNames = [
   "--color-surface-tint-success-hover",
   "--color-surface-tint-info-hover",
   "--color-surface-tint-warning-hover",
-
+ 
   "--font-family-sans",
   "--font-family-mono",
   "--letter-spacing",
@@ -252,16 +252,16 @@ export const designTokenNames = [
   "--toast-scrim-size",
   "--toast-scrim-density",
 ] as const;
-
+ 
 export type DesignCssVar = (typeof designTokenNames)[number];
-
+ 
 type ColorCssVarName = Extract<DesignCssVar, `--color-${string}`>;
-
+ 
 /** Suffix after `--color-` (same as theme key without the `color-` prefix) */
 export type ColorTokenSuffix = ColorCssVarName extends `--color-${infer S}`
   ? S
   : never;
-
+ 
 /**
  * Reference to a color token for `style` / ripple: without a literal `var(--...)`.
  * @example colorToken("converge-ripple-neutral") // → var(--color-converge-ripple-neutral)
@@ -269,3 +269,4 @@ export type ColorTokenSuffix = ColorCssVarName extends `--color-${infer S}`
 export function colorToken<S extends ColorTokenSuffix>(suffix: S): `var(--color-${S})` {
   return `var(--color-${suffix})` as `var(--color-${S})`;
 }
+ 

@@ -1,5 +1,5 @@
 import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipRoot, TooltipTitle, TooltipTrigger } from "./Tooltip";
-
+ 
 export const Tooltip = Object.assign(TooltipRoot, {
   Trigger: TooltipTrigger,
   Content: TooltipContent,
@@ -11,7 +11,7 @@ export const Tooltip = Object.assign(TooltipRoot, {
   Title: TooltipTitle,
   Description: TooltipDescription,
 });
-
+ 
 export type {
   TooltipVariant,
   TooltipSize,
@@ -31,3 +31,4 @@ export type {
   TooltipLifecycleMotion,
   TooltipPartMotion,
 } from "./tooltipTypes";
+ 

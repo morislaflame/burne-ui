@@ -66,7 +66,7 @@ function ZIndexScaleTable() {
         {[...burneZIndexScale].reverse().map((layer) => (
           <li
             key={layer}
-            className={`flex items-center justify-between gap-large rounded-mid border-token px-base py-small ${LAYER_SWATCH[layer]}`}
+            className={`flex items-center justify-between gap-large rounded-large border-token px-base py-small ${LAYER_SWATCH[layer]}`}
           >
             <div className="min-w-0">
               <p className="font-w-mid text-foreground">
@@ -91,11 +91,11 @@ function LayeredCardsDemo() {
       <p className="text-small text-muted">
         Overlapping siblings in one parent — z-index utilities decide paint order.
       </p>
-      <div className="relative h-72 w-full overflow-hidden rounded-mid border-token bg-surface">
+      <div className="relative h-72 w-full overflow-hidden rounded-large border-token bg-surface">
         {VISUAL_LAYERS.map((layer, index) => (
           <div
             key={layer}
-            className={`absolute flex w-[min(16rem,70%)] flex-col gap-xsmall rounded-mid border-2 p-base shadow-token-mid ${LAYER_SWATCH[layer]} ${LAYER_Z_CLASS[layer]}`}
+            className={`absolute flex w-[min(16rem,70%)] flex-col gap-xsmall rounded-large border-2 p-base shadow-token-mid ${LAYER_SWATCH[layer]} ${LAYER_Z_CLASS[layer]}`}
             style={{
               top: `${1.25 + index * 2.25}rem`,
               left: `${1.25 + index * 1.75}rem`,
@@ -155,7 +155,7 @@ function ContainedOverlayStackDemo() {
 
       <div
         ref={setHost}
-        className="relative h-[28rem] overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/50"
+        className="relative h-[28rem] overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/50"
       >
         <p className="absolute left-large top-large z-0 text-xsmall text-muted">
           Contained dialog host (show, not showModal)
@@ -309,7 +309,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Overlay stacking tokens (`--z-dialog` → `--z-tooltip`). z-index only orders siblings inside the same stacking context. Default Dialog `showModal()` uses the browser top layer — menus must share that context (e.g. contained `portalContainer` + `show()`) for the scale to apply.",
+          "Overlay stacking tokens (`--z-dialog` → `--z-tooltip`). z-index only orders siblings inside the same stacking context. Default Dialog `showModal()` uses the browser top layer — menus must share that context (e.g. contained `portalContainer` + `show()`) for the scale to apply. A contained host (not `document.body`) adds `--z-overlay-nested-step`; the published numbers stay.",
       },
     },
   },

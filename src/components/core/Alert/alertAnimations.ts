@@ -5,22 +5,25 @@
  * (not slots: `message`, `content` — `display: contents`)
  *
  * Host: root (`useAlertAnimations`) plays pointer `hoverIn` / `hoverOut`.
- * Defaults: `resolveAlertMotionDefaults` (hoverLift + variant → kit recipe).
+ * Defaults: `resolveAlertMotionDefaults` (hoverLift + second-level). A skin overlays its own recipes.
  */
 import { useCallback, useMemo, useRef } from "react";
 
-import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
+import {
+  mergeMotionPointerHandlers,
+  useMotionPointerPhases,
+  useOptionalEnterOnMount,
+} from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
+import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import { useAlertMotionScope } from "./alertContext";
 import { alertSurfaceClass } from "./alertStyles";
 import type { AlertMotion, AlertVariant, UseAlertAnimationsProps } from "./alertTypes";
-
-import "../utils/glossInteractive.css";
+import { KIT_ALERT_VARIANTS } from "./alertTypes";
 
 export function resolveAlertMotionDefaults({
   variant,
@@ -29,9 +32,13 @@ export function resolveAlertMotionDefaults({
   variant: AlertVariant;
   hoverLift: boolean;
 }): AlertMotion {
-  const recipe = variant === "gloss" ? "hoverLiftGloss" : "hoverLiftSecondLevel";
-  const rootPhase = hoverLift ? recipe : false;
-  return { root: { hoverIn: rootPhase, hoverOut: rootPhase } };
+  const rootPhase = hoverLift ? "hoverLiftSecondLevel" : false;
+  return overlaySkinMotion(
+    { root: { hoverIn: rootPhase, hoverOut: rootPhase } },
+    variant,
+    KIT_ALERT_VARIANTS,
+    "alert",
+  );
 }
 
 export function useAlertAnimations({
@@ -44,29 +51,26 @@ export function useAlertAnimations({
   onPointerOver: onPointerOverProp,
   onPointerOut: onPointerOutProp,
 }: UseAlertAnimationsProps) {
-  const isGloss = variant === "gloss";
   const rootRef = useRef<HTMLDivElement | null>(null);
   const scope = useAlertMotionScope();
   const rootMotionRef = useRef(motion?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
 
-  const glossEnabled = isGloss && (hoverLift || motion?.root != null);
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, glossEnabled),
-    [glossEnabled],
-  );
+  const hasHoverShadow = isKitVariant(variant, KIT_ALERT_VARIANTS) && hoverLift;
 
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
-      bindGlossRef(node);
       rootRef.current = node;
       scope.registerTarget("root", node);
       mergeForwardedRef(ref, node);
     },
-    [bindGlossRef, ref, scope],
+    [ref, scope],
   );
 
-  const secondLevelLift = useSecondLevelShadow(rootRef, !isGloss, {
+  useOptionalEnterOnMount(scope, "root", rootRef);
+
+  const secondLevelLift = useSecondLevelShadow(rootRef, hasHoverShadow, {
     shadowSize: shadow,
     interactive: false,
   });
@@ -87,12 +91,7 @@ export function useAlertAnimations({
     },
   });
 
-  const motionClass = isGloss
-    ? glossEnabled
-      ? GLOSS_INTERACTIVE_MOTION_CLASS
-      : ""
-    : secondLevelLift.motionClass;
-
+  const motionClass = hasHoverShadow ? secondLevelLift.motionClass : "";
   const surfaceClass = cn(alertSurfaceClass(variant, status), motionClass);
 
   const pointerHandlers = useMemo(

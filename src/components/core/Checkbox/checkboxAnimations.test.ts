@@ -23,18 +23,14 @@ describe("resolveCheckboxIndicatorMotion", () => {
         "check",
         undefined,
         mapped,
-        { fill: { check: "selectionFill", uncheck: "selectionFill" } },
-      ),
-    ).toBe(check);
+        { fill: { check: "selectionFill", uncheck: "selectionFill" } })).toBe(check);
     expect(
       resolveSlotPhase(
         "fill",
         "uncheck",
         undefined,
         mapped,
-        { fill: { check: "selectionFill", uncheck: "selectionFill" } },
-      ),
-    ).toBe(uncheck);
+        { fill: { check: "selectionFill", uncheck: "selectionFill" } })).toBe(uncheck);
   });
 
   it("forwards root events onto the SelectionIndicator map", () => {

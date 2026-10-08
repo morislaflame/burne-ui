@@ -7,7 +7,7 @@ export function TimeFieldClassNamesFullDemo() {
     <TimeField
       className="max-w-sm"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
         shellInner: "gap-xsmall",
         segmentGroup: "px-px",
@@ -18,7 +18,6 @@ export function TimeFieldClassNamesFullDemo() {
       }}
       label="Meeting time"
       defaultValue="09:30"
-      status="danger"
       hint="24-hour format"
       error="Please enter the correct time."
       segmentSeparator="·"
@@ -32,7 +31,7 @@ export function TimeFieldClassNamesCompoundDemo() {
     <TimeField
       className="max-w-sm"
       classNames={{
-        root: "rounded-mid border border-info/25 p-base",
+        root: "rounded-large border border-info/25 p-base",
         shell: "border-info/30 bg-info/5",
         segments: "text-info",
         segment: "font-medium",

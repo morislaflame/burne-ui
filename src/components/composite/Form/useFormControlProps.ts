@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useRef } from "react";
-
+ 
 import { mergeFormFieldRules, readControlValueFromEvent } from "./formAPI";
 import { formFieldAriaInvalid } from "./formA11y";
 import { useOptionalFormBindingContext } from "./formContext";
 import type { UseFormControlPropsOptions } from "./formTypes";
-
+ 
 export function useFormControlProps({
   name,
   value: valueProp,
@@ -18,7 +18,7 @@ export function useFormControlProps({
   const form = useOptionalFormBindingContext();
   const explicitValue = valueProp !== undefined;
   const bound = form != null && name != null && !explicitValue;
-
+ 
   const ref = useRef<HTMLElement | null>(null);
   const setRef = useCallback(
     (node: HTMLElement | null) => {
@@ -27,7 +27,7 @@ export function useFormControlProps({
     },
     [bound, form, name],
   );
-
+ 
   const disabled = disabledProp ?? form?.disabled ?? false;
   const readOnly = readOnlyProp ?? form?.readOnly ?? false;
   const formError = bound && name ? form.getError(name) : undefined;
@@ -35,7 +35,7 @@ export function useFormControlProps({
     () => mergeFormFieldRules(name ? form?.getFieldRules(name) : undefined, rulesProp),
     [form, name, rulesProp],
   );
-
+ 
   const rawValue = bound && name ? form.getValue(name) : valueProp;
   const onChange = useCallback(
     (event: unknown) => {
@@ -48,7 +48,7 @@ export function useFormControlProps({
     },
     [bound, form, name, onChangeProp, type],
   );
-
+ 
   const onBlur = useCallback(
     (event: unknown) => {
       onBlurProp?.(event);
@@ -60,7 +60,7 @@ export function useFormControlProps({
     },
     [bound, form, name, onBlurProp],
   );
-
+ 
   // Form-bound fields must stay controlled from the first render.
   // `getValue` is undefined until the field is written — coerce to "" (same as Select/ComboBox).
   return {
@@ -83,7 +83,8 @@ export function useFormControlProps({
     rules,
   };
 }
-
+ 
 export function useFormField(name: string, rules?: UseFormControlPropsOptions["rules"]) {
   return useFormControlProps({ name, rules });
 }
+ 

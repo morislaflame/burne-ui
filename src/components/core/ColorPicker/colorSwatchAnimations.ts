@@ -7,7 +7,7 @@
  * Host: `useColorSwatchAnimations` — first-level lift with hover shadow + squeeze.
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
-
+ 
 import {
   initElementShadow,
   isInteractivePressKey,
@@ -17,10 +17,10 @@ import {
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
-
+ 
 import { useColorSwatchMotionScope } from "./colorSwatchContext";
 import type { ColorSwatchMotion, UseColorSwatchAnimationsProps } from "./colorSwatchTypes";
-
+ 
 export function resolveColorSwatchMotionDefaults({
   disabled,
 }: {
@@ -36,7 +36,7 @@ export function resolveColorSwatchMotionDefaults({
     },
   };
 }
-
+ 
 export function resolveColorSwatchMotionParams({
   disabled,
   pointerInside,
@@ -47,10 +47,9 @@ export function resolveColorSwatchMotionParams({
   return {
     pointerInside,
     hasHoverShadow: !disabled,
-    isGloss: false,
   };
 }
-
+ 
 export function useColorSwatchAnimations({
   disabled,
   forwardedRef,
@@ -68,8 +67,9 @@ export function useColorSwatchAnimations({
   const btnRef = useRef<HTMLButtonElement>(null);
   const scope = useColorSwatchMotionScope();
   const rootMotionRef = useRef(motion?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
-
+ 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
       btnRef.current = node;
@@ -78,14 +78,14 @@ export function useColorSwatchAnimations({
     },
     [forwardedRef, scope],
   );
-
+ 
   const btnShadow = useMemo(() => (enabled ? shadowMotionFor("none") : undefined), [enabled]);
-
+ 
   useLayoutEffect(() => {
     if (!enabled || !btnShadow) return;
     initElementShadow(btnRef.current, shadowNone());
   }, [btnShadow, enabled]);
-
+ 
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       if (!enabled) return;
@@ -97,7 +97,7 @@ export function useColorSwatchAnimations({
     },
     [enabled, scope],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLButtonElement>({
     enabled,
     targetRef: btnRef,
@@ -106,7 +106,7 @@ export function useColorSwatchAnimations({
     onHoverIn: () => playRoot("hoverIn"),
     onHoverOut: () => playRoot("hoverOut"),
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -117,7 +117,7 @@ export function useColorSwatchAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOut, onPointerOver],
   );
-
+ 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDown?.(e);
@@ -126,7 +126,7 @@ export function useColorSwatchAnimations({
     },
     [enabled, onPointerDown, playRoot],
   );
-
+ 
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerUp?.(e);
@@ -135,21 +135,21 @@ export function useColorSwatchAnimations({
     },
     [enabled, onPointerUp, playRoot],
   );
-
+ 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnter?.(e);
     },
     [onPointerEnter],
   );
-
+ 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
     },
     [onPointerLeave],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
@@ -158,7 +158,7 @@ export function useColorSwatchAnimations({
     },
     [enabled, onKeyDown, playRoot],
   );
-
+ 
   return {
     setRefs,
     handlePointerEnter,
@@ -169,3 +169,4 @@ export function useColorSwatchAnimations({
     pointerHandlers: hoverHandlers,
   };
 }
+ 

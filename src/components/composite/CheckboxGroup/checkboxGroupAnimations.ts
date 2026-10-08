@@ -9,23 +9,23 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalCheckboxGroupMotionScope } from "./checkboxGroupContext";
 import type { CheckboxGroupMotion, CheckboxGroupPartMotion } from "./checkboxGroupTypes";
-
+ 
 export type CheckboxGroupMotionSlot = keyof CheckboxGroupMotion;
-
+ 
 export function resolveCheckboxGroupMotionDefaults(): CheckboxGroupMotion {
   return {};
 }
-
+ 
 function useCheckboxGroupPartMotion<T extends HTMLElement>(
   slot: CheckboxGroupMotionSlot,
   {
@@ -61,7 +61,7 @@ function useCheckboxGroupPartMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useCheckboxGroupRootMotion({
   motion,
   forwardedRef,
@@ -94,7 +94,7 @@ export function useCheckboxGroupRootMotion({
   });
   return part;
 }
-
+ 
 export function useCheckboxGroupSlotMotion<T extends HTMLElement>(
   slot: Exclude<CheckboxGroupMotionSlot, "root">,
   options?: {
@@ -108,3 +108,4 @@ export function useCheckboxGroupSlotMotion<T extends HTMLElement>(
 ) {
   return useCheckboxGroupPartMotion<T>(slot, options);
 }
+ 

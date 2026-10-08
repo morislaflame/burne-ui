@@ -1,6 +1,6 @@
 import { TextArea } from "@/components/core/TextArea";
 
-const VARIANTS = ["default", "outline", "secondary", "gloss"] as const;
+const VARIANTS = ["default", "outline", "secondary"] as const;
 
 export function TextAreaVariantsDemo() {
   return (

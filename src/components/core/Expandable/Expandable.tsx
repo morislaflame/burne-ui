@@ -1,16 +1,18 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "react";
 
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
-import "../utils/glossInteractive.css";
-
-import { ExpandableClassNamesProvider, ExpandableMotionProvider, ExpandableProvider } from "./expandableContext";
-import { EXPANDABLE_MOTION_DEFAULTS } from "./expandableAnimations";
-import { EXPANDABLE_GLOSS_CONTENT_CLASS, ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableSimpleBody, ExpandableTitle, ExpandableTrigger } from "./expandableParts";
-import { expandableRootClass } from "./expandableStyles";
-import type { ExpandableProps } from "./expandableTypes";
-import { useExpandableRootState } from "./useExpandableRootState";
-
+import { dataExpandedState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
+import { useFirstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+
+import { ExpandableClassNamesProvider, ExpandableMotionProvider, ExpandableProvider, useExpandable, useExpandableMotionScope } from "./expandableContext";
+import { resolveExpandableMotionDefaults } from "./expandableAnimations";
+import { ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableSimpleBody, ExpandableTitle, ExpandableTrigger } from "./expandableParts";
+import { expandableRootClass } from "./expandableStyles";
+import { KIT_EXPANDABLE_VARIANTS, type ExpandableProps } from "./expandableTypes";
+import { useExpandableRootState } from "./useExpandableRootState";
 
 export type {
   ExpandableProps,
@@ -40,7 +42,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
       title,
       description,
       icon,
-      variant = "default",
+      variant,
       size = "base",
       defaultOpen = false,
       open: openProp,
@@ -68,7 +70,12 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
       variant,
     });
 
-    const setRootRef = useMergedGlossPanelRef(ref, state.isGloss);
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveExpandableMotionDefaults(state.contextValue.variant);
+    }, [skinRevision, state.contextValue.variant]);
+    const surfaceStyle = useSkinSurfaceStyle(state.contextValue.variant);
 
     const body = state.isCompound ? (
       children
@@ -84,32 +91,22 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
     return (
       <ExpandableProvider value={state.contextValue}>
         <ExpandableClassNamesProvider classNames={classNames}>
-          <ExpandableMotionProvider motion={motion} defaults={EXPANDABLE_MOTION_DEFAULTS} controller={motionController}
+          <ExpandableMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
-          <div
-            ref={setRootRef}
+          <ExpandableRootSurface
+            forwardedRef={ref}
             className={expandableRootClass({
-              variant,
+              variant: state.contextValue.variant,
               className,
               slotClass: classNames?.root,
             })}
-            {...rest}
+            rest={rest}
+            style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
           >
-            {state.isGloss ? (
-              <div
-                className={cn(
-                  EXPANDABLE_GLOSS_CONTENT_CLASS,
-                  classNames?.glossContent,
-                )}
-              >
-                {body}
-              </div>
-            ) : (
-              body
-            )}
-          </div>
+            {body}
+          </ExpandableRootSurface>
           </ExpandableMotionProvider>
         </ExpandableClassNamesProvider>
       </ExpandableProvider>
@@ -118,6 +115,54 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
 );
 
 ExpandableRoot.displayName = "ExpandableRoot";
+
+function ExpandableRootSurface({
+  forwardedRef,
+  className,
+  rest,
+  style,
+  children,
+}: {
+  forwardedRef: ForwardedRef<HTMLDivElement>;
+  className: string;
+  rest: HTMLAttributes<HTMLDivElement>;
+  style: HTMLAttributes<HTMLDivElement>["style"];
+  children: ExpandableProps["children"];
+}) {
+  const { onPointerOver, onPointerOut, ...domRest } = rest;
+  const scope = useExpandableMotionScope();
+  const part = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "root",
+    forwardedRef,
+  });
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
+  const { open, size, variant } = useExpandable();
+  const shadow = useFirstLevelHoverShadow(
+    part.targetRef,
+    isKitVariant(variant, KIT_EXPANDABLE_VARIANTS),
+  );
+  return (
+    <div
+      ref={part.setRef}
+      className={cn(className, shadow.motionClass)}
+      {...domRest}
+      onPointerOver={(event) => {
+        onPointerOver?.(event);
+        shadow.onPointerOver(event);
+      }}
+      onPointerOut={(event) => {
+        onPointerOut?.(event);
+        shadow.onPointerOut(event);
+      }}
+      style={style}
+      {...dataVariantProps({ size, variant })}
+      data-state={dataExpandedState(open)}
+    >
+      {children}
+    </div>
+  );
+}
 
 export {
   ExpandableTrigger,

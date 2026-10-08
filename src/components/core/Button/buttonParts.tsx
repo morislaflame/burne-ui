@@ -1,11 +1,11 @@
 import { forwardRef } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
-
+ 
 import { useButtonClassNames, useOptionalButtonContext, useOptionalButtonMotionScope } from "./buttonContext";
 import { buttonContentClass, buttonErrorLayerClass, buttonIconClass, buttonIconSvgClass, buttonLabelClass, buttonLoaderLayerClass, buttonSpinnerClass, buttonSpinnerInnerClass, buttonSuccessLayerClass, buttonTextClass, BUTTON_SIZE_TEXT_VARIANT, BUTTON_SPINNER_MOTION_CLASS } from "./buttonStyles";
 import type {
@@ -20,7 +20,7 @@ import type {
   ButtonSuccessProps,
   ButtonTextProps,
 } from "./buttonTypes";
-
+ 
 export function ButtonSpinner({ className }: ButtonSpinnerProps) {
   return (
     <span
@@ -29,7 +29,7 @@ export function ButtonSpinner({ className }: ButtonSpinnerProps) {
     />
   );
 }
-
+ 
 export function ButtonIconCheck({ className }: ButtonIconCheckProps) {
   return (
     <svg
@@ -46,7 +46,7 @@ export function ButtonIconCheck({ className }: ButtonIconCheckProps) {
     </svg>
   );
 }
-
+ 
 export function ButtonIconCross({ className }: ButtonIconCrossProps) {
   return (
     <svg
@@ -63,19 +63,19 @@ export function ButtonIconCross({ className }: ButtonIconCrossProps) {
     </svg>
   );
 }
-
+ 
 export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
   function ButtonContent({ className = "", children, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
     const scope = useOptionalButtonMotionScope();
-
+ 
     const setRef = (node: HTMLSpanElement | null) => {
       if (ref != null) mergeForwardedRef(ref, node);
       else if (ctx?.contentMotionRef) ctx.contentMotionRef.current = node;
       if (ctx?.groupSegment) scope?.registerTarget("root", node);
     };
-
+ 
     return (
       <span
         ref={setRef}
@@ -91,9 +91,9 @@ export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
     );
   },
 );
-
+ 
 ButtonContent.displayName = "ButtonContent";
-
+ 
 export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
   function ButtonLabel(
     { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
@@ -108,7 +108,7 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <span
         ref={setRef}
@@ -124,9 +124,9 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
     );
   },
 );
-
+ 
 ButtonLabel.displayName = "ButtonLabel";
-
+ 
 export function ButtonIcon({
   className = "",
   children,
@@ -145,7 +145,7 @@ export function ButtonIcon({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <span
       ref={setRef}
@@ -158,9 +158,9 @@ export function ButtonIcon({
     </span>
   );
 }
-
+ 
 ButtonIcon.displayName = "ButtonIcon";
-
+ 
 export function ButtonText({
   className = "",
   children,
@@ -179,7 +179,7 @@ export function ButtonText({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <Text
       ref={setRef}
@@ -194,9 +194,9 @@ export function ButtonText({
     </Text>
   );
 }
-
+ 
 ButtonText.displayName = "ButtonText";
-
+ 
 export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
   function ButtonLoader({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
@@ -209,7 +209,7 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <span
         ref={setRef}
@@ -227,9 +227,9 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
     );
   },
 );
-
+ 
 ButtonLoader.displayName = "ButtonLoader";
-
+ 
 export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
   function ButtonSuccess({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
@@ -242,7 +242,7 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <span
         ref={setRef}
@@ -255,9 +255,9 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
     );
   },
 );
-
+ 
 ButtonSuccess.displayName = "ButtonSuccess";
-
+ 
 export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
   function ButtonError({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
@@ -270,7 +270,7 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <span
         ref={setRef}
@@ -283,5 +283,6 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
     );
   },
 );
-
+ 
 ButtonError.displayName = "ButtonError";
+ 

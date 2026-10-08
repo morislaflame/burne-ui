@@ -416,7 +416,7 @@ export const CustomClassNames: Story = {
       variant="outline"
       defaultOpen
       classNames={{
-        trigger: "border border-primary/30 rounded-mid",
+        trigger: "border border-primary/30 rounded-large",
         title: "text-primary font-semibold",
         contentPanel: "border border-primary/20 bg-primary/5",
       }}

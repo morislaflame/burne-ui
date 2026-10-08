@@ -1,18 +1,18 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   SelectClassNames,
   SelectClassNamesProviderProps,
   SelectContextValue,
   SelectFieldContextValue,
 } from "./selectTypes";
-
+ 
 const SelectContext = createContext<SelectContextValue | null>(null);
 const SelectFieldContext = createContext<SelectFieldContextValue | null>(null);
 const SelectClassNamesContext = createContext<SelectClassNames>({});
-
+ 
 export function SelectProvider({
   value,
   children,
@@ -24,13 +24,13 @@ export function SelectProvider({
     <SelectContext.Provider value={value}>{children}</SelectContext.Provider>
   );
 }
-
+ 
 export function useSelectContext(): SelectContextValue {
   const ctx = useContext(SelectContext);
   if (!ctx) throw new Error("Select.* must be inside <Select>.");
   return ctx;
 }
-
+ 
 export function SelectFieldProvider({
   value,
   children,
@@ -42,13 +42,13 @@ export function SelectFieldProvider({
     <SelectFieldContext.Provider value={value}>{children}</SelectFieldContext.Provider>
   );
 }
-
+ 
 export function useSelectFieldContext(): SelectFieldContextValue {
   const ctx = useContext(SelectFieldContext);
   if (!ctx) throw new Error("Select compound-parts must be inside <Select>.");
   return ctx;
 }
-
+ 
 export function SelectClassNamesProvider({
   classNames,
   children,
@@ -58,21 +58,22 @@ export function SelectClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <SelectClassNamesContext.Provider value={merged}>
       {children}
     </SelectClassNamesContext.Provider>
   );
 }
-
+ 
 export function useSelectClassNames(): SelectClassNames {
   return useContext(SelectClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `selectAnimations.ts`. */
 export const {
   MotionScopeProvider: SelectMotionProvider,
   useMotionScope: useSelectMotionScope,
   useOptionalMotionScope: useOptionalSelectMotionScope,
 } = createMotionScope("Select");
+ 

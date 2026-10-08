@@ -1,5 +1,5 @@
 import { Children, isValidElement, type ReactNode } from "react";
-
+ 
 export type OptionListItemParts = {
   indicator: ReactNode | null;
   label: ReactNode | null;
@@ -7,22 +7,22 @@ export type OptionListItemParts = {
   icon: ReactNode | null;
   rest: ReactNode[];
 };
-
+ 
 const INDICATOR_NAMES = new Set([
   "ListBoxItemIndicator",
   "DropdownItemIndicator",
 ]);
-
+ 
 const LABEL_NAMES = new Set(["ListBoxLabel", "DropdownItemLabel", "Dropdown.ItemLabel"]);
-
+ 
 const HINT_NAMES = new Set(["ListBoxHint", "DropdownItemHint", "Dropdown.ItemHint"]);
-
+ 
 const ICON_NAMES = new Set(["ListBoxIcon", "DropdownItemIcon", "Dropdown.ItemIcon"]);
-
+ 
 function partDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;
 }
-
+ 
 /** Parses list item compound children into label / hint / icon / indicator slots. */
 export function partitionOptionListItemChildren(children: ReactNode): OptionListItemParts {
   let indicator: ReactNode | null = null;
@@ -30,7 +30,7 @@ export function partitionOptionListItemChildren(children: ReactNode): OptionList
   let hint: ReactNode | null = null;
   let icon: ReactNode | null = null;
   const rest: ReactNode[] = [];
-
+ 
   for (const child of Children.toArray(children)) {
     if (!isValidElement(child)) {
       rest.push(child);
@@ -55,6 +55,7 @@ export function partitionOptionListItemChildren(children: ReactNode): OptionList
     }
     rest.push(child);
   }
-
+ 
   return { indicator, label, hint, icon, rest };
 }
+ 

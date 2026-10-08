@@ -1,7 +1,5 @@
 import { KbdClassNamesFullDemo } from "../demos/kbd/KbdClassNamesFull.demo";
 import kbdClassNamesFullSource from "../demos/kbd/KbdClassNamesFull.demo.tsx?raw";
-import { KbdGlossDemo } from "../demos/kbd/KbdGloss.demo";
-import kbdGlossSource from "../demos/kbd/KbdGloss.demo.tsx?raw";
 import { KbdVariantsDemo } from "../demos/kbd/KbdVariants.demo";
 import kbdVariantsSource from "../demos/kbd/KbdVariants.demo.tsx?raw";
 import { KbdSizesDemo } from "../demos/kbd/KbdSizes.demo";
@@ -25,16 +23,12 @@ export function KbdShowcase() {
       importPath='import { Kbd } from "@/components/core/Kbd";'
       tags={["core", "typography"]}
     >
-      <ShowcaseSection title="Options" description="default, primary, secondary, outline, gloss.">
+      <ShowcaseSection title="Options" description="default, primary, secondary, outline.">
         <ShowcaseDemoFromFile Demo={KbdVariantsDemo} source={kbdVariantsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={KbdSizesDemo} source={kbdSizesSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description='variant="gloss" — glass key with hover-lift.'>
-        <ShowcaseDemoFromFile Demo={KbdGlossDemo} source={kbdGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="One gallery: instant hover, root tilt, text pop, key bounce, Group enter.">
@@ -77,7 +71,7 @@ export function KbdShowcase() {
             <code>null</code> hides).
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss='variant="gloss"' />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

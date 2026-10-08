@@ -1,9 +1,9 @@
 import type { MouseEvent, ReactNode } from "react";
-import { IoClose, IoEye, IoEyeOff, IoFolderOpen } from "react-icons/io5";
-
+import { KitClose, KitEye, KitEyeOff, KitFolderOpen } from "@/components/core/utils/kitIcons";
+ 
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabel, useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import {
   inputFileRemoveAriaLabel,
   inputPasswordHideAriaLabel,
@@ -23,9 +23,9 @@ import {
   inputPasswordToggleButtonClass,
 } from "./inputStyles";
 import type { InputSize, InputStatus } from "./inputTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function AffixSlot({
   side,
   status,
@@ -43,7 +43,7 @@ export function AffixSlot({
     slot: side,
     pointerPhases: true,
   });
-
+ 
   return (
     <span
       ref={setRef}
@@ -59,7 +59,7 @@ export function AffixSlot({
     </span>
   );
 }
-
+ 
 export function PasswordVisibilityAffix({
   status,
   controlSize,
@@ -82,7 +82,7 @@ export function PasswordVisibilityAffix({
     pointerPhases: true,
     onPointerDown: (e) => e.stopPropagation(),
   });
-
+ 
   return (
     <span
       className={cn(
@@ -113,18 +113,18 @@ export function PasswordVisibilityAffix({
         {...pointerHandlers}
       >
         {visible ? (
-          <IoEyeOff className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
+          <KitEyeOff className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
         ) : (
-          <IoEye className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
+          <KitEye className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
         )}
       </button>
     </span>
   );
 }
-
+ 
 export function FileGlyph({ className }: { className?: string }) {
   const slotClassNames = useInputClassNames();
-
+ 
   return (
     <span
       className={cn(
@@ -134,11 +134,11 @@ export function FileGlyph({ className }: { className?: string }) {
       )}
       aria-hidden
     >
-      <IoFolderOpen className={INPUT_FILE_GLYPH_ICON_CLASS} aria-hidden />
+      <KitFolderOpen className={INPUT_FILE_GLYPH_ICON_CLASS} aria-hidden />
     </span>
   );
 }
-
+ 
 export function FileRemoveButton({
   disabled,
   onRemove,
@@ -154,7 +154,7 @@ export function FileRemoveButton({
     pointerPhases: true,
     onPointerDown: (e) => e.stopPropagation(),
   });
-
+ 
   return (
     <button
       ref={setRef}
@@ -173,11 +173,11 @@ export function FileRemoveButton({
       })}
       {...pointerHandlers}
     >
-      <IoClose className={INPUT_FILE_REMOVE_ICON_CLASS} aria-hidden />
+      <KitClose className={INPUT_FILE_REMOVE_ICON_CLASS} aria-hidden />
     </button>
   );
 }
-
+ 
 export function InputFileRow({
   className,
   children,
@@ -190,11 +190,12 @@ export function InputFileRow({
     slot: "fileRow",
     pointerPhases: true,
   });
-
+ 
   return (
     <div ref={setRef} data-file-row="" className={className} {...pointerHandlers}>
       {children}
     </div>
   );
 }
-
+ 
+ 

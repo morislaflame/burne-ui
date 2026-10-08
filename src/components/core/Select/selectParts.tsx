@@ -1,18 +1,18 @@
 import { forwardRef, useCallback } from "react";
-
+ 
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import type { MotionController, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import { useSelectClassNames, useSelectContext } from "./selectContext";
 import { SelectError, SelectHint, SelectLabel } from "./selectFieldParts";
 import { SELECT_LISTBOX_CLASS, SELECT_POPOVER_BODY_CLASS, SELECT_POPOVER_CLASS } from "./selectStyles";
 import { SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectTriggerParts";
 import type { SelectPopoverProps } from "./selectTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
   function SelectPopover(
     {
@@ -36,33 +36,44 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
       labelConnected,
       placeholder,
       menuMaxHeight,
+      virtualized,
+      virtualItemSize,
       options,
       optionValues,
+      multiple,
       value,
       setValue,
+      values,
+      setValues,
       activeValue,
       setActiveValue,
       variant,
       size,
     } = useSelectContext();
-
+ 
     const {
       className: listBoxClassName,
       classNames: listBoxSlotClassNames,
       style: listBoxStyle,
       size: listBoxSize,
+      virtualized: listVirtualized,
+      virtualItemSize: listItemSize,
       ...listBoxRest
     } = listBoxProps ?? {};
-
+ 
     const handleValueChange = useCallback(
       (next: string | string[]) => {
+        if (multiple) {
+          setValues(Array.isArray(next) ? next : next ? [next] : []);
+          return;
+        }
         const v = Array.isArray(next) ? (next[0] ?? "") : next;
         setValue(v);
         setOpen(false);
       },
-      [setOpen, setValue],
+      [multiple, setOpen, setValue, setValues],
     );
-
+ 
     const listContent =
       children ??
       (optionValues.length === 0 ? (
@@ -83,14 +94,14 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
           );
         })
       ));
-
+ 
     return (
       <Popover
         open={open}
         onOpenChange={setOpen}
         side={side}
         anchorRef={anchorRef}
-        variant={variant === "gloss" ? "gloss" : "default"}
+        variant={variant}
       >
         <Popover.Content
           ref={ref}
@@ -114,7 +125,8 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
               listId={listId}
               aria-labelledby={labelConnected ? labelId : undefined}
               aria-label={labelConnected ? undefined : placeholder}
-              value={value}
+              multiple={multiple}
+              value={multiple ? values : value}
               onValueChange={handleValueChange}
               activeValue={activeValue}
               onActiveValueChange={setActiveValue}
@@ -133,6 +145,8 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
                 slotClassNames.listBox,
                 listBoxClassName,
               )}
+              virtualized={virtualized || listVirtualized}
+              virtualItemSize={virtualItemSize ?? listItemSize}
               style={{ maxHeight: menuMaxHeight, ...listBoxStyle }}
             >
               {listContent}
@@ -143,10 +157,10 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
     );
   },
 );
-
+ 
 SelectPopover.displayName = "SelectPopover";
-
-
+ 
+ 
 export function SelectSimpleBody({
   label,
   hint,
@@ -164,7 +178,7 @@ export function SelectSimpleBody({
   motionController?: MotionController;
 } & MotionStateHostProps) {
   const slotClassNames = useSelectClassNames();
-
+ 
   return (
     <>
       {label != null ? (
@@ -185,6 +199,7 @@ export function SelectSimpleBody({
     </>
   );
 }
-
+ 
 export { SelectError, SelectHint, SelectLabel } from "./selectFieldParts";
 export { SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectTriggerParts";
+ 

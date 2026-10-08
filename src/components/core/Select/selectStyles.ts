@@ -3,57 +3,61 @@ import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHover
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import { KIT_INPUT_VARIANTS } from "@/components/core/Input/inputTypes";
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
-
+ 
 export const SELECT_VALUE_CONTROL: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.controlPad,
   base: CONTROL_SIZE_LAYOUT.base.controlPad,
   mid: CONTROL_SIZE_LAYOUT.mid.controlPad,
   large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
-
+ 
 export const SELECT_CHEVRON_ICON: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.chevronIcon,
   base: CONTROL_SIZE_LAYOUT.base.chevronIcon,
   mid: CONTROL_SIZE_LAYOUT.mid.chevronIcon,
   large: CONTROL_SIZE_LAYOUT.large.chevronIcon,
 };
-
+ 
 export const SELECT_TRIGGER_GROUP_BASE_CLASS =
-  "relative z-0 flex min-w-0 items-stretch border-1 text-left overflow-hidden motion-reduce:transition-none";
-
+  "relative z-0 flex min-w-0 items-stretch border-1 text-start overflow-hidden motion-reduce:transition-none";
+ 
 export const SELECT_VALUE_BASE_CLASS =
-  "min-w-0 flex-1 truncate bg-transparent text-left text-foreground outline-none";
-
+  "min-w-0 flex-1 truncate bg-transparent text-start text-foreground outline-none";
+ 
 export const SELECT_VALUE_MUTED_CLASS = "text-muted";
-
+ 
 export const SELECT_TRIGGER_BASE_CLASS =
   "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset";
-
+ 
 export const SELECT_TRIGGER_DISABLED_CLASS = "pointer-events-none";
-
+ 
 /** Same band as Popover; above Dialog when sharing a stacking context (not `showModal` top layer). */
 export const SELECT_POPOVER_CLASS = "z-popover";
-
+ 
 export const SELECT_POPOVER_BODY_CLASS = "gap-0 p-base";
-
+ 
 export const SELECT_LISTBOX_CLASS = "overflow-y-auto overflow-x-hidden";
-
+ 
 export const SELECT_TRIGGER_GROUP_DISABLED_CLASS =
   "cursor-not-allowed opacity-55 shadow-token-base";
-
+ 
 export const SELECT_TRIGGER_GROUP_ENABLED_CLASS = "cursor-pointer";
-
+ 
 export function selectShellSurface({
   variant,
 }: {
   variant: InputVariant;
   status?: InputStatus;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "select.triggerGroup");
+  if (visual.className !== undefined) return visual.className;
   return resolveFieldShellSurfaceClass({ variant });
 }
-
+ 
 export function selectGroupShellClass(groupSegment?: ButtonGroupSegment): string {
   if (groupSegment) {
     return cn(
@@ -63,7 +67,7 @@ export function selectGroupShellClass(groupSegment?: ButtonGroupSegment): string
   }
   return "rounded-base";
 }
-
+ 
 export function selectTriggerGroupClass({
   variant,
   status,
@@ -81,8 +85,8 @@ export function selectTriggerGroupClass({
   className?: string;
   slotClass?: string;
 }): string {
-  const isGloss = variant === "gloss";
-
+  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+ 
   return cn(
     SELECT_TRIGGER_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
@@ -90,7 +94,7 @@ export function selectTriggerGroupClass({
     selectShellSurface({ variant, status }),
     FIELD_SHELL_TRANSITION_CLASS,
     fieldShellFocusRingClass(status),
-    isGloss ? "" : fieldShellHoverClass(!disabled, status, variant),
+    kitSurface && fieldShellHoverClass(!disabled, status, variant),
     shellHoverMotionClass,
     disabled
       ? SELECT_TRIGGER_GROUP_DISABLED_CLASS
@@ -99,7 +103,7 @@ export function selectTriggerGroupClass({
     className,
   );
 }
-
+ 
 export function selectValueClass({
   size,
   muted,
@@ -119,7 +123,7 @@ export function selectValueClass({
     className,
   );
 }
-
+ 
 export function selectTriggerClass({
   disabled,
   className,
@@ -136,3 +140,4 @@ export function selectTriggerClass({
     className,
   );
 }
+ 

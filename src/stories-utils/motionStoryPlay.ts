@@ -1,12 +1,12 @@
 import { expect, screen, waitFor } from "storybook/test";
-
+ 
 type Canvas = {
   getByRole: (
     role: string,
     options?: { name?: string | RegExp },
   ) => HTMLElement;
 };
-
+ 
 type UserEvent = {
   click: (element: Element) => Promise<void>;
   hover: (element: Element) => Promise<void>;
@@ -14,7 +14,7 @@ type UserEvent = {
   keyboard: (text: string) => Promise<void>;
   tab: () => Promise<void>;
 };
-
+ 
 /** Open a modal/drawer from a button, then close it and wait for portal unmount. */
 export async function playOpenCloseUnmounts(options: {
   canvas: Canvas;
@@ -33,7 +33,7 @@ export async function playOpenCloseUnmounts(options: {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 }
-
+ 
 /**
  * Keyboard-open a `*.Trigger` host. Asserts focus moved into the panel and
  * the active element matches `:focus-visible` (kit ring contract).
@@ -57,3 +57,4 @@ export async function playKeyboardOpensDialog(options: {
   });
   expect(document.activeElement?.matches(":focus-visible")).toBe(true);
 }
+ 

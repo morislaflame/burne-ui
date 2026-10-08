@@ -24,7 +24,7 @@ function ValidatedTimeCompoundDemo({ initialValue = "25:00" }: { initialValue?: 
   const invalid = value.length > 0 && !isValidTime(value);
 
   return (
-    <TimeField status={invalid ? "danger" : "default"} required>
+    <TimeField required>
       <TimeField.Label>Shift start</TimeField.Label>
       <TimeField.Control
         value={value}
@@ -46,7 +46,6 @@ function ValidatedTimeSimpleDemo({ initialValue = "25:00" }: { initialValue?: st
       label="Shift start"
       hint="Format: HH:MM (24-hour)"
       error={invalid ? "Enter a valid time." : undefined}
-      status={invalid ? "danger" : "default"}
       required
       value={value}
       onValueChange={setValue}
@@ -77,7 +76,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Time input field. **Simple** — `label`, `hint`, `error`, `prefix`, `suffix`, and control props on root; **Compound** — `<TimeField.Label>` / `<TimeField.Control>` / `<TimeField.Hint>` / `<TimeField.Error>`. Variants: `default`, `outline`, `segmented`. `compact` prop — shell sized to the time width. **a11y:** `aria-describedby`, `aria-invalid` when `status=\"danger\"`, `role=\"spinbutton\"` on segments.",
+          "Time input field. **Simple** — `label`, `hint`, `error`, `prefix`, `suffix`, and control props on root; **Compound** — `<TimeField.Label>` / `<TimeField.Control>` / `<TimeField.Hint>` / `<TimeField.Error>`. Variants: `default`, `outline`, `segmented`. `compact` prop — shell sized to the time width. **a11y:** `aria-describedby`, `aria-invalid` on the group from `invalid` / `error`, `role=\"spinbutton\"` on segments.",
       },
     },
   },
@@ -238,7 +237,7 @@ export const Validation: Story = {
 export const Danger: Story = {
   name: "Danger",
   render: () => (
-    <TimeField status="danger">
+    <TimeField>
       <TimeField.Label>Time</TimeField.Label>
       <TimeField.Control defaultValue="25:00" />
       <TimeField.Error>Invalid time.</TimeField.Error>
@@ -299,7 +298,7 @@ export const VariantsComparison: Story = {
   name: "All variants",
   render: () => (
     <div className="flex flex-col gap-large">
-      {(["default", "outline", "segmented"] as const).map((variant) => (
+      {(["default", "outline", "secondary", "segmented"] as const).map((variant) => (
         <TimeField key={variant}>
           <TimeField.Label>{variant}</TimeField.Label>
           <TimeField.Control
@@ -333,7 +332,7 @@ export const CustomClassNames: Story = {
     <TimeField
       className="max-w-sm"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
         shellInner: "gap-xsmall",
         segmentGroup: "px-px",
@@ -344,7 +343,6 @@ export const CustomClassNames: Story = {
       }}
       label="Meeting time"
       defaultValue="09:30"
-      status="danger"
       hint="24-hour format"
       error="Enter a valid time."
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}

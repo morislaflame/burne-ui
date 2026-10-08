@@ -1,17 +1,14 @@
 import { forwardRef, useCallback, useMemo, type ForwardedRef } from "react";
 
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+import { TableBody, TableCaption, TableCell, TableColumn, TableContent, TableEmpty, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRow, TableScrollContainer } from "./tableParts";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
 
-import "@/components/core/utils/glossInteractive.css";
-
-import { TableBody, TableCell, TableColumn, TableContent, TableEmpty, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRow, TableScrollContainer } from "./tableParts";
 import { resolveTableMotionDefaults, useTableSlotMotion } from "./tableAnimations";
 import { TableClassNamesProvider, TableMotionProvider, TableVariantProvider } from "./tableContext";
-import { TABLE_GLOSS_CONTENT_CLASS, tableRootClass } from "./tableStyles";
+import { tableRootClass } from "./tableStyles";
 import type { TableProps } from "./tableTypes";
 import { useTableRootState } from "./useTableRootState";
-
-import { cn } from "@/utils/cn";
 
 export type {
   TableProps,
@@ -24,6 +21,7 @@ export type {
   TableColumnProps,
   TableColumnRenderProps,
   TableColumnSortIconRenderProps,
+  TableCaptionProps,
   TableLabelProps,
   TableBodyProps,
   TableEmptyProps,
@@ -42,11 +40,15 @@ export type {
 export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
 
 export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
-  { variant: variantProp = "default", className, classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
+  { variant: variantProp, className, classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
-  const { variant, isGloss } = useTableRootState({ variant: variantProp });
-  const motionDefaults = useMemo(() => resolveTableMotionDefaults(), []);
+  const { variant } = useTableRootState({ variant: variantProp });
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveTableMotionDefaults(variant);
+  }, [skinRevision, variant]);
 
   return (
     <TableVariantProvider variant={variant}>
@@ -57,10 +59,8 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
         playInitialState={playInitialState}>
           <TableRootSurface
             forwardedRef={ref}
-            isGloss={isGloss}
             variant={variant}
             slotClass={classNames?.root}
-            glossClass={classNames?.glossContent}
             className={className}
             rest={rest}
           >
@@ -74,19 +74,15 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
 
 function TableRootSurface({
   forwardedRef,
-  isGloss,
   variant,
   slotClass,
-  glossClass,
   className,
   rest,
   children,
 }: {
   forwardedRef: ForwardedRef<HTMLDivElement>;
-  isGloss: boolean;
   variant: ReturnType<typeof useTableRootState>["variant"];
   slotClass?: string;
-  glossClass?: string;
   className?: string;
   rest: Omit<TableProps, "variant" | "className" | "classNames" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
   children: TableProps["children"];
@@ -98,19 +94,20 @@ function TableRootSurface({
     onPointerUp,
     ...domRest
   } = rest;
-  const bindGlossRef = useMergedGlossPanelRef(forwardedRef, isGloss);
   const part = useTableSlotMotion<HTMLDivElement>("root", {
     onPointerOver,
     onPointerOut,
     onPointerDown,
     onPointerUp,
   });
+  const setSlotRef = part.setRef;
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
-      bindGlossRef(node);
-      part.setRef(node);
+      setSlotRef(node);
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
     },
-    [bindGlossRef, part.setRef],
+    [forwardedRef, setSlotRef],
   );
 
   return (
@@ -123,14 +120,9 @@ function TableRootSurface({
       })}
       {...domRest}
       {...part.pointerHandlers}
+      {...dataVariantProps({ variant })}
     >
-      {isGloss ? (
-        <div className={cn(TABLE_GLOSS_CONTENT_CLASS, glossClass)}>
-          {children}
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </div>
   );
 }
@@ -144,6 +136,7 @@ export {
   TableHeaderRow,
   TableColumn,
   TableLabel,
+  TableCaption,
   TableBody,
   TableEmpty,
   TableRow,

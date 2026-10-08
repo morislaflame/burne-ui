@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { IoCheckmark } from "react-icons/io5";
 
 import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { SelectionThumbMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/selectionThumb/motionController/gallery";
@@ -30,6 +31,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   render: () => <SelectionThumb />,
+};
+
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
+  render: () => (
+    <SelectionThumb size="mid" classNames={{ root: "ring-2 ring-primary/30" }}>
+      <SelectionThumb.Icon size="mid" classNames={{ root: "text-info", icon: "opacity-90" }}>
+        <IoCheckmark aria-hidden />
+      </SelectionThumb.Icon>
+    </SelectionThumb>
+  ),
 };
 
 export const SlotMotionGallery: Story = {

@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
-
+ 
 import {
   useOptionalToggleButtonContext,
   useOptionalToggleButtonMotionScope,
@@ -27,7 +27,7 @@ import type {
   ToggleButtonTextProps,
 } from "./toggleButtonTypes";
 import { SELECTION_FILL_DATA_ATTR } from "./useToggleButtonFillAnimation";
-
+ 
 export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProps>(
   function ToggleButtonFill({ className = "", motion, ...rest }, ref) {
     const ctx = useOptionalToggleButtonContext();
@@ -38,9 +38,9 @@ export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProp
       motion,
       forwardedRef: ref,
     });
-
+ 
     if (!ctx) return null;
-
+ 
     return (
       <span
         ref={mergeRefs(setRef, ctx.bindFillRef)}
@@ -59,9 +59,9 @@ export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProp
     );
   },
 );
-
+ 
 ToggleButtonFill.displayName = "ToggleButtonFill";
-
+ 
 export const ToggleButtonContent = forwardRef<HTMLSpanElement, ToggleButtonContentProps>(
   function ToggleButtonContent({ className = "", children, motion, ...rest }, ref) {
     const ctx = useOptionalToggleButtonContext();
@@ -73,13 +73,13 @@ export const ToggleButtonContent = forwardRef<HTMLSpanElement, ToggleButtonConte
       motion,
       forwardedRef: ref,
     });
-
+ 
     const bindRef = (node: HTMLSpanElement | null) => {
       setRef(node);
       if (ctx?.contentMotionRef) ctx.contentMotionRef.current = node;
       if (ctx?.groupSegment) scope?.registerTarget("root", node);
     };
-
+ 
     return (
       <span
         ref={bindRef}
@@ -95,9 +95,9 @@ export const ToggleButtonContent = forwardRef<HTMLSpanElement, ToggleButtonConte
     );
   },
 );
-
+ 
 ToggleButtonContent.displayName = "ToggleButtonContent";
-
+ 
 export const ToggleButtonLabel = forwardRef<HTMLSpanElement, ToggleButtonLabelProps>(
   function ToggleButtonLabel(
     { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
@@ -113,7 +113,7 @@ export const ToggleButtonLabel = forwardRef<HTMLSpanElement, ToggleButtonLabelPr
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <span
         ref={setRef}
@@ -129,9 +129,9 @@ export const ToggleButtonLabel = forwardRef<HTMLSpanElement, ToggleButtonLabelPr
     );
   },
 );
-
+ 
 ToggleButtonLabel.displayName = "ToggleButtonLabel";
-
+ 
 export function ToggleButtonIconStart({
   className = "",
   children,
@@ -151,7 +151,7 @@ export function ToggleButtonIconStart({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <span
       ref={setRef}
@@ -164,9 +164,9 @@ export function ToggleButtonIconStart({
     </span>
   );
 }
-
+ 
 ToggleButtonIconStart.displayName = "ToggleButtonIconStart";
-
+ 
 export function ToggleButtonIconEnd({
   className = "",
   children,
@@ -186,7 +186,7 @@ export function ToggleButtonIconEnd({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <span
       ref={setRef}
@@ -199,9 +199,9 @@ export function ToggleButtonIconEnd({
     </span>
   );
 }
-
+ 
 ToggleButtonIconEnd.displayName = "ToggleButtonIconEnd";
-
+ 
 export function ToggleButtonText({
   className = "",
   children,
@@ -221,7 +221,7 @@ export function ToggleButtonText({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <Text
       ref={setRef}
@@ -236,5 +236,6 @@ export function ToggleButtonText({
     </Text>
   );
 }
-
+ 
 ToggleButtonText.displayName = "ToggleButtonText";
+ 

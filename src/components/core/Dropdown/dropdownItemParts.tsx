@@ -5,8 +5,10 @@ import {
   type HTMLAttributes,
   type Ref,
 } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import { useSkinVariant } from "@/skins/skinContext";
 import { animateInteractivePressSqueeze, isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
@@ -14,7 +16,7 @@ import { OptionListItemContextProvider, useOptionListItemContext } from "@/compo
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { useOptionalPopoverMotionScope } from "@/components/core/Popover/popoverContext";
-
+ 
 import { useDropdownClassNames } from "./dropdownContext";
 import { dropdownItemRowClass, resolveDropdownItemIndicatorClassNames } from "./dropdownStyles";
 import type {
@@ -25,9 +27,9 @@ import type {
   DropdownItemProps,
 } from "./dropdownTypes";
 import { useDropdownItemState } from "./useDropdownItemState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function DropdownItemLabel({
   className,
   motion,
@@ -44,7 +46,7 @@ export function DropdownItemLabel({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <OptionListItemLabel
       ref={setRef}
@@ -54,9 +56,9 @@ export function DropdownItemLabel({
     />
   );
 }
-
+ 
 DropdownItemLabel.displayName = "DropdownItemLabel";
-
+ 
 export function DropdownItemHint({
   className,
   motion,
@@ -73,7 +75,7 @@ export function DropdownItemHint({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <OptionListItemHint
       ref={setRef}
@@ -83,9 +85,9 @@ export function DropdownItemHint({
     />
   );
 }
-
+ 
 DropdownItemHint.displayName = "DropdownItemHint";
-
+ 
 export function DropdownItemIcon({
   className,
   motion,
@@ -102,7 +104,7 @@ export function DropdownItemIcon({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <OptionListItemIcon
       ref={setRef}
@@ -112,11 +114,11 @@ export function DropdownItemIcon({
     />
   );
 }
-
+ 
 DropdownItemIcon.displayName = "DropdownItemIcon";
-
+ 
 export function DropdownItemIndicator({
-  variant = "default",
+  variant: variantProp,
   size = "small",
   check,
   children,
@@ -124,13 +126,14 @@ export function DropdownItemIndicator({
   classNames: classNamesProp,
   ...rest
 }: DropdownItemIndicatorProps) {
+  const variant = useSkinVariant(variantProp);
   const ctx = useOptionListItemContext("Dropdown.ItemIndicator");
   const slotClassNames = useDropdownClassNames();
-
+ 
   if (!ctx.showIndicatorSlot) return null;
-
+ 
   const showCheck = check ?? ctx.indicatorMode === "multi";
-
+ 
   return (
     <OptionListItemIndicatorShell
       className={cn(
@@ -155,9 +158,9 @@ export function DropdownItemIndicator({
     </OptionListItemIndicatorShell>
   );
 }
-
+ 
 DropdownItemIndicator.displayName = "DropdownItemIndicator";
-
+ 
 const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
   function DropdownItem(
     {
@@ -207,14 +210,14 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       status,
       indicator,
     });
-
+ 
     const setRefs = useCallback(
       (node: HTMLElement | null) => {
         setItemMotionRef(node);
       },
       [setItemMotionRef],
     );
-
+ 
     const rowClass = dropdownItemRowClass({
       status,
       disabled,
@@ -224,7 +227,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       className,
       slotClass: slotClassNames.item,
     });
-
+ 
     const handlePointerDown = useCallback(
       (e: React.PointerEvent<HTMLElement>) => {
         onPointerDown?.(e);
@@ -235,7 +238,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       },
       [config, disabled, onPointerDown],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLElement>) => {
         onKeyDown?.(e);
@@ -246,7 +249,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       },
       [config, disabled, onKeyDown],
     );
-
+ 
     const handleClick = useCallback(
       (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
@@ -260,7 +263,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       },
       [disabled, isSelectionItem, onClick, selectItem, setOpen, value],
     );
-
+ 
     const itemBody = (
       <>
         {parts.indicator}
@@ -271,7 +274,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
         {parts.rest}
       </>
     );
-
+ 
     if (isLink) {
       return (
         <OptionListItemContextProvider value={itemCtx}>
@@ -286,13 +289,14 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
             {...(rest as HTMLAttributes<HTMLAnchorElement>)}
+            {...dataVariantProps({ status })}
           >
             {itemBody}
           </a>
         </OptionListItemContextProvider>
       );
     }
-
+ 
     return (
       <OptionListItemContextProvider value={itemCtx}>
         <button
@@ -307,6 +311,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
           {...(rest as HTMLAttributes<HTMLButtonElement>)}
+          {...dataVariantProps({ status })}
         >
           {itemBody}
         </button>
@@ -314,7 +319,8 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
     );
   },
 );
-
+ 
 export const DropdownItem = memo(DropdownItemInner);
-
+ 
 DropdownItem.displayName = "Dropdown.Item";
+ 

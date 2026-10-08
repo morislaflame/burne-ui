@@ -1,17 +1,19 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type {
   SelectionIndicatorSize,
   SelectionIndicatorVariant,
   SelectionIndicatorClassNames,
 } from "@/components/core/SelectionIndicator";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type ListBoxSize = "small" | "base" | "mid" | "large";
-
-export type ListBoxVariant = "default" | "gloss";
-
+ 
+export const KIT_LIST_BOX_VARIANTS = ["default"] as const;
+export type KitListBoxVariant = (typeof KIT_LIST_BOX_VARIANTS)[number];
+export type ListBoxVariant = KitListBoxVariant | (string & {});
+ 
 export type ListBoxClassNames = {
   /** Root `role="listbox"`. */
   root?: string;
@@ -40,7 +42,7 @@ export type ListBoxClassNames = {
   itemIndicatorFill?: string;
   itemIndicatorMark?: string;
 };
-
+ 
 export type ListBoxPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -49,7 +51,7 @@ export type ListBoxPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type ListBoxMotion = {
   item?: ListBoxPartMotion;
   label?: ListBoxPartMotion;
@@ -60,7 +62,7 @@ export type ListBoxMotion = {
   empty?: ListBoxPartMotion;
   separator?: ListBoxPartMotion;
 };
-
+ 
 export type ListBoxContextValue = {
   listId: string;
   size: ListBoxSize;
@@ -76,7 +78,7 @@ export type ListBoxContextValue = {
    */
   standaloneKeyboard: boolean;
 };
-
+ 
 export type ListBoxProps = Omit<
   HTMLAttributes<HTMLDivElement>,
   "children" | "onChange"
@@ -105,36 +107,43 @@ export type ListBoxProps = Omit<
    * Nested `ListBox.Item` is a separate scope — pass a handle there. Not placed on the DOM.
    */
   motionController?: MotionController;
+  /**
+   * Mount only the visible rows. Requires a flat list of `ListBox.Item`
+   * (`value` on each). Sections stay fully rendered.
+   */
+  virtualized?: boolean;
+  /** Fixed row height in px. Measured from the first row when omitted. */
+  virtualItemSize?: number;
 } & MotionStateHostProps;
-
+ 
 export type ListBoxClassNamesProviderProps = {
   classNames?: Prettify<ListBoxClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseListBoxRootStateProps = Omit<
   ListBoxProps,
   "classNames" | "className"
 >;
-
+ 
 export type ListBoxSectionProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxHeaderProps = HTMLAttributes<HTMLDivElement> & {
   /** Classes for the inner `Text` in the header (per-instance; merges after `classNames.headerText`). */
   textClassName?: string;
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxSeparatorProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxEmptyProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   disabled?: boolean;
@@ -150,19 +159,19 @@ export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> 
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxHintProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxIconProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
-
+ 
 export type ListBoxItemIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<
     Pick<
@@ -170,7 +179,7 @@ export type ListBoxItemIndicatorClassNames = SelectionIndicatorClassNames &
       "itemIndicator" | "itemIndicatorShell" | "itemIndicatorFill" | "itemIndicatorMark"
     >
   >;
-
+ 
 export type ListBoxItemIndicatorProps = Omit<
   HTMLAttributes<HTMLSpanElement>,
   "children"
@@ -181,7 +190,7 @@ export type ListBoxItemIndicatorProps = Omit<
   children?: ReactNode;
   classNames?: Prettify<ListBoxItemIndicatorClassNames>;
 };
-
+ 
 export type ListBoxRootShellProps = Omit<
   HTMLAttributes<HTMLDivElement>,
   "children"
@@ -191,9 +200,12 @@ export type ListBoxRootShellProps = Omit<
   ariaLabel?: string;
   ariaLabelledBy?: string;
   children?: ReactNode;
+  virtualized?: boolean;
+  virtualItemSize?: number;
 };
-
+ 
 export type UseListBoxItemStateProps = Pick<
   ListBoxItemProps,
   "children" | "label" | "hint" | "icon" | "indicator" | "value" | "disabled"
 >;
+ 

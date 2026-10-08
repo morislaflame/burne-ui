@@ -5,7 +5,7 @@ import { TimeField } from "@/components/core/TimeField";
 
 const prefix = <IoTimeOutline className="icon-base shrink-0" aria-hidden />;
 
-const VARIANTS = ["default", "outline", "secondary", "segmented", "gloss"] as const;
+const VARIANTS = ["default", "outline", "secondary", "segmented"] as const;
 
 export function TimeFieldVariantsDemo() {
   const [timeValue, setTimeValue] = useState("09:30");

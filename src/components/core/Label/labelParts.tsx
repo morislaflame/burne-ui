@@ -1,17 +1,17 @@
 import { Text } from "@/components/core/Text";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { LABEL_REQUIRED_MARKER_ARIA_HIDDEN } from "./labelA11y";
 import { useLabelClassNames, useOptionalLabelMotionScope } from "./labelContext";
 import { labelRequiredClass, labelTextClass } from "./labelStyles";
 import type { LabelContentProps, LabelProps } from "./labelTypes";
-
+ 
 export function LabelSlot(_props: LabelProps) {
   return null;
 }
-
+ 
 LabelSlot.displayName = "Label";
-
+ 
 export function LabelContent({ children, required, variant = "base" }: LabelContentProps) {
   const slotClassNames = useLabelClassNames();
   const scope = useOptionalLabelMotionScope();
@@ -25,7 +25,7 @@ export function LabelContent({ children, required, variant = "base" }: LabelCont
     slot: "required",
     pointerPhases: false,
   });
-
+ 
   return (
     <>
       <Text
@@ -50,3 +50,4 @@ export function LabelContent({ children, required, variant = "base" }: LabelCont
     </>
   );
 }
+ 

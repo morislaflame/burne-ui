@@ -136,6 +136,20 @@ export const OnLightTheme: Story = {
   decorators: [...lightThemeDecorator],
 };
 
+export const CustomClassNames: Story = {
+  name: "Custom className",
+  render: () => (
+    <div className="flex max-w-sm flex-col items-start gap-small">
+      <Text variant="header-2" className="text-primary">
+        Primary heading
+      </Text>
+      <Text variant="base" className="text-muted">
+        Text is one node. Color comes from className.
+      </Text>
+    </div>
+  ),
+};
+
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
   render: () => <TextSlotMotionGalleryDemo />,

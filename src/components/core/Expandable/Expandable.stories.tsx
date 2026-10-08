@@ -152,8 +152,8 @@ export const WithImage: Story = {
     >
       <img
         src={PIN_IMAGE}
-        alt="Portrait in glossy red helmet, text on visor"
-        className="w-full max-h-[min(420px,55vh)] rounded-mid object-cover"
+        alt="Portrait in shiny red helmet, text on visor"
+        className="w-full max-h-[min(420px,55vh)] rounded-large object-cover"
         loading="lazy"
       />
     </Expandable>
@@ -246,7 +246,7 @@ export const AllVariationsLight: Story = {
         <img
           src={PIN_IMAGE}
           alt=""
-          className="w-full max-h-[min(320px,40vh)] rounded-mid object-cover"
+          className="w-full max-h-[min(320px,40vh)] rounded-large object-cover"
           loading="lazy"
         />
       </Expandable>
@@ -273,6 +273,7 @@ export const CustomClassNames: Story = {
         trigger: "bg-primary/5",
         title: "text-primary font-semibold",
         panel: "bg-primary/5",
+        contentWrap: "bg-primary/5",
       }}
     >
       <p className="text-small text-muted">Panel content.</p>

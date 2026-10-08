@@ -10,10 +10,6 @@ import { SearchInputCommandBarDemo } from "../demos/search-input/SearchInputComm
 import searchInputCommandBarSource from "../demos/search-input/SearchInputCommandBar.demo.tsx?raw";
 import { SearchInputFilterResultsDemo } from "../demos/search-input/SearchInputFilterResults.demo";
 import searchInputFilterResultsSource from "../demos/search-input/SearchInputFilterResults.demo.tsx?raw";
-import { SearchInputGlossDemo } from "../demos/search-input/SearchInputGloss.demo";
-import searchInputGlossSource from "../demos/search-input/SearchInputGloss.demo.tsx?raw";
-import { SearchInputGlossHeroDemo } from "../demos/search-input/SearchInputGlossHero.demo";
-import searchInputGlossHeroSource from "../demos/search-input/SearchInputGlossHero.demo.tsx?raw";
 import { SearchInputWithResultDemo } from "../demos/search-input/SearchInputWithResult.demo";
 import searchInputWithResultSource from "../demos/search-input/SearchInputWithResult.demo.tsx?raw";
 import { SearchInputSlotMotionGalleryDemo } from "../demos/search-input/slotMotion/gallery";
@@ -34,7 +30,7 @@ export function SearchInputShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={SearchInputBasicDemo} source={searchInputBasicSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+      <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={SearchInputVariantsDemo} source={searchInputVariantsSource} />
       </ShowcaseSection>
 
@@ -56,22 +52,16 @@ export function SearchInputShowcase() {
           source={searchInputClassNamesFullSource}
         />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">
-        <ShowcaseDemoFromFile align="center" Demo={SearchInputGlossDemo} source={searchInputGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: instant expand, icon spin, press bounce, hover tilt.">
+<ShowcaseSection title="Slot motion" description="One gallery: instant expand, icon spin, press bounce, hover tilt.">
         <SearchInputSlotMotionGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="Custom Variations"
-        description="Command bar, filter with badges and gloss hero — demo-files in `demos/search-input/`."
+        description="Command bar, filter with badges and default hero — demo-files in `demos/search-input/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SearchInputCommandBarDemo} source={searchInputCommandBarSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SearchInputFilterResultsDemo} source={searchInputFilterResultsSource} />
-        <ShowcaseDemoFromFile align="stretch" Demo={SearchInputGlossHeroDemo} source={searchInputGlossHeroSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>
@@ -90,7 +80,7 @@ export function SearchInputShowcase() {
             default text signature.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

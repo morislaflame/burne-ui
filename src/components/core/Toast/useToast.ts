@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-
+ 
 import type { AddToastOpts, PromiseToastOpts, ToastStatus } from "./toastTypes";
 import { TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
 import { useToastContext } from "./toastContext";
-
+ 
 type ToastAPI = {
   show: (opts: AddToastOpts) => string;
   success: (title: string, opts?: Omit<AddToastOpts, "status" | "title">) => string;
@@ -13,19 +13,19 @@ type ToastAPI = {
   promise: <T>(p: Promise<T>, opts: PromiseToastOpts<T>) => string;
   dismiss: (id: string) => void;
 };
-
+ 
 export function useToast(): { toast: ToastAPI } {
   const ctx = useToastContext();
-
+ 
   const show = useCallback((opts: AddToastOpts) => ctx.add(opts), [ctx]);
-
+ 
   const byStatus = useCallback(
     (status: ToastStatus) =>
       (title: string, opts?: Omit<AddToastOpts, "status" | "title">) =>
         ctx.add({ ...opts, status, title }),
     [ctx],
   );
-
+ 
   const promise = useCallback(
     <T,>(p: Promise<T>, opts: PromiseToastOpts<T>): string => {
       const id = ctx.add({
@@ -41,7 +41,7 @@ export function useToast(): { toast: ToastAPI } {
         motionPayload: opts.motionPayload,
         playInitialState: opts.playInitialState,
       });
-
+ 
       void p.then(
         (value) => {
           const successTitle =
@@ -70,12 +70,12 @@ export function useToast(): { toast: ToastAPI } {
           });
         },
       );
-
+ 
       return id;
     },
     [ctx],
   );
-
+ 
   const toast: ToastAPI = {
     show,
     success: byStatus("success"),
@@ -85,6 +85,7 @@ export function useToast(): { toast: ToastAPI } {
     promise,
     dismiss: ctx.dismiss,
   };
-
+ 
   return { toast };
 }
+ 

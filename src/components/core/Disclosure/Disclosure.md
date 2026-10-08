@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Disclosure, Disclosure.Group, type DisclosureProps, type DisclosureGroupProps, type DisclosureTriggerProps, type DisclosureContentProps, type DisclosureVariant, type DisclosureSize, type DisclosureChevronPos, type DisclosureClassNames } from "burne-ui";
+import { Disclosure, Disclosure.Group, type DisclosureProps, type DisclosureGroupProps, type DisclosureTriggerProps, type DisclosureContentProps, type DisclosureVariant, type DisclosureSize, type IconPosition, type DisclosureClassNames } from "burne-ui";
 ```
 
 ## API
@@ -53,7 +53,7 @@ Simple API нет.
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled |
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `value` | — | ID для `Disclosure.Group` + `accordion` |
-| `variant` | `default` | Визуальный стиль (наследуется от группы) |
+| `variant` | `default` | `default` \| `outline` \| `secondary` \| `card` \| `ghost` \| `gloss` (наследуется от группы) |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `disabled` | `false` | Блокирует trigger |
 | `chevronPosition` | `end` | `start` \| `end` — позиция chevron |
@@ -112,7 +112,7 @@ Simple API нет.
 
 ### `DisclosureClassNames`
 
-`root`, `trigger`, `titleLift`, `title`, `icon`, `chevron`, `contentShell`, `contentWrap`, `contentPanel`, `body`, `glossPanel`, `glossContent`, `handle`, `group`.
+`root`, `trigger`, `titleLift`, `title`, `icon`, `chevron`, `contentShell`, `contentWrap`, `contentPanel`, `body`, `handle`, `group`.
 
 ## variant и размеры
 
@@ -121,9 +121,11 @@ Simple API нет.
 | `default` | Trigger + content; в группе — `divide-y-token` |
 | `outline` | Рамка только у контента (`FRAMED_PANEL`) |
 | `secondary` | Framed + `bg-secondary` |
-| `card` | Единая карточка `shadow-token-sm`; drag handle |
+| `card` | Единая карточка; тень только при наведении (`--shadow-lift`); drag handle |
 | `ghost` | Прозрачный trigger, muted content |
 | `gloss` | `gloss-panel gloss-deep` |
+
+`card` — **доменное исключение** `variant`: несводимая структура (единая карточка + `dragHandle` / `Disclosure.Handle`). Тень появляется при наведении. Канон кита — `default` | `outline` | `secondary` | `gloss` (+ `primary` у Button/Badge).
 
 `status` нет.
 
@@ -247,7 +249,7 @@ Pointer на кнопке, play на `titleLift`. `asChild` без lift-span —
 
 - Portal motion
 - Ripple
-- Second-level hover shadow (кроме static `shadow-token-sm` у `card`)
+- Постоянная тень в покое. У `card` тень только при наведении (`--shadow-lift`)
 - FLIP в группе
 - Handle как публичный слот
 
@@ -290,12 +292,12 @@ Pointer на кнопке, play на `titleLift`. `asChild` без lift-span —
 | `trigger` | `<button>` | Padding, hover bg |
 | `titleLift` | Lift wrapper | Motion target area |
 | `title` | Title Text | Typography |
+| `icon` | Leading icon | Size and color |
 | `chevron` | Chevron span | Icon color/size |
 | `contentShell` | Collapsible shell | Max-height helpers |
 | `contentWrap` | Inner wrap | Padding framed variants |
 | `contentPanel` | `<section>` | Content typography |
 | `body` | тот же `<section>` | Motion-слот контента (`motion.body` / `playSlot("body")`) |
-| `glossPanel` / `glossContent` | Gloss layers | Gloss variant |
 | `handle` | Drag bar | Card drag grip |
 | `group` | `Disclosure.Group` | Accordion container |
 

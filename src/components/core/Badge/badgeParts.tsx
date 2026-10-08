@@ -1,9 +1,9 @@
 import { Children, forwardRef, isValidElement, useCallback, useMemo, useRef, useState, type ReactNode } from "react";
-
+ 
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { mergeMotionPointerHandlers } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
-
+ 
 import { registerBadgeAnchorLiftTarget, resolveBadgeAnchorMotionDefaults, useBadgeAnchorAnimations, useBadgeAnchorMotion } from "./badgeAnimations";
 import { isBadgeElement } from "./badgeAPI";
 import { badgeRootA11yProps } from "./badgeA11y";
@@ -23,8 +23,8 @@ import type {
   BadgeTextViewProps,
 } from "./badgeTypes";
 import { BADGE_ANCHOR_ROOT_CLASS, BADGE_SHELL_SPLIT_OUTER_CLASS, badgeDotViewClass, badgeIconOnlyViewClass, badgeShellAnchorChildClass, badgeTextViewClass } from "./badgeStyles";
-
-
+ 
+ 
 function BadgeShell({
   setMergedRef,
   splitLift,
@@ -32,25 +32,28 @@ function BadgeShell({
   splitLiftMotionCls,
   selfLiftMotionCls,
   isDirectAnchorChild,
-  isGloss,
+  kitSurface,
   innerLiftRef,
   pointerHandlers,
   rest,
+  variantData,
   className,
   dataIcon,
   children,
   withA11y = false,
 }: BadgeShellProps) {
+  const slotClassNames = useBadgeClassNames();
   const a11y = withA11y ? badgeRootA11yProps(rest) : undefined;
-
+ 
   if (splitLift) {
     return (
       <span
         ref={setMergedRef}
         data-badge-root
-        className={cn(BADGE_SHELL_SPLIT_OUTER_CLASS, placementClass)}
+        className={cn(BADGE_SHELL_SPLIT_OUTER_CLASS, placementClass, slotClassNames.splitShell)}
         {...rest}
         {...a11y}
+        {...variantData}
       >
         <span
           ref={innerLiftRef}
@@ -63,7 +66,7 @@ function BadgeShell({
       </span>
     );
   }
-
+ 
   return (
     <span
       ref={setMergedRef}
@@ -72,19 +75,20 @@ function BadgeShell({
       className={cn(
         splitLiftMotionCls,
         selfLiftMotionCls,
-        badgeShellAnchorChildClass(isDirectAnchorChild, isGloss),
+        badgeShellAnchorChildClass(isDirectAnchorChild, kitSurface),
         placementClass,
         className,
       )}
       {...pointerHandlers}
       {...rest}
       {...a11y}
+      {...variantData}
     >
       {children}
     </span>
   );
 }
-
+ 
 export function BadgeDotView({
   size,
   variant,
@@ -98,17 +102,16 @@ export function BadgeDotView({
     size,
     variant,
     status,
-    shell.isGloss,
     cn(slotClassNames.root, slotClassNames.dot, className),
   );
-
+ 
   return (
     <BadgeShell {...shell} className={dotInnerCls} rest={rest} withA11y>
       {null}
     </BadgeShell>
   );
 }
-
+ 
 export function BadgeIconOnlyView({
   size,
   surfaceClass,
@@ -123,14 +126,14 @@ export function BadgeIconOnlyView({
     surfaceClass,
     cn(slotClassNames.root, slotClassNames.iconOnly, className),
   );
-
+ 
   return (
     <BadgeShell {...shell} className={iconInnerCls} rest={rest} withA11y>
       {iconOnlyBody}
     </BadgeShell>
   );
 }
-
+ 
 export function BadgeTextView({
   size,
   surfaceClass,
@@ -146,14 +149,14 @@ export function BadgeTextView({
     surfaceClass,
     cn(slotClassNames.root, slotClassNames.text, className),
   );
-
+ 
   return (
     <BadgeShell {...shell} className={textInnerCls} rest={rest} dataIcon={dataIcon}>
       {bodyContent}
     </BadgeShell>
   );
 }
-
+ 
 export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function BadgeAnchor(
   {
     className = "",
@@ -185,7 +188,7 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     }),
     [config.badgeAnchorHoverLiftScale],
   );
-
+ 
   return (
     <BadgeClassNamesProvider classNames={classNames}>
       <BadgeMotionProvider
@@ -212,9 +215,9 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     </BadgeClassNamesProvider>
   );
 });
-
+ 
 BadgeAnchor.displayName = "BadgeAnchor";
-
+ 
 function BadgeAnchorSurface({
   className,
   classNames,
@@ -251,7 +254,7 @@ function BadgeAnchorSurface({
   const liftedRef = useRef<HTMLElement | null>(null);
   const [anchorCommitGen] = useState(1);
   const scope = useOptionalBadgeMotionScope();
-
+ 
   const setMergedRef = useCallback(
     (node: HTMLDivElement | null) => {
       anchorRef.current = node;
@@ -261,7 +264,7 @@ function BadgeAnchorSurface({
     },
     [forwardedRef, scope],
   );
-
+ 
   const registerLiftTarget = useCallback(
     (el: HTMLElement | null) => {
       liftedRef.current = el;
@@ -269,12 +272,12 @@ function BadgeAnchorSurface({
     },
     [hoverLift],
   );
-
+ 
   const ctx = useMemo(
     () => ({ registerLiftTarget, anchorRef, anchorCommitGen, hoverLift }),
     [registerLiftTarget, anchorCommitGen, hoverLift],
   );
-
+ 
   useBadgeAnchorAnimations(liftedRef);
   const anchorMotion = useBadgeAnchorMotion(liftedRef, anchorRef);
   const pointerHandlers = useMemo(
@@ -293,7 +296,7 @@ function BadgeAnchorSurface({
     ],
   );
   const slotClassNames = useBadgeClassNames();
-
+ 
   return (
     <BadgeLiftTargetProvider value={ctx}>
       <div

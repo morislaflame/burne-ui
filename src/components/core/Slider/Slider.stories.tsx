@@ -270,7 +270,7 @@ export const CustomClassNames: Story = {
       min={0}
       max={100}
       classNames={{
-        root: "rounded-mid border border-primary/25 p-base",
+        root: "rounded-large border border-primary/25 p-base",
         header: "text-primary",
         value: "font-semibold text-primary",
         track: "ring-1 ring-primary/20",

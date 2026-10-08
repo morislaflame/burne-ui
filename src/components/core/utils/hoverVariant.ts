@@ -1,11 +1,11 @@
 import { cn } from "@/utils/cn";
-
+ 
 export const SURFACE_COLOR_TRANSITION =
   "surface-color-transition motion-reduce:transition-none";
-
+ 
 export const TEXT_COLOR_TRANSITION =
   "text-color-transition motion-reduce:transition-none";
-
+ 
 /**
  * Hover background for interactive surfaces.
  * - `default` — foreground wash on surface (menus, default Button).
@@ -32,9 +32,9 @@ export type HoverVariant =
   | "warning-fill"
   | "info-fill"
   | "success-fill";
-
+ 
 type HoverFocusMode = "focus-visible" | "focus-within";
-
+ 
 const HOVER_VARIANT_BG: Record<
   HoverVariant,
   Record<HoverFocusMode, string>
@@ -136,7 +136,7 @@ const HOVER_VARIANT_BG: Record<
       "hover:bg-success-fill-hover focus-within:bg-success-fill-hover",
   },
 };
-
+ 
 /** Hover/focus background without transition — for shells with their own `field-shell-transition`. */
 export function hoverVariantBg(
   tone: HoverVariant = "default",
@@ -144,8 +144,9 @@ export function hoverVariantBg(
 ): string {
   return HOVER_VARIANT_BG[tone][focus];
 }
-
+ 
 /** Hover background for interactive surfaces. */
 export function hoverVariant(tone: HoverVariant = "default"): string {
   return cn(SURFACE_COLOR_TRANSITION, hoverVariantBg(tone, "focus-visible"));
 }
+ 

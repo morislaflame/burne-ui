@@ -66,12 +66,10 @@ export const Basic: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Open" }));
     await expect(
-      await screen.findByText("Arbitrary content inside the panel."),
-    ).toBeVisible();
+      await screen.findByText("Arbitrary content inside the panel.")).toBeVisible();
     await userEvent.keyboard("{Escape}");
     await waitFor(() =>
-      expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument(),
-    );
+      expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument());
   },
 };
 
@@ -98,12 +96,10 @@ export const ReducedMotionOpenClose: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Open" }));
     await expect(
-      await screen.findByText("Arbitrary content inside the panel."),
-    ).toBeVisible();
+      await screen.findByText("Arbitrary content inside the panel.")).toBeVisible();
     await userEvent.keyboard("{Escape}");
     await waitFor(() =>
-      expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument(),
-    );
+      expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument());
   },
 };
 
@@ -242,8 +238,7 @@ function TagColorPopoverDemo() {
                   className={cn(
                     "inline-flex size-8 items-center justify-center rounded-base border-2 outline-none transition-colors",
                     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-                    colorId === color.id ? "border-primary" : "border-transparent",
-                  )}
+                    colorId === color.id ? "border-primary" : "border-transparent")}
                   onClick={() => setColorId(color.id)}
                 >
                   <span className={cn("size-5 rounded-full", color.className)} />
@@ -414,7 +409,7 @@ export const PortalContainer: Story = {
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative flex h-64 items-start justify-center overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
@@ -505,20 +500,20 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root (trigger), trigger, content, panelRelative, panel, label, hint, and body via classNames prop.",
+          "Slots root (trigger), trigger, content, panelRelative, panel, title, description, and body via classNames prop.",
       },
     },
   },
   render: () => (
     <Popover
       classNames={{
-        root: "rounded-mid ring-2 ring-primary/40",
-        trigger: "rounded-mid",
+        root: "rounded-large ring-2 ring-primary/40",
+        trigger: "rounded-large",
         content: "ring-1 ring-primary/20",
         panelRelative: "isolate",
         panel: "border-primary/25",
-        label: "text-primary",
-        hint: "text-muted/80",
+        title: "text-primary",
+        description: "text-muted/80",
         body: "text-foreground",
       }}
     >

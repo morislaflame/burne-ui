@@ -67,22 +67,22 @@ function shareIcon(ctx: MotionContext, spinning: boolean) {
 const states = createMotionStates({
   idle: {
     text: (ctx) => splitReveal(ctx, false),
-    icon: (ctx) => shareIcon(ctx, false),
+    iconEnd: (ctx) => shareIcon(ctx, false),
     root: { x: 0, y: 0, duration: 0.2 },
   },
   sharing: {
     text: (ctx) => splitReveal(ctx, true),
-    icon: (ctx) => shareIcon(ctx, true),
+    iconEnd: (ctx) => shareIcon(ctx, true),
     root: { x: 0, y: 0, duration: 0.2 },
   },
   copied: {
     text: (ctx) => splitReveal(ctx, false),
-    icon: (ctx) => shareIcon(ctx, false),
+    iconEnd: (ctx) => shareIcon(ctx, false),
     root: { x: 0, y: 0, duration: 0.2 },
   },
   failed: {
     text: (ctx) => splitReveal(ctx, false),
-    icon: (ctx) => shareIcon(ctx, false),
+    iconEnd: (ctx) => shareIcon(ctx, false),
     root: (ctx) => ctx.fromRest({ x: 6, duration: 0.07, yoyo: true, repeat: 5 }),
   },
 });

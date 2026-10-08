@@ -10,7 +10,7 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   mergeMotionSlotMaps,
@@ -18,16 +18,16 @@ import {
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalFormMotionScope } from "./formContext";
 import type { FormMotion, FormPartMotion } from "./formTypes";
-
+ 
 export function resolveFormMotionDefaults(): FormMotion {
   return {};
 }
-
+ 
 export { mergeMotionSlotMaps };
-
+ 
 export function useFormSlotMotion<T extends HTMLElement>(
   slot: keyof FormMotion,
   {
@@ -71,3 +71,4 @@ export function useFormSlotMotion<T extends HTMLElement>(
   );
   return part;
 }
+ 

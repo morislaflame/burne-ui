@@ -5,7 +5,7 @@ export function TextAreaClassNamesFullDemo() {
     <TextArea
       className="max-w-md"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
         control: "text-primary placeholder:text-primary/50",
         hint: "text-foreground/70",
@@ -14,7 +14,6 @@ export function TextAreaClassNamesFullDemo() {
       label="Comment"
       placeholder="Your review…"
       rows={3}
-      status="danger"
       hint="Up to 500 characters."
       error="The text is too short."
     />
@@ -26,7 +25,7 @@ export function TextAreaClassNamesCompoundDemo() {
     <TextArea
       className="max-w-md"
       classNames={{
-        root: "rounded-mid border border-info/25 p-base",
+        root: "rounded-large border border-info/25 p-base",
         shell: "border-info/30 bg-info/5",
         control: "text-info placeholder:text-info/50",
         resizeHandle: "text-info",

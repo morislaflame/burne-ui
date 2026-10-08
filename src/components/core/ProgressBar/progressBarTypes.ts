@@ -5,11 +5,11 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type ProgressBarSize = "small" | "base" | "mid" | "large";
-
+ 
 export type ProgressBarOrientation = "horizontal" | "vertical";
-
+ 
 export type ProgressBarClassNames = {
   root?: string;
   label?: string;
@@ -21,7 +21,7 @@ export type ProgressBarClassNames = {
   hint?: string;
   error?: string;
 };
-
+ 
 export type ProgressBarPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -36,7 +36,7 @@ export type ProgressBarPartMotion = {
    */
   change?: MotionValue;
 };
-
+ 
 export type ProgressBarMotion = {
   track?: ProgressBarPartMotion;
   fill?: ProgressBarPartMotion;
@@ -46,7 +46,7 @@ export type ProgressBarMotion = {
   hint?: ProgressBarPartMotion;
   error?: ProgressBarPartMotion;
 };
-
+ 
 export type ProgressBarDisplayState = {
   clampedValue: number;
   statusText: string;
@@ -54,7 +54,7 @@ export type ProgressBarDisplayState = {
   max: number;
   indeterminate: boolean;
 };
-
+ 
 export type ProgressBarFieldContextValue = {
   progressId: string;
   hintId: string;
@@ -65,7 +65,7 @@ export type ProgressBarFieldContextValue = {
   display: ProgressBarDisplayState | null;
   setDisplay: (next: ProgressBarDisplayState | null) => void;
 };
-
+ 
 export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   value?: number;
   indeterminate?: boolean;
@@ -84,7 +84,7 @@ export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "childr
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
   Partial<Omit<ProgressBarTrackProps, "motion">> & {
     children?: ReactNode;
@@ -113,41 +113,41 @@ export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
      */
     motionController?: MotionController;
   } & MotionStateHostProps;
-
+ 
 export type ProgressBarClassNamesProviderProps = {
   classNames?: Prettify<ProgressBarClassNames>;
   children: ReactNode;
 };
-
+ 
 export type ProgressBarHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   motion?: Prettify<ProgressBarPartMotion>;
 };
-
+ 
 export type ProgressBarValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<ProgressBarPartMotion>;
 };
-
+ 
 export type ProgressBarLabelProps = Omit<LabelProps, "motion"> & {
   motion?: Prettify<ProgressBarPartMotion>;
 };
-
+ 
 export type ProgressBarHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<ProgressBarPartMotion>;
 };
-
+ 
 export type ProgressBarErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<ProgressBarPartMotion>;
 };
-
+ 
 export type UseProgressBarRootStateProps = Omit<
   ProgressBarProps,
   "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
-
+ 
 export type UseProgressBarTrackStateProps = Pick<
   ProgressBarTrackProps,
   | "value"
@@ -162,7 +162,7 @@ export type UseProgressBarTrackStateProps = Pick<
 > & {
   "aria-describedby"?: string;
 };
-
+ 
 export type ProgressBarTrackAriaProps = {
   clampedValue: number;
   min: number;
@@ -172,7 +172,7 @@ export type ProgressBarTrackAriaProps = {
   labelId?: string;
   ariaDescribedBy?: string;
 };
-
+ 
 export type ProgressBarSimpleBodyProps = {
   label?: ReactNode;
   showValue?: boolean;
@@ -181,3 +181,4 @@ export type ProgressBarSimpleBodyProps = {
   error?: ReactNode;
   trackProps: Partial<ProgressBarTrackProps>;
 };
+ 

@@ -10,8 +10,8 @@ export function CheckboxFeatureFlagsDemo() {
       <Checkbox.Control>
         <Checkbox.Indicator
           classNames={{
-            root: "rounded-mid",
-            fill: "rounded-mid",
+            root: "rounded-large",
+            fill: "rounded-large",
           }}
         />
       </Checkbox.Control>

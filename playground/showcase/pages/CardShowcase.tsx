@@ -2,8 +2,6 @@ import { CardAuthPanelDemo } from "../demos/card/CardAuthPanel.demo";
 import cardAuthPanelSource from "../demos/card/CardAuthPanel.demo.tsx?raw";
 import { CardClassNamesFullDemo } from "../demos/card/CardClassNamesFull.demo";
 import cardClassNamesFullSource from "../demos/card/CardClassNamesFull.demo.tsx?raw";
-import { CardGlossDemo } from "../demos/card/CardGloss.demo";
-import cardGlossSource from "../demos/card/CardGloss.demo.tsx?raw";
 import { CardMotionControllerGalleryDemo } from "../demos/card/motionController/gallery";
 import { CardMetricTilesDemo } from "../demos/card/CardMetricTiles.demo";
 import cardMetricTilesSource from "../demos/card/CardMetricTiles.demo.tsx?raw";
@@ -45,12 +43,7 @@ export function CardShowcase() {
       <ShowcaseSection title="Pressable" description="Clickable card with ripple and preview.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardPressableDemo} source={cardPressableSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
-        <ShowcaseDemoFromFile align="stretch" Demo={CardGlossDemo} source={cardGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: instant hover, press bounce, title pop, header/footer split.">
+<ShowcaseSection title="Slot motion" description="One gallery: instant hover, press bounce, title pop, header/footer split.">
         <CardSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -97,12 +90,12 @@ export function CardShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, header, title, description, body, footer, content, glossContent."
+            description="root, content, header, headingBlock, title, description, body, footer."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Options">
           <p>
-            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — prop{" "}
+            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>default</code> — prop{" "}
             <code>variant</code> on the root Card.
           </p>
           <p>
@@ -110,7 +103,7 @@ export function CardShowcase() {
             <code>large</code> — radius (same as Button), section padding, Title/Description type scale.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

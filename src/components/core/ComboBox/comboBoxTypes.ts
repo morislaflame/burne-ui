@@ -1,6 +1,6 @@
 import type { HTMLAttributes, InputHTMLAttributes, MutableRefObject, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 import type { LabelProps } from "@/components/core/Label";
@@ -8,7 +8,7 @@ import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
-
+ 
 export type ComboBoxOption = {
   value: string;
   label: ReactNode;
@@ -17,7 +17,7 @@ export type ComboBoxOption = {
   disabled?: boolean;
   filterText?: string;
 };
-
+ 
 export type ComboBoxClassNames = {
   root?: string;
   label?: string;
@@ -38,7 +38,7 @@ export type ComboBoxClassNames = {
   hint?: string;
   error?: string;
 };
-
+ 
 export type ComboBoxPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -47,7 +47,7 @@ export type ComboBoxPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type ComboBoxMotion = {
   inputGroup?: ComboBoxPartMotion;
   input?: ComboBoxPartMotion;
@@ -57,12 +57,14 @@ export type ComboBoxMotion = {
   hint?: ComboBoxPartMotion;
   error?: ComboBoxPartMotion;
 };
-
+ 
 export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** Danger visual, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. */
+  invalid?: boolean;
   id?: string;
   name?: string;
   required?: boolean;
@@ -79,6 +81,10 @@ export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   placeholder?: string;
   menuMaxHeight?: string;
+  /** Mount only the visible options. Flat `options` list. */
+  virtualized?: boolean;
+  /** Fixed option height in px. Measured from the first row when omitted. */
+  virtualItemSize?: number;
   classNames?: Prettify<ComboBoxClassNames>;
   /**
    * Per-slot motion (`inputGroup`, `input`, `trigger`, `triggerIcon`, `label`, `hint`, `error`).
@@ -96,11 +102,11 @@ export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ComboBoxSimpleProps = ComboBoxProps & {
   options: ComboBoxOption[];
 };
-
+ 
 export type ComboBoxFieldContextValue = {
   comboBoxId: string;
   hintId: string;
@@ -109,12 +115,14 @@ export type ComboBoxFieldContextValue = {
   labelConnected: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
+  invalid?: boolean;
+  formInvalid?: boolean;
   required: boolean;
   status: InputStatus;
   size: InputSize;
   errorMessage?: ReactNode;
 };
-
+ 
 export type ComboBoxContextValue = ComboBoxFieldContextValue & {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -131,17 +139,19 @@ export type ComboBoxContextValue = ComboBoxFieldContextValue & {
   disabled: boolean;
   placeholder: string;
   menuMaxHeight: string;
+  virtualized: boolean;
+  virtualItemSize?: number;
   options: ComboBoxOption[];
   filteredValues: string[];
   formInputRef?: (node: HTMLInputElement | null) => void;
   formOnBlur?: () => void;
 };
-
+ 
 export type ComboBoxClassNamesProviderProps = {
   classNames?: Prettify<ComboBoxClassNames>;
   children: ReactNode;
 };
-
+ 
 export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement> & {
   groupSegment?: ButtonGroupSegment;
   /** Part motion for the `inputGroup` host slot. Root `motion.inputGroup` still applies. */
@@ -152,18 +162,18 @@ export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ComboBoxInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "value" | "defaultValue" | "size"
 > & {
   motion?: Prettify<ComboBoxPartMotion>;
 };
-
+ 
 export type ComboBoxTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<ComboBoxPartMotion>;
 };
-
+ 
 export type UseComboBoxShellAnimationsProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   disabled: boolean;
@@ -172,7 +182,7 @@ export type UseComboBoxShellAnimationsProps = {
   motion?: ComboBoxPartMotion;
   pointerInsideRef: MutableRefObject<boolean>;
 };
-
+ 
 export type ComboBoxPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   /** Preferred side relative to the trigger. Default: `bottom`. */
@@ -192,20 +202,21 @@ export type ComboBoxPopoverProps = HTMLAttributes<HTMLDivElement> & {
     | "listId"
   >;
 };
-
+ 
 export type ComboBoxLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<ComboBoxPartMotion>;
 };
-
+ 
 export type ComboBoxHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: Exclude<InputStatus, "danger"> | "default";
+  status?: InputStatus;
   motion?: Prettify<ComboBoxPartMotion>;
 };
-
+ 
 export type ComboBoxErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<ComboBoxPartMotion>;
 };
-
+ 
 export type UseComboBoxRootStateProps = ComboBoxProps;
+ 

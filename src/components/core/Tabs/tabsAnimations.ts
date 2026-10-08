@@ -1,10 +1,10 @@
 /**
  * Slot motion for Tabs — look here first.
  *
- * DOM slots: `root`, `list`, `tab`, `tabText`, `panel`
+ * DOM slots: `root`, `list`, `indicator`, `tab`, `tabText`, `panel`
  *
- * Not a slot: indicator — FLIP layout (`left`/`top`/`width`/`height` + compositor
- * `x`/`y`/`scale`) stays kit-internal in `useSlidingTabIndicator.ts`.
+ * `indicator.change` → `tabsIndicatorMove`. The host writes the layout box, then
+ * the recipe tweens the compositor delta (`useSlidingTabIndicator.ts`).
  *
  * Hosts:
  * - Root plays optional `enter` and `change` when the selected value updates
@@ -25,7 +25,7 @@ import {
   type PointerEvent,
   type RefObject,
 } from "react";
-
+ 
 import {
   isInteractivePressKey,
   shouldSkipInteractiveHoverLift,
@@ -36,13 +36,21 @@ import {
   useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
+ 
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
-import type { TabsMotion } from "./tabsTypes";
+import type { TabsMotion, TabsVariant } from "./tabsTypes";
+import { KIT_TABS_VARIANTS } from "./tabsTypes";
 
-export function resolveTabsMotionDefaults(): TabsMotion {
-  return {};
+export function resolveTabsMotionDefaults(variant: TabsVariant = "default"): TabsMotion {
+  return overlaySkinMotion(
+    { indicator: { change: "tabsIndicatorMove" } },
+    variant,
+    KIT_TABS_VARIANTS,
+    "tabs",
+  );
 }
-
+ 
 export function resolveTabsTabMotionDefaults({
   selected,
   disabled,
@@ -69,16 +77,16 @@ export function resolveTabsTabMotionDefaults({
     },
   };
 }
-
+ 
 export function useTabsRootEnter(scope: MotionScopeValue | null, value: string) {
   useOptionalEnterOnMount(scope, "root");
   useSlotPhaseOnChange(scope, "root", value, { phase: "change" });
 }
-
+ 
 export function useTabsListEnter(scope: MotionScopeValue | null) {
   useOptionalEnterOnMount(scope, "list");
 }
-
+ 
 export function useTabsTabEnter(
   scope: MotionScopeValue | null,
   tabTarget?: RefObject<HTMLElement | null>,
@@ -87,7 +95,7 @@ export function useTabsTabEnter(
   useOptionalEnterOnMount(scope, "tab", tabTarget);
   useOptionalEnterOnMount(scope, "tabText", textTarget);
 }
-
+ 
 function playTabPhase(
   scope: MotionScopeValue,
   phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut" | "check" | "uncheck",
@@ -107,7 +115,7 @@ function playTabPhase(
     }
   }
 }
-
+ 
 export function useTabsTabPointerMotion({
   scope,
   isDisabled,
@@ -134,7 +142,7 @@ export function useTabsTabPointerMotion({
     },
     [config, isDisabled, onPointerEnter, scope],
   );
-
+ 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
@@ -143,7 +151,7 @@ export function useTabsTabPointerMotion({
     },
     [config, isDisabled, onPointerLeave, scope],
   );
-
+ 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDown?.(e);
@@ -152,7 +160,7 @@ export function useTabsTabPointerMotion({
     },
     [isDisabled, onPointerDown, scope],
   );
-
+ 
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerUp?.(e);
@@ -161,7 +169,7 @@ export function useTabsTabPointerMotion({
     },
     [isDisabled, onPointerUp, scope],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
@@ -170,7 +178,7 @@ export function useTabsTabPointerMotion({
     },
     [isDisabled, onKeyDown, scope],
   );
-
+ 
   return {
     handlePointerEnter,
     handlePointerLeave,
@@ -179,7 +187,7 @@ export function useTabsTabPointerMotion({
     handleKeyDown,
   };
 }
-
+ 
 export function useTabsTabSelectionMotion(
   scope: MotionScopeValue,
   selected: boolean,
@@ -197,18 +205,18 @@ export function useTabsTabSelectionMotion(
     target: textTarget,
   });
 }
-
+ 
 export function useTabsPanelLifecycle(
   scope: MotionScopeValue | null,
   isSelected: boolean,
 ) {
   const prevRef = useRef<boolean | undefined>(undefined);
   const [leaving, setLeaving] = useState(false);
-
+ 
   useLayoutEffect(() => {
     if (!scope) return;
     const el = scope.getTarget("panel");
-
+ 
     if (prevRef.current === undefined) {
       prevRef.current = isSelected;
       if (isSelected && el) {
@@ -219,10 +227,10 @@ export function useTabsPanelLifecycle(
       }
       return;
     }
-
+ 
     if (prevRef.current === isSelected) return;
     prevRef.current = isSelected;
-
+ 
     if (isSelected) {
       setLeaving(false);
       if (el) {
@@ -233,13 +241,13 @@ export function useTabsPanelLifecycle(
       }
       return;
     }
-
+ 
     const leave = el ? scope.resolve("panel", "leave") : undefined;
     if (leave === undefined || leave === false || !el) {
       setLeaving(false);
       return;
     }
-
+ 
     setLeaving(true);
     const run = scope.play("panel", "leave", {
       el,
@@ -251,6 +259,7 @@ export function useTabsPanelLifecycle(
       setLeaving(false);
     };
   }, [isSelected, scope]);
-
+ 
   return { leaving };
 }
+ 

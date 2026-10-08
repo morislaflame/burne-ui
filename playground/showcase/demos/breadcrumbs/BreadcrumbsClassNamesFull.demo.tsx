@@ -5,7 +5,7 @@ import { preventNav } from "../../shared/utils";
 export function BreadcrumbsClassNamesFullDemo() {
   return (
     <Breadcrumbs
-      className="max-w-lg rounded-mid border border-token p-small"
+      className="max-w-lg rounded-large border border-token p-small"
       classNames={{
         list: "gap-small",
         item: "gap-xsmall",

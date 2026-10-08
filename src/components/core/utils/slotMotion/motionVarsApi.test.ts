@@ -105,5 +105,7 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
     expectTypeOf<MotionContext>().toHaveProperty("parallel");
     expectTypeOf<MotionContext>().toHaveProperty("onInterrupt");
     expectTypeOf<MotionContext>().toHaveProperty("onError");
+    expectTypeOf<MotionContext>().toHaveProperty("shadowFade");
+    expectTypeOf<MotionContext>().toHaveProperty("adaptiveScale");
   });
 });

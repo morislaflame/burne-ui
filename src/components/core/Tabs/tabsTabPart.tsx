@@ -13,11 +13,11 @@ import {
   type ReactElement,
   type Ref,
 } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { tabsPanelId, tabsTabA11y, tabsTabId } from "./tabsA11y";
 import {
   resolveTabsTabMotionDefaults,
@@ -34,9 +34,9 @@ import {
 } from "./tabsContext";
 import { TABS_TAB_AS_CHILD_CLASS, tabsTabClass, tabsTabTextClass, tabTextVariant } from "./tabsStyles";
 import type { TabsTabProps } from "./tabsTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
   { motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
@@ -60,7 +60,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     parentScope?.getRootMotion(),
     motion ? { tab: motion } : undefined,
   );
-
+ 
   return (
     <TabsMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -70,7 +70,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     </TabsMotionProvider>
   );
 });
-
+ 
 function TabsTabSurface({
   value: tabValue,
   children,
@@ -104,14 +104,14 @@ function TabsTabSurface({
   } = useTabsContext();
   const slotClassNames = useTabsClassNames();
   const scope = useTabsMotionScope();
-
+ 
   const isSelected = value === tabValue;
   const isDisabled = rootDisabled || tabDisabled;
   const tabId = tabsTabId(baseId, tabValue);
   const panelId = tabsPanelId(baseId, tabValue);
   const a11y = tabsTabA11y({ isSelected, isDisabled, panelId });
-
-  const tabPart = useMotionPart<HTMLButtonElement>({
+ 
+  const { setRef: setTabRef, targetRef: tabTargetRef } = useMotionPart<HTMLButtonElement>({
     scope,
     slot: "tab",
     motion: itemMotion,
@@ -122,21 +122,21 @@ function TabsTabSurface({
     slot: "tabText",
     pointerPhases: false,
   });
-  useTabsTabEnter(scope, tabPart.targetRef, textPart.targetRef);
-  useTabsTabSelectionMotion(scope, isSelected, tabPart.targetRef, textPart.targetRef);
-
+  useTabsTabEnter(scope, tabTargetRef, textPart.targetRef);
+  useTabsTabSelectionMotion(scope, isSelected, tabTargetRef, textPart.targetRef);
+ 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
-      tabPart.setRef(node);
+      setTabRef(node);
       if (node) tabElementsRef.current.set(tabValue, node);
       else tabElementsRef.current.delete(tabValue);
       notifyTabLayout();
       if (typeof forwardedRef === "function") forwardedRef(node);
       else if (forwardedRef) forwardedRef.current = node;
     },
-    [forwardedRef, notifyTabLayout, tabElementsRef, tabPart.setRef, tabValue],
+    [forwardedRef, notifyTabLayout, setTabRef, tabElementsRef, tabValue],
   );
-
+ 
   useLayoutEffect(() => {
     const tabElements = tabElementsRef.current;
     return () => {
@@ -144,7 +144,7 @@ function TabsTabSurface({
       notifyTabLayout();
     };
   }, [notifyTabLayout, tabElementsRef, tabValue]);
-
+ 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       onClick?.(e);
@@ -153,7 +153,7 @@ function TabsTabSurface({
     },
     [isDisabled, onClick, setValue, tabValue],
   );
-
+ 
   const pointer = useTabsTabPointerMotion({
     scope,
     isDisabled,
@@ -163,7 +163,7 @@ function TabsTabSurface({
     onPointerUp,
     onKeyDown,
   });
-
+ 
   const tabButtonClassName = tabsTabClass({
     size,
     variant,
@@ -172,7 +172,7 @@ function TabsTabSurface({
     slotClass: slotClassNames.tab,
     className,
   });
-
+ 
   if (asChild && isValidElement(children)) {
     const child = children as ReactElement<
       ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -180,7 +180,7 @@ function TabsTabSurface({
         "data-tab-value"?: string;
       }
     >;
-
+ 
     return cloneElement(child, {
       ...rest,
       role: "tab",
@@ -221,7 +221,7 @@ function TabsTabSurface({
       },
     });
   }
-
+ 
   return (
     <button
       ref={setRefs}
@@ -236,6 +236,7 @@ function TabsTabSurface({
       className={tabButtonClassName}
       onClick={handleClick}
       {...rest}
+      data-state={a11y["aria-selected"] ? "active" : "inactive"}
       onPointerEnter={pointer.handlePointerEnter}
       onPointerLeave={pointer.handlePointerLeave}
       onPointerDown={pointer.handlePointerDown}
@@ -254,5 +255,6 @@ function TabsTabSurface({
     </button>
   );
 }
-
+ 
 TabsTab.displayName = "TabsTab";
+ 

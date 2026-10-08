@@ -9,19 +9,18 @@
  * Defaults: `resolveBadgeMotionDefaults` / `resolveBadgeAnchorMotionDefaults`.
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject } from "react";
-
-import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
+ 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { initElementShadow, shadowBase, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { SHADOW_LIFT_MOTION_CLASS, useSecondLevelShadow, useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
-
+ 
 import { useBadgeLiftContext, useBadgeMotionScope } from "./badgeContext";
-import type { BadgeMotion, BadgeVariant, UseBadgeAnimationsProps } from "./badgeTypes";
-
-import "../utils/glossInteractive.css";
-
+import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { KIT_BADGE_VARIANTS, type BadgeMotion, type BadgeVariant, type UseBadgeAnimationsProps } from "./badgeTypes";
+ 
+ 
 export function resolveBadgeMotionDefaults({
   variant,
   hoverLift,
@@ -34,11 +33,15 @@ export function resolveBadgeMotionDefaults({
   if (splitLift) {
     return { root: { hoverIn: false, hoverOut: false } };
   }
-  const recipe = variant === "gloss" ? "hoverLiftGloss" : "hoverLiftSecondLevel";
-  const rootPhase = hoverLift ? recipe : false;
-  return { root: { hoverIn: rootPhase, hoverOut: rootPhase } };
+  const rootPhase = hoverLift ? "hoverLiftSecondLevel" : false;
+  return overlaySkinMotion(
+    { root: { hoverIn: rootPhase, hoverOut: rootPhase } },
+    variant,
+    KIT_BADGE_VARIANTS,
+    "badge",
+  );
 }
-
+ 
 export function resolveBadgeAnchorMotionDefaults({
   hoverLift,
 }: {
@@ -47,7 +50,7 @@ export function resolveBadgeAnchorMotionDefaults({
   const recipe = hoverLift ? "hoverLiftSecondLevel" : false;
   return { anchor: { hoverIn: recipe, hoverOut: recipe } };
 }
-
+ 
 export function useBadgeAnimations({
   variant,
   hoverLift = true,
@@ -64,25 +67,19 @@ export function useBadgeAnimations({
   const innerLiftRef = useRef<HTMLSpanElement | null>(null);
   const scope = useBadgeMotionScope();
   const rootMotionRef = useRef(motion?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
-
-  const isGloss = variant === "gloss";
-  const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && !isGloss);
+ 
+  const kitSurface = isKitVariant(variant, KIT_BADGE_VARIANTS);
+  const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && kitSurface);
   const selfLiftEnabled = hoverLift && !splitLift;
-  const glossEnabled = isGloss && (selfLiftEnabled || motion?.root != null);
 
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, glossEnabled),
-    [glossEnabled],
-  );
-
-  const selfLiftShadow = useSecondLevelShadow(rootRef, !splitLift && !isGloss, {
+  const selfLiftShadow = useSecondLevelShadow(rootRef, selfLiftEnabled && kitSurface, {
     interactive: false,
   });
 
   const setMergedRef = useCallback(
     (node: HTMLSpanElement | null) => {
-      bindGlossRef(node);
       rootRef.current = node;
       if (node === null) {
         liftCtx?.registerLiftTarget(null);
@@ -90,9 +87,9 @@ export function useBadgeAnimations({
       if (!splitLift) scope.registerTarget("root", node);
       mergeForwardedRef(forwardedRef, node);
     },
-    [bindGlossRef, forwardedRef, liftCtx, scope, splitLift],
+    [forwardedRef, liftCtx, scope, splitLift],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLSpanElement>({
     enabled: !splitLift,
     targetRef: rootRef,
@@ -108,7 +105,7 @@ export function useBadgeAnimations({
       scope.play("root", "hoverOut", { partMotion: rootMotionRef.current, el });
     },
   });
-
+ 
   const pointerHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -119,15 +116,11 @@ export function useBadgeAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp],
   );
+ 
+  const selfLiftMotionCls = selfLiftEnabled && kitSurface ? selfLiftShadow.motionClass : "";
 
-  const selfLiftMotionCls = !splitLift && !isGloss
-    ? selfLiftShadow.motionClass
-    : glossEnabled
-      ? GLOSS_INTERACTIVE_MOTION_CLASS
-      : "";
-
-  const splitLiftMotionCls = splitLift && !isGloss ? SHADOW_LIFT_MOTION_CLASS : "";
-
+  const splitLiftMotionCls = splitLift ? SHADOW_LIFT_MOTION_CLASS : "";
+ 
   const syncDirectChild = useCallback(() => {
     if (!liftCtx || !isDirectAnchorChild || !liftCtx.hoverLift) {
       liftCtx?.registerLiftTarget(null);
@@ -137,9 +130,9 @@ export function useBadgeAnimations({
     liftCtx.registerLiftTarget(inner);
     if (splitLift) scope.registerTarget("root", inner);
   }, [isDirectAnchorChild, liftCtx, scope, splitLift]);
-
+ 
   const { meaningChild, icon, dot, iconOnly, children } = syncDeps;
-
+ 
   useLayoutEffect(() => {
     syncDirectChild();
     queueMicrotask(() => {
@@ -157,9 +150,9 @@ export function useBadgeAnimations({
     iconOnly,
     children,
   ]);
-
+ 
   return {
-    isGloss,
+    kitSurface: isKitVariant(variant, KIT_BADGE_VARIANTS),
     splitLift,
     selfLiftEnabled,
     innerLiftRef,
@@ -169,13 +162,13 @@ export function useBadgeAnimations({
     splitLiftMotionCls,
   };
 }
-
+ 
 export function useBadgeAnchorMotion(
   liftedRef: RefObject<HTMLElement | null>,
   anchorRef: RefObject<HTMLDivElement | null>,
 ) {
   const scope = useBadgeMotionScope();
-
+ 
   return useMotionPointerPhases<HTMLDivElement>({
     enabled: true,
     targetRef: anchorRef,
@@ -196,7 +189,7 @@ export function useBadgeAnchorMotion(
     },
   });
 }
-
+ 
 export function useBadgeAnchorAnimations(liftedRef: RefObject<HTMLElement | null>) {
   const config = useMotionConfig();
   return useSecondLevelShadowContainer(liftedRef, true, {
@@ -204,10 +197,11 @@ export function useBadgeAnchorAnimations(liftedRef: RefObject<HTMLElement | null
     liftScale: config.badgeAnchorHoverLiftScale,
   });
 }
-
+ 
 export function registerBadgeAnchorLiftTarget(
   el: HTMLElement | null,
   _hoverLift: boolean,
 ): void {
   if (el) initElementShadow(el, shadowBase());
 }
+ 

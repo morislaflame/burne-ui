@@ -1,11 +1,11 @@
 import { SelectionIndicator as SelectionIndicatorRoot } from "./SelectionIndicator";
 import { SelectionIndicatorFill, SelectionIndicatorMark } from "./selectionIndicatorParts";
-
+ 
 export const SelectionIndicator = Object.assign(SelectionIndicatorRoot, {
   Fill: SelectionIndicatorFill,
   Mark: SelectionIndicatorMark,
 });
-
+ 
 export type {
   SelectionIndicatorProps,
   SelectionIndicatorClassNames,
@@ -13,8 +13,10 @@ export type {
   SelectionIndicatorMarkProps,
   SelectionIndicatorMotion,
   SelectionIndicatorCheckMotion,
+  SelectionIndicatorSize,
+  SelectionIndicatorVariant,
 } from "./selectionIndicatorTypes";
-
+ 
 export {
   SELECTION_INDICATOR_FILL_CLASS,
   SELECTION_INDICATOR_ICON_CLASS,
@@ -24,13 +26,12 @@ export {
   selectionIndicatorFallbackPx,
   selectionIndicatorShellClass,
   selectionIndicatorVariantClass,
-  type SelectionIndicatorSize,
-  type SelectionIndicatorVariant,
-} from "./selectionIndicatorTokens";
-
+} from "./selectionIndicatorStyles";
+ 
 export {
   SELECTION_INDICATOR_FILL_DISPLAY_NAME,
   SELECTION_INDICATOR_MARK_DISPLAY_NAME,
 } from "./selectionIndicatorAPI";
-
+ 
 export { useSelectionIndicatorAnimation } from "./selectionIndicatorAnimations";
+ 

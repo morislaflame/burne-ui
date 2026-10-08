@@ -1,11 +1,12 @@
 import { forwardRef, useCallback, useState } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import {
   colorPickerAlphaInputAriaLabel,
   colorPickerAreaAriaLabel,
@@ -31,6 +32,8 @@ import {
   COLOR_PICKER_HEX_PREFIX_CLASS,
   COLOR_PICKER_INPUTS_ROW_CLASS,
   COLOR_PICKER_PRESETS_CLASS,
+  COLOR_PICKER_PREVIEW_SWATCH_CLASS,
+  COLOR_PICKER_PREVIEW_WRAP_CLASS,
   COLOR_PICKER_SLIDERS_ROW_CLASS,
   COLOR_PICKER_SLIDERS_STACK_CLASS,
   colorPickerAreaClass,
@@ -48,9 +51,9 @@ import type {
   ColorPickerPreviewProps,
   ColorPickerTriggerProps,
 } from "./colorPickerTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
   function ColorPickerArea(
     {
@@ -85,7 +88,7 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
       },
     });
     useColorPickerAreaChange(hex);
-
+ 
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
         areaRef.current = node;
@@ -101,10 +104,10 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
       },
       [thumbPart.setRef, thumbRef],
     );
-
+ 
     const hueColor = hueToRgbString(hsva.h);
     const thumbColor = hsvaToColorString(hsva);
-
+ 
     return (
       <div
         ref={setRefs}
@@ -146,8 +149,6 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
           style={{
             left: `${hsva.s}%`,
             top: `${100 - hsva.v}%`,
-            width: "14px",
-            height: "14px",
             backgroundColor: thumbColor,
           }}
           onKeyDown={handleThumbKeyDown}
@@ -161,9 +162,9 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
     );
   },
 );
-
+ 
 ColorPickerArea.displayName = "ColorPicker.Area";
-
+ 
 export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInputProps>(
   function ColorPickerHexInput(
     {
@@ -190,7 +191,7 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
     });
     const [isEditing, setIsEditing] = useState(false);
     const [editDraft, setEditDraft] = useState("");
-
+ 
     const commit = useCallback(
       (draft: string) => {
         const candidate = `#${draft}`;
@@ -199,9 +200,9 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
       },
       [setHsva],
     );
-
+ 
     const displayValue = isEditing ? editDraft : hex.slice(1);
-
+ 
     return (
       <div
         ref={part.setRef}
@@ -254,9 +255,9 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
     );
   },
 );
-
+ 
 ColorPickerHexInput.displayName = "ColorPicker.HexInput";
-
+ 
 export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlphaInputProps>(
   function ColorPickerAlphaInput(
     {
@@ -281,7 +282,7 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <div
         ref={part.setRef}
@@ -319,9 +320,9 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
     );
   },
 );
-
+ 
 ColorPickerAlphaInput.displayName = "ColorPicker.AlphaInput";
-
+ 
 export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsProps>(
   function ColorPickerPresets(
     {
@@ -346,7 +347,7 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <div
         ref={part.setRef}
@@ -376,9 +377,9 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
     );
   },
 );
-
+ 
 ColorPickerPresets.displayName = "ColorPicker.Presets";
-
+ 
 export const ColorPickerPreview = forwardRef<HTMLSpanElement, ColorPickerPreviewProps>(
   function ColorPickerPreview(
     {
@@ -405,11 +406,11 @@ export const ColorPickerPreview = forwardRef<HTMLSpanElement, ColorPickerPreview
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <span
         ref={part.setRef}
-        className={cn("inline-flex shrink-0", className)}
+        className={cn(COLOR_PICKER_PREVIEW_WRAP_CLASS, className)}
         {...rest}
         {...part.pointerHandlers}
       >
@@ -417,15 +418,15 @@ export const ColorPickerPreview = forwardRef<HTMLSpanElement, ColorPickerPreview
           color={color ?? hex}
           size={size}
           shape={shape}
-          className={cn("shrink-0", slotClassNames.previewSwatch)}
+          className={cn(COLOR_PICKER_PREVIEW_SWATCH_CLASS, slotClassNames.previewSwatch)}
         />
       </span>
     );
   },
 );
-
+ 
 ColorPickerPreview.displayName = "ColorPicker.Preview";
-
+ 
 function ColorPickerDefaultLayout({
   showAlpha,
   presets,
@@ -437,11 +438,11 @@ function ColorPickerDefaultLayout({
   const slotClassNames = useColorPickerClassNames();
   const sliderSize = COLOR_PICKER_SLIDER_SIZE_MAP[size];
   const pickerMotion = useOptionalColorPickerMotionScope()?.getRootMotion();
-
+ 
   return (
     <>
       <ColorPickerArea />
-
+ 
       <div
         className={cn(
           COLOR_PICKER_SLIDERS_ROW_CLASS,
@@ -449,7 +450,7 @@ function ColorPickerDefaultLayout({
         )}
       >
         <ColorPickerPreview />
-
+ 
         <div
           className={cn(
             COLOR_PICKER_SLIDERS_STACK_CLASS,
@@ -465,7 +466,7 @@ function ColorPickerDefaultLayout({
             motion={pickerMotion?.hueSlider}
             onValueChange={(h) => setHsva({ ...hsva, h })}
           />
-
+ 
           {showAlpha ? (
             <ColorSliderTrack
               channel="alpha"
@@ -479,7 +480,7 @@ function ColorPickerDefaultLayout({
           ) : null}
         </div>
       </div>
-
+ 
       <div
         className={cn(
           COLOR_PICKER_INPUTS_ROW_CLASS,
@@ -489,30 +490,33 @@ function ColorPickerDefaultLayout({
         <ColorPickerHexInput />
         {showAlpha ? <ColorPickerAlphaInput /> : null}
       </div>
-
+ 
       {presets && presets.length > 0 ? (
         <ColorPickerPresets presets={presets} />
       ) : null}
     </>
   );
 }
-
+ 
 export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger(
     { swatchSize, className, children, asChild, motion, ...rest },
     ref,
   ) {
     const labels = useBurneLabels();
-    const { hex, disabled, size } = useColorPicker();
+    const { hex, disabled, size, invalid } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
-
+ 
     return (
       <Popover.Trigger
         ref={ref}
         asChild={asChild}
         motion={motion}
         className={cn(slotClassNames.trigger, className)}
+        aria-invalid={invalid ? true : undefined}
         {...rest}
+        {...dataVariantProps({ size })}
+        data-invalid={invalid ? "" : undefined}
       >
         {children ?? (
           <ColorSwatch
@@ -527,9 +531,9 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
     );
   },
 );
-
+ 
 ColorPickerTrigger.displayName = "ColorPicker.Trigger";
-
+ 
 export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
   function ColorPickerContent(
     { showAlpha = false, presets, className, children, motion, ...rest },
@@ -541,7 +545,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
     const panelPart = useColorPickerSlotMotion<HTMLDivElement>("contentPanel", {
       motion,
     });
-
+ 
     return (
       <Popover.Content
         ref={ref}
@@ -568,5 +572,6 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
     );
   },
 );
-
+ 
 ColorPickerContent.displayName = "ColorPicker.Content";
+ 

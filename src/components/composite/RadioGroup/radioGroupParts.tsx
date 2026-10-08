@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
 import { OptionGroupHeader } from "@/components/composite/utils/optionGroupFieldset";
 import { cn } from "@/utils/cn";
-
+ 
 import { useRadioGroupSlotMotion } from "./radioGroupAnimations";
 import { useRadioGroupClassNames, useRadioGroupContext } from "./radioGroupContext";
 import { radioGroupListClass } from "./radioGroupStyles";
@@ -14,7 +14,7 @@ import type {
   RadioGroupLegendProps,
   RadioGroupListProps,
 } from "./radioGroupTypes";
-
+ 
 export const RadioGroupLegend = forwardRef<HTMLLegendElement, RadioGroupLegendProps>(
   function RadioGroupLegend(
     {
@@ -36,7 +36,7 @@ export const RadioGroupLegend = forwardRef<HTMLLegendElement, RadioGroupLegendPr
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Legend ref={part.setRef} {...rest} {...part.pointerHandlers}>
         <OptionGroupHeader>{children}</OptionGroupHeader>
@@ -44,9 +44,9 @@ export const RadioGroupLegend = forwardRef<HTMLLegendElement, RadioGroupLegendPr
     );
   },
 );
-
+ 
 RadioGroupLegend.displayName = "RadioGroup.Legend";
-
+ 
 export const RadioGroupHint = forwardRef<HTMLElement, RadioGroupHintProps>(
   function RadioGroupHint(
     {
@@ -71,7 +71,7 @@ export const RadioGroupHint = forwardRef<HTMLElement, RadioGroupHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -85,9 +85,9 @@ export const RadioGroupHint = forwardRef<HTMLElement, RadioGroupHintProps>(
     );
   },
 );
-
+ 
 RadioGroupHint.displayName = "RadioGroup.Hint";
-
+ 
 export const RadioGroupError = forwardRef<HTMLElement, RadioGroupErrorProps>(
   function RadioGroupError(
     {
@@ -112,7 +112,7 @@ export const RadioGroupError = forwardRef<HTMLElement, RadioGroupErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -124,9 +124,9 @@ export const RadioGroupError = forwardRef<HTMLElement, RadioGroupErrorProps>(
     );
   },
 );
-
+ 
 RadioGroupError.displayName = "RadioGroup.Error";
-
+ 
 export const RadioGroupActions = forwardRef<HTMLDivElement, RadioGroupActionsProps>(
   function RadioGroupActions(
     {
@@ -148,7 +148,7 @@ export const RadioGroupActions = forwardRef<HTMLDivElement, RadioGroupActionsPro
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Set.Actions
         ref={part.setRef}
@@ -159,9 +159,9 @@ export const RadioGroupActions = forwardRef<HTMLDivElement, RadioGroupActionsPro
     );
   },
 );
-
+ 
 RadioGroupActions.displayName = "RadioGroup.Actions";
-
+ 
 export const RadioGroupList = forwardRef<HTMLDivElement, RadioGroupListProps>(
   function RadioGroupList(
     {
@@ -195,5 +195,6 @@ export const RadioGroupList = forwardRef<HTMLDivElement, RadioGroupListProps>(
     );
   },
 );
-
+ 
 RadioGroupList.displayName = "RadioGroup.List";
+ 

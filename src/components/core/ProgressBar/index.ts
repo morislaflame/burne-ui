@@ -1,5 +1,5 @@
 import { ProgressBarError, ProgressBarHeader, ProgressBarHint, ProgressBarLabel, ProgressBarRoot, ProgressBarTrack, ProgressBarValue } from "./ProgressBar";
-
+ 
 export const ProgressBar = Object.assign(ProgressBarRoot, {
   Header: ProgressBarHeader,
   Label: ProgressBarLabel,
@@ -8,19 +8,19 @@ export const ProgressBar = Object.assign(ProgressBarRoot, {
   Error: ProgressBarError,
   Track: ProgressBarTrack,
 });
-
+ 
 export type {
   ProgressBarTrackProps,
   ProgressBarSize,
   ProgressBarOrientation,
   ProgressBarClassNames,
 } from "./ProgressBar";
-
+ 
 export type {
   ProgressBarMotion,
   ProgressBarPartMotion,
 } from "./progressBarTypes";
-
+ 
 export type {
   ProgressBarProps,
   ProgressBarHeaderProps,
@@ -29,13 +29,14 @@ export type {
   ProgressBarErrorProps,
   ProgressBarLabelProps,
 } from "./ProgressBar";
-
+ 
 export {
   useProgressBarFieldContext,
   useOptionalProgressBarFieldContext,
 } from "./ProgressBar";
-
+ 
 export type {
   ProgressBarDisplayState,
   ProgressBarFieldContextValue,
 } from "./progressBarTypes";
+ 

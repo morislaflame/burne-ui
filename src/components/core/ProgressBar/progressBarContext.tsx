@@ -1,18 +1,18 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   ProgressBarClassNames,
   ProgressBarClassNamesProviderProps,
   ProgressBarFieldContextValue,
 } from "./progressBarTypes";
-
+ 
 const ProgressBarFieldContext = createContext<ProgressBarFieldContextValue | null>(
   null,
 );
 const ProgressBarClassNamesContext = createContext<ProgressBarClassNames>({});
-
+ 
 export function ProgressBarFieldProvider({
   value,
   children,
@@ -26,7 +26,7 @@ export function ProgressBarFieldProvider({
     </ProgressBarFieldContext.Provider>
   );
 }
-
+ 
 export function ProgressBarClassNamesProvider({
   classNames,
   children,
@@ -36,14 +36,14 @@ export function ProgressBarClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <ProgressBarClassNamesContext.Provider value={merged}>
       {children}
     </ProgressBarClassNamesContext.Provider>
   );
 }
-
+ 
 export function useProgressBarFieldContext(): ProgressBarFieldContextValue {
   const ctx = useContext(ProgressBarFieldContext);
   if (!ctx) {
@@ -51,20 +51,21 @@ export function useProgressBarFieldContext(): ProgressBarFieldContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalProgressBarFieldContext() {
   return useContext(ProgressBarFieldContext);
 }
-
+ 
 export function useProgressBarClassNames(): ProgressBarClassNames {
   return useContext(ProgressBarClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults + params + fill play live on Track (nested provider). */
 export const {
   MotionScopeProvider: ProgressBarMotionProvider,
   useMotionScope: useProgressBarMotionScope,
   useOptionalMotionScope: useOptionalProgressBarMotionScope,
 } = createMotionScope("ProgressBar");
-
+ 
 export { ProgressBarFieldContext };
+ 

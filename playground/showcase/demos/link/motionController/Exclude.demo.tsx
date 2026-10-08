@@ -37,7 +37,7 @@ export function LinkMotionControllerExcludeDemo() {
             hoverIn: { y: -6, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },
           },
-          icon: {
+          iconEnd: {
             hoverIn: { y: -10, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },
           },

@@ -64,6 +64,7 @@ Option-grid (indicator | label | icon) включается только ког�
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `variant` | `default` | `default` \| `gloss` |
 | `multiple` | `false` | Multi-select (`string[]`) |
+| `virtualized` | `false` | Плоский список `ListBox.Item`: в DOM только видимые строки |
 | `value` / `defaultValue` | — | Controlled / uncontrolled |
 | `onValueChange` | — | `(string \| string[]) => void` |
 | `activeValue` / `onActiveValueChange` | — | Keyboard hover option (Select/ComboBox) |
@@ -99,7 +100,7 @@ Option-grid (indicator | label | icon) включается только ког�
 | variant | Root |
 |---------|------|
 | `default` | `flex flex-col gap-xsmall` |
-| `gloss` | `gloss-panel gloss-deep rounded-mid p-mid` + gloss ref refresh |
+| `gloss` | `gloss-panel gloss-deep rounded-large p-mid` + gloss ref refresh |
 
 ## Размеры
 
@@ -191,7 +192,7 @@ Compound: `motion` на `ListBox.Item` — part motion слота `item`; на `
   defaultValue="ru"
   aria-label="Язык интерфейса"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     headerText: "text-primary",
     item: "rounded-lg",
     label: "font-semibold",

@@ -4,7 +4,7 @@ export function cardRenderAsButton(
 ): boolean {
   return pressable || hasExplicitHandlers;
 }
-
+ 
 export function cardHasExplicitHandlers(props: {
   onClick?: unknown;
   onKeyDown?: unknown;
@@ -12,3 +12,4 @@ export function cardHasExplicitHandlers(props: {
 }): boolean {
   return Boolean(props.onClick || props.onKeyDown || props.onPointerDown);
 }
+ 

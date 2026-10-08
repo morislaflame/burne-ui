@@ -1,12 +1,14 @@
-import "../utils/glossPanel.css";
 
-import { useMemo } from "react";
+import { forwardRef, useMemo, type ForwardedRef } from "react";
+
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
 import { selectionThumbDecorativeProps } from "./selectionThumbA11y";
@@ -25,6 +27,7 @@ import type {
   SelectionThumbIconProps,
   SelectionThumbPartMotion,
   SelectionThumbProps,
+  SelectionThumbVariant,
 } from "./selectionThumbTypes";
 
 export type {
@@ -34,11 +37,15 @@ export type {
   SelectionThumbMotion,
   SelectionThumbPartMotion,
   SelectionThumbProps,
+  SelectionThumbVariant,
+  KitSelectionThumbVariant,
 } from "./selectionThumbTypes";
+export { KIT_SELECTION_THUMB_VARIANTS } from "./selectionThumbTypes";
 
-export function SelectionThumb({
+export const SelectionThumb = forwardRef<HTMLSpanElement, SelectionThumbProps>(
+  function SelectionThumb({
   size = "base",
-  gloss = false,
+  variant: variantProp,
   shellRef,
   className,
   classNames,
@@ -53,8 +60,13 @@ export function SelectionThumb({
   onPointerDown,
   onPointerUp,
   ...rest
-}: SelectionThumbProps) {
-  const motionDefaults = useMemo(() => resolveSelectionThumbMotionDefaults(), []);
+}, ref) {
+  const variant = useSkinVariant(variantProp);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveSelectionThumbMotionDefaults(variant);
+  }, [skinRevision, variant]);
 
   return (
     <SelectionThumbMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
@@ -63,8 +75,9 @@ export function SelectionThumb({
         playInitialState={playInitialState}>
       <SelectionThumbShell
         size={size}
-        gloss={gloss}
+        variant={variant}
         shellRef={shellRef}
+        forwardedRef={ref}
         className={className}
         classNames={classNames}
         rootMotion={motion?.root}
@@ -78,12 +91,13 @@ export function SelectionThumb({
       </SelectionThumbShell>
     </SelectionThumbMotionProvider>
   );
-}
+});
 
 function SelectionThumbShell({
   size,
-  gloss,
+  variant,
   shellRef,
+  forwardedRef,
   className,
   classNames,
   children,
@@ -95,8 +109,9 @@ function SelectionThumbShell({
   rest,
 }: {
   size: NonNullable<SelectionThumbProps["size"]>;
-  gloss: boolean;
+  variant: SelectionThumbVariant;
   shellRef: SelectionThumbProps["shellRef"];
+  forwardedRef: ForwardedRef<HTMLSpanElement>;
   className: SelectionThumbProps["className"];
   classNames: SelectionThumbProps["classNames"];
   children: SelectionThumbProps["children"];
@@ -108,7 +123,7 @@ function SelectionThumbShell({
   rest: Omit<
     SelectionThumbProps,
     | "size"
-    | "gloss"
+    | "variant"
     | "shellRef"
     | "className"
     | "classNames"
@@ -139,13 +154,14 @@ function SelectionThumbShell({
   const setRef = (node: HTMLSpanElement | null) => {
     part.setRef(node);
     if (shellRef) mergeForwardedRef(shellRef, node);
+    mergeForwardedRef(forwardedRef, node);
   };
 
   return (
     <span
       ref={setRef}
       className={selectionThumbShellClass({
-        gloss,
+        variant,
         size,
         className,
         slotRoot: classNames?.root,
@@ -153,6 +169,7 @@ function SelectionThumbShell({
       {...selectionThumbDecorativeProps()}
       {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ size, variant })}
     >
       {children}
     </span>
@@ -161,9 +178,10 @@ function SelectionThumbShell({
 
 SelectionThumb.displayName = "SelectionThumb";
 
-export function SelectionThumbIcon({
+export const SelectionThumbIcon = forwardRef<HTMLSpanElement, SelectionThumbIconProps>(
+  function SelectionThumbIcon({
   size = "base",
-  gloss = false,
+  variant: variantProp,
   iconRef,
   className,
   classNames,
@@ -175,7 +193,8 @@ export function SelectionThumbIcon({
   onPointerDown,
   onPointerUp,
   ...rest
-}: SelectionThumbIconProps) {
+}, ref) {
+  const variant = useSkinVariant(variantProp);
   const scope = useOptionalSelectionThumbMotionScope();
   const pointer = hasPointerPhases(motion);
   const part = useMotionPart<HTMLSpanElement>({
@@ -193,6 +212,7 @@ export function SelectionThumbIcon({
   const setRef = (node: HTMLSpanElement | null) => {
     part.setRef(node);
     if (iconRef) mergeForwardedRef(iconRef, node);
+    mergeForwardedRef(ref, node);
   };
 
   return (
@@ -200,7 +220,7 @@ export function SelectionThumbIcon({
       ref={setRef}
       {...selectionThumbDecorativeProps()}
       className={selectionThumbIconRootClass({
-        gloss,
+        variant,
         className,
         slotRoot: classNames?.root,
       })}
@@ -213,6 +233,6 @@ export function SelectionThumbIcon({
       </span>
     </span>
   );
-}
+});
 
 SelectionThumbIcon.displayName = "SelectionThumbIcon";

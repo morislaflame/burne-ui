@@ -1,13 +1,15 @@
 import { forwardRef, useMemo, type HTMLAttributes } from "react";
-
+ 
 import { resolveKbdMotionDefaults, useKbdAnimations } from "./kbdAnimations";
 import { KbdBody } from "./kbdBodyPart";
 import { KbdClassNamesProvider, KbdMotionProvider } from "./kbdContext";
 import type { KbdMotion, KbdProps } from "./kbdTypes";
 import { useKbdRootState } from "./useKbdRootState";
-
+ 
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   KbdProps,
   KbdVariant,
@@ -18,10 +20,10 @@ export type {
   KbdPartMotion,
   KbdTextProps,
 } from "./kbdTypes";
-
+ 
 export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
   {
-    variant = "default",
+    variant,
     size = "base",
     classNames,
     className = "",
@@ -44,15 +46,19 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     className,
     classNames,
   });
+  const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(
-    () => resolveKbdMotionDefaults({ variant: state.variant, hoverLift }),
-    [hoverLift, state.variant],
+    () => {
+      void skinRevision;
+      return resolveKbdMotionDefaults({ variant: state.variant, hoverLift });
+    },
+    [hoverLift, skinRevision, state.variant],
   );
   const motionParams = useMemo(
     () => ({ shadowSize: "base" as const, variant: state.variant }),
     [state.variant],
   );
-
+ 
   return (
     <KbdClassNamesProvider classNames={classNames}>
       <KbdMotionProvider
@@ -81,9 +87,9 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     </KbdClassNamesProvider>
   );
 });
-
+ 
 KbdRoot.displayName = "KbdRoot";
-
+ 
 function KbdSurface({
   rootClass,
   size,
@@ -107,6 +113,7 @@ function KbdSurface({
   rest: HTMLAttributes<HTMLElement>;
   children: KbdProps["children"];
 }) {
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const animations = useKbdAnimations({
     variant,
     hoverLift,
@@ -115,15 +122,18 @@ function KbdSurface({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <kbd
       ref={animations.setMergedRef}
       className={cn(rootClass, animations.motionClass)}
       {...animations.pointerHandlers}
       {...rest}
+      style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
+      {...dataVariantProps({ size, variant })}
     >
       <KbdBody size={size}>{children}</KbdBody>
     </kbd>
   );
 }
+ 

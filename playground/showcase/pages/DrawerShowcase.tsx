@@ -6,8 +6,6 @@ import { DrawerClassNamesFullDemo } from "../demos/drawer/DrawerClassNamesFull.d
 import drawerClassNamesFullSource from "../demos/drawer/DrawerClassNamesFull.demo.tsx?raw";
 import { DrawerFilterSheetDemo } from "../demos/drawer/DrawerFilterSheet.demo";
 import drawerFilterSheetSource from "../demos/drawer/DrawerFilterSheet.demo.tsx?raw";
-import { DrawerGlossDemo } from "../demos/drawer/DrawerGloss.demo";
-import drawerGlossSource from "../demos/drawer/DrawerGloss.demo.tsx?raw";
 import { DrawerHandleDemo } from "../demos/drawer/DrawerHandle.demo";
 import drawerHandleSource from "../demos/drawer/DrawerHandle.demo.tsx?raw";
 import { DrawerMobileNavDemo } from "../demos/drawer/DrawerMobileNav.demo";
@@ -47,12 +45,7 @@ export function DrawerShowcase() {
           source={drawerBottomSheetHandleSource}
         />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass side panel.">
-        <ShowcaseDemoFromFile Demo={DrawerGlossDemo} source={drawerGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: default slide, instant panel, title stagger, headingBlock, bounce factory.">
+<ShowcaseSection title="Slot motion" description="One gallery: default slide, instant panel, title stagger, headingBlock, bounce factory.">
         <DrawerSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -113,7 +106,7 @@ export function DrawerShowcase() {
             description="Custom HTMLElement host for the portal (contained: show + absolute)."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             <code>placement</code>: left, right, top, bottom. <code>size</code> — width or height
             panels.             <code>Drawer.Handle</code> — swipe dismiss. Slot motion —{" "}

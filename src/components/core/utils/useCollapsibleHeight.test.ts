@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { gsap } from "./gsapMotion";
-import { animateCollapsibleHeight } from "./useCollapsibleHeight";
+import { animateCollapsibleHeight, releaseExpandedShellHeight } from "./useCollapsibleHeight";
 
 function fakeEl(height = 0): HTMLElement {
   const store: Record<string, string> = {};
@@ -86,8 +86,7 @@ describe("animateCollapsibleHeight", () => {
         }
         observe() {}
         disconnect() {}
-      },
-    );
+      });
 
     const inner = fakeEl(100);
     const tween = stubTween();
@@ -117,5 +116,35 @@ describe("animateCollapsibleHeight", () => {
     });
 
     expect(fromTo.mock.calls[0][2]?.height).toBe(144);
+  });
+});
+
+describe("releaseExpandedShellHeight", () => {
+  it("cancels the previous frame pair and skips a disconnected shell", () => {
+    const frames: FrameRequestCallback[] = [];
+    let nextId = 0;
+    const cancel = vi.fn();
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      frames.push(cb);
+      return ++nextId;
+    });
+    vi.stubGlobal("cancelAnimationFrame", cancel);
+
+    const shell = fakeEl(48);
+    shell.style.height = "48px";
+    Object.defineProperty(shell, "isConnected", { configurable: true, value: true });
+    const inner = fakeEl(48);
+
+    releaseExpandedShellHeight(shell, inner);
+    const firstFrame = nextId;
+    releaseExpandedShellHeight(shell, inner);
+    expect(cancel).toHaveBeenCalledWith(firstFrame);
+
+    frames.at(-1)?.(0);
+    const innerFrame = frames.at(-1);
+    Object.defineProperty(shell, "isConnected", { configurable: true, value: false });
+    const set = vi.spyOn(gsap, "set");
+    innerFrame?.(0);
+    expect(set).not.toHaveBeenCalled();
   });
 });

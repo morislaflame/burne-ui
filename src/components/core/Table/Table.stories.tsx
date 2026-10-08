@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/core/Checkbox";
 import { Pagination } from "@/components/core/Pagination";
 
 import { Table, type Selection, type SortDescriptor, type TableRowTone } from ".";
+import { TableAlignDemo } from "../../../../playground/showcase/demos/table/TableAlign.demo";
 import { TableSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/table/slotMotion/gallery";
 import { TableMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/table/motionController/gallery";
 
@@ -111,6 +112,34 @@ export const Basic: Story = {
   ),
 };
 
+export const Virtualized: Story = {
+  name: "Virtualized",
+  render: () => {
+    const rows = Array.from({ length: 200 }, (_, index) => ({
+      id: String(index + 1),
+      name: `Row ${index + 1}`,
+    }));
+    return (
+      <Table>
+        <Table.ScrollContainer className="overflow-y-auto" style={{ maxHeight: "min(16rem, 50dvh)" }}>
+          <Table.Content aria-label="Rows">
+            <Table.Header>
+              <Table.Column isRowHeader>Name</Table.Column>
+            </Table.Header>
+            <Table.Body virtualized items={rows}>
+              {(row: { id: string; name: string }) => (
+                <Table.Row id={row.id}>
+                  <Table.Cell>{row.name}</Table.Cell>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+    );
+  },
+};
+
 export const SecondaryVariant: Story = {
   name: "Secondary variant",
   render: () => (
@@ -154,8 +183,7 @@ export const Sorting: Story = {
           const cmp = String(a[col]).localeCompare(String(b[col]));
           return sortDescriptor.direction === "descending" ? -cmp : cmp;
         }),
-      [sortDescriptor],
-    );
+      [sortDescriptor]);
 
     return (
       <Table>
@@ -226,8 +254,7 @@ export const CustomSortIcon: Story = {
           const cmp = String(a[col]).localeCompare(String(b[col]));
           return sortDescriptor.direction === "descending" ? -cmp : cmp;
         }),
-      [sortDescriptor],
-    );
+      [sortDescriptor]);
 
     return (
       <Table>
@@ -310,8 +337,7 @@ export const UncontrolledSorting: Story = {
           const cmp = String(a[col]).localeCompare(String(b[col]));
           return sortDescriptor.direction === "descending" ? -cmp : cmp;
         }),
-      [sortDescriptor],
-    );
+      [sortDescriptor]);
 
     return (
       <Table>
@@ -561,8 +587,7 @@ export const CustomCells: Story = {
           const cmp = String(a[col]).localeCompare(String(b[col]));
           return sortDescriptor.direction === "descending" ? -cmp : cmp;
         }),
-      [sortDescriptor],
-    );
+      [sortDescriptor]);
 
     return (
       <Table>
@@ -617,6 +642,11 @@ export const CustomCells: Story = {
   },
 };
 
+export const Alignment: Story = {
+  name: "Alignment",
+  render: () => <TableAlignDemo />,
+};
+
 export const WithPagination: Story = {
   name: "With pagination",
   render: function WithPaginationStory() {
@@ -655,10 +685,16 @@ export const WithPagination: Story = {
           </Table.Content>
         </Table.ScrollContainer>
         <Table.Footer>
-          <span className="text-small text-muted">
-            {start}–{end} of {users.length}
-          </span>
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} siblingCount={1}>
+          <Pagination
+            className="flex-nowrap"
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            siblingCount={1}
+          >
+            <Pagination.Summary>
+              {start}–{end} of {users.length}
+            </Pagination.Summary>
             <Pagination.Content>
               <Pagination.Item>
                 <Pagination.Previous
@@ -717,7 +753,11 @@ export const EmptyState: Story = {
 export const StickyHeader: Story = {
   name: "Sticky header (scroll)",
   render: function StickyHeaderStory() {
-    const manyUsers = [...users, ...users, ...users];
+    let rowSerial = 0;
+    const manyUsers = [...users, ...users, ...users].map((user) => ({
+      ...user,
+      rowKey: `${user.id}-${rowSerial++}`,
+    }));
 
     return (
       <Table>
@@ -730,9 +770,8 @@ export const StickyHeader: Story = {
               <Table.Column>Email</Table.Column>
             </Table.Header>
             <Table.Body>
-              {manyUsers.map((user, i) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <Table.Row key={`${user.id}-${i}`}>
+              {manyUsers.map((user) => (
+                <Table.Row key={user.rowKey}>
                   <Table.Cell>{user.name}</Table.Cell>
                   <Table.Cell>{user.role}</Table.Cell>
                   <Table.Cell>{user.status}</Table.Cell>
@@ -861,98 +900,6 @@ export const TonedRowsWithSelection: Story = {
   },
 };
 
-export const Gloss: Story = {
-  name: "Gloss",
-  render: () => (
-    <div className="flex flex-col gap-base">
-      <Table variant="gloss" className="w-full">
-        <Table.ScrollContainer>
-          <Table.Content aria-label="Gloss team" className="min-w-[600px]">
-            <Table.Header>
-              <Table.Column isRowHeader>Name</Table.Column>
-              <Table.Column>Role</Table.Column>
-              <Table.Column>Status</Table.Column>
-              <Table.Column>Email</Table.Column>
-            </Table.Header>
-            <Table.Body>
-              {users.slice(0, 6).map((user) => (
-                <Table.Row key={user.id} id={user.id}>
-                  <Table.Cell className="font-medium">{user.name}</Table.Cell>
-                  <Table.Cell className="text-muted">{user.role}</Table.Cell>
-                  <Table.Cell>
-                    <Badge status={statusBadgeColor[user.status]} size="small">
-                      {user.status}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell className="text-muted">{user.email}</Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Content>
-        </Table.ScrollContainer>
-      </Table>
-      <p className="text-small text-muted">
-        Hover a row — <span className="text-foreground">primary-tint</span> highlight.
-      </p>
-    </div>
-  ),
-};
-
-export const GlossWithSelection: Story = {
-  name: "Gloss + selection",
-  render: function GlossWithSelectionStory() {
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>([2, 4]));
-
-    const selectedLabel =
-      selectedKeys === "all"
-        ? "All"
-        : (selectedKeys as Set<number>).size > 0
-          ? Array.from(selectedKeys as Set<number>).join(", ")
-          : "None";
-
-    return (
-      <div className="flex flex-col gap-base">
-        <Table variant="gloss" className="w-full">
-          <Table.ScrollContainer>
-            <Table.Content
-              aria-label="Gloss team with selection"
-              className="min-w-[600px]"
-              selectionMode="multiple"
-              selectedKeys={selectedKeys}
-              onSelectionChange={setSelectedKeys}
-            >
-              <Table.Header>
-                <Table.Column isRowHeader>Name</Table.Column>
-                <Table.Column>Role</Table.Column>
-                <Table.Column>Status</Table.Column>
-                <Table.Column>Email</Table.Column>
-              </Table.Header>
-              <Table.Body>
-                {users.slice(0, 6).map((user) => (
-                  <Table.Row key={user.id} id={user.id}>
-                    <Table.Cell className="font-medium">{user.name}</Table.Cell>
-                    <Table.Cell className="text-muted">{user.role}</Table.Cell>
-                    <Table.Cell>
-                      <Badge status={statusBadgeColor[user.status]} size="small">
-                        {user.status}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell className="text-muted">{user.email}</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table.Content>
-          </Table.ScrollContainer>
-        </Table>
-        <p className="text-small text-muted">
-          Hover and selection — <span className="text-foreground">primary-tint</span>. Selected:{" "}
-          <span className="font-medium text-foreground">{selectedLabel}</span>
-        </p>
-      </div>
-    );
-  },
-};
-
 export const CustomClassNames: Story = {
   name: "Full classNames customization",
   parameters: {
@@ -965,19 +912,22 @@ export const CustomClassNames: Story = {
   render: () => (
     <Table
       classNames={{
-        root: "rounded-mid border border-info/25 shadow-token-base",
+        root: "rounded-large border border-info/25 shadow-token-base",
         headerRow: "bg-info/10",
         column: "text-info font-semibold",
+        columnButton: "text-info",
         row: "hover:bg-info/5",
         cell: "text-foreground/90",
         footer: "bg-info/5",
+        caption: "text-info",
       }}
       className="max-w-2xl"
     >
       <Table.ScrollContainer>
-        <Table.Content aria-label="Team">
+        <Table.Content>
+          <Table.Caption>Team</Table.Caption>
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column isRowHeader allowsSorting>Name</Table.Column>
             <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body>

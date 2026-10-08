@@ -51,8 +51,7 @@ describe("playDeclarativeMotion", () => {
     playDeclarativeMotion(
       fakeEl(),
       { y: -4, duration: 0.28, delay: "expandDuration" },
-      { phase: "enter", reduced: false, config: MOTION_CONFIG_DEFAULTS },
-    );
+      { phase: "enter", reduced: false, config: MOTION_CONFIG_DEFAULTS });
     expect(toSpy.mock.calls[0]?.[1]).toMatchObject({
       delay: MOTION_CONFIG_DEFAULTS.expandDuration / 1000,
     });
@@ -65,14 +64,12 @@ describe("playDeclarativeMotion", () => {
     playDeclarativeMotion(
       fakeEl(),
       { y: -4, duration: 0.28, delay: "expand" },
-      { phase: "enter", reduced: false, config: MOTION_CONFIG_DEFAULTS },
-    );
+      { phase: "enter", reduced: false, config: MOTION_CONFIG_DEFAULTS });
     expect(toSpy.mock.calls[0]?.[1]).toMatchObject({ delay: expandDelay });
     playDeclarativeMotion(
       fakeEl(),
       { y: 8, autoAlpha: 0, duration: 0.28, delay: "expand", replay: "rest" },
-      { phase: "enter", reduced: false, config: MOTION_CONFIG_DEFAULTS },
-    );
+      { phase: "enter", reduced: false, config: MOTION_CONFIG_DEFAULTS });
     expect(fromToSpy.mock.calls[0]?.[2]).toMatchObject({
       delay: expandDelay,
       immediateRender: true,
@@ -108,8 +105,7 @@ describe("playDeclarativeMotion", () => {
     playDeclarativeMotion(
       el,
       { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
-      { phase: "notify:ping", reduced: false, config: MOTION_CONFIG_DEFAULTS },
-    );
+      { phase: "notify:ping", reduced: false, config: MOTION_CONFIG_DEFAULTS });
 
     expect(fromToSpy).toHaveBeenCalledTimes(1);
     expect(toSpy).not.toHaveBeenCalled();
@@ -129,8 +125,7 @@ describe("playDeclarativeMotion", () => {
     playDeclarativeMotion(
       fakeEl(),
       { y: -6, duration: 0.28, replay: "rest" },
-      { phase: "hoverIn", reduced: false, config: MOTION_CONFIG_DEFAULTS },
-    );
+      { phase: "hoverIn", reduced: false, config: MOTION_CONFIG_DEFAULTS });
 
     expect(fromToSpy).toHaveBeenCalledTimes(1);
     expect(fromToSpy.mock.calls[0]?.[1]).toMatchObject({ y: 0 });
@@ -219,8 +214,7 @@ describe("MotionContext tween helpers", () => {
           () => {
             order.push("b");
             return tween;
-          },
-        ),
+          }),
       targets: {},
     });
 
@@ -247,8 +241,7 @@ describe("MotionContext tween helpers", () => {
           },
           () => {
             order.push("fast");
-          },
-        ),
+          }),
       targets: {},
     });
 
@@ -368,11 +361,9 @@ describe("resolveMotionDelay", () => {
 
   it("maps duration tokens and expand alias from config milliseconds", () => {
     expect(resolveMotionDelay("expandDuration", MOTION_CONFIG_DEFAULTS)).toBe(
-      MOTION_CONFIG_DEFAULTS.expandDuration / 1000,
-    );
+      MOTION_CONFIG_DEFAULTS.expandDuration / 1000);
     expect(resolveMotionDelay("expand", MOTION_CONFIG_DEFAULTS)).toBe(
-      MOTION_CONFIG_DEFAULTS.expandDuration / 1000,
-    );
+      MOTION_CONFIG_DEFAULTS.expandDuration / 1000);
   });
 
   it("omits non-finite numbers", () => {

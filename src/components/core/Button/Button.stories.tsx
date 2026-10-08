@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoSave } from "react-icons/io5";
 
 import { Button, type ButtonStatus, type ButtonVariant } from ".";
 import { ButtonSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/button/slotMotion/gallery";
@@ -14,7 +14,6 @@ const BUTTON_VARIANTS: ButtonVariant[] = [
   "outline",
   "secondary",
   "ghost",
-  "gloss",
 ];
 
 const BUTTON_STATUSES: ButtonStatus[] = [
@@ -74,7 +73,6 @@ const meta = {
         "outline",
         "secondary",
         "ghost",
-        "gloss",
       ],
     },
     status: {
@@ -261,6 +259,24 @@ export const WithIcon: Story = {
   ),
 };
 
+export const OverrideIconSize: Story = {
+  name: "Override icon size",
+  render: () => (
+    <div className="flex flex-wrap items-center gap-mid">
+      <Button size="base" icon={<IoAdd aria-hidden />}>
+        Default
+      </Button>
+      <Button
+        size="base"
+        icon={<IoAdd aria-hidden />}
+        classNames={{ icon: "icon-slot-large" }}
+      >
+        Large icon
+      </Button>
+    </div>
+  ),
+};
+
 export const Disabled: Story = {
   args: { disabled: true },
 };
@@ -280,83 +296,10 @@ export const MotionStateSave: Story = {
   render: () => <ButtonMotionStateSaveDemo />,
 };
 
-// ─── Gloss variant ───────────────────────────────────────────────────────────
-
-const dottedGridStyle = {
-  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
-  backgroundSize: "30px 30px",
-  backgroundPosition: "2px 2px",
-} as const;
-
-function glossDottedDecorator(light = false) {
-  return (Story: ComponentType) => (
-    <div
-      data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[20rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
-      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
-    >
-      <Story />
-    </div>
-  );
-}
-
-function GlossDemo() {
-  return (
-    <div className="flex flex-col items-center gap-2xlarge">
-      <div className="flex flex-wrap items-center justify-center gap-mid">
-        {BUTTON_STATUSES.map((status) => (
-          <Button key={status} variant="gloss" status={status} className="capitalize">
-            {status}
-          </Button>
-        ))}
-      </div>
-      <div className="flex flex-wrap items-center justify-center gap-mid">
-        <Button variant="gloss" size="small">
-          Small
-        </Button>
-        <Button variant="gloss" size="base">
-          Base
-        </Button>
-        <Button variant="gloss" size="mid">
-          Mid
-        </Button>
-        <Button variant="gloss" size="large">
-          Generate
-        </Button>
-      </div>
-      <div className="flex flex-wrap items-center justify-center gap-mid">
-        <Button variant="gloss" icon={<IoAdd aria-hidden />}>
-          With icon
-        </Button>
-        <Button variant="gloss" iconOnly aria-label="Add">
-          <IoAdd aria-hidden className="icon-base" />
-        </Button>
-        <Button variant="gloss" disabled>
-          Disabled
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
-};
-
 export const LabelLayout: Story = {
   name: "Label + shortcut layout",
   render: () => (
-    <Button variant="gloss" type="button" className="w-full max-w-xs justify-between gap-mid">
+    <Button variant="default" type="button" className="w-full max-w-xs justify-between gap-mid">
       <span>Command palette</span>
       <span className="inline-flex gap-xsmall">
         <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">⌘</span>
@@ -404,6 +347,26 @@ export const AsChildLink: Story = {
         <a href="#ghost">Ghost link</a>
       </Button>
     </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
+  render: () => (
+    <Button
+      variant="outline"
+      status="info"
+      icon={<IoSave aria-hidden />}
+      classNames={{
+        root: "rounded-large border-token-info",
+        content: "gap-small",
+        label: "gap-small",
+        icon: "icon-slot-large text-info",
+        text: "font-w-strong text-info",
+      }}
+    >
+      Save draft
+    </Button>
   ),
 };
 

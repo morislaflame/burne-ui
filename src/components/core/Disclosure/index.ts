@@ -7,7 +7,7 @@ import {
   DisclosureTrigger,
 } from "./Disclosure";
 import { DisclosureGroup } from "./disclosureGroup";
-
+ 
 export const Disclosure = Object.assign(DisclosureRoot, {
   Trigger: DisclosureTrigger,
   Icon: DisclosureIcon,
@@ -16,7 +16,7 @@ export const Disclosure = Object.assign(DisclosureRoot, {
   Content: DisclosureContent,
   Group: DisclosureGroup,
 });
-
+ 
 export type {
   DisclosureProps,
   DisclosureGroupProps,
@@ -27,9 +27,9 @@ export type {
   DisclosureChevronProps,
   DisclosureVariant,
   DisclosureSize,
-  DisclosureChevronPos,
   DisclosureClassNames,
   DisclosureMotion,
   DisclosureLifecycleMotion,
   DisclosureTitleLiftMotion,
 } from "./disclosureTypes";
+ 

@@ -2,11 +2,11 @@ import {
   SelectionThumb as SelectionThumbRoot,
   SelectionThumbIcon,
 } from "./SelectionThumb";
-
+ 
 export const SelectionThumb = Object.assign(SelectionThumbRoot, {
   Icon: SelectionThumbIcon,
 });
-
+ 
 export type {
   SelectionThumbIconProps,
   SelectionThumbProps,
@@ -14,4 +14,6 @@ export type {
   SelectionThumbIconClassNames,
   SelectionThumbMotion,
   SelectionThumbPartMotion,
+  SelectionThumbVariant,
 } from "./SelectionThumb";
+ 

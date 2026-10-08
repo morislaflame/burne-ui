@@ -1,7 +1,7 @@
 import { ToggleButtonIconStart, ToggleButtonText, ToggleButtonIconEnd } from "./toggleButtonParts";
 import { shouldWrapToggleButtonChildrenInText } from "./toggleButtonAPI";
 import type { ToggleButtonSimpleContentProps } from "./toggleButtonTypes";
-
+ 
 /** Simple API: assembles content slot from root props (single icon). */
 export function ToggleButtonSimpleContent({
   icon,
@@ -18,7 +18,7 @@ export function ToggleButtonSimpleContent({
         ) : (
           <ToggleButtonIconStart>{icon}</ToggleButtonIconStart>
         );
-
+ 
   return (
     <>
       {iconPosition === "start" ? iconNode : null}
@@ -27,3 +27,4 @@ export function ToggleButtonSimpleContent({
     </>
   );
 }
+ 

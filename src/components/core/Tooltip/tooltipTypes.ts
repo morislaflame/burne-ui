@@ -1,48 +1,48 @@
 import type {
   HTMLAttributes,
   ReactNode,
-  Ref,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-
+ 
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { TooltipSide } from "./tooltipPosition";
-
+ 
 export type { TooltipSide };
-
-export type TooltipVariant = "default" | "outline" | "secondary" | "gloss";
-
+ 
+export const KIT_TOOLTIP_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitTooltipVariant = (typeof KIT_TOOLTIP_VARIANTS)[number];
+export type TooltipVariant = KitTooltipVariant | (string & {});
+ 
 export type TooltipSize = "small" | "base" | "mid" | "large";
-
+ 
 export type TooltipClassNames = {
   root?: string;
   trigger?: string;
   content?: string;
+  panelRelative?: string;
   arrow?: string;
   panel?: string;
-  glossPanel?: string;
-  glossContent?: string;
   message?: string;
   indicator?: string;
   icon?: string;
   title?: string;
   description?: string;
 };
-
+ 
 export type TooltipLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type TooltipPartMotion = TooltipLifecycleMotion & {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
 };
-
+ 
 export type TooltipMotion = {
   content?: TooltipPartMotion;
   title?: TooltipPartMotion;
@@ -51,7 +51,7 @@ export type TooltipMotion = {
   arrow?: TooltipPartMotion;
   panel?: TooltipPartMotion;
 };
-
+ 
 export type TooltipProps = {
   children?: ReactNode;
   size?: TooltipSize;
@@ -75,12 +75,12 @@ export type TooltipProps = {
    */
   motion?: Prettify<MotionMapWithEvents<TooltipMotion>>;
 } & MotionStateHostProps;
-
+ 
 export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
   /** Merge props onto the single child (Button, etc.) instead of wrapping in `<span>`. */
   asChild?: boolean;
 };
-
+ 
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   showArrow?: boolean;
   offset?: number;
@@ -93,11 +93,11 @@ export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<TooltipPartMotion>;
 };
-
+ 
 export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TooltipVariant;
   status?: SemanticStatus;
@@ -106,26 +106,26 @@ export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   showIcon?: boolean;
   title?: ReactNode;
   description?: ReactNode;
-  glossPanelRef?: Ref<HTMLDivElement>;
   motion?: Prettify<TooltipPartMotion>;
 };
-
+ 
 export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   showIcon?: boolean;
   motion?: Prettify<TooltipPartMotion>;
 };
-
+ 
 export type TooltipIconProps = TooltipIndicatorProps;
-
+ 
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type TooltipMessageProps = HTMLAttributes<HTMLDivElement>;
-
+ 
 export type TooltipTitleProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<TooltipPartMotion>;
 };
 export type TooltipDescriptionProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<TooltipPartMotion>;
 };
-
+ 
 export type TooltipContextValue = {
   open: boolean;
   tooltipId: string;
@@ -141,7 +141,7 @@ export type TooltipContextValue = {
   /** Portal mount node from Root; Content may override via its own prop. */
   portalContainer?: HTMLElement | null;
 };
-
+ 
 export type TooltipBodyContextValue = {
   variant: TooltipVariant;
   status: SemanticStatus;
@@ -150,8 +150,9 @@ export type TooltipBodyContextValue = {
   showIcon?: boolean;
   gridSlots: MessageBannerGridSlots;
 };
-
+ 
 export type TooltipClassNamesProviderProps = {
   classNames?: Prettify<TooltipClassNames>;
   children: ReactNode;
 };
+ 

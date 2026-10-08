@@ -1,11 +1,11 @@
 import { Text } from "@/components/core/Text";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
-
+ 
 import { useKbdClassNames, useOptionalKbdMotionScope } from "./kbdContext";
 import { KBD_TEXT_CLASS, KBD_TEXT_VARIANT } from "./kbdStyles";
 import type { KbdTextProps } from "./kbdTypes";
-
+ 
 export function KbdText({
   size,
   className,
@@ -24,7 +24,7 @@ export function KbdText({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <Text
       ref={setRef as never}
@@ -39,5 +39,6 @@ export function KbdText({
     </Text>
   );
 }
-
+ 
 KbdText.displayName = "Kbd.Text";
+ 

@@ -63,7 +63,7 @@ Simple API нет.
 | `motion` | — | Локально перекрывает root `motion` (мерж по слотам). `events` мержатся с root |
 | `motionController` | — | Handle этого Item → Expandable. Accordion без group-scope: один handle → один Item |
 
-Каждый Item — обёртка над `Expandable` (`compound={true}`, controlled `open`). Слоты `trigger`, `triggerLift`, `message`, `icon`, `content`, `title`, `description`, `chevron`, `panelShell`, `panel`, `glossContent` прокидываются в `classNames` вложенного `Expandable`; `item` прокидывается в `Expandable`'s `classNames.root`.
+Каждый Item — обёртка над `Expandable` (`compound={true}`, controlled `open`). Слоты `trigger`, `triggerLift`, `message`, `icon`, `content`, `title`, `description`, `chevron`, `panelShell`, `panel` прокидываются в `classNames` вложенного `Expandable`; `item` прокидывается в `Expandable`'s `classNames.root`.
 
 ### Compound-подчасти
 
@@ -257,10 +257,10 @@ configureMotion({
 
 | Класс / функция | Назначение |
 |-----------------|------------|
-| `accordionRootClass` | `flex flex-col`; скругление first/last Item |
-| `[&>item:first-child]:rounded-t-mid` | Верх группы |
+| `accordionRootClass` | `accordion-root`; `--accordion-item-radius` (по умолчанию `--radius-large`); тот же outer и `--radius-pad: var(--space-xsmall)` для `rounded-nested` |
+| `[--accordion-item-radius:…]` | Перекрывает радиус крайних Item |
 | `[&>item:not(:first-child)]:-mt-px` | Склейка border между Item |
-| `accordionItemClass` | `relative !rounded-none` |
+| `accordionItemClass` | `rounded-none`; `first:` / `last:` читают `--accordion-item-radius` |
 | `accordionHeadingClass` | Reset `<h3>` |
 | `accordionChevronClass` | Chevron wrapper `origin-center` |
 | `accordionBodyClass` | `text-muted` |
@@ -288,7 +288,6 @@ type AccordionClassNames = {
   chevron?: string;
   panelShell?: string;
   panel?: string;
-  glossContent?: string;
   body?: string;
 };
 ```
@@ -311,7 +310,6 @@ type AccordionClassNames = {
 | `chevron` | `Accordion.Chevron` (свой компонент, не `Expandable.Chevron`) |
 | `panelShell` / `panel` | `Accordion.Panel` → `Expandable.Panel` |
 | `body` | `Accordion.Body` (опциональный muted-текст; не motion-слот) |
-| `glossContent` | `Expandable`'s gloss-wrapper (не используется, т.к. Item всегда `variant="default"`) |
 
 ### Пример: переопределение на одном Item
 

@@ -1,7 +1,7 @@
 import type { TextVariant } from "@/components/core/Text";
-
+ 
 import type { ComponentSize } from "./componentSize";
-
+ 
 /**
  * Shared size presets for option-style controls (Checkbox, Radio, Switch)
  * and menu rows (ListBox, Dropdown): title/desc typography + grid gaps.
@@ -14,7 +14,7 @@ export type OptionControlSizeLayout = {
   /** ListBox / Dropdown item row: indicator ↔ label (gap-x only). */
   listItemGapX: string;
 };
-
+ 
 export const OPTION_CONTROL_SIZE_LAYOUT: Record<
   ComponentSize,
   OptionControlSizeLayout
@@ -44,3 +44,4 @@ export const OPTION_CONTROL_SIZE_LAYOUT: Record<
     listItemGapX: "gap-x-mid",
   },
 };
+ 

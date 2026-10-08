@@ -1,7 +1,9 @@
 import { useId, useMemo, type ReactNode } from "react";
-
+ 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/sizeLayout";
+ 
+import { useSkinVariant } from "@/skins/skinContext";
 
 import { alertHasAction, alertHasDescription, alertHasTitle, alertShowsIndicator, hasAlertCompoundChildren, resolveAlertStatus, resolveAlertVariant } from "./alertAPI";
 import { resolveAlertAriaDescribedBy, resolveAlertAriaLabelledBy, resolveAlertLiveRole } from "./alertA11y";
@@ -12,7 +14,7 @@ import type {
   AlertVariant,
   AlertSize,
 } from "./alertTypes";
-
+ 
 function resolveAlertGridSlots(
   variant: AlertVariant,
   status: AlertStatus,
@@ -31,7 +33,7 @@ function resolveAlertGridSlots(
     hasClose: false,
   };
 }
-
+ 
 export function useAlertRootState({
   variant: variantProp,
   status: statusProp,
@@ -57,14 +59,14 @@ export function useAlertRootState({
   ariaDescribedByProp?: string;
   size?: AlertSize;
 }) {
-  const variant = resolveAlertVariant(variantProp);
+  const variant = resolveAlertVariant(useSkinVariant(variantProp));
   const status = resolveAlertStatus(statusProp);
   const size = resolveMessageBannerSize(sizeProp);
   const sizePreset = messageBannerSizePreset(size);
   const autoId = useId();
   const titleId = `${autoId}-title`;
   const descriptionId = `${autoId}-description`;
-
+ 
   const isCompound = useMemo(() => hasAlertCompoundChildren(children), [children]);
   const hasTitle = useMemo(
     () => title != null || alertHasTitle(children),
@@ -74,7 +76,7 @@ export function useAlertRootState({
     () => description != null || alertHasDescription(children),
     [children, description],
   );
-
+ 
   const gridSlots = useMemo(
     () =>
       resolveAlertGridSlots(
@@ -89,7 +91,7 @@ export function useAlertRootState({
       ),
     [action, children, hasDescription, hasTitle, icon, isCompound, status, variant],
   );
-
+ 
   const liveRole = resolveAlertLiveRole(status, roleProp);
   const ariaLabelledBy =
     ariaLabelledByProp ??
@@ -97,12 +99,12 @@ export function useAlertRootState({
   const ariaDescribedBy =
     ariaDescribedByProp ??
     resolveAlertAriaDescribedBy(descriptionId, hasTitle, hasDescription);
-
+ 
   const contextValue = useMemo<AlertContextValue>(
     () => ({ variant, status, size, sizePreset, titleId, descriptionId, gridSlots }),
     [descriptionId, gridSlots, size, sizePreset, status, titleId, variant],
   );
-
+ 
   return {
     variant,
     status,
@@ -116,3 +118,4 @@ export function useAlertRootState({
     contextValue,
   };
 }
+ 

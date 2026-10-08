@@ -13,6 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const primitivesPath = join(root, "src/tokens/tokenPrimitives.json");
 const cssPath = join(root, "src/tokens/styles.css");
+const appCssPath = join(root, "src/styles.css");
 
 const primitives = JSON.parse(readFileSync(primitivesPath, "utf8"));
 
@@ -83,7 +84,7 @@ function shadowLayer(geom, opacity) {
   ].join("\n");
 }
 
-const SHADOW_LEVELS = ["small", "base", "mid", "large"];
+const SHADOW_LEVELS = ["small", "base", "mid", "large", "xlarge"];
 
 function shadowBlock(theme) {
   const opacity = primitives.shadowOpacity[theme];
@@ -123,18 +124,29 @@ function fontBlock() {
   ].join("\n");
 }
 
-function replaceMarked(css, id, body) {
+function replaceMarked(css, id, body, label = cssPath) {
   const startRe = new RegExp(`^([ \\t]*)/\\* BEGIN GENERATED:${id} \\*/\\r?\\n`, "m");
   const endRe = new RegExp(`^([ \\t]*)/\\* END GENERATED:${id} \\*/`, "m");
   const startMatch = startRe.exec(css);
   const endMatch = endRe.exec(css);
   if (!startMatch || !endMatch || endMatch.index < startMatch.index) {
-    throw new Error(`Missing markers for ${id} in ${cssPath}`);
+    throw new Error(`Missing markers for ${id} in ${label}`);
   }
   const indent = startMatch[1] || "  ";
   const before = css.slice(0, startMatch.index + startMatch[0].length);
   const after = css.slice(endMatch.index + endMatch[0].length);
   return `${before}${body}\n${indent}/* END GENERATED:${id} */${after}`;
+}
+
+function breakpointThemeBlock() {
+  return Object.entries(primitives.breakpoints)
+    .map(([name, px]) => `  --breakpoint-${name}: ${px}px;`)
+    .join("\n");
+}
+
+function narrowViewportMedia() {
+  const lg = primitives.breakpoints.lg;
+  return `  @media (max-width: ${lg}px), (hover: none), (pointer: coarse), (any-pointer: coarse) {`;
 }
 
 const checkOnly = process.argv.includes("--check");
@@ -145,9 +157,13 @@ const next = replaceMarked(
   "shadows-dark",
   shadowBlock("dark"),
 );
-const next2 = replaceMarked(next, "shadows-light", shadowBlock("light"));
+let next2 = replaceMarked(next, "shadows-light", shadowBlock("light"));
 
-if (next2 === css) {
+let appCss = readFileSync(appCssPath, "utf8");
+appCss = replaceMarked(appCss, "breakpoints", breakpointThemeBlock(), appCssPath);
+appCss = replaceMarked(appCss, "narrow-viewport", narrowViewportMedia(), appCssPath);
+
+if (next2 === css && appCss === readFileSync(appCssPath, "utf8")) {
   console.log("token CSS already in sync with tokenPrimitives.json");
   process.exit(0);
 }
@@ -157,5 +173,6 @@ if (checkOnly) {
   process.exit(1);
 }
 
-writeFileSync(cssPath, next2);
-console.log("updated generated regions in src/tokens/styles.css");
+if (next2 !== css) writeFileSync(cssPath, next2);
+if (appCss !== readFileSync(appCssPath, "utf8")) writeFileSync(appCssPath, appCss);
+console.log("updated generated regions in src/tokens/styles.css and src/styles.css");

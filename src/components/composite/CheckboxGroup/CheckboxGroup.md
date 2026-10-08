@@ -56,7 +56,7 @@ Simple API нет.
 | `value` | — | Controlled (`single` only) |
 | `defaultValue` | — | Uncontrolled initial (`single`) |
 | `onValueChange` | — | `(value: string \| undefined) => void` (`single`) |
-| `required` | `false` | Required mark на Label; native `required` на first checkbox в `single` |
+| `required` | `false` | Required mark на Label; `aria-required` на группе. Нативный `required` на checkbox не ставится |
 | `size` | `small` | `small` \| `base` \| `mid` \| `large` — gaps legend/list |
 | `disabled` | `false` | На fieldset + context → Checkbox |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
@@ -228,7 +228,7 @@ configureMotion({
   required
   className="max-w-md"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     legend: "text-primary",
     legendHeader: "gap-xsmall",
     hint: "text-foreground/70",
@@ -274,7 +274,7 @@ configureMotion({
 ### Multiple + hint
 
 ```tsx
-<CheckboxGroup size="base" className="rounded-mid border border-token p-large">
+<CheckboxGroup size="base" className="rounded-large border border-token p-large">
   <CheckboxGroup.Legend>
     <CheckboxGroup.Label>Теги</CheckboxGroup.Label>
     <CheckboxGroup.Hint>Выберите один или несколько.</CheckboxGroup.Hint>
@@ -336,7 +336,7 @@ configureMotion({
 
 - Паттерн legend: `Legend` → `Label` + опционально `Hint`.
 - `single`: все `Checkbox` должны иметь уникальный `value`.
-- `required` в `single` — native `required` только на **первом** checkbox (`claimRequiredAnchor`).
+- `required`: `aria-required` на группе. Нативный `required` на checkbox не ставится.
 - `multiple`: каждый checkbox со своим `name` или общим `name` + разными `value` — по сценарию.
 - Стили опций — через `Checkbox` `classNames`, не через группу.
 - Сравнение с `RadioGroup`: checkbox UI + optional single-selection mode.
@@ -350,7 +350,7 @@ configureMotion({
 | `Form` | Ограниченная интеграция (см. выше) |
 | `RadioGroup` | Альтернатива для strict single-select |
 
-Shared: `optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupParts.tsx`, `optionGroupClassNames.tsx` (с `RadioGroup`).
+Shared: `optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupClassNames.tsx` (с `RadioGroup`).
 
 ## Доступность
 
@@ -359,7 +359,7 @@ Shared: `optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupParts.tsx
 - `aria-describedby` на fieldset → hint + error ids
 - `Checkbox`: native `<input type="checkbox">`, `aria-describedby`, labels
 - `Error`: `role="alert"` через `FieldError`
-- `single` + `required`: required anchor на первом checkbox
+- `single` + `required`: `aria-required` на fieldset. Нативный `required` на checkbox не ставится
 
 ## Структура файлов
 
@@ -377,7 +377,6 @@ CheckboxGroup/
 composite/utils/
 ├── optionGroupFieldset.tsx
 ├── optionGroupLayout.ts
-├── optionGroupParts.tsx
 ├── optionGroupClassNames.tsx
 ├── useOptionGroupSingleValue.ts
 └── useOptionGroupRequiredAnchor.ts

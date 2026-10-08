@@ -1,8 +1,8 @@
 import { isValidElement, type ReactNode } from "react";
-
+ 
 import type { KbdSize } from "./kbdTypes";
 import { KbdText } from "./kbdTextPart";
-
+ 
 export function KbdBody({
   size,
   children,
@@ -14,5 +14,6 @@ export function KbdBody({
   if (isValidElement(children)) return children;
   return <KbdText size={size}>{children}</KbdText>;
 }
-
+ 
 KbdBody.displayName = "KbdBody";
+ 

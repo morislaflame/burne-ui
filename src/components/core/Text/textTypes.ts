@@ -1,7 +1,7 @@
 import type { ElementType, HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type TextVariant =
   | "accent-header"
   | "header-1"
@@ -11,7 +11,7 @@ export type TextVariant =
   | "base"
   | "small"
   | "xsmall";
-
+ 
 export type TextPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -20,11 +20,11 @@ export type TextPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type TextMotion = {
   root?: TextPartMotion;
 };
-
+ 
 export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
   variant: TextVariant;
   as?: ElementType;
@@ -42,3 +42,4 @@ export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
+ 

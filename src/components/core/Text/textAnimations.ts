@@ -14,14 +14,14 @@ import {
 } from "@/components/core/utils/slotMotion";
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import { useOptionalTextMotionScope, useTextMotionScope } from "./textContext";
 import type { TextMotion, TextPartMotion } from "./textTypes";
-
+ 
 export function resolveTextMotionDefaults(): TextMotion {
   return {};
 }
-
+ 
 export function useTextRootMotion({
   forwardedRef,
   motion,
@@ -54,7 +54,8 @@ export function useTextRootMotion({
   useOptionalEnterOnMount(scope, "root", part.targetRef);
   return part;
 }
-
+ 
 export function useOptionalTextRootMotion() {
   return useOptionalTextMotionScope();
 }
+ 

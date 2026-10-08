@@ -1,7 +1,7 @@
 import type { TextVariant } from "@/components/core/Text";
-
+ 
 import type { ComponentSize } from "./componentSize";
-
+ 
 export type ControlSizeLayout = {
   minWButton: string;
   padX: string;
@@ -16,7 +16,7 @@ export type ControlSizeLayout = {
   spinnerBorder: string;
   rounded: string;
 };
-
+ 
 /** Shared size presets for interactive controls (Button, Input, Tabs, …). */
 export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
   small: {
@@ -76,3 +76,4 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     rounded: "rounded-large",
   },
 };
+ 

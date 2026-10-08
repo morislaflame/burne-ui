@@ -75,6 +75,7 @@ describe("MotionController", () => {
 
   it("missing target and unknown event skip with a dev error", () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const { scope } = scopeWithRoot();
     const controller = createMotionControllerFromScope(scope);
 
@@ -82,10 +83,24 @@ describe("MotionController", () => {
     expect(missing.status).toBe("cancelled");
 
     const unknown = controller.play("checkout:saving" as "hoverIn");
-    expect(unknown.status).toBe("finished");
+    expect(unknown.status).toBe("skipped");
 
     expect(error).toHaveBeenCalled();
+    expect(warn).toHaveBeenCalled();
     error.mockRestore();
+    warn.mockRestore();
+  });
+
+  it("playAll of an unknown event skips instead of throwing", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { scope } = scopeWithRoot();
+    const controller = createMotionControllerFromScope(scope);
+
+    const { runs } = await controller.playAll("checkout:saving" as "hoverIn");
+    expect(runs).toHaveLength(1);
+    expect(runs[0]?.status).toBe("skipped");
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
   });
 
   it("playAll hits every live instance and skip disposed", async () => {

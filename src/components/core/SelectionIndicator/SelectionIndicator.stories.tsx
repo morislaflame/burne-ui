@@ -31,6 +31,26 @@ export const Playground: Story = {
   args: { selected: true, check: true },
 };
 
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
+  args: { selected: true, check: true },
+  render: () => (
+    <div className="flex items-end gap-2xlarge">
+      <SelectionIndicator
+        size="large"
+        selected
+        check
+        classNames={{
+          root: "rounded-large ring-1 ring-primary/30",
+          fill: "bg-danger",
+          mark: "text-danger-foreground",
+        }}
+      />
+      <SelectionIndicator size="large" selected check />
+    </div>
+  ),
+};
+
 export const MotionControllerGallery: Story = {
   args: { selected: true, check: true },
   name: "MotionController",

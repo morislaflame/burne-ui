@@ -6,7 +6,7 @@ export function RadioClassNamesFullDemo() {
       name="classnames-full"
       value="courier"
       defaultChecked
-      variant="gloss"
+      variant="default"
       classNames={{
         root: "rounded-large border-info/40 p-large shadow-token-base",
         control: "ring-info/30",

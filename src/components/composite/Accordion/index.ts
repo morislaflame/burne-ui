@@ -1,5 +1,5 @@
 import { AccordionBody, AccordionContent, AccordionDescription, AccordionHeading, AccordionIcon, AccordionChevron, AccordionItem, AccordionMessage, AccordionPanel, AccordionRoot, AccordionTitle, AccordionTrigger } from "./Accordion";
-
+ 
 export const Accordion = Object.assign(AccordionRoot, {
   Item: AccordionItem,
   Heading: AccordionHeading,
@@ -13,7 +13,7 @@ export const Accordion = Object.assign(AccordionRoot, {
   Panel: AccordionPanel,
   Body: AccordionBody,
 });
-
+ 
 export type {
   AccordionProps,
   AccordionItemProps,
@@ -32,3 +32,4 @@ export type {
   AccordionLifecycleMotion,
   AccordionTriggerLiftMotion,
 } from "./Accordion";
+ 

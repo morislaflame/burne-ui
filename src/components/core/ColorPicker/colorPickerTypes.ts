@@ -1,14 +1,16 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { ColorSwatchShape, ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
-
+ 
 export type ColorPickerSize = "small" | "base" | "mid" | "large";
-
-export type ColorPickerVariant = "default" | "gloss";
-
+ 
+export const KIT_COLOR_PICKER_VARIANTS = ["default"] as const;
+export type KitColorPickerVariant = (typeof KIT_COLOR_PICKER_VARIANTS)[number];
+export type ColorPickerVariant = KitColorPickerVariant | (string & {});
+ 
 export type ColorPickerClassNames = {
   content?: string;
   contentPanel?: string;
@@ -31,7 +33,7 @@ export type ColorPickerClassNames = {
   presets?: string;
   presetSwatch?: string;
 };
-
+ 
 export type ColorPickerPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -40,7 +42,7 @@ export type ColorPickerPartMotion = {
   enter?: MotionValue;
   change?: MotionValue;
 };
-
+ 
 export type ColorPickerMotion = {
   contentPanel?: ColorPickerPartMotion;
   area?: ColorPickerPartMotion;
@@ -54,7 +56,7 @@ export type ColorPickerMotion = {
   /** Pass-through to `Popover.Trigger` (nested Popover scope). */
   trigger?: ColorPickerPartMotion;
 };
-
+ 
 export type ColorPickerProps = {
   children?: ReactNode;
   value?: string;
@@ -67,6 +69,9 @@ export type ColorPickerProps = {
   variant?: ColorPickerVariant;
   side?: "top" | "bottom" | "left" | "right";
   disabled?: boolean;
+  "aria-invalid"?: boolean;
+  /** `aria-invalid` and `data-invalid` on the trigger without a message. Native `aria-invalid` still wins when it is true. */
+  invalid?: boolean;
   classNames?: Prettify<ColorPickerClassNames>;
   /**
    * Per-slot motion (`contentPanel`, `area`, `areaThumb`, `hexInput`, `alphaInput`, `presets`, `hueSlider`, `alphaSlider`, `previewSwatch`).
@@ -83,7 +88,7 @@ export type ColorPickerProps = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ColorPickerTriggerProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "color"
@@ -94,7 +99,7 @@ export type ColorPickerTriggerProps = Omit<
   children?: ReactNode;
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerPreviewProps = Omit<
   HTMLAttributes<HTMLSpanElement>,
   "color"
@@ -104,7 +109,7 @@ export type ColorPickerPreviewProps = Omit<
   shape?: ColorSwatchShape;
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   showAlpha?: boolean;
   presets?: string[];
@@ -115,40 +120,42 @@ export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "colo
   children?: ReactNode;
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerAreaProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerHexInputProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerAlphaInputProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerPresetsProps = HTMLAttributes<HTMLDivElement> & {
   presets: string[];
   motion?: Prettify<ColorPickerPartMotion>;
 };
-
+ 
 export type ColorPickerContextValue = {
   hsva: HSVA;
   setHsva: (next: HSVA) => void;
   hex: string;
   disabled: boolean;
   size: ColorPickerSize;
+  invalid: boolean;
 };
-
+ 
 export type ColorPickerClassNamesProviderProps = {
   classNames?: Prettify<ColorPickerClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseColorPickerRootStateProps = ColorPickerProps;
-
+ 
 export type UseColorPickerAreaDragProps = {
   hsva: HSVA;
   setHsva: (next: HSVA) => void;
 };
+ 

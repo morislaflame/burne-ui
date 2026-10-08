@@ -18,10 +18,10 @@ export function SliderVolumeCardDemo() {
         min={0}
         max={100}
         step={1}
-        thumbClassName="rounded-mid"
+        thumbClassName="rounded-large"
       >
-        <Slider.Rail className="rounded-mid">
-          <Slider.Fill className="rounded-mid" />
+        <Slider.Rail className="rounded-large">
+          <Slider.Fill className="rounded-large" />
         </Slider.Rail>
         <Slider.Thumb>
           <Slider.Icon>
@@ -29,7 +29,7 @@ export function SliderVolumeCardDemo() {
           </Slider.Icon>
         </Slider.Thumb>
       </Slider.Track>
-      <Slider.Hint>Compound Track + thumbClassName=&quot;rounded-mid&quot;.</Slider.Hint>
+      <Slider.Hint>Compound Track + thumbClassName=&quot;rounded-large&quot;.</Slider.Hint>
     </Slider>
   );
 }

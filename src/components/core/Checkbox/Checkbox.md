@@ -27,7 +27,7 @@ Root рендерится как `<label>` с grid: control + text column.
 ### Compound API
 
 ```tsx
-<Checkbox defaultChecked variant="outline" status={hasError ? "danger" : "default"}>
+<Checkbox defaultChecked variant="outline">
   <Checkbox.Control>
     <Checkbox.Indicator />
   </Checkbox.Control>
@@ -48,9 +48,11 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `variant` | `default` | `default` \| `secondary` \| `outline` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `checked` / `defaultChecked` | — | Controlled / uncontrolled |
+| `indeterminate` | `false` | Смешанный выбор: `input.indeterminate`, `aria-checked="mixed"`, `data-state="indeterminate"`, черта вместо галочки |
 | `onChange` | — | Native change event |
 | `disabled` | `false` | + opacity track animation |
-| `danger` | `false` | Красный label text (или из Form error) |
+| `danger` | `false` | Красный label text. Не ставит `aria-invalid` |
+| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `icon` | — | Кастомная иконка отмеченного состояния (канон `icon`, как у `SelectionIndicator`; не путать с Switch `iconOn`/`iconOff`) |
 | `label` / `hint` / `error` | — | Simple API |
 | `name` / `value` | — | Form / CheckboxGroup |
@@ -68,7 +70,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 |-------|------|
 | `Checkbox.Control` | Cell + hidden/overlay input + indicator |
 | `Checkbox.Indicator` | `SelectionIndicator` (`.Fill`, `.Mark`) |
-| `Checkbox.Content` | Label column / wrapper |
+| `Checkbox.Content` | Label column / wrapper (`display: contents` — padding, border, background и width не рисуются) |
 | `Checkbox.Label` | Текст + required `*` |
 | `Checkbox.Hint` / `Error` | Вторичные строки grid |
 
@@ -268,7 +270,7 @@ ListBox в этом срезе публичный `motion` не получает
   hint="classNames.label и labelText в simple API."
   className="max-w-md"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     controlTrack: "border-primary/40",
     label: "text-primary",
     labelText: "font-semibold underline decoration-primary/30",
@@ -287,7 +289,7 @@ ListBox в этом срезе публичный `motion` не получает
     root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-md",
     control: "ring-primary/30",
     controlTrack: "border-primary/50",
-    indicator: "rounded-mid",
+    indicator: "rounded-large",
     labelText: "text-primary font-semibold",
     hint: "text-foreground/80",
   }}
@@ -307,7 +309,7 @@ ListBox в этом срезе публичный `motion` не получает
 ### Практические заметки
 
 - **Simple vs compound root:** simple — `<label>`; compound — `<fieldset>` (a11y group).
-- **danger:** красит `labelText`; Form error auto-включает status.
+- **danger:** красит `labelText` и не ставит `aria-invalid`. Ошибка валидации — `error` или `invalid`: danger-визуал, `aria-invalid` и `data-invalid=""` на корне. `status="danger"` тоже только цвет.
 - **CheckboxGroup:** `value` + single selection mode; стили на каждом `Checkbox` отдельно.
 - **Не ломайте grid:** `root` задаёт `checkboxGridClass` — осторожно с `display` override.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
@@ -316,15 +318,17 @@ ListBox в этом срезе публичный `motion` не получает
 
 | Контекст | Поведение |
 |----------|-----------|
-| `Form` | `name`, `checked`, `error` → status |
+| `Form` | `name`, `checked`, `error` → `aria-invalid` и danger-визуал |
 | `CheckboxGroup` | single/multi selection, `disabled`, `required` |
 
 ## Доступность
 
 - Native `<input type="checkbox">` — focus, Space toggle
 - `aria-describedby` hint/error; `aria-labelledby` / `aria-label`
-- `aria-invalid` при status + error
+- `aria-invalid` и `data-invalid=""` при `invalid` / `error` (и ошибке Form), не при `status` / `danger`
+- `aria-required` на input, когда рисуется `*` (`required`)
 - Compound fieldset: `aria-labelledby` от `Checkbox.Label`
+- Forced colors (Windows HCM): selected fill/mark через `Highlight` в `styles.css` (`data-checked` + `data-selection-fill` / `data-selection-mark`)
 
 ## Структура файлов
 

@@ -1,12 +1,14 @@
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
-
+ 
 import { TimeFieldClassNamesProvider, TimeFieldFieldProvider, TimeFieldMotionProvider } from "./timeFieldContext";
 import { TimeFieldSimpleBody } from "./timeFieldParts";
 import { timeFieldRootClass } from "./timeFieldStyles";
 import type { TimeFieldProps } from "./timeFieldTypes";
 import { useTimeFieldRootState } from "./useTimeFieldRootState";
-
+ 
 export type {
   TimeFieldClassNames,
   TimeFieldControlProps,
@@ -21,21 +23,22 @@ export type {
   TimeFieldMotion,
   TimeFieldPartMotion,
 } from "./timeFieldTypes";
-
+ 
 export { TimeFieldControl, TimeFieldError, TimeFieldHint, TimeFieldLabel } from "./timeFieldParts";
-
+ 
 export function TimeFieldRoot({
   children,
   label,
   hint,
   error,
+  invalid,
   className,
   classNames,
   id: idProp,
   required = false,
   status = "default",
   size = "base",
-  variant = "default",
+  variant,
   value,
   defaultValue,
   onValueChange,
@@ -57,6 +60,7 @@ export function TimeFieldRoot({
     label,
     hint,
     error,
+    invalid,
     id: idProp,
     required,
     status,
@@ -64,7 +68,12 @@ export function TimeFieldRoot({
     variant,
     compact,
   });
-
+  const isInvalid = useResolvedFieldInvalid({
+    invalid,
+    errorConnected: error != null,
+  });
+  const paintedStatus = visualStatusForInvalid(state.status, isInvalid, "default");
+ 
   const body = state.isCompound ? (
     children
   ) : (
@@ -94,7 +103,7 @@ export function TimeFieldRoot({
       }}
     />
   );
-
+ 
   return (
     <TimeFieldFieldProvider value={state.fieldCtx}>
       <TimeFieldClassNamesProvider classNames={classNames}>
@@ -114,6 +123,11 @@ export function TimeFieldRoot({
               className,
             })}
             {...rest}
+            {...dataVariantProps({
+              size: state.size,
+              variant: state.variant,
+              status: paintedStatus,
+            })}
           >
             {body}
           </Field>
@@ -123,5 +137,6 @@ export function TimeFieldRoot({
     </TimeFieldFieldProvider>
   );
 }
-
+ 
 TimeFieldRoot.displayName = "TimeField";
+ 

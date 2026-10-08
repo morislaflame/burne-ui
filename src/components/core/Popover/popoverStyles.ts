@@ -1,15 +1,17 @@
 import type { TextVariant } from "@/components/core/Text";
-import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import {
   panelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
 import { TOOLTIP_ARROW_SHELL_PAD } from "@/components/core/Tooltip/tooltipPosition";
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 
 import type {
   PopoverContentGap,
   PopoverSide,
   PopoverSize,
+  PopoverVariant,
 } from "./popoverTypes";
+import { KIT_POPOVER_VARIANTS } from "./popoverTypes";
 
 import { cn } from "@/utils/cn";
 
@@ -42,33 +44,27 @@ export const POPOVER_TRIGGER_CLASS =
   "inline-flex shrink-0 border-0 bg-transparent p-0 outline-none focus-ring";
 
 export const POPOVER_CONTENT_CLASS =
-  "pointer-events-auto z-popover w-max min-w-0 overflow-visible text-left outline-none";
+  "pointer-events-auto z-popover w-max min-w-0 overflow-visible text-start outline-none";
 
 export const POPOVER_PANEL_RELATIVE_CLASS = "relative overflow-visible";
 
-export const POPOVER_GLOSS_PANEL_CLASS =
-  "gloss-panel gloss-deep relative z-[1] flex min-w-0 origin-center flex-col overflow-hidden text-foreground";
+export const POPOVER_PANEL_BASE_CLASS =
+  "relative z-[1] flex min-w-0 flex-col overflow-hidden text-foreground";
 
-export const POPOVER_GLOSS_CONTENT_CLASS =
-  "gloss-content flex min-w-0 flex-col";
-
-export const POPOVER_DEFAULT_PANEL_CLASS =
-  "relative z-[1] flex min-w-0 flex-col overflow-hidden border-token bg-surface text-foreground shadow-token-large";
+export const POPOVER_PANEL_SURFACE_CLASS =
+  "border-token bg-surface shadow-token-large";
 
 export const POPOVER_ARROW_BASE_CLASS =
   "pointer-events-none absolute z-0 size-2 rotate-45";
 
-export const POPOVER_ARROW_GLOSS_CLASS =
-  "border-0 bg-[var(--color-surface)]";
-
 export const POPOVER_ARROW_DEFAULT_CLASS = "border-token bg-surface";
 
 export const POPOVER_HEADER_CLASS =
-  "flex shrink-0 flex-col text-left";
+  "flex shrink-0 flex-col text-start";
 
 export const POPOVER_LABEL_CLASS = "min-w-0 font-w-mid";
 
-export const POPOVER_BODY_CLASS = "min-h-0 min-w-0 text-left";
+export const POPOVER_BODY_CLASS = "min-h-0 min-w-0 text-start";
 
 function resolvePopoverGapClass(
   contentGap: PopoverContentGap,
@@ -135,80 +131,46 @@ export function popoverContentClass({
   );
 }
 
-export function popoverGlossPanelClass({
-  size,
-  unstyled,
-  slotClass,
-}: {
-  size: PopoverSize;
-  unstyled: boolean;
-  slotClass?: string;
-}): string {
-  const panel = panelSizeLayout(size);
-  return cn(
-    POPOVER_GLOSS_PANEL_CLASS,
-    GLOSS_INTERACTIVE_MOTION_CLASS,
-    // Gap lives on gloss content (Header/Body siblings) — not on this shell.
-    unstyled
-      ? panel.rounded
-      : cn(panel.rounded, panel.panelMin, panel.popoverMax),
-    slotClass,
-  );
-}
-
-export function popoverGlossContentClass({
-  unstyled,
-  contentGap,
-  gapPropSet,
-  slotClass,
-}: {
-  unstyled: boolean;
-  contentGap: PopoverContentGap;
-  gapPropSet: boolean;
-  slotClass?: string;
-}): string {
-  return cn(
-    POPOVER_GLOSS_CONTENT_CLASS,
-    !unstyled && resolvePopoverGapClass(contentGap, gapPropSet),
-    slotClass,
-  );
-}
-
 export function popoverDefaultPanelClass({
+  variant,
   size,
   unstyled,
   contentGap,
   gapPropSet,
   slotClass,
 }: {
+  variant: PopoverVariant;
   size: PopoverSize;
   unstyled: boolean;
   contentGap: PopoverContentGap;
   gapPropSet: boolean;
   slotClass?: string;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_POPOVER_VARIANTS, "popover.panel");
   return cn(
-    POPOVER_DEFAULT_PANEL_CLASS,
+    POPOVER_PANEL_BASE_CLASS,
+    visual.className !== undefined ? visual.className : POPOVER_PANEL_SURFACE_CLASS,
     popoverSizedPanelClasses({ size, unstyled, contentGap, gapPropSet }),
     slotClass,
   );
 }
 
 export function popoverArrowClass({
-  isGloss,
+  variant,
   arrowSideClass,
   slotClass,
   className,
 }: {
-  isGloss: boolean;
+  variant: PopoverVariant;
   resolvedSide: PopoverSide;
   arrowSideClass: string;
   slotClass?: string;
   className?: string;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_POPOVER_VARIANTS, "popover.arrow");
   return cn(
     POPOVER_ARROW_BASE_CLASS,
-    isGloss ? POPOVER_ARROW_GLOSS_CLASS : POPOVER_ARROW_DEFAULT_CLASS,
+    visual.className !== undefined ? visual.className : POPOVER_ARROW_DEFAULT_CLASS,
     arrowSideClass,
     slotClass,
     className,

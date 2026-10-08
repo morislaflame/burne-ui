@@ -1,5 +1,8 @@
 import { forwardRef, useMemo, useRef, type InputHTMLAttributes, type MutableRefObject } from "react";
 
+import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
+ 
 import {
   SearchInputClear,
   SearchInputControl,
@@ -16,7 +19,7 @@ import { SearchInputMotionProvider } from "./searchInputContext";
 import { searchInputRootClass } from "./searchInputStyles";
 import type { SearchInputMotion, SearchInputProps } from "./searchInputTypes";
 import { useSearchInputRootState } from "./useSearchInputRootState";
-
+ 
 export type {
   SearchInputProps,
   SearchInputSize,
@@ -25,7 +28,7 @@ export type {
   SearchInputMotion,
   SearchInputPartMotion,
 } from "./searchInputTypes";
-
+ 
 type SearchInputRest = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   | "size"
@@ -42,7 +45,7 @@ type SearchInputRest = Omit<
   | "className"
   | "aria-label"
 >;
-
+ 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput(
     {
@@ -64,6 +67,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       onKeyDown,
       id,
       "aria-label": ariaLabel,
+      invalid,
       ripple,
       groupSegment,
       classNames,
@@ -97,17 +101,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       classNames,
       forwardedRef: ref,
     });
-
-    const motionDefaults = useMemo(
-      () =>
-        resolveSearchInputMotionDefaults({
-          isGloss: state.isGloss,
-          blocked: state.blocked,
-          groupSegment: state.groupSegment,
-          expanded: state.expanded,
-        }),
-      [state.blocked, state.expanded, state.groupSegment, state.isGloss],
-    );
+ 
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveSearchInputMotionDefaults({
+        variant: state.variant,
+        blocked: state.blocked,
+        groupSegment: state.groupSegment,
+        expanded: state.expanded,
+      });
+    }, [skinRevision, state.blocked, state.expanded, state.groupSegment, state.variant]);
     const motionParams = useMemo(
       () =>
         resolveSearchInputMotionParams({
@@ -116,7 +120,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           targetW: state.targetW,
           expanded: state.expanded,
           blocked: state.blocked,
-          isGloss: state.isGloss,
+          variant: state.variant,
           groupSegment: state.groupSegment,
           pointerInside: pointerInsideRef,
         }),
@@ -124,18 +128,19 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         state.blocked,
         state.expanded,
         state.groupSegment,
-        state.isGloss,
+        state.variant,
         state.layout,
         state.size,
         state.targetW,
       ],
     );
-
+ 
     return (
       <SearchInputMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
         <SearchInputSurface
           state={state}
           motion={motion}
+          invalid={invalid}
           rest={rest}
           pointerInsideRef={pointerInsideRef}
         />
@@ -143,17 +148,19 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     );
   },
 );
-
+ 
 SearchInput.displayName = "SearchInput";
-
+ 
 function SearchInputSurface({
   state,
   motion,
+  invalid,
   rest,
   pointerInsideRef,
 }: {
   state: ReturnType<typeof useSearchInputRootState>;
   motion?: SearchInputMotion;
+  invalid?: boolean;
   rest: SearchInputRest;
   pointerInsideRef: MutableRefObject<boolean>;
 }) {
@@ -161,7 +168,7 @@ function SearchInputSurface({
     size: state.size,
     expanded: state.expanded,
     blocked: state.blocked,
-    isGloss: state.isGloss,
+    variant: state.variant,
     groupSegment: state.groupSegment,
     layout: state.layout,
     targetW: state.targetW,
@@ -170,28 +177,26 @@ function SearchInputSurface({
     iconRef: state.iconRef,
     pointerInsideRef,
   });
-
+ 
   const rootClass = searchInputRootClass({
     size: state.size,
     variant: state.variant,
     expanded: state.expanded,
     blocked: state.blocked,
-    isGloss: state.isGloss,
     groupSegment: state.groupSegment,
     shellHoverMotionClass: animations.shellHoverMotionClass,
-    standardMotionClass: animations.standardMotionClass,
     className: state.className,
     slotRoot: state.classNames?.root,
   });
-
+ 
   return (
     <div
       ref={animations.bindRootRef}
       role="search"
-      data-search-expanded={state.expanded ? "" : undefined}
+      {...dataVariantProps({ size: state.size, variant: state.variant })}
+      data-state={state.expanded ? "expanded" : "collapsed"}
+      data-group-segment={dataGroupSegment(state.groupSegment != null)}
       style={state.expanded ? { width: state.targetW } : undefined}
-      onFocusCapture={animations.onShellFocusIn}
-      onBlurCapture={animations.onShellFocusOut}
       className={rootClass}
       onPointerDown={() => animations.beginPressSqueeze()}
       onPointerEnter={animations.handlePointerEnter}
@@ -199,6 +204,7 @@ function SearchInputSurface({
     >
       {!state.expanded ? (
         <SearchInputExpandTrigger
+          triggerRef={state.expandTriggerRef}
           blocked={state.blocked}
           inputId={state.inputId}
           collapseA11yLabel={state.collapseA11yLabel}
@@ -229,6 +235,7 @@ function SearchInputSurface({
         layout={state.layout}
         paddingStyle={state.inputPaddingStyle}
         className={state.classNames?.input}
+        invalid={invalid}
         rest={rest}
       />
       {state.showClear ? (
@@ -241,3 +248,4 @@ function SearchInputSurface({
     </div>
   );
 }
+ 

@@ -26,7 +26,7 @@ export function AlertDialogMotionControllerPlayVsSlotDemo() {
       </div>
       <div
         ref={setContainer}
-        className="relative min-h-[18rem] overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+        className="relative min-h-[18rem] overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
       {container ? (
         <AlertDialog open portalContainer={container} size="small" status="warning">

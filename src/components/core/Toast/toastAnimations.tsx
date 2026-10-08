@@ -1,13 +1,8 @@
-import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
-import { prefersReducedMotion, usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import {
-  isMotionFeatureEnabledFor,
-  motionInteractiveFor,
-  motionToastDismissFor,
-} from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { applyToastRootInstant } from "@/components/core/utils/slotMotion/recipes/toastSurface";
+import { applyToastStackInstant } from "@/components/core/utils/slotMotion/recipes/toastStackShift";
+import { applyToastScrimInstant } from "@/components/core/utils/slotMotion/recipes/toastScrimFade";
 import {
   hideNestedEnterSlots,
   killMotionScope,
@@ -20,8 +15,10 @@ import {
 } from "@/components/core/utils/slotMotion";
 import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { useApplySkinPortal, useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
-
+ 
 import {
   resolveToastStackContainerHeight,
   TOAST_ENTRY_OFFSET_PX,
@@ -37,15 +34,24 @@ import {
   useToastMotionScope,
 } from "./toastContext";
 import { ToastRoot } from "./Toast";
-import { toastScrimClass, toastStackClass, toastViewportClass } from "./toastStyles";
-import type { ToastItemWrapperProps, ToastMotion, ToastViewportProps } from "./toastTypes";
-
+import { resolveToastMotionDefaults, TOAST_VIEWPORT_MOTION_DEFAULTS } from "./toastMotionDefaults";
+import {
+  toastScrimClass,
+  toastStackClass,
+  toastStackItemClass,
+  toastStackItemStyle,
+  toastViewportClass,
+  toastViewportWidthStyle,
+} from "./toastStyles";
+import type { ToastItemWrapperProps, ToastViewportProps } from "./toastTypes";
+import { KIT_TOAST_VARIANTS } from "./toastTypes";
+ 
 /**
  * Slot motion for Toast — look here first.
  *
  * DOM slots: `root` (enter/leave surface), `indicator`, `title`, `description`,
- * `action`, `close`. `message` / `content` are `display: contents`. Stack peek,
- * viewport height and scrim stay kit-internal.
+ * `action`, `close`, `stackItem` (peek), `scrim` (viewport). `message` / `content`
+ * are `display: contents`. Viewport height is `--toast-stack-height`, not a tween.
  *
  * Host: `ToastItemWrapper` plays `enter` / `leave` on `root` and broadcasts
  * nested slots (`scheduleNestedEnterBroadcast`). Nested parts do not own mount enter.
@@ -54,10 +60,11 @@ import type { ToastItemWrapperProps, ToastMotion, ToastViewportProps } from "./t
  */
 export const TOAST_MOTION_HOST_SLOTS = ["root"] as const;
 
-export const TOAST_MOTION_DEFAULTS: ToastMotion = {
-  root: { enter: "toastSurfaceEnter", leave: "toastSurfaceLeave" },
-};
-
+/** `stackItem` is the card shell, not nested content. The host plays enter / change. */
+const TOAST_NESTED_ENTER_EXCLUDE = ["root", "stackItem"] as const;
+ 
+export { TOAST_MOTION_DEFAULTS } from "./toastMotionDefaults";
+ 
 function ToastItemMotionHost({
   entry,
   reverseIdx,
@@ -75,13 +82,24 @@ function ToastItemMotionHost({
   const cardRef = useRef<HTMLDivElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(false);
-  const reduceMotionPreferred = usePrefersReducedMotion();
   const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
-
+ 
   const { setRef: setRootPartRef } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "root",
   });
+  const { setRef: setStackPartRef } = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "stackItem",
+    pointerPhases: false,
+  });
+  const setStackRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      stackRef.current = node;
+      setStackPartRef(node);
+    },
+    [setStackPartRef],
+  );
   const setAnimRef = useCallback(
     (node: HTMLDivElement | null) => {
       animRef.current = node;
@@ -89,64 +107,42 @@ function ToastItemMotionHost({
     },
     [setRootPartRef],
   );
-
+ 
   const capped = Math.min(reverseIdx, TOAST_MAX_VISIBLE - 1);
   const stackScale = 1 - capped * TOAST_STACK_SCALE_STEP;
   const peekY = isTop ? capped * TOAST_STACK_PEEK_PX : -capped * TOAST_STACK_PEEK_PX;
   const stackOpacity = reverseIdx >= TOAST_MAX_VISIBLE ? 0 : 1;
-
+ 
   useLayoutEffect(() => {
     const el = stackRef.current;
     if (!el) return;
 
-    const reduceMotion =
-      reduceMotionPreferred || !isMotionFeatureEnabledFor(config, "enableToastStack");
-
+    const stack = { peekY, scale: stackScale, opacity: stackOpacity };
     const isFirstMount = !isMountedRef.current;
     isMountedRef.current = true;
-
-    killMotion(el);
-
-    if (reduceMotion) {
-      gsap.set(el, {
-        y: peekY,
-        scale: stackScale,
-        autoAlpha: stackOpacity,
-      });
+    const phase =
+      isFirstMount && isKitVariant(entry.variant, KIT_TOAST_VARIANTS) ? "enter" : "change";
+    const value = scope.resolve("stackItem", phase);
+    if (value === false || value === undefined) {
+      applyToastStackInstant(el, stack);
       return;
     }
-
-    if (isFirstMount && entry.variant !== "gloss") {
-      gsap.fromTo(
-        el,
-        { opacity: 0 },
-        { opacity: stackOpacity, ...motionInteractiveFor(config), overwrite: "auto" },
-      );
-    } else {
-      setWillChangeTransform(el, true);
-      gsap.to(el, {
-        y: peekY,
-        scale: stackScale,
-        autoAlpha: stackOpacity,
-        ...motionInteractiveFor(config),
-        overwrite: "auto",
-        onComplete: clearWillChangeOnComplete(el),
-      });
-    }
-  }, [config, entry.variant, peekY, reduceMotionPreferred, stackOpacity, stackScale]);
-
+    scope.play("stackItem", phase, { el, params: { toastStack: stack } });
+  }, [entry.variant, peekY, scope, stackOpacity, stackScale]);
+ 
   useLayoutEffect(() => {
     const el = cardRef.current;
     if (!el) return;
     // Measured stack geometry (peek / viewport height), not an enter-layout flush.
     onHeightChange(entry.id, el.offsetHeight);
+    if (typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(() => {
       onHeightChange(entry.id, el.offsetHeight);
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, [entry.id, onHeightChange]);
-
+ 
   useLayoutEffect(() => {
     const el = animRef.current;
     if (!el) return;
@@ -156,12 +152,12 @@ function ToastItemMotionHost({
       else applyReducedPortalMotion(el);
       return;
     }
-    hideNestedEnterSlots(scope, TOAST_MOTION_HOST_SLOTS);
+    hideNestedEnterSlots(scope, TOAST_NESTED_ENTER_EXCLUDE);
     scope.play("root", "enter", { el });
-    const frame = scheduleNestedEnterBroadcast(scope, TOAST_MOTION_HOST_SLOTS);
+    const frame = scheduleNestedEnterBroadcast(scope, TOAST_NESTED_ENTER_EXCLUDE);
     return () => cancelAnimationFrame(frame);
   }, [config, scope, slideDir]);
-
+ 
   useEffect(() => {
     if (!isDismissing) return;
     const el = animRef.current;
@@ -189,28 +185,28 @@ function ToastItemMotionHost({
       leaveWait.kill();
     };
   }, [config, entry.id, isDismissing, onRemoveFinal, scope, slideDir]);
-
+ 
   useEffect(() => {
     if (entry.timeout === 0 || isDismissing || entry.loading) return;
-
+ 
     let remaining = entry.timeout;
     let startedAt: number | null = Date.now();
     let timerId: number | undefined;
     let paused = false;
-
+ 
     const clear = () => {
       if (timerId != null) {
         window.clearTimeout(timerId);
         timerId = undefined;
       }
     };
-
+ 
     const arm = () => {
       clear();
       startedAt = Date.now();
       timerId = window.setTimeout(() => onDismiss(entry.id), remaining);
     };
-
+ 
     const pause = () => {
       if (paused || startedAt == null) return;
       paused = true;
@@ -218,7 +214,7 @@ function ToastItemMotionHost({
       startedAt = null;
       clear();
     };
-
+ 
     const resume = () => {
       if (!paused) return;
       paused = false;
@@ -228,9 +224,9 @@ function ToastItemMotionHost({
       }
       arm();
     };
-
+ 
     arm();
-
+ 
     const node = stackRef.current;
     const onPointerEnter = () => pause();
     const onPointerLeave = () => resume();
@@ -241,12 +237,12 @@ function ToastItemMotionHost({
       }
       resume();
     };
-
+ 
     node?.addEventListener("pointerenter", onPointerEnter);
     node?.addEventListener("pointerleave", onPointerLeave);
     node?.addEventListener("focusin", onFocusIn);
     node?.addEventListener("focusout", onFocusOut);
-
+ 
     return () => {
       clear();
       node?.removeEventListener("pointerenter", onPointerEnter);
@@ -255,23 +251,22 @@ function ToastItemMotionHost({
       node?.removeEventListener("focusout", onFocusOut);
     };
   }, [entry.id, entry.timeout, isDismissing, entry.loading, onDismiss]);
-
+ 
   const dismiss = useCallback(() => onDismiss(entry.id), [entry.id, onDismiss]);
-
+ 
   const isVisible = reverseIdx < total;
   const mergedClassNames = { ...providerClassNames, ...entry.classNames };
-
+ 
   return (
     <div
-      ref={stackRef}
+      ref={setStackRef}
       aria-hidden={!isVisible || undefined}
-      style={{
-        gridColumn: 1,
-        gridRow: 1,
-        transformOrigin: isTop ? "top center" : "bottom center",
+      className={toastStackItemClass(mergedClassNames.stackItem)}
+      style={toastStackItemStyle({
+        origin: isTop ? "top center" : "bottom center",
         zIndex: TOAST_MAX_VISIBLE + 1 - reverseIdx,
         pointerEvents: reverseIdx === 0 ? "auto" : "none",
-      }}
+      })}
     >
       <div ref={setAnimRef}>
         <ToastClassNamesProvider classNames={mergedClassNames}>
@@ -291,7 +286,7 @@ function ToastItemMotionHost({
     </div>
   );
 }
-
+ 
 export function ToastItemWrapper({
   entry,
   reverseIdx,
@@ -305,6 +300,12 @@ export function ToastItemWrapper({
   providerMotion,
 }: ToastItemWrapperProps) {
   const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
+  const toastVariant = useSkinVariant(entry.variant);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveToastMotionDefaults(toastVariant);
+  }, [skinRevision, toastVariant]);
   const mergedMotion = useMemo(() => {
     const mergedSlots = mergeMotionSlotMaps(providerMotion, entry.motion);
     const siblings = mergeMotionRootSiblings(
@@ -313,11 +314,11 @@ export function ToastItemWrapper({
     );
     return { ...mergedSlots, ...siblings };
   }, [entry.motion, providerMotion]);
-
+ 
   return (
     <ToastMotionProvider
       motion={mergedMotion}
-      defaults={TOAST_MOTION_DEFAULTS}
+      defaults={motionDefaults}
       params={{ isTop, slideDir }}
       controller={entry.motionController}
       motionState={entry.motionState}
@@ -338,29 +339,68 @@ export function ToastItemWrapper({
     </ToastMotionProvider>
   );
 }
-
-function applyToastStackContainerHeight(
-  el: HTMLElement,
-  containerH: number,
-  config: Parameters<typeof motionInteractiveFor>[0],
-) {
+ 
+/** Layout, not a tween. Same exception class as `searchExpand`: the stack shell tracks the front card. */
+function applyToastStackContainerHeight(el: HTMLElement, containerH: number) {
   if (containerH <= 0) return;
-
-  const reduceMotion =
-    prefersReducedMotion() || !isMotionFeatureEnabledFor(config, "enableToastStack");
-
-  killMotion(el);
-
-  if (reduceMotion) {
-    el.style.height = `${containerH}px`;
-    return;
-  }
-
-  gsap.to(el, {
-    height: containerH,
-    ...motionInteractiveFor(config),
-    overwrite: "auto",
+  el.style.setProperty("--toast-stack-height", `${containerH}px`);
+}
+ 
+function ToastScrim({
+  isTop,
+  sorted,
+  dismissingIds,
+  className,
+}: {
+  isTop: boolean;
+  sorted: ToastViewportProps["sorted"];
+  dismissingIds: ToastViewportProps["dismissingIds"];
+  className?: string;
+}) {
+  const scope = useToastMotionScope();
+  const firstRef = useRef(true);
+  const part = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "scrim",
+    pointerPhases: false,
   });
+
+  useLayoutEffect(() => {
+    const el = part.targetRef.current;
+    if (!el) return;
+
+    const fromZero = firstRef.current;
+    firstRef.current = false;
+    const isLastDismissing =
+      sorted.length === 1 && dismissingIds.has(sorted[0]?.id ?? "");
+    const phase = isLastDismissing ? "leave" : "enter";
+    const scrim = { opacity: isLastDismissing ? 0 : 1, dismiss: isLastDismissing, fromZero };
+    const value = scope.resolve("scrim", phase);
+    if (value === false || value === undefined) {
+      applyToastScrimInstant(el, scrim.opacity);
+      return;
+    }
+    scope.play("scrim", phase, { el, params: { toastScrim: scrim } });
+  }, [dismissingIds, part.targetRef, scope, sorted]);
+
+  return (
+    <div
+      ref={part.setRef}
+      aria-hidden
+      className={toastScrimClass(className)}
+      style={{
+        [isTop ? "top" : "bottom"]: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.offsetY)})`,
+        left: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.insetX)})`,
+        right: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.insetX)})`,
+        height: toastScrimToken(TOAST_SCRIM_CSS_VAR.height),
+        background: isTop
+          ? toastScrimToken(TOAST_SCRIM_CSS_VAR.gradientTop)
+          : toastScrimToken(TOAST_SCRIM_CSS_VAR.gradientBottom),
+        maskImage: toastScrimToken(TOAST_SCRIM_CSS_VAR.mask),
+        WebkitMaskImage: toastScrimToken(TOAST_SCRIM_CSS_VAR.mask),
+      }}
+    />
+  );
 }
 
 export function ToastViewport({
@@ -373,35 +413,34 @@ export function ToastViewport({
   motion,
   defaultSize = "base",
 }: ToastViewportProps) {
-  const config = useMotionConfig();
   const isTop = placement.startsWith("top");
   const toastNotificationsLabel = useBurneLabel("toastNotifications");
   const heightsRef = useRef<Map<string, number>>(null!);
   if (!heightsRef.current) heightsRef.current = new Map();
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrimRef = useRef<HTMLDivElement>(null);
+  useApplySkinPortal(containerRef);
   const prevContainerHRef = useRef(0);
   const stackMetaRef = useRef({
     frontId: sorted[0]?.id as string | undefined,
     count: sorted.length,
   });
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   stackMetaRef.current = { frontId: sorted[0]?.id, count: sorted.length };
-  const reduceMotionPreferred = usePrefersReducedMotion();
-
+ 
   const syncContainerHeight = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-
+ 
     const { frontId, count } = stackMetaRef.current;
     const frontHeight =
       frontId != null ? (heightsRef.current.get(frontId) ?? 0) : 0;
     const raw = resolveToastStackContainerHeight(frontHeight, count);
     const containerH = raw > 0 ? raw : prevContainerHRef.current;
     if (raw > 0) prevContainerHRef.current = raw;
-
-    applyToastStackContainerHeight(el, containerH, config);
-  }, [config]);
-
+ 
+    applyToastStackContainerHeight(el, containerH);
+  }, []);
+ 
   const onHeightChange = useCallback(
     (id: string, h: number) => {
       if (heightsRef.current.get(id) === h) return;
@@ -413,7 +452,7 @@ export function ToastViewport({
     },
     [syncContainerHeight],
   );
-
+ 
   useLayoutEffect(() => {
     const liveIds = new Set(sorted.map((entry) => entry.id));
     for (const id of heightsRef.current.keys()) {
@@ -422,56 +461,19 @@ export function ToastViewport({
     syncContainerHeight();
   }, [sorted, syncContainerHeight]);
 
-  useLayoutEffect(() => {
-    const el = scrimRef.current;
-    if (el) gsap.set(el, { opacity: 0 });
-  }, []);
-
-  useLayoutEffect(() => {
-    const el = scrimRef.current;
-    if (!el) return;
-
-    const reduceMotion = reduceMotionPreferred;
-
-    const isLastDismissing =
-      sorted.length === 1 && dismissingIds.has(sorted[0]?.id ?? "");
-
-    killMotion(el);
-
-    if (reduceMotion) {
-      gsap.set(el, { opacity: isLastDismissing ? 0 : 1 });
-      return;
-    }
-
-    if (isLastDismissing) {
-      gsap.to(el, { opacity: 0, ...motionToastDismissFor(config), overwrite: "auto" });
-    } else {
-      gsap.to(el, { opacity: 1, ...motionInteractiveFor(config), overwrite: "auto" });
-    }
-  }, [config, sorted, dismissingIds, reduceMotionPreferred]);
-
   return (
+    <ToastMotionProvider motion={motion} defaults={TOAST_VIEWPORT_MOTION_DEFAULTS}>
     <div
       role="region"
       aria-label={toastViewportAriaLabel(placement, toastNotificationsLabel)}
       className={toastViewportClass({ placement, slotClass: classNames?.viewport })}
-      style={{ width: toastViewportWidthPx(sorted, defaultSize) }}
+      style={toastViewportWidthStyle(toastViewportWidthPx(sorted, defaultSize))}
     >
-      <div
-        ref={scrimRef}
-        aria-hidden
-        className={toastScrimClass(classNames?.scrim)}
-        style={{
-          [isTop ? "top" : "bottom"]: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.offsetY)})`,
-          left: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.insetX)})`,
-          right: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.insetX)})`,
-          height: toastScrimToken(TOAST_SCRIM_CSS_VAR.height),
-          background: isTop
-            ? toastScrimToken(TOAST_SCRIM_CSS_VAR.gradientTop)
-            : toastScrimToken(TOAST_SCRIM_CSS_VAR.gradientBottom),
-          maskImage: toastScrimToken(TOAST_SCRIM_CSS_VAR.mask),
-          WebkitMaskImage: toastScrimToken(TOAST_SCRIM_CSS_VAR.mask),
-        }}
+      <ToastScrim
+        isTop={isTop}
+        sorted={sorted}
+        dismissingIds={dismissingIds}
+        className={classNames?.scrim}
       />
       <div
         ref={containerRef}
@@ -497,5 +499,7 @@ export function ToastViewport({
         ))}
       </div>
     </div>
+    </ToastMotionProvider>
   );
 }
+ 

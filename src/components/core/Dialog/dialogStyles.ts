@@ -7,11 +7,13 @@ import {
 
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes";
+import { KIT_DIALOG_VARIANTS } from "./dialogTypes";
 
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const DIALOG_CONTENT_CLASS =
-  "flex min-h-0 flex-1 flex-col text-left";
+  "flex min-h-0 flex-1 flex-col text-start";
 
 function toDialogSizePreset(size: PanelSize): DialogSizePreset {
   const panel = PANEL_SIZE_LAYOUT[size];
@@ -46,7 +48,7 @@ export const DIALOG_NATIVE_CLASS =
 
 export const DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
 
-export const DIALOG_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-dialog";
+export const DIALOG_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-dialog portal-contained";
 
 export function dialogNativeClass(contained: boolean): string {
   return cn(
@@ -64,21 +66,25 @@ export const DIALOG_OVERLAY_DARK_CLASS = "overlay-backdrop-scrim";
 export const DIALOG_PANEL_BASE_CLASS =
   "relative z-10 w-full outline-none";
 
-export const DIALOG_PANEL_SURFACE_CLASS =
-  "flex min-h-0 flex-col overflow-hidden border-token bg-surface text-left text-foreground shadow-token-large";
+/** Stays when a skin target replaces the fill (`""` drops paint, not layout). */
+export const DIALOG_PANEL_LAYOUT_CLASS =
+  "flex min-h-0 flex-col overflow-hidden text-start text-foreground";
 
-export const DIALOG_GLOSS_PANEL_CLASS =
-  "gloss-panel gloss-deep flex min-h-0 w-full flex-col text-foreground";
+export const DIALOG_PANEL_SURFACE_CLASS =
+  "border-token bg-surface shadow-token-large";
+
+/** Fills the panel when `SkinShell` wraps children in a declarative content node. */
+export const DIALOG_PANEL_LAYER_CONTENT_CLASS = "flex min-h-0 flex-1 flex-col";
 
 export const DIALOG_HEADER_CLASS = "flex shrink-0 items-start";
 
 export const DIALOG_HEADING_BLOCK_CLASS =
-  "flex min-w-0 flex-1 flex-col text-left";
+  "flex min-w-0 flex-1 flex-col text-start";
 
 export const DIALOG_TITLE_CLASS = "min-w-0";
 
 export const DIALOG_BODY_BASE_CLASS =
-  "min-h-0 flex-1 overflow-y-auto py-small";
+  "min-h-0 flex-1 overflow-y-auto overscroll-contain py-small";
 
 export const DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
@@ -86,8 +92,6 @@ export const DIALOG_FOOTER_CLASS =
 export const DIALOG_CLOSE_CLASS = "shrink-0";
 
 export const DIALOG_TRIGGER_BASE_CLASS = "outline-none focus-ring";
-
-export const DIALOG_GLOSS_CONTENT_CLASS = "gloss-content";
 
 export function dialogOverlayEnterStyle() {
   return modalOverlayEnterStyle();
@@ -112,36 +116,21 @@ export function dialogPanelClass({
   className?: string;
   slotClass?: string;
 }): string {
-  const isGloss = variant === "gloss";
+  const visual = resolveVariantVisual(variant, KIT_DIALOG_VARIANTS, "dialog.panel");
   return cn(
     DIALOG_PANEL_BASE_CLASS,
+    DIALOG_PANEL_LAYOUT_CLASS,
     sizePreset.panelMax,
     sizePreset.rounded,
-    !isGloss && DIALOG_PANEL_SURFACE_CLASS,
-    !isGloss && sizePreset.maxHeight,
+    visual.className !== undefined ? visual.className : DIALOG_PANEL_SURFACE_CLASS,
+    sizePreset.maxHeight,
     slotClass,
     className,
   );
 }
 
-export function dialogGlossPanelClass({
-  maxHeight,
-  rounded,
-  slotClass,
-}: {
-  maxHeight: string;
-  rounded: string;
-  slotClass?: string;
-}): string {
-  return cn(DIALOG_GLOSS_PANEL_CLASS, rounded, maxHeight, slotClass);
-}
-
-export function dialogContentClass(slotClass?: string, gloss = false): string {
-  return cn(
-    DIALOG_CONTENT_CLASS,
-    gloss && DIALOG_GLOSS_CONTENT_CLASS,
-    slotClass,
-  );
+export function dialogContentClass(slotClass?: string): string {
+  return cn(DIALOG_CONTENT_CLASS, slotClass);
 }
 
 export function dialogBodyClass(bodyPadding: string, slotClass?: string): string {

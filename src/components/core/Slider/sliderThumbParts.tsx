@@ -1,20 +1,21 @@
 import { SelectionThumb } from "@/components/core/SelectionThumb";
+import { useSkinVariant } from "@/skins/skinContext";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { forwardRef } from "react";
-
+ 
 import { useSliderThumbShellAnimation } from "./sliderAnimations";
-import { useOptionalSliderMotionScope, useSliderClassNames } from "./sliderContext";
+import { useOptionalSliderFieldContext, useOptionalSliderMotionScope, useSliderClassNames } from "./sliderContext";
 import { sliderThumbButtonClass, sliderThumbPositionStyle } from "./sliderStyles";
 import type { SliderThumbButtonProps } from "./sliderTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButtonProps>(
   function SliderThumbButton(
     {
       size,
       icon,
-      gloss = false,
+      variant: variantProp,
       thumbClassName,
       className,
       style,
@@ -36,7 +37,9 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
     },
     forwardedRef,
   ) {
+    const variant = useSkinVariant(variantProp);
     const slotClassNames = useSliderClassNames();
+    const fieldCtx = useOptionalSliderFieldContext();
     const shellRef = useSliderThumbShellAnimation(disabled);
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalSliderMotionScope(),
@@ -47,7 +50,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       pressPhases: !disabled,
       onPointerDown,
     });
-
+ 
     return (
       <button
         ref={setRef}
@@ -64,6 +67,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
         aria-valuenow={ariaValueNow}
         aria-valuetext={ariaValueText}
         aria-orientation={orientation}
+        aria-invalid={fieldCtx?.isInvalid ? true : undefined}
         disabled={disabled}
         tabIndex={disabled ? -1 : 0}
         className={sliderThumbButtonClass({
@@ -77,15 +81,16 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
         onKeyDown={onKeyDown}
         {...rest}
         {...pointerHandlers}
+        data-invalid={fieldCtx?.isInvalid ? "" : undefined}
       >
         <SelectionThumb
           size={size}
-          gloss={gloss}
+          variant={variant}
           shellRef={shellRef}
           className={cn(slotClassNames.thumbShell, thumbClassName)}
         >
           {icon != null ? (
-            <SelectionThumb.Icon size={size} gloss={gloss}>
+            <SelectionThumb.Icon size={size} variant={variant}>
               {icon}
             </SelectionThumb.Icon>
           ) : null}
@@ -94,5 +99,6 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
     );
   },
 );
-
+ 
 SliderThumbButton.displayName = "SliderThumbButton";
+ 

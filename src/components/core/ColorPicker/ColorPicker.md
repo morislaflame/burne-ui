@@ -62,7 +62,11 @@ Compound внутри Content: `ColorPicker.Area`, `ColorPicker.Preview` (сло
 
 ### `ColorPickerClassNames`
 
-`content`, `contentPanel`, `trigger`, `area`, `areaThumb`, `slidersRow`, `previewSwatch`, `hueSlider`, `alphaSlider`, `inputsRow`, `hexInput`, `hexPrefix`, `hexInputField`, `alphaInput`, `alphaInputField`, `alphaSuffix`, `presets`, `presetSwatch`.
+`content`, `contentPanel`, `trigger`, `area`, `areaThumb`, `slidersRow`, `slidersStack`, `previewSwatch`, `hueSlider`, `alphaSlider`, `inputsRow`, `hexInput`, `hexPrefix`, `hexInputField`, `alphaInput`, `alphaInputField`, `alphaSuffix`, `presets`, `presetSwatch`.
+
+### `ColorSwatchClassNames`
+
+`root`, `selected`.
 
 ### Standalone `ColorSlider`
 
@@ -244,7 +248,7 @@ Pointer + keyboard на `SliderThumbButton` (shared Slider patterns).
 />
 ```
 
-**Где в коде:** `colorSwatchTypes.ts`, `colorSwatchContext.tsx`, `colorSwatchAnimations.ts`, `ColorSwatch.tsx`.
+**Где в коде:** `colorSwatchTypes.ts`, `colorSwatchStyles.ts`, `colorSwatchContext.tsx`, `colorSwatchAnimations.ts`, `ColorSwatch.tsx`.
 
 ### Чего нет
 
@@ -279,7 +283,7 @@ Pointer + keyboard на `SliderThumbButton` (shared Slider patterns).
 1. **`classNames` на `ColorPicker` root** — все слоты панели и trigger.
 2. **`className` на `Trigger` / `Content`** — доп. классы подчастей.
 
-`ColorSwatch` / `ColorSlider` — собственный `className` (standalone).
+`ColorSwatch` — `className` и `classNames` (`root`, `selected`). Выбранный свотч публикует `data-state="selected"`, фокус — `focus-ring`. `ColorSlider` — собственный `className` (standalone).
 
 ### Слоты (ключевые)
 
@@ -289,6 +293,7 @@ Pointer + keyboard на `SliderThumbButton` (shared Slider patterns).
 | `contentPanel` | Inner panel | Border, padding |
 | `area` | 2D picker | Custom gradient frame |
 | `areaThumb` | Thumb handle | Size, border ring |
+| `slidersStack` | Колонка hue/alpha | Gap между слайдерами |
 | `hueSlider` / `alphaSlider` | Slider rows | Track height/color |
 | `hexInputField` | Hex input | Monospace, width |
 | `presets` / `presetSwatch` | Preset row | Gap, swatch size |
@@ -361,7 +366,7 @@ ColorPicker/
 ├── colorSliderTypes.ts
 ├── colorSliderStyles.ts
 ├── ColorSwatch.tsx
-├── colorSwatchTypes.ts / colorSwatchContext.tsx / colorSwatchAnimations.ts
+├── colorSwatchTypes.ts / colorSwatchStyles.ts / colorSwatchContext.tsx / colorSwatchAnimations.ts
 └── ColorPicker.stories.tsx
 ```
 

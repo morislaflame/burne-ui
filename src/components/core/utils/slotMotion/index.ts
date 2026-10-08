@@ -13,6 +13,7 @@ export {
   isMotionVarsObject,
   isMotionRunActive,
   isMotionAbortError,
+  isMotionHostLifecyclePhase,
   isMotionPhaseName,
   LEAVE_COMPLETE_FALLBACK_MS,
   type KitRecipeName,
@@ -111,7 +112,7 @@ export {
   runMotionPhase,
   type RunMotionPhaseOptions,
 } from "./runMotionPhase";
-export { waitForLeaveGeneration } from "./waitForLeaveGeneration";
+export { leaveCancelBlocksUnmount, waitForLeaveGeneration } from "./waitForLeaveGeneration";
 export { enterHidesFirstPaint, KIT_ENTER_HIDES_FIRST_PAINT } from "./enterHidesFirstPaint";
 export { scheduleNestedEnterBroadcast, invalidateEnterFrame } from "./scheduleNestedEnterBroadcast";
 export {
@@ -136,3 +137,4 @@ export {
   useSlotPhaseOnChange,
 } from "./useSlotLifecycle";
 export { registerKitMotionRecipes } from "./recipes";
+ 

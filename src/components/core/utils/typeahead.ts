@@ -1,16 +1,16 @@
 /** APG menu / listbox typeahead: typed character buffer + prefix match. */
-
+ 
 export const TYPEAHEAD_RESET_MS = 500;
-
+ 
 export type TypeaheadBufferState = {
   buffer: string;
   timeoutId: ReturnType<typeof setTimeout> | null;
 };
-
+ 
 export function createTypeaheadBufferState(): TypeaheadBufferState {
   return { buffer: "", timeoutId: null };
 }
-
+ 
 export function isTypeaheadPrintableKey(
   key: string,
   mods: { ctrlKey?: boolean; altKey?: boolean; metaKey?: boolean },
@@ -21,7 +21,7 @@ export function isTypeaheadPrintableKey(
   if (key === " ") return false;
   return true;
 }
-
+ 
 export function typeaheadPush(
   state: TypeaheadBufferState,
   char: string,
@@ -35,7 +35,7 @@ export function typeaheadPush(
   }, resetMs);
   return state.buffer;
 }
-
+ 
 /** Same letter repeated → cycle matches for that letter (APG). */
 export function typeaheadQuery(buffer: string): string {
   if (buffer.length > 1 && buffer.split("").every((c) => c === buffer[0])) {
@@ -43,7 +43,7 @@ export function typeaheadQuery(buffer: string): string {
   }
   return buffer;
 }
-
+ 
 /**
  * Next label (case-insensitive prefix) after `currentIndex`, wrapping.
  * `currentIndex` < 0 means start from the beginning.
@@ -63,3 +63,4 @@ export function typeaheadMatchIndex(
   }
   return -1;
 }
+ 

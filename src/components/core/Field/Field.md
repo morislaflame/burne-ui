@@ -10,6 +10,15 @@ import { Field, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHint
 
 ## API
 
+### `FieldClassNames`
+
+`root`, `label`, `hint`, `error`.
+
+### `FieldSetClassNames`
+
+`root`, `stack`, `legend`, `legendHeader`, `group`, `actions`.
+
+
 ### `Field` — одно поле
 
 Compound через `Object.assign`:
@@ -19,7 +28,7 @@ Compound через `Object.assign`:
 | `Field` / `Field` | Вертикальный stack: label → control → hint/error |
 | `Field.Label` | Алиас `Label` |
 | `Field.Hint` | Подсказка (`text-muted` или semantic) |
-| `Field.Error` | Ошибка (`status="danger"`, `role="alert"`) |
+| `Field.Error` | Ошибка (`role="alert"`, цвет danger) |
 
 ```tsx
 <Field classNames={{ root: "max-w-sm" }}>
@@ -281,7 +290,7 @@ Field — layout-примитив: два независимых набора с
 #### Два уровня
 
 1. **`className` на root** — мерж с `classNames.root`.
-2. **`classNames`** — `root`, `hint`, `error` через `FieldClassNamesProvider`.
+2. **`classNames`** — `root`, `label`, `hint`, `error` через `FieldClassNamesProvider`.
 
 Используется внутри Input, TextArea, ComboBox и напрямую:
 
@@ -289,7 +298,7 @@ Field — layout-примитив: два независимых набора с
 <Field
   className="max-w-sm"
   classNames={{
-    root: "rounded-mid border-token p-mid gap-small",
+    root: "rounded-large border-token p-mid gap-small",
     hint: "text-xs text-muted",
     error: "font-medium",
   }}
@@ -304,6 +313,7 @@ Field — layout-примитив: два независимых набора с
 | Слот | Элемент | Назначение |
 |------|---------|------------|
 | `root` | `Field` div | Gap, max-width, внешняя рамка |
+| `label` | `Field.Label` | Typography подписи |
 | `hint` | `Field.Hint` | Текст подсказки |
 | `error` | `Field.Error` | Текст ошибки (`role="alert"`) |
 

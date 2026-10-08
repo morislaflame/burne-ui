@@ -42,7 +42,7 @@ import {
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` / gloss из ButtonGroup | `default` \| `gloss` |
+| `variant` | `default` / из ButtonGroup | `default` \| `outline` \| `secondary` \| `gloss` |
 | `expanded` / `defaultExpanded` | `false` | Controlled / uncontrolled expand |
 | `onExpandedChange` | — | Колбэк раскрытия |
 | `expandedWidth` | по size | Ширина в px (240–360) |
@@ -55,6 +55,19 @@ import {
 | `classNames` | — | Слоты `root` / `icon` / `input` / `clear` / `expandTrigger` |
 | `motion` | — | Карта слотов; expand — `root` / `icon` `enter` / `leave` |
 | `aria-label` | — | **Рекомендуется** — collapsed trigger + input |
+
+## variant
+
+Канонический visual style шелла (`FieldShellVariant`). Без явного пропа внутри `ButtonGroup` наследуется gloss / outline / secondary группы.
+
+| variant | Поверхность |
+|---------|-------------|
+| `default` | `bg-surface` + `border-token` |
+| `outline` | `bg-transparent` + `border-token` |
+| `secondary` | `bg-secondary` + `border-token` |
+| `gloss` | `gloss-control` |
+
+`status` нет. Доменных исключений нет.
 
 ## Состояния UI
 
@@ -101,9 +114,9 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 
 ## Стилизация и кастомизация
 
-`classNames` — слоты `root` / `icon` / `input` / `clear`. Merge: база компонента → слот `classNames.*` → `className` (только для `root`).
+`classNames` — слоты `root` / `icon` / `input` / `clear` / `expandTrigger`. Merge: база компонента → слот `classNames.*` → `className` (только для `root`).
 
-### Слоты `classNames`
+### Слоты `SearchInputClassNames`
 
 | Слот | DOM-элемент |
 |------|-------------|
@@ -122,7 +135,7 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 | `classNames.input` | Текст, placeholder внутри поля |
 | `classNames.clear` | Цвет кнопки очистки |
 | `size` | Высота, icon box, collapsed width, default expanded width |
-| `variant="gloss"` | `gloss-control` surface |
+| `variant` | `default` / `outline` / `secondary` / `gloss` surface |
 | `expandedWidth` | Целевая ширина expand (px) |
 | `ripple` | Press ripple overlay |
 
@@ -166,7 +179,7 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 - **Для форм с label** — используйте `Input` + prefix icon, не SearchInput.
 - **Controlled expand:** `expanded` + `onExpandedChange` для header toolbar integration.
 - **Не override `transform` / `width` / `border-radius` на shell / icon** при expand — конфликт с `searchExpand` / `searchIconShift`.
-- **Ширина expanded** — `expandedWidth`, не `className="w-*"` (collapsed всегда квадрат `w-control-*` + `h-control-*`).
+- **Ширина expanded** — `expandedWidth`, не `className="w-*"` (collapsed всегда квадрат `w-control-*` + `min-h-control-*`).
 - **`aria-label` обязателен** в collapsed mode (дефолт «Open search»).
 
 ## Доступность

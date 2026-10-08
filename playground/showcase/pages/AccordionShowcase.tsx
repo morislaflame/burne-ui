@@ -86,7 +86,7 @@ export function AccordionShowcase() {
             <code>triggerLift</code>, <code>chevron</code>, <code>panelShell</code>).{" "}
             <code>classNames</code> on Root (root, item, heading, trigger,
             triggerLift, message, icon, content, title, description, chevron, panelShell, panel,
-            glossContent) — locally overridable on <code>Accordion.Item</code>.
+            body) — locally overridable on <code>Accordion.Item</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

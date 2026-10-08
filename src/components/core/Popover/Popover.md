@@ -53,6 +53,7 @@ const [open, setOpen] = useState(false);
 | `onOpenChange` | — | Колбэк |
 | `anchorRef` | trigger | Внешний anchor для positioning |
 | `shouldDismiss` | — | `(target) => boolean` — veto outside dismiss |
+| `restoreFocus` | `true` | На закрытии вернуть фокус на trigger. `false` — не трогать фокус (так делает HoverCard) |
 | `classNames` | — | Слоты |
 | `motion` | — | Карта слотов. Root без portal DOM — хост `Popover.Content`. `events` — app-команды |
 | `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `Popover.Content` |
@@ -85,13 +86,13 @@ const [open, setOpen] = useState(false);
 
 ### `PopoverClassNames`
 
-`root`, `trigger`, `content`, `panelRelative`, `panel`, `glossPanel`, `glossContent`, `arrow`, `header`, `label`, `hint`, `body`.
+`root`, `trigger`, `content`, `panelRelative`, `panel`, `arrow`, `header`, `title`, `description`, `body`.
 
 ## Variant / размеры
 
 | Variant | Поверхность |
 |---------|-------------|
-| `default` | `bg-surface border-token` + `shadow-token-large` |
+| `default` | `bg-surface border-token` + `shadow-token-xlarge` |
 | `gloss` | `gloss-panel` + gloss interactive handlers |
 
 Sizes влияют на padding частей (`Header` / `Body`), typography (`Popover.Title` / `Hint`), radius и min/max width — общий пресет `PANEL_SIZE_LAYOUT` (с Dialog / AlertDialog / Card).
@@ -119,8 +120,8 @@ Title/Description — отдельная шкала Popover (компактне�
       [Popover.Arrow]
       <div class=panel | glossPanel>
         <Popover.Header>
-          <h2 Title>                     ← слот `title` (classNames.label)
-          <FieldHint Description>        ← слот `description` (classNames.hint)
+          <h2 Title>                     ← слот `title` (`classNames.title`)
+          <FieldHint Description>        ← слот `description` (`classNames.description`)
         <Popover.Body>                   ← слот `body`
 ```
 
@@ -135,12 +136,12 @@ Title/Description — отдельная шкала Popover (компактне�
 | `arrow` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** |
 | `item` | `enter` / `leave` | нет; хост **рассылает**; repeated (Dropdown) |
 | `itemLabel`, `itemHint`, `itemIcon` | `enter` / `leave` + локальные hover | нет; хост **рассылает**; repeated (Dropdown) |
-| `label`, `subTrigger`, `separator` | `enter` / `leave` | нет; Dropdown pass-through (не `classNames.label` = Title) |
+| `label`, `subTrigger`, `separator` | `enter` / `leave` | нет; Dropdown pass-through (это не `classNames.title`) |
 | `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Content |
 
 Nested `enter` — следующий кадр после host (`portalSurfaceEnter` / `preparePortalSurfaceForEnter`), без `offsetHeight` flush.
 
-`leave: false` — портал размонтируется сразу. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Motion-слот Title — `title`, хотя `classNames` зовут его `label`.
+`leave: false` — портал размонтируется сразу. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Motion-слот и `classNames` заголовка — `title`, описания — `description`.
 
 **Где в коде:** типы — `popoverTypes.ts`; scope — `popoverContext.tsx`; defaults + host — `popoverAnimations.ts`; Content-provider — `popoverParts.tsx`; карта на корне — `Popover.tsx`.
 
@@ -217,7 +218,7 @@ configureMotion({
 `reposition()` на:
 
 - open + `requestAnimationFrame`
-- `scroll` (capture), `resize`
+- `scroll` (capture, `passive`), `resize`, `visualViewport` (`resize` / `scroll` — iOS keyboard)
 - `ResizeObserver` на panel
 
 `matchAnchorWidth` → `minWidth = max(anchor.width, 12rem)`.
@@ -230,7 +231,7 @@ configureMotion({
 
 | variant | Поведение |
 |---------|-----------|
-| `default` | CSS `shadow-token-large` в покое (floating overlay, как Dialog) |
+| `default` | CSS `shadow-token-xlarge` в покое (floating overlay, как Dialog) |
 | `gloss` | `createGlossInteractiveRefCallback` на gloss panel; gloss pointer handlers |
 
 Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
@@ -239,7 +240,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 `pointerdown` на document → close, если target не в trigger/panel и `shouldDismiss(target)` !== false.
 
-`Escape` → close + focus trigger.
+`Escape` → close. При `restoreFocus` (по умолчанию) фокус возвращается на trigger.
 
 ### Чего нет
 
@@ -255,7 +256,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
 | Nested title / body | slot broadcast | — | `motion.title` / `description` / `body` |
 | Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale` | `motion.trigger.pressIn` |
-| Rest shadow | `shadow-token-large` | — | `variant="default"` |
+| Rest shadow | `shadow-token-xlarge` | — | `variant="default"` |
 | Gloss interactive | gloss utils | gloss tokens | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side`, `align`, `offset` |
 
@@ -263,9 +264,9 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `POPOVER_DEFAULT_PANEL_CLASS` | `bg-surface border-token shadow-token-large` + radius из `PANEL_SIZE_LAYOUT` |
+| `POPOVER_DEFAULT_PANEL_CLASS` | `bg-surface border-token shadow-token-xlarge` + radius из `PANEL_SIZE_LAYOUT` |
 | `POPOVER_GLOSS_PANEL_CLASS` | `gloss-panel gloss-deep` |
-| `shadow-token-large` | Rest panel shadow (default variant) |
+| `shadow-token-xlarge` | Rest panel shadow (default variant) |
 | `burneLightThemePortalProps` | Theme sync в portal |
 | `z-popover` stacking | Panel above page / dialog (`--z-popover`) |
 
@@ -287,11 +288,10 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | `content` | Portal outer shell | z-index, outer ring |
 | `panelRelative` | Relative wrapper вокруг panel | Positioning host между content и panel |
 | `panel` | Default inner panel | Surface, border, radius |
-| `glossPanel` / `glossContent` | Gloss layers | Glass surface + inner grid |
 | `arrow` | Arrow span | Side tint, size |
 | `header` | Header row | Label + hint layout |
-| `label` | `h2` title | Typography заголовка |
-| `hint` | `FieldHint` | Muted subtitle |
+| `title` | `Popover.Title` | Typography заголовка |
+| `description` | `Popover.Description` | Muted subtitle |
 | `body` | Body block | Main content padding |
 
 ### Default panel с header
@@ -301,8 +301,8 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
   side="bottom"
   classNames={{
     panel: "border-primary/25",
-    label: "text-primary",
-    hint: "text-muted/80",
+    title: "text-primary",
+    description: "text-muted/80",
     body: "text-foreground",
   }}
 >
@@ -325,7 +325,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 <Popover classNames={{ content: "ring-1 ring-primary/20" }}>
   <Popover.Trigger>Меню</Popover.Trigger>
   <Popover.Content matchAnchorWidth unstyled>
-    <Popover.Body className="rounded-mid border border-token bg-surface p-base shadow-token-md">
+    <Popover.Body className="rounded-large border border-token bg-surface p-base shadow-token-md">
       Кастомная поверхность
     </Popover.Body>
   </Popover.Content>

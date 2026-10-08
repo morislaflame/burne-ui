@@ -75,30 +75,30 @@ function ShowcaseDocApiRow({
 
 /**
  * Standard customization block for showcase-documentation.
- * @param gloss — `true` → `variant="gloss"`; string - arbitrary prop (for example. `variant="gloss"`).
+ * @param surfaceHint — `true` → `variant="default"`; string — arbitrary prop example.
  */
 function ShowcaseDocCustomization({
-  gloss,
+  surfaceHint,
   motion = true,
   children,
 }: {
-  gloss?: boolean | string;
+  surfaceHint?: boolean | string;
   /** Show hint about configureMotion(). Default true. */
   motion?: boolean;
   children?: ReactNode;
 }) {
-  const glossProp =
-    gloss === true ? 'variant="gloss"' : typeof gloss === "string" ? gloss : null;
+  const hintProp =
+    surfaceHint === true ? 'variant="default"' : typeof surfaceHint === "string" ? surfaceHint : null;
 
   return (
     <ShowcaseDocBlock title="Customization">
       <div className="flex flex-col gap-xsmall">
         <p>
           Additional styles - via <code>className</code> on root and slots.
-          {glossProp ? (
+          {hintProp ? (
             <>
               {" "}
-              <code>{glossProp}</code> — glass surface; transparency and stroke are set
+              <code>{hintProp}</code> — surface hint; transparency and stroke are set
               CSS-theme variables (<code>--color-surface</code>, <code>--color-border</code>).
             </>
           ) : (

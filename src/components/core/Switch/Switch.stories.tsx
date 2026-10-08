@@ -109,6 +109,28 @@ export const ToggleInteraction: Story = {
   },
 };
 
+export const CompoundLabelHtmlFor: Story = {
+  name: "Compound — Label htmlFor",
+  render: function CompoundLabelHtmlForDemo() {
+    const [on, setOn] = useState(false);
+    return (
+      <Switch>
+        <Switch.Control checked={on} onChange={(e) => setOn(e.target.checked)} />
+        <Switch.Content>
+          <Switch.Label>Email alerts</Switch.Label>
+          <Switch.Hint>Click the label to toggle</Switch.Hint>
+        </Switch.Content>
+      </Switch>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const toggle = canvas.getByRole("switch", { name: /Email alerts/ });
+    await expect(toggle).not.toBeChecked();
+    await userEvent.click(canvas.getByText("Email alerts"));
+    await expect(toggle).toBeChecked();
+  },
+};
+
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
@@ -310,9 +332,8 @@ export const CustomClassNames: Story = {
   render: () => (
     <Switch
       defaultChecked
-      gloss
       classNames={{
-        root: "rounded-mid border border-primary/25 p-base",
+        root: "rounded-large border border-primary/25 p-base",
         track: "ring-1 ring-primary/20",
         fill: "bg-primary/90",
         labelText: "text-primary font-semibold",

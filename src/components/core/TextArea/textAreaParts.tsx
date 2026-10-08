@@ -1,16 +1,17 @@
 import type { PointerEventHandler } from "react";
 import { forwardRef, useId, useMemo, useRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
-
-import "@/components/core/utils/glossInteractive.css";
-
+ 
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
-
+ 
 import { textAreaResizeHandleAriaLabel } from "./textAreaA11y";
-
+ 
 import {
   resolveTextAreaMotionDefaults,
   resolveTextAreaMotionParams,
@@ -24,7 +25,7 @@ import {
   useTextAreaClassNames,
   useTextAreaFieldContext,
 } from "./textAreaContext";
-import { TEXTAREA_RESIZE_GRIP_STROKE, TEXTAREA_RESIZE_GRIP_WRAP_CLASS, textareaControlClassNames, textareaResizeHandleClass, textareaShellClass, textareaShellSurfaceClass } from "./textAreaStyles";
+import { TEXTAREA_RESIZE_GRIP_WRAP_CLASS, textareaControlClassNames, textareaResizeHandleClass, textareaShellClass, textareaShellSurfaceClass } from "./textAreaStyles";
 import type {
   TextAreaErrorProps,
   TextAreaHintProps,
@@ -34,9 +35,9 @@ import type {
   TextAreaSimpleBodyProps,
 } from "./textAreaTypes";
 import { useTextAreaResize } from "./useTextAreaResize";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 /** Two 1px diagonals: right edge → bottom edge, inside the corner box. */
 function TextAreaResizeGrip() {
   return (
@@ -49,12 +50,12 @@ function TextAreaResizeGrip() {
       fill="none"
     >
       {/* Diagonals right→bottom; shorter line kept away from the corner so radius doesn’t hide it. */}
-      <path d="M9.5 2.5 L2.5 9.5" stroke={TEXTAREA_RESIZE_GRIP_STROKE} strokeWidth={1} />
-      <path d="M9.5 5 L5 9.5" stroke={TEXTAREA_RESIZE_GRIP_STROKE} strokeWidth={1} />
+      <path d="M9.5 2.5 L2.5 9.5" stroke="currentColor" strokeWidth={1} />
+      <path d="M9.5 5 L5 9.5" stroke="currentColor" strokeWidth={1} />
     </svg>
   );
 }
-
+ 
 function TextAreaResizeHandle({
   disabled,
   className,
@@ -88,11 +89,11 @@ function TextAreaResizeHandle({
     </button>
   );
 }
-
+ 
 export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlProps>(
   function TextAreaControl(
     {
-      variant = "default",
+      variant: variantProp,
       status: statusProp,
       size: sizeProp,
       rows = 1,
@@ -113,11 +114,16 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
     },
     ref,
   ) {
+    const variant = useSkinVariant(variantProp);
     const fieldCtx = useOptionalTextAreaFieldContext();
     const slotClassNames = useTextAreaClassNames();
     const genId = useId();
     const id = idProp ?? fieldCtx?.textareaId ?? genId;
-    const status = statusProp ?? fieldCtx?.status ?? "default";
+    const isInvalid = useResolvedFieldInvalid({
+      invalid: fieldCtx?.invalid,
+      errorConnected: fieldCtx?.errorConnected ?? false,
+    });
+    const status = visualStatusForInvalid(statusProp ?? fieldCtx?.status, isInvalid, "default");
     const size = sizeProp ?? fieldCtx?.size ?? "base";
     const required = fieldCtx?.required ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;
@@ -130,20 +136,20 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
         hintConnected ? hintId : undefined,
         errorConnected ? errorId : undefined,
       );
-
+ 
     const shellRef = useRef<HTMLDivElement>(null);
     const pointerInsideRef = useRef(false);
     const blocked = Boolean(disabled || readOnly);
-    const isGloss = variant === "gloss";
-
+ 
     const parentScope = useOptionalTextAreaMotionScope();
-    const motionDefaults = useMemo(
-      () => resolveTextAreaMotionDefaults({ isGloss, blocked }),
-      [blocked, isGloss],
-    );
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveTextAreaMotionDefaults({ variant, blocked });
+    }, [blocked, skinRevision, variant]);
     const motionParams = useMemo(
-      () => resolveTextAreaMotionParams({ blocked, isGloss, pointerInside: pointerInsideRef }),
-      [blocked, isGloss],
+      () => resolveTextAreaMotionParams({ variant, blocked, pointerInside: pointerInsideRef }),
+      [blocked, variant],
     );
     const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -154,7 +160,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
       states: parentScope?.getStates(),
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
-
+ 
     return (
       <TextAreaMotionProvider
         motion={mergedMotion}
@@ -178,6 +184,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
           className={className}
           onPointerDown={onPointerDown}
           required={required}
+          isInvalid={isInvalid}
           ariaDescribedBy={ariaDescribedBy}
           slotClassNames={slotClassNames}
           shellRef={shellRef}
@@ -191,9 +198,9 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
     );
   },
 );
-
+ 
 TextAreaControl.displayName = "TextAreaControl";
-
+ 
 function TextAreaControlSurface({
   variant,
   status,
@@ -207,6 +214,7 @@ function TextAreaControlSurface({
   className,
   onPointerDown,
   required,
+  isInvalid,
   ariaDescribedBy,
   slotClassNames,
   shellRef,
@@ -228,6 +236,7 @@ function TextAreaControlSurface({
   className?: string;
   onPointerDown?: TextAreaControlProps["onPointerDown"];
   required: boolean;
+  isInvalid: boolean;
   ariaDescribedBy?: string;
   slotClassNames: ReturnType<typeof useTextAreaClassNames>;
   shellRef: React.RefObject<HTMLDivElement | null>;
@@ -275,7 +284,7 @@ function TextAreaControlSurface({
     forwardedRef,
     pointerPhases: true,
   });
-
+ 
   return (
     <div
       ref={shellMotion.bindShellRef}
@@ -284,19 +293,17 @@ function TextAreaControlSurface({
       onPointerUp={shellMotion.shellPointerUp}
       onPointerEnter={shellMotion.shellPointerEnter}
       onPointerLeave={shellMotion.shellPointerLeave}
-      onFocusCapture={shellMotion.shellFocusCapture}
-      onBlurCapture={shellMotion.shellBlurCapture}
       className={textareaShellClass({
         variant,
         status,
         blocked,
         size,
         shellSurface,
-        glossShellHoverMotionClass: shellMotion.glossShellHoverMotionClass,
-        standardShellHoverMotionClass: shellMotion.standardShellHoverMotionClass,
+        shellHoverMotionClass: shellMotion.shellHoverMotionClass,
         slotClass: slotClassNames.shell,
         className,
       })}
+      {...dataVariantProps({ size, variant, status })}
     >
       <textarea
         ref={setRef}
@@ -305,9 +312,6 @@ function TextAreaControlSurface({
         disabled={disabled}
         readOnly={readOnly}
         placeholder={placeholder}
-        aria-required={required || undefined}
-        aria-invalid={status === "danger" ? true : undefined}
-        aria-describedby={ariaDescribedBy}
         className={textareaControlClassNames({
           size,
           resizable,
@@ -315,6 +319,11 @@ function TextAreaControlSurface({
         })}
         {...rest}
         {...pointerHandlers}
+        aria-required={required || undefined}
+        aria-invalid={ariaInvalidValue(isInvalid)}
+        aria-describedby={ariaDescribedBy}
+        data-invalid={isInvalid ? "" : undefined}
+        data-required={required ? "" : undefined}
       />
       {resizable ? (
         <TextAreaResizeHandle
@@ -327,7 +336,7 @@ function TextAreaControlSurface({
     </div>
   );
 }
-
+ 
 export const TextAreaLabel = forwardRef<HTMLElement, TextAreaLabelProps>(
   function TextAreaLabel(
     {
@@ -351,7 +360,7 @@ export const TextAreaLabel = forwardRef<HTMLElement, TextAreaLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Label
         ref={part.setRef}
@@ -366,9 +375,9 @@ export const TextAreaLabel = forwardRef<HTMLElement, TextAreaLabelProps>(
     );
   },
 );
-
+ 
 TextAreaLabel.displayName = "TextAreaLabel";
-
+ 
 export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
   function TextAreaHint(
     {
@@ -387,13 +396,7 @@ export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
   ) {
     const field = useTextAreaFieldContext();
     const slotClassNames = useTextAreaClassNames();
-    const hintStatus =
-      status ??
-      (field.status === "danger"
-        ? "default"
-        : field.status === "default"
-          ? "default"
-          : field.status);
+    const hintStatus = status ?? field.status;
     const part = useTextAreaChromeSlot("hint", {
       motion,
       forwardedRef: ref,
@@ -402,7 +405,7 @@ export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -417,9 +420,9 @@ export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
     );
   },
 );
-
+ 
 TextAreaHint.displayName = "TextAreaHint";
-
+ 
 export const TextAreaError = forwardRef<HTMLElement, TextAreaErrorProps>(
   function TextAreaError(
     {
@@ -445,7 +448,7 @@ export const TextAreaError = forwardRef<HTMLElement, TextAreaErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -459,9 +462,9 @@ export const TextAreaError = forwardRef<HTMLElement, TextAreaErrorProps>(
     );
   },
 );
-
+ 
 TextAreaError.displayName = "TextAreaError";
-
+ 
 export function TextAreaSimpleBody({
   label,
   hint,
@@ -473,7 +476,7 @@ export function TextAreaSimpleBody({
   controlProps,
 }: TextAreaSimpleBodyProps) {
   const slotClassNames = useTextAreaClassNames();
-
+ 
   return (
     <>
       {label != null ? (
@@ -487,3 +490,4 @@ export function TextAreaSimpleBody({
     </>
   );
 }
+ 

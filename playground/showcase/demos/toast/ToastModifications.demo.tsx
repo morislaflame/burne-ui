@@ -67,19 +67,6 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Gloss toast",
-              description: "variant gloss — glass surface.",
-              status: "info",
-              variant: "gloss",
-            })
-          }
-        >
-          gloss
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() =>
-            toast.show({
               title: "Update available",
               description: "Version 2.4.0 is ready for installation.",
               status: "info",

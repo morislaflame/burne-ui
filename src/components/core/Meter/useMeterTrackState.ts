@@ -1,13 +1,13 @@
 import { useLayoutEffect, useMemo } from "react";
-
+ 
 import { clampNumber } from "@/components/core/utils/clampNumber";
-
+ 
 import { defaultMeterFormatValue, meterValueToPercent } from "./meterAPI";
 import { meterLabelId, resolveMeterDescribedBy, resolveMeterTrackAria } from "./meterA11y";
 import { useOptionalMeterFieldContext } from "./meterContext";
 import { meterFillColorStyle, meterTrackCrossStyle } from "./meterStyles";
 import type { UseMeterTrackStateProps } from "./meterTypes";
-
+ 
 export function useMeterTrackState({
   value,
   min = 0,
@@ -26,7 +26,7 @@ export function useMeterTrackState({
   const labelConnected = fieldCtx?.labelConnected ?? false;
   const hintConnected = fieldCtx?.hintConnected ?? false;
   const errorConnected = fieldCtx?.errorConnected ?? false;
-
+ 
   const clampedValue = useMemo(
     () => clampNumber(value, min, max),
     [max, min, value],
@@ -35,13 +35,13 @@ export function useMeterTrackState({
     () => meterValueToPercent(clampedValue, min, max),
     [clampedValue, max, min],
   );
-
+ 
   const isHorizontal = orientation === "horizontal";
   const statusText = useMemo(
     () => formatValue(clampedValue),
     [clampedValue, formatValue],
   );
-
+ 
   const ariaDescribedBy = resolveMeterDescribedBy({
     ariaDescribedByProp,
     hintConnected,
@@ -49,7 +49,7 @@ export function useMeterTrackState({
     errorConnected,
     errorId: fieldCtx?.errorId,
   });
-
+ 
   const aria = resolveMeterTrackAria({
     clampedValue,
     min,
@@ -59,20 +59,20 @@ export function useMeterTrackState({
     labelId,
     ariaDescribedBy,
   });
-
+ 
   const trackCrossStyle = useMemo(
     () => meterTrackCrossStyle({ isHorizontal, thickness }),
     [isHorizontal, thickness],
   );
-
+ 
   const fillColorStyle = useMemo(() => meterFillColorStyle(color), [color]);
-
+ 
   const setDisplay = fieldCtx?.setDisplay;
-
+ 
   useLayoutEffect(() => {
     setDisplay?.({ clampedValue, statusText, min, max });
   }, [clampedValue, max, min, setDisplay, statusText]);
-
+ 
   return {
     size,
     thickness,
@@ -84,3 +84,4 @@ export function useMeterTrackState({
     fillColorStyle,
   };
 }
+ 

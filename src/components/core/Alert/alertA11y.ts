@@ -1,11 +1,11 @@
 import type { AlertLiveRole, AlertStatus } from "./alertTypes";
-
+ 
 export function resolveAlertLiveRole(status: AlertStatus, roleProp?: AlertLiveRole): AlertLiveRole {
   if (roleProp != null) return roleProp;
   if (status === "danger" || status === "warning") return "alert";
   return "status";
 }
-
+ 
 export function resolveAlertAriaLabelledBy(
   titleId: string,
   descriptionId: string,
@@ -16,7 +16,7 @@ export function resolveAlertAriaLabelledBy(
   if (hasDescription) return descriptionId;
   return undefined;
 }
-
+ 
 export function resolveAlertAriaDescribedBy(
   descriptionId: string,
   hasTitle: boolean,
@@ -25,3 +25,4 @@ export function resolveAlertAriaDescribedBy(
   if (hasTitle && hasDescription) return descriptionId;
   return undefined;
 }
+ 

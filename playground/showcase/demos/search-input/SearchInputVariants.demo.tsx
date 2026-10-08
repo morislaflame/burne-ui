@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SearchInput } from "@/components/core/SearchInput";
 import { Text } from "@/components/core/Text";
 
-const VARIANTS = ["default", "outline", "secondary", "gloss"] as const;
+const VARIANTS = ["default", "outline", "secondary"] as const;
 
 export function SearchInputVariantsDemo() {
   const [search, setSearch] = useState("");

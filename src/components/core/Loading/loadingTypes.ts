@@ -1,13 +1,13 @@
 import type { HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-
+ 
 export type LoadingSize = ComponentSize;
-
+ 
 export type LoadingType = "spinner" | "dots";
-
+ 
 export type LoadingColor =
   | "primary"
   | "foreground"
@@ -17,14 +17,14 @@ export type LoadingColor =
   | "success"
   | "info"
   | "warning";
-
+ 
 export type LoadingClassNames = {
   root?: string;
   spinner?: string;
   dots?: string;
   dot?: string;
 };
-
+ 
 export type LoadingPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -33,13 +33,15 @@ export type LoadingPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type LoadingMotion = {
   root?: LoadingPartMotion;
   spinner?: LoadingPartMotion;
   dots?: LoadingPartMotion;
+  /** Wave. `enter` is the loop; the host replays it when config or reduced motion changes. */
+  dot?: LoadingPartMotion;
 };
-
+ 
 export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
   type?: LoadingType;
   size?: LoadingSize;
@@ -47,7 +49,7 @@ export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
   label?: string;
   classNames?: Prettify<LoadingClassNames>;
   /**
-   * Per-slot motion (`root`, `spinner`, `dots`). Dot wave stays kit-internal.
+   * Per-slot motion (`root`, `spinner`, `dots`, `dot`). `dot.enter` is the wave (`loadingDots`).
    * Defaults are empty — `enter` runs on mount only when set.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
@@ -58,7 +60,7 @@ export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type LoadingDotsLayout = {
   dotClass: string;
   dotSizeVar: string;
@@ -66,3 +68,4 @@ export type LoadingDotsLayout = {
   jumpPx: number;
   scalePeak: number;
 };
+ 

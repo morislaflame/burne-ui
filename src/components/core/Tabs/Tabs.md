@@ -66,9 +66,9 @@ const [tab, setTab] = useState("profile");
 | variant | List surface | Indicator |
 |---------|--------------|-----------|
 | `default` | border-bottom/left line | `bg-primary` линия 2px |
-| `outline` | `bg-transparent border-token rounded-mid` | bbox таба, `bg-secondary` |
-| `secondary` | `bg-secondary border-token rounded-mid` | bbox, `bg-tertiary` |
-| `gloss` | `gloss-panel rounded-mid` | bbox, `bg-tertiary` |
+| `outline` | `bg-transparent border-token rounded-large` | bbox таба, `bg-secondary` |
+| `secondary` | `bg-secondary border-token rounded-large` | bbox, `bg-tertiary` |
+| `gloss` | `gloss-panel rounded-large` | bbox, `bg-tertiary` |
 
 `status` нет — только `variant` + `size`.
 
@@ -117,11 +117,22 @@ configureMotion({
 });
 ```
 
+### 2. Tab text hover/press (`useTabPointerMotion`)
+
+Только **неактивные** вкладки (`!isSelected`):
+
+- **Hover:** `animateInteractiveHoverLift` на span `tabText`
+- **Press:** `animateInteractivePressSqueeze`
+
+Выбранная вкладка — без motion (статичный primary text).
+
+`asChild` — motion не вешается (нет внутреннего ref `Text`).
+
 ### Slot motion
 
 Публичные слоты = compound / `classNames` DOM: `root`, `list`, `tab`, `tabText`, `panel`.
 
-**Indicator не публичный слот.** FLIP (`left` / `top` / `width` / `height` + GSAP `x` / `y` / `scaleX` / `scaleY`) остаётся kit-internal в `useSlidingTabIndicator.ts` (`killMotion` + FLIP как раньше). Не анимируйте геометрию индикатора в публичных MotionVars.
+**`indicator.change`** — рецепт `tabsIndicatorMove`. Хост по-прежнему пишет `left` / `top` / `width` / `height`. Рецепт твинит только `x` / `y` / `scaleX` / `scaleY`. `indicator.change: false` ставит позу сразу.
 
 | Слот | Фазы | Дефолт |
 |------|------|--------|
@@ -220,7 +231,7 @@ function Nudge() {
 <Tabs
   defaultValue="a"
   classNames={{
-    root: "max-w-xl rounded-mid border border-info/25 p-base",
+    root: "max-w-xl rounded-large border border-info/25 p-base",
     list: "bg-info/5 ring-1 ring-info/15",
     indicator: "bg-info/30",
     tab: "font-medium",

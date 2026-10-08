@@ -2,6 +2,8 @@ import { ComboBoxClassNamesFullDemo } from "../demos/combobox/ComboBoxClassNames
 import comboBoxClassNamesFullSource from "../demos/combobox/ComboBoxClassNamesFull.demo.tsx?raw";
 import { ComboBoxCustomTriggerIconDemo } from "../demos/combobox/ComboBoxCustomTriggerIcon.demo";
 import comboBoxCustomTriggerIconSource from "../demos/combobox/ComboBoxCustomTriggerIcon.demo.tsx?raw";
+import { ComboBoxVirtualizedDemo } from "../demos/combobox/ComboBoxVirtualized.demo";
+import comboBoxVirtualizedSource from "../demos/combobox/ComboBoxVirtualized.demo.tsx?raw";
 import { ComboBoxDefaultDemo } from "../demos/combobox/ComboBoxDefault.demo";
 import comboBoxDefaultSource from "../demos/combobox/ComboBoxDefault.demo.tsx?raw";
 import { ComboBoxVariantsDemo } from "../demos/combobox/ComboBoxVariants.demo";
@@ -10,8 +12,6 @@ import { ComboBoxStatusesDemo } from "../demos/combobox/ComboBoxStatuses.demo";
 import comboBoxStatusesSource from "../demos/combobox/ComboBoxStatuses.demo.tsx?raw";
 import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
 import comboBoxSizesSource from "../demos/combobox/ComboBoxSizes.demo.tsx?raw";
-import { ComboBoxGlossDemo } from "../demos/combobox/ComboBoxGloss.demo";
-import comboBoxGlossSource from "../demos/combobox/ComboBoxGloss.demo.tsx?raw";
 import { ComboBoxPopoverSideDemo } from "../demos/combobox/ComboBoxPopoverSide.demo";
 import comboBoxPopoverSideSource from "../demos/combobox/ComboBoxPopoverSide.demo.tsx?raw";
 import { ComboBoxStackPickerDemo } from "../demos/combobox/ComboBoxStackPicker.demo";
@@ -39,7 +39,11 @@ export function ComboBoxShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxDefaultDemo} source={comboBoxDefaultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+      <ShowcaseSection title="Virtualized" description="virtualized mounts only the visible options. Filtering still searches the full list.">
+        <ShowcaseDemoFromFile align="center" Demo={ComboBoxVirtualizedDemo} source={comboBoxVirtualizedSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxVariantsDemo} source={comboBoxVariantsSource} />
       </ShowcaseSection>
       <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
@@ -71,12 +75,7 @@ export function ComboBoxShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxSizesDemo} source={comboBoxSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass shell.">
-        <ShowcaseDemoFromFile align="center" Demo={ComboBoxGlossDemo} source={comboBoxGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="classNames"
         description="Slot customization inputGroup, input, trigger, popover and listBox."
       >
@@ -123,11 +122,11 @@ export function ComboBoxShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Options">
           <p>
-            Array <code>options</code> with margins <code>value</code> and <code>label</code>. For gloss-style
-            pass it on <code>variant=&quot;gloss&quot;</code>.
+            Array <code>options</code> with margins <code>value</code> and <code>label</code>. For default-style
+            pass it on <code>variant=&quot;default&quot;</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

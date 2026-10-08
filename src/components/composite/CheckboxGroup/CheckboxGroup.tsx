@@ -1,8 +1,8 @@
 import { forwardRef, useMemo } from "react";
-
+ 
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
-
+ 
 import { CHECKBOX_GROUP_USES_NATIVE_FIELDSET } from "./checkboxGroupA11y";
 import { resolveCheckboxGroupMotionDefaults, useCheckboxGroupRootMotion } from "./checkboxGroupAnimations";
 import {
@@ -15,7 +15,7 @@ import {
 import { CheckboxGroupClassNamesProvider, CheckboxGroupMotionProvider, CheckboxGroupProvider, useCheckboxGroupClassNames, useCheckboxGroupContext } from "./checkboxGroupContext";
 import type { CheckboxGroupProps } from "./checkboxGroupTypes";
 import { useCheckboxGroupRootState } from "./useCheckboxGroupRootState";
-
+ 
 export type {
   CheckboxGroupProps,
   CheckboxGroupSelection,
@@ -30,7 +30,7 @@ export type {
   CheckboxGroupMotion,
   CheckboxGroupPartMotion,
 } from "./checkboxGroupTypes";
-
+ 
 const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroupFieldsetProps, "classNames">>(
   function CheckboxGroupFieldsetShell(
     {
@@ -43,7 +43,7 @@ const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGr
     ref,
   ) {
     const slotClassNames = useCheckboxGroupClassNames();
-    const { selectedValue } = useCheckboxGroupContext();
+    const { selectedValue, required } = useCheckboxGroupContext();
     const part = useCheckboxGroupRootMotion({
       forwardedRef: ref,
       selectionIdentity: selectedValue ?? "",
@@ -52,18 +52,19 @@ const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGr
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <OptionGroupFieldset
         ref={part.setRef}
         classNames={slotClassNames}
         {...props}
         {...part.pointerHandlers}
+        aria-required={required || undefined}
       />
     );
   },
 );
-
+ 
 export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(
   function CheckboxGroupRoot(props, ref) {
     const {
@@ -88,7 +89,7 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
     } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useCheckboxGroupRootState(props);
     const motionDefaults = useMemo(() => resolveCheckboxGroupMotionDefaults(), []);
-
+ 
     const fieldset = CHECKBOX_GROUP_USES_NATIVE_FIELDSET ? (
       <CheckboxGroupFieldsetShell
         ref={ref}
@@ -102,7 +103,7 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
         {children}
       </CheckboxGroupFieldsetShell>
     ) : null;
-
+ 
     return (
       <CheckboxGroupProvider value={contextValue}>
         <CheckboxGroupClassNamesProvider classNames={classNames}>
@@ -119,9 +120,9 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
     );
   },
 );
-
+ 
 CheckboxGroupRoot.displayName = "CheckboxGroup";
-
+ 
 export {
   CheckboxGroupLegend,
   CheckboxGroupHint,
@@ -129,3 +130,4 @@ export {
   CheckboxGroupActions,
   CheckboxGroupList,
 };
+ 

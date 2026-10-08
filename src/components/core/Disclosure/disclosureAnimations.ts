@@ -22,6 +22,7 @@ import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { applyCollapsibleInstantState, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 import { applyChevronRotationInstant, createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart, type MotionScopeValue } from "@/components/core/utils/slotMotion";
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useDisclosureMotionScope } from "./disclosureContext";
 import type {
@@ -30,20 +31,24 @@ import type {
   UseDisclosureContentMotionProps,
   UseDisclosureTriggerMotionProps,
 } from "./disclosureTypes";
+import { KIT_DISCLOSURE_VARIANTS } from "./disclosureTypes";
 
 export function resolveDisclosureMotionDefaults(variant: DisclosureVariant): DisclosureMotion {
-  const hover = variant === "gloss" ? "hoverLiftGloss" : "hoverLiftFirstLevel";
-  const press = variant === "gloss" ? "pressSqueezeGloss" : "pressSqueeze";
-  return {
-    titleLift: {
-      hoverIn: hover,
-      hoverOut: hover,
-      pressIn: press,
-      pressOut: false,
+  return overlaySkinMotion(
+    {
+      titleLift: {
+        hoverIn: "hoverLiftFirstLevel",
+        hoverOut: "hoverLiftFirstLevel",
+        pressIn: "pressSqueeze",
+        pressOut: false,
+      },
+      chevron: { enter: "chevronRotate", leave: "chevronRotate" },
+      contentShell: { enter: "collapsibleHeight", leave: "collapsibleHeight" },
     },
-    chevron: { enter: "chevronRotate", leave: "chevronRotate" },
-    contentShell: { enter: "collapsibleHeight", leave: "collapsibleHeight" },
-  };
+    variant,
+    KIT_DISCLOSURE_VARIANTS,
+    "disclosure",
+  );
 }
 
 const DISCLOSURE_TRIGGER_BROADCAST_EXCLUDE = [
@@ -52,7 +57,7 @@ const DISCLOSURE_TRIGGER_BROADCAST_EXCLUDE = [
   "contentShell",
   "panelInner",
 ] as const;
-
+ 
 function useDisclosureOpenPhasePlay(
   scope: MotionScopeValue,
   slot: string,
@@ -88,7 +93,7 @@ function useDisclosureOpenPhasePlay(
     }
   }, [broadcastExclude, onSkip, open, scope, skipContentAnimRef, slot]);
 }
-
+ 
 export function useDisclosureTriggerMotion({
   open,
   disabled,
@@ -107,7 +112,7 @@ export function useDisclosureTriggerMotion({
   const scope = useDisclosureMotionScope();
   const titleLiftRef = useRef<HTMLSpanElement | null>(null);
   const initialOpenRef = useRef(open);
-
+ 
   const liftPart = useMotionPart<HTMLSpanElement>({
     scope,
     slot: "titleLift",
@@ -116,12 +121,12 @@ export function useDisclosureTriggerMotion({
     pressPhases: false,
   });
   const { setRef: setLiftPartRef } = liftPart;
-
+ 
   const bindChevronInit = useMemo(
     () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
     [chevronRef],
   );
-
+ 
   const setChevronRef = useCallback(
     (node: HTMLSpanElement | null) => {
       bindChevronInit(node);
@@ -129,7 +134,7 @@ export function useDisclosureTriggerMotion({
     },
     [bindChevronInit, scope],
   );
-
+ 
   const setLiftRef = useCallback(
     (node: HTMLSpanElement | null) => {
       titleLiftRef.current = node;
@@ -137,7 +142,7 @@ export function useDisclosureTriggerMotion({
     },
     [setLiftPartRef],
   );
-
+ 
   const skipChevron = useCallback(
     (nextOpen: boolean) => {
       const el = scope.getTarget("chevron");
@@ -145,7 +150,7 @@ export function useDisclosureTriggerMotion({
     },
     [scope],
   );
-
+ 
   useDisclosureOpenPhasePlay(
     scope,
     "chevron",
@@ -154,27 +159,27 @@ export function useDisclosureTriggerMotion({
     skipChevron,
     DISCLOSURE_TRIGGER_BROADCAST_EXCLUDE,
   );
-
+ 
   useEffect(() => {
     const el = titleLiftRef.current;
     return () => {
       if (el) killMotion(el);
     };
   }, []);
-
+ 
   useEffect(() => {
     if (!disabled) return;
     const el = titleLiftRef.current;
     if (el) killMotion(el);
   }, [disabled]);
-
+ 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
       mergeForwardedRef(forwardedRef, node);
     },
     [forwardedRef],
   );
-
+ 
   const playLift = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       if (disabled) return;
@@ -192,7 +197,7 @@ export function useDisclosureTriggerMotion({
     },
     [config, disabled, motion, scope],
   );
-
+ 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e);
@@ -201,7 +206,7 @@ export function useDisclosureTriggerMotion({
     },
     [disabled, onClick, open, setOpen],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
@@ -214,7 +219,7 @@ export function useDisclosureTriggerMotion({
     },
     [disabled, onKeyDown, open, playLift, setOpen],
   );
-
+ 
   const handlePointerEnter = useCallback(
     (e: React.PointerEvent<HTMLButtonElement>) => {
       onPointerEnter?.(e);
@@ -223,7 +228,7 @@ export function useDisclosureTriggerMotion({
     },
     [disabled, onPointerEnter, playLift],
   );
-
+ 
   const handlePointerLeave = useCallback(
     (e: React.PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
@@ -231,7 +236,7 @@ export function useDisclosureTriggerMotion({
     },
     [onPointerLeave, playLift],
   );
-
+ 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLButtonElement>) => {
       onPointerDown?.(e);
@@ -240,7 +245,7 @@ export function useDisclosureTriggerMotion({
     },
     [disabled, onPointerDown, playLift],
   );
-
+ 
   return {
     setRefs,
     titleLiftRef: setLiftRef,
@@ -253,7 +258,7 @@ export function useDisclosureTriggerMotion({
     mergeRefs,
   };
 }
-
+ 
 export function useDisclosureContentMotion({
   open,
   motion,
@@ -263,13 +268,13 @@ export function useDisclosureContentMotion({
 }: UseDisclosureContentMotionProps) {
   const scope = useDisclosureMotionScope();
   const bindShellInit = useCollapsibleShellRef(shellRef, open);
-
+ 
   const { setRef: setShellPartRef } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "contentShell",
     motion,
   });
-
+ 
   const setShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       bindShellInit(node);
@@ -277,7 +282,7 @@ export function useDisclosureContentMotion({
     },
     [bindShellInit, setShellPartRef],
   );
-
+ 
   const setInnerRef = useCallback(
     (node: HTMLDivElement | null) => {
       innerRef.current = node;
@@ -285,7 +290,7 @@ export function useDisclosureContentMotion({
     },
     [innerRef, scope],
   );
-
+ 
   const skipPanel = useCallback(
     (nextOpen: boolean) => {
       const shell = shellRef.current;
@@ -293,8 +298,9 @@ export function useDisclosureContentMotion({
     },
     [shellRef],
   );
-
+ 
   useDisclosureOpenPhasePlay(scope, "contentShell", open, skipContentAnimRef, skipPanel);
-
+ 
   return { setShellRef, setInnerRef };
 }
+ 

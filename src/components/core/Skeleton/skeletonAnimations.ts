@@ -8,20 +8,20 @@
  * Defaults: empty.
  */
 import type { ForwardedRef } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import type { SkeletonMotion, SkeletonPartMotion } from "./skeletonTypes";
-
+ 
 export function resolveSkeletonMotionDefaults(): SkeletonMotion {
   return {};
 }
-
+ 
 export function useSkeletonSlotMotion<T extends HTMLElement>({
   scope,
   slot,
@@ -45,3 +45,4 @@ export function useSkeletonSlotMotion<T extends HTMLElement>({
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

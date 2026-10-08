@@ -10,14 +10,13 @@ export function SurfaceClassNamesFullDemo() {
         Default surface with custom root slot
       </Surface>
       <Surface
-        variant="gloss"
+        variant="default"
         padding="base"
         classNames={{
           root: "ring-1 ring-primary/20",
-          glossContent: "gap-small text-primary",
         }}
       >
-        Gloss surface with glossContent slot
+        Default surface with a custom root ring
       </Surface>
     </div>
   );

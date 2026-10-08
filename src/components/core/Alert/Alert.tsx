@@ -1,10 +1,12 @@
 import { forwardRef, useMemo, type HTMLAttributes, type ReactNode } from "react";
-
+ 
 import { messageBannerGridClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { alertRootShellClass } from "@/components/core/utils/sizeLayout";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
 import type { ShadowLevel } from "@/tokens/shadows";
-
+ 
 import { AlertClassNamesProvider, AlertContext, AlertMotionProvider } from "./alertContext";
 import { AlertSimpleContent } from "./alertSimpleContent";
 import { resolveAlertMotionDefaults, useAlertAnimations } from "./alertAnimations";
@@ -18,7 +20,7 @@ import type {
   AlertStatus,
   AlertVariant,
 } from "./alertTypes";
-
+ 
 export type {
   AlertActionProps,
   AlertContentProps,
@@ -36,7 +38,7 @@ export type {
   AlertProps,
   AlertTitleProps,
 } from "./alertTypes";
-
+ 
 type AlertSurfaceProps = {
   variant: AlertVariant;
   status: AlertStatus;
@@ -61,7 +63,7 @@ type AlertSurfaceProps = {
   rest: HTMLAttributes<HTMLDivElement>;
   children?: ReactNode;
 };
-
+ 
 const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function AlertSurface(
   {
     variant,
@@ -89,6 +91,7 @@ const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function Aler
   },
   ref,
 ) {
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const { setRootRef, surfaceClass, pointerHandlers } = useAlertAnimations({
     variant,
     status,
@@ -99,7 +102,7 @@ const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function Aler
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <div
       ref={setRootRef}
@@ -115,6 +118,8 @@ const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function Aler
       )}
       {...pointerHandlers}
       {...rest}
+      style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
+      {...dataVariantProps({ size, variant, status })}
     >
       {isCompound ? (
         children
@@ -132,10 +137,10 @@ const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function Aler
     </div>
   );
 });
-
+ 
 export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
-    variant = "default",
+    variant,
     status,
     size = "base",
     role: roleProp,
@@ -182,17 +187,21 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     ariaLabelledByProp,
     ariaDescribedByProp,
   });
-
+ 
+  const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(
-    () => resolveAlertMotionDefaults({ variant: contextValue.variant, hoverLift }),
-    [contextValue.variant, hoverLift],
+    () => {
+      void skinRevision;
+      return resolveAlertMotionDefaults({ variant: contextValue.variant, hoverLift });
+    },
+    [contextValue.variant, hoverLift, skinRevision],
   );
-
+ 
   const motionParams = useMemo(
     () => ({ shadowSize: shadow, variant: contextValue.variant }),
     [contextValue.variant, shadow],
   );
-
+ 
   return (
     <AlertContext.Provider value={contextValue}>
       <AlertClassNamesProvider classNames={classNames}>
@@ -236,9 +245,9 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     </AlertContext.Provider>
   );
 });
-
+ 
 AlertRoot.displayName = "AlertRoot";
-
+ 
 export {
   AlertAction,
   AlertContent,
@@ -247,3 +256,4 @@ export {
   AlertMessage,
   AlertTitle,
 } from "./alertParts";
+ 

@@ -2,13 +2,13 @@ import { forwardRef, useMemo } from "react";
 
 import { Tooltip } from "@/components/core/Tooltip";
 
-import "../utils/glossPanel.css";
+
+import { useSkinRegistryRevision } from "@/skins/skinContext";
 
 import { resolveAvatarMotionDefaults } from "./avatarAnimations";
 import { AvatarClassNamesProvider, AvatarContext, AvatarMotionProvider } from "./avatarContext";
 import {
   AvatarDefaultShell,
-  AvatarGlossShell,
   AvatarSimpleContent,
 } from "./avatarParts";
 import type { AvatarProps } from "./avatarTypes";
@@ -55,9 +55,9 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
 ) {
   const {
     size,
+    variant,
     ctx,
     isCompound,
-    isGloss,
     rootRole,
     ariaLabel,
     tooltip,
@@ -83,6 +83,7 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
 
   const shellProps = {
     size,
+    variant,
     className,
     role: rootRole,
     "aria-label": ariaLabel,
@@ -90,13 +91,13 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     ...rest,
   };
 
-  const motionDefaults = useMemo(() => resolveAvatarMotionDefaults(), []);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveAvatarMotionDefaults(variant);
+  }, [skinRevision, variant]);
 
-  const shell = isGloss ? (
-    <AvatarGlossShell ref={ref} {...shellProps} />
-  ) : (
-    <AvatarDefaultShell ref={ref} {...shellProps} />
-  );
+  const shell = <AvatarDefaultShell ref={ref} {...shellProps} />;
 
   const wrapped = tooltip ? (
     <Tooltip size={tooltip.size} variant={tooltip.variant} side={tooltip.side}>

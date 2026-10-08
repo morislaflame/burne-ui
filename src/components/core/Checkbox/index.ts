@@ -1,11 +1,11 @@
 import { CheckboxContent, CheckboxControl, CheckboxError, CheckboxHint, CheckboxIndicator, CheckboxLabel, CheckboxRoot } from "./Checkbox";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-
+ 
 const CheckboxIndicatorCompound = Object.assign(CheckboxIndicator, {
   Fill: SelectionIndicator.Fill,
   Mark: SelectionIndicator.Mark,
 });
-
+ 
 export const Checkbox = Object.assign(CheckboxRoot, {
   Control: CheckboxControl,
   Indicator: CheckboxIndicatorCompound,
@@ -14,7 +14,7 @@ export const Checkbox = Object.assign(CheckboxRoot, {
   Hint: CheckboxHint,
   Error: CheckboxError,
 });
-
+ 
 export type {
   CheckboxProps,
   CheckboxControlProps,
@@ -29,3 +29,4 @@ export type {
   CheckboxMotion,
   CheckboxCheckMotion,
 } from "./checkboxTypes";
+ 

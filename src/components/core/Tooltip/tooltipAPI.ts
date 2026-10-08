@@ -1,7 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
-
+ 
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
-
+ 
 export const TOOLTIP_COMPOUND_SLOT_NAMES = new Set([
   "TooltipIndicator",
   "TooltipIcon",
@@ -9,13 +9,13 @@ export const TOOLTIP_COMPOUND_SLOT_NAMES = new Set([
   "TooltipDescription",
   "TooltipMessage",
 ]);
-
+ 
 export function walkTooltipChildren(
   node: ReactNode,
   match: (displayName: string | undefined) => boolean,
 ): boolean {
   let found = false;
-
+ 
   const walk = (current: ReactNode) => {
     if (found) return;
     for (const child of Children.toArray(current)) {
@@ -28,33 +28,33 @@ export function walkTooltipChildren(
       walk((child.props as { children?: ReactNode }).children);
     }
   };
-
+ 
   walk(node);
   return found;
 }
-
+ 
 export function hasTooltipCompoundChildren(children: ReactNode): boolean {
   return walkTooltipChildren(
     children,
     (name) => name != null && TOOLTIP_COMPOUND_SLOT_NAMES.has(name),
   );
 }
-
+ 
 export function tooltipHasTitle(children: ReactNode): boolean {
   return walkTooltipChildren(children, (name) => name === "TooltipTitle");
 }
-
+ 
 export function tooltipHasDescription(children: ReactNode): boolean {
   return walkTooltipChildren(children, (name) => name === "TooltipDescription");
 }
-
+ 
 export function tooltipHasIndicator(children: ReactNode): boolean {
   return walkTooltipChildren(
     children,
     (name) => name === "TooltipIndicator" || name === "TooltipIcon",
   );
 }
-
+ 
 function walkTooltipIndicatorProps(
   node: ReactNode,
   visit: (props: { children?: ReactNode; showIcon?: boolean }) => void,
@@ -68,7 +68,7 @@ function walkTooltipIndicatorProps(
     walkTooltipIndicatorProps((child.props as { children?: ReactNode }).children, visit);
   }
 }
-
+ 
 export function tooltipIndicatorWouldRender(
   status: SemanticStatus,
   icon: ReactNode | undefined,
@@ -81,7 +81,7 @@ export function tooltipIndicatorWouldRender(
   if (icon != null) return true;
   return status !== "default";
 }
-
+ 
 export function tooltipCompoundShowsIndicator(
   children: ReactNode,
   status: SemanticStatus,
@@ -104,7 +104,7 @@ export function tooltipCompoundShowsIndicator(
   });
   return visible;
 }
-
+ 
 export function tooltipShowsIndicator(
   status: SemanticStatus,
   icon: ReactNode | undefined,
@@ -117,7 +117,7 @@ export function tooltipShowsIndicator(
   if (icon != null) return true;
   return status !== "default";
 }
-
+ 
 export function resolveTooltipGridSlots({
   status,
   icon,
@@ -142,7 +142,7 @@ export function resolveTooltipGridSlots({
       : children != null && description == null);
   const hasDescription =
     description != null || (isCompound && tooltipHasDescription(children));
-
+ 
   return {
     hasIndicator: tooltipShowsIndicator(status, icon, showIcon, isCompound, children),
     hasTitle,
@@ -151,7 +151,8 @@ export function resolveTooltipGridSlots({
     hasClose: false,
   };
 }
-
+ 
 export function isTooltipArrowElement(el: ReactElement): boolean {
   return (el.type as { displayName?: string }).displayName === "TooltipArrow";
 }
+ 

@@ -6,25 +6,23 @@ import { MOTION_PHASE_NAMES, type MotionValue } from "./slotMotionTypes";
 describe("MOTION_PHASE_NAMES", () => {
   it("includes change as a standard phase", () => {
     expect(MOTION_PHASE_NAMES).toContain("change");
-    expect(MOTION_PHASE_NAMES).toHaveLength(9);
+    expect(MOTION_PHASE_NAMES).toContain("mount");
+    expect(MOTION_PHASE_NAMES).toHaveLength(10);
   });
 });
 
 describe("resolveMotionValue", () => {
   it("prefers part over slot over default", () => {
-    expect(resolveMotionValue("selectionFill", "hoverLiftGloss", "hoverLiftSecondLevel")).toBe(
-      "selectionFill",
-    );
-    expect(resolveMotionValue(undefined, "hoverLiftGloss", "hoverLiftSecondLevel")).toBe(
-      "hoverLiftGloss",
-    );
+    expect(resolveMotionValue("selectionFill", "customLift", "hoverLiftSecondLevel")).toBe(
+      "selectionFill");
+    expect(resolveMotionValue(undefined, "customLift", "hoverLiftSecondLevel")).toBe(
+      "customLift");
     expect(resolveMotionValue(undefined, undefined, "hoverLiftSecondLevel")).toBe(
-      "hoverLiftSecondLevel",
-    );
+      "hoverLiftSecondLevel");
   });
 
   it("treats false as a real disable, not a fallthrough", () => {
-    expect(resolveMotionValue(false, "hoverLiftSecondLevel", "hoverLiftGloss")).toBe(false);
+    expect(resolveMotionValue(false, "hoverLiftSecondLevel", "customLift")).toBe(false);
     expect(resolveMotionValue(undefined, false, "hoverLiftSecondLevel")).toBe(false);
   });
 });
@@ -38,9 +36,7 @@ describe("resolveSlotPhase", () => {
         "hoverIn",
         { hoverIn: value },
         { title: { hoverIn: "hoverLiftSecondLevel" } },
-        { title: { hoverIn: false } },
-      ),
-    ).toBe(value);
+        { title: { hoverIn: false } })).toBe(value);
   });
 
   it("reads change from the base phase contract", () => {
@@ -51,9 +47,7 @@ describe("resolveSlotPhase", () => {
         "change",
         { change },
         { track: { hoverIn: "hoverLiftFirstLevel" } },
-        undefined,
-      ),
-    ).toBe(change);
+        undefined)).toBe(change);
   });
 
   it("prefers a fill factory on the root map over the kit recipe default", () => {
@@ -64,9 +58,7 @@ describe("resolveSlotPhase", () => {
         "check",
         undefined,
         { fill: { check, uncheck: false } },
-        { fill: { check: "selectionFill", uncheck: "selectionFill" } },
-      ),
-    ).toBe(check);
+        { fill: { check: "selectionFill", uncheck: "selectionFill" } })).toBe(check);
   });
 });
 
@@ -74,8 +66,7 @@ describe("mergeMotionSlotMaps", () => {
   it("merges per-slot phase objects, override wins", () => {
     const merged = mergeMotionSlotMaps(
       { root: { hoverIn: "hoverLiftSecondLevel" }, title: { hoverIn: false } },
-      { title: { hoverIn: { y: -2 } } },
-    );
+      { title: { hoverIn: { y: -2 } } });
     expect(merged?.root?.hoverIn).toBe("hoverLiftSecondLevel");
     expect(merged?.title?.hoverIn).toEqual({ y: -2 });
   });

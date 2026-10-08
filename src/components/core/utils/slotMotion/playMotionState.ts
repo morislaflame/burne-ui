@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef } from "react";
-
+ 
 import type { MotionStates } from "./motionEvents";
 import type { MotionValue } from "./slotMotionTypes";
-
+ 
 export type MotionStatePlayScope = {
   getStates: () => MotionStates | undefined;
   getTargets: (slot: string) => readonly HTMLElement[];
@@ -18,7 +18,7 @@ export type MotionStatePlayScope = {
     },
   ) => unknown;
 };
-
+ 
 /**
  * Copy taken at the start of a state transition for `ctx.payload`.
  * Plain objects / arrays are shallow-copied and frozen so later mutation of
@@ -34,7 +34,7 @@ export function snapshotMotionPayload<T>(payload: T): T {
   if (proto !== Object.prototype && proto !== null) return payload;
   return Object.freeze({ ...(payload as Record<string, unknown>) }) as T;
 }
-
+ 
 /**
  * First commit: skip unless `playInitial`.
  * Same name: skip (payload-only updates do not replay).
@@ -53,7 +53,7 @@ export function nextMotionStateTransition(
   if (prev === next) return null;
   return { from: prev, to: next };
 }
-
+ 
 /** Play every listed slot for `to`. Missing state → skip + dev `console.error`. */
 export function playMotionStateTransition(
   scope: MotionStatePlayScope,
@@ -83,7 +83,7 @@ export function playMotionStateTransition(
     }
   }
 }
-
+ 
 /**
  * Provider hook: play `motion.states[motionState]` when the mode changes.
  * `payload` is taken from the render that changed the mode, then copied and
@@ -98,8 +98,9 @@ export function useMotionStatePlayback(
   const prevRef = useRef<string | undefined>(undefined);
   const initedRef = useRef(false);
   const payloadRef = useRef(payload);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   payloadRef.current = payload;
-
+ 
   useLayoutEffect(() => {
     const isFirst = !initedRef.current;
     initedRef.current = true;
@@ -113,3 +114,4 @@ export function useMotionStatePlayback(
     playMotionStateTransition(scope, transition.from, transition.to, payloadRef.current);
   }, [motionState, playInitial, scope]);
 }
+ 

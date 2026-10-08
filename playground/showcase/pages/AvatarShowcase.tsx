@@ -1,9 +1,7 @@
-import { AvatarClassNamesGlossDemo } from "../demos/avatar/AvatarClassNamesGloss.demo";
-import avatarClassNamesGlossSource from "../demos/avatar/AvatarClassNamesGloss.demo.tsx?raw";
+import { AvatarClassNamesFullDemo } from "../demos/avatar/AvatarClassNamesFull.demo";
+import avatarClassNamesFullSource from "../demos/avatar/AvatarClassNamesFull.demo.tsx?raw";
 import { AvatarCommentRowDemo } from "../demos/avatar/AvatarCommentRow.demo";
 import avatarCommentRowSource from "../demos/avatar/AvatarCommentRow.demo.tsx?raw";
-import { AvatarGlossDemo } from "../demos/avatar/AvatarGloss.demo";
-import avatarGlossSource from "../demos/avatar/AvatarGloss.demo.tsx?raw";
 import { AvatarGroupDemo } from "../demos/avatar/AvatarGroup.demo";
 import avatarGroupSource from "../demos/avatar/AvatarGroup.demo.tsx?raw";
 import { AvatarMotionControllerGalleryDemo } from "../demos/avatar/motionController/gallery";
@@ -35,11 +33,10 @@ export function AvatarShowcase() {
         <ShowcaseDemoFromFile Demo={AvatarGroupDemo} source={avatarGroupSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — glass surface.">
-        <ShowcaseDemoFromFile Demo={AvatarGlossDemo} source={avatarGlossSource} />
+      <ShowcaseSection title="classNames" description="Slots root, fallback, group and groupItem.">
+        <ShowcaseDemoFromFile Demo={AvatarClassNamesFullDemo} source={avatarClassNamesFullSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="Image enter (Replay) — instant vs scale-in. Group hover — instant vs rotate.">
+<ShowcaseSection title="Slot motion" description="Image enter (Replay) — instant vs scale-in. Group hover — instant vs rotate.">
         <AvatarSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -49,15 +46,7 @@ export function AvatarShowcase() {
       >
         <AvatarMotionControllerGalleryDemo />
       </ShowcaseSection>
-
-      <ShowcaseSection
-        title="classNames"
-        description="In gloss: root and className — on the avatar circle, glossWrap — on the outer shell."
-      >
-        <ShowcaseDemoFromFile Demo={AvatarClassNamesGlossDemo} source={avatarClassNamesGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="Custom Variations"
         description="Comment line, project participants and online status — `demos/avatar/`."
       >
@@ -86,7 +75,7 @@ export function AvatarShowcase() {
             <code>label</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

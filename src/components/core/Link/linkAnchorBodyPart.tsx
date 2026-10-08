@@ -1,13 +1,14 @@
 import { Text } from "@/components/core/Text";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-
+ 
 import { useLinkClassNames, useOptionalLinkMotionScope } from "./linkContext";
 import { LinkDefaultIcon } from "./linkDefaultIconPart";
 import { LinkIconSlot } from "./linkIconSlotPart";
 import { linkAnchorClass, linkTextClass } from "./linkStyles";
 import type { LinkAnchorBodyProps, LinkBodyContentProps } from "./linkTypes";
-
+ 
 export function LinkBodyContent({
   size,
   underline,
@@ -26,19 +27,20 @@ export function LinkBodyContent({
     slot: "text",
     pointerPhases: true,
   });
-
+ 
   const resolvedStart =
-    startIcon ?? (usesDefaultAtStart ? <LinkDefaultIcon size={size} /> : null);
+    startIcon ?? (usesDefaultAtStart ? <LinkDefaultIcon /> : null);
   const resolvedEnd =
-    endIcon ?? (usesDefaultAtEnd ? <LinkDefaultIcon size={size} /> : null);
-
+    endIcon ?? (usesDefaultAtEnd ? <LinkDefaultIcon /> : null);
+ 
   return (
     <>
       {resolvedStart ? (
         <LinkIconSlot
           size={size}
           muted={startIconMuted}
-          slotClass={slotClassNames.icon}
+          slot="iconStart"
+          slotClass={slotClassNames.iconStart}
         >
           {resolvedStart}
         </LinkIconSlot>
@@ -60,7 +62,8 @@ export function LinkBodyContent({
         <LinkIconSlot
           size={size}
           muted={endIconMuted}
-          slotClass={slotClassNames.icon}
+          slot="iconEnd"
+          slotClass={slotClassNames.iconEnd}
         >
           {resolvedEnd}
         </LinkIconSlot>
@@ -68,7 +71,7 @@ export function LinkBodyContent({
     </>
   );
 }
-
+ 
 export function LinkAnchorBody({
   href,
   size,
@@ -90,7 +93,7 @@ export function LinkAnchorBody({
   ...rest
 }: LinkAnchorBodyProps) {
   const slotClassNames = useLinkClassNames();
-
+ 
   return (
     <a
       ref={setAnchorRef}
@@ -104,6 +107,7 @@ export function LinkAnchorBody({
       onKeyDown={handleKeyDown}
       {...rest}
       {...pointerHandlers}
+      {...dataVariantProps({ size })}
     >
       <LinkBodyContent
         size={size}
@@ -120,3 +124,4 @@ export function LinkAnchorBody({
     </a>
   );
 }
+ 

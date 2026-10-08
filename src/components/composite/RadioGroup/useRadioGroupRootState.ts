@@ -1,12 +1,12 @@
 import { useCallback, useId, useMemo } from "react";
-
+ 
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
 import { useOptionGroupRequiredAnchor } from "@/components/composite/utils/useOptionGroupRequiredAnchor";
 import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptionGroupSingleValue";
-
+ 
 import { radioGroupName } from "./radioGroupA11y";
 import type { RadioGroupContextValue, UseRadioGroupRootStateProps } from "./radioGroupTypes";
-
+ 
 export function useRadioGroupRootState({
   required = false,
   value: valueProp,
@@ -21,24 +21,24 @@ export function useRadioGroupRootState({
   const groupName = radioGroupName(nameProp, autoId);
   const hintId = useFieldSetHintId(hintIdProp);
   const errorId = useFieldSetErrorId(errorIdProp);
-
+ 
   const { selectedValue, selectValue } = useOptionGroupSingleValue({
     value: valueProp,
     defaultValue,
     onValueChange,
     allowClear: !required,
   });
-
+ 
   const { claimRequiredAnchor: claimAnchor } = useOptionGroupRequiredAnchor([
     required,
     groupName,
   ]);
-
+ 
   const claimRequiredAnchor = useCallback(() => {
     if (!required) return false;
     return claimAnchor();
   }, [claimAnchor, required]);
-
+ 
   const contextValue = useMemo<RadioGroupContextValue>(
     () => ({
       name: groupName,
@@ -61,8 +61,9 @@ export function useRadioGroupRootState({
       selectedValue,
     ],
   );
-
+ 
   const fieldLabelCtx = useMemo(() => ({ required }), [required]);
-
+ 
   return { contextValue, fieldLabelCtx, hintId, errorId, disabled };
 }
+ 

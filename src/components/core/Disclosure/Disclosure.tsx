@@ -1,7 +1,12 @@
-import { forwardRef, useMemo } from "react";
-
+import { forwardRef, useMemo, useRef } from "react";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
-
+import { useFirstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
+import { cn } from "@/utils/cn";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
+ 
 import { resolveDisclosureMotionDefaults } from "./disclosureAnimations";
 import {
   DisclosureClassNamesProvider,
@@ -9,7 +14,7 @@ import {
   DisclosureProvider,
   useDisclosureGroupContext,
 } from "./disclosureContext";
-import { disclosureRootClass } from "./disclosureStyles";
+import { DISCLOSURE_CARD_CLIP_CLASS, disclosureRootClass } from "./disclosureStyles";
 import {
   DisclosureContent,
   DisclosureHandleInner,
@@ -19,7 +24,7 @@ import {
 } from "./disclosureParts";
 import type { DisclosureProps } from "./disclosureTypes";
 import { useDisclosureRootState } from "./useDisclosureRootState";
-
+ 
 export type {
   DisclosureProps,
   DisclosureGroupProps,
@@ -30,13 +35,12 @@ export type {
   DisclosureChevronProps,
   DisclosureVariant,
   DisclosureSize,
-  DisclosureChevronPos,
   DisclosureClassNames,
   DisclosureMotion,
   DisclosureLifecycleMotion,
   DisclosureTitleLiftMotion,
 } from "./disclosureTypes";
-
+ 
 export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
   function DisclosureRoot(
     {
@@ -74,16 +78,21 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       chevronPosition,
       dragHandle,
     });
-
+ 
     const mergedMotion = useMemo(
       () => mergeMotionSlotMaps(groupCtx?.motion, motion),
       [groupCtx?.motion, motion],
     );
-    const defaults = useMemo(
-      () => resolveDisclosureMotionDefaults(state.variant),
-      [state.variant],
-    );
-
+    const skinRevision = useSkinRegistryRevision();
+    const defaults = useMemo(() => {
+      void skinRevision;
+      return resolveDisclosureMotionDefaults(state.variant);
+    }, [skinRevision, state.variant]);
+    const rootRef = useRef<HTMLDivElement>(null);
+    const elevationCard = state.variant === "card" && !state.groupedCardShell;
+    const shadow = useFirstLevelHoverShadow(rootRef, elevationCard);
+    const { onPointerOver, onPointerOut, ...domRest } = rest;
+ 
     return (
       <DisclosureProvider value={state.contextValue}>
         <DisclosureClassNamesProvider classNames={classNames}>
@@ -92,16 +101,35 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
           <div
-            ref={ref}
-            className={disclosureRootClass({
+            ref={mergeRefs(rootRef, ref)}
+            className={cn(
+              disclosureRootClass({
+                variant: state.variant,
+                groupedCardShell: state.groupedCardShell,
+                className,
+                slotClass: classNames?.root,
+              }),
+              shadow.motionClass,
+            )}
+            {...domRest}
+            onPointerOver={(event) => {
+              onPointerOver?.(event);
+              shadow.onPointerOver(event);
+            }}
+            onPointerOut={(event) => {
+              onPointerOut?.(event);
+              shadow.onPointerOut(event);
+            }}
+            {...dataVariantProps({
+              size: state.contextValue.size,
               variant: state.variant,
-              groupedCardShell: state.groupedCardShell,
-              className,
-              slotClass: classNames?.root,
             })}
-            {...rest}
           >
-            {state.orderedChildren}
+            {elevationCard ? (
+              <div className={DISCLOSURE_CARD_CLIP_CLASS}>{state.orderedChildren}</div>
+            ) : (
+              state.orderedChildren
+            )}
           </div>
           </DisclosureMotionProvider>
         </DisclosureClassNamesProvider>
@@ -109,9 +137,9 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
     );
   },
 );
-
+ 
 DisclosureRoot.displayName = "Disclosure";
-
+ 
 export {
   DisclosureTrigger,
   DisclosureHandleInner,
@@ -119,3 +147,4 @@ export {
   DisclosureIcon,
   DisclosureChevron,
 };
+ 

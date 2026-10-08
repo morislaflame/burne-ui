@@ -2,11 +2,15 @@ import type {
   FocusEvent,
   KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
+  RefObject,
 } from "react";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
-import { IoChevronDown } from "react-icons/io5";
-
+import { KitChevronDown } from "@/components/core/utils/kitIcons";
+import { dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+ 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
@@ -18,9 +22,10 @@ import {
 } from "@/components/core/utils/typeahead";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
-
+ 
 import { focusElement } from "@/components/core/utils/focusElement";
-
+import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
+ 
 import {
   resolveSelectMotionDefaults,
   resolveSelectMotionParams,
@@ -28,7 +33,7 @@ import {
   useSelectShellAnimations,
 } from "./selectAnimations";
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
-import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectTypeaheadLabels } from "./selectAPI";
+import { selectActiveOnOpen, selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectSelectionLabels, selectShownValue, selectTypeaheadLabels } from "./selectAPI";
 import {
   SelectMotionProvider,
   useOptionalSelectMotionScope,
@@ -41,9 +46,9 @@ import type {
   SelectTriggerProps,
   SelectValueProps,
 } from "./selectTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupProps>(
   function SelectTriggerGroup(
     {
@@ -68,22 +73,22 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
-    const isGloss = variant === "gloss";
     const pointerInsideRef = useRef(false);
     const parentScope = useOptionalSelectMotionScope();
-    const motionDefaults = useMemo(
-      () => resolveSelectMotionDefaults({ isGloss, disabled, groupSegment }),
-      [disabled, groupSegment, isGloss],
-    );
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveSelectMotionDefaults({ variant, disabled, groupSegment });
+    }, [disabled, groupSegment, skinRevision, variant]);
     const motionParams = useMemo(
       () =>
         resolveSelectMotionParams({
+          variant,
           disabled,
-          isGloss,
           groupSegment,
           pointerInside: pointerInsideRef,
         }),
-      [disabled, groupSegment, isGloss],
+      [disabled, groupSegment, variant],
     );
     const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -94,7 +99,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       states: parentScope?.getStates(),
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
-
+ 
     return (
       <SelectMotionProvider
         motion={mergedMotion}
@@ -121,9 +126,9 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
     );
   },
 );
-
+ 
 SelectTriggerGroup.displayName = "SelectTriggerGroup";
-
+ 
 function SelectTriggerGroupSurface({
   forwardedRef,
   className,
@@ -162,39 +167,18 @@ function SelectTriggerGroupSurface({
     disabled,
     variant,
     status,
+    size,
+    invalid,
+    errorConnected,
+    formInvalid,
     anchorRef,
-    listId,
     valueRef,
     value,
     optionValues,
     setActiveValue,
-    activeValue,
-    required,
-    hintConnected,
-    errorConnected,
-    hintId,
-    errorId,
-    labelId,
-    labelConnected,
-    placeholder,
   } = ctx;
-
-  const {
-    "aria-label": ariaLabelProp,
-    "aria-labelledby": ariaLabelledByProp,
-    ...triggerGroupRest
-  } = rest;
-
-  const activeOptionId = selectActiveOptionId(listId, open, activeValue);
-  const ariaDescribedBy = joinFieldDescribedBy(
-    hintConnected ? hintId : undefined,
-    errorConnected ? errorId : undefined,
-  );
-  const ariaLabelledBy =
-    ariaLabelledByProp ?? (labelConnected ? labelId : undefined);
-  const ariaLabel =
-    ariaLabelProp ??
-    (ariaLabelledBy ? undefined : placeholder || undefined);
+  const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
+  const visualStatus = visualStatusForInvalid(status, isInvalid, "default");
 
   const {
     bindShellRef,
@@ -202,10 +186,7 @@ function SelectTriggerGroupSurface({
     shellPointerUp,
     shellPointerEnter,
     shellPointerLeave,
-    shellFocusCapture,
-    shellBlurCapture,
     shellHoverMotionClass,
-    glossDisabledAttr,
   } = useSelectShellAnimations({
     shellRef: anchorRef,
     disabled,
@@ -214,13 +195,13 @@ function SelectTriggerGroupSurface({
     motion: shellPartMotion,
     pointerInsideRef,
   });
-
+ 
   const finishOpen = useCallback(() => {
     const selectedIdx = optionValues.indexOf(value);
     setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
     requestAnimationFrame(() => focusElement(valueRef.current));
   }, [optionValues, setActiveValue, value, valueRef]);
-
+ 
   const handlePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
       if (disabled) return;
@@ -230,22 +211,10 @@ function SelectTriggerGroupSurface({
     },
     [disabled, finishOpen, open, setOpen, squeezeThenOpen],
   );
-
+ 
   return (
     <div
       ref={mergeRefs(forwardedRef, bindShellRef)}
-      role="combobox"
-      aria-expanded={open}
-      aria-controls={open ? listId : undefined}
-      aria-haspopup="listbox"
-      aria-activedescendant={open ? activeOptionId : undefined}
-      aria-labelledby={ariaLabelledBy}
-      aria-label={ariaLabel}
-      aria-required={required || undefined}
-      aria-invalid={status === "danger" ? true : undefined}
-      aria-describedby={ariaDescribedBy}
-      aria-disabled={disabled || undefined}
-      tabIndex={-1}
       onPointerDown={handlePointerDown}
       onPointerUp={shellPointerUp}
       onPointerEnter={(e) => {
@@ -258,23 +227,49 @@ function SelectTriggerGroupSurface({
         if (e.defaultPrevented) return;
         shellPointerLeave?.(e);
       }}
-      onFocusCapture={shellFocusCapture}
-      onBlurCapture={shellBlurCapture}
-      {...glossDisabledAttr}
       className={selectTriggerGroupClass({
         variant,
-        status,
+        status: visualStatus,
         disabled,
         groupSegment,
         shellHoverMotionClass,
         className,
         slotClass: slotClassNames.triggerGroup,
       })}
-      {...triggerGroupRest}
+      {...rest}
+      {...dataVariantProps({ size, variant, status: visualStatus })}
+      data-group-segment={dataGroupSegment(groupSegment != null)}
     >
       {children}
     </div>
   );
+}
+ 
+function commitSelectOption(
+  next: string,
+  {
+    multiple,
+    values,
+    setValues,
+    setValue,
+    setOpen,
+    valueRef,
+  }: {
+    multiple: boolean;
+    values: string[];
+    setValues: (values: string[]) => void;
+    setValue: (value: string) => void;
+    setOpen: (open: boolean) => void;
+    valueRef: RefObject<HTMLButtonElement | null>;
+  },
+) {
+  if (multiple) {
+    setValues(toggleOptionListSelection(values, next, true));
+    return;
+  }
+  setValue(next);
+  setOpen(false);
+  focusElement(valueRef.current);
 }
 
 export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
@@ -285,8 +280,11 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       selectId,
       open,
       setOpen,
+      multiple,
       value,
       setValue,
+      values,
+      setValues,
       activeValue,
       setActiveValue,
       valueRef,
@@ -296,24 +294,33 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       disabled,
       placeholder: contextPlaceholder,
       size,
-      variant,
+      required,
+      listId,
+      labelId,
+      labelConnected,
+      hintConnected,
+      errorConnected,
+      invalid,
+      formInvalid,
+      hintId,
+      errorId,
       formValueRef,
       formOnBlur,
     } = ctx;
-
+ 
     const placeholder = placeholderProp ?? contextPlaceholder;
+    const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
     const typeaheadRef = useRef(createTypeaheadBufferState());
-    const isGloss = variant === "gloss";
     const partMotionRef = useRef(motion);
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     partMotionRef.current = motion;
-
+ 
     const squeezeThenOpen = useSelectOpenAfterSqueeze({
       triggerRef: anchorRef,
       disabled,
-      isGloss,
       partMotionRef,
     });
-
+ 
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalSelectMotionScope(),
       slot: "value",
@@ -322,23 +329,32 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       pointerPhases: true,
       pressPhases: true,
     });
-
+ 
     const optionsByValue = useMemo(
       () => selectOptionsByValue(options),
       [options],
     );
-
+ 
     const selectedOption = useMemo(
       () => optionsByValue.get(value),
       [optionsByValue, value],
     );
-
+    const selectionLabels = useMemo(
+      () => selectSelectionLabels(optionValues, values, optionsByValue),
+      [optionValues, optionsByValue, values],
+    );
+    const shown = selectShownValue(multiple, selectionLabels, selectedOption?.label, placeholder);
+    const activeOptionId = selectActiveOptionId(listId, open, activeValue);
+    const ariaDescribedBy = joinFieldDescribedBy(
+      hintConnected ? hintId : undefined,
+      errorConnected ? errorId : undefined,
+    );
+ 
     const finishOpen = useCallback(() => {
-      const selectedIdx = optionValues.indexOf(value);
-      setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
+      setActiveValue(selectActiveOnOpen({ optionValues, multiple, values, value }));
       requestAnimationFrame(() => focusElement(valueRef.current));
-    }, [optionValues, setActiveValue, value, valueRef]);
-
+    }, [multiple, optionValues, setActiveValue, value, valueRef, values]);
+ 
     const bumpActive = useCallback(
       (delta: number) => {
         const next = selectBumpActiveValue({
@@ -351,23 +367,21 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       },
       [activeValue, optionValues, optionsByValue, setActiveValue],
     );
-
+ 
     const selectOption = useCallback(
       (next: string) => {
         const opt = optionsByValue.get(next);
         if (!opt || opt.disabled) return;
-        setValue(next);
-        setOpen(false);
-        focusElement(valueRef.current);
+        commitSelectOption(next, { multiple, values, setValues, setValue, setOpen, valueRef });
       },
-      [optionsByValue, setOpen, setValue, valueRef],
+      [multiple, optionsByValue, setOpen, setValue, setValues, valueRef, values],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: ReactKeyboardEvent<HTMLButtonElement>) => {
         onKeyDown?.(e);
         if (e.defaultPrevented || disabled) return;
-
+ 
         if (!open) {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
@@ -381,7 +395,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
           }
           return;
         }
-
+ 
         if (e.key === "ArrowDown") {
           e.preventDefault();
           bumpActive(1);
@@ -414,7 +428,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
           if (last) setActiveValue(last);
           return;
         }
-
+ 
         if (isTypeaheadPrintableKey(e.key, e)) {
           e.preventDefault();
           const labels = selectTypeaheadLabels(optionValues, optionsByValue);
@@ -445,7 +459,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         squeezeThenOpen,
       ],
     );
-
+ 
     const handleBlur = useCallback(
       (e: FocusEvent<HTMLButtonElement>) => {
         onBlur?.(e);
@@ -453,11 +467,9 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       },
       [formOnBlur, onBlur],
     );
-
-    const display =
-      children ??
-      (selectedOption ? selectedOption.label : placeholder);
-
+ 
+    const display = children ?? shown.text;
+ 
     return (
       <button
         ref={setRef}
@@ -466,7 +478,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         disabled={disabled}
         className={selectValueClass({
           size,
-          muted: !selectedOption,
+          muted: shown.muted,
           className,
           slotClass: slotClassNames.value,
         })}
@@ -474,26 +486,51 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         onBlur={handleBlur}
         {...rest}
         {...pointerHandlers}
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-haspopup="listbox"
+        aria-activedescendant={open ? activeOptionId : undefined}
+        aria-labelledby={labelConnected ? labelId : undefined}
+        aria-label={labelConnected ? undefined : placeholder || undefined}
+        aria-required={required || undefined}
+        aria-invalid={ariaInvalidValue(isInvalid)}
+        aria-describedby={ariaDescribedBy}
+        data-state={dataOpenState(open)}
+        data-invalid={isInvalid ? "" : undefined}
+        data-required={required ? "" : undefined}
       >
         {display}
       </button>
     );
   },
 );
-
+ 
 SelectValue.displayName = "SelectValue";
-
+ 
 function SelectTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" }) {
   const slotClassNames = useSelectClassNames();
+  const { open } = useSelectContext();
+  const scope = useOptionalSelectMotionScope();
+  const iconRef = useRef<HTMLSpanElement | null>(null);
+  const bindChevronRef = useChevronRotation(open, iconRef, undefined, undefined, scope, "triggerIcon");
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
-    scope: useOptionalSelectMotionScope(),
+    scope,
     slot: "triggerIcon",
     pointerPhases: true,
   });
+  const setIconRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      bindChevronRef(node);
+      iconRef.current = node;
+      setRef(node);
+    },
+    [bindChevronRef, setRef],
+  );
 
   return (
-    <span ref={setRef} {...pointerHandlers}>
-      <IoChevronDown
+    <span ref={setIconRef} className={slotClassNames.triggerIconWrap} {...pointerHandlers}>
+      <KitChevronDown
         className={cn(
           SELECT_CHEVRON_ICON[size],
           slotClassNames.triggerIcon,
@@ -503,14 +540,12 @@ function SelectTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" 
     </span>
   );
 }
-
+ 
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
   function SelectTrigger({ className, onPointerDown, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useSelectClassNames();
     const { open, setOpen, disabled, size, valueRef } = useSelectContext();
-    const triggerRef = useRef<HTMLButtonElement | null>(null);
-    const bindChevronRef = useChevronRotation(open, triggerRef);
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalSelectMotionScope(),
       slot: "trigger",
@@ -530,18 +565,16 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         requestAnimationFrame(() => focusElement(valueRef.current));
       },
     });
-
+ 
     const setTriggerRef = useCallback(
       (node: HTMLButtonElement | null) => {
-        bindChevronRef(node);
-        triggerRef.current = node;
         setRef(node);
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [bindChevronRef, ref, setRef],
+      [ref, setRef],
     );
-
+ 
     return (
       <button
         type="button"
@@ -556,11 +589,13 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         })}
         {...rest}
         {...pointerHandlers}
+        data-state={dataOpenState(open)}
       >
         {children ?? <SelectTriggerIcon size={size} />}
       </button>
     );
   },
 );
-
+ 
 SelectTrigger.displayName = "SelectTrigger";
+ 

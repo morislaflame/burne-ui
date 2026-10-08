@@ -1,12 +1,12 @@
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-
+ 
 const CONTROL_HEIGHT_VAR: Record<ComponentSize, string> = {
   small: "--control-height-small",
   base: "--control-height-base",
   mid: "--control-height-mid",
   large: "--control-height-large",
 };
-
+ 
 /** SSR fallback: root rem multiplier when DOM measurement is unavailable. */
 const CONTROL_HEIGHT_SCALE: Record<ComponentSize, number> = {
   small: 1.75,
@@ -14,15 +14,15 @@ const CONTROL_HEIGHT_SCALE: Record<ComponentSize, number> = {
   mid: 2.5,
   large: 3,
 };
-
+ 
 const controlHeightPxCache = new Map<ComponentSize, number>();
-
+ 
 function measureControlHeightPx(size: ComponentSize): number | null {
   if (typeof document === "undefined") return null;
-
+ 
   const cached = controlHeightPxCache.get(size);
   if (cached != null) return cached;
-
+ 
   try {
     const dummy = document.createElement("div");
     dummy.style.position = "absolute";
@@ -36,12 +36,14 @@ function measureControlHeightPx(size: ComponentSize): number | null {
       return computedHeight;
     }
   } catch {
+    // Detached document / computed style can throw; fall through to token scale.
   }
-
+ 
   return null;
 }
-
+ 
 /** Control height in px — reads `--control-height-*` from `:root`. */
 export function readControlHeightPx(size: ComponentSize, rootPx = 16): number {
   return measureControlHeightPx(size) ?? rootPx * CONTROL_HEIGHT_SCALE[size];
 }
+ 

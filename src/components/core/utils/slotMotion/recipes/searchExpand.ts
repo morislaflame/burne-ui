@@ -5,9 +5,9 @@ import {
   applySearchExpandInstant,
   type SearchExpandMetrics,
 } from "@/components/core/utils/searchInputExpandMotion";
-
+ 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
-
+ 
 function metricsOf(ctx: MotionContext): SearchExpandMetrics | null {
   const targetW = ctx.params.targetW;
   const collapsedDim = ctx.params.collapsedDim;
@@ -27,7 +27,7 @@ function metricsOf(ctx: MotionContext): SearchExpandMetrics | null {
   }
   return { targetW, collapsedDim, expandedRadius, padX, iconBox, iconLeftCollapsedCss };
 }
-
+ 
 /** Layout exception: tween shell `width` + `borderRadius`. `enter` expands, `leave` collapses. */
 export function searchExpandRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const metrics = metricsOf(ctx);
@@ -40,7 +40,7 @@ export function searchExpandRecipe(ctx: MotionContext): MotionAnimation | undefi
   }
   return animateSearchShellExpand(ctx.el, open, metrics, ctx.config) as unknown as MotionAnimation;
 }
-
+ 
 /** Icon layout `left` snaps; visual interpolation is `x` (no `scaleX`). */
 export function searchIconShiftRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const metrics = metricsOf(ctx);
@@ -54,3 +54,4 @@ export function searchIconShiftRecipe(ctx: MotionContext): MotionAnimation | und
   if (!(shell instanceof HTMLElement)) return undefined;
   return animateSearchIconShift(ctx.el, shell, open, metrics, ctx.config) as unknown as MotionAnimation;
 }
+ 

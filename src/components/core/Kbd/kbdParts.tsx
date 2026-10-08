@@ -1,14 +1,14 @@
 import { Fragment, forwardRef, type ForwardedRef, type ReactNode } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
-
+ 
 import { flattenKbdGroupChildren } from "./kbdAPI";
 import { KBD_GROUP_SEPARATOR_ARIA_HIDDEN } from "./kbdA11y";
 import { useKbdGroupSlotMotion } from "./kbdAnimations";
 import { KbdMotionProvider, useKbdClassNames, useOptionalKbdMotionScope } from "./kbdContext";
 import { kbdGroupClass, kbdGroupSeparatorClass } from "./kbdStyles";
 import type { KbdGroupProps } from "./kbdTypes";
-
+ 
 export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(
   function KbdGroup(
     {
@@ -42,11 +42,11 @@ export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(
         {children}
       </KbdGroupSurface>
     );
-
+ 
     if (parentScope || (motion == null && motionController == null && motionState == null)) {
       return surface;
     }
-
+ 
     return (
       <KbdMotionProvider
         motion={motion ? { group: motion } : undefined}
@@ -61,7 +61,7 @@ export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(
     );
   },
 );
-
+ 
 function KbdGroupSurface({
   className,
   classNames,
@@ -101,7 +101,7 @@ function KbdGroupSurface({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <span
       ref={part.setRef}
@@ -129,7 +129,8 @@ function KbdGroupSurface({
     </span>
   );
 }
-
+ 
 KbdGroup.displayName = "KbdGroup";
-
+ 
 export { KbdText } from "./kbdTextPart";
+ 

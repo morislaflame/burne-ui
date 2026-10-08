@@ -25,7 +25,7 @@ export function LinkMotionTextTintDemo() {
             return tl;
           },
         },
-        icon: {
+        iconEnd: {
           pressIn: (ctx) =>
             ctx.to({ rotate: 90, scale: 0.88, duration: 0.16, ease: "back.out(1.8)" }),
           pressOut: (ctx) =>

@@ -1,3 +1,6 @@
+# Required visual gate for Э1 (shadows) and Э4.B (token scales).
+# Keep this GitHub check Required in branch protection — do not set
+# exitZeroOnChanges. Main still publishes a new baseline when the PR is merged.
 name: Chromatic
 
 on:
@@ -30,3 +33,5 @@ jobs:
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           buildScriptName: build-storybook
+          exitZeroOnChanges: false
+          onlyChanged: true

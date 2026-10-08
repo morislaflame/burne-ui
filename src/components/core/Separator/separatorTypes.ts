@@ -1,9 +1,9 @@
 import type { HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type SeparatorOrientation = "horizontal" | "vertical";
-
+ 
 export type SeparatorPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -12,11 +12,11 @@ export type SeparatorPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type SeparatorMotion = {
   root?: SeparatorPartMotion;
 };
-
+ 
 export type SeparatorProps = Omit<HTMLAttributes<HTMLElement>, "role"> & {
   orientation?: SeparatorOrientation;
   /**
@@ -30,3 +30,4 @@ export type SeparatorProps = Omit<HTMLAttributes<HTMLElement>, "role"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
+ 

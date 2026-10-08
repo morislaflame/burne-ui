@@ -1,15 +1,15 @@
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
 import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
-
+ 
 export type SwitchSize = "small" | "base" | "mid" | "large";
-
+ 
 const THUMB_PX: Record<SwitchSize, number> = {
   small: selectionIndicatorFallbackPx("small"),
   base: selectionIndicatorFallbackPx("base"),
   mid: selectionIndicatorFallbackPx("mid"),
   large: selectionIndicatorFallbackPx("large"),
 };
-
+ 
 export function resolveFallbackThumbPx(
   thickness: number | string | undefined,
   size: SwitchSize,
@@ -27,13 +27,13 @@ export function resolveFallbackThumbPx(
   }
   return THUMB_PX[size];
 }
-
+ 
 export function measureSwitchTravel(trackEl: HTMLElement, thumbEl: HTMLElement): number {
   const trackW = trackEl.getBoundingClientRect().width;
   const thumbW = thumbEl.getBoundingClientRect().width;
   return Math.max(0, trackW - thumbW);
 }
-
+ 
 const SWITCH_TRACK: Record<SwitchSize, string> = {
   small:
     "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)] w-[calc(2*var(--selection-indicator-small))] min-w-[calc(2*var(--selection-indicator-small))]",
@@ -44,7 +44,7 @@ const SWITCH_TRACK: Record<SwitchSize, string> = {
   large:
     "h-[var(--selection-indicator-large)] min-h-[var(--selection-indicator-large)] w-[calc(2*var(--selection-indicator-large))] min-w-[calc(2*var(--selection-indicator-large))]",
 };
-
+ 
 export const SWITCH_LAYOUT: Record<
   SwitchSize,
   {
@@ -84,3 +84,4 @@ export const SWITCH_LAYOUT: Record<
     gap: OPTION_CONTROL_SIZE_LAYOUT.large.gridGap,
   },
 };
+ 

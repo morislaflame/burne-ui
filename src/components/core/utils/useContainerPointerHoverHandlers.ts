@@ -1,14 +1,14 @@
 /**
  * Shared container pointer enter/leave guards for hover-lift surfaces.
- * Callers supply enter/leave effects (standard lift, gloss, future plugins).
+ * Callers supply enter/leave effects (standard lift,, future plugins).
  */
-
+ 
 import { useEffect, useMemo, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { killMotion } from "./gsapMotion";
-
+ 
 export type UseContainerPointerHoverHandlersOptions<
   Element extends HTMLElement = HTMLElement,
 > = {
@@ -30,7 +30,7 @@ export type UseContainerPointerHoverHandlersOptions<
   onEnter: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
   onLeave: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
 };
-
+ 
 export function useContainerPointerHoverHandlers<
   Element extends HTMLElement = HTMLElement,
 >({
@@ -52,7 +52,7 @@ export function useContainerPointerHoverHandlers<
       if (t) killMotion(t);
     };
   }, [killMotionOnUnmount, targetRef]);
-
+ 
   return useMemo(() => {
     const onPointerOver = (e: ReactPointerEvent<Element>) => {
       if (!enabled) return;
@@ -66,12 +66,12 @@ export function useContainerPointerHoverHandlers<
       if (pointerInsideRef) pointerInsideRef.current = true;
       onEnter(el, e);
     };
-
+ 
     const onPointerOut = (e: ReactPointerEvent<Element>) => {
       const c = e.currentTarget;
       const rt = e.relatedTarget;
       if (rt instanceof Node && c.contains(rt)) return;
-
+ 
       if (pointerInsideRef) pointerInsideRef.current = false;
       if (!enabled) return;
       if (skipHover?.()) return;
@@ -79,7 +79,8 @@ export function useContainerPointerHoverHandlers<
       if (!el) return;
       onLeave(el, e);
     };
-
+ 
     return { onPointerOver, onPointerOut };
   }, [enabled, onEnter, onLeave, pointerInsideRef, skipHover, targetRef]);
 }
+ 

@@ -6,8 +6,6 @@ import { PopoverClassNamesFullDemo } from "../demos/popover/PopoverClassNamesFul
 import popoverClassNamesFullSource from "../demos/popover/PopoverClassNamesFull.demo.tsx?raw";
 import { PopoverFilterPanelDemo } from "../demos/popover/PopoverFilterPanel.demo";
 import popoverFilterPanelSource from "../demos/popover/PopoverFilterPanel.demo.tsx?raw";
-import { PopoverGlossDemo } from "../demos/popover/PopoverGloss.demo";
-import popoverGlossSource from "../demos/popover/PopoverGloss.demo.tsx?raw";
 import { PopoverProfileCardDemo } from "../demos/popover/PopoverProfileCard.demo";
 import popoverProfileCardSource from "../demos/popover/PopoverProfileCard.demo.tsx?raw";
 import { PopoverShareMenuDemo } from "../demos/popover/PopoverShareMenu.demo";
@@ -46,12 +44,7 @@ export function PopoverShowcase() {
       <ShowcaseSection title="With header" description="Header, Label, Hint and arrow showArrow.">
         <ShowcaseDemoFromFile Demo={PopoverWithHeaderDemo} source={popoverWithHeaderSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass pop-up panel.">
-        <ShowcaseDemoFromFile Demo={PopoverGlossDemo} source={popoverGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: default recipe, instant leave, slide factory, title stagger, header enter.">
+<ShowcaseSection title="Slot motion" description="One gallery: default recipe, instant leave, slide factory, title stagger, header enter.">
         <PopoverSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -82,7 +75,7 @@ export function PopoverShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Slots root (trigger), trigger, content, panel, glossPanel, label, hint and body — through prop classNames."
+        description="Slots root, trigger, content, panelRelative, panel, arrow, header, label, hint and body — through prop classNames."
       >
         <ShowcaseDemoFromFile Demo={PopoverClassNamesFullDemo} source={popoverClassNamesFullSource} />
       </ShowcaseSection>
@@ -111,7 +104,7 @@ export function PopoverShowcase() {
             <code>showArrow</code> on Content includes Popover.Arrow — pointer to trigger.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -6,8 +6,6 @@ import { DisclosureChangelogDemo } from "../demos/disclosure/DisclosureChangelog
 import disclosureChangelogSource from "../demos/disclosure/DisclosureChangelog.demo.tsx?raw";
 import { DisclosureCheckoutStepsDemo } from "../demos/disclosure/DisclosureCheckoutSteps.demo";
 import disclosureCheckoutStepsSource from "../demos/disclosure/DisclosureCheckoutSteps.demo.tsx?raw";
-import { DisclosureGlossDemo } from "../demos/disclosure/DisclosureGloss.demo";
-import disclosureGlossSource from "../demos/disclosure/DisclosureGloss.demo.tsx?raw";
 import { DisclosureOutlineFaqDemo } from "../demos/disclosure/DisclosureOutlineFaq.demo";
 import disclosureOutlineFaqSource from "../demos/disclosure/DisclosureOutlineFaq.demo.tsx?raw";
 import { DisclosureSettingsGroupDemo } from "../demos/disclosure/DisclosureSettingsGroup.demo";
@@ -46,12 +44,7 @@ export function DisclosureShowcase() {
       <ShowcaseSection title="Outline FAQ" description="Disclosure.Group variant outline with icons.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureOutlineFaqDemo} source={disclosureOutlineFaqSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass panel with hover-lift.">
-        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureGlossDemo} source={disclosureGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: instant height, title slot, titleLift tilt, quiet hover, chevron + icon, group chevron snap.">
+<ShowcaseSection title="Slot motion" description="One gallery: instant height, title slot, titleLift tilt, quiet hover, chevron + icon, group chevron snap.">
         <DisclosureSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -93,7 +86,7 @@ export function DisclosureShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, trigger, title, contentPanel, glossPanel, handle, group."
+            description="root, trigger, titleLift, title, contentPanel, handle, group."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Groups">
@@ -102,7 +95,7 @@ export function DisclosureShowcase() {
             <code>defaultValue</code> — open item by default.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             Slot motion — <code>motion.contentShell</code> / <code>collapsibleHeight</code>. Handle-drag is kit-internal.
           </p>

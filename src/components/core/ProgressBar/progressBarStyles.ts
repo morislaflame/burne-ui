@@ -1,65 +1,66 @@
 import type { CSSProperties } from "react";
-
+ 
 import { sliderThicknessToCss } from "@/components/core/Slider";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
-
+ 
 import type { ProgressBarOrientation, ProgressBarSize } from "./progressBarTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const PROGRESS_BAR_RAIL_HEIGHT_CLASS: Record<ProgressBarSize, string> = {
   small: "h-small",
   base: "h-base",
   mid: "h-mid",
   large: "h-large",
 };
-
+ 
 export const PROGRESS_BAR_RAIL_WIDTH_CLASS: Record<ProgressBarSize, string> = {
   small: "w-small",
   base: "w-base",
   mid: "w-mid",
   large: "w-large",
 };
-
+ 
 export const PROGRESS_BAR_TRACK_BASE_CLASS =
   "relative overflow-hidden rounded-full bg-primary-tint";
-
+ 
 export const PROGRESS_BAR_TRACK_HORIZONTAL_CLASS = "w-full";
-
+ 
 export const PROGRESS_BAR_TRACK_VERTICAL_CLASS = "h-48";
-
+ 
 export const PROGRESS_BAR_FILL_BASE_CLASS = "absolute rounded-full";
-
-export const PROGRESS_BAR_FILL_HORIZONTAL_CLASS = "inset-y-0 left-0";
-
+ 
+export const PROGRESS_BAR_FILL_HORIZONTAL_CLASS =
+  "inset-y-0 start-0 origin-left rtl:origin-right";
+ 
 export const PROGRESS_BAR_FILL_VERTICAL_CLASS = "inset-x-0 bottom-0";
-
+ 
 export const PROGRESS_BAR_FILL_DEFAULT_COLOR_CLASS = "bg-primary";
-
+ 
 export const PROGRESS_BAR_INDETERMINATE_FILL_BASE_CLASS =
   "absolute rounded-full";
-
+ 
 export const PROGRESS_BAR_INDETERMINATE_FILL_HORIZONTAL_CLASS =
-  "inset-y-0 left-0 w-1/4";
-
+  "inset-y-0 start-0 w-1/4";
+ 
 export const PROGRESS_BAR_INDETERMINATE_FILL_VERTICAL_CLASS =
   "inset-x-0 bottom-0 h-1/4";
-
+ 
 export const PROGRESS_BAR_INDETERMINATE_FILL_REDUCED_HORIZONTAL_CLASS =
-  "left-1/4 w-1/2";
-
+  "start-1/4 w-1/2";
+ 
 export const PROGRESS_BAR_INDETERMINATE_FILL_REDUCED_VERTICAL_CLASS =
   "bottom-1/4 h-1/2";
-
+ 
 export const PROGRESS_BAR_HEADER_BASE_CLASS =
   "flex items-baseline justify-between gap-xsmall";
-
+ 
 export const PROGRESS_BAR_HEADER_HORIZONTAL_CLASS = "w-full";
-
+ 
 export const PROGRESS_BAR_HEADER_VERTICAL_CLASS = "min-w-[8rem]";
-
+ 
 export const PROGRESS_BAR_VALUE_CLASS = "tabular-nums text-muted";
-
+ 
 export function progressBarRootClass({
   orientation,
   slotClass,
@@ -75,7 +76,7 @@ export function progressBarRootClass({
     className,
   );
 }
-
+ 
 export function progressBarHeaderClass({
   orientation,
   slotClass,
@@ -94,7 +95,7 @@ export function progressBarHeaderClass({
     className,
   );
 }
-
+ 
 export function progressBarValueClass({
   slotClass,
   className,
@@ -104,7 +105,7 @@ export function progressBarValueClass({
 }): string {
   return cn(PROGRESS_BAR_VALUE_CLASS, slotClass, className);
 }
-
+ 
 export function progressBarTrackClass({
   isHorizontal,
   size,
@@ -131,7 +132,7 @@ export function progressBarTrackClass({
     className,
   );
 }
-
+ 
 export function progressBarFillClass({
   isHorizontal,
   hasCustomColor,
@@ -150,7 +151,7 @@ export function progressBarFillClass({
     slotClass,
   );
 }
-
+ 
 export function progressBarIndeterminateFillClass({
   isHorizontal,
   hasCustomColor,
@@ -175,7 +176,7 @@ export function progressBarIndeterminateFillClass({
     slotClass,
   );
 }
-
+ 
 export function progressBarTrackCrossStyle({
   isHorizontal,
   thickness,
@@ -187,12 +188,12 @@ export function progressBarTrackCrossStyle({
   const thicknessCss = sliderThicknessToCss(thickness);
   return isHorizontal ? { height: thicknessCss } : { width: thicknessCss };
 }
-
+ 
 export function progressBarFillColorStyle(color?: string): CSSProperties | undefined {
   if (!color) return undefined;
   return { background: color };
 }
-
+ 
 export function progressBarDeterminateFillStyle({
   isHorizontal,
   fillColorStyle,
@@ -203,7 +204,8 @@ export function progressBarDeterminateFillStyle({
   return {
     width: "100%",
     height: "100%",
-    transformOrigin: isHorizontal ? "left center" : "bottom center",
+    ...(isHorizontal ? {} : { transformOrigin: "bottom center" }),
     ...fillColorStyle,
   };
 }
+ 

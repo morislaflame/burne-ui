@@ -1,6 +1,6 @@
 export { cn } from "@/utils/cn";
 export type { Prettify } from "@/utils/prettify";
-
+ 
 export {
   type ComponentSize,
   COMPONENT_SIZES,
@@ -305,7 +305,6 @@ export {
   Link,
   type LinkProps,
   type LinkSize,
-  type LinkIconPos,
   type LinkIconProps,
   type LinkClassNames,
   type LinkMotion,
@@ -439,6 +438,7 @@ export {
   type SelectionThumbIconClassNames,
   type SelectionThumbMotion,
   type SelectionThumbPartMotion,
+  type SelectionThumbVariant,
 } from "@/components/core/SelectionThumb";
 export {
   Radio,
@@ -465,6 +465,7 @@ export {
   type SwitchIconWhen,
   type SwitchSize,
   type SwitchLabelPosition,
+  type SwitchVariant,
   type SwitchContentProps,
   type SwitchLabelProps,
   type SwitchHintProps,
@@ -514,6 +515,7 @@ export {
   type SliderRangeProps,
   type SliderOrientation,
   type SliderSize,
+  type SliderVariant,
   type SliderThickness,
   type SliderRailProps,
   type SliderFillProps,
@@ -644,6 +646,20 @@ export {
   type PopoverPartMotion,
 } from "@/components/core/Popover";
 export {
+  HoverCard,
+  HOVER_CARD_CLOSE_DELAY,
+  HOVER_CARD_OPEN_DELAY,
+  type HoverCardClassNames,
+  type HoverCardContentProps,
+  type HoverCardMotion,
+  type HoverCardPartMotion,
+  type HoverCardProps,
+  type HoverCardSide,
+  type HoverCardSize,
+  type HoverCardTriggerProps,
+  type HoverCardVariant,
+} from "@/components/core/HoverCard";
+export {
   Breadcrumbs,
   type BreadcrumbsProps,
   type BreadcrumbsListProps,
@@ -668,6 +684,21 @@ export {
   type PaginationPartMotion,
   type PaginationSummaryPartMotion,
 } from "@/components/core/Pagination";
+export {
+  Stepper,
+  type StepperClassNames,
+  type StepperDescriptionProps,
+  type StepperIndicatorProps,
+  type StepperItemProps,
+  type StepperMotion,
+  type StepperOrientation,
+  type StepperPartMotion,
+  type StepperProps,
+  type StepperSize,
+  type StepperStep,
+  type StepperStepState,
+  type StepperTitleProps,
+} from "@/components/core/Stepper";
 export {
   Separator,
   type SeparatorProps,
@@ -710,13 +741,30 @@ export {
   type DropdownPopoverMotion,
 } from "@/components/core/Dropdown";
 export {
+  ContextMenu,
+  type ContextMenuProps,
+  type ContextMenuClassNames,
+  type ContextMenuTriggerProps,
+  type ContextMenuContentProps,
+  type ContextMenuGroupProps,
+  type ContextMenuLabelProps,
+  type ContextMenuSeparatorProps,
+  type ContextMenuItemProps,
+  type ContextMenuItemLabelProps,
+  type ContextMenuItemHintProps,
+  type ContextMenuItemIconProps,
+  type ContextMenuItemIndicatorProps,
+  type ContextMenuSubProps,
+  type ContextMenuSubTriggerProps,
+  type ContextMenuSubContentProps,
+} from "@/components/core/ContextMenu";
+export {
   Badge,
   type BadgeProps,
   type BadgeVariant,
   type BadgeStatus,
   type BadgeSize,
   type BadgePlacement,
-  type BadgeIconPosition,
   type BadgeInlineIconPosition,
   type BadgeClassNames,
   type BadgeAnchorProps,
@@ -740,11 +788,26 @@ export {
   overlayMotionConfig,
   isMotionEnabled,
   isMotionFeatureEnabled,
+  isMotionFeatureEnabledFor,
+  motionPressSqueezeTotalFor,
   MOTION_CONFIG_DEFAULTS,
   MOTION_CONFIG_LIMITS,
   type MotionConfig,
   type MotionFeatureFlag,
 } from "@/components/core/utils/motionConfig";
+export {
+  resolveAdaptiveHoverLiftScale,
+  resolveAdaptivePressSqueezeScale,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
+export { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+export {
+  playShadowFade,
+  removeShadowFadeHost,
+  snapShadowFade,
+  type ShadowFadeKind,
+  type ShadowFadeName,
+} from "@/components/core/utils/shadowFade";
 export {
   MotionConfigProvider,
   useMotionConfig,
@@ -882,6 +945,7 @@ export {
   type TableClassNames,
   type TableMotion,
   type TablePartMotion,
+  type TableCaptionProps,
   type TableLabelProps,
   type SortDescriptor,
   type SortDirection,
@@ -891,6 +955,9 @@ export {
 export {
   Calendar,
   EN_LOCALE,
+  createCalendarLocale,
+  resolveCalendarLocale,
+  type CalendarLocaleLabels,
   useCalendar,
   type CalendarProps,
   type CalendarHeaderProps,
@@ -912,6 +979,75 @@ export {
   type CalendarMotion,
   type CalendarPartMotion,
 } from "@/components/core/Calendar";
+
+export {
+  DatePicker,
+  type DatePickerClassNames,
+  type DatePickerErrorProps,
+  type DatePickerHintProps,
+  type DatePickerLabelProps,
+  type DatePickerMode,
+  type DatePickerMotion,
+  type DatePickerPartMotion,
+  type DatePickerPopoverProps,
+  type DatePickerProps,
+  type DatePickerRangeProps,
+  type DatePickerSingleProps,
+  type DatePickerTriggerProps,
+} from "@/components/core/DatePicker";
+
+export {
+  NumberInput,
+  type NumberInputClassNames,
+  type NumberInputControlProps,
+  type NumberInputErrorProps,
+  type NumberInputHintProps,
+  type NumberInputLabelProps,
+  type NumberInputMotion,
+  type NumberInputPartMotion,
+  type NumberInputProps,
+  type NumberInputStepperProps,
+} from "@/components/core/NumberInput";
+
+export {
+  ScrollArea,
+  type ScrollAreaClassNames,
+  type ScrollAreaCornerProps,
+  type ScrollAreaMotion,
+  type ScrollAreaOrientation,
+  type ScrollAreaPartMotion,
+  type ScrollAreaProps,
+  type ScrollAreaScrollbarProps,
+  type ScrollAreaThumbProps,
+  type ScrollAreaViewportProps,
+  type ScrollAreaVisibility,
+  type ScrollAxis,
+} from "@/components/core/ScrollArea";
+
+export {
+  PinInput,
+  type PinInputClassNames,
+  type PinInputErrorProps,
+  type PinInputGroupProps,
+  type PinInputHintProps,
+  type PinInputLabelProps,
+  type PinInputMotion,
+  type PinInputPartMotion,
+  type PinInputProps,
+  type PinInputType,
+} from "@/components/core/PinInput";
+
+export {
+  TagsInput,
+  type TagsInputClassNames,
+  type TagsInputControlProps,
+  type TagsInputErrorProps,
+  type TagsInputHintProps,
+  type TagsInputLabelProps,
+  type TagsInputMotion,
+  type TagsInputPartMotion,
+  type TagsInputProps,
+} from "@/components/core/TagsInput";
 
 export {
   ColorPicker,
@@ -946,6 +1082,7 @@ export {
   type ColorSliderOrientation,
   type ColorSliderMotion,
   type ColorSliderPartMotion,
+  type ColorSwatchClassNames,
   type ColorSwatchProps,
   type ColorSwatchSize,
   type ColorSwatchShape,
@@ -954,7 +1091,7 @@ export {
   type HSVA,
   type RGBA,
 } from "@/components/core/ColorPicker";
-
+ 
 export {
   TimeField,
   type TimeFieldProps,
@@ -970,7 +1107,7 @@ export {
   type TimeFieldMotion,
   type TimeFieldPartMotion,
 } from "@/components/core/TimeField";
-
+ 
 export {
   Skeleton,
   type SkeletonProps,
@@ -988,7 +1125,7 @@ export {
   type SkeletonMotion,
   type SkeletonPartMotion,
 } from "@/components/core/Skeleton";
-
+ 
 export {
   Disclosure,
   type DisclosureProps,
@@ -1000,13 +1137,12 @@ export {
   type DisclosureChevronProps,
   type DisclosureVariant,
   type DisclosureSize,
-  type DisclosureChevronPos,
   type DisclosureClassNames,
   type DisclosureMotion,
   type DisclosureLifecycleMotion,
   type DisclosureTitleLiftMotion,
 } from "@/components/core/Disclosure";
-
+ 
 export {
   BurneUIProvider,
   BurneLabelsProvider,
@@ -1039,3 +1175,34 @@ export {
   type CustomThemeTokens,
   type CustomThemeTokenValue,
 } from "@/theme";
+
+export {
+  SkinProvider,
+  useSkin,
+  useSkinVariant,
+  useSkinSurfaceStyle,
+  useSkinRegistryRevision,
+  mergeSkinSurfaceStyle,
+  type SkinProviderProps,
+  type SkinScope,
+} from "@/skins/skinContext";
+export {
+  registerSkin,
+  unregisterSkin,
+  hasSkin,
+  listSkins,
+  getSkin,
+  subscribeSkins,
+  getSkinRevision,
+  type RegisterSkinOptions,
+} from "@/skins/skinRegistry";
+export type {
+  SkinDefinition,
+  SkinMeta,
+  SkinSlot,
+  SkinDeclarativeLayers,
+  SkinDeclarativeNode,
+  SkinLayerProps,
+  SkinLayerRenderer,
+} from "@/skins/skinTypes";
+ 

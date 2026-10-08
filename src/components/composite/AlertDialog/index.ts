@@ -1,5 +1,5 @@
 import { AlertDialogBody, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogPanel, AlertDialogRoot, AlertDialogTitle, AlertDialogTrigger } from "./AlertDialog";
-
+ 
 export const AlertDialog = Object.assign(AlertDialogRoot, {
   Trigger: AlertDialogTrigger,
   Panel: AlertDialogPanel,
@@ -13,14 +13,14 @@ export const AlertDialog = Object.assign(AlertDialogRoot, {
   Footer: AlertDialogFooter,
   Close: AlertDialogClose,
 });
-
+ 
 export {
   primaryButtonVariantForAlertTone,
   primaryButtonStatusForAlertTone,
 } from "./alertDialogAPI";
 export { useAlertDialog, type AlertDialogContextValue } from "./useAlertDialog";
 export { footerButtonSizeForAlertDialog } from "./alertDialogStyles";
-
+ 
 export type {
   AlertDialogProps,
   AlertDialogPanelProps,
@@ -40,3 +40,4 @@ export type {
   AlertDialogLifecycleMotion,
   AlertDialogPartMotion,
 } from "./alertDialogTypes";
+ 

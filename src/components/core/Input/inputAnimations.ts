@@ -6,16 +6,14 @@
  *
  * Root passes the `motion` map. Host is `Input.Control` (defaults + `play`).
  * Chrome (`label` / `hint` / `error`) registers on the Root scope (siblings of Control).
- * Gloss hover/press stay on `useGlossFieldShellMotion`.
  * File row leave: `scope.play("fileRow", "leave", { el })` — `false` unmounts instantly.
  *
  * Not slots: Field's own scope; `fileArea` / `fileEmpty` /
  * `fileGlyph` / `filePreview` (layout).
  */
 import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEvent, type PointerEventHandler } from "react";
-
+ 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   hasPointerPhases,
@@ -23,10 +21,10 @@ import {
   useMotionPart,
   useMotionPointerPhases,
   useOptionalEnterOnMount,
-  type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-
+import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+ 
 import { useInputMotionScope, useOptionalInputMotionScope } from "./inputContext";
 import type {
   InputMotion,
@@ -34,63 +32,55 @@ import type {
   InputVariant,
   UseInputShellAnimationsProps,
 } from "./inputTypes";
-
-import "../utils/glossInteractive.css";
-
-function isKitPressSqueeze(value: MotionValue | undefined): boolean {
-  if (typeof value === "string") {
-    return value === "pressSqueeze" || value === "pressSqueezeGloss";
-  }
-  if (value && typeof value === "object" && "recipe" in value) {
-    const recipe = (value as { recipe?: unknown }).recipe;
-    return recipe === "pressSqueeze" || recipe === "pressSqueezeGloss";
-  }
-  return false;
-}
-
+import { KIT_INPUT_VARIANTS } from "./inputTypes";
+ 
 export function resolveInputMotionDefaults({
-  isGloss,
+  variant,
   blocked,
   groupSegment,
 }: {
-  isGloss: boolean;
+  variant: InputVariant;
   blocked: boolean;
   groupSegment?: unknown;
 }): InputMotion {
-  const hover = !blocked && !isGloss && groupSegment == null;
-  const press = !blocked && !isGloss && groupSegment == null;
-  return {
-    shell: {
-      hoverIn: hover ? "hoverLiftSecondLevel" : false,
-      hoverOut: hover ? "hoverLiftSecondLevel" : false,
-      pressIn: press ? "pressSqueeze" : false,
-      pressOut: false,
+  const active = !blocked && groupSegment == null;
+  return overlaySkinMotion(
+    {
+      shell: {
+        hoverIn: active ? "hoverLiftSecondLevel" : false,
+        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        pressIn: active ? "pressSqueeze" : false,
+        pressOut: false,
+      },
+      fileRow: {
+        leave: "fileRowExit",
+      },
     },
-    fileRow: {
-      leave: "fileRowExit",
-    },
-  };
+    variant,
+    KIT_INPUT_VARIANTS,
+    "input",
+  );
 }
-
+ 
 export function resolveInputMotionParams({
+  variant,
   blocked,
-  isGloss,
   groupSegment,
   pointerInside,
 }: {
+  variant: InputVariant;
   blocked: boolean;
-  isGloss: boolean;
   groupSegment?: unknown;
   pointerInside: MutableRefObject<boolean>;
 }) {
+  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
   return {
     shadowSize: "base" as const,
-    hasHoverShadow: !blocked && !isGloss && groupSegment == null,
-    isGloss,
+    hasHoverShadow: !blocked && kitSurface && groupSegment == null,
     pointerInside,
   };
 }
-
+ 
 export function useInputShellAnimations({
   shellRef,
   blocked,
@@ -102,54 +92,51 @@ export function useInputShellAnimations({
 }: UseInputShellAnimationsProps) {
   const scope = useInputMotionScope();
   const shellMotionRef = useRef(motion);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   shellMotionRef.current = motion;
-  const isGloss = variant === "gloss";
-
+  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const shellActive = !blocked && groupSegment == null;
+ 
+  useOptionalEnterOnMount(scope, "shell", shellRef);
+ 
   const standardShellHover = useSecondLevelShadow(
     shellRef,
-    !blocked && !isGloss && groupSegment == null,
+    shellActive && kitSurface,
     {
       interactive: false,
       pointerInsideRef,
     },
   );
-  const glossShellMotion = useGlossFieldShellMotion(
-    shellRef,
-    !blocked && isGloss && groupSegment == null,
-  );
-
+ 
   const bindShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       shellRef.current = node;
       scope.registerTarget("shell", node);
-      if (!blocked && isGloss && groupSegment == null) {
-        glossShellMotion.bindShellRef(node);
-      }
     },
-    [blocked, glossShellMotion, groupSegment, isGloss, scope, shellRef],
+    [scope, shellRef],
   );
-
+ 
   const playShell = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
-      if (blocked || isGloss) return;
+      if (!shellActive) return;
       const el = shellRef.current;
       if (!el) return;
       const value = scope.resolve("shell", phase, shellMotionRef.current);
-      if (value === undefined) return;
+      if (value === undefined || value === false) return;
       scope.play("shell", phase, { partMotion: shellMotionRef.current, el });
     },
-    [blocked, isGloss, scope, shellRef],
+    [scope, shellActive, shellRef],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLDivElement>({
-    enabled: !blocked && !isGloss && groupSegment == null,
+    enabled: shellActive,
     targetRef: shellRef,
     pointerInsideRef,
     skipHover: shouldSkipInteractiveHoverLift,
     onHoverIn: () => playShell("hoverIn"),
     onHoverOut: () => playShell("hoverOut"),
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -160,29 +147,23 @@ export function useInputShellAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver],
   );
-
+ 
   const handleShellPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       onPointerDown?.(e);
       if (e.defaultPrevented || blocked || groupSegment != null) return;
       const shell = shellRef.current;
       if (!shell || prefersReducedMotion()) return;
-      if (isGloss) {
-        glossShellMotion.onShellPointerDown();
-        return;
-      }
       const pressIn = scope.resolve("shell", "pressIn", shellMotionRef.current);
       if (pressIn === false || pressIn === undefined) return;
-      if (isKitPressSqueeze(pressIn) || pressIn) {
-        void scope.play("shell", "pressIn", {
-          partMotion: shellMotionRef.current,
-          el: shell,
-        }).finished;
-      }
+      void scope.play("shell", "pressIn", {
+        partMotion: shellMotionRef.current,
+        el: shell,
+      }).finished;
     },
-    [blocked, glossShellMotion, groupSegment, isGloss, onPointerDown, scope, shellRef],
+    [blocked, groupSegment, onPointerDown, scope, shellRef],
   );
-
+ 
   const playFileRowLeave = useCallback(
     async (rowEl: HTMLElement | null) => {
       if (!rowEl || prefersReducedMotion()) return;
@@ -192,39 +173,22 @@ export function useInputShellAnimations({
     },
     [scope],
   );
-
-  const handlePointerEnter =
-    isGloss && groupSegment == null
-      ? glossShellMotion.onShellPointerEnter
-      : hoverHandlers.onPointerOver;
-  const handlePointerLeave =
-    isGloss && groupSegment == null
-      ? glossShellMotion.onShellPointerLeave
-      : hoverHandlers.onPointerOut;
-
+ 
   return {
-    isGloss,
     bindShellRef,
     playFileRowLeave,
     shellPointerDown: handleShellPointerDown,
     shellPointerUp: () => playShell("pressOut"),
-    shellPointerEnter: handlePointerEnter,
-    shellPointerLeave: handlePointerLeave,
-    shellFocusCapture:
-      isGloss && !blocked ? glossShellMotion.onShellFocusIn : undefined,
-    shellBlurCapture:
-      isGloss && !blocked ? glossShellMotion.onShellFocusOut : undefined,
-    shellHoverMotionClass: isGloss
-      ? glossShellMotion.shellHoverMotionClass
-      : standardShellHover.motionClass,
-    glossDisabledAttr: blocked && isGloss ? { "data-gloss-disabled": "" } : {},
+    shellPointerEnter: hoverHandlers.onPointerOver,
+    shellPointerLeave: hoverHandlers.onPointerOut,
+    shellHoverMotionClass: kitSurface ? standardShellHover.motionClass : "",
   };
 }
-
+ 
 export type { InputVariant };
-
+ 
 export type InputChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useInputChromeSlot(
   slot: InputChromeSlot,
   {
@@ -260,3 +224,4 @@ export function useInputChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

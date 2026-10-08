@@ -11,7 +11,7 @@ export function CheckboxIndicatorCompoundDemo() {
       </Text>
       <Checkbox variant="outline" defaultChecked>
         <Checkbox.Control>
-          <Checkbox.Indicator classNames={{ root: "rounded-mid" }}>
+          <Checkbox.Indicator classNames={{ root: "rounded-large" }}>
             <Checkbox.Indicator.Fill/>
             <Checkbox.Indicator.Mark>
               <IoShieldCheckmark aria-hidden />
@@ -21,7 +21,7 @@ export function CheckboxIndicatorCompoundDemo() {
         <Checkbox.Content>
           <Checkbox.Label>2FA</Checkbox.Label>
           <Checkbox.Hint>
-            Square indicator through compound Fill/Mark and rounded-mid on shell.
+            Square indicator through compound Fill/Mark and rounded-large on shell.
           </Checkbox.Hint>
         </Checkbox.Content>
       </Checkbox>

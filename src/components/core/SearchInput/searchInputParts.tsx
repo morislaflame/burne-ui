@@ -7,12 +7,14 @@ import type {
   MouseEvent,
   Ref,
 } from "react";
-import { IoClose, IoSearch } from "react-icons/io5";
-
+import { KitClose, KitSearch } from "@/components/core/utils/kitIcons";
+ 
 import { Ripple } from "@/components/core/Ripple";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
-
+ 
+import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { searchInputClearA11yLabel } from "./searchInputA11y";
 import { useOptionalSearchInputMotionScope } from "./searchInputContext";
 import {
@@ -24,18 +26,19 @@ import {
   searchInputIconWrapClass,
 } from "./searchInputStyles";
 import type { SearchSizeLayout } from "./searchInputTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function SearchInputRipple({ disabled }: { disabled: boolean }) {
   return <Ripple color="neutral" disabled={disabled} />;
 }
-
+ 
 export function SearchInputExpandTrigger({
   blocked,
   inputId,
   collapseA11yLabel,
   className,
+  triggerRef,
   onClick,
   onKeyDown,
 }: {
@@ -43,6 +46,7 @@ export function SearchInputExpandTrigger({
   inputId: string;
   collapseA11yLabel: string;
   className?: string;
+  triggerRef?: Ref<HTMLButtonElement>;
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
@@ -50,12 +54,11 @@ export function SearchInputExpandTrigger({
     scope: useOptionalSearchInputMotionScope(),
     slot: "expandTrigger",
   });
-
+ 
   return (
     <button
-      ref={setRef}
+      ref={mergeRefs(setRef, triggerRef)}
       type="button"
-      data-search-expand=""
       className={cn(SEARCH_INPUT_EXPAND_TRIGGER_CLASS, className)}
       tabIndex={blocked ? -1 : 0}
       disabled={blocked}
@@ -67,7 +70,7 @@ export function SearchInputExpandTrigger({
     />
   );
 }
-
+ 
 export function SearchInputIcon({
   bindIconRef,
   layout,
@@ -81,7 +84,7 @@ export function SearchInputIcon({
     scope: useOptionalSearchInputMotionScope(),
     slot: "icon",
   });
-
+ 
   return (
     <span
       ref={(node) => {
@@ -92,11 +95,11 @@ export function SearchInputIcon({
       style={{ width: layout.iconBox }}
       aria-hidden
     >
-      <IoSearch className={searchInputIconClass(layout.iconClass)} aria-hidden />
+      <KitSearch className={searchInputIconClass(layout.iconClass)} aria-hidden />
     </span>
   );
 }
-
+ 
 export function SearchInputControl({
   inputRef,
   id,
@@ -113,6 +116,7 @@ export function SearchInputControl({
   layout,
   paddingStyle,
   className,
+  invalid,
   rest,
 }: {
   inputRef: Ref<HTMLInputElement>;
@@ -130,6 +134,7 @@ export function SearchInputControl({
   layout: SearchSizeLayout;
   paddingStyle?: CSSProperties;
   className?: string;
+  invalid?: boolean;
   rest: Omit<
     InputHTMLAttributes<HTMLInputElement>,
     | "size"
@@ -153,6 +158,11 @@ export function SearchInputControl({
     forwardedRef: inputRef,
     pointerPhases: true,
   });
+  const { "aria-invalid": ariaInvalid, ...inputRest } = rest;
+  const isInvalid = resolveFieldInvalid({
+    invalid,
+    error: ariaInvalid === true || ariaInvalid === "true" ? true : undefined,
+  });
 
   return (
     <input
@@ -175,12 +185,14 @@ export function SearchInputControl({
         slotInput: className,
       })}
       style={paddingStyle}
-      {...rest}
+      {...inputRest}
       {...pointerHandlers}
+      aria-invalid={isInvalid ? true : undefined}
+      data-invalid={isInvalid ? "" : undefined}
     />
   );
 }
-
+ 
 export function SearchInputClear({
   layout,
   onClick,
@@ -197,7 +209,7 @@ export function SearchInputClear({
     pointerPhases: true,
     onPointerDown: (e) => e.stopPropagation(),
   });
-
+ 
   return (
     <button
       ref={setRef}
@@ -212,10 +224,11 @@ export function SearchInputClear({
       }}
       {...pointerHandlers}
     >
-      <IoClose
+      <KitClose
         className={searchInputClearIconClass(layout.clearIconClass)}
         aria-hidden
       />
     </button>
   );
 }
+ 

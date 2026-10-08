@@ -185,7 +185,7 @@ export const NarrowContainer: Story = {
     const totalPages = 20;
 
     return (
-      <div className="w-full max-w-[16rem] rounded-mid border-token p-large">
+      <div className="w-full max-w-[16rem] rounded-large border-token p-large">
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
           <Pagination.Summary>
             Page {page} of {totalPages}
@@ -359,7 +359,7 @@ export const CustomClassNames: Story = {
         totalPages={totalPages}
         onPageChange={setPage}
         classNames={{
-          root: "rounded-mid border border-primary/20 p-base",
+          root: "rounded-large border border-primary/20 p-base",
           summaryText: "text-primary",
           content: "gap-small",
           previous: "text-info hover:text-primary",

@@ -1,7 +1,8 @@
 import { forwardRef, useMemo, type FormEventHandler, type ForwardedRef, type ReactNode } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { FormBindingContext } from "./formContext";
-
+ 
 import { formRootDescribedBy, formRootLabelledBy } from "./formA11y";
 import { resolveFormMotionDefaults, useFormSlotMotion } from "./formAnimations";
 import { FormClassNamesProvider, FormMotionProvider, FormShellProvider } from "./formContext";
@@ -9,7 +10,7 @@ import { FormActions, FormAnnounce, FormDescription, FormErrorSummary, FormField
 import { formRootClass, resolveFormSize } from "./formStyles";
 import type { FormProps, FormSize } from "./formTypes";
 import { useFormRootState } from "./useFormRootState";
-
+ 
 export type {
   FormProps,
   FormSectionProps,
@@ -25,7 +26,7 @@ export type {
   FormMotion,
   FormPartMotion,
 } from "./formTypes";
-
+ 
 export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot(
   {
     children,
@@ -77,7 +78,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     classNames,
   });
   const motionDefaults = useMemo(() => resolveFormMotionDefaults(), []);
-
+ 
   return (
     <FormClassNamesProvider classNames={classNames}>
       <FormBindingContext.Provider value={bindingValue}>
@@ -112,9 +113,9 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     </FormClassNamesProvider>
   );
 });
-
+ 
 FormRoot.displayName = "Form";
-
+ 
 function FormRootSurface({
   forwardedRef,
   handleSubmit,
@@ -183,7 +184,7 @@ function FormRootSurface({
     onPointerUp,
     changeIdentity: hasErrors,
   });
-
+ 
   return (
     <form
       ref={part.setRef}
@@ -198,6 +199,7 @@ function FormRootSurface({
       className={formRootClass(resolvedSize, className, classNames)}
       {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ size: resolvedSize })}
     >
       <FormAnnounce message={announce} />
       <FormErrorSummary>{errorSummary}</FormErrorSummary>
@@ -205,7 +207,7 @@ function FormRootSurface({
     </form>
   );
 }
-
+ 
 export {
   FormSection,
   FormHeader,
@@ -216,3 +218,4 @@ export {
   FormAnnounce,
   FormField,
 };
+ 

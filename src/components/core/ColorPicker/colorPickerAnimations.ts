@@ -15,7 +15,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import { focusElement } from "@/components/core/utils/focusElement";
 import {
   hasPointerPhases,
@@ -23,7 +23,7 @@ import {
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { clampN } from "./colorUtils";
 import { useOptionalColorPickerMotionScope } from "./colorPickerContext";
 import type {
@@ -35,11 +35,11 @@ import {
   COLOR_PICKER_AREA_KEYBOARD_STEP,
   COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE,
 } from "./colorPickerA11y";
-
+ 
 export function resolveColorPickerMotionDefaults(): ColorPickerMotion {
   return {};
 }
-
+ 
 export function useColorPickerSlotMotion<T extends HTMLElement>(
   slot: keyof ColorPickerMotion,
   {
@@ -77,7 +77,7 @@ export function useColorPickerSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(playEnter ? scope : null, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useColorPickerAreaChange(hex: string) {
   const scope = useOptionalColorPickerMotionScope();
   useSlotPhaseOnChange(scope, "area", hex, {
@@ -85,12 +85,12 @@ export function useColorPickerAreaChange(hex: string) {
     exclude: ["areaThumb"],
   });
 }
-
+ 
 export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDragProps) {
   const areaRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLButtonElement>(null);
   const dragging = useRef(false);
-
+ 
   const update = useCallback(
     (clientX: number, clientY: number) => {
       const el = areaRef.current;
@@ -102,7 +102,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
     },
     [hsva, setHsva],
   );
-
+ 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       if (dragging.current) update(e.clientX, e.clientY);
@@ -119,7 +119,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
       window.removeEventListener("pointercancel", onUp);
     };
   }, [update]);
-
+ 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
       e.preventDefault();
@@ -129,7 +129,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
     },
     [update],
   );
-
+ 
   const handleThumbKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       const large = e.shiftKey;
@@ -138,7 +138,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
         : COLOR_PICKER_AREA_KEYBOARD_STEP;
       let nextS = hsva.s;
       let nextV = hsva.v;
-
+ 
       switch (e.key) {
         case "ArrowLeft":
           nextS = hsva.s - step;
@@ -167,7 +167,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
         default:
           return;
       }
-
+ 
       e.preventDefault();
       setHsva({
         ...hsva,
@@ -177,7 +177,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
     },
     [hsva, setHsva],
   );
-
+ 
   return {
     areaRef,
     thumbRef,
@@ -185,3 +185,4 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
     handleThumbKeyDown,
   };
 }
+ 

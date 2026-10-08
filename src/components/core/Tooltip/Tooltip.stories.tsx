@@ -376,7 +376,7 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root (trigger), trigger, content, arrow, panel, glossPanel, glossContent, message, icon, indicator, title, and description via classNames prop on root.",
+          "Slots root (trigger), trigger, content, panelRelative, arrow, panel, surfacePanel, surfaceContent, message, icon, indicator, title, and description via classNames prop on root.",
       },
     },
   },
@@ -385,11 +385,11 @@ export const CustomClassNames: Story = {
       delayShowMs={0}
       status="info"
       classNames={{
-        root: "rounded-mid ring-2 ring-primary/35",
-        trigger: "rounded-mid",
+        root: "rounded-large ring-2 ring-primary/35",
+        trigger: "rounded-large",
         content: "ring-1 ring-primary/25",
+        panelRelative: "isolate",
         panel: "border-primary/30",
-        glossPanel: "ring-1 ring-primary/20",
         title: "text-primary font-semibold",
         description: "text-muted/80",
       }}
@@ -431,7 +431,7 @@ export const PortalContainer: Story = {
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-48 items-center justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative flex h-48 items-center justify-center overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
           style={{ transform: "translateZ(0)" }}
         >
           <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
@@ -505,25 +505,6 @@ export const AsChildMergedProps: Story = {
     await expect(btn).toHaveAttribute("id", "story-tooltip-trigger");
     await expect(btn).toHaveAttribute("data-analytics", "hover-tooltip");
   },
-};
-
-export const GlossWithCompoundLayout: Story = {
-  name: "Gloss — grid like Alert",
-  render: () => (
-    <Tooltip delayShowMs={0} variant="gloss" status="info">
-      <Tooltip.Trigger>
-        <Button variant="gloss" type="button">
-          Gloss compound
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content showArrow>
-        <Tooltip.Arrow />
-        <Tooltip.Icon />
-        <Tooltip.Title>Help</Tooltip.Title>
-        <Tooltip.Description>Icon to the left of title and description</Tooltip.Description>
-      </Tooltip.Content>
-    </Tooltip>
-  ),
 };
 
 export const CompoundCustomIcon: Story = {

@@ -11,7 +11,6 @@ const COMBOBOX_VARIANTS: InputVariant[] = [
   "default",
   "outline",
   "secondary",
-  "gloss",
 ];
 
 const COMBOBOX_STATUSES: InputStatus[] = [

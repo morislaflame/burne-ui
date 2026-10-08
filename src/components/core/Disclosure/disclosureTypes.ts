@@ -5,23 +5,17 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
-export type DisclosureVariant =
-  | "default"
-  | "outline"
-  | "secondary"
-  | "card"
-  | "ghost"
-  | "gloss";
-
+ 
+export const KIT_DISCLOSURE_VARIANTS = ["default", "outline", "secondary", "card", "ghost"] as const;
+export type KitDisclosureVariant = (typeof KIT_DISCLOSURE_VARIANTS)[number];
+export type DisclosureVariant = KitDisclosureVariant | (string & {});
+ 
 export type DisclosureSize = ComponentSize;
-/** Alias of shared `IconPosition` (chevron start/end). */
-export type DisclosureChevronPos = IconPosition;
-
+ 
 export type DisclosureClassNames = {
   root?: string;
   trigger?: string;
@@ -32,13 +26,11 @@ export type DisclosureClassNames = {
   contentShell?: string;
   contentWrap?: string;
   contentPanel?: string;
-  glossPanel?: string;
-  glossContent?: string;
   handle?: string;
   group?: string;
   body?: string;
 };
-
+ 
 export type DisclosureLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
@@ -47,14 +39,14 @@ export type DisclosureLifecycleMotion = {
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type DisclosureTitleLiftMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 /**
  * Per-slot motion. DOM slots: `titleLift` (`classNames.titleLift`), `title`, `chevron`,
  * `contentShell`, `icon`, `body` (Content `<section>`). `panelInner` is an internal height-recipe target, not a public slot.
@@ -68,7 +60,7 @@ export type DisclosureMotion = {
   icon?: DisclosureLifecycleMotion;
   body?: DisclosureLifecycleMotion;
 };
-
+ 
 export type DisclosureGroupContextValue = {
   openValue: string | null;
   setOpenValue: (val: string | null) => void;
@@ -78,7 +70,7 @@ export type DisclosureGroupContextValue = {
   accordion: boolean;
   motion?: DisclosureMotion;
 };
-
+ 
 export type DisclosureContextValue = {
   open: boolean;
   setOpen: (value: boolean) => void;
@@ -94,12 +86,12 @@ export type DisclosureContextValue = {
   chevronRef: RefObject<HTMLSpanElement | null>;
   skipContentAnimRef: RefObject<boolean>;
 };
-
+ 
 export type DisclosureClassNamesProviderProps = {
   classNames?: Prettify<DisclosureClassNames>;
   children: ReactNode;
 };
-
+ 
 export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   open?: boolean;
@@ -126,7 +118,7 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   accordion?: boolean;
@@ -140,7 +132,7 @@ export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   /** Merged into each item’s slot map (same as Accordion). */
   motion?: Prettify<DisclosureMotion>;
 };
-
+ 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
   /** Leading indicator icon (left of title). */
@@ -150,30 +142,30 @@ export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   asChild?: boolean;
   motion?: Prettify<DisclosureTitleLiftMotion>;
 };
-
+ 
 export type DisclosureIconProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<DisclosureLifecycleMotion>;
 };
 export type DisclosureChevronProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<DisclosureLifecycleMotion>;
 };
-
+ 
 export type DisclosureHandleProps = HTMLAttributes<HTMLDivElement>;
 export type DisclosureContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   motion?: Prettify<DisclosureLifecycleMotion>;
 };
-
+ 
 export type UseDisclosureRootStateProps = Omit<
   DisclosureProps,
   "className" | "classNames"
 >;
-
+ 
 export type UseDisclosureGroupRootStateProps = Omit<
   DisclosureGroupProps,
   "className" | "classNames"
 >;
-
+ 
 export type UseDisclosureTriggerMotionProps = {
   open: boolean;
   disabled: boolean;
@@ -188,7 +180,7 @@ export type UseDisclosureTriggerMotionProps = {
   onPointerLeave?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: React.PointerEventHandler<HTMLButtonElement>;
 };
-
+ 
 export type UseDisclosureContentMotionProps = {
   open: boolean;
   motion?: DisclosureLifecycleMotion;
@@ -196,3 +188,4 @@ export type UseDisclosureContentMotionProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   innerRef: RefObject<HTMLDivElement | null>;
 };
+ 

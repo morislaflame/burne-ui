@@ -2,12 +2,12 @@ import { TooltipClassNamesProvider, TooltipContext, TooltipMotionProvider } from
 import type { TooltipProps } from "./tooltipTypes";
 import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipTitle, TooltipTrigger } from "./tooltipParts";
 import { useTooltipRootState } from "./useTooltipRootState";
-
+ 
 export function TooltipRoot({
   children,
   classNames,
   size = "base",
-  variant = "default",
+  variant,
   status = "default",
   delayShowMs = 240,
   side = "top",
@@ -35,7 +35,7 @@ export function TooltipRoot({
     onOpenChange,
     portalContainer,
   });
-
+ 
   return (
     <TooltipClassNamesProvider classNames={classNames}>
       <TooltipMotionProvider
@@ -49,9 +49,9 @@ export function TooltipRoot({
     </TooltipClassNamesProvider>
   );
 }
-
+ 
 TooltipRoot.displayName = "TooltipRoot";
-
+ 
 export {
   TooltipArrow,
   TooltipContent,
@@ -63,3 +63,4 @@ export {
   TooltipTitle,
   TooltipTrigger,
 };
+ 

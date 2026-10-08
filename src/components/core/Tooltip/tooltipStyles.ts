@@ -1,24 +1,25 @@
-import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
+import { iconSlotClass } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import { SEMANTIC_STATUS_TEXT } from "@/components/core/utils/semanticStatusSurface";
 import type { TextVariant } from "@/components/core/Text";
 
-import { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD } from "./tooltipPosition";
-import type { TooltipSize, TooltipVariant } from "./tooltipTypes";
-
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
+
+import { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD } from "./tooltipPosition";
+import type { TooltipSize, TooltipVariant, KitTooltipVariant } from "./tooltipTypes";
+import { KIT_TOOLTIP_VARIANTS } from "./tooltipTypes";
 
 export { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD };
 
 export const TOOLTIP_DEFAULT_OFFSET = 8;
 
 /** Neutral shell by variant — status accents live on indicator + title (Alert / Toast). */
-export const TOOLTIP_VARIANT_SURFACE_CLASS: Record<TooltipVariant, string> = {
+export const TOOLTIP_VARIANT_SURFACE_CLASS: Record<KitTooltipVariant, string> = {
   default: "border-token bg-surface text-foreground",
   outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
-  gloss: "",
 };
 
 export const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
@@ -42,21 +43,16 @@ export const TOOLTIP_DESC_VARIANT: Record<TooltipSize, TextVariant> = {
   large: "base",
 };
 
-export const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
-  small: "icon-small",
-  base: "icon-base",
-  mid: "icon-mid",
-  large: "icon-large",
-};
-
-export const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
-  small: "[&_svg]:icon-small",
-  base: "[&_svg]:icon-base",
-  mid: "[&_svg]:icon-mid",
-  large: "[&_svg]:icon-large",
+export const TOOLTIP_ICON_SLOT_SIZE: Record<TooltipSize, string> = {
+  small: iconSlotClass("small"),
+  base: iconSlotClass("base"),
+  mid: iconSlotClass("mid"),
+  large: iconSlotClass("large"),
 };
 
 /** Status accent for indicator (and semantic SVG). Default → primary like Alert/Toast. */
+export const TOOLTIP_STATUS_ICON_CLASS = "shrink-0";
+
 export const TOOLTIP_STATUS_ACCENT_CLASS: Record<SemanticStatus, string> = {
   default: "text-primary",
   danger: SEMANTIC_STATUS_TEXT.danger,
@@ -74,7 +70,7 @@ export const TOOLTIP_GRID_GAP: Record<TooltipSize, string> = {
 
 export const TOOLTIP_TRIGGER_BASE_CLASS = "inline-flex shrink-0 outline-none focus-ring";
 
-export const TOOLTIP_INDICATOR_BASE_CLASS = "inline-flex shrink-0 [&_svg]:shrink-0";
+export const TOOLTIP_INDICATOR_BASE_CLASS = "inline-flex shrink-0";
 
 export const TOOLTIP_TITLE_CLASS = "font-w-mid";
 
@@ -83,30 +79,25 @@ export const TOOLTIP_DESCRIPTION_MUTED_CLASS = "text-muted";
 export const TOOLTIP_ARROW_BASE_CLASS =
   "pointer-events-none absolute z-0 size-2 rotate-45";
 
-export const TOOLTIP_ARROW_GLOSS_CLASS = "border-0 bg-[var(--color-surface)]";
-
 /** Arrow fill mirrors panel surface (no status tint). */
-export const TOOLTIP_ARROW_FILL_CLASS: Record<Exclude<TooltipVariant, "gloss">, string> = {
+export const TOOLTIP_ARROW_FILL_CLASS: Record<KitTooltipVariant, string> = {
   default: "bg-surface",
   outline: "bg-transparent",
   secondary: "bg-secondary",
 };
 
 export const TOOLTIP_CONTENT_BASE_CLASS =
-  "pointer-events-none z-tooltip w-max min-w-0 overflow-visible text-left outline-none";
+  "pointer-events-none z-tooltip w-max min-w-0 overflow-visible text-start outline-none";
 
 export const TOOLTIP_CONTENT_INNER_CLASS = "relative overflow-visible";
-
-export const TOOLTIP_GLOSS_PANEL_BASE_CLASS =
-  "gloss-panel gloss-deep relative z-[1] w-max min-w-0 origin-center overflow-hidden rounded-mid text-left text-foreground";
-
-export const TOOLTIP_GLOSS_CONTENT_CLASS = "gloss-content";
 
 /** Compound slots (`Tooltip.Message`) — pass-through grid children. */
 export const TOOLTIP_COMPOUND_CONTENTS_CLASS = "contents";
 
 export const TOOLTIP_PANEL_BASE_CLASS =
-  "relative z-[1] w-max min-w-0 rounded-mid text-left shadow-token-large";
+  "relative z-[1] w-max min-w-0 rounded-mid text-start";
+
+export const TOOLTIP_PANEL_SHADOW_CLASS = "shadow-token-large";
 
 export function tooltipTitleClass(status: SemanticStatus): string {
   return cn(
@@ -128,40 +119,6 @@ export function tooltipIndicatorClass(
   );
 }
 
-export function tooltipGlossShellClass({
-  size,
-  slotClass,
-  className,
-}: {
-  size: TooltipSize;
-  slotClass?: string;
-  className?: string;
-}) {
-  return cn(
-    TOOLTIP_GLOSS_PANEL_BASE_CLASS,
-    GLOSS_INTERACTIVE_MOTION_CLASS,
-    TOOLTIP_TEXT_LAYOUT[size],
-    slotClass,
-    className,
-  );
-}
-
-export function tooltipGlossContentClass({
-  gridSlots,
-  size,
-  slotClass,
-}: {
-  gridSlots: Parameters<typeof messageBannerGridClass>[0];
-  size: TooltipSize;
-  slotClass?: string;
-}) {
-  return cn(
-    messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
-    TOOLTIP_GLOSS_CONTENT_CLASS,
-    slotClass,
-  );
-}
-
 export function tooltipPanelClass({
   variant,
   size,
@@ -175,16 +132,14 @@ export function tooltipPanelClass({
   slotClass?: string;
   className?: string;
 }) {
-  const isGloss = variant === "gloss";
-
-  if (isGloss) {
-    return tooltipGlossShellClass({ size, slotClass, className });
-  }
+  const visual = resolveVariantVisual(variant, KIT_TOOLTIP_VARIANTS, "tooltip.panel");
 
   return cn(
     messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
     TOOLTIP_PANEL_BASE_CLASS,
-    TOOLTIP_VARIANT_SURFACE_CLASS[variant],
+    visual.className !== undefined
+      ? visual.className
+      : cn(TOOLTIP_PANEL_SHADOW_CLASS, TOOLTIP_VARIANT_SURFACE_CLASS[visual.key]),
     TOOLTIP_TEXT_LAYOUT[size],
     slotClass,
     className,
@@ -202,11 +157,13 @@ export function tooltipArrowClass({
   slotClass?: string;
   className?: string;
 }) {
-  const isGloss = variant === "gloss";
+  const visual = resolveVariantVisual(variant, KIT_TOOLTIP_VARIANTS, "tooltip.arrow");
 
   return cn(
     TOOLTIP_ARROW_BASE_CLASS,
-    isGloss ? TOOLTIP_ARROW_GLOSS_CLASS : TOOLTIP_ARROW_FILL_CLASS[variant],
+    visual.className !== undefined
+      ? visual.className
+      : TOOLTIP_ARROW_FILL_CLASS[visual.key],
     TOOLTIP_ARROW_CLASS[resolvedSide],
     slotClass,
     className,

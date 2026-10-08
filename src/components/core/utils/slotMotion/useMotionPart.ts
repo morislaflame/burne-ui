@@ -1,13 +1,13 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-
+ 
 import type { MotionScopeValue } from "./createMotionScope";
 import type { MotionPartPhases } from "./slotMotionTypes";
 import { useMotionPointerPhases } from "./useMotionPointerPhases";
-
+ 
 export function mergeMotionPointerHandlers<E extends HTMLElement>(
   userOver: ((e: ReactPointerEvent<E>) => void) | undefined,
   userOut: ((e: ReactPointerEvent<E>) => void) | undefined,
@@ -28,7 +28,7 @@ export function mergeMotionPointerHandlers<E extends HTMLElement>(
     },
   };
 }
-
+ 
 export function mergeMotionPressHandlers<E extends HTMLElement>(
   userDown: ((e: ReactPointerEvent<E>) => void) | undefined,
   userUp: ((e: ReactPointerEvent<E>) => void) | undefined,
@@ -49,7 +49,7 @@ export function mergeMotionPressHandlers<E extends HTMLElement>(
     },
   };
 }
-
+ 
 /**
  * Registers a compound part as a motion target and optionally plays local hover/press phases.
  * User pointer handlers belong here — Parts must not merge them locally.
@@ -92,9 +92,10 @@ export function useMotionPart<T extends HTMLElement>({
 } {
   const targetRef = useRef<T | null>(null);
   const motionRef = useRef(motion);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   motionRef.current = motion;
   const idRef = useRef(Symbol(slot));
-
+ 
   const syncRegistration = useCallback(
     (node: T | null, partMotion: MotionPartPhases | undefined) => {
       if (!scope) return;
@@ -107,17 +108,17 @@ export function useMotionPart<T extends HTMLElement>({
     },
     [scope, slot],
   );
-
+ 
   useLayoutEffect(() => {
     syncRegistration(targetRef.current, motion);
   }, [motion, syncRegistration]);
-
+ 
   useLayoutEffect(() => {
     return () => {
       syncRegistration(null, undefined);
     };
   }, [syncRegistration]);
-
+ 
   const setRef = useCallback(
     (node: T | null) => {
       targetRef.current = node;
@@ -126,7 +127,7 @@ export function useMotionPart<T extends HTMLElement>({
     },
     [forwardedRef, syncRegistration],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<T>({
     enabled: Boolean(scope && pointerPhases),
     targetRef,
@@ -144,7 +145,7 @@ export function useMotionPart<T extends HTMLElement>({
       scope.play(slot, "hoverOut", { partMotion: motionRef.current, el });
     },
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -155,7 +156,7 @@ export function useMotionPart<T extends HTMLElement>({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOut, onPointerOver],
   );
-
+ 
   const pressHandlers = useMemo(
     () =>
       mergeMotionPressHandlers(
@@ -180,11 +181,12 @@ export function useMotionPart<T extends HTMLElement>({
       ),
     [onPointerDown, onPointerUp, pressPhases, scope, slot],
   );
-
+ 
   const pointerHandlers = useMemo(
     () => ({ ...hoverHandlers, ...pressHandlers }),
     [hoverHandlers, pressHandlers],
   );
-
+ 
   return { setRef, targetRef, pointerHandlers };
 }
+ 

@@ -11,7 +11,7 @@
  */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { useLayoutEffect, useRef } from "react";
-
+ 
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
@@ -25,19 +25,19 @@ import {
   type MotionMapWithEvents,
 } from "@/components/core/utils/slotMotion";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
-
+ 
 import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
-
+ 
 import { useCheckboxFieldContext, useOptionalCheckboxMotionScope } from "./checkboxContext";
 import type { CheckboxCheckMotion, CheckboxMotion, UseCheckboxAnimationsProps } from "./checkboxTypes";
-
+ 
 /** Root Checkbox `motion` keys → SelectionIndicator slots. */
 export const CHECKBOX_MOTION_SLOT_MAP = {
   indicator: "root",
   indicatorFill: "fill",
   indicatorMark: "mark",
 } as const;
-
+ 
 export function resolveCheckboxIndicatorMotion({
   rootMotion,
   indicatorMotion,
@@ -69,14 +69,14 @@ export function resolveCheckboxIndicatorMotion({
     ...(states ? { states } : {}),
   };
 }
-
+ 
 export function useCheckboxControlTrackAnimation() {
   const config = useMotionConfig();
   const ctx = useCheckboxFieldContext();
   const trackRef = useRef<HTMLSpanElement>(null);
   const trackFirstLayoutRef = useRef(true);
   const reduceMotion = usePrefersReducedMotion();
-
+ 
   useLayoutEffect(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -85,17 +85,17 @@ export function useCheckboxControlTrackAnimation() {
       track.style.opacity = ctx.isDisabled ? "0.48" : "1";
       return;
     }
-
+ 
     if (trackFirstLayoutRef.current) {
       trackFirstLayoutRef.current = false;
       track.style.opacity = ctx.isDisabled ? "0.48" : "1";
       return;
     }
-
+ 
     killMotion(track);
     const from = Number.parseFloat(getComputedStyle(track).opacity);
     const start = Number.isFinite(from) ? from : 1;
-    void gsap.fromTo(
+    const tween = gsap.fromTo(
       track,
       { autoAlpha: start },
       {
@@ -104,11 +104,14 @@ export function useCheckboxControlTrackAnimation() {
         overwrite: "auto",
       },
     );
+    return () => {
+      tween.kill();
+    };
   }, [config, ctx.isDisabled, reduceMotion]);
-
+ 
   return trackRef;
 }
-
+ 
 export function useCheckboxTextMotion({
   isDisabled,
   enableTextMotion,
@@ -124,9 +127,9 @@ export function useCheckboxTextMotion({
     onKeyDown,
   });
 }
-
+ 
 export type CheckboxChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useCheckboxChromeSlot(
   slot: CheckboxChromeSlot,
   motion?: CheckboxCheckMotion,
@@ -146,7 +149,8 @@ export function useCheckboxChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
-
+ 
 export function useCheckboxLabelSlot(motion?: CheckboxCheckMotion) {
   return useCheckboxChromeSlot("label", motion);
 }
+ 

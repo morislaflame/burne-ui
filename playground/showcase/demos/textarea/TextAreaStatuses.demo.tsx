@@ -8,7 +8,6 @@ const TEXTAREA_VARIANTS: TextAreaVariant[] = [
   "default",
   "outline",
   "secondary",
-  "gloss",
 ];
 
 const TEXTAREA_STATUSES: TextAreaStatus[] = [

@@ -46,7 +46,7 @@ export const RootWithHintAndError: Story = {
   render: () => (
     <Field className="max-w-sm">
       <Field.Label htmlFor="field-email">Email</Field.Label>
-      <Input.Control id="field-email" placeholder="you@example.com" status="danger" />
+      <Input.Control id="field-email" placeholder="you@example.com" />
       <Field.Hint>We do not share your address with third parties.</Field.Hint>
       <Field.Error>Enter a valid email.</Field.Error>
     </Field>
@@ -68,7 +68,7 @@ export const FieldSetGroup: Story = {
           <Input.Label>Phone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
-        <Input status="danger">
+        <Input>
           <Input.Label>Email</Input.Label>
           <Input.Control defaultValue="bad@" />
           <Input.Error>Invalid address.</Input.Error>
@@ -194,7 +194,6 @@ export const WithForm: Story = {
           placeholder="you@example.com"
           hint="Format: name@domain.tld"
           error={emailInvalid ? "Invalid address" : undefined}
-          status={emailInvalid ? "danger" : "default"}
           value={email}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           autoComplete="email"

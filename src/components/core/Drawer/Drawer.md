@@ -28,7 +28,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | Часть | Назначение |
 |-------|------------|
 | `Drawer.Trigger` | Открытие после press-squeeze; `asChild` |
-| `Drawer.Panel` | Портал + overlay + slide motion |
+| `Drawer.Panel` | Портал + backdrop + slide motion |
 | `Drawer.Backdrop` | Маркер `isDismissable={false}` (рендерит `null`) |
 | `Drawer.Handle` | Drag-handle для swipe-dismiss |
 | `Drawer.Content` | Layout-обёртка (`p-xlarge`, `gap-large`) |
@@ -43,10 +43,10 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 |------|--------------|----------|
 | `size` | `default` | `default` \| `mid` \| `full` |
 | `variant` | `default` | `default` \| `gloss` |
-| `themeAnchor` | auto | Якорь темы для overlay портала |
+| `themeAnchor` | auto | Якорь темы для backdrop портала |
 | `className` | — | На focusable panel wrapper |
 | `motion` | — | Мерж с картой Root; defaults + `params.placement` |
-| `motionController` | — | Handle портального хоста (`panel` / chrome). `play()` skip. `playSlot("panel")` |
+| `motionController` | — | Handle портального хоста (`panel` / `backdrop` / chrome). `play()` skip. `playSlot("panel")` |
 
 ### Пример
 
@@ -70,7 +70,7 @@ const [open, setOpen] = useState(false);
 </Drawer>
 ```
 
-`Drawer.Backdrop isDismissable={false}` — отключить закрытие по клику на overlay.
+`Drawer.Backdrop isDismissable={false}` — отключить закрытие по клику на backdrop.
 
 ## placement, extent и size
 
@@ -99,7 +99,7 @@ const [open, setOpen] = useState(false);
 
 ```
 <dialog>
-  <div overlayRef>              ← слот `overlay`
+  <div overlayRef>              ← слот `backdrop`
   <div panelRef tabIndex={-1}>  ← слот `panel` (px-slide, не xPercent)
     [Drawer.Handle]             ← слот `handle` + pointer capture drag
     <Drawer.Content>            ← слот `content`
@@ -110,17 +110,17 @@ const [open, setOpen] = useState(false);
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
+| `backdrop` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
 | `panel` | `enter` / `leave` | `drawerSlideEnter` / `drawerSlideLeave` (`params.placement`) |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 | `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
 
-`body` — `Drawer.Body` (скролл), не слот `content`.
+`body` — `Drawer.Body` (скролл + `overscroll-contain`), не слот `content`. Body-scroll lock — тот же синглтон, что у Dialog (`position: fixed` для iOS, счётчик вложенности). `contained` не блокирует.
 
-Nested `enter` — следующий кадр после host, без overlay `offsetHeight` flush. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
+Nested `enter` — следующий кадр после host, без backdrop `offsetHeight` flush. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
 
-Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: высота нижней панели может вырасти после mount. `leave` factory должна вернуть tween и **увести панель за край** (`x: el.offsetWidth` и т.п.) — короткий сдвиг на 80px оставит панель на экране, и `dialog.close()` даст рывок. Прерывание leave (повторный open) отменяет `MotionRun` и не вызывает `complete`. `panel.enter/leave: false` — хост сразу ставит rest / off-screen; overlay по-прежнему фейдится.
+Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: высота нижней панели может вырасти после mount. `leave` factory должна вернуть tween и **увести панель за край** (`x: el.offsetWidth` и т.п.) — короткий сдвиг на 80px оставит панель на экране, и `dialog.close()` даст рывок. Прерывание leave (повторный open) отменяет `MotionRun` и не вызывает `complete`. `panel.enter/leave: false` — хост сразу ставит rest / off-screen; backdrop по-прежнему фейдится.
 
 **Где в коде:** типы — `drawerTypes.ts`; scope — `drawerContext.tsx`; defaults + host play — `drawerAnimations.ts`; Panel-provider — `drawerParts.tsx`; карта на корне — `Drawer.tsx`.
 
@@ -237,6 +237,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 | Panel enter | `modalPanelEnter` (scale) | `drawerSlideEnter` (px по `placement`) |
 | Drag dismiss | нет | `Drawer.Handle` |
 | Close skip | нет | после drag |
+| Scrim slot | `overlay` (публичной `Dialog.Backdrop` нет) | `backdrop` (`Drawer.Backdrop`) |
 
 ## Токены и CSS
 
@@ -264,10 +265,8 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 |------|---------------|-------------------|
 | `trigger` | `Drawer.Trigger` | Слот на кнопке / asChild |
 | `dialog` | Нативный `<dialog>` | Глобальные правки dialog |
-| `overlay` | Backdrop | Blur, opacity |
+| `backdrop` | `Drawer.Backdrop` (DOM scrim) | Blur, opacity |
 | `panel` | Surface панели | Width/height по `size`, border, shadow |
-| `glossPanel` | Gloss-обёртка | При `variant="gloss"` |
-| `glossContent` | Gloss inner wrap | Внутренний gloss-слой |
 | `content` | `Drawer.Content` | Padding внутри панели |
 | `handle` | Drag handle | Hit-area, padding (не focusable) |
 | `handleGrip` | Grip / тамб | Визуал + keyboard focus ring |
@@ -289,7 +288,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
   onOpenChange={setOpen}
   placement="bottom"
   classNames={{
-    overlay: "backdrop-blur-2xl",
+    backdrop: "backdrop-blur-2xl",
     panel: "max-h-[85vh] border-primary/40 shadow-token-lg",
     handle: "py-mid",
     header: "border-b border-primary/20 pb-small",
@@ -330,7 +329,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 - `<dialog>` + `showModal()`, Esc → `onClose`
 - `aria-labelledby` — только при `Drawer.Title`; иначе `aria-label` на panel
 - `aria-describedby` — при `Drawer.Description`
-- Handle: hit-area (drag) + grip `role="button"` / `tabIndex={0}` / `focus-ring` на тамбе; Enter/Space закрывают; `aria-label` по placement
+- Handle: hit-area (drag) + grip `role="button"` / `tabIndex={0}` / `focus-ring` на тамбе; Enter/Space закрывают; `aria-label` — `labels.close` («Close»)
 - `Drawer.Close` → `aria-label="Close"`
 
 ## Структура файлов

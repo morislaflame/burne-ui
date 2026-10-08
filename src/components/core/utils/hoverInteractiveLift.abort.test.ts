@@ -13,8 +13,7 @@ describe("animateInteractivePressSqueeze abort", () => {
     abort.abort();
 
     await expect(
-      animateInteractivePressSqueeze(fakeEl(), { onReleaseStart, signal: abort.signal }),
-    ).resolves.toBeUndefined();
+      animateInteractivePressSqueeze(fakeEl(), { onReleaseStart, signal: abort.signal })).resolves.toBeUndefined();
     expect(onReleaseStart).not.toHaveBeenCalled();
   });
 });

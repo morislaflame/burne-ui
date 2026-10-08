@@ -1,9 +1,11 @@
-import "@/components/core/utils/glossInteractive.css";
-
 import { Fragment, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactNode } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+import { useSkinVariant } from "@/skins/skinContext";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { KIT_BUTTON_VARIANTS } from "@/components/core/Button/buttonTypes";
+ 
 import { BUTTON_GROUP_ROLE, buttonGroupSeparatorA11yProps } from "./buttonGroupA11y";
 import { resolveButtonGroupMotionDefaults, useButtonGroupSlotMotion } from "./buttonGroupAnimations";
 import { buildButtonGroupSegment, isGroupSegmentSlot, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
@@ -11,7 +13,7 @@ import { ButtonGroupClassNamesProvider, ButtonGroupLayoutProvider, ButtonGroupMo
 import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
 import type { ButtonGroupOrientation, ButtonGroupProps } from "./buttonGroupTypes";
 import { useButtonGroupRootState } from "./useButtonGroupRootState";
-
+ 
 export type {
   ButtonGroupProps,
   ButtonGroupTextProps,
@@ -21,12 +23,12 @@ export type {
   ButtonGroupMotion,
   ButtonGroupPartMotion,
 } from "./buttonGroupTypes";
-
+ 
 function ButtonGroupSeparator({ orientation }: { orientation: ButtonGroupOrientation }) {
   const slotClassNames = useButtonGroupClassNames();
   return <span {...buttonGroupSeparatorA11yProps()} className={buttonGroupSeparatorClass(orientation, slotClassNames.separator)} />;
 }
-
+ 
 export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
   function ButtonGroupRoot(
     {
@@ -36,7 +38,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
       orientation = "horizontal",
       segmented = false,
       buttonSize = "base",
-      variant = "default",
+      variant: variantProp,
       motion,
       motionController,
       motionState,
@@ -50,6 +52,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
     },
     ref,
   ) {
+    const variant = useSkinVariant(variantProp);
     const { flat, segmentCount, layoutValue } = useButtonGroupRootState({
       children: _children,
       orientation,
@@ -58,9 +61,9 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
       variant,
     });
     const motionDefaults = useMemo(() => resolveButtonGroupMotionDefaults(), []);
-
+ 
     let segmentIndex = -1;
-
+ 
     return (
       <ButtonGroupLayoutProvider value={layoutValue}>
         <ButtonGroupClassNamesProvider classNames={classNames}>
@@ -84,15 +87,15 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
                 if (!isGroupSegmentSlot(child)) {
                   return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
                 }
-
+ 
                 if (segmented) {
                   return <Fragment key={child.key ?? `bg-item-${i}`}>{child}</Fragment>;
                 }
-
+ 
                 segmentIndex += 1;
                 const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
                 const segment = buildButtonGroupSegment(orientation, position);
-
+ 
                 return (
                   <Fragment key={child.key ?? `bg-seg-${i}`}>
                     <ButtonGroupSegmentProvider
@@ -102,7 +105,9 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
                     >
                       {child}
                     </ButtonGroupSegmentProvider>
-                    {variant !== "gloss" && position !== "last" && position !== "only" ? (
+                    {isKitVariant(variant, KIT_BUTTON_VARIANTS) &&
+                    position !== "last" &&
+                    position !== "only" ? (
                       <ButtonGroupSeparator orientation={orientation} />
                     ) : null}
                   </Fragment>
@@ -115,9 +120,9 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
     );
   },
 );
-
+ 
 ButtonGroupRoot.displayName = "ButtonGroup";
-
+ 
 function ButtonGroupRootSurface({
   forwardedRef,
   orientation,
@@ -153,7 +158,7 @@ function ButtonGroupRootSurface({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -166,9 +171,11 @@ function ButtonGroupRootSurface({
       })}
       {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ variant })}
     >
       {children}
     </div>
   );
 }
-
+ 
+ 

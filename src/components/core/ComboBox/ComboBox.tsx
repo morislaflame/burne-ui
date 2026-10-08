@@ -1,3 +1,6 @@
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useSkinVariant } from "@/skins/skinContext";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
@@ -5,16 +8,15 @@ import {
   BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
-
+ 
 import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxMotionProvider, ComboBoxProvider } from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
 import type { ComboBoxProps } from "./comboBoxTypes";
 import { useComboBoxRootState } from "./useComboBoxRootState";
-
-import "../utils/glossInteractive.css";
-
+ 
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   ComboBoxProps,
   ComboBoxSimpleProps,
@@ -30,13 +32,14 @@ export type {
   ComboBoxMotion,
   ComboBoxPartMotion,
 } from "./comboBoxTypes";
-
-
+ 
+ 
 export function ComboBoxRoot({
   children,
   label,
   hint,
   error,
+  invalid,
   className,
   classNames,
   id,
@@ -54,6 +57,8 @@ export function ComboBoxRoot({
   disabled,
   placeholder,
   menuMaxHeight,
+  virtualized,
+  virtualItemSize,
   name,
   motion,
   motionController,
@@ -66,19 +71,20 @@ export function ComboBoxRoot({
   const fieldName = typeof name === "string" ? name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
   const resolvedError = error ?? formError;
-  const resolvedStatus = status === "default" && formError ? "danger" : status;
   const resolvedSize = size ?? "base";
+  const resolvedVariant = useSkinVariant(variant);
   const inJoinedButtonGroup = useInJoinedButtonGroup();
-
+ 
   const state = useComboBoxRootState({
     children,
     label,
     hint,
     error: resolvedError,
+    invalid,
     id,
     name,
     required,
-    status: resolvedStatus,
+    status,
     size: resolvedSize,
     options,
     value,
@@ -91,8 +97,16 @@ export function ComboBoxRoot({
     disabled,
     placeholder,
     menuMaxHeight,
+    virtualized,
+    virtualItemSize,
   });
-
+  const isInvalid = useResolvedFieldInvalid({
+    invalid,
+    errorConnected: resolvedError != null,
+    formInvalid: state.fieldCtx.formInvalid,
+  });
+  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
+ 
   return (
     <ComboBoxFieldProvider value={state.fieldCtx}>
       <ComboBoxProvider value={state.comboCtx}>
@@ -113,6 +127,11 @@ export function ComboBoxRoot({
                 classNames?.root,
               )}
               {...rest}
+              {...dataVariantProps({
+                size: resolvedSize,
+                variant: resolvedVariant,
+                status: paintedStatus,
+              })}
             >
               {state.isCompound ? (
                 children
@@ -136,9 +155,9 @@ export function ComboBoxRoot({
     </ComboBoxFieldProvider>
   );
 }
-
+ 
 ComboBoxRoot.displayName = "ComboBox";
-
+ 
 export {
   ComboBoxInput,
   ComboBoxInputGroup,
@@ -148,3 +167,4 @@ export {
   ComboBoxHint,
   ComboBoxError,
 };
+ 

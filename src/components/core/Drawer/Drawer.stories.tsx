@@ -559,7 +559,7 @@ export const PortalContainer: Story = {
         </Button>
         <div
           ref={setContainer}
-          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          className="relative h-72 overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="text-xs text-muted">Custom portal host</p>
           {container ? (
@@ -675,6 +675,7 @@ export const CustomClassNames: Story = {
           onOpenChange={setOpen}
           classNames={{
             trigger: "font-medium",
+            backdrop: "backdrop-blur-2xl",
             panel: "border-primary/40 shadow-token-large",
             header: "border-b border-primary/20 pb-small",
             title: "text-primary font-semibold",

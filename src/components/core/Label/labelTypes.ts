@@ -2,13 +2,13 @@ import type { LabelHTMLAttributes, ReactNode } from "react";
 import type { TextVariant } from "@/components/core/Text";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type LabelClassNames = {
   root?: string;
   text?: string;
   required?: string;
 };
-
+ 
 export type LabelPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -17,13 +17,13 @@ export type LabelPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type LabelMotion = {
   root?: LabelPartMotion;
   text?: LabelPartMotion;
   required?: LabelPartMotion;
 };
-
+ 
 export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
   children?: ReactNode;
   required?: boolean;
@@ -41,25 +41,26 @@ export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children">
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type LabelClassNamesProviderProps = {
   classNames?: Prettify<LabelClassNames>;
   children: ReactNode;
 };
-
+ 
 export type FieldLabelContextValue = {
   controlId?: string;
   labelId?: string;
   required?: boolean;
 };
-
+ 
 export type UseLabelRootStateProps = Pick<
   LabelProps,
   "required" | "htmlFor" | "id"
 >;
-
+ 
 export type LabelContentProps = {
   children?: ReactNode;
   required: boolean;
   variant?: TextVariant;
 };
+ 

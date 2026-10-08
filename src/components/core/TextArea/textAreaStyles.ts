@@ -1,46 +1,46 @@
 import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-
+ 
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
-
-import type { TextAreaSize, TextAreaStatus, TextAreaVariant } from "./textAreaTypes";
-
+import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+ 
+import { KIT_TEXT_AREA_VARIANTS, type TextAreaSize, type TextAreaStatus, type TextAreaVariant } from "./textAreaTypes";
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const TEXTAREA_MIN_H: Record<TextAreaSize, string> = {
   small: "min-h-control-small",
   base: "min-h-control-base",
   mid: "min-h-control-mid",
   large: "min-h-control-large",
 };
-
+ 
 export const TEXTAREA_SHELL_LAYOUT_CLASS = "flex flex-col items-stretch";
-
+ 
 export const TEXTAREA_CONTROL_BASE_CLASS =
   `box-border block min-h-0 w-full flex-1 resize-none overflow-auto bg-transparent font-inherit text-foreground outline-none placeholder:text-muted appearance-none [field-sizing:content] ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
-
+ 
 /**
  * Resize grip — hardcoded SVG geometry (not theme border/size tokens).
  * Two 1px diagonals from the right edge to the bottom edge, fully inside the corner.
+ * Stroke follows `currentColor` (`text-muted`).
  */
-export const TEXTAREA_RESIZE_GRIP_STROKE = "#9a9aa3";
-
 export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS =
-  "pointer-events-none block size-[10px] shrink-0 overflow-hidden";
-
-/** Hit area extends up/left; grip sits flush in the bottom-right corner. */
+  "pointer-events-none block size-[10px] shrink-0 overflow-hidden text-muted";
+ 
+/** Hit area extends toward the start; grip sits flush in the block-end / inline-end corner. */
 export const TEXTAREA_RESIZE_HANDLE_BASE_CLASS =
-  "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end pr-0 pb-0 outline-none focus-ring-inset";
-
+  "absolute bottom-0 end-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end pe-0 pb-0 outline-none focus-ring-inset";
+ 
 export const TEXTAREA_RESIZE_HANDLE_DISABLED_CLASS = "cursor-not-allowed opacity-45";
-
+ 
 export const TEXTAREA_RESIZE_HANDLE_ENABLED_CLASS = "cursor-ns-resize";
-
+ 
 export function textareaControlClass(size: TextAreaSize): string {
   return CONTROL_SIZE_LAYOUT[size].controlPad;
 }
-
+ 
 export function textareaShellSurfaceClass({
   variant,
 }: {
@@ -49,15 +49,14 @@ export function textareaShellSurfaceClass({
 }): string {
   return resolveFieldShellSurfaceClass({ variant });
 }
-
+ 
 export function textareaShellClass({
   variant,
   status,
   blocked,
   size,
   shellSurface,
-  glossShellHoverMotionClass,
-  standardShellHoverMotionClass,
+  shellHoverMotionClass,
   slotClass,
   className,
 }: {
@@ -66,29 +65,30 @@ export function textareaShellClass({
   blocked: boolean;
   size: TextAreaSize;
   shellSurface: string;
-  glossShellHoverMotionClass?: string;
-  standardShellHoverMotionClass?: string;
+  shellHoverMotionClass?: string;
   slotClass?: string;
   className?: string;
 }) {
-  const isGloss = variant === "gloss";
+  const visual = resolveVariantVisual(variant, KIT_TEXT_AREA_VARIANTS, "textArea.shell");
+  const kitSurface = isKitVariant(variant, KIT_TEXT_AREA_VARIANTS);
 
   return cn(
-    "relative w-full overflow-hidden rounded-base border-1",
+    "relative w-full overflow-hidden rounded-base",
+    kitSurface && "border-1",
+    visual.className,
     TEXTAREA_SHELL_LAYOUT_CLASS,
-    isGloss && "relative",
     TEXTAREA_MIN_H[size],
-    shellSurface,
+    kitSurface ? shellSurface : undefined,
     FIELD_SHELL_TRANSITION_CLASS,
     fieldShellFocusRingClass(status),
-    isGloss ? glossShellHoverMotionClass : fieldShellHoverClass(!blocked, status, variant),
-    !isGloss && standardShellHoverMotionClass,
+    kitSurface && fieldShellHoverClass(!blocked, status, variant),
+    shellHoverMotionClass,
     blocked ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
     slotClass,
     className,
   );
 }
-
+ 
 export function textareaControlClassNames({
   size,
   resizable,
@@ -100,13 +100,13 @@ export function textareaControlClassNames({
 }) {
   return cn(
     TEXTAREA_CONTROL_BASE_CLASS,
-    resizable && "pr-large",
+    resizable && "pe-large",
     textareaControlClass(size),
     slotClass,
     FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
   );
 }
-
+ 
 export function textareaResizeHandleClass({
   disabled,
   slotClass,
@@ -120,3 +120,4 @@ export function textareaResizeHandleClass({
     slotClass,
   );
 }
+ 

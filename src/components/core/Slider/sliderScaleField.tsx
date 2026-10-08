@@ -1,17 +1,17 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
-
+ 
 import { SLIDER_SCALE_HEADER_BASE_CLASS, SLIDER_SCALE_HEADER_HORIZONTAL_CLASS, SLIDER_SCALE_HEADER_VERTICAL_CLASS, SLIDER_SCALE_VALUE_CLASS } from "./sliderStyles";
 import type { SliderOrientation } from "./sliderTypes";
-
+ 
 export type SliderScaleFieldHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   orientation?: SliderOrientation;
 };
-
+ 
 export const SliderScaleFieldHeader = forwardRef<HTMLDivElement, SliderScaleFieldHeaderProps>(
   function SliderScaleFieldHeader(
     { children, className, orientation = "horizontal", ...rest },
@@ -34,14 +34,14 @@ export const SliderScaleFieldHeader = forwardRef<HTMLDivElement, SliderScaleFiel
     );
   },
 );
-
+ 
 SliderScaleFieldHeader.displayName = "SliderScaleFieldHeader";
-
+ 
 export type SliderScaleFieldValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   fallback?: ReactNode;
 };
-
+ 
 export const SliderScaleFieldValue = forwardRef<HTMLElement, SliderScaleFieldValueProps>(
   function SliderScaleFieldValue({ children, fallback, className, ...rest }, ref) {
     const text = children ?? fallback;
@@ -59,14 +59,14 @@ export const SliderScaleFieldValue = forwardRef<HTMLElement, SliderScaleFieldVal
     );
   },
 );
-
+ 
 SliderScaleFieldValue.displayName = "SliderScaleFieldValue";
-
+ 
 export type SliderSimpleLayoutParts = {
   Header: (props: { children?: ReactNode }) => ReactNode;
   Value: (props: { children?: ReactNode }) => ReactNode;
 };
-
+ 
 export type SliderSimpleLayoutProps = SliderSimpleLayoutParts & {
   label?: ReactNode;
   labelNode?: ReactNode;
@@ -76,7 +76,7 @@ export type SliderSimpleLayoutProps = SliderSimpleLayoutParts & {
   errorNode?: ReactNode;
   track: ReactNode;
 };
-
+ 
 /** Simple mode layout for Slider. */
 export function renderSliderSimpleLayout({
   label,
@@ -90,7 +90,7 @@ export function renderSliderSimpleLayout({
   track,
 }: SliderSimpleLayoutProps) {
   const showHeader = label != null || showValue || valueText != null;
-
+ 
   return (
     <>
       {showHeader ? (
@@ -109,3 +109,4 @@ export function renderSliderSimpleLayout({
     </>
   );
 }
+ 

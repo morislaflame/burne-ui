@@ -5,24 +5,27 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
-
-export type ButtonVariant =
-  | "default"
-  | "primary"
-  | "outline"
-  | "secondary"
-  | "ghost"
-  | "gloss";
-
-export type ButtonStatus = "default" | "danger" | "success" | "info" | "warning";
-
+ 
+export const KIT_BUTTON_VARIANTS = [
+  "default",
+  "primary",
+  "outline",
+  "secondary",
+  "ghost",
+] as const;
+export type KitButtonVariant = (typeof KIT_BUTTON_VARIANTS)[number];
+export type ButtonVariant = KitButtonVariant | (string & {});
+ 
+export type ButtonStatus = SemanticStatus;
+ 
 export type ButtonSize = ComponentSize;
-
+ 
 export type ButtonClassNames = {
   root?: string;
   content?: string;
@@ -33,7 +36,7 @@ export type ButtonClassNames = {
   success?: string;
   error?: string;
 };
-
+ 
 export type ButtonContextValue = {
   size: ButtonSize;
   variant: ButtonVariant;
@@ -42,14 +45,14 @@ export type ButtonContextValue = {
   loaderTextClass: string;
   contentMotionRef: RefObject<HTMLSpanElement | null>;
 };
-
+ 
 export type ButtonPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type ButtonMotion = {
   root?: ButtonPartMotion;
   label?: ButtonPartMotion;
@@ -59,7 +62,7 @@ export type ButtonMotion = {
   success?: ButtonPartMotion;
   error?: ButtonPartMotion;
 };
-
+ 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   asChild?: boolean;
   groupSegment?: ButtonGroupSegment;
@@ -74,7 +77,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /**
    * Per-slot motion (`root` = the button, or the inner content span in a ButtonGroup segment;
    * `label` / `icon` / `text`; overlay `loader` / `success` / `error` when the app mounts those parts).
-   * Hover/press defaults: `hoverLiftFirstLevel` / `pressSqueeze` (gloss → `hoverLiftGloss` / `pressSqueezeGloss`).
+   * Hover/press defaults: `hoverLiftFirstLevel` / `pressSqueeze`. A skin overlays its own recipes.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    * `states` — app modes for `motionState` (not a DOM slot, not a phase).
    */
@@ -90,41 +93,41 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
    */
   ripple?: boolean;
 } & MotionStateHostProps;
-
+ 
 export type ButtonContentProps = HTMLAttributes<HTMLSpanElement>;
-
+ 
 export type ButtonLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ButtonPartMotion>;
 };
-
+ 
 export type ButtonIconProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<ButtonPartMotion>;
 };
-
+ 
 export type ButtonTextProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<ButtonPartMotion>;
 };
-
+ 
 export type ButtonLoaderProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ButtonPartMotion>;
 };
-
+ 
 export type ButtonSuccessProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ButtonPartMotion>;
 };
-
+ 
 export type ButtonErrorProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ButtonPartMotion>;
 };
-
+ 
 export type ButtonSimpleContentProps = {
   icon?: ReactNode;
   iconPosition?: IconPosition;
   children?: ReactNode;
 };
-
+ 
 export type UseButtonRootStateProps = Pick<
   ButtonProps,
   | "variant"
@@ -142,7 +145,7 @@ export type UseButtonRootStateProps = Pick<
   | "onClick"
   | "type"
 >;
-
+ 
 export type UseButtonAnimationsProps = {
   variant: ButtonVariant;
   blocked: boolean;
@@ -158,15 +161,16 @@ export type UseButtonAnimationsProps = {
   onPointerUp?: React.PointerEventHandler<HTMLButtonElement>;
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
 };
-
+ 
 export type ButtonSpinnerProps = {
   className?: string;
 };
-
+ 
 export type ButtonIconCheckProps = {
   className?: string;
 };
-
+ 
 export type ButtonIconCrossProps = {
   className?: string;
 };
+ 

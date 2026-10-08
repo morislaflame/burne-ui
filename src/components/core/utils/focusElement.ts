@@ -17,7 +17,7 @@
  * `FocusOptions.focusVisible` is supported in Chromium / WebKit; engines that
  * ignore unknown options still receive a normal focus without throwing.
  */
-
+ 
 export type FocusElementOptions = {
   preventScroll?: boolean;
   /**
@@ -26,9 +26,9 @@ export type FocusElementOptions = {
    */
   focusVisible?: boolean;
 };
-
+ 
 type FocusOptionsWithVisible = FocusOptions & { focusVisible?: boolean };
-
+ 
 const FOCUSABLE_SELECTOR = [
   "button:not([disabled])",
   "[href]",
@@ -37,7 +37,7 @@ const FOCUSABLE_SELECTOR = [
   "textarea:not([disabled])",
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
-
+ 
 export function focusElement(
   el: HTMLElement | null | undefined,
   options: FocusElementOptions = {},
@@ -50,7 +50,7 @@ export function focusElement(
   }
   el.focus(focusOpts);
 }
-
+ 
 /** Roving tabindex / arrow moves — always paints the kit focus ring. */
 export function focusKeyboard(
   el: HTMLElement | null | undefined,
@@ -58,12 +58,12 @@ export function focusKeyboard(
 ): void {
   focusElement(el, { ...options, focusVisible: true });
 }
-
+ 
 /** Whether `el` currently matches `:focus-visible` (keyboard-styled focus). */
 export function isFocusVisibleElement(el: Element | null | undefined): boolean {
   return !!el && typeof el.matches === "function" && el.matches(":focus-visible");
 }
-
+ 
 /**
  * First Tab-reachable control inside `root` (skips `aria-hidden` subtrees).
  * Falls back to `null` when the panel itself should take focus (`tabIndex={-1}`).
@@ -76,14 +76,14 @@ export function getFirstFocusable(root: HTMLElement): HTMLElement | null {
   }
   return null;
 }
-
+ 
 export type FocusOnOpenOptions = {
   /** Element that had focus before open (usually the trigger). */
   from?: Element | null;
   /** Explicit ring intent — wins over reading `from`. */
   focusVisible?: boolean;
 };
-
+ 
 /**
  * Move focus into a newly opened overlay / menu item.
  * Keyboard-opened (`from` is `:focus-visible`) → visible ring / row tint.
@@ -110,7 +110,7 @@ export function focusOnOpen(
       : isFocusVisibleElement(from);
   focusElement(target, { focusVisible });
 }
-
+ 
 /**
  * Move focus into a panel on open (first Tab-reachable, else the panel).
  * Pass `focusVisible` when the opener already lost `:focus-visible`
@@ -128,3 +128,4 @@ export function focusPanelOnOpen(
   if (!target) return;
   focusOnOpen(target, openOptions);
 }
+ 

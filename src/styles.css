@@ -1,3 +1,6 @@
+/* `ui-kit` sits under utilities: a consumer utility overrides kit size classes. */
+@layer theme, base, ui-kit, components, utilities;
+
 @import "./tokens/styles.css";
 
 @import "tailwindcss";
@@ -133,18 +136,34 @@ html {
   --spacing-xlarge: var(--space-xlarge);
   --spacing-2xlarge: var(--space-2xlarge);
   --spacing-3xlarge: var(--space-3xlarge);
+  --spacing-4xlarge: var(--space-4xlarge);
+  --spacing-5xlarge: var(--space-5xlarge);
 
   /* Identity bridge: design steps are already `--radius-*` (knob remains `--radius`). */
+  --radius-none: var(--radius-none);
   --radius-xsmall: var(--radius-xsmall);
   --radius-small: var(--radius-small);
   --radius-base: var(--radius-base);
   --radius-mid: var(--radius-mid);
   --radius-large: var(--radius-large);
+  --radius-2xlarge: var(--radius-2xlarge);
+  --radius-3xlarge: var(--radius-3xlarge);
+  --radius-full: var(--radius-full);
+  --radius-nested: var(--radius-nested);
 
   --shadow-token-small: var(--shadow-small);
   --shadow-token-base: var(--shadow-base);
   --shadow-token-mid: var(--shadow-mid);
   --shadow-token-large: var(--shadow-large);
+  --shadow-token-xlarge: var(--shadow-xlarge);
+
+  /* BEGIN GENERATED:breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  /* END GENERATED:breakpoints */
 
   /**
    * Single source of truth for the `text-base` utility (no duplicate with @utility).
@@ -172,14 +191,14 @@ html {
 @utility shadow-token-mid {
   box-shadow: var(--shadow-mid);
 }
-@utility shadow-token-large {
-  box-shadow: var(--shadow-large);
+@utility shadow-token-xlarge {
+  box-shadow: var(--shadow-xlarge);
 }
 
 /**
  * Modal frosted scrim (Dialog / Drawer / AlertDialog — light UI).
  * Tokens: `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate`.
- * Webkit-first `backdrop-filter` — same constraint as gloss panels.
+ * Webkit-first `backdrop-filter` so Lightning CSS keeps the unprefixed filter.
  */
 @utility overlay-backdrop {
   background-color: var(--overlay-backdrop-color);
@@ -202,14 +221,49 @@ html {
 }
 
 /**
- * Shadow via local `--el-shadow` + `box-shadow: var(--el-shadow)`.
- * At rest / after tween: CSS paints the token (theme knobs apply live).
- * During lift/press: GSAP temporarily sets inline `boxShadow`, then clears it on commit
- * — no CSS transition on box-shadow (it fought / lagged behind GSAP).
+ * Rest elevation token. The painted shadow lives on `[data-burne-shadow-fade]`
+ * layers (static `box-shadow`); GSAP cross-fades their `opacity`.
+ * Until the host mounts, the element itself paints `--el-shadow`.
  */
 @utility animate-shadow {
   --el-shadow: var(--shadow-none);
+  position: relative;
   box-shadow: var(--el-shadow);
+}
+
+/* Enhancement: drop the host shadow once fade layers mount, so two shadows do not stack.
+   Without :has() the host shadow stays. Layout does not depend on this selector. */
+.animate-shadow:has(> [data-burne-shadow-fade]) {
+  box-shadow: none;
+}
+
+[data-burne-shadow-fade="elevation"] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade] {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade="rest"] {
+  box-shadow: var(--el-shadow);
+  opacity: 1;
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade="hover"] {
+  box-shadow: var(--shadow-fade-hover, none);
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade="press"] {
+  box-shadow: var(--shadow-fade-press, var(--el-shadow));
 }
 
 /**
@@ -229,10 +283,12 @@ html {
 }
 
 /**
- * Interactive surfaces: background, border, text, shadow, focus-ring.
+ * Interactive surfaces: background, border, text, focus-ring.
  * Single shorthand — otherwise Tailwind classes conflict in the cascade.
  * Keep this list identical to the transition on `focus-ring*` / `has-focus-ring`
  * so either class winning the cascade still animates hover + ring.
+ * Lists must match AND must not contain `box-shadow` — fade layers own elevation.
+ * Color stays here: kit components do not also tween `color` / `background-color`.
  */
 @utility surface-color-transition {
   transition:
@@ -241,7 +297,6 @@ html {
     color var(--motion-surface-duration) var(--motion-surface-ease),
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
-    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 
@@ -251,12 +306,11 @@ html {
   }
 }
 
-/** Field shells: background, border, shadow, and focus-ring — one shorthand without conflicts. */
+/** Field shells: background, border, and focus-ring — one shorthand without conflicts. No `box-shadow` (GSAP owns elevation). */
 @utility field-shell-transition {
   transition:
     background-color var(--motion-surface-duration) var(--motion-shadow-ease),
     border-color var(--motion-surface-duration) var(--motion-shadow-ease),
-    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 
@@ -273,7 +327,9 @@ html {
    * `any-pointer: coarse` covers iPad with pointer devices attached.
    * `!important` beats `text-base` / `text-small` on the same element.
    */
+  /* BEGIN GENERATED:narrow-viewport */
   @media (max-width: 1024px), (hover: none), (pointer: coarse), (any-pointer: coarse) {
+  /* END GENERATED:narrow-viewport */
     font-size: 16px !important;
   }
 }
@@ -290,7 +346,11 @@ html {
  * `[--color-focus-ring:var(--color-focus-ring-danger)]` or paint `--color-focus-ring-*` directly.
  * On `:focus-visible` / `:focus-within` re-assert outline-style/width so the ring wins over
  * co-located `outline-none` (Tailwind emits `outline-none` later in the stylesheet).
- * Transition list matches `surface-color-transition` (cascade-safe when both are present).
+ * Stay `@utility` (utilities layer). Moving these into `@layer ui-kit` lets `outline-none` win
+ * and the keyboard ring disappears.
+ * Transition list matches `surface-color-transition` (cascade-safe when both are present):
+ * same properties, no `box-shadow`.
+ * Forced colors (Windows HCM): `Highlight` outline — see `@media (forced-colors: active)` below.
  */
 @utility focus-ring {
   outline-style: solid;
@@ -303,7 +363,6 @@ html {
     color var(--motion-surface-duration) var(--motion-surface-ease),
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
-    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible {
     outline-style: solid;
@@ -324,7 +383,6 @@ html {
     color var(--motion-surface-duration) var(--motion-surface-ease),
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
-    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible,
   &:focus-within {
@@ -336,18 +394,22 @@ html {
 }
 
 @utility focus-ring-inset {
-  outline: none;
-  box-shadow: inset 0 0 0 var(--focus-ring-width, 2px) transparent;
+  outline-style: solid;
+  outline-width: var(--focus-ring-width, 2px);
+  outline-color: transparent;
+  outline-offset: calc(-1 * var(--focus-ring-width, 2px));
   transition:
     background-color var(--motion-surface-duration) var(--motion-surface-ease),
     border-color var(--motion-surface-duration) var(--motion-surface-ease),
     color var(--motion-surface-duration) var(--motion-surface-ease),
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
-    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible {
-    box-shadow: inset 0 0 0 var(--focus-ring-width, 2px) var(--color-focus-ring);
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: calc(-1 * var(--focus-ring-width, 2px));
+    outline-color: var(--color-focus-ring);
   }
 }
 
@@ -363,8 +425,9 @@ html {
     color var(--motion-surface-duration) var(--motion-surface-ease),
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
-    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+  /* Enhancement: ring on the shell when a hidden native input inside is keyboard-focused.
+     Without :has() the control still works; the shell ring does not paint. */
   &:has(:focus-visible) {
     outline-style: solid;
     outline-width: var(--focus-ring-width, 2px);
@@ -432,15 +495,24 @@ html {
   border-right-width: var(--border-width, 1px);
   border-right-color: var(--border-color, var(--color-border));
 }
+@utility border-s-token {
+  border-inline-start-width: var(--border-width, 1px);
+  border-inline-start-color: var(--border-color, var(--color-border));
+}
+@utility border-e-token {
+  border-inline-end-width: var(--border-width, 1px);
+  border-inline-end-color: var(--border-color, var(--color-border));
+}
 
 /**
  * divide-token — divider between child elements with width from --border-width.
+ * `divide-x-token` uses the inline-start edge so a row flips with `dir`.
  * Use instead of Tailwind `divide-y` / `divide-x` with the default color.
  */
 @utility divide-x-token {
   & > * + * {
-    border-left-width: var(--border-width, 1px);
-    border-left-color: var(--border-color, var(--color-border));
+    border-inline-start-width: var(--border-width, 1px);
+    border-inline-start-color: var(--border-color, var(--color-border));
   }
 }
 @utility divide-y-token {
@@ -454,18 +526,21 @@ html {
   font-size: var(--text-accent-header-size);
   line-height: var(--tw-leading, var(--text-accent-header-line-height));
   font-weight: var(--tw-font-weight, var(--text-accent-header-weight));
+  letter-spacing: calc(var(--letter-spacing) + var(--letter-spacing-3xlarge));
 }
 
 @utility text-header-1 {
   font-size: var(--text-header-1-size);
   line-height: var(--tw-leading, var(--text-header-1-line-height));
   font-weight: var(--tw-font-weight, var(--text-header-1-weight));
+  letter-spacing: calc(var(--letter-spacing) + var(--letter-spacing-2xlarge));
 }
 
 @utility text-header-2 {
   font-size: var(--text-header-2-size);
   line-height: var(--tw-leading, var(--text-header-2-line-height));
   font-weight: var(--tw-font-weight, var(--text-header-2-weight));
+  letter-spacing: calc(var(--letter-spacing) + var(--letter-spacing-xlarge));
 }
 
 @utility text-large {
@@ -495,6 +570,9 @@ html {
 }
 
 /** Font weight from `--font-w-*` tokens (not Tailwind `font-medium`). */
+@utility font-w-regular {
+  font-weight: var(--font-w-regular);
+}
 @utility font-w-small {
   font-weight: var(--font-w-small);
 }
@@ -607,24 +685,30 @@ html {
   min-height: var(--control-height-large);
 }
 
-@utility h-control-xsmall {
-  min-height: var(--control-height-xsmall);
-}
-
-@utility h-control-small {
-  min-height: var(--control-height-small);
-}
-
-@utility h-control-base {
-  min-height: var(--control-height-base);
-}
-
-@utility h-control-mid {
-  min-height: var(--control-height-mid);
-}
-
-@utility h-control-large {
-  min-height: var(--control-height-large);
+/**
+ * Contained portal host (`.portal-contained`, `portalContainer` other than `document.body`).
+ * Adds `--z-overlay-nested-step` on top of the published layer. Body portals and
+ * `showModal()` keep the published numbers. The browser top layer ignores z-index.
+ */
+@layer utilities {
+  .portal-contained.z-dialog {
+    z-index: calc(var(--z-dialog) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-dropdown {
+    z-index: calc(var(--z-dropdown) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-dropdown-sub {
+    z-index: calc(var(--z-dropdown-sub) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-popover {
+    z-index: calc(var(--z-popover) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-toast {
+    z-index: calc(var(--z-toast) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-tooltip {
+    z-index: calc(var(--z-tooltip) + var(--z-overlay-nested-step));
+  }
 }
 
 @utility w-control-xsmall {
@@ -687,61 +771,87 @@ html {
   max-width: var(--control-size-large);
 }
 
-@utility avatar-size-small {
+/* Plain classes in `ui-kit`: a later utility (`size-*`, `w-*`, `rounded-*`) overrides them. */
+@layer ui-kit {
+.avatar-size-small {
   width: var(--avatar-size-small);
   height: var(--avatar-size-small);
 }
 
-@utility avatar-size-base {
+.avatar-size-base {
   width: var(--avatar-size-base);
   height: var(--avatar-size-base);
 }
 
-@utility avatar-size-mid {
+.avatar-size-mid {
   width: var(--avatar-size-mid);
   height: var(--avatar-size-mid);
 }
 
-@utility avatar-size-large {
+.avatar-size-large {
   width: var(--avatar-size-large);
   height: var(--avatar-size-large);
 }
 
 /** Selection indicators — diameter + corner radius from `--selection-indicator-*` / `--selection-indicator-radius-*`. */
-@utility selection-indicator-xsmall {
+.selection-indicator-xsmall {
   width: var(--selection-indicator-xsmall);
   height: var(--selection-indicator-xsmall);
   min-width: var(--selection-indicator-xsmall);
   min-height: var(--selection-indicator-xsmall);
   border-radius: var(--selection-indicator-radius-xsmall);
 }
-@utility selection-indicator-small {
+.selection-indicator-small {
   width: var(--selection-indicator-small);
   height: var(--selection-indicator-small);
   min-width: var(--selection-indicator-small);
   min-height: var(--selection-indicator-small);
   border-radius: var(--selection-indicator-radius-small);
 }
-@utility selection-indicator-base {
+.selection-indicator-base {
   width: var(--selection-indicator-base);
   height: var(--selection-indicator-base);
   min-width: var(--selection-indicator-base);
   min-height: var(--selection-indicator-base);
   border-radius: var(--selection-indicator-radius-base);
 }
-@utility selection-indicator-mid {
+.selection-indicator-mid {
   width: var(--selection-indicator-mid);
   height: var(--selection-indicator-mid);
   min-width: var(--selection-indicator-mid);
   min-height: var(--selection-indicator-mid);
   border-radius: var(--selection-indicator-radius-mid);
 }
-@utility selection-indicator-large {
+.selection-indicator-large {
   width: var(--selection-indicator-large);
   height: var(--selection-indicator-large);
   min-width: var(--selection-indicator-large);
   min-height: var(--selection-indicator-large);
   border-radius: var(--selection-indicator-radius-large);
+}
+
+/* Invisible hit pad so Checkbox / Radio / Switch reach 24×24 without changing the glyph. */
+.hit-target-24::before {
+  content: "";
+  position: absolute;
+  inset: min(0px, calc((100% - 24px) / 2));
+}
+
+/*
+ * Icon wrap. `initial` blocks an inherited `--icon-size`.
+ * A utility `icon-slot-*` (higher layer) sets the variable.
+ * Without it, the svg fills the wrap (`100%`).
+ * `icon-*` on the svg itself is a utility and wins over this rule.
+ */
+.icon-slot {
+  --icon-size: initial;
+}
+
+.icon-slot > svg {
+  width: var(--icon-size, 100%);
+  height: var(--icon-size, 100%);
+  flex-shrink: 0;
+}
 }
 
 /** Icons: width and height from `--icon-size-*` (1:1 with `--size-scale-*`; see `tokens/styles.css`). */
@@ -777,6 +887,47 @@ html {
   width: var(--icon-size-3xlarge);
   height: var(--icon-size-3xlarge);
 }
+/** Round sizes beside the step scale: 16px and 24px at the default `--size` (1rem). */
+@utility icon-16 {
+  width: var(--icon-size-16);
+  height: var(--icon-size-16);
+}
+@utility icon-24 {
+  width: var(--icon-size-24);
+  height: var(--icon-size-24);
+}
+
+/** Icon-wrap size. Sets `--icon-size` for `.icon-slot > svg`. One `cn` group: `icon-slot`. */
+@utility icon-slot-xsmall {
+  --icon-size: var(--icon-size-xsmall);
+}
+@utility icon-slot-small {
+  --icon-size: var(--icon-size-small);
+}
+@utility icon-slot-base {
+  --icon-size: var(--icon-size-base);
+}
+@utility icon-slot-mid {
+  --icon-size: var(--icon-size-mid);
+}
+@utility icon-slot-large {
+  --icon-size: var(--icon-size-large);
+}
+@utility icon-slot-xlarge {
+  --icon-size: var(--icon-size-xlarge);
+}
+@utility icon-slot-2xlarge {
+  --icon-size: var(--icon-size-2xlarge);
+}
+@utility icon-slot-3xlarge {
+  --icon-size: var(--icon-size-3xlarge);
+}
+@utility icon-slot-16 {
+  --icon-size: var(--icon-size-16);
+}
+@utility icon-slot-24 {
+  --icon-size: var(--icon-size-24);
+}
 
 /*
  * ToggleButton / Calendar cell fill: hide until GSAP marks ready when not pressed.
@@ -790,13 +941,104 @@ html {
 }
 
 /*
- * Gloss blur OOTB: Lightning CSS / Tailwind can drop unprefixed `backdrop-filter`
- * when `-webkit-backdrop-filter` is listed second (often after `@source` on dist).
- * Re-assert with webkit-first order so Chromium/Firefox keep blur without app CSS.
+ * Windows High Contrast / forced-colors:
+ * UA remaps bg/border and drops translucent `--color-focus-ring` mixes; GSAP fills
+ * stay at scale(0)/opacity 0, so checked == unchecked. System colors + !important
+ * beat inline GSAP. Status surfaces keep author paint (`forced-color-adjust: none`).
  */
-:is(.gloss-panel, .gloss-control, .gloss-btn, .gloss-indicator) {
-  -webkit-backdrop-filter: blur(var(--gloss-blur));
-  backdrop-filter: blur(var(--gloss-blur));
+@media (forced-colors: active) {
+  html {
+    --color-focus-ring: Highlight;
+    --color-focus-ring-danger: Highlight;
+    --color-focus-ring-success: Highlight;
+    --color-focus-ring-info: Highlight;
+    --color-focus-ring-warning: Highlight;
+  }
+
+  .focus-ring:focus-visible,
+  .focus-within-ring:focus-visible,
+  .focus-within-ring:focus-within,
+  /* Same shell ring as .has-focus-ring, in forced-colors. Without :has() the control still works. */
+  .has-focus-ring:has(:focus-visible),
+  .focus-ring-inset:focus-visible {
+    outline-color: Highlight;
+  }
+
+  :is(
+    .bg-danger,
+    .bg-success,
+    .bg-info,
+    .bg-warning,
+    .bg-surface-tint-danger,
+    .bg-surface-tint-success,
+    .bg-surface-tint-info,
+    .bg-surface-tint-warning,
+    .text-danger,
+    .text-success,
+    .text-info,
+    .text-warning,
+    .text-danger-foreground,
+    .text-success-foreground,
+    .text-info-foreground,
+    .text-warning-foreground,
+    .border-token-danger,
+    .border-token-success,
+    .border-token-info,
+    .border-token-warning
+  ) {
+    forced-color-adjust: none;
+  }
+
+  :is(
+    .selection-indicator-xsmall,
+    .selection-indicator-small,
+    .selection-indicator-base,
+    .selection-indicator-mid,
+    .selection-indicator-large
+  )[data-selected] {
+    border-color: Highlight;
+  }
+
+  [data-selected] [data-selection-fill],
+  [data-checked] [data-selection-fill],
+  [aria-selected="true"] [data-selection-fill],
+  [aria-pressed="true"] [data-selection-fill],
+  [data-selection-fill][data-pressed="true"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  [data-selected] [data-selection-mark],
+  [data-checked] [data-selection-mark],
+  [aria-selected="true"] [data-selection-mark],
+  [aria-pressed="true"] [data-selection-mark],
+  [aria-checked="true"] [data-selection-mark] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    color: HighlightText;
+  }
+
+  /* Enhancement: mark uses Highlight when the fill layer is absent (forced-colors only).
+     Without :has() the mark stays HighlightText. The indicator still shows. */
+  :is(
+    .selection-indicator-xsmall,
+    .selection-indicator-small,
+    .selection-indicator-base,
+    .selection-indicator-mid,
+    .selection-indicator-large
+  )[data-selected]:not(:has([data-selection-fill])) [data-selection-mark] {
+    color: Highlight;
+  }
+
+  [role="switch"][aria-checked="true"] + * {
+    background-color: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
 }
 
 /**

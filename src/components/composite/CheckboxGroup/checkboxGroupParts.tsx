@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
 import { OptionGroupHeader } from "@/components/composite/utils/optionGroupFieldset";
 import { cn } from "@/utils/cn";
-
+ 
 import { useCheckboxGroupSlotMotion } from "./checkboxGroupAnimations";
 import { useCheckboxGroupClassNames, useCheckboxGroupContext } from "./checkboxGroupContext";
 import { checkboxGroupListClass } from "./checkboxGroupStyles";
@@ -14,7 +14,7 @@ import type {
   CheckboxGroupLegendProps,
   CheckboxGroupListProps,
 } from "./checkboxGroupTypes";
-
+ 
 export const CheckboxGroupLegend = forwardRef<HTMLLegendElement, CheckboxGroupLegendProps>(
   function CheckboxGroupLegend(
     {
@@ -36,7 +36,7 @@ export const CheckboxGroupLegend = forwardRef<HTMLLegendElement, CheckboxGroupLe
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Legend ref={part.setRef} {...rest} {...part.pointerHandlers}>
         <OptionGroupHeader>{children}</OptionGroupHeader>
@@ -44,9 +44,9 @@ export const CheckboxGroupLegend = forwardRef<HTMLLegendElement, CheckboxGroupLe
     );
   },
 );
-
+ 
 CheckboxGroupLegend.displayName = "CheckboxGroup.Legend";
-
+ 
 export const CheckboxGroupHint = forwardRef<HTMLElement, CheckboxGroupHintProps>(
   function CheckboxGroupHint(
     {
@@ -71,7 +71,7 @@ export const CheckboxGroupHint = forwardRef<HTMLElement, CheckboxGroupHintProps>
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -85,9 +85,9 @@ export const CheckboxGroupHint = forwardRef<HTMLElement, CheckboxGroupHintProps>
     );
   },
 );
-
+ 
 CheckboxGroupHint.displayName = "CheckboxGroup.Hint";
-
+ 
 export const CheckboxGroupError = forwardRef<HTMLElement, CheckboxGroupErrorProps>(
   function CheckboxGroupError(
     {
@@ -112,7 +112,7 @@ export const CheckboxGroupError = forwardRef<HTMLElement, CheckboxGroupErrorProp
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -124,9 +124,9 @@ export const CheckboxGroupError = forwardRef<HTMLElement, CheckboxGroupErrorProp
     );
   },
 );
-
+ 
 CheckboxGroupError.displayName = "CheckboxGroup.Error";
-
+ 
 export const CheckboxGroupActions = forwardRef<HTMLDivElement, CheckboxGroupActionsProps>(
   function CheckboxGroupActions(
     {
@@ -148,7 +148,7 @@ export const CheckboxGroupActions = forwardRef<HTMLDivElement, CheckboxGroupActi
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Set.Actions
         ref={part.setRef}
@@ -159,9 +159,9 @@ export const CheckboxGroupActions = forwardRef<HTMLDivElement, CheckboxGroupActi
     );
   },
 );
-
+ 
 CheckboxGroupActions.displayName = "CheckboxGroup.Actions";
-
+ 
 export const CheckboxGroupList = forwardRef<HTMLDivElement, CheckboxGroupListProps>(
   function CheckboxGroupList(
     {
@@ -195,5 +195,6 @@ export const CheckboxGroupList = forwardRef<HTMLDivElement, CheckboxGroupListPro
     );
   },
 );
-
+ 
 CheckboxGroupList.displayName = "CheckboxGroup.List";
+ 

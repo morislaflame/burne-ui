@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   TabsClassNames,
   TabsClassNamesProviderProps,
   TabsContextValue,
 } from "./tabsTypes";
-
+ 
 const TabsContext = createContext<TabsContextValue | null>(null);
 const TabsClassNamesContext = createContext<TabsClassNames>({});
-
+ 
 export function TabsClassNamesProvider({
   classNames,
   children,
@@ -20,14 +20,14 @@ export function TabsClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <TabsClassNamesContext.Provider value={merged}>
       {children}
     </TabsClassNamesContext.Provider>
   );
 }
-
+ 
 export function useTabsContext(): TabsContextValue {
   const ctx = useContext(TabsContext);
   if (!ctx) {
@@ -35,16 +35,17 @@ export function useTabsContext(): TabsContextValue {
   }
   return ctx;
 }
-
+ 
 export function useTabsClassNames(): TabsClassNames {
   return useContext(TabsClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `tabsAnimations.ts`. */
 export const {
   MotionScopeProvider: TabsMotionProvider,
   useMotionScope: useTabsMotionScope,
   useOptionalMotionScope: useOptionalTabsMotionScope,
 } = createMotionScope("Tabs");
-
+ 
 export { TabsContext };
+ 

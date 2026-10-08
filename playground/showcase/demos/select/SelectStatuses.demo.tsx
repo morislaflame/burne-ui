@@ -7,7 +7,7 @@ const options = [
   { value: "vue", label: "Vue" },
 ];
 
-const SELECT_VARIANTS: InputVariant[] = ["default", "outline", "secondary", "gloss"];
+const SELECT_VARIANTS: InputVariant[] = ["default", "outline", "secondary"];
 
 const SELECT_STATUSES: InputStatus[] = [
   "default",

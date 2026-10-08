@@ -1,23 +1,23 @@
 /**
  * Slot motion for Link — look here first.
  *
- * DOM slots: `root` (`<a>` / asChild host), `text`, `icon`
+ * DOM slots: `root` (`<a>` / asChild host), `text`, `iconStart`, `iconEnd`
  *
  * Host: root (`useLinkAnimations`) plays hover/press.
  * Defaults: `hoverLiftFirstLevel` (no hover shadow) + `pressSqueeze` (`pressOut: false`).
  */
 import { useCallback, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
-
+ 
 import {
   isInteractivePressKey,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
-
+ 
 import { useLinkMotionScope } from "./linkContext";
 import type { LinkMotion, UseLinkAnimationsProps } from "./linkTypes";
-
+ 
 export function resolveLinkMotionDefaults(): LinkMotion {
   return {
     root: {
@@ -28,7 +28,7 @@ export function resolveLinkMotionDefaults(): LinkMotion {
     },
   };
 }
-
+ 
 export function useLinkAnimations({
   forwardedRef,
   onPointerEnter,
@@ -42,8 +42,9 @@ export function useLinkAnimations({
   const anchorRef = useRef<HTMLAnchorElement | null>(null);
   const scope = useLinkMotionScope();
   const rootMotionRef = useRef(scope.getRootMotion()?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = scope.getRootMotion()?.root;
-
+ 
   const setAnchorRef = useCallback(
     (node: HTMLAnchorElement | null) => {
       anchorRef.current = node;
@@ -52,7 +53,7 @@ export function useLinkAnimations({
     },
     [forwardedRef, scope],
   );
-
+ 
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       const el = anchorRef.current;
@@ -64,7 +65,7 @@ export function useLinkAnimations({
     },
     [scope],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLAnchorElement>({
     enabled: true,
     targetRef: anchorRef,
@@ -72,7 +73,7 @@ export function useLinkAnimations({
     onHoverIn: () => playRoot("hoverIn"),
     onHoverOut: () => playRoot("hoverOut"),
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -83,7 +84,7 @@ export function useLinkAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOut, onPointerOver],
   );
-
+ 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLAnchorElement>) => {
       onPointerDown?.(e);
@@ -92,7 +93,7 @@ export function useLinkAnimations({
     },
     [onPointerDown, playRoot],
   );
-
+ 
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLAnchorElement>) => {
       onPointerUp?.(e);
@@ -101,21 +102,21 @@ export function useLinkAnimations({
     },
     [onPointerUp, playRoot],
   );
-
+ 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLAnchorElement>) => {
       onPointerEnter?.(e);
     },
     [onPointerEnter],
   );
-
+ 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLAnchorElement>) => {
       onPointerLeave?.(e);
     },
     [onPointerLeave],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLAnchorElement>) => {
       onKeyDown?.(e);
@@ -124,7 +125,7 @@ export function useLinkAnimations({
     },
     [onKeyDown, playRoot],
   );
-
+ 
   const pointerHandlers = useMemo(
     () => ({
       onPointerOver: hoverHandlers.onPointerOver,
@@ -134,7 +135,7 @@ export function useLinkAnimations({
     }),
     [handlePointerDown, handlePointerUp, hoverHandlers],
   );
-
+ 
   return {
     setAnchorRef,
     handlePointerEnter,
@@ -143,3 +144,4 @@ export function useLinkAnimations({
     pointerHandlers,
   };
 }
+ 

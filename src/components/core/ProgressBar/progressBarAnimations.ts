@@ -9,7 +9,7 @@
  * opt-in and played by `useBarFillMotion` (layout cleanup replays in Strict Mode).
  */
 import { type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
@@ -19,12 +19,12 @@ import {
 } from "@/components/core/utils/slotMotion";
 import { useBarFillMotion } from "@/components/core/utils/slotMotion/useBarFillMotion";
 import { progressScaleFromPercent } from "@/components/core/utils/slotMotion/recipes/progressFill";
-
+ 
 import { useOptionalProgressBarMotionScope } from "./progressBarContext";
 import type { ProgressBarMotion, ProgressBarPartMotion } from "./progressBarTypes";
-
+ 
 export { progressScaleFromPercent };
-
+ 
 export function resolveProgressBarMotionDefaults({
   indeterminate = false,
 }: {
@@ -36,7 +36,7 @@ export function resolveProgressBarMotionDefaults({
     },
   };
 }
-
+ 
 export function useProgressBarTrackSlotMotion(
   scope: MotionScopeValue | null,
   identity: string,
@@ -48,7 +48,7 @@ export function useProgressBarTrackSlotMotion(
     broadcast: true,
   });
 }
-
+ 
 export function useProgressBarFillMotion({
   scope,
   percent,
@@ -64,9 +64,9 @@ export function useProgressBarFillMotion({
 }) {
   return useBarFillMotion({ scope, percent, isHorizontal, indeterminate, fillRef });
 }
-
+ 
 export type ProgressBarChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useProgressBarChromeSlot(
   slot: ProgressBarChromeSlot,
   {
@@ -102,3 +102,4 @@ export function useProgressBarChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

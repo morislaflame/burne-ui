@@ -2,9 +2,12 @@ import type {
   PointerEvent as ReactPointerEvent,
 } from "react";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
-import { IoChevronDown } from "react-icons/io5";
-
+import { dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { KitChevronDown } from "@/components/core/utils/kitIcons";
+ 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -13,7 +16,7 @@ import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart, type Motio
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import {
   resolveComboBoxMotionDefaults,
   resolveComboBoxMotionParams,
@@ -35,9 +38,9 @@ import type {
   ComboBoxTriggerProps,
 } from "./comboBoxTypes";
 import { useComboBoxInputState } from "./useComboBoxInputState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupProps>(
   function ComboBoxInputGroup(
     {
@@ -62,22 +65,22 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
-    const isGloss = variant === "gloss";
     const pointerInsideRef = useRef(false);
     const parentScope = useOptionalComboBoxMotionScope();
-    const motionDefaults = useMemo(
-      () => resolveComboBoxMotionDefaults({ isGloss, disabled, groupSegment }),
-      [disabled, groupSegment, isGloss],
-    );
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveComboBoxMotionDefaults({ variant, disabled, groupSegment });
+    }, [disabled, groupSegment, skinRevision, variant]);
     const motionParams = useMemo(
       () =>
         resolveComboBoxMotionParams({
+          variant,
           disabled,
-          isGloss,
           groupSegment,
           pointerInside: pointerInsideRef,
         }),
-      [disabled, groupSegment, isGloss],
+      [disabled, groupSegment, variant],
     );
     const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
@@ -88,7 +91,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       states: parentScope?.getStates(),
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
-
+ 
     return (
       <ComboBoxMotionProvider
         motion={mergedMotion}
@@ -115,9 +118,9 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     );
   },
 );
-
+ 
 ComboBoxInputGroup.displayName = "ComboBoxInputGroup";
-
+ 
 function ComboBoxInputGroupSurface({
   forwardedRef,
   className,
@@ -156,21 +159,22 @@ function ComboBoxInputGroupSurface({
     disabled,
     variant,
     status,
+    invalid,
+    errorConnected,
+    formInvalid,
     size,
     anchorRef,
-    listId,
   } = ctx;
-
+  const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
+  const visualStatus = visualStatusForInvalid(status, isInvalid, "default");
+ 
   const {
     bindShellRef,
     squeezeThenOpen,
     shellPointerUp,
     shellPointerEnter,
     shellPointerLeave,
-    shellFocusCapture,
-    shellBlurCapture,
     shellHoverMotionClass,
-    glossDisabledAttr,
   } = useComboBoxShellAnimations({
     shellRef: anchorRef,
     disabled,
@@ -179,7 +183,7 @@ function ComboBoxInputGroupSurface({
     motion: shellPartMotion,
     pointerInsideRef,
   });
-
+ 
   const handlePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
       if (disabled) return;
@@ -189,18 +193,13 @@ function ComboBoxInputGroupSurface({
     },
     [disabled, open, setOpen, squeezeThenOpen],
   );
-
+ 
   return (
     <div
       ref={(node) => {
         mergeForwardedRef(forwardedRef, node);
         bindShellRef(node);
       }}
-      role="combobox"
-      aria-expanded={open}
-      aria-controls={open ? listId : undefined}
-      aria-haspopup="listbox"
-      aria-disabled={disabled || undefined}
       onPointerDown={handlePointerDown}
       onPointerUp={shellPointerUp}
       onPointerEnter={(e) => {
@@ -213,13 +212,10 @@ function ComboBoxInputGroupSurface({
         if (e.defaultPrevented) return;
         shellPointerLeave?.(e);
       }}
-      onFocusCapture={shellFocusCapture}
-      onBlurCapture={shellBlurCapture}
-      {...glossDisabledAttr}
       className={comboBoxInputGroupClass({
         size,
         variant,
-        status,
+        status: visualStatus,
         disabled,
         groupSegment,
         shellHoverMotionClass,
@@ -227,12 +223,14 @@ function ComboBoxInputGroupSurface({
         slotClass: slotClassNames.inputGroup,
       })}
       {...rest}
+      {...dataVariantProps({ size, variant, status: visualStatus })}
+      data-group-segment={dataGroupSegment(groupSegment != null)}
     >
       {children}
     </div>
   );
 }
-
+ 
 export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
   function ComboBoxInput({ className, onKeyDown, onChange, onBlur, motion, ...rest }, ref) {
     const slotClassNames = useComboBoxClassNames();
@@ -242,8 +240,9 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       disabled,
       placeholder,
       size,
-      status,
       required,
+      listId,
+      isInvalid,
       activeOptionId,
       ariaDescribedBy,
       inputValue,
@@ -253,7 +252,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       handleKeyDown,
       handleBlur,
     } = useComboBoxInputState({ onKeyDown, onChange, onBlur }, ref);
-
+ 
     const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
       scope: useOptionalComboBoxMotionScope(),
       slot: "input",
@@ -261,19 +260,22 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       forwardedRef: setRefs,
       pointerPhases: true,
     });
-
+ 
     return (
       <input
         ref={setRef}
         id={comboBoxId}
         type="text"
+        role="combobox"
         aria-autocomplete="list"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-haspopup="listbox"
         aria-activedescendant={activeOptionId}
         aria-required={required || undefined}
-        aria-invalid={status === "danger" ? true : undefined}
+        aria-invalid={ariaInvalidValue(isInvalid)}
         aria-describedby={ariaDescribedBy}
         disabled={disabled}
-        readOnly={!open}
         autoComplete="off"
         placeholder={placeholder}
         value={inputValue}
@@ -288,24 +290,38 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         })}
         {...rest}
         {...pointerHandlers}
+        data-state={dataOpenState(open)}
+        data-invalid={isInvalid ? "" : undefined}
       />
     );
   },
 );
-
+ 
 ComboBoxInput.displayName = "ComboBoxInput";
-
+ 
 function ComboBoxTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" }) {
   const slotClassNames = useComboBoxClassNames();
+  const { open } = useComboBoxContext();
+  const scope = useOptionalComboBoxMotionScope();
+  const iconRef = useRef<HTMLSpanElement | null>(null);
+  const bindChevronRef = useChevronRotation(open, iconRef, undefined, undefined, scope, "triggerIcon");
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
-    scope: useOptionalComboBoxMotionScope(),
+    scope,
     slot: "triggerIcon",
     pointerPhases: true,
   });
+  const setIconRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      bindChevronRef(node);
+      iconRef.current = node;
+      setRef(node);
+    },
+    [bindChevronRef, setRef],
+  );
 
   return (
-    <span ref={setRef} {...pointerHandlers}>
-      <IoChevronDown
+    <span ref={setIconRef} {...pointerHandlers}>
+      <KitChevronDown
         className={cn(
           COMBOBOX_CHEVRON_ICON[size],
           slotClassNames.triggerIcon,
@@ -315,14 +331,12 @@ function ComboBoxTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large
     </span>
   );
 }
-
+ 
 export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
   function ComboBoxTrigger({ className, onPointerDown, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useComboBoxClassNames();
     const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
-    const triggerRef = useRef<HTMLButtonElement | null>(null);
-    const bindChevronRef = useChevronRotation(open, triggerRef);
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalComboBoxMotionScope(),
       slot: "trigger",
@@ -343,17 +357,15 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         requestAnimationFrame(() => focusElement(inputRef.current));
       },
     });
-
+ 
     const setTriggerRef = useCallback(
       (node: HTMLButtonElement | null) => {
-        bindChevronRef(node);
-        triggerRef.current = node;
         setRef(node);
         mergeForwardedRef(ref, node);
       },
-      [bindChevronRef, ref, setRef],
+      [ref, setRef],
     );
-
+ 
     return (
       <button
         type="button"
@@ -374,9 +386,9 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
     );
   },
 );
-
+ 
 ComboBoxTrigger.displayName = "ComboBoxTrigger";
-
+ 
 export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
   function ComboBoxPopover(
     {
@@ -400,6 +412,8 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       labelConnected,
       placeholder,
       menuMaxHeight,
+      virtualized,
+      virtualItemSize,
       options,
       filteredValues,
       value,
@@ -410,15 +424,17 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       variant,
       size,
     } = useComboBoxContext();
-
+ 
     const {
       className: listBoxClassName,
       classNames: listBoxSlotClassNames,
       style: listBoxStyle,
       size: listBoxSize,
+      virtualized: listVirtualized,
+      virtualItemSize: listItemSize,
       ...listBoxRest
     } = listBoxProps ?? {};
-
+ 
     const handleValueChange = useCallback(
       (next: string | string[]) => {
         const v = Array.isArray(next) ? (next[0] ?? "") : next;
@@ -428,7 +444,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       },
       [setFilterQuery, setOpen, setValue],
     );
-
+ 
     const listContent =
       children ??
       (filteredValues.length === 0 ? (
@@ -449,14 +465,14 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
           );
         })
       ));
-
+ 
     return (
       <Popover
         open={open}
         onOpenChange={setOpen}
         side={side}
         anchorRef={anchorRef}
-        variant={variant === "gloss" ? "gloss" : "default"}
+        variant={variant}
       >
         <Popover.Content
           ref={ref}
@@ -499,6 +515,8 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
                 slotClassNames.listBox,
                 listBoxClassName,
               )}
+              virtualized={virtualized || listVirtualized}
+              virtualItemSize={virtualItemSize ?? listItemSize}
               style={{ maxHeight: menuMaxHeight, ...listBoxStyle }}
             >
               {listContent}
@@ -509,10 +527,10 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
     );
   },
 );
-
+ 
 ComboBoxPopover.displayName = "ComboBoxPopover";
-
-
+ 
+ 
 export function ComboBoxSimpleBody({
   label,
   hint,
@@ -530,7 +548,7 @@ export function ComboBoxSimpleBody({
   motionController?: MotionController;
 } & MotionStateHostProps) {
   const slotClassNames = useComboBoxClassNames();
-
+ 
   return (
     <>
       {label != null ? (
@@ -551,5 +569,6 @@ export function ComboBoxSimpleBody({
     </>
   );
 }
-
+ 
 export { ComboBoxError, ComboBoxHint, ComboBoxLabel } from "./comboBoxFieldParts";
+ 

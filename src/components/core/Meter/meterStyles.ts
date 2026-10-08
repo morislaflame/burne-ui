@@ -1,50 +1,51 @@
 import type { CSSProperties } from "react";
-
+ 
 import { sliderThicknessToCss } from "@/components/core/Slider";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
-
+ 
 import type { MeterOrientation, MeterSize } from "./meterTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const METER_RAIL_HEIGHT_CLASS: Record<MeterSize, string> = {
   small: "h-small",
   base: "h-base",
   mid: "h-mid",
   large: "h-large",
 };
-
+ 
 export const METER_RAIL_WIDTH_CLASS: Record<MeterSize, string> = {
   small: "w-small",
   base: "w-base",
   mid: "w-mid",
   large: "w-large",
 };
-
+ 
 export const METER_TRACK_BASE_CLASS =
   "relative overflow-hidden rounded-full bg-primary-tint";
-
+ 
 export const METER_TRACK_HORIZONTAL_CLASS = "w-full";
-
+ 
 export const METER_TRACK_VERTICAL_CLASS = "h-48";
-
+ 
 export const METER_FILL_BASE_CLASS = "absolute rounded-full";
-
-export const METER_FILL_HORIZONTAL_CLASS = "inset-y-0 left-0";
-
+ 
+export const METER_FILL_HORIZONTAL_CLASS =
+  "inset-y-0 start-0 origin-left rtl:origin-right";
+ 
 export const METER_FILL_VERTICAL_CLASS = "inset-x-0 bottom-0";
-
+ 
 export const METER_FILL_DEFAULT_COLOR_CLASS = "bg-primary";
-
+ 
 export const METER_HEADER_BASE_CLASS =
   "flex items-baseline justify-between gap-xsmall";
-
+ 
 export const METER_HEADER_HORIZONTAL_CLASS = "w-full";
-
+ 
 export const METER_HEADER_VERTICAL_CLASS = "min-w-[8rem]";
-
+ 
 export const METER_VALUE_CLASS = "tabular-nums text-muted";
-
+ 
 export function meterRootClass({
   orientation,
   slotClass,
@@ -60,7 +61,7 @@ export function meterRootClass({
     className,
   );
 }
-
+ 
 export function meterHeaderClass({
   orientation,
   slotClass,
@@ -79,7 +80,7 @@ export function meterHeaderClass({
     className,
   );
 }
-
+ 
 export function meterValueClass({
   slotClass,
   className,
@@ -89,7 +90,7 @@ export function meterValueClass({
 }): string {
   return cn(METER_VALUE_CLASS, slotClass, className);
 }
-
+ 
 export function meterTrackClass({
   isHorizontal,
   size,
@@ -112,7 +113,7 @@ export function meterTrackClass({
     className,
   );
 }
-
+ 
 export function meterFillClass({
   isHorizontal,
   hasCustomColor,
@@ -129,7 +130,7 @@ export function meterFillClass({
     slotClass,
   );
 }
-
+ 
 export function meterTrackCrossStyle({
   isHorizontal,
   thickness,
@@ -141,12 +142,12 @@ export function meterTrackCrossStyle({
   const thicknessCss = sliderThicknessToCss(thickness);
   return isHorizontal ? { height: thicknessCss } : { width: thicknessCss };
 }
-
+ 
 export function meterFillColorStyle(color?: string): CSSProperties | undefined {
   if (!color) return undefined;
   return { background: color };
 }
-
+ 
 export function meterDeterminateFillStyle({
   isHorizontal,
   fillColorStyle,
@@ -157,7 +158,8 @@ export function meterDeterminateFillStyle({
   return {
     width: "100%",
     height: "100%",
-    transformOrigin: isHorizontal ? "left center" : "bottom center",
+    ...(isHorizontal ? {} : { transformOrigin: "bottom center" }),
     ...fillColorStyle,
   };
 }
+ 

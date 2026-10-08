@@ -1,11 +1,11 @@
 import { forwardRef, useId, useMemo } from "react";
-
+ 
 import { resolveFieldSetMotionDefaults } from "./fieldAnimations";
 import { FieldError, FieldHint, FieldLabel, FieldLegend, FieldLegendHeader, FieldRoot, FieldSetActions, FieldSetGroup, FieldSetRootInner } from "./fieldParts";
 import { FieldSetClassNamesProvider, FieldSetMotionProvider, FieldSetSizeProvider } from "./fieldContext";
 import type { FieldSetProps } from "./fieldTypes";
 import { useFieldSetRootState } from "./useFieldSetRootState";
-
+ 
 export type {
   FieldProps,
   FieldHintProps,
@@ -25,9 +25,9 @@ export type {
   FieldPartMotion,
   FieldSetMotion,
 } from "./fieldTypes";
-
+ 
 export { FieldRoot };
-
+ 
 export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
   function FieldSetRoot(
     {
@@ -49,7 +49,7 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
   ) {
     const state = useFieldSetRootState(children);
     const motionDefaults = useMemo(() => resolveFieldSetMotionDefaults(), []);
-
+ 
     return (
       <FieldSetSizeProvider size={size}>
         <FieldSetClassNamesProvider classNames={classNames}>
@@ -76,19 +76,19 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
     );
   },
 );
-
+ 
 FieldSetRoot.displayName = "FieldSet";
-
+ 
 export function useFieldSetHintId(providedId?: string) {
   const autoId = useId();
   return providedId ?? `${autoId}-hint`;
 }
-
+ 
 export function useFieldSetErrorId(providedId?: string) {
   const autoId = useId();
   return providedId ?? `${autoId}-error`;
 }
-
+ 
 export {
   FieldHint,
   FieldError,
@@ -98,3 +98,4 @@ export {
   FieldSetGroup,
   FieldSetActions,
 };
+ 

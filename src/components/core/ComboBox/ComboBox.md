@@ -51,11 +51,13 @@ const options = [
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled попап |
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `variant` | `default` / gloss из ButtonGroup | как Input |
-| `status` | `default` | danger/success/warning/info — постоянный статусный ring |
+| `status` | `default` | Только цвет: danger/success/warning/info — постоянный статусный ring. Не ставит `aria-invalid` |
+| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `size` | `base` | размер shell, текста и пунктов ListBox в Popover |
 | `disabled` | `false` | |
 | `placeholder` | `"Выберите значение"` | |
-| `menuMaxHeight` | `min(24rem, 70vh)` | ListBox scroll |
+| `menuMaxHeight` | `min(24rem, 70dvh)` | ListBox scroll |
+| `virtualized` | `false` | В DOM только видимые options. Строки одной высоты |
 | `name` | — | Form binding |
 | `classNames` | — | см. ниже |
 | `motion` | — | Root / simple: карта слотов + `events`. На `ComboBox.InputGroup` — part motion слота `inputGroup` |
@@ -71,21 +73,21 @@ const options = [
 
 | Часть | Роль |
 |-------|------|
-| `ComboBox.InputGroup` | Shell anchor, `role="combobox"`, open squeeze |
-| `ComboBox.Input` | Текстовое поле + keyboard |
+| `ComboBox.InputGroup` | Shell anchor, open squeeze |
+| `ComboBox.Input` | `<input role="combobox">` + keyboard |
 | `ComboBox.Trigger` | Chevron, toggle open |
 | `ComboBox.Popover` | `Popover` + `ListBox` |
 
 ## Поведение
 
-- Закрыт: input показывает label выбранной опции (`readOnly`), placeholder muted
-- Открыт: input редактируемый, `filterQuery` фильтрует options
+- Закрыт: input показывает label выбранной опции, placeholder muted. Поле не `readOnly`: ввод открывает список и становится фильтром
+- Открыт: `filterQuery` фильтрует options
 - Клавиатура: Arrow/Home/End, Enter выбирает, type-ahead открывает с символом
 - `comboBoxFilteredValues(options, query)` — утилита фильтрации
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `ComboBox.InputGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `inputGroup.pressIn` (non-gloss) или kit gloss squeeze. Chevron rotation — kit-internal. Menu enter — на Popover, не дублируется.
+Публичный slot motion. Root передаёт карту `motion`; хост — `ComboBox.InputGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `inputGroup.pressIn` (non-gloss) или kit gloss squeeze. Шеврон — слот `triggerIcon`, фазы `enter` / `leave`, рецепт `chevronRotate`. Menu enter — на Popover, не дублируется.
 
 ### Slot motion
 
@@ -139,7 +141,7 @@ function Nudge() {
 
 ### Chevron / Popover / ListBox
 
-- Chevron: `useChevronRotation` — kit-internal
+- Chevron: слот `triggerIcon`, рецепт `chevronRotate` (`enter` / `leave`)
 - Popover enter/leave — публичный slot motion Popover
 - ListBox items — slot motion ListBox (если подключён)
 
@@ -165,8 +167,8 @@ function Nudge() {
 |------|---------------|-------------------|
 | `root` | `Field` | Max-width, layout поля |
 | `label` | `Label` | Типографика label |
-| `inputGroup` | Shell `role="combobox"` | Border, фон, hover shell, squeeze target |
-| `input` | `<input>` внутри группы | Текст, placeholder, muted-состояние |
+| `inputGroup` | Shell | Border, фон, hover shell, squeeze target |
+| `input` | `<input role="combobox">` | Текст, placeholder, muted-состояние |
 | `trigger` | Кнопка chevron | Hit-area, цвет иконки-триггера |
 | `triggerIcon` | `IoChevronDown` | Размер/цвет шеврона |
 | `popover` | `Popover.Content` (portal) | `z-popover`, shadow панели |
@@ -257,8 +259,8 @@ Simple рендерит фиксированную разметку: `Label` →
 
 ## Доступность
 
-- `InputGroup`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`
-- `Input`: `aria-autocomplete="list"`, `aria-activedescendant` при open
+- `Input`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-autocomplete="list"`, `aria-activedescendant` на том же узле при open, `aria-invalid` / `aria-required` / `aria-describedby`. `disabled` — нативный, без `aria-disabled`
+- `error` или `invalid` ставят `aria-invalid` на input и пустой `data-invalid` на корне. `status` этого не делает
 - `Trigger`: `aria-label` open/close, `tabIndex={-1}`
 - `ListBox`: `aria-labelledby` / `aria-label`
 

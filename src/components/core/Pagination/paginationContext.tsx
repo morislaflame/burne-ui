@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   PaginationClassNames,
   PaginationClassNamesProviderProps,
   PaginationContextValue,
 } from "./paginationTypes";
-
+ 
 const PaginationContext = createContext<PaginationContextValue | null>(null);
 const PaginationClassNamesContext = createContext<PaginationClassNames>({});
-
+ 
 export function PaginationProvider({
   value,
   children,
@@ -24,7 +24,7 @@ export function PaginationProvider({
     </PaginationContext.Provider>
   );
 }
-
+ 
 export function PaginationClassNamesProvider({
   classNames,
   children,
@@ -34,14 +34,14 @@ export function PaginationClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <PaginationClassNamesContext.Provider value={merged}>
       {children}
     </PaginationClassNamesContext.Provider>
   );
 }
-
+ 
 export function usePagination(): PaginationContextValue {
   const ctx = useContext(PaginationContext);
   if (!ctx) {
@@ -49,18 +49,19 @@ export function usePagination(): PaginationContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalPagination() {
   return useContext(PaginationContext);
 }
-
+ 
 export function usePaginationClassNames(): PaginationClassNames {
   return useContext(PaginationClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `paginationAnimations.ts`. */
 export const {
   MotionScopeProvider: PaginationMotionProvider,
   useMotionScope: usePaginationMotionScope,
   useOptionalMotionScope: useOptionalPaginationMotionScope,
 } = createMotionScope("Pagination");
+ 

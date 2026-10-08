@@ -7,7 +7,7 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
@@ -15,16 +15,18 @@ import type {
   MotionController,
   MotionMapWithEvents,
   MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
-
-
+ 
+ 
 export type ToggleButtonSize = ComponentSize;
-
-export type ToggleButtonVariant = "default" | "outline" | "ghost" | "gloss";
-
+ 
+export const KIT_TOGGLE_BUTTON_VARIANTS = ["default", "outline", "ghost"] as const;
+export type KitToggleButtonVariant = (typeof KIT_TOGGLE_BUTTON_VARIANTS)[number];
+export type ToggleButtonVariant = KitToggleButtonVariant | (string & {});
+ 
 export type ToggleButtonGroupType = "multiple" | "single";
-
+ 
 export type ToggleButtonGroupOrientation = "horizontal" | "vertical";
-
+ 
 export type ToggleButtonClassNames = {
   root?: string;
   fill?: string;
@@ -34,21 +36,21 @@ export type ToggleButtonClassNames = {
   iconEnd?: string;
   text?: string;
 };
-
+ 
 export type ToggleButtonPointerMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type ToggleButtonCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
 };
-
+ 
 export type ToggleButtonPartMotion = ToggleButtonPointerMotion & ToggleButtonCheckMotion;
-
+ 
 export type ToggleButtonMotion = {
   root?: ToggleButtonPointerMotion;
   fill?: ToggleButtonCheckMotion;
@@ -58,7 +60,7 @@ export type ToggleButtonMotion = {
   iconEnd?: ToggleButtonPartMotion;
   text?: ToggleButtonPartMotion;
 };
-
+ 
 export type ToggleButtonContextValue = {
   size: ToggleButtonSize;
   variant: ToggleButtonVariant;
@@ -69,7 +71,7 @@ export type ToggleButtonContextValue = {
   pressed: boolean;
   roundingClass: string;
 };
-
+ 
 export type ToggleButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "aria-pressed" | "aria-checked" | "role" | "value"
@@ -89,7 +91,7 @@ export type ToggleButtonProps = Omit<
   classNames?: Prettify<ToggleButtonClassNames>;
   /**
    * Per-slot motion (`root`, `fill`, `content`, `label`, `iconStart`, `iconEnd`, `text`).
-   * Root defaults: first-level lift + squeeze (gloss recipes when gloss).
+   * Root defaults: first-level lift + squeeze. A skin overlays its own recipes.
    * Fill defaults: `selectionFill` on `check` / `uncheck`.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
@@ -100,40 +102,40 @@ export type ToggleButtonProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type ToggleButtonFillProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ToggleButtonCheckMotion>;
 };
-
+ 
 export type ToggleButtonContentProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ToggleButtonPartMotion>;
 };
-
+ 
 export type ToggleButtonLabelProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ToggleButtonPartMotion>;
 };
-
+ 
 export type ToggleButtonIconStartProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<ToggleButtonPartMotion>;
 };
-
+ 
 export type ToggleButtonIconEndProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<ToggleButtonPartMotion>;
 };
-
+ 
 export type ToggleButtonTextProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<ToggleButtonPartMotion>;
 };
-
+ 
 export type ToggleButtonSimpleContentProps = {
   icon?: ReactNode;
   iconPosition?: IconPosition;
   children?: ReactNode;
 };
-
+ 
 export type ToggleButtonGroupContextValue = {
   type: ToggleButtonGroupType;
   disabled: boolean;
@@ -145,7 +147,7 @@ export type ToggleButtonGroupContextValue = {
   /** Updates the roving tab stop (arrow keys / focus). Does not change selection. */
   setRovingValue: (value: string) => void;
 };
-
+ 
 export type UseToggleButtonRootStateProps = Pick<
   ToggleButtonProps,
   | "value"
@@ -164,7 +166,7 @@ export type UseToggleButtonRootStateProps = Pick<
   | "onClick"
   | "onFocus"
 >;
-
+ 
 export type UseToggleButtonAnimationsProps = {
   disabled: boolean;
   variant: ToggleButtonVariant;
@@ -183,5 +185,6 @@ export type UseToggleButtonAnimationsProps = {
   onPointerUp?: PointerEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 };
-
-
+ 
+ 
+ 

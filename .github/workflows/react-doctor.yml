@@ -32,6 +32,15 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: millionco/react-doctor@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Shipped bug errors stay at the baseline
+        run: |
+          npx react-doctor@latest --json --no-score --json-out /tmp/rd.json
+          node scripts/check-react-doctor-baseline.mjs /tmp/rd.json
         # Common configuration knobs — uncomment any to override the default.
         # Full reference: https://www.react.doctor/ci
         # with:

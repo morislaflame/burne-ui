@@ -1,7 +1,6 @@
-import "../utils/glossInteractive.css";
-
+ 
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
-
+ 
 import { DropdownClassNamesProvider, DropdownIndicatorPreferenceProvider, DropdownMotionProvider, DropdownProvider } from "./dropdownContext";
 import {
   DropdownGroup,
@@ -22,9 +21,9 @@ import { dropdownRootClass } from "./dropdownStyles";
 import type { DropdownProps } from "./dropdownTypes";
 import { useDropdownRootState } from "./useDropdownRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   DropdownProps,
   DropdownClassNames,
@@ -47,7 +46,7 @@ export type {
   DropdownPartMotion,
   DropdownPopoverMotion,
 } from "./dropdownTypes";
-
+ 
 export function DropdownRoot({
   children,
   className,
@@ -83,7 +82,7 @@ export function DropdownRoot({
     portalContainer,
   });
   const inJoinedButtonGroup = useInJoinedButtonGroup();
-
+ 
   return (
     <DropdownProvider value={contextValue}>
       <DropdownClassNamesProvider classNames={classNames}>
@@ -107,9 +106,9 @@ export function DropdownRoot({
     </DropdownProvider>
   );
 }
-
+ 
 DropdownRoot.displayName = "Dropdown";
-
+ 
 export {
   DropdownTrigger,
   DropdownPopover,
@@ -125,3 +124,4 @@ export {
   DropdownSubTrigger,
   DropdownSubContent,
 };
+ 

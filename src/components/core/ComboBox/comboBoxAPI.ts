@@ -1,5 +1,5 @@
 import type { ComboBoxOption } from "./comboBoxTypes";
-
+ 
 function optionSearchHaystack(opt: ComboBoxOption): string {
   const parts: string[] = [opt.value];
   if (opt.filterText) parts.push(opt.filterText);
@@ -7,13 +7,13 @@ function optionSearchHaystack(opt: ComboBoxOption): string {
   if (typeof opt.hint === "string") parts.push(opt.hint);
   return parts.join(" ").toLowerCase();
 }
-
+ 
 function comboBoxOptionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
   const t = query.trim().toLowerCase();
   if (!t) return true;
   return optionSearchHaystack(opt).includes(t);
 }
-
+ 
 export function comboBoxFilteredValues(options: ComboBoxOption[], query: string): string[] {
   const result: string[] = [];
   for (const opt of options) {
@@ -21,11 +21,11 @@ export function comboBoxFilteredValues(options: ComboBoxOption[], query: string)
   }
   return result;
 }
-
+ 
 export function comboBoxOptionsByValue(options: ComboBoxOption[]): Map<string, ComboBoxOption> {
   return new Map(options.map((o) => [o.value, o]));
 }
-
+ 
 export function comboBoxOptionDisplayString(
   selectedOption: ComboBoxOption | undefined,
 ): string {
@@ -34,7 +34,7 @@ export function comboBoxOptionDisplayString(
   if (selectedOption.filterText) return selectedOption.filterText;
   return selectedOption.value;
 }
-
+ 
 export function comboBoxBumpActiveValue({
   filteredValues,
   activeValue,
@@ -57,7 +57,7 @@ export function comboBoxBumpActiveValue({
   }
   return activeValue;
 }
-
+ 
 export function comboBoxFirstEnabledValue(
   filteredValues: string[],
   optionsByValue: Map<string, ComboBoxOption>,
@@ -68,7 +68,7 @@ export function comboBoxFirstEnabledValue(
   }
   return null;
 }
-
+ 
 export function comboBoxLastEnabledValue(
   filteredValues: string[],
   optionsByValue: Map<string, ComboBoxOption>,
@@ -80,5 +80,6 @@ export function comboBoxLastEnabledValue(
   }
   return null;
 }
-
+ 
 export const EMPTY_COMBOBOX_OPTIONS: ComboBoxOption[] = [];
+ 

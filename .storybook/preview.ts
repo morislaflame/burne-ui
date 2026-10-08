@@ -3,6 +3,7 @@ import { INITIAL_VIEWPORTS } from "storybook/viewport";
 
 import "../src/styles.css";
 
+
 const preview: Preview = {
   parameters: {
     layout: "centered",
@@ -27,12 +28,17 @@ const preview: Preview = {
       },
     },
 
-  a11y: {
+    a11y: {
       // a11y test behavior with Vitest addon (axe-core):
       // 'off'   — do not run automatically
-      // 'todo'  — warnings in Storybook UI, CI does not fail (baseline)
+      // 'todo'  — warnings in Storybook UI, CI does not fail (kit-wide baseline)
       // 'error' — fail in UI and CLI/CI on violations
       // https://storybook.js.org/docs/writing-tests/accessibility-testing#test-behavior
+      //
+      // Default stays "todo" so test-storybook.yml is not blocked by legacy
+      // stories. Opt in per story (`parameters.a11y.test: "error"`) — Э2/Э3
+      // flip form/overlay stories as they are rewritten. Foundations/A11yGate
+      // is the CI canary that axe is actually wired.
       test: "todo",
 
       // Analyze the rendered story DOM (Storybook disables rule 'region' by default)

@@ -8,20 +8,20 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalButtonGroupMotionScope } from "./buttonGroupContext";
 import type { ButtonGroupMotion, ButtonGroupPartMotion } from "./buttonGroupTypes";
-
+ 
 export function resolveButtonGroupMotionDefaults(): ButtonGroupMotion {
   return {};
 }
-
+ 
 export function useButtonGroupSlotMotion<T extends HTMLElement>(
   slot: keyof ButtonGroupMotion,
   {
@@ -57,3 +57,4 @@ export function useButtonGroupSlotMotion<T extends HTMLElement>(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

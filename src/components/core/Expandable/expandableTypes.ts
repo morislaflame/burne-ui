@@ -5,16 +5,17 @@ import type {
   Ref,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type ExpandableSize = ComponentSize;
-export type ExpandableVariant = "default" | "gloss";
-
+export const KIT_EXPANDABLE_VARIANTS = ["default"] as const;
+export type KitExpandableVariant = (typeof KIT_EXPANDABLE_VARIANTS)[number];
+export type ExpandableVariant = KitExpandableVariant | (string & {});
+ 
 export type ExpandableClassNames = {
   root?: string;
-  glossContent?: string;
   trigger?: string;
   triggerLift?: string;
   triggerRippleOverlay?: string;
@@ -25,23 +26,26 @@ export type ExpandableClassNames = {
   description?: string;
   chevron?: string;
   panelShell?: string;
+  contentWrap?: string;
   panel?: string;
   body?: string;
 };
-
+ 
 export type ExpandableLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type ExpandableTriggerLiftMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type ExpandableMotion = {
+  /** Shell. A skin `mount` (gloss shine) lands here. */
+  root?: ExpandableLifecycleMotion;
   triggerLift?: ExpandableTriggerLiftMotion;
   chevron?: ExpandableLifecycleMotion;
   panelShell?: ExpandableLifecycleMotion;
@@ -50,7 +54,7 @@ export type ExpandableMotion = {
   description?: ExpandableLifecycleMotion;
   body?: ExpandableLifecycleMotion;
 };
-
+ 
 export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
   variant?: ExpandableVariant;
@@ -76,8 +80,8 @@ export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
-
+ 
+ 
 export type ExpandableContextValue = {
   open: boolean;
   disabled: boolean;
@@ -89,22 +93,24 @@ export type ExpandableContextValue = {
   panelId: string;
   setHasPanel: (value: boolean) => void;
 };
-
+ 
 export type ExpandableClassNamesProviderProps = {
   classNames?: Prettify<ExpandableClassNames>;
   children: ReactNode;
 };
-
+ 
 export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   hideChevron?: boolean;
   asChild?: boolean;
   motion?: Prettify<ExpandableTriggerLiftMotion>;
 };
-
+ 
 export type ExpandableIconProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<ExpandableLifecycleMotion>;
 };
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type ExpandableMessageProps = HTMLAttributes<HTMLDivElement>;
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type ExpandableContentProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableTitleProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ExpandableLifecycleMotion>;
@@ -118,14 +124,14 @@ export type ExpandableChevronProps = HTMLAttributes<HTMLSpanElement> & {
 export type ExpandablePanelProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ExpandableLifecycleMotion>;
 };
-
+ 
 export type ExpandableSimpleBodyProps = {
   title?: ReactNode;
   description?: ReactNode;
   icon?: ReactNode;
   panelChildren?: ReactNode;
 };
-
+ 
 export type UseExpandableRootStateProps = Pick<
   ExpandableProps,
   | "children"
@@ -137,7 +143,7 @@ export type UseExpandableRootStateProps = Pick<
   | "size"
   | "variant"
 >;
-
+ 
 export type UseExpandableTriggerMotionProps = {
   open: boolean;
   disabled: boolean;
@@ -149,8 +155,9 @@ export type UseExpandableTriggerMotionProps = {
   onPointerDown?: ButtonHTMLAttributes<HTMLButtonElement>["onPointerDown"];
   onPointerUp?: ButtonHTMLAttributes<HTMLButtonElement>["onPointerUp"];
 };
-
+ 
 export type UseExpandablePanelMotionProps = {
   open: boolean;
   motion?: ExpandableLifecycleMotion;
 };
+ 

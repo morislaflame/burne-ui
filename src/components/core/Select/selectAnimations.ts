@@ -5,20 +5,13 @@
  *
  * Root passes the `motion` map. Host is `Select.TriggerGroup` (defaults + `play`).
  * Chrome (`label` / `hint` / `error`) registers on the Root scope.
- * Gloss hover/press stay on `useGlossFieldShellMotion`.
- * Open-after-squeeze uses slot `pressIn` (non-gloss) or kit gloss squeeze.
+ * Open-after-squeeze plays slot `pressIn`.
  *
  * Not slots: Field's own scope; Popover / ListBox (menu enter lives on Popover).
  */
 import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler, type RefObject } from "react";
-
-import {
-  animateGlossInteractivePressSqueeze,
-  useGlossFieldShellMotion,
-} from "@/components/core/utils/glossInteractiveMotion";
+ 
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionPressSqueezeTotalFor, type MotionConfig } from "@/components/core/utils/motionConfig";
-import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import {
@@ -28,128 +21,90 @@ import {
   useMotionPointerPhases,
   useOptionalEnterOnMount,
   type MotionScopeValue,
-  type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-
+import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
+ 
 import { useOptionalSelectMotionScope, useSelectMotionScope } from "./selectContext";
 import type {
   SelectMotion,
   SelectPartMotion,
   UseSelectShellAnimationsProps,
 } from "./selectTypes";
-
-import "../utils/glossInteractive.css";
-
-function isKitPressSqueeze(value: MotionValue | undefined): boolean {
-  if (typeof value === "string") {
-    return value === "pressSqueeze" || value === "pressSqueezeGloss";
-  }
-  if (value && typeof value === "object" && "recipe" in value) {
-    const recipe = (value as { recipe?: unknown }).recipe;
-    return recipe === "pressSqueeze" || recipe === "pressSqueezeGloss";
-  }
-  return false;
-}
-
+ 
 export function resolveSelectMotionDefaults({
-  isGloss,
+  variant,
   disabled,
   groupSegment,
 }: {
-  isGloss: boolean;
+  variant: InputVariant;
   disabled: boolean;
   groupSegment?: unknown;
 }): SelectMotion {
-  const hover = !disabled && !isGloss && groupSegment == null;
-  const press = !disabled && !isGloss && groupSegment == null;
-  return {
-    triggerGroup: {
-      hoverIn: hover ? "hoverLiftSecondLevel" : false,
-      hoverOut: hover ? "hoverLiftSecondLevel" : false,
-      pressIn: press ? "pressSqueeze" : false,
-      pressOut: false,
+  const active = !disabled && groupSegment == null;
+  return overlaySkinMotion(
+    {
+      triggerGroup: {
+        hoverIn: active ? "hoverLiftSecondLevel" : false,
+        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        pressIn: active ? "pressSqueeze" : false,
+        pressOut: false,
+      },
+      triggerIcon: { enter: "chevronRotate", leave: "chevronRotate" },
     },
-  };
+    variant,
+    KIT_INPUT_VARIANTS,
+    "select",
+  );
 }
-
+ 
 export function resolveSelectMotionParams({
+  variant,
   disabled,
-  isGloss,
   groupSegment,
   pointerInside,
 }: {
+  variant: InputVariant;
   disabled: boolean;
-  isGloss: boolean;
   groupSegment?: unknown;
   pointerInside: MutableRefObject<boolean>;
 }) {
+  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
   return {
     shadowSize: "base" as const,
-    hasHoverShadow: !disabled && !isGloss && groupSegment == null,
-    isGloss,
+    hasHoverShadow: !disabled && kitSurface && groupSegment == null,
     pointerInside,
   };
 }
-
+ 
 async function playSelectOpenSqueeze({
   scope,
   el,
-  isGloss,
   partMotion,
-  glossOnPointerDown,
-  userPressIn,
-  config,
 }: {
   scope: MotionScopeValue;
   el: HTMLElement;
-  isGloss: boolean;
   partMotion?: SelectPartMotion;
-  glossOnPointerDown?: () => void;
-  userPressIn?: MotionValue | false;
-  config: Readonly<MotionConfig>;
 }): Promise<void> {
   if (prefersReducedMotion()) return;
-  if (isGloss) {
-    if (userPressIn === false) return;
-    if (userPressIn != null) {
-      await scope.play("triggerGroup", "pressIn", { partMotion, el }).finished;
-      return;
-    }
-    if (glossOnPointerDown) {
-      glossOnPointerDown();
-      await new Promise<void>((resolve) => {
-        window.setTimeout(resolve, motionPressSqueezeTotalFor(config) * 1000);
-      });
-      return;
-    }
-    await animateGlossInteractivePressSqueeze(el, true, undefined, undefined, { config });
-    return;
-  }
   const value = scope.resolve("triggerGroup", "pressIn", partMotion);
   if (value === false || value === undefined) return;
-  if (isKitPressSqueeze(value) || value) {
-    await scope.play("triggerGroup", "pressIn", { partMotion, el }).finished;
-  }
+  await scope.play("triggerGroup", "pressIn", { partMotion, el }).finished;
 }
-
+ 
 export function useSelectOpenAfterSqueeze({
   triggerRef,
   disabled,
-  isGloss,
   partMotionRef,
-  glossOnPointerDown,
 }: {
   triggerRef: RefObject<HTMLElement | null>;
   disabled: boolean;
-  isGloss: boolean;
   partMotionRef?: MutableRefObject<SelectPartMotion | undefined>;
-  glossOnPointerDown?: () => void;
 }) {
-  const config = useMotionConfig();
   const scope = useSelectMotionScope();
   const openingRef = useOpeningRef();
-
+ 
   return useCallback(
     (opts: { setOpen: (open: boolean) => void; onOpened?: () => void }) => {
       runOpenAfterSqueeze({
@@ -162,20 +117,14 @@ export function useSelectOpenAfterSqueeze({
           playSelectOpenSqueeze({
             scope,
             el,
-            isGloss,
             partMotion: partMotionRef?.current,
-            glossOnPointerDown,
-            userPressIn:
-              partMotionRef?.current?.pressIn ??
-              scope.getRootMotion()?.triggerGroup?.pressIn,
-            config,
           }),
       });
     },
-    [config, disabled, glossOnPointerDown, isGloss, openingRef, partMotionRef, scope, triggerRef],
+    [disabled, openingRef, partMotionRef, scope, triggerRef],
   );
 }
-
+ 
 export function useSelectShellAnimations({
   shellRef,
   disabled,
@@ -186,62 +135,57 @@ export function useSelectShellAnimations({
 }: UseSelectShellAnimationsProps) {
   const scope = useSelectMotionScope();
   const shellMotionRef = useRef(motion);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   shellMotionRef.current = motion;
-  const isGloss = variant === "gloss";
+  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const shellActive = !disabled && groupSegment == null;
+
+  useOptionalEnterOnMount(scope, "triggerGroup", shellRef);
 
   const standardShellHover = useSecondLevelShadow(
     shellRef,
-    !disabled && !isGloss && groupSegment == null,
+    shellActive && kitSurface,
     {
       interactive: false,
       pointerInsideRef,
     },
   );
-  const glossShellMotion = useGlossFieldShellMotion(
-    shellRef,
-    !disabled && isGloss && groupSegment == null,
-  );
 
   const squeezeThenOpen = useSelectOpenAfterSqueeze({
     triggerRef: shellRef,
     disabled,
-    isGloss,
     partMotionRef: shellMotionRef,
-    glossOnPointerDown: glossShellMotion.onShellPointerDown,
   });
 
   const bindShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       shellRef.current = node;
       scope.registerTarget("triggerGroup", node);
-      if (!disabled && isGloss && groupSegment == null) {
-        glossShellMotion.bindShellRef(node);
-      }
     },
-    [disabled, glossShellMotion, groupSegment, isGloss, scope, shellRef],
+    [scope, shellRef],
   );
 
   const playShell = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
-      if (disabled || isGloss) return;
+      if (!shellActive) return;
       const el = shellRef.current;
       if (!el) return;
       const value = scope.resolve("triggerGroup", phase, shellMotionRef.current);
-      if (value === undefined) return;
+      if (value === undefined || value === false) return;
       scope.play("triggerGroup", phase, { partMotion: shellMotionRef.current, el });
     },
-    [disabled, isGloss, scope, shellRef],
+    [scope, shellActive, shellRef],
   );
 
   const motionPointer = useMotionPointerPhases<HTMLDivElement>({
-    enabled: !disabled && !isGloss && groupSegment == null,
+    enabled: shellActive,
     targetRef: shellRef,
     pointerInsideRef,
     skipHover: shouldSkipInteractiveHoverLift,
     onHoverIn: () => playShell("hoverIn"),
     onHoverOut: () => playShell("hoverOut"),
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -252,37 +196,20 @@ export function useSelectShellAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver],
   );
-
-  const handlePointerEnter =
-    isGloss && groupSegment == null
-      ? glossShellMotion.onShellPointerEnter
-      : hoverHandlers.onPointerOver;
-  const handlePointerLeave =
-    isGloss && groupSegment == null
-      ? glossShellMotion.onShellPointerLeave
-      : hoverHandlers.onPointerOut;
-
+ 
   return {
-    isGloss,
     bindShellRef,
     squeezeThenOpen,
     playShell,
     shellPointerUp: () => playShell("pressOut"),
-    shellPointerEnter: handlePointerEnter,
-    shellPointerLeave: handlePointerLeave,
-    shellFocusCapture:
-      isGloss && !disabled ? glossShellMotion.onShellFocusIn : undefined,
-    shellBlurCapture:
-      isGloss && !disabled ? glossShellMotion.onShellFocusOut : undefined,
-    shellHoverMotionClass: isGloss
-      ? glossShellMotion.shellHoverMotionClass
-      : standardShellHover.motionClass,
-    glossDisabledAttr: disabled && isGloss ? { "data-gloss-disabled": "" } : {},
+    shellPointerEnter: hoverHandlers.onPointerOver,
+    shellPointerLeave: hoverHandlers.onPointerOut,
+    shellHoverMotionClass: kitSurface ? standardShellHover.motionClass : "",
   };
 }
-
+ 
 export type SelectChromeSlot = "label" | "hint" | "error";
-
+ 
 export function useSelectChromeSlot(
   slot: SelectChromeSlot,
   {
@@ -318,3 +245,4 @@ export function useSelectChromeSlot(
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
+ 

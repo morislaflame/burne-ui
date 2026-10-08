@@ -6,17 +6,17 @@ import {
   type MotionRecipe,
   type MotionRecipeMetadata,
 } from "./slotMotionTypes";
-
+ 
 const KIT_RECIPE_SET = new Set<string>(KIT_MOTION_RECIPES);
-
+ 
 type RecipeEntry = {
   recipe: MotionRecipe;
   meta: MotionRecipeMetadata;
 };
-
+ 
 const kitRecipes = new Map<string, RecipeEntry>();
 const appRecipes = new Map<string, RecipeEntry>();
-
+ 
 export type RegisterMotionRecipeOptions = {
   /**
    * Replace a kit recipe (`hoverLiftSecondLevel`, …).
@@ -24,11 +24,11 @@ export type RegisterMotionRecipeOptions = {
    */
   override?: boolean;
 } & Partial<MotionRecipeMetadata>;
-
+ 
 export function isKitMotionRecipe(name: string): name is KitRecipeName {
   return KIT_RECIPE_SET.has(name);
 }
-
+ 
 function omitOverride(
   options?: RegisterMotionRecipeOptions,
 ): Partial<MotionRecipeMetadata> {
@@ -36,7 +36,7 @@ function omitOverride(
   const { override: _override, ...meta } = options;
   return meta;
 }
-
+ 
 function mergeRecipeMeta(
   base: MotionRecipeMetadata,
   overlay?: Partial<MotionRecipeMetadata>,
@@ -44,7 +44,7 @@ function mergeRecipeMeta(
   if (!overlay) return base;
   return { ...base, ...overlay };
 }
-
+ 
 /**
  * Write the kit layer only. Does not touch app overrides, so a later
  * `registerKitMotionRecipes()` (HMR / re-import) cannot wipe `{ override: true }`.
@@ -53,7 +53,7 @@ function mergeRecipeMeta(
 export function registerKitMotionRecipe(name: KitRecipeName, recipe: MotionRecipe): void {
   kitRecipes.set(name, { recipe, meta: KIT_MOTION_RECIPE_META[name] });
 }
-
+ 
 /**
  * Register an app recipe. Custom names always write.
  * Kit names no-op in dev with a warning unless `{ override: true }`.
@@ -84,37 +84,38 @@ export function registerMotionRecipe(
     meta: mergeRecipeMeta(base, omitOverride(options)),
   });
 }
-
+ 
 /** Remove an app entry. Kit names fall back to the kit default. */
 export function unregisterMotionRecipe(name: string): boolean {
   return appRecipes.delete(name);
 }
-
+ 
 function getEntry(name: string): RecipeEntry | undefined {
   return appRecipes.get(name) ?? kitRecipes.get(name);
 }
-
+ 
 export function getMotionRecipe(name: string): MotionRecipe | undefined {
   return getEntry(name)?.recipe;
 }
-
+ 
 /** Live passport (app overlay wins, then kit, then nothing). */
 export function getMotionRecipeMetadata(name: string): MotionRecipeMetadata | undefined {
   return getEntry(name)?.meta;
 }
-
+ 
 export function hasMotionRecipe(name: string): boolean {
   return getMotionRecipe(name) !== undefined;
 }
-
+ 
 /** Kit names plus any app custom / override names, sorted. */
 export function listMotionRecipes(): string[] {
   const names = new Set<string>(kitRecipes.keys());
   for (const name of appRecipes.keys()) names.add(name);
   return [...names].sort();
 }
-
+ 
 /** Test helper — clears app overrides/custom names, not kit defaults. */
 export function clearMotionRecipesForTests(): void {
   appRecipes.clear();
 }
+ 

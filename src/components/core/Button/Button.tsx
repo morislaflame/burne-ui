@@ -11,12 +11,11 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-
+ 
 import { Ripple } from "@/components/core/Ripple";
+import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-
-import "../utils/glossInteractive.css";
-
+ 
 import { resolveButtonMotionDefaults, useButtonAnimations } from "./buttonAnimations";
 import { buttonHasCompoundPart } from "./buttonAPI";
 import {
@@ -27,10 +26,13 @@ import {
 import { ButtonContent, ButtonLabel } from "./buttonParts";
 import { ButtonSimpleContent } from "./buttonSimpleContent";
 import type { ButtonMotion, ButtonProps } from "./buttonTypes";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision } from "@/skins/skinContext";
+import { hasKitMember } from "@/skins/resolveVariantVisual";
+import { KIT_BUTTON_VARIANTS } from "./buttonTypes";
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
 import { cn } from "@/utils/cn";
 import { useButtonRootState } from "./useButtonRootState";
-
+ 
 export type {
   ButtonProps,
   ButtonSize,
@@ -47,7 +49,7 @@ export type {
   ButtonSuccessProps,
   ButtonErrorProps,
 } from "./buttonTypes";
-
+ 
 export {
   ButtonContent,
   ButtonLabel,
@@ -57,7 +59,7 @@ export {
   ButtonSuccess,
   ButtonError,
 } from "./buttonParts";
-
+ 
 function resolveButtonInner({
   children,
   isCompound,
@@ -79,7 +81,7 @@ function resolveButtonInner({
     if (hasCompoundContent) return children;
     return <ButtonContent>{children}</ButtonContent>;
   }
-
+ 
   return (
     <ButtonContent>
       <ButtonLabel className={cn(classNames?.label, labelLayoutClass)}>
@@ -90,7 +92,7 @@ function resolveButtonInner({
     </ButtonContent>
   );
 }
-
+ 
 type ButtonSurfaceProps = {
   state: ReturnType<typeof useButtonRootState>;
   motion?: ButtonMotion;
@@ -107,8 +109,9 @@ type ButtonSurfaceProps = {
   onKeyDown?: ButtonProps["onKeyDown"];
   onMouseDown?: ButtonProps["onMouseDown"];
   rest: HTMLAttributes<HTMLButtonElement>;
+  motionState?: ButtonProps["motionState"];
 };
-
+ 
 function ButtonSurface({
     state,
     motion,
@@ -125,6 +128,7 @@ function ButtonSurface({
     onKeyDown,
     onMouseDown,
     rest,
+    motionState,
   }: ButtonSurfaceProps) {
     const animations = useButtonAnimations({
       variant: state.variant,
@@ -141,7 +145,7 @@ function ButtonSurface({
       onPointerUp,
       onKeyDown,
     });
-
+ 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
       if (state.blocked) {
         event.preventDefault();
@@ -149,7 +153,7 @@ function ButtonSurface({
       }
       state.onClick?.(event);
     };
-
+ 
     const contextValue = {
       size: state.size,
       variant: state.variant,
@@ -158,12 +162,12 @@ function ButtonSurface({
       loaderTextClass: state.loaderTextClass,
       contentMotionRef: animations.contentMotionRef,
     };
-
+ 
     const hasCompoundContent = useMemo(
       () => buttonHasCompoundPart(contentChildren, "ButtonContent"),
       [contentChildren],
     );
-
+ 
     const inner = (
       <>
         {state.ripple ? (
@@ -184,7 +188,7 @@ function ButtonSurface({
         })}
       </>
     );
-
+ 
     return (
       <ButtonContextProvider value={contextValue}>
         {asChildElement ? (
@@ -194,7 +198,9 @@ function ButtonSurface({
               asChildElement,
               {
                 ...rest,
+                style: mergeSkinSurfaceStyle(state.surfaceStyle, rest.style),
                 className: state.buttonClass,
+                "data-group-segment": dataGroupSegment(state.groupSegment != null),
                 "aria-disabled": state.blocked || undefined,
                 tabIndex: state.blocked
                   ? -1
@@ -215,6 +221,11 @@ function ButtonSurface({
                   handleClick(event as MouseEvent<HTMLButtonElement>);
                 },
                 children: inner,
+                ...dataVariantProps({
+                  size: state.size,
+                  variant: state.variant,
+                  status: state.status,
+                }),
               },
               animations.setRefs,
             ),
@@ -223,6 +234,7 @@ function ButtonSurface({
           <button
             ref={animations.setRefs}
             {...rest}
+            style={mergeSkinSurfaceStyle(state.surfaceStyle, rest.style)}
             type={state.type}
             disabled={state.blocked}
             className={state.buttonClass}
@@ -235,6 +247,19 @@ function ButtonSurface({
             onKeyDown={animations.handleKeyDown}
             onMouseDown={onMouseDown}
             onClick={handleClick}
+            {...dataVariantProps({
+              size: state.size,
+              variant: state.variant,
+              status: state.status,
+            })}
+            data-group-segment={dataGroupSegment(state.groupSegment != null)}
+            data-disabled={state.blocked ? "" : undefined}
+            data-state={
+              motionState === "loading" || motionState === "success" || motionState === "error"
+                ? motionState
+                : (rest as { "data-state"?: string })["data-state"]
+            }
+            aria-busy={motionState === "loading" ? true : undefined}
           >
             {inner}
           </button>
@@ -242,8 +267,8 @@ function ButtonSurface({
       </ButtonContextProvider>
     );
   };
-
-
+ 
+ 
 export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     className,
@@ -285,7 +310,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
   const contentChildren = asChildElement
     ? asChildElement.props.children
     : children;
-
+ 
   const state = useButtonRootState({
     className,
     classNames,
@@ -302,22 +327,25 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     children: contentChildren,
     onClick,
   });
-
+ 
   const hoverPointerInsideRef = useRef(false);
+  const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(
-    () => resolveButtonMotionDefaults({ variant: state.variant }),
-    [state.variant],
+    () => {
+      void skinRevision;
+      return resolveButtonMotionDefaults({ variant: state.variant });
+    },
+    [skinRevision, state.variant],
   );
   const motionParams = useMemo(
     () => ({
       pointerInside: hoverPointerInsideRef,
       hasHoverShadow:
-        BUTTON_VARIANT_HAS_HOVER_SHADOW.has(state.variant) && !state.groupSegment,
-      isGloss: state.variant === "gloss",
+        hasKitMember(state.variant, KIT_BUTTON_VARIANTS, BUTTON_VARIANT_HAS_HOVER_SHADOW) && !state.groupSegment,
     }),
     [state.groupSegment, state.variant],
   );
-
+ 
   return (
     <ButtonClassNamesProvider classNames={state.classNames}>
       <ButtonMotionProvider
@@ -345,10 +373,12 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
           onKeyDown={onKeyDown}
           onMouseDown={onMouseDown}
           rest={rest}
+          motionState={motionState}
         />
       </ButtonMotionProvider>
     </ButtonClassNamesProvider>
   );
 });
-
+ 
 ButtonRoot.displayName = "ButtonRoot";
+ 

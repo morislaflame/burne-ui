@@ -3,3 +3,4 @@ export function separatorAriaOrientation(
 ): "vertical" | undefined {
   return orientation === "vertical" ? "vertical" : undefined;
 }
+ 

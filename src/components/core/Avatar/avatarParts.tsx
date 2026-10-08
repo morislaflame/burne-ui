@@ -7,11 +7,12 @@ import {
   useRef,
   type ReactElement,
 } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 import { letterFromLabel } from "./avatarAPI";
 import { AVATAR_FALLBACK_ARIA_HIDDEN, avatarGroupRole } from "./avatarA11y";
 import {
@@ -29,13 +30,11 @@ import {
 } from "./avatarContext";
 import {
   AVATAR_FALLBACK_TEXT,
-  AVATAR_GLOSS_SHADOW_CLASS,
   avatarFallbackClass,
   avatarGroupClass,
   avatarGroupItemClass,
   avatarImageClass,
   avatarRootClass,
-  avatarGlossWrapClass,
   AVATAR_GROUP_ITEM_TRANSFORM_ORIGIN,
 } from "./avatarStyles";
 import type {
@@ -46,7 +45,7 @@ import type {
   AvatarShellProps,
   AvatarSimpleContentProps,
 } from "./avatarTypes";
-
+ 
 export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
   function AvatarImage({ className = "", motion, onLoad, onError, ...rest }, ref) {
     const { imageStatus, onImageLoad, onImageError } = useAvatarContext("Avatar.Image");
@@ -59,7 +58,7 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     const bindRef = useCallback(
       (node: HTMLImageElement | null) => {
         imgRef.current = node;
@@ -67,7 +66,7 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       },
       [setRef],
     );
-
+ 
     const mergedOnLoad = useCallback(
       (e: React.SyntheticEvent<HTMLImageElement>) => {
         onLoad?.(e);
@@ -75,7 +74,7 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       },
       [onLoad, onImageLoad],
     );
-
+ 
     const mergedOnError = useCallback(
       (e: React.SyntheticEvent<HTMLImageElement>) => {
         onError?.(e);
@@ -83,10 +82,10 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       },
       [onError, onImageError],
     );
-
+ 
     const visible = imageStatus === "loaded";
     useAvatarImageMotion(scope, visible, imgRef);
-
+ 
     return (
       <img
         ref={bindRef}
@@ -99,9 +98,9 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
     );
   },
 );
-
+ 
 AvatarImage.displayName = "AvatarImage";
-
+ 
 export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
   function AvatarFallback({ className = "", children, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { label, imageStatus, size } = useAvatarContext("Avatar.Fallback");
@@ -115,16 +114,16 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     const show = imageStatus !== "loaded";
-
+ 
     const hasCustomChild =
       children !== undefined && children !== null && children !== false && children !== "";
-
+ 
     const text = hasCustomChild ? children : letterFromLabel(label);
-
+ 
     const fb = AVATAR_FALLBACK_TEXT[size];
-
+ 
     return (
       <span
         ref={setRef}
@@ -140,9 +139,9 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
     );
   },
 );
-
+ 
 AvatarFallback.displayName = "AvatarFallback";
-
+ 
 export function AvatarSimpleContent({ src, alt = "", loading }: AvatarSimpleContentProps) {
   return (
     <>
@@ -151,12 +150,12 @@ export function AvatarSimpleContent({ src, alt = "", loading }: AvatarSimpleCont
     </>
   );
 }
-
+ 
 export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
   function AvatarGroup({ className = "", classNames, children, motion, ...rest }, ref) {
     const slotClassNames = useAvatarClassNames();
     const mapped = Children.toArray(children).filter(isValidElement) as ReactElement[];
-
+ 
     return (
       <AvatarClassNamesProvider classNames={classNames}>
         <AvatarGroupMotionProvider motion={motion}>
@@ -177,23 +176,23 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     );
   },
 );
-
+ 
 AvatarGroup.displayName = "AvatarGroup";
-
+ 
 function AvatarGroupItem({
   stackIndex,
   children,
 }: AvatarGroupItemProps) {
   const groupMotion = useAvatarGroupMotion();
   const defaults = useMemo(() => resolveAvatarGroupItemMotionDefaults(), []);
-
+ 
   return (
     <AvatarMotionProvider motion={groupMotion} defaults={defaults}>
       <AvatarGroupItemSurface stackIndex={stackIndex}>{children}</AvatarGroupItemSurface>
     </AvatarMotionProvider>
   );
 }
-
+ 
 function AvatarGroupItemSurface({
   stackIndex,
   children,
@@ -204,7 +203,7 @@ function AvatarGroupItemSurface({
     slot: "groupItem",
     pointerPhases: true,
   });
-
+ 
   return (
     <div
       ref={setRef}
@@ -216,9 +215,9 @@ function AvatarGroupItemSurface({
     </div>
   );
 }
-
+ 
 export const AvatarDefaultShell = forwardRef<HTMLDivElement, AvatarShellProps>(
-  function AvatarDefaultShell({ size, className, role, children, onPointerOver, onPointerOut, ...rest }, ref) {
+  function AvatarDefaultShell({ size, variant, className, role, children, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useAvatarClassNames();
     const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
       scope: useOptionalAvatarMotionScope(),
@@ -232,9 +231,10 @@ export const AvatarDefaultShell = forwardRef<HTMLDivElement, AvatarShellProps>(
       <div
         ref={setRef}
         role={role}
-        className={avatarRootClass(size, false, cn(slotClassNames.root, className))}
+        className={avatarRootClass(size, variant, cn(slotClassNames.root, className))}
         {...rest}
         {...pointerHandlers}
+        {...dataVariantProps({ size, variant })}
       >
         {children}
       </div>
@@ -243,38 +243,3 @@ export const AvatarDefaultShell = forwardRef<HTMLDivElement, AvatarShellProps>(
 );
 
 AvatarDefaultShell.displayName = "AvatarDefaultShell";
-
-export const AvatarGlossShell = forwardRef<HTMLDivElement, AvatarShellProps>(
-  function AvatarGlossShell({ size, className, role, children, onPointerOver, onPointerOut, ...rest }, ref) {
-    const slotClassNames = useAvatarClassNames();
-    const { "aria-label": ariaLabel, ...outerRest } = rest;
-    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
-      scope: useOptionalAvatarMotionScope(),
-      slot: "root",
-      forwardedRef: ref,
-      pointerPhases: true,
-      onPointerOver,
-      onPointerOut,
-    });
-
-    return (
-      <div
-        ref={setRef}
-        className={avatarGlossWrapClass(size, slotClassNames.glossWrap)}
-        {...outerRest}
-        {...pointerHandlers}
-      >
-        <div className={AVATAR_GLOSS_SHADOW_CLASS} aria-hidden />
-        <div
-          role={role}
-          className={avatarRootClass(size, true, cn(slotClassNames.root, className))}
-          aria-label={ariaLabel}
-        >
-          {children}
-        </div>
-      </div>
-    );
-  },
-);
-
-AvatarGlossShell.displayName = "AvatarGlossShell";

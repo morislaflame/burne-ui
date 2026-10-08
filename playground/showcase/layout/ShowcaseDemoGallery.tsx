@@ -79,7 +79,7 @@ export function ShowcaseDemoGallery({
         aria-label={ariaLabel}
         tabIndex={0}
         onKeyDown={onChromeKeyDown}
-        className="flex flex-col gap-small rounded-mid focus-ring"
+        className="flex flex-col gap-small rounded-large focus-ring"
       >
         <div className="flex items-center gap-small">
           <Button

@@ -1,5 +1,5 @@
-import { TableBody, TableCell, TableColumn, TableContent, TableEmpty, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRoot, TableRow, TableScrollContainer } from "./Table";
-
+import { TableBody, TableCaption, TableCell, TableColumn, TableContent, TableEmpty, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRoot, TableRow, TableScrollContainer } from "./Table";
+ 
 export const Table = Object.assign(TableRoot, {
   ScrollContainer: TableScrollContainer,
   Content: TableContent,
@@ -7,15 +7,16 @@ export const Table = Object.assign(TableRoot, {
   HeaderRow: TableHeaderRow,
   Column: TableColumn,
   Label: TableLabel,
+  Caption: TableCaption,
   Body: TableBody,
   Empty: TableEmpty,
   Row: TableRow,
   Cell: TableCell,
   Footer: TableFooter,
 });
-
+ 
 export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
-
+ 
 export type {
   TableProps,
   TableVariant,
@@ -27,6 +28,7 @@ export type {
   TableColumnProps,
   TableColumnRenderProps,
   TableColumnSortIconRenderProps,
+  TableCaptionProps,
   TableLabelProps,
   TableBodyProps,
   TableEmptyProps,
@@ -41,3 +43,4 @@ export type {
   TableMotion,
   TablePartMotion,
 } from "./tableTypes";
+ 

@@ -1,9 +1,11 @@
 import { SEMANTIC_STATUS_TEXT } from "@/components/core/utils/semanticStatusSurface";
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-import type { AlertStatus, AlertVariant } from "./alertTypes";
+import type { AlertStatus, AlertVariant, KitAlertVariant } from "./alertTypes";
+import { KIT_ALERT_VARIANTS } from "./alertTypes";
 
-export const ALERT_VARIANT_SURFACE: Record<Exclude<AlertVariant, "gloss">, string> = {
+export const ALERT_VARIANT_SURFACE: Record<KitAlertVariant, string> = {
   default: "bg-surface border-token text-foreground",
   outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
@@ -11,11 +13,9 @@ export const ALERT_VARIANT_SURFACE: Record<Exclude<AlertVariant, "gloss">, strin
 
 /** Panel surface follows variant only; status colors the indicator (and AlertDialog mirrors this). */
 export function alertSurfaceClass(variant: AlertVariant, _status: AlertStatus = "default"): string {
-  if (variant === "gloss") {
-    return "gloss-panel border-0 text-foreground";
-  }
-
-  return ALERT_VARIANT_SURFACE[variant];
+  const visual = resolveVariantVisual(variant, KIT_ALERT_VARIANTS, "alert.root");
+  if (visual.className !== undefined) return visual.className;
+  return ALERT_VARIANT_SURFACE[visual.key];
 }
 
 export function alertIndicatorWrapperTextClass(status: AlertStatus): string {
@@ -42,4 +42,3 @@ export function alertTitleClass(status: AlertStatus): string {
 }
 
 export const ALERT_DESCRIPTION_CLASS = "text-muted";
-

@@ -1,3 +1,25 @@
 {
-  "entrypoints": ["src/index.ts", "playground/main.tsx"]
+  "$schema": "https://react.doctor/schema/config.json",
+  "entrypoints": ["src/index.ts", "playground/main.tsx"],
+  "ignore": {
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.ts",
+          "**/*.stories.tsx",
+          "src/stories-utils/**",
+          "playground/**"
+        ],
+        "rules": [
+          "react-doctor/no-array-index-as-key",
+          "react-doctor/no-loading-flag-reset-outside-finally",
+          "react-doctor/no-ref-current-in-render",
+          "react-doctor/exhaustive-deps",
+          "react-doctor/no-adjust-state-on-prop-change",
+          "react-doctor/no-derived-state",
+          "react-doctor/no-derived-state-effect"
+        ]
+      }
+    ]
+  }
 }

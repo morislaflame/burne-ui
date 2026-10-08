@@ -1,27 +1,27 @@
 import { forwardRef, useCallback } from "react";
-
+ 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
-
+ 
 import { SELECTION_INDICATOR_FILL_DISPLAY_NAME, SELECTION_INDICATOR_MARK_DISPLAY_NAME } from "./selectionIndicatorAPI";
 import { selectionIndicatorDecorativeProps } from "./selectionIndicatorA11y";
 import { useOptionalSelectionIndicatorMotionScope, useSelectionIndicatorContext } from "./selectionIndicatorContext";
 import type { SelectionIndicatorFillProps, SelectionIndicatorMarkProps } from "./selectionIndicatorTypes";
-
+ 
 function initFillNode(node: HTMLSpanElement) {
   if (node.dataset.motionInit === "1") return;
   node.dataset.motionInit = "1";
   node.style.transform = "scale(0)";
   node.style.opacity = "0";
 }
-
+ 
 function initMarkNode(node: HTMLSpanElement) {
   if (node.dataset.motionInit === "1") return;
   node.dataset.motionInit = "1";
   node.style.opacity = "0";
 }
-
+ 
 export const SelectionIndicatorFill = forwardRef<HTMLSpanElement, SelectionIndicatorFillProps>(
   function SelectionIndicatorFill({ className, style, motion, ...rest }, forwardedRef) {
     const ctx = useSelectionIndicatorContext();
@@ -39,7 +39,7 @@ export const SelectionIndicatorFill = forwardRef<HTMLSpanElement, SelectionIndic
       motion,
       forwardedRef: bindFillRef,
     });
-
+ 
     return (
       <span
         ref={setRef}
@@ -47,13 +47,15 @@ export const SelectionIndicatorFill = forwardRef<HTMLSpanElement, SelectionIndic
         className={cn(ctx.fillClassName, className)}
         style={style}
         {...rest}
+        data-selection-fill=""
+        data-pressed={ctx.selected ? "true" : "false"}
       />
     );
   },
 );
-
+ 
 SelectionIndicatorFill.displayName = SELECTION_INDICATOR_FILL_DISPLAY_NAME;
-
+ 
 export const SelectionIndicatorMark = forwardRef<HTMLSpanElement, SelectionIndicatorMarkProps>(
   function SelectionIndicatorMark({ className, children, style, motion, ...rest }, forwardedRef) {
     const ctx = useSelectionIndicatorContext();
@@ -72,9 +74,9 @@ export const SelectionIndicatorMark = forwardRef<HTMLSpanElement, SelectionIndic
       motion,
       forwardedRef: bindMarkRef,
     });
-
+ 
     if (content == null) return null;
-
+ 
     return (
       <span
         ref={setRef}
@@ -82,11 +84,13 @@ export const SelectionIndicatorMark = forwardRef<HTMLSpanElement, SelectionIndic
         className={cn(ctx.markClassName, className)}
         style={style}
         {...rest}
+        data-selection-mark=""
       >
         {content}
       </span>
     );
   },
 );
-
+ 
 SelectionIndicatorMark.displayName = SELECTION_INDICATOR_MARK_DISPLAY_NAME;
+ 

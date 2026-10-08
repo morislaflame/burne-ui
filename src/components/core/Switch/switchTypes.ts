@@ -8,17 +8,21 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import type { SwitchSize } from "./switchGeometry";
-
+ 
 export type { SwitchSize };
 
+export const KIT_SWITCH_VARIANTS = ["default"] as const;
+export type KitSwitchVariant = (typeof KIT_SWITCH_VARIANTS)[number];
+export type SwitchVariant = KitSwitchVariant | (string & {});
+ 
 export type SwitchLabelPosition = "left" | "right";
-
+ 
 export type SwitchClassNames = {
   root?: string;
   control?: string;
@@ -27,7 +31,10 @@ export type SwitchClassNames = {
   fill?: string;
   thumb?: string;
   thumbShell?: string;
-  icon?: string;
+  /** Glyph inside the thumb when the switch is off. */
+  iconOff?: string;
+  /** Glyph inside the thumb when the switch is on. */
+  iconOn?: string;
   content?: string;
   label?: string;
   labelText?: string;
@@ -36,7 +43,7 @@ export type SwitchClassNames = {
   simpleLabelWrap?: string;
   simpleLabelText?: string;
 };
-
+ 
 export type SwitchCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
@@ -47,7 +54,7 @@ export type SwitchCheckMotion = {
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 export type SwitchMotion = {
   fill?: SwitchCheckMotion;
   thumb?: SwitchCheckMotion;
@@ -58,11 +65,13 @@ export type SwitchMotion = {
   hint?: SwitchCheckMotion;
   error?: SwitchCheckMotion;
 };
-
+ 
 export type SwitchFieldContextValue = {
   switchId: string;
+  labelId: string;
   hintId: string;
   errorId: string;
+  labelConnected: boolean;
   size: SwitchSize;
   labelPosition: SwitchLabelPosition;
   disabled?: boolean;
@@ -72,6 +81,7 @@ export type SwitchFieldContextValue = {
   hasTextColumn: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
+  isInvalid: boolean;
   useInlineCompoundMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
   setSqueezeToken: (fn: (t: number) => number) => void;
@@ -79,20 +89,20 @@ export type SwitchFieldContextValue = {
   mergedChecked: boolean | null;
   setMergedChecked: (next: boolean) => void;
 };
-
+ 
 export type SwitchTrackContextValue = {
   checked: boolean;
   disabled?: boolean;
   size: SwitchSize;
   color?: string;
-  gloss?: boolean;
+  variant: SwitchVariant;
   trackFillRef: RefObject<HTMLSpanElement | null>;
   thumbRef: RefObject<HTMLSpanElement | null>;
   thumbShellRef: RefObject<HTMLSpanElement | null>;
   iconOffRef: RefObject<HTMLSpanElement | null>;
   iconOnRef: RefObject<HTMLSpanElement | null>;
 };
-
+ 
 export type SwitchControlProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange"
@@ -103,12 +113,12 @@ export type SwitchControlProps = Omit<
     iconOff?: ReactNode;
     iconOn?: ReactNode;
     color?: string;
-    gloss?: boolean;
+    variant?: SwitchVariant;
     className?: string;
     classNames?: Prettify<
       Pick<
         SwitchClassNames,
-        "control" | "input" | "track" | "fill" | "thumb" | "thumbShell" | "icon"
+        "control" | "input" | "track" | "fill" | "thumb" | "thumbShell" | "iconOff" | "iconOn"
       >
     >;
     children?: ReactNode;
@@ -118,7 +128,7 @@ export type SwitchControlProps = Omit<
      */
     motionController?: MotionController;
   } & MotionStateHostProps;
-
+ 
 export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   size: SwitchSize;
   thickness?: number | string;
@@ -128,9 +138,9 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   squeezeToken?: number;
   iconOff?: ReactNode;
   iconOn?: ReactNode;
-  gloss?: boolean;
+  variant?: SwitchVariant;
   classNames?: Prettify<
-    Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "icon">
+    Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "iconOff" | "iconOn">
   >;
   motion?: Prettify<MotionMapWithEvents<SwitchMotion>>;
   /**
@@ -140,24 +150,24 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SwitchFillProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<SwitchCheckMotion>;
 };
-
+ 
 export type SwitchThumbProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<SwitchCheckMotion>;
 };
-
+ 
 export type SwitchIconWhen = "off" | "on";
-
+ 
 export type SwitchIconProps = HTMLAttributes<HTMLSpanElement> & {
   when: SwitchIconWhen;
   children?: ReactNode;
   motion?: Prettify<SwitchCheckMotion>;
 };
-
+ 
 export type SwitchProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
@@ -166,6 +176,8 @@ export type SwitchProps = Omit<
   label?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** `aria-invalid`, `data-invalid`, and a danger label. `error` does the same and shows the message. */
+  invalid?: boolean;
   labelPosition?: SwitchLabelPosition;
   size?: SwitchSize;
   disabled?: boolean;
@@ -187,44 +199,45 @@ export type SwitchProps = Omit<
   motionController?: MotionController;
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
 } & MotionStateHostProps;
-
+ 
 export type SwitchSimpleProps = SwitchProps & SwitchControlProps;
-
+ 
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type SwitchContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
-
+ 
 export type SwitchLabelProps = Omit<LabelProps, "htmlFor" | "motion"> & {
   motion?: Prettify<SwitchCheckMotion>;
 };
-
+ 
 export type SwitchHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
   motion?: Prettify<SwitchCheckMotion>;
 };
-
+ 
 export type SwitchErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
   motion?: Prettify<SwitchCheckMotion>;
 };
-
+ 
 export type SwitchClassNamesProviderProps = {
   classNames?: Prettify<SwitchClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseSwitchRootStateProps = Omit<
   SwitchProps,
   "className" | "classNames" | "onPointerDown" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 > &
   Partial<Omit<SwitchControlProps, "motionController">>;
-
+ 
 export type UseSwitchAnimationsProps = {
   isDisabled?: boolean;
   enableTextMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
-  onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
-  onKeyDown?: (e: KeyboardEvent<HTMLLabelElement>) => void;
+  onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLElement>) => void;
 };
-
+ 
 export type UseSwitchTrackAnimationsProps = {
   checked: boolean;
   disabled?: boolean;
@@ -239,3 +252,4 @@ export type UseSwitchTrackAnimationsProps = {
   iconOffRef: RefObject<HTMLSpanElement | null>;
   iconOnRef: RefObject<HTMLSpanElement | null>;
 };
+ 

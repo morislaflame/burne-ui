@@ -11,7 +11,7 @@ export function CheckboxConsentCardDemo() {
   return (
     <label
       htmlFor={inputId}
-      className="block w-full max-w-sm cursor-pointer rounded-mid border-token bg-secondary p-large"
+      className="block w-full max-w-sm cursor-pointer rounded-large border-token bg-secondary p-large"
     >
       <Checkbox
         id={inputId}

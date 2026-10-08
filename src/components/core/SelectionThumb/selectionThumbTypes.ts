@@ -2,7 +2,11 @@ import type { HTMLAttributes, ReactNode, Ref, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 
-import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTokens";
+import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTypes";
+
+export const KIT_SELECTION_THUMB_VARIANTS = ["default"] as const;
+export type KitSelectionThumbVariant = (typeof KIT_SELECTION_THUMB_VARIANTS)[number];
+export type SelectionThumbVariant = KitSelectionThumbVariant | (string & {});
 
 export type SelectionThumbClassNames = {
   root?: string;
@@ -30,7 +34,7 @@ export type SelectionThumbMotion = {
 export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: SelectionIndicatorSize;
   shellRef?: RefObject<HTMLSpanElement | null>;
-  gloss?: boolean;
+  variant?: SelectionThumbVariant;
   children?: ReactNode;
   classNames?: Prettify<SelectionThumbClassNames>;
   /**
@@ -49,7 +53,7 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
 
 export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: SelectionIndicatorSize;
-  gloss?: boolean;
+  variant?: SelectionThumbVariant;
   iconRef?: Ref<HTMLSpanElement | null>;
   children?: ReactNode;
   classNames?: Prettify<SelectionThumbIconClassNames>;

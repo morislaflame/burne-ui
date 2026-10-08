@@ -4,10 +4,8 @@ import { TooltipPortalContainerDemo } from "../demos/tooltip/TooltipPortalContai
 import tooltipPortalContainerSource from "../demos/tooltip/TooltipPortalContainer.demo.tsx?raw";
 import { TooltipFormHintDemo } from "../demos/tooltip/TooltipFormHint.demo";
 import tooltipFormHintSource from "../demos/tooltip/TooltipFormHint.demo.tsx?raw";
-import { TooltipClassNamesFullDemo, TooltipClassNamesGlossDemo } from "../demos/tooltip/TooltipClassNamesFull.demo";
+import { TooltipClassNamesFullDemo } from "../demos/tooltip/TooltipClassNamesFull.demo";
 import tooltipClassNamesFullSource from "../demos/tooltip/TooltipClassNamesFull.demo.tsx?raw";
-import { TooltipGlossDemo } from "../demos/tooltip/TooltipGloss.demo";
-import tooltipGlossSource from "../demos/tooltip/TooltipGloss.demo.tsx?raw";
 import { TooltipIconToolbarDemo } from "../demos/tooltip/TooltipIconToolbar.demo";
 import tooltipIconToolbarSource from "../demos/tooltip/TooltipIconToolbar.demo.tsx?raw";
 import { TooltipShortcutGridDemo } from "../demos/tooltip/TooltipShortcutGrid.demo";
@@ -41,10 +39,6 @@ export function TooltipShowcase() {
         <ShowcaseDemoFromFile Demo={TooltipSizesDemo} source={tooltipSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description='variant="gloss" — glass tip with hover-lift.'>
-        <ShowcaseDemoFromFile Demo={TooltipGlossDemo} source={tooltipGlossSource} />
-      </ShowcaseSection>
-
       <ShowcaseSection title="Slot motion" description="One gallery: default recipe, instant leave, slide factory, panel slot, stagger + classNames.">
         <TooltipSlotMotionGalleryDemo />
       </ShowcaseSection>
@@ -76,10 +70,9 @@ export function TooltipShowcase() {
 
       <ShowcaseSection
         title="Customization classNames"
-        description="Slots root (trigger), trigger, content, arrow, panel, glossContent, indicator, title and description."
+        description="Slots root, trigger, content, arrow, panel, message, indicator, icon, title and description."
       >
         <ShowcaseDemoFromFile Demo={TooltipClassNamesFullDemo} source={tooltipClassNamesFullSource} />
-        <ShowcaseDemoFromFile Demo={TooltipClassNamesGlossDemo} source={tooltipClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -108,7 +101,7 @@ export function TooltipShowcase() {
             <code>large</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss='variant="gloss"' />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

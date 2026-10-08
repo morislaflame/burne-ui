@@ -1,5 +1,5 @@
 import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
-
+ 
 import { alertDefaultIndicatorIcon, alertShowsDefaultIndicatorIcon } from "@/components/core/Alert/alertAPI";
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import { Button, type ButtonProps, type ButtonSize, type ButtonStatus, type ButtonVariant } from "@/components/core/Button";
@@ -11,7 +11,7 @@ export function primaryButtonVariantForAlertTone(
   void status;
   return "primary";
 }
-
+ 
 /** Status of the primary action button in the modal footer in the window tone. */
 export function primaryButtonStatusForAlertTone(
   status: AlertStatus,
@@ -26,13 +26,13 @@ export function primaryButtonStatusForAlertTone(
       return "default";
   }
 }
-
+ 
 function walkAlertDialogHeaderChildren(
   node: ReactNode,
   match: (displayName: string | undefined) => boolean,
 ): boolean {
   let found = false;
-
+ 
   const walk = (current: ReactNode) => {
     if (found) return;
     for (const child of Children.toArray(current)) {
@@ -45,50 +45,50 @@ function walkAlertDialogHeaderChildren(
       walk((child.props as { children?: ReactNode }).children);
     }
   };
-
+ 
   walk(node);
   return found;
 }
-
+ 
 export function alertDialogHasTitle(children: ReactNode): boolean {
   return walkAlertDialogHeaderChildren(children, (name) => name === "AlertDialogTitle");
 }
-
+ 
 export function alertDialogHasDescription(children: ReactNode): boolean {
   return walkAlertDialogHeaderChildren(
     children,
     (name) => name === "AlertDialogDescription",
   );
 }
-
+ 
 export function alertDialogHasIndicator(children: ReactNode): boolean {
   return walkAlertDialogHeaderChildren(
     children,
     (name) => name === "AlertDialogIndicator",
   );
 }
-
+ 
 export function alertDialogHasClose(children: ReactNode): boolean {
   return walkAlertDialogHeaderChildren(
     children,
     (name) => name === "AlertDialogClose",
   );
 }
-
+ 
 export function alertDialogShowsDefaultHeaderIcon(
   variant: AlertVariant,
   status: AlertStatus,
 ): boolean {
   return alertShowsDefaultIndicatorIcon(variant, status);
 }
-
+ 
 export function alertDialogDefaultHeaderIcon(
   variant: AlertVariant,
   status: AlertStatus,
 ) {
   return alertDefaultIndicatorIcon(variant, status);
 }
-
+ 
 export function alertDialogShowsIndicator(
   variant: AlertVariant,
   status: AlertStatus,
@@ -103,7 +103,7 @@ export function alertDialogShowsIndicator(
     alertDialogDefaultHeaderIcon(variant, status) !== null
   );
 }
-
+ 
 export function resolveAlertDialogHeaderGridSlots(
   variant: AlertVariant,
   status: AlertStatus,
@@ -121,7 +121,7 @@ export function resolveAlertDialogHeaderGridSlots(
     hasClose: compoundHasClose || showClose,
   };
 }
-
+ 
 export function injectFooterButtonSize(
   children: ReactNode,
   buttonSize: ButtonSize,
@@ -145,3 +145,4 @@ export function injectFooterButtonSize(
     return child;
   });
 }
+ 

@@ -231,7 +231,7 @@ configureMotion({
   value={62}
   color="var(--color-info)"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     value: "text-info font-semibold",
     track: "bg-primary/10",
     fill: "opacity-95",

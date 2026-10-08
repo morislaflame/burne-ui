@@ -1,12 +1,12 @@
-import { forwardRef, type LabelHTMLAttributes, type Ref } from "react";
-
+import { forwardRef, useEffect, useRef, type LabelHTMLAttributes, type Ref } from "react";
+ 
 import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-
+ 
 import { checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
 import { resolveCheckboxIndicatorMotion, useCheckboxChromeSlot, useCheckboxControlTrackAnimation, useCheckboxLabelSlot } from "./checkboxAnimations";
 import { useCheckboxClassNames, useCheckboxFieldContext, useCheckboxMotion, useOptionalCheckboxMotionScope } from "./checkboxContext";
@@ -21,15 +21,21 @@ import type {
   CheckboxSize,
 } from "./checkboxTypes";
 import type { MotionController, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>(
   function CheckboxControl({ className, children, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const ctx = useCheckboxFieldContext();
     const slotClassNames = useCheckboxClassNames();
     const trackRef = useCheckboxControlTrackAnimation();
-
+    const indeterminateRef = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+      if (indeterminateRef.current) {
+        indeterminateRef.current.indeterminate = ctx.indeterminate;
+      }
+    }, [ctx.indeterminate]);
+ 
     return (
       <span
         ref={ref}
@@ -49,7 +55,8 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
           )}
         >
           <input
-            ref={ctx.inputProps.inputRef}
+            ref={mergeRefs(ctx.inputProps.inputRef, indeterminateRef)}
+            aria-checked={ctx.indeterminate ? "mixed" : undefined}
             id={ctx.inputId}
             type="checkbox"
             className={
@@ -73,7 +80,8 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
             readOnly={ctx.inputProps.readOnly}
             onBlur={ctx.inputProps.onBlur}
             onFocus={ctx.inputProps.onFocus}
-            aria-invalid={ctx.inputProps.ariaInvalid}
+            aria-invalid={ctx.inputProps.ariaInvalid ? true : undefined}
+            aria-required={ctx.inputProps.required || undefined}
             aria-describedby={joinFieldDescribedBy(
               ctx.hintConnected ? ctx.hintId : undefined,
               ctx.errorConnected ? ctx.errorId : undefined,
@@ -86,6 +94,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
                   defaultChecked: ctx.inputProps.defaultChecked,
                   onChange: ctx.onChange,
                 })}
+            data-invalid={ctx.inputProps.ariaInvalid ? "" : undefined}
           />
           {children ?? <CheckboxIndicator motionController={motionController}
                 motionState={motionState}
@@ -96,9 +105,9 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
     );
   },
 );
-
+ 
 CheckboxControl.displayName = "CheckboxControl";
-
+ 
 export function CheckboxIndicator({
   children,
   className,
@@ -121,12 +130,13 @@ export function CheckboxIndicator({
   const parentEvents = useOptionalCheckboxMotionScope()?.getEvents();
   const events = mapped?.events ?? parentEvents;
   const motion = events ? { ...mapped, events } : mapped;
-
+ 
   return (
     <SelectionIndicator
       variant={checkboxVariantToIndicator(ctx.variant)}
       size={sizeProp ?? ctx.size}
-      selected={ctx.mergedChecked}
+      selected={ctx.mergedChecked || ctx.indeterminate}
+      indeterminate={ctx.indeterminate}
       icon={ctx.icon ?? undefined}
       check
       classNames={resolveCheckboxIndicatorClassNames({
@@ -145,9 +155,9 @@ export function CheckboxIndicator({
     </SelectionIndicator>
   );
 }
-
+ 
 CheckboxIndicator.displayName = "CheckboxIndicator";
-
+ 
 export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
   function CheckboxContent({ className, children, ...rest }, ref) {
     const ctx = useCheckboxFieldContext();
@@ -158,10 +168,10 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
       slotClassNames.content,
       className,
     );
-
+ 
     const useNativeLabel =
       ctx.isCompound && !compoundContentHasExternalLabel(children);
-
+ 
     if (useNativeLabel) {
       return (
         <label
@@ -178,7 +188,7 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
         </label>
       );
     }
-
+ 
     return (
       <div ref={ref} className={contentClass} {...rest}>
         {children}
@@ -186,9 +196,9 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
     );
   },
 );
-
+ 
 CheckboxContent.displayName = "CheckboxContent";
-
+ 
 export function CheckboxLabel({
   children,
   className,
@@ -203,7 +213,7 @@ export function CheckboxLabel({
   const required = requiredProp ?? labelCtx?.required ?? false;
   const sz = CHECKBOX_SIZE_LAYOUT[field.size];
   const { setRef } = useCheckboxLabelSlot(motion);
-
+ 
   return (
     <span
       id={idProp}
@@ -250,9 +260,9 @@ export function CheckboxLabel({
     </span>
   );
 }
-
+ 
 CheckboxLabel.displayName = "CheckboxLabel";
-
+ 
 export function CheckboxHint({ children, className, variant, motion, ...rest }: CheckboxHintProps) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
@@ -275,9 +285,9 @@ export function CheckboxHint({ children, className, variant, motion, ...rest }: 
     </Field.Hint>
   );
 }
-
+ 
 CheckboxHint.displayName = "CheckboxHint";
-
+ 
 export function CheckboxError({ children, className, motion, ...rest }: CheckboxErrorProps) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
@@ -300,9 +310,9 @@ export function CheckboxError({ children, className, motion, ...rest }: Checkbox
     </Field.Error>
   );
 }
-
+ 
 CheckboxError.displayName = "CheckboxError";
-
+ 
 export function CheckboxSimpleBody({
   label,
   hint,
@@ -340,7 +350,7 @@ export function CheckboxSimpleBody({
   const { setRef: setLabelMotionRef } = useCheckboxLabelSlot();
   const { setRef: setHintMotionRef } = useCheckboxChromeSlot("hint");
   const { setRef: setErrorMotionRef } = useCheckboxChromeSlot("error");
-
+ 
   return (
     <>
       <CheckboxControl motionController={motionController}
@@ -404,3 +414,4 @@ export function CheckboxSimpleBody({
     </>
   );
 }
+ 

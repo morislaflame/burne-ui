@@ -1,12 +1,14 @@
 import { useCallback, useId, useMemo, useRef, useState, type FormEvent } from "react";
+ 
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { buildFormErrorSummaryMessage, buildFormSuccessAnnounceMessage, focusFirstFormInvalidField } from "./formA11y";
 import { setFormValueAtPath, validateFormFieldRules } from "./formAPI";
 import type { FormBindingContextValue, FormFieldRules, FormValues } from "./formTypes";
-
+ 
 import { countFormErrors } from "./formAPI";
 import type { FormShellIds, UseFormRootStateProps } from "./formTypes";
-
+ 
 export function useFormRootState({
   defaultValues,
   values: valuesProp,
@@ -19,32 +21,34 @@ export function useFormRootState({
   onSubmit,
   onSubmitError,
 }: UseFormRootStateProps) {
+  const labels = useBurneLabels();
   const titleId = useId();
   const descriptionId = useId();
   const errorSummaryId = useId();
   const announceId = useId();
-
+ 
   const shellIds: FormShellIds = {
     titleId,
     descriptionId,
     errorSummaryId,
     announceId,
   };
-
+ 
   const controlled = valuesProp !== undefined;
   const [internalValues, setInternalValues] = useState<FormValues>(defaultValues ?? {});
   const values = controlled ? valuesProp : internalValues;
-
+ 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouchedState] = useState<Record<string, boolean>>({});
   const [submitCount, setSubmitCount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [announce, setAnnounce] = useState<string | null>(null);
-
+ 
   const fieldRefs = useRef(new Map<string, HTMLElement>());
   const fieldRulesRef = useRef(rulesProp ?? {});
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   fieldRulesRef.current = rulesProp ?? {};
-
+ 
   const setValues = useCallback(
     (next: FormValues) => {
       if (!controlled) setInternalValues(next);
@@ -52,7 +56,7 @@ export function useFormRootState({
     },
     [controlled, onValuesChange],
   );
-
+ 
   const getValue = useCallback((name: string) => {
     const parts = name.split(".");
     return parts.reduce<unknown>((acc, key) => {
@@ -60,7 +64,7 @@ export function useFormRootState({
       return (acc as Record<string, unknown>)[key];
     }, values);
   }, [values]);
-
+ 
   const setValue = useCallback(
     (name: string, value: unknown, options?: { shouldValidate?: boolean }) => {
       const nextValues = setFormValueAtPath(values, name, value);
@@ -77,34 +81,34 @@ export function useFormRootState({
     },
     [setValues, values],
   );
-
+ 
   const getError = useCallback((name: string) => errors[name], [errors]);
   const getErrors = useCallback(() => errors, [errors]);
-
+ 
   const getFieldRules = useCallback((name: string) => fieldRulesRef.current[name], []);
-
+ 
   const setTouched = useCallback((name: string, nextTouched: boolean) => {
     setTouchedState((prev) => ({ ...prev, [name]: nextTouched }));
   }, []);
-
+ 
   const isTouched = useCallback((name: string) => Boolean(touched[name]), [touched]);
-
+ 
   const registerRef = useCallback((name: string, node: HTMLElement | null) => {
     if (node) fieldRefs.current.set(name, node);
     else fieldRefs.current.delete(name);
   }, []);
-
+ 
   const registerFieldRules = useCallback((name: string, rules?: FormFieldRules) => {
     if (rules == null) return;
     fieldRulesRef.current = { ...fieldRulesRef.current, [name]: rules };
   }, []);
-
+ 
   const unregisterFieldRules = useCallback((name: string) => {
     const next = { ...fieldRulesRef.current };
     delete next[name];
     fieldRulesRef.current = next;
   }, []);
-
+ 
   const validateField = useCallback(
     (name: string) => {
       const message = validateFormFieldRules(
@@ -122,7 +126,7 @@ export function useFormRootState({
     },
     [getValue, values],
   );
-
+ 
   const validateForm = useCallback(() => {
     const nextErrors: Record<string, string> = {};
     for (const name of Object.keys(fieldRulesRef.current)) {
@@ -136,13 +140,13 @@ export function useFormRootState({
     setErrors(nextErrors);
     return nextErrors;
   }, [getValue, values]);
-
+ 
   const focusFirstInvalid = useCallback(() => {
     focusFirstFormInvalidField(fieldRefs.current, errors);
   }, [errors]);
-
+ 
   const clearAnnounce = useCallback(() => setAnnounce(null), []);
-
+ 
   const bindingValue = useMemo<FormBindingContextValue>(
     () => ({
       disabled,
@@ -189,15 +193,15 @@ export function useFormRootState({
       validateMode,
     ],
   );
-
+ 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       setSubmitCount((n) => n + 1);
       setAnnounce(null);
-
+ 
       let nextErrors: Record<string, string> = validateForm();
-
+ 
       if (resolver) {
         const result = await resolver(values);
         if (result.errors) {
@@ -205,29 +209,29 @@ export function useFormRootState({
           setErrors(nextErrors);
         }
       }
-
+ 
       if (countFormErrors(nextErrors) > 0) {
-        setAnnounce(buildFormErrorSummaryMessage(countFormErrors(nextErrors)));
+        setAnnounce(buildFormErrorSummaryMessage(countFormErrors(nextErrors), labels));
         focusFirstFormInvalidField(fieldRefs.current, nextErrors);
         onSubmitError?.(nextErrors);
         return;
       }
-
+ 
       if (!onSubmit) return;
-
+ 
       try {
         setIsSubmitting(true);
         await onSubmit(values);
-        setAnnounce(buildFormSuccessAnnounceMessage());
+        setAnnounce(buildFormSuccessAnnounceMessage(labels));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [onSubmit, onSubmitError, resolver, validateForm, values],
+    [labels, onSubmit, onSubmitError, resolver, validateForm, values],
   );
-
+ 
   const hasErrors = countFormErrors(errors) > 0;
-
+ 
   return {
     shellIds,
     bindingValue,
@@ -238,3 +242,4 @@ export function useFormRootState({
     announce,
   };
 }
+ 

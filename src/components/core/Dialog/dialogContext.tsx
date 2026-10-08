@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   DialogClassNames,
   DialogClassNamesProviderProps,
   DialogContextValue,
 } from "./dialogTypes";
-
+ 
 const DialogContext = createContext<DialogContextValue | null>(null);
 const DialogClassNamesContext = createContext<DialogClassNames>({});
-
+ 
 export function DialogProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function DialogProvider({
     <DialogContext.Provider value={value}>{children}</DialogContext.Provider>
   );
 }
-
+ 
 export function DialogClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function DialogClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <DialogClassNamesContext.Provider value={merged}>
       {children}
     </DialogClassNamesContext.Provider>
   );
 }
-
+ 
 export function useDialog(): DialogContextValue {
   const ctx = useContext(DialogContext);
   if (!ctx) {
@@ -47,11 +47,11 @@ export function useDialog(): DialogContextValue {
   }
   return ctx;
 }
-
+ 
 export function useDialogClassNames(): DialogClassNames {
   return useContext(DialogClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `dialogAnimations.ts`. */
 export const {
   MotionScopeProvider: DialogMotionProvider,

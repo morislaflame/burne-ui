@@ -1,9 +1,29 @@
 import { Children, cloneElement, isValidElement, type ReactNode } from "react";
-
+ 
+export function compoundContentHasExternalLabel(children: ReactNode): boolean {
+  let found = false;
+ 
+  const walk = (node: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const props = child.props as { htmlFor?: string; children?: ReactNode };
+      if (props.htmlFor != null) {
+        found = true;
+        return;
+      }
+      walk(props.children);
+    }
+  };
+ 
+  walk(children);
+  return found;
+}
+ 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {
   return !/\bflex-col\b/.test(className ?? "");
 }
-
+ 
 export function injectSwitchControlProps(
   children: ReactNode,
   controlProps: Record<string, unknown>,
@@ -20,10 +40,30 @@ export function injectSwitchControlProps(
     return child;
   });
 }
-
+ 
+export function compoundHasSwitchLabel(children: ReactNode): boolean {
+  let found = false;
+ 
+  const walk = (node: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const name = (child.type as { displayName?: string }).displayName;
+      if (name === "SwitchLabel") {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+ 
+  walk(children);
+  return found;
+}
+ 
 export function compoundHasLabel(children: ReactNode): boolean {
   let found = false;
-
+ 
   const walk = (node: ReactNode) => {
     if (found) return;
     for (const child of Children.toArray(node)) {
@@ -36,11 +76,11 @@ export function compoundHasLabel(children: ReactNode): boolean {
       walk((child.props as { children?: ReactNode }).children);
     }
   };
-
+ 
   walk(children);
   return found;
 }
-
+ 
 export function countSecondaryLines(
   isCompound: boolean,
   hasHint: boolean,
@@ -53,14 +93,14 @@ export function countSecondaryLines(
   }
   return (hasHint ? 1 : 0) + (hasError ? 1 : 0);
 }
-
+ 
 export function partitionSwitchControlChildren(children: ReactNode): {
   track: ReactNode | null;
   content: ReactNode;
 } {
   let track: ReactNode | null = null;
   const rest: ReactNode[] = [];
-
+ 
   for (const child of Children.toArray(children)) {
     if (
       isValidElement(child) &&
@@ -71,12 +111,12 @@ export function partitionSwitchControlChildren(children: ReactNode): {
     }
     rest.push(child);
   }
-
+ 
   if (rest.length === 0) return { track, content: null };
   if (rest.length === 1) return { track, content: rest[0]! };
   return { track, content: rest };
 }
-
+ 
 export function hasSwitchThumbChild(children: ReactNode): boolean {
   let found = false;
   const walk = (node: ReactNode) => {
@@ -94,3 +134,4 @@ export function hasSwitchThumbChild(children: ReactNode): boolean {
   walk(children);
   return found;
 }
+ 

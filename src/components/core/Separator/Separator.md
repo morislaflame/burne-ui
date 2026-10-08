@@ -37,7 +37,7 @@ Compound API нет.
 | Orientation | Element | Стили |
 |-------------|---------|-------|
 | `horizontal` | `<hr>` | `h-0 w-full border-t-token my-xsmall` |
-| `vertical` | `<div role="separator">` | `w-0 min-h-[1.5rem] border-l-token mx-xsmall self-stretch` |
+| `vertical` | `<div role="separator">` | `w-0 min-h-[1.5rem] border-s-token mx-xsmall self-stretch` |
 
 Общие классы: `box-border shrink-0`.
 

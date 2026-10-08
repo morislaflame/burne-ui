@@ -4,7 +4,7 @@ import type {
   MotionSlotMap,
   MotionValue,
 } from "./slotMotionTypes";
-
+ 
 /**
  * Precedence: part prop → root `motion[slot]` → kit default.
  * `false` is a real value (disable) and does not fall through.
@@ -18,7 +18,7 @@ export function resolveMotionValue(
   if (slotValue !== undefined) return slotValue;
   return defaultValue;
 }
-
+ 
 export function resolveSlotPhase(
   slot: string,
   phase: MotionPhaseName,
@@ -31,7 +31,7 @@ export function resolveSlotPhase(
   const defaultValue = defaults?.[slot]?.[phase];
   return resolveMotionValue(partValue, slotValue, defaultValue);
 }
-
+ 
 export function mergeMotionSlotMaps(
   base: MotionSlotMap | undefined,
   override: MotionSlotMap | undefined,
@@ -46,3 +46,4 @@ export function mergeMotionSlotMaps(
   }
   return merged;
 }
+ 

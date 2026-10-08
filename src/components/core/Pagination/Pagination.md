@@ -62,7 +62,7 @@ const [page, setPage] = useState(1);
 | `Pagination.Content` | `<ol>` списка controls |
 | `Pagination.Item` | `<li>` wrapper |
 | `Pagination.Previous` / `Next` | Nav buttons с auto disable; nested motion scope (`motionController`, `playSlot("control")`) |
-| `Pagination.PreviousIcon` / `NextIcon` | `IoChevronBack` / `Forward` |
+| `Pagination.PreviousIcon` / `NextIcon` | Chevron back / forward (кит) |
 | `Pagination.Page` | Кнопка номера страницы; nested motion scope (`motionController`, `playSlot("control")`) |
 | `Pagination.Pages` | Auto range из context |
 | `Pagination.Ellipsis` | Декоративное `…` (`children ?? "…"`) |
@@ -201,7 +201,7 @@ Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.
 | `PAGINATION_PAGE_ACTIVE_CLASS` | Current page `font-medium text-foreground` |
 | `PAGINATION_PAGE_TEXT_CLASS` | `tabular-nums` на номерах |
 | `PAGINATION_ELLIPSIS_CLASS` | Decorative `…` |
-| `PAGINATION_PREVIOUS_ICON_CLASS` | `IoChevronBack icon-small` |
+| `PAGINATION_PREVIOUS_ICON_CLASS` | kit chevron back + `icon-small` |
 | `focus-ring` | Keyboard focus на interactive |
 | `motion-reduce:animate-none` | На buttons |
 
@@ -240,7 +240,7 @@ Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.
   totalPages={12}
   onPageChange={setPage}
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     summaryText: "text-primary",
     content: "gap-small",
     previous: "text-info hover:text-primary",
@@ -275,7 +275,7 @@ Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.
 
 ### Практические заметки
 
-- Иконки: `react-icons/io5` (`IoChevronBack`, `IoChevronForward`).
+- Иконки: инлайн-SVG кита (chevron back / forward). Свои глифы — `children` на `Previous` / `Next` или подмена `PreviousIcon` / `NextIcon`.
 - `children` в `Previous` / `Next` — кастомные labels; `aria-label` для a11y.
 - `Pagination.Ellipsis` — `children ?? "…"` (кастомный символ/узел разрыва).
 - `Pagination.Page` принимает `active` override.

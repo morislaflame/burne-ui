@@ -1,17 +1,17 @@
 import { Children, isValidElement, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import { cn } from "@/utils/cn";
-
+ 
 import type { CheckboxClassNames, CheckboxIndicatorClassNames, CheckboxVariant } from "./checkboxTypes";
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
-
+ 
 export function checkboxVariantToIndicator(
   variant: CheckboxVariant,
 ): SelectionIndicatorVariant {
   if (variant === "default") return "default";
   return variant;
 }
-
+ 
 export function resolveCheckboxIndicatorClassNames({
   slotClassNames,
   classNames,
@@ -40,10 +40,10 @@ export function resolveCheckboxIndicatorClassNames({
     ),
   };
 }
-
+ 
 export function compoundContentHasExternalLabel(children: ReactNode): boolean {
   let found = false;
-
+ 
   const walk = (node: ReactNode) => {
     if (found) return;
     for (const child of Children.toArray(node)) {
@@ -56,11 +56,12 @@ export function compoundContentHasExternalLabel(children: ReactNode): boolean {
       walk(props.children);
     }
   };
-
+ 
   walk(children);
   return found;
 }
-
+ 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {
   return !/\bflex-col\b/.test(className ?? "");
 }
+ 

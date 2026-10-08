@@ -1,13 +1,14 @@
 import type { ForwardedRef, HTMLAttributes, PointerEvent as ReactPointerEvent } from "react";
 import { forwardRef, useMemo } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { resolveLabelMotionDefaults, useLabelRootMotion } from "./labelAnimations";
 import { LabelClassNamesProvider, LabelMotionProvider, useLabelClassNames, useLabelMotionScope } from "./labelContext";
 import { labelRootClass } from "./labelStyles";
 import { LabelContent, LabelSlot } from "./labelParts";
 import type { LabelProps } from "./labelTypes";
 import { useLabelRootState } from "./useLabelRootState";
-
+ 
 export type {
   LabelProps,
   LabelClassNames,
@@ -15,7 +16,7 @@ export type {
   LabelPartMotion,
   FieldLabelContextValue,
 } from "./labelTypes";
-
+ 
 export function LabelRoot({
   children,
   className,
@@ -51,7 +52,7 @@ export function LabelRoot({
     onPointerDown: onPointerDown as ((e: ReactPointerEvent<HTMLElement>) => void) | undefined,
     onPointerUp: onPointerUp as ((e: ReactPointerEvent<HTMLElement>) => void) | undefined,
   });
-
+ 
   if (htmlFor != null) {
     return (
       <label
@@ -61,6 +62,7 @@ export function LabelRoot({
         className={rootClass}
         {...rest}
         {...part.pointerHandlers}
+        {...dataVariantProps({ variant })}
       >
         <LabelContent required={required} variant={variant}>
           {children}
@@ -68,9 +70,9 @@ export function LabelRoot({
       </label>
     );
   }
-
+ 
   const spanRest = rest as HTMLAttributes<HTMLSpanElement>;
-
+ 
   return (
     <span
       ref={part.setRef}
@@ -78,6 +80,7 @@ export function LabelRoot({
       className={rootClass}
       {...spanRest}
       {...part.pointerHandlers}
+      {...dataVariantProps({ variant })}
     >
       <LabelContent required={required} variant={variant}>
         {children}
@@ -85,7 +88,7 @@ export function LabelRoot({
     </span>
   );
 }
-
+ 
 export const Label = forwardRef<HTMLElement, LabelProps>(function Label(
   { classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
@@ -102,5 +105,6 @@ export const Label = forwardRef<HTMLElement, LabelProps>(function Label(
     </LabelClassNamesProvider>
   );
 });
-
+ 
 export { LabelSlot };
+ 

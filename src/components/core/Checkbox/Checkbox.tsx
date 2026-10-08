@@ -1,17 +1,18 @@
 import { forwardRef, type HTMLAttributes, type KeyboardEvent, type Ref } from "react";
-
+ 
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FieldLabelContext } from "@/components/core/Label";
-
+ 
 import { useCheckboxTextMotion } from "./checkboxAnimations";
 import { CheckboxClassNamesProvider, CheckboxFieldProvider, CheckboxMotionProvider } from "./checkboxContext";
 import { CheckboxContent, CheckboxControl, CheckboxError, CheckboxHint, CheckboxIndicator, CheckboxLabel, CheckboxSimpleBody } from "./checkboxParts";
 import { CHECKBOX_COMPOUND_FIELDSET_CLASS, CHECKBOX_ROOT_DISABLED_CLASS, checkboxGridClass } from "./checkboxStyles";
 import type { CheckboxProps } from "./checkboxTypes";
 import { useCheckboxRootState } from "./useCheckboxRootState";
-
+ 
+import { dataCheckedState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   CheckboxProps,
   CheckboxControlProps,
@@ -26,7 +27,7 @@ export type {
   CheckboxMotion,
   CheckboxCheckMotion,
 } from "./checkboxTypes";
-
+ 
 export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
   function CheckboxRoot(
     {
@@ -34,6 +35,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       label,
       hint,
       error,
+      invalid,
       size,
       variant,
       status,
@@ -41,6 +43,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       disabled,
       checked,
       defaultChecked,
+      indeterminate,
       onChange,
       id,
       name,
@@ -70,17 +73,18 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
     const fieldName = typeof name === "string" ? name : undefined;
     const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
     const resolvedError = error ?? formError;
-    const resolvedStatus = formError ? "danger" : (status ?? "default");
-
+ 
     const state = useCheckboxRootState(
       {
         size,
         variant,
-        status: resolvedStatus,
+        status,
+        invalid,
         icon,
         disabled,
         checked,
         defaultChecked,
+        indeterminate,
         onChange,
         id,
         name,
@@ -100,7 +104,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       children,
       className,
     );
-
+ 
     const { handlePointerDown, handleKeyDown } = useCheckboxTextMotion({
       isDisabled: state.isDisabled,
       enableTextMotion: state.enableTextMotion,
@@ -108,13 +112,13 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       onPointerDown,
       onKeyDown: onKeyDown as ((e: KeyboardEvent<HTMLElement>) => void) | undefined,
     });
-
+ 
     const gridClass = cn(
       checkboxGridClass(state.secondaryLines, state.sz.gridGap, className),
       state.isDisabled && CHECKBOX_ROOT_DISABLED_CLASS,
       classNames?.root,
     );
-
+ 
     if (state.isCompound) {
       return (
         <CheckboxFieldProvider value={state.contextValue}>
@@ -129,7 +133,6 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
                 aria-labelledby={
                   state.contextValue.labelConnected ? state.contextValue.labelId : undefined
                 }
-                data-checked={state.mergedChecked ? true : undefined}
                 className={cn(
                   gridClass,
                   CHECKBOX_COMPOUND_FIELDSET_CLASS,
@@ -137,6 +140,13 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
                 onPointerDown={handlePointerDown}
                 onKeyDown={handleKeyDown}
                 {...(rest as HTMLAttributes<HTMLFieldSetElement>)}
+                {...dataVariantProps({
+                  size: state.contextValue.size,
+                  variant: state.contextValue.variant,
+                  status: state.contextValue.status,
+                })}
+                data-state={dataCheckedState(state.mergedChecked, state.contextValue.indeterminate)}
+                data-checked={state.mergedChecked ? "true" : undefined}
               >
                 {children}
               </fieldset>
@@ -146,7 +156,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
         </CheckboxFieldProvider>
       );
     }
-
+ 
     return (
       <CheckboxFieldProvider value={state.contextValue}>
         <CheckboxClassNamesProvider classNames={classNames}>
@@ -159,11 +169,17 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
           <label
             ref={ref}
             htmlFor={state.contextValue.inputId}
-            data-checked={state.mergedChecked ? true : undefined}
             className={gridClass}
             {...rest}
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
+            {...dataVariantProps({
+              size: state.contextValue.size,
+              variant: state.contextValue.variant,
+              status: state.contextValue.status,
+            })}
+            data-state={dataCheckedState(state.mergedChecked, state.contextValue.indeterminate)}
+            data-checked={state.mergedChecked ? "true" : undefined}
           >
             <CheckboxSimpleBody
               label={state.label}
@@ -190,9 +206,9 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
     );
   },
 );
-
+ 
 CheckboxRoot.displayName = "CheckboxRoot";
-
+ 
 export {
   CheckboxControl,
   CheckboxIndicator,
@@ -201,3 +217,4 @@ export {
   CheckboxHint,
   CheckboxError,
 };
+ 

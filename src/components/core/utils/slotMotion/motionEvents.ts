@@ -7,19 +7,19 @@ import {
   type MotionSlotMap,
   type MotionValue,
 } from "./slotMotionTypes";
-
+ 
 const PHASE_SET = new Set<string>(MOTION_PHASE_NAMES);
-
+ 
 /** App commands on `motion.events`. Do not use `MotionPhaseName` keys. */
 export type MotionEvents<TEvent extends string = string> = {
   [K in TEvent]?: MotionValue;
 };
-
+ 
 /** Per-slot values for one app mode (`idle` / `loading`). Not phases. */
 export type MotionStateSlots = {
   [slot: string]: MotionValue | undefined;
 };
-
+ 
 /**
  * App modes on `motion.states`. Sibling of slots and `events`.
  * Do not use `MotionPhaseName` keys (`idle` is fine; `hoverIn` is not).
@@ -27,7 +27,7 @@ export type MotionStateSlots = {
 export type MotionStates<TState extends string = string> = {
   [K in TState]?: MotionStateSlots;
 };
-
+ 
 /**
  * Host props for declarative modes. Destructure before `...rest` (not on the DOM).
  * Pair with `motion.states`. Same `motionState` again does not replay.
@@ -51,13 +51,13 @@ export type MotionStateHostProps<TPayload = unknown> = {
    */
   playInitialState?: boolean;
 };
-
+ 
 /** Slot map plus sibling `events` / `states` (not DOM slots). */
 export type MotionMapWithEvents<TSlots extends object> = TSlots & {
   events?: MotionEvents;
   states?: MotionStates;
 };
-
+ 
 /**
  * Root `motion` including optional `events` / `states`. Open index cannot be `MotionSlotMap`
  * (`events` values are `MotionValue`; `states` values are per-slot maps).
@@ -67,11 +67,11 @@ export type MotionRootInput = {
   events?: MotionEvents;
   states?: MotionStates;
 };
-
+ 
 type NoPhaseKeys<T> = Extract<keyof T, (typeof MOTION_PHASE_NAMES)[number]> extends never
   ? T
   : never;
-
+ 
 /**
  * Identity helper for a namespaced event map (`checkout:saving`).
  * Built-in phase names as keys are a type error and a dev `console.error`.
@@ -90,7 +90,7 @@ export function createMotionEvents<const T extends Record<string, MotionValue>>(
   }
   return events;
 }
-
+ 
 /**
  * Identity helper for `motion.states` (`idle` / `loading` / `success`).
  * Built-in phase names as keys are a type error and a dev `console.error`.
@@ -109,7 +109,7 @@ export function createMotionStates<const T extends Record<string, MotionStateSlo
   }
   return states;
 }
-
+ 
 /**
  * Typed factory for `motion.states` / `motion.events`. `MotionValue` sees
  * `MotionContext` (`payload` unknown); this wrapper types `ctx.payload`.
@@ -120,7 +120,7 @@ export function createMotionFactory<TPayload = unknown>(
 ): MotionFactory {
   return (ctx) => fn(ctx as MotionContext<TPayload>);
 }
-
+ 
 export function splitMotionRootMap(motion: MotionRootInput | undefined): {
   slots: MotionSlotMap | undefined;
   events: MotionEvents | undefined;
@@ -136,7 +136,7 @@ export function splitMotionRootMap(motion: MotionRootInput | undefined): {
     states,
   };
 }
-
+ 
 /** Per-mode slot maps; `override` wins on the same slot. */
 export function mergeMotionStates(
   base?: MotionStates,
@@ -150,7 +150,7 @@ export function mergeMotionStates(
   }
   return out;
 }
-
+ 
 /**
  * Nested host sibling merge (`events` / `states`). Local wins.
  * Empty objects are omitted so callers can spread onto a slot map.
@@ -167,7 +167,7 @@ export function mergeMotionRootSiblings(
     ...(states && Object.keys(states).length > 0 ? { states } : {}),
   };
 }
-
+ 
 /** Rename slots inside each mode (`indicator` → `root` for SelectionIndicator). */
 export function remapMotionStateSlots(
   states: MotionStates | undefined,
@@ -189,9 +189,15 @@ export function remapMotionStateSlots(
   }
   return Object.keys(out).length > 0 ? out : undefined;
 }
-
+ 
 function warnSilentSlotKeys(slots: MotionSlotMap): void {
   for (const [slot, part] of Object.entries(slots)) {
+    if (isMotionPhaseName(slot)) {
+      console.error(
+        `[burne-ui] motion.${slot} is a phase, not a slot; use motion.root.${slot} (or the host slot). Root shorthand motion={{ ${slot} }} is ignored.`,
+      );
+      continue;
+    }
     if (!part || typeof part !== "object") continue;
     for (const key of Object.keys(part)) {
       if (PHASE_SET.has(key)) continue;
@@ -201,3 +207,4 @@ function warnSilentSlotKeys(slots: MotionSlotMap): void {
     }
   }
 }
+ 

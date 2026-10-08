@@ -5,10 +5,10 @@ import type {
   OlHTMLAttributes,
   ReactNode,
 } from "react";
-import type { IconBaseProps } from "react-icons";
+import type { KitIconProps } from "@/components/core/utils/kitIcons";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type PaginationClassNames = {
   /** Root `<nav>`. */
   root?: string;
@@ -41,7 +41,7 @@ export type PaginationClassNames = {
   /** `Pagination.NextIcon`. */
   nextIcon?: string;
 };
-
+ 
 export type PaginationPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -49,11 +49,11 @@ export type PaginationPartMotion = {
   pressOut?: MotionValue;
   enter?: MotionValue;
 };
-
+ 
 export type PaginationSummaryPartMotion = PaginationPartMotion & {
   change?: MotionValue;
 };
-
+ 
 export type PaginationMotion = {
   control?: PaginationPartMotion;
   previousIcon?: PaginationPartMotion;
@@ -61,14 +61,14 @@ export type PaginationMotion = {
   summary?: PaginationSummaryPartMotion;
   ellipsis?: PaginationPartMotion;
 };
-
+ 
 export type PaginationContextValue = {
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
   siblingCount: number;
 };
-
+ 
 export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children?: ReactNode;
   page?: number;
@@ -92,25 +92,25 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type PaginationClassNamesProviderProps = {
   classNames?: Prettify<PaginationClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UsePaginationRootStateProps = Omit<
   PaginationProps,
   "className" | "classNames" | "children"
 >;
-
+ 
 export type PaginationSummaryProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<PaginationSummaryPartMotion>;
 };
-
+ 
 export type PaginationContentProps = OlHTMLAttributes<HTMLOListElement>;
-
+ 
 export type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
-
+ 
 export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<PaginationPartMotion>;
   /**
@@ -119,7 +119,7 @@ export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type PaginationPageProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children"
@@ -134,19 +134,20 @@ export type PaginationPageProps = Omit<
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<PaginationPartMotion>;
 };
-
+ 
 export type PaginationPagesProps = Record<string, never>;
-
+ 
 export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   motion?: Prettify<PaginationPartMotion>;
   motionController?: MotionController;
 } & MotionStateHostProps;
-
-export type PaginationIconProps = IconBaseProps & {
+ 
+export type PaginationIconProps = KitIconProps & {
   motion?: Prettify<PaginationPartMotion>;
 };
+ 

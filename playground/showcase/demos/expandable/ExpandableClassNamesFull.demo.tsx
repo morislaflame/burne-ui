@@ -28,6 +28,7 @@ export function ExpandableClassNamesFullDemo() {
         title: "text-primary font-semibold",
         description: "text-foreground/75",
         panel: "border-t border-primary/20",
+        contentWrap: "bg-primary/5",
       }}
     >
       <p className="text-small text-muted">

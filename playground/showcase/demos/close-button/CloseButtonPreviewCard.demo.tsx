@@ -5,7 +5,7 @@ import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function CloseButtonPreviewCardDemo() {
   return (
-    <div className="relative w-full max-w-xs overflow-hidden rounded-mid">
+    <div className="relative w-full max-w-xs overflow-hidden rounded-large">
       <div
         className="h-36 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${PIN_IMAGE2})` }}
@@ -15,7 +15,7 @@ export function CloseButtonPreviewCardDemo() {
         size="small"
         className="absolute right-small top-small shadow-token-mid"
       />
-      <Surface variant="default" padding="base" className="rounded-none rounded-b-mid">
+      <Surface variant="default" padding="base" className="rounded-none rounded-b-large">
         <Text as="p" variant="base">
           Preview Card
         </Text>

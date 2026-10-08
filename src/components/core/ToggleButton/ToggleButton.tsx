@@ -1,6 +1,9 @@
 import { forwardRef, useMemo, useRef } from "react";
-
-import "@/components/core/utils/glossInteractive.css";
+ 
+import { dataGroupSegment, dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
+import { cn } from "@/utils/cn";
 
 import { resolveToggleButtonMotionDefaults, useToggleButtonAnimations } from "./toggleButtonAnimations";
 import { toggleButtonHasCompoundPart } from "./toggleButtonAPI";
@@ -13,9 +16,9 @@ import { ToggleButtonContent, ToggleButtonFill } from "./toggleButtonParts";
 import { ToggleButtonSimpleContent } from "./toggleButtonSimpleContent";
 import { toggleButtonRootClass } from "./toggleButtonStyles";
 import type { ToggleButtonMotion, ToggleButtonProps } from "./toggleButtonTypes";
-import { cn } from "@/utils/cn";
+import { KIT_TOGGLE_BUTTON_VARIANTS } from "./toggleButtonTypes";
 import { useToggleButtonRootState } from "./useToggleButtonRootState";
-
+ 
 export type {
   ToggleButtonProps,
   ToggleButtonSize,
@@ -32,7 +35,7 @@ export type {
   ToggleButtonIconEndProps,
   ToggleButtonTextProps,
 } from "./toggleButtonTypes";
-
+ 
 export {
   ToggleButtonContent,
   ToggleButtonFill,
@@ -41,7 +44,7 @@ export {
   ToggleButtonIconEnd,
   ToggleButtonText,
 } from "./toggleButtonParts";
-
+ 
 type ToggleButtonSurfaceProps = {
   state: ReturnType<typeof useToggleButtonRootState>;
   motion?: ToggleButtonMotion;
@@ -91,7 +94,7 @@ type ToggleButtonSurfaceProps = {
   onPointerLeave: ToggleButtonProps["onPointerLeave"];
   onKeyDown: ToggleButtonProps["onKeyDown"];
 };
-
+ 
 function ToggleButtonSurface({
   state,
   motion,
@@ -130,7 +133,7 @@ function ToggleButtonSurface({
     onPointerUp,
     onKeyDown,
   });
-
+ 
   const buttonClass = toggleButtonRootClass({
     variant: state.variant,
     pressed: animations.displayPressed,
@@ -140,7 +143,7 @@ function ToggleButtonSurface({
     slotClass: state.classNames?.root,
     className,
   });
-
+ 
   const contextValue = {
     size: state.size,
     variant: state.variant,
@@ -151,7 +154,7 @@ function ToggleButtonSurface({
     pressed: animations.displayPressed,
     roundingClass: state.roundingClass,
   };
-
+ 
   const { hasCompoundFill, hasCompoundContent } = useMemo(
     () => ({
       hasCompoundFill: toggleButtonHasCompoundPart(children, "ToggleButtonFill"),
@@ -159,7 +162,7 @@ function ToggleButtonSurface({
     }),
     [children],
   );
-
+ 
   return (
     <ToggleButtonContextProvider value={contextValue}>
       <button
@@ -173,6 +176,8 @@ function ToggleButtonSurface({
         tabIndex={state.tabIndex}
         className={buttonClass}
         {...rest}
+        {...dataVariantProps({ size: state.size, variant: state.variant })}
+        data-group-segment={dataGroupSegment(state.groupSegment != null)}
         onPointerOver={animations.pointerHandlers.onPointerOver}
         onPointerOut={animations.pointerHandlers.onPointerOut}
         onPointerEnter={animations.handlePointerEnter}
@@ -182,6 +187,7 @@ function ToggleButtonSurface({
         onKeyDown={animations.handleKeyDown}
         onClick={(e) => state.handleClick(e, animations.queueFillOnClick)}
         onFocus={state.handleFocus}
+        data-state={dataOnState(state.pressed)}
       >
         {!hasCompoundFill ? <ToggleButtonFill /> : null}
         {state.isCompound ? (
@@ -203,7 +209,7 @@ function ToggleButtonSurface({
     </ToggleButtonContextProvider>
   );
 }
-
+ 
 export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>(
   function ToggleButton(
     {
@@ -258,23 +264,24 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       onClick,
       onFocus,
     });
-
+ 
     const hoverPointerInsideRef = useRef(false);
     const onReleaseStartRef = useRef<(() => void) | undefined>(undefined);
-    const motionDefaults = useMemo(
-      () => resolveToggleButtonMotionDefaults({ variant: state.variant }),
-      [state.variant],
-    );
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveToggleButtonMotionDefaults({ variant: state.variant });
+    }, [skinRevision, state.variant]);
     const motionParams = useMemo(
       () => ({
         pointerInside: hoverPointerInsideRef,
-        hasHoverShadow: state.variant !== "gloss" && !state.groupSegment,
-        isGloss: state.variant === "gloss",
+        hasHoverShadow:
+          isKitVariant(state.variant, KIT_TOGGLE_BUTTON_VARIANTS) && !state.groupSegment,
         onReleaseStart: () => onReleaseStartRef.current?.(),
       }),
       [state.groupSegment, state.variant],
     );
-
+ 
     return (
       <ToggleButtonClassNamesProvider classNames={state.classNames}>
         <ToggleButtonMotionProvider
@@ -312,5 +319,6 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
     );
   },
 );
-
+ 
 ToggleButtonRoot.displayName = "ToggleButtonRoot";
+ 

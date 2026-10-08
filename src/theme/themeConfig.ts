@@ -1,15 +1,15 @@
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
-
+ 
 import type { BurneLabels } from "./burneLabels";
 import { applyThemeTokens, createDefaultThemeState, ensureModePalettes, exportThemeCss, type ThemeColors, type ThemeFontWeights, type ThemeMode, type ThemeTokenState } from "./themeDefaults";
-
+ 
 /** Color mode for ThemeProvider / BurneUIProvider (`system` follows OS). */
 export type BurneThemeMode = ThemeMode | "system";
-
+ 
 /** Default `localStorage` key for theme persistence. */
 export const DEFAULT_THEME_STORAGE_KEY = "burne-ui-theme";
-
+ 
 /**
  * Shared (mode-independent) token overrides.
  * Colors live only under `BurneThemeConfig.colors`.
@@ -34,12 +34,12 @@ export type ThemeTokenOverrides = {
   toastScrimSize?: number;
   toastScrimDensity?: number;
 };
-
+ 
 /** Per-mode flat palette (status + hover included as regular keys). */
 export type ThemeModeColorOverrides = ThemeColors | Partial<ThemeColors>;
-
+ 
 export type CustomThemeTokenValue = string | number | boolean;
-
+ 
 export type CustomThemeTokenControl =
   | "color"
   | "number"
@@ -47,7 +47,7 @@ export type CustomThemeTokenControl =
   | "slider"
   | "switch"
   | "text";
-
+ 
 export type CustomThemeTokenDefinition = {
   /** Shared value. Use `values` when light and dark need different values. */
   value?: CustomThemeTokenValue;
@@ -62,7 +62,7 @@ export type CustomThemeTokenDefinition = {
   unit?: string;
   options?: readonly (string | { label: string; value: string })[];
 };
-
+ 
 /**
  * Project-specific CSS variables. Keys must be valid custom properties (`--*`).
  * Primitive values get an inferred devtools control; use a definition for metadata.
@@ -71,7 +71,7 @@ export type CustomThemeTokens = Record<
   `--${string}`,
   CustomThemeTokenValue | CustomThemeTokenDefinition
 >;
-
+ 
 /**
  * Serializable theme config for `BurneUIProvider`.
  * Generate via `exportBurneThemeConfigSource()` from the playground.
@@ -96,7 +96,7 @@ export type BurneThemeConfig = {
    */
   labels?: Partial<BurneLabels>;
 };
-
+ 
 const MOTION_STATE_KEYS = [
   "interactiveDuration",
   "interactiveEase",
@@ -143,7 +143,7 @@ const MOTION_STATE_KEYS = [
   "enablePaginationFlip",
   "enableSelectionFill",
 ] as const satisfies ReadonlyArray<keyof ThemeTokenState>;
-
+ 
 /** Merge shared `tokens` with `colors[mode]` into a full `ThemeTokenState`. */
 export function resolveThemeTokenState(
   config: Pick<BurneThemeConfig, "tokens" | "colors">,
@@ -152,11 +152,11 @@ export function resolveThemeTokenState(
   const base = createDefaultThemeState(mode);
   const shared = config.tokens ?? {};
   const modeOverrides = config.colors?.[mode];
-
+ 
   const colors: ThemeColors = modeOverrides
     ? { ...base.colors, ...modeOverrides }
     : base.colors;
-
+ 
   return {
     ...base,
     ...pickDefined({
@@ -188,11 +188,11 @@ export function resolveThemeTokenState(
     },
   };
 }
-
+ 
 /** Build a `BurneThemeConfig` snapshot from live playground state. */
 export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfig {
   const withPalettes = ensureModePalettes(state);
-
+ 
   const motion: Partial<MotionConfig> = {
     interactiveDuration: withPalettes.interactiveDuration,
     interactiveEase: withPalettes.interactiveEase,
@@ -240,7 +240,7 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     enablePaginationFlip: withPalettes.enablePaginationFlip,
     enableSelectionFill: withPalettes.enableSelectionFill,
   };
-
+ 
   const tokens: ThemeTokenOverrides = {
     space: withPalettes.space,
     size: withPalettes.size,
@@ -261,7 +261,7 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     toastScrimSize: withPalettes.toastScrimSize,
     toastScrimDensity: withPalettes.toastScrimDensity,
   };
-
+ 
   return {
     theme: withPalettes.theme,
     tokens,
@@ -273,7 +273,7 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     toast: true,
   };
 }
-
+ 
 function resolveCustomTokenValue(
   definition: CustomThemeTokenValue | CustomThemeTokenDefinition,
   mode: ThemeMode,
@@ -285,11 +285,11 @@ function resolveCustomTokenValue(
   ) {
     return { value: definition };
   }
-
+ 
   const value = definition.values?.[mode] ?? definition.value;
   return value === undefined ? null : { value, unit: definition.unit };
 }
-
+ 
 /** Resolve custom token definitions to CSS-ready values for the active mode. */
 export function resolveCustomThemeTokens(
   customTokens: CustomThemeTokens | undefined,
@@ -297,7 +297,7 @@ export function resolveCustomThemeTokens(
 ): Record<`--${string}`, string> {
   const resolved = {} as Record<`--${string}`, string>;
   if (!customTokens) return resolved;
-
+ 
   for (const [name, definition] of Object.entries(customTokens) as [
     `--${string}`,
     CustomThemeTokenValue | CustomThemeTokenDefinition,
@@ -309,13 +309,13 @@ export function resolveCustomThemeTokens(
         ? `${token.value}${token.unit}`
         : String(token.value);
   }
-
+ 
   return resolved;
 }
-
+ 
 type PreviousCustomToken = { priority: string; value: string };
 const appliedCustomTokens = new WeakMap<HTMLElement, Map<string, PreviousCustomToken>>();
-
+ 
 /** Apply custom CSS variables and remove stale variables previously owned by Burne UI. */
 export function applyCustomThemeTokens(
   customTokens: CustomThemeTokens | undefined,
@@ -325,7 +325,7 @@ export function applyCustomThemeTokens(
   const resolved = resolveCustomThemeTokens(customTokens, mode);
   const nextNames = new Set(Object.keys(resolved));
   const previousTokens = appliedCustomTokens.get(root) ?? new Map<string, PreviousCustomToken>();
-
+ 
   previousTokens.forEach((previous, name) => {
     if (nextNames.has(name)) return;
     if (previous.value) {
@@ -344,10 +344,10 @@ export function applyCustomThemeTokens(
     }
     root.style.setProperty(name, value);
   }
-
+ 
   appliedCustomTokens.set(root, previousTokens);
 }
-
+ 
 /** Remove all custom variables last applied by Burne UI on this root. */
 export function clearCustomThemeTokens(root?: HTMLElement) {
   if (typeof document === "undefined") return;
@@ -361,7 +361,7 @@ export function clearCustomThemeTokens(root?: HTMLElement) {
   });
   appliedCustomTokens.delete(target);
 }
-
+ 
 /**
  * Default app theme snapshot (shared tokens + light/dark colors + motion).
  * Used by scaffolds / `burne-ui init` and as a starting point for Copy config edits.
@@ -376,12 +376,12 @@ export function createDefaultBurneThemeConfig(options?: {
     storageKey: options?.storageKey === undefined ? DEFAULT_THEME_STORAGE_KEY : options.storageKey,
   };
 }
-
+ 
 /** TypeScript source for a starter `burne-theme.ts` (same shape as playground Copy config). */
 export function exportDefaultBurneThemeConfigSource(options?: { exportName?: string }): string {
   const exportName = options?.exportName ?? "burneTheme";
   const body = stringifyValue(createDefaultBurneThemeConfig(), 0);
-
+ 
   return [
     "/**",
     " * Burne UI theme config (starter snapshot).",
@@ -390,8 +390,8 @@ export function exportDefaultBurneThemeConfigSource(options?: { exportName?: str
     " *   and optional `customTokens` for project-specific CSS variables.",
     " * - Or replace this file with docs site → Copy config.",
     " *",
-    " *   import { BurneUIProvider } from \"burne-ui\";",
-    ` *   import ${exportName} from \"./burne-theme\";`,
+    ' *   import { BurneUIProvider } from "burne-ui";',
+    ` *   import ${exportName} from "./burne-theme";`,
     ` *   <BurneUIProvider config={${exportName}}>{children}</BurneUIProvider>`,
     " */",
     'import type { BurneThemeConfig } from "burne-ui";',
@@ -402,7 +402,7 @@ export function exportDefaultBurneThemeConfigSource(options?: { exportName?: str
     "",
   ].join("\n");
 }
-
+ 
 /** Merge shared token overrides into a full `ThemeTokenState` (no mode colors). */
 export function mergeThemeTokenOverrides(
   overrides: ThemeTokenOverrides | undefined,
@@ -410,7 +410,7 @@ export function mergeThemeTokenOverrides(
 ): ThemeTokenState {
   const base = createDefaultThemeState(theme);
   if (!overrides) return base;
-
+ 
   return {
     ...base,
     ...pickDefined({
@@ -437,7 +437,7 @@ export function mergeThemeTokenOverrides(
       : base.fontWeights,
   };
 }
-
+ 
 function pickDefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
   const out: Partial<T> = {};
   for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
@@ -445,7 +445,7 @@ function pickDefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
   }
   return out;
 }
-
+ 
 /**
  * Apply a `BurneThemeConfig` to the document.
  * Colors for the resolved mode come from `colors[mode]`.
@@ -459,7 +459,7 @@ export function applyBurneThemeConfig(
   if (typeof document === "undefined") return;
   const target = root ?? document.documentElement;
   const state = resolveThemeTokenState(config, resolvedTheme);
-
+ 
   if (config.motion) {
     const m = config.motion;
     if (m.interactiveDuration !== undefined) state.interactiveDuration = m.interactiveDuration;
@@ -524,11 +524,11 @@ export function applyBurneThemeConfig(
     if (m.enablePaginationFlip !== undefined) state.enablePaginationFlip = m.enablePaginationFlip;
     if (m.enableSelectionFill !== undefined) state.enableSelectionFill = m.enableSelectionFill;
   }
-
+ 
   applyThemeTokens(state, target);
   applyCustomThemeTokens(config.customTokens, target, resolvedTheme);
 }
-
+ 
 export function resolveTheme(theme: BurneThemeMode | undefined = "system"): ThemeMode {
   if (theme === "light" || theme === "dark") return theme;
   if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches) {
@@ -536,7 +536,7 @@ export function resolveTheme(theme: BurneThemeMode | undefined = "system"): Them
   }
   return "dark";
 }
-
+ 
 /** Alias: apply shared token overrides without mode colors. */
 export function applyTokens(
   overrides: ThemeTokenOverrides,
@@ -545,7 +545,7 @@ export function applyTokens(
 ) {
   applyBurneThemeConfig({ theme, tokens: overrides }, root, theme);
 }
-
+ 
 /** CSS string for `burne-theme-overrides.css` (same as playground “Copy CSS”). */
 export function exportBurneThemeCss(config: BurneThemeConfig): string {
   const theme = resolveTheme(config.theme);
@@ -554,25 +554,25 @@ export function exportBurneThemeCss(config: BurneThemeConfig): string {
   const custom = resolveCustomThemeTokens(config.customTokens, theme);
   const entries = Object.entries(custom);
   if (entries.length === 0) return css;
-
+ 
   const customLines = entries.map(([name, value]) => `  ${name}: ${value};`).join("\n");
   return css.replace(/\n}(\n|$)/, `\n  /* Custom project tokens */\n${customLines}\n}$1`);
 }
-
+ 
 function stringifyValue(value: unknown, indent: number): string {
   const pad = "  ".repeat(indent);
   const padIn = "  ".repeat(indent + 1);
-
+ 
   if (value === null || value === undefined) return "undefined";
   if (typeof value === "boolean" || typeof value === "number") return String(value);
   if (typeof value === "string") return JSON.stringify(value);
-
+ 
   if (Array.isArray(value)) {
     if (value.length === 0) return "[]";
     const items = value.map((item) => `${padIn}${stringifyValue(item, indent + 1)}`);
     return `[\n${items.join(",\n")},\n${pad}]`;
   }
-
+ 
   if (typeof value === "object") {
     const entries = Object.entries(value as Record<string, unknown>).filter(
       ([, v]) => v !== undefined,
@@ -583,14 +583,14 @@ function stringifyValue(value: unknown, indent: number): string {
     );
     return `{\n${lines.join(",\n")},\n${pad}}`;
   }
-
+ 
   return JSON.stringify(value);
 }
-
+ 
 function safeKey(key: string): string {
   return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
 }
-
+ 
 /**
  * TypeScript source for a project file (e.g. `burne-theme.ts`).
  * `tokens` / `motion` are shared; `colors.light` / `colors.dark` hold palettes.
@@ -601,14 +601,14 @@ export function exportBurneThemeConfigSource(
 ): string {
   const exportName = options?.exportName ?? "burneTheme";
   const body = stringifyValue(config, 0);
-
+ 
   return [
     "/**",
     " * Generated from the Burne UI theme playground.",
     " * Save as `burne-theme.ts` and pass to BurneUIProvider:",
     " *",
-    " *   import { BurneUIProvider } from \"burne-ui\";",
-    ` *   import ${exportName} from \"./burne-theme\";`,
+    ' *   import { BurneUIProvider } from "burne-ui";',
+    ` *   import ${exportName} from "./burne-theme";`,
     " *",
     ` *   <BurneUIProvider config={${exportName}}>{children}</BurneUIProvider>`,
     " *",
@@ -623,6 +623,7 @@ export function exportBurneThemeConfigSource(
     "",
   ].join("\n");
 }
-
+ 
 /** @internal used by docs — list of motion keys mirrored from ThemeTokenState */
 export const BURNE_THEME_MOTION_STATE_KEYS = MOTION_STATE_KEYS;
+ 

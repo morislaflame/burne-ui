@@ -52,6 +52,8 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 </Dropdown>
 ```
 
+Правый клик по области — `ContextMenu`: то же меню и submenu, якорь в точке курсора.
+
 ### Submenu
 
 ```tsx
@@ -83,7 +85,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 
 ### `DropdownClassNames`
 
-`root`, `trigger`, `popover`, `popoverBody`, `group`, `label`, `separator`, `item`, `itemLabel`, `itemHint`, `itemIcon`, `itemIndicator`, `itemIndicatorShell`, `itemIndicatorFill`, `itemIndicatorMark`, `sub`, `subTrigger`, `subTriggerLabelWrap`, `subTriggerIcon`, `subPopover`, `subPopoverGlossPanel`, `subPopoverBody`.
+`root`, `trigger`, `popover`, `popoverBody`, `group`, `label`, `separator`, `item`, `itemLabel`, `itemHint`, `itemIcon`, `itemIndicator`, `itemIndicatorShell`, `itemIndicatorFill`, `itemIndicatorMark`, `sub`, `subTrigger`, `subTriggerLabelWrap`, `subTriggerIcon`, `subPopover`, `subPopoverBody`.
 
 ### Compound-подчасти
 
@@ -248,7 +250,7 @@ Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). К�
 
 `leave: false` — панель сразу unmount. Factory leave должна скрыть поверхность (`autoAlpha: 0`). Прерывание leave отменяет `MotionRun` без `complete`.
 
-Rest shadow на default panel — из `Popover` (`shadow-token-large`).
+Rest shadow на default panel — из `Popover` (`shadow-token-xlarge`).
 
 #### Кастомизация portal
 
@@ -277,7 +279,7 @@ animateInteractivePressSqueeze(el);
 
 **Open:** `pointerenter` / `click` / `Enter|Space` на `SubTrigger` → `setOpen(true)`.
 
-**Position:** fixed `left/top`, gap 6px справа от trigger; flip влево если не влезает; clamp по viewport height.
+**Position:** fixed `left/top`, gap 6px справа от trigger; flip влево если не влезает; clamp по viewport height. Reflow — `bindOverlayReflow` (`scroll` passive capture, `resize`, `visualViewport`).
 
 **Motion:** слот `subContent` (`portalSurfaceEnter` / `Leave`) на `Dropdown.SubContent`. Nested provider с `DROPDOWN_SUB_MOTION_DEFAULTS`.
 
@@ -326,8 +328,8 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `DROPDOWN_POPOVER_BODY_CLASS` | `max-h-[min(24rem,70vh)]`, `p-base`, scroll |
-| `DROPDOWN_ITEM_BASE_CLASS` | `rounded-mid px-base py-small` row |
+| `DROPDOWN_POPOVER_BODY_CLASS` | `max-h-[min(24rem,70dvh)]`, `p-base`, scroll |
+| `DROPDOWN_ITEM_BASE_CLASS` | `rounded-large px-base py-small` row |
 | `hoverVariant()` | Semantic hover background на item/sub |
 | `optionListItemGridClass` | Grid: indicator, icon, label, hint |
 | `shadow-token-md` | Submenu default surface |
@@ -361,13 +363,15 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 | `itemHint` | Hint span | Secondary text под label |
 | `itemIcon` | Leading icon slot | Размер/цвет иконки |
 | `itemIndicator` | Indicator wrapper | Позиция radio/check |
-| `itemIndicatorShell` / `Fill` / `Mark` | `SelectionIndicator` parts | Кастом mark/fill |
+| `itemIndicatorShell` | Оболочка индикатора | Кастом shell |
+| `itemIndicatorFill` | Fill слоя индикатора | Кастом fill |
+| `itemIndicatorMark` | Mark слоя индикатора | Кастом mark |
 | `sub` | `Dropdown.Sub` wrapper | Submenu container |
 | `subTrigger` | Sub trigger row | Hover row стили |
 | `subTriggerLabelWrap` | Label flex area | Truncate длинных label |
 | `subTriggerIcon` | `IoChevronForward` | Muted chevron |
 | `subPopover` | Submenu portal panel | Flyout surface |
-| `subPopoverGlossPanel` / `subPopoverBody` | Gloss submenu layers | Gloss variant |
+| `subPopoverBody` | Тело подменю | Padding внутри подменю |
 
 ### Simple-подобный selection menu
 
@@ -403,7 +407,7 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 ### Compound с submenu и semantic items
 
 ```tsx
-<Dropdown classNames={{ item: "rounded-mid", subPopover: "shadow-token-lg" }}>
+<Dropdown classNames={{ item: "rounded-large", subPopover: "shadow-token-lg" }}>
   <Dropdown.Trigger>Меню</Dropdown.Trigger>
   <Dropdown.Popover bodyClassName="p-small">
     <Dropdown.Item status="danger">

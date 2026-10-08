@@ -1,9 +1,9 @@
 import { useCallback, useId, useMemo, useState } from "react";
-
+ 
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-
+ 
 import { progressBarDisplayEqual } from "./progressBarAPI";
 import { progressBarLabelId } from "./progressBarA11y";
 import type {
@@ -11,7 +11,7 @@ import type {
   ProgressBarFieldContextValue,
   UseProgressBarRootStateProps,
 } from "./progressBarTypes";
-
+ 
 export function useProgressBarRootState({
   children,
   id: idProp,
@@ -35,12 +35,12 @@ export function useProgressBarRootState({
   const hintId = fieldHintId(progressId);
   const errorId = fieldErrorId(progressId);
   const labelId = progressBarLabelId(progressId);
-
+ 
   const [display, setDisplayState] = useState<ProgressBarDisplayState | null>(null);
   const setDisplay = useCallback((next: ProgressBarDisplayState | null) => {
     setDisplayState((prev) => (progressBarDisplayEqual(prev, next) ? prev : next));
   }, []);
-
+ 
   const { isCompound, hasHint, hasError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
@@ -49,7 +49,7 @@ export function useProgressBarRootState({
       hasError: error != null || (compound && hasCompoundChild(children, "ProgressBar.Error")),
     };
   }, [children, error, hint]);
-
+ 
   const fieldCtx = useMemo<ProgressBarFieldContextValue>(
     () => ({
       progressId,
@@ -63,9 +63,9 @@ export function useProgressBarRootState({
     }),
     [display, errorId, hasError, hasHint, hintId, orientation, progressId, setDisplay],
   );
-
+ 
   const fieldLabelCtx = useMemo(() => ({ labelId }), [labelId]);
-
+ 
   const trackProps = {
     value,
     indeterminate,
@@ -77,7 +77,7 @@ export function useProgressBarRootState({
     formatValue,
     orientation,
   };
-
+ 
   return {
     progressId,
     isCompound,
@@ -91,3 +91,4 @@ export function useProgressBarRootState({
     error,
   };
 }
+ 

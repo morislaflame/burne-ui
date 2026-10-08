@@ -17,7 +17,7 @@ export default defineConfig({
     host: true,
     port: 5173,
     strictPort: true,
-    // tuna.am and other tunnels send Host != localhost
-    allowedHosts: [".tuna.am", "localhost"],
+    // Tunnels send Host != localhost (tuna, Cloudflare quick tunnels)
+    allowedHosts: [".tuna.am", ".trycloudflare.com", "localhost"],
   },
 });

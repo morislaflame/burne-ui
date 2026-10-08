@@ -1,12 +1,21 @@
 import type { CSSProperties } from "react";
 
-import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
+import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
+import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 
-import { sliderThicknessToCss } from "./sliderAPI";
-import type { SliderOrientation, SliderSize } from "./sliderTypes";
+import {
+  KIT_SLIDER_VARIANTS,
+  type SliderOrientation,
+  type SliderSize,
+  type SliderVariant,
+} from "./sliderTypes";
 
 import { cn } from "@/utils/cn";
+
+export function sliderThicknessToCss(thickness: number | string): string {
+  return typeof thickness === "number" ? `${thickness}px` : thickness;
+}
 
 export const SLIDER_SCALE_HEADER_BASE_CLASS = "flex items-baseline justify-between gap-xsmall";
 
@@ -35,20 +44,14 @@ export const SLIDER_RAIL_LAYOUT_CLASS =
 
 export const SLIDER_RAIL_DEFAULT_CLASS = "bg-primary-tint";
 
-export const SLIDER_RAIL_GLOSS_CLASS = "gloss-indicator border-0";
-
-export const SLIDER_RAIL_GLOSS_SHAPE_CLASS = "overflow-hidden";
-
 export const SLIDER_RAIL_DISABLED_CLASS = "opacity-48";
+
+export const SLIDER_RAIL_SKIN_SHAPE_CLASS = "overflow-hidden";
 
 /** Rail fill — clipped by rail `overflow-hidden` (same radius as thumb). */
 export const SLIDER_FILL_LAYOUT_CLASS = "absolute rounded-[inherit]";
 
 export const SLIDER_FILL_DEFAULT_CLASS = "bg-primary";
-
-export const SLIDER_FILL_GLOSS_CLASS = "bg-primary-tint";
-
-export const SLIDER_FILL_GLOSS_LAYER_CLASS = "z-[1]";
 
 export const SLIDER_FILL_HORIZONTAL_CLASS = "inset-y-0";
 
@@ -70,7 +73,7 @@ export const SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS =
   "top-0 h-full w-auto -translate-x-1/2 aspect-square";
 
 export const SLIDER_THUMB_BUTTON_VERTICAL_CLASS =
-  "left-0 w-full h-auto -translate-y-1/2 aspect-square";
+  "start-0 w-full h-auto -translate-y-1/2 aspect-square";
 
 export const SLIDER_THUMB_BUTTON_DISABLED_CLASS = "cursor-not-allowed";
 
@@ -79,6 +82,8 @@ export const SLIDER_THUMB_BUTTON_ENABLED_CLASS = "cursor-grab active:cursor-grab
 export const SLIDER_THUMB_BUTTON_Z_CLASS = "z-[2]";
 
 export const SLIDER_THUMB_BUTTON_Z_ACTIVE_CLASS = "z-[3]";
+
+export const SLIDER_LABEL_DANGER_CLASS = "text-danger";
 
 export function sliderRootClass({
   orientation,
@@ -95,20 +100,20 @@ export function sliderRootClass({
 export function sliderRailClass({
   size,
   disabled,
-  gloss = false,
+  variant = "default",
   slotClass,
   className,
 }: {
   size: SliderSize;
   disabled?: boolean;
-  gloss?: boolean;
+  variant?: SliderVariant;
   slotClass?: string;
   className?: string;
 }): string {
   return cn(
     SLIDER_RAIL_LAYOUT_CLASS,
     SELECTION_INDICATOR_RADIUS_CLASS[size],
-    !gloss && SLIDER_RAIL_DEFAULT_CLASS,
+    isKitVariant(variant, KIT_SLIDER_VARIANTS) && SLIDER_RAIL_DEFAULT_CLASS,
     disabled && SLIDER_RAIL_DISABLED_CLASS,
     slotClass,
     className,
@@ -117,20 +122,23 @@ export function sliderRailClass({
 
 export function sliderFillClass({
   isHorizontal,
-  gloss = false,
+  variant = "default",
   slotClass,
   className,
 }: {
   isHorizontal: boolean;
-  gloss?: boolean;
+  variant?: SliderVariant;
   slotClass?: string;
   className?: string;
 }): string {
+  const visual = resolveVariantVisual(variant, KIT_SLIDER_VARIANTS, "slider.fill");
+  const surface =
+    visual.className !== undefined ? visual.className : SLIDER_FILL_DEFAULT_CLASS;
+
   return cn(
     SLIDER_FILL_LAYOUT_CLASS,
     isHorizontal ? SLIDER_FILL_HORIZONTAL_CLASS : SLIDER_FILL_VERTICAL_CLASS,
-    gloss ? SLIDER_FILL_GLOSS_CLASS : SLIDER_FILL_DEFAULT_CLASS,
-    gloss && SLIDER_FILL_GLOSS_LAYER_CLASS,
+    surface,
     slotClass,
     className,
   );
@@ -140,24 +148,31 @@ export function sliderTrackHitAreaClass({
   isHorizontal,
   size,
   thickness,
-  gloss = false,
+  variant = "default",
   slotClass,
   className,
 }: {
   isHorizontal: boolean;
   size: SliderSize;
   thickness?: number | string;
-  gloss?: boolean;
+  variant?: SliderVariant;
   slotClass?: string;
   className?: string;
 }): string {
+  const visual = resolveVariantVisual(
+    variant,
+    KIT_SLIDER_VARIANTS,
+    "selectionIndicator.root",
+  );
+  const skinSurface = visual.className !== undefined;
+
   return cn(
     SLIDER_TRACK_HIT_BASE_CLASS,
     isHorizontal ? SLIDER_TRACK_HIT_HORIZONTAL_CLASS : SLIDER_TRACK_HIT_VERTICAL_CLASS,
     thickness == null && (isHorizontal ? SLIDER_RAIL_HEIGHT[size] : SLIDER_RAIL_WIDTH[size]),
-    gloss && SELECTION_INDICATOR_RADIUS_CLASS[size],
-    gloss && SLIDER_RAIL_GLOSS_SHAPE_CLASS,
-    gloss && SLIDER_RAIL_GLOSS_CLASS,
+    skinSurface && SELECTION_INDICATOR_RADIUS_CLASS[size],
+    skinSurface && SLIDER_RAIL_SKIN_SHAPE_CLASS,
+    visual.className,
     slotClass,
     className,
   );

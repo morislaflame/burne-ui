@@ -1,5 +1,5 @@
 import { colorToken } from "@/tokens";
-
+ 
 export const RIPPLE_COLOR = {
   primarySolid: colorToken("converge-ripple-primary-fill"),
   neutral: colorToken("converge-ripple-neutral"),
@@ -9,5 +9,6 @@ export const RIPPLE_COLOR = {
   info: colorToken("converge-ripple-info"),
   warning: colorToken("converge-ripple-warning"),
 } as const;
-
+ 
 export type RippleColor = keyof typeof RIPPLE_COLOR;
+ 

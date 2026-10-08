@@ -1,19 +1,19 @@
 import type { MotionPartPhases } from "./slotMotionTypes";
-
+ 
 export type MotionRegistration = {
   id: symbol;
   slot: string;
   node: HTMLElement;
   motion?: MotionPartPhases;
 };
-
+ 
 export type MotionRegisterInput = {
   id?: symbol;
   slot: string;
   node: HTMLElement | null;
   motion?: MotionPartPhases;
 };
-
+ 
 export type MotionRegistry = {
   register: (input: MotionRegisterInput) => () => void;
   unregister: (id: symbol) => void;
@@ -23,7 +23,7 @@ export type MotionRegistry = {
   snapshotTargets: () => Record<string, HTMLElement | null>;
   find: (slot: string, node?: HTMLElement | null) => MotionRegistration | undefined;
 };
-
+ 
 /**
  * Multi-instance slot registry. One slot name may have many live DOM nodes.
  * `register` upserts by `id`; the disposer / `unregister` remove only that id.
@@ -31,7 +31,7 @@ export type MotionRegistry = {
 export function createMotionRegistry(): MotionRegistry {
   const entries = new Map<symbol, MotionRegistration>();
   const orderBySlot = new Map<string, symbol[]>();
-
+ 
   const addToSlot = (slot: string, id: symbol) => {
     const list = orderBySlot.get(slot);
     if (!list) {
@@ -40,7 +40,7 @@ export function createMotionRegistry(): MotionRegistry {
     }
     if (!list.includes(id)) list.push(id);
   };
-
+ 
   const removeFromSlot = (slot: string, id: symbol) => {
     const list = orderBySlot.get(slot);
     if (!list) return;
@@ -48,14 +48,14 @@ export function createMotionRegistry(): MotionRegistry {
     if (next.length === 0) orderBySlot.delete(slot);
     else orderBySlot.set(slot, next);
   };
-
+ 
   const unregister = (id: symbol) => {
     const prev = entries.get(id);
     if (!prev) return;
     entries.delete(id);
     removeFromSlot(prev.slot, id);
   };
-
+ 
   const register = (input: MotionRegisterInput): (() => void) => {
     const id = input.id ?? Symbol(input.slot);
     if (!input.node) {
@@ -75,7 +75,7 @@ export function createMotionRegistry(): MotionRegistry {
     addToSlot(input.slot, id);
     return () => unregister(id);
   };
-
+ 
   const getRegistrations = (slot?: string): readonly MotionRegistration[] => {
     if (slot !== undefined) {
       const ids = orderBySlot.get(slot);
@@ -96,7 +96,7 @@ export function createMotionRegistry(): MotionRegistry {
     }
     return out;
   };
-
+ 
   const getTarget = (slot: string): HTMLElement | null => {
     const ids = orderBySlot.get(slot);
     if (!ids) return null;
@@ -106,7 +106,7 @@ export function createMotionRegistry(): MotionRegistry {
     }
     return null;
   };
-
+ 
   const getTargets = (slot: string): readonly HTMLElement[] => {
     const regs = getRegistrations(slot);
     if (regs.length === 0) return [];
@@ -119,7 +119,7 @@ export function createMotionRegistry(): MotionRegistry {
     }
     return nodes;
   };
-
+ 
   const snapshotTargets = (): Record<string, HTMLElement | null> => {
     const out: Record<string, HTMLElement | null> = {};
     for (const [slot, ids] of orderBySlot) {
@@ -133,13 +133,13 @@ export function createMotionRegistry(): MotionRegistry {
     }
     return out;
   };
-
+ 
   const find = (slot: string, node?: HTMLElement | null): MotionRegistration | undefined => {
     const regs = getRegistrations(slot);
     if (node) return regs.find((reg) => reg.node === node);
     return regs[0];
   };
-
+ 
   return {
     register,
     unregister,
@@ -150,3 +150,4 @@ export function createMotionRegistry(): MotionRegistry {
     find,
   };
 }
+ 

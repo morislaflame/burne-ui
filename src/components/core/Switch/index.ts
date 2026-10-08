@@ -1,5 +1,5 @@
 import { SwitchContent, SwitchControl, SwitchError, SwitchFill, SwitchHint, SwitchIcon, SwitchLabel, SwitchRoot, SwitchThumb, SwitchTrack } from "./Switch";
-
+ 
 export const Switch = Object.assign(SwitchRoot, {
   Control: SwitchControl,
   Track: SwitchTrack,
@@ -11,7 +11,7 @@ export const Switch = Object.assign(SwitchRoot, {
   Hint: SwitchHint,
   Error: SwitchError,
 });
-
+ 
 export type {
   SwitchControlProps,
   SwitchTrackProps,
@@ -30,4 +30,6 @@ export type {
   SwitchClassNames,
   SwitchMotion,
   SwitchCheckMotion,
+  SwitchVariant,
 } from "./switchTypes";
+ 

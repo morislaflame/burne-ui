@@ -7,25 +7,22 @@
  * Host: root (`useKbdAnimations`) plays pointer `hoverIn` / `hoverOut`.
  * `Kbd.Group` registers `group` on an ancestor Kbd scope, or creates its own
  * scope when used standalone with `motion`.
- * Defaults: `resolveKbdMotionDefaults` (second-level lift / gloss).
+ * Defaults: `resolveKbdMotionDefaults` (second-level lift). A skin overlays its own recipes.
  */
 import { useCallback, useMemo, useRef, type ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
-import {
-  createGlossInteractiveRefCallback,
-  GLOSS_INTERACTIVE_MOTION_CLASS,
-} from "@/components/core/utils/glossInteractiveMotion";
+ 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeMotionPointerHandlers, useMotionPointerPhases, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-
+import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+ 
 import { useKbdMotionScope, useOptionalKbdMotionScope } from "./kbdContext";
 import type { KbdMotion, KbdPartMotion, KbdVariant, UseKbdAnimationsProps } from "./kbdTypes";
-
-import "../utils/glossInteractive.css";
-
+import { KIT_KBD_VARIANTS } from "./kbdTypes";
+ 
+ 
 export function resolveKbdMotionDefaults({
   variant,
   hoverLift,
@@ -33,11 +30,15 @@ export function resolveKbdMotionDefaults({
   variant: KbdVariant;
   hoverLift: boolean;
 }): KbdMotion {
-  const recipe = variant === "gloss" ? "hoverLiftGloss" : "hoverLiftSecondLevel";
-  const rootPhase = hoverLift ? recipe : false;
-  return { root: { hoverIn: rootPhase, hoverOut: rootPhase } };
+  const rootPhase = hoverLift ? "hoverLiftSecondLevel" : false;
+  return overlaySkinMotion(
+    { root: { hoverIn: rootPhase, hoverOut: rootPhase } },
+    variant,
+    KIT_KBD_VARIANTS,
+    "kbd",
+  );
 }
-
+ 
 export function useKbdAnimations({
   variant,
   hoverLift = true,
@@ -46,32 +47,26 @@ export function useKbdAnimations({
   onPointerOver: onPointerOverProp,
   onPointerOut: onPointerOutProp,
 }: UseKbdAnimationsProps) {
-  const isGloss = variant === "gloss";
+  const kitSurface = isKitVariant(variant, KIT_KBD_VARIANTS);
   const rootRef = useRef<HTMLElement | null>(null);
   const scope = useKbdMotionScope();
   const rootMotionRef = useRef(motion?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
-
-  const glossEnabled = isGloss && (hoverLift || motion?.root != null);
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, glossEnabled),
-    [glossEnabled],
-  );
-
-  const secondLevelLift = useSecondLevelShadow(rootRef, !isGloss, {
+ 
+  const secondLevelLift = useSecondLevelShadow(rootRef, kitSurface && hoverLift, {
     interactive: false,
   });
-
+ 
   const setMergedRef = useCallback(
     (node: HTMLElement | null) => {
-      bindGlossRef(node);
       rootRef.current = node;
       scope.registerTarget("root", node);
       mergeForwardedRef(forwardedRef, node);
     },
-    [bindGlossRef, forwardedRef, scope],
+    [forwardedRef, scope],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLElement>({
     enabled: true,
     targetRef: rootRef,
@@ -87,7 +82,7 @@ export function useKbdAnimations({
       scope.play("root", "hoverOut", { partMotion: rootMotionRef.current, el });
     },
   });
-
+ 
   const pointerHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -98,20 +93,16 @@ export function useKbdAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp],
   );
-
-  const motionClass = isGloss
-    ? glossEnabled
-      ? GLOSS_INTERACTIVE_MOTION_CLASS
-      : ""
-    : secondLevelLift.motionClass;
-
+ 
+  const motionClass = kitSurface && hoverLift ? secondLevelLift.motionClass : "";
+ 
   return {
     setMergedRef,
     motionClass,
     pointerHandlers,
   };
 }
-
+ 
 export function useKbdGroupSlotMotion(
   {
     motion,

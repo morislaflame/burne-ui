@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 import type { ButtonSize } from "@/components/core/Button";
@@ -10,15 +10,13 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
-
+ 
 export type AlertDialogSize = PanelSize;
-
+ 
 export type AlertDialogClassNames = {
   dialog?: string;
   overlay?: string;
   panel?: string;
-  glossPanel?: string;
-  glossContent?: string;
   content?: string;
   trigger?: string;
   header?: string;
@@ -30,12 +28,12 @@ export type AlertDialogClassNames = {
   footer?: string;
   close?: string;
 };
-
+ 
 export type AlertDialogLifecycleMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 /** Nested text slots also listen for local pointer phases. */
 export type AlertDialogPartMotion = AlertDialogLifecycleMotion & {
   hoverIn?: MotionValue;
@@ -43,7 +41,7 @@ export type AlertDialogPartMotion = AlertDialogLifecycleMotion & {
   pressIn?: MotionValue;
   pressOut?: MotionValue;
 };
-
+ 
 /**
  * Overlay / panel / chrome. Overlay+panel defaults: `modalOverlay*` / `modalPanel*`.
  * Nested chrome enter/leave is broadcast from the panel host.
@@ -63,7 +61,7 @@ export type AlertDialogMotion = {
   /** Open squeeze on `AlertDialog.Trigger` (Root scope — outside Panel). */
   trigger?: AlertDialogPartMotion;
 };
-
+ 
 /** Size tokens from shared `PANEL_SIZE_LAYOUT` (AlertDialog slice). */
 export type AlertDialogSizePreset = Pick<
   PanelSizeLayout,
@@ -85,7 +83,7 @@ export type AlertDialogSizePreset = Pick<
   /** Alert header grid gap (`alertHeaderGap` in panel layout). */
   headerGap: string;
 };
-
+ 
 export type AlertDialogProps = {
   open?: boolean;
   defaultOpen?: boolean;
@@ -116,12 +114,12 @@ export type AlertDialogProps = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type AlertDialogClassNamesProviderProps = {
   classNames?: Prettify<AlertDialogClassNames>;
   children?: ReactNode;
 };
-
+ 
 export type AlertDialogPanelProps = {
   className?: string;
   /**
@@ -139,14 +137,14 @@ export type AlertDialogPanelProps = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */
   asChild?: boolean;
   children?: ReactNode;
   motion?: Prettify<AlertDialogPartMotion>;
 };
-
+ 
 export type AlertDialogContextValue = {
   /** Whether the alert dialog is currently open. */
   open: boolean;
@@ -167,7 +165,7 @@ export type AlertDialogContextValue = {
   /** Portal mount node from Root; Panel may override via its own prop. */
   portalContainer?: HTMLElement | null;
 };
-
+ 
 export type AlertDialogHeaderContextValue = {
   variant: AlertVariant;
   status: AlertStatus;
@@ -175,13 +173,13 @@ export type AlertDialogHeaderContextValue = {
   gridSlots: MessageBannerGridSlots;
   headerIcon?: ReactNode | null;
 };
-
+ 
 export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
   icon?: ReactNode | null;
   showClose?: boolean;
   motion?: Prettify<AlertDialogLifecycleMotion>;
 };
-
+ 
 export type AlertDialogIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<AlertDialogLifecycleMotion>;
 };
@@ -203,10 +201,11 @@ export type AlertDialogCloseProps = CloseButtonProps & {
 export type AlertDialogContentProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AlertDialogLifecycleMotion>;
 };
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AlertDialogPartMotion>;
 };
-
+ 
 export type UseAlertDialogRootStateProps = Pick<
   AlertDialogProps,
   | "open"
@@ -218,15 +217,16 @@ export type UseAlertDialogRootStateProps = Pick<
   | "closeOnEscape"
   | "portalContainer"
 >;
-
+ 
 export type UseAlertDialogModalMotionProps = {
   open: boolean;
   variant: AlertVariant;
   /** When true, open with `show()` + absolute positioning inside a custom portal host. */
   contained?: boolean;
 };
-
+ 
 export type AlertDialogPortalShellProps = {
+  open: boolean;
   children: ReactNode;
   className?: string;
   variant: AlertVariant;
@@ -242,7 +242,7 @@ export type AlertDialogPortalShellProps = {
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
-  bindGlossPanelRef: (node: HTMLDivElement | null) => void;
   /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
   contained?: boolean;
 };
+ 

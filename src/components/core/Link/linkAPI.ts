@@ -1,5 +1,5 @@
 import { Children, Fragment, createElement, isValidElement, type ReactNode } from "react";
-
+ 
 import type {
   LinkIconPlacement,
   LinkIconProps,
@@ -7,14 +7,14 @@ import type {
   ResolvedLinkIconSlot,
   UseLinkRootStateProps,
 } from "./linkTypes";
-
+ 
 export const LINK_ICON_DISPLAY_NAME = "Link.Icon";
-
+ 
 function elementDisplayName(node: ReactNode): string | undefined {
   if (!isValidElement(node)) return undefined;
   return (node.type as { displayName?: string }).displayName;
 }
-
+ 
 export function hasLinkCompoundChildren(children: ReactNode): boolean {
   return Children.toArray(children).some((child) => {
     if (!isValidElement(child)) return false;
@@ -23,7 +23,7 @@ export function hasLinkCompoundChildren(children: ReactNode): boolean {
     return nested != null && hasLinkCompoundChildren(nested);
   });
 }
-
+ 
 function resolveIconSlot(props: LinkIconProps): ResolvedLinkIconSlot {
   const hasCustomIcon = props.children !== undefined && props.children !== null;
   return {
@@ -31,12 +31,12 @@ function resolveIconSlot(props: LinkIconProps): ResolvedLinkIconSlot {
     muted: !hasCustomIcon,
   };
 }
-
+ 
 export function resolveLinkCompoundBody(children: ReactNode): ResolvedLinkCompoundBody {
   const textNodes: ReactNode[] = [];
   let startIcon: ResolvedLinkIconSlot | undefined;
   let endIcon: ResolvedLinkIconSlot | undefined;
-
+ 
   Children.forEach(children, (child) => {
     if (isValidElement(child) && elementDisplayName(child) === LINK_ICON_DISPLAY_NAME) {
       const props = child.props as LinkIconProps;
@@ -48,7 +48,7 @@ export function resolveLinkCompoundBody(children: ReactNode): ResolvedLinkCompou
     }
     textNodes.push(child);
   });
-
+ 
   return {
     textChildren:
       textNodes.length === 1 ? textNodes[0]! : createElement(Fragment, null, ...textNodes),
@@ -56,7 +56,7 @@ export function resolveLinkCompoundBody(children: ReactNode): ResolvedLinkCompou
     endIcon,
   };
 }
-
+ 
 function resolveIconNode(
   slot: ResolvedLinkIconSlot | undefined,
   fallback: ReactNode | undefined,
@@ -77,7 +77,7 @@ function resolveIconNode(
   }
   return { node: null, muted: false };
 }
-
+ 
 export function resolveLinkIconPlacement({
   icon,
   showDefaultIcon = false,
@@ -89,14 +89,14 @@ export function resolveLinkIconPlacement({
   const usesDefaultIcon = showDefaultIcon && icon == null;
   const defaultIconAtStart = usesDefaultIcon && defaultIconPosition === "start";
   const defaultIconAtEnd = usesDefaultIcon && defaultIconPosition === "end";
-
+ 
   return {
     usesDefaultIcon,
     defaultIconAtStart,
     defaultIconAtEnd,
   };
 }
-
+ 
 export function resolveLinkBodyIcons({
   icon,
   iconPosition = "start",
@@ -113,12 +113,12 @@ export function resolveLinkBodyIcons({
   usesDefaultAtEnd: boolean;
 } {
   const isCompound = children != null && hasLinkCompoundChildren(children);
-
+ 
   if (isCompound) {
     const body = resolveLinkCompoundBody(children);
     const start = resolveIconNode(body.startIcon, undefined, false, true);
     const end = resolveIconNode(body.endIcon, undefined, false, true);
-
+ 
     return {
       textChildren: body.textChildren,
       startIcon: start.node,
@@ -129,13 +129,13 @@ export function resolveLinkBodyIcons({
       usesDefaultAtEnd: body.endIcon?.node === "default",
     };
   }
-
+ 
   const placement = resolveLinkIconPlacement({
     icon,
     showDefaultIcon,
     defaultIconPosition,
   });
-
+ 
   return {
     textChildren: children ?? null,
     startIcon: icon != null && iconPosition === "start" ? icon : null,
@@ -146,3 +146,4 @@ export function resolveLinkBodyIcons({
     usesDefaultAtEnd: placement.defaultIconAtEnd,
   };
 }
+ 

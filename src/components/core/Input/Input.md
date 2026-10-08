@@ -13,7 +13,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 ### Compound
 
 ```tsx
-<Input label="Email" hint="…" status="danger" required>
+<Input label="Email" hint="…" error="Некорректный адрес" required>
   <Input.Label>Email</Input.Label>
   <Input.Control type="email" autoComplete="email" />
   <Input.Hint>Формат: name@domain.tld</Input.Hint>
@@ -35,8 +35,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 <Input
   label="Email"
   hint="Формат: name@domain.tld"
-  error={invalid ? "Укажите корректный адрес." : undefined}
-  status={invalid ? "danger" : "default"}
+  error={showError ? "Укажите корректный адрес." : undefined}
   required
   value={value}
   onChange={(e) => setValue(e.target.value)}
@@ -48,7 +47,8 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `outline` \| `gloss` |
-| `status` | `default` | `default` \| `danger` \| `success` \| `warning` |
+| `status` | `default` | Только цвет: `default` \| `danger` \| `success` \| `warning`. Не ставит `aria-invalid` |
+| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""` без текста. `error` делает то же и показывает сообщение |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `inputType` | `text` | `text` \| `number` \| `password` \| `file` |
 | `prefix` / `suffix` | — | Affix-слоты (не для `file`) |
@@ -71,6 +71,10 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 | `password` | Toggle visibility (`IoEye` / `IoEyeOff`) |
 | `file` | Drag-area, preview, multi-file, remove с exit-анимацией |
 
+Preview: `file.type` `image/*`, иначе последнее расширение после `.` (`my photo.jpg` → `jpg`). Имя без точки, с одной ведущей точкой или с точкой в конце не считается картинкой — не `split(".").pop()`.
+
+Remove файла вызывает `onChange` один раз после синхронизации `input.files`, не из `setState` updater (в StrictMode updater может вызваться дважды).
+
 ## variant и status
 
 | variant | Shell |
@@ -83,7 +87,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 
 ## Размеры
 
-Из `CONTROL_SIZE_LAYOUT`: `h-control-*`, `controlPad`, toggle icon/pad для password.
+Из `CONTROL_SIZE_LAYOUT`: `min-h-control-*`, `controlPad`, toggle icon/pad для password.
 
 ## Анимации
 
@@ -202,7 +206,7 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 <Input
   className="max-w-sm"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     shell: "ring-1 ring-primary/15",
     control: "text-primary placeholder:text-primary/50",
     prefix: "bg-surface-elevated text-muted",
@@ -212,7 +216,6 @@ Resize/file geometry не в публичных vars. Password toggle и file re
   label="Email"
   placeholder="you@example.com"
   prefix={<IoSearch aria-hidden />}
-  status="danger"
   hint="Мы не передаём адрес третьим лицам."
   error="Введите корректный email."
 />
@@ -226,7 +229,6 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 
 ```tsx
 <Input
-  status="danger"
   required
   classNames={{
     root: "max-w-md gap-small",
@@ -265,7 +267,7 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 ## Доступность
 
 - `joinFieldDescribedBy(hintId, errorId)` на control
-- `aria-invalid` при `status="danger"`
+- `error` или `invalid` ставят `aria-invalid` на control и пустой `data-invalid` на корне. `status` этого не делает
 - `aria-required` из `required`
 - Password toggle: `aria-label`, `aria-pressed`
 - File remove: `aria-label`

@@ -1,11 +1,11 @@
 import { useMemo, type ReactNode } from "react";
-
+ 
 import type { OptionListItemContextValue } from "@/components/core/utils/optionListItemContext";
-
+ 
 import { partitionDropdownItemChildren } from "./dropdownAPI";
 import { useDropdown } from "./dropdownContext";
 import type { DropdownItemStatus } from "./dropdownTypes";
-
+ 
 export function useDropdownItemState({
   children,
   href,
@@ -41,7 +41,7 @@ export function useDropdownItemState({
       ? "menuitemcheckbox"
       : "menuitemradio";
   const isSelected = isSelectionItem && value != null && selected.has(value);
-
+ 
   const itemCtx: OptionListItemContextValue = useMemo(
     () => ({
       showIndicatorSlot,
@@ -62,7 +62,7 @@ export function useDropdownItemState({
       status,
     ],
   );
-
+ 
   return {
     parts,
     selectItem,
@@ -79,3 +79,4 @@ export function useDropdownItemState({
     itemCtx,
   };
 }
+ 

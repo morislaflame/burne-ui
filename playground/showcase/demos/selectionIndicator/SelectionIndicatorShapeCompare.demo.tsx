@@ -25,11 +25,11 @@ export function SelectionIndicatorShapeCompareDemo() {
             selected={selected}
             check
             classNames={{
-              root: "rounded-mid",
+              root: "rounded-large",
             }}
           />
           <Text as="span" variant="xsmall" className="text-muted">
-            rounded-mid
+            rounded-large
           </Text>
         </div>
       </div>

@@ -5,11 +5,11 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type MeterSize = "small" | "base" | "mid" | "large";
-
+ 
 export type MeterOrientation = "horizontal" | "vertical";
-
+ 
 export type MeterClassNames = {
   /** Field root (`Field`). */
   root?: string;
@@ -28,7 +28,7 @@ export type MeterClassNames = {
   /** `Meter.Error`. */
   error?: string;
 };
-
+ 
 export type MeterPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -43,7 +43,7 @@ export type MeterPartMotion = {
    */
   change?: MotionValue;
 };
-
+ 
 export type MeterMotion = {
   track?: MeterPartMotion;
   fill?: MeterPartMotion;
@@ -53,14 +53,14 @@ export type MeterMotion = {
   hint?: MeterPartMotion;
   error?: MeterPartMotion;
 };
-
+ 
 export type MeterDisplayState = {
   clampedValue: number;
   statusText: string;
   min: number;
   max: number;
 };
-
+ 
 export type MeterFieldContextValue = {
   meterId: string;
   hintId: string;
@@ -72,7 +72,7 @@ export type MeterFieldContextValue = {
   display: MeterDisplayState | null;
   setDisplay: (next: MeterDisplayState | null) => void;
 };
-
+ 
 export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   value: number;
   min?: number;
@@ -90,7 +90,7 @@ export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> &
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type MeterProps = HTMLAttributes<HTMLDivElement> &
   Partial<Omit<MeterTrackProps, "motion">> & {
     children?: ReactNode;
@@ -119,41 +119,41 @@ export type MeterProps = HTMLAttributes<HTMLDivElement> &
      */
     motionController?: MotionController;
   } & MotionStateHostProps;
-
+ 
 export type MeterClassNamesProviderProps = {
   classNames?: Prettify<MeterClassNames>;
   children: ReactNode;
 };
-
+ 
 export type MeterHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   motion?: Prettify<MeterPartMotion>;
 };
-
+ 
 export type MeterValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   motion?: Prettify<MeterPartMotion>;
 };
-
+ 
 export type MeterLabelProps = Omit<LabelProps, "motion"> & {
   motion?: Prettify<MeterPartMotion>;
 };
-
+ 
 export type MeterHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<MeterPartMotion>;
 };
-
+ 
 export type MeterErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<MeterPartMotion>;
 };
-
+ 
 export type UseMeterRootStateProps = Omit<
   MeterProps,
   "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
-
+ 
 export type UseMeterTrackStateProps = Pick<
   MeterTrackProps,
   | "value"
@@ -167,7 +167,7 @@ export type UseMeterTrackStateProps = Pick<
 > & {
   "aria-describedby"?: string;
 };
-
+ 
 export type MeterTrackAriaProps = {
   clampedValue: number;
   min: number;
@@ -177,7 +177,7 @@ export type MeterTrackAriaProps = {
   labelId?: string;
   ariaDescribedBy?: string;
 };
-
+ 
 export type MeterSimpleBodyProps = {
   label?: ReactNode;
   showValue?: boolean;
@@ -186,3 +186,4 @@ export type MeterSimpleBodyProps = {
   error?: ReactNode;
   trackProps: Partial<MeterTrackProps> & { value?: number };
 };
+ 

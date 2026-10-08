@@ -1,8 +1,8 @@
 import { createContext, createElement, useContext, type Dispatch, type ReactNode, type SetStateAction } from "react";
-
+ 
 import type { BurneThemeConfig } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";
-
+ 
 export type BurneThemeRuntimeContextValue = {
   /** Config supplied to BurneUIProvider before a temporary preview is applied. */
   baseConfig: BurneThemeConfig;
@@ -13,9 +13,9 @@ export type BurneThemeRuntimeContextValue = {
   setPreviewConfig: Dispatch<SetStateAction<BurneThemeConfig | null>>;
   clearPreview: () => void;
 };
-
+ 
 const BurneThemeRuntimeContext = createContext<BurneThemeRuntimeContextValue | null>(null);
-
+ 
 export function BurneThemeRuntimeContextProvider({
   children,
   value,
@@ -25,7 +25,7 @@ export function BurneThemeRuntimeContextProvider({
 }) {
   return createElement(BurneThemeRuntimeContext.Provider, { value }, children);
 }
-
+ 
 export function useBurneThemeRuntime(): BurneThemeRuntimeContextValue {
   const context = useContext(BurneThemeRuntimeContext);
   if (!context) {
@@ -33,7 +33,8 @@ export function useBurneThemeRuntime(): BurneThemeRuntimeContextValue {
   }
   return context;
 }
-
+ 
 export function useBurneThemeRuntimeOptional(): BurneThemeRuntimeContextValue | null {
   return useContext(BurneThemeRuntimeContext);
 }
+ 

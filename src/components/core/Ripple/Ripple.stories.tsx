@@ -50,7 +50,7 @@ const meta = {
     layout: "fullscreen",
     docs: {
       description: {
-        component: `Insert **as the first child** relative to an area with \`relative\`: the \`pointerdown\` listener is on the Ripple node's **parent**; content sits at \`relative z-[1]\` above the layer.
+        component: `Insert **as the first child** of a \`relative\` host: the \`pointerdown\` listener is on the Ripple node's **parent**; content sits at \`relative z-[1]\` above the layer. Ripple clips itself (\`overflow-hidden rounded-[inherit]\`) — do not put \`overflow-hidden\` on a host that paints \`box-shadow\` / hover elevation.
 
 **Named colors** (\`color\`): ${RIPPLE_COLOR_KEYS} — see the \`RIPPLE_COLOR\` object in the kit export. Any other string is treated as a regular CSS color.
 
@@ -92,7 +92,7 @@ export const Playground: Story = {
   },
   render: (args) => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-base"
+      className="relative cursor-pointer rounded-large border-token bg-surface shadow-token-base"
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
@@ -117,7 +117,7 @@ export const ClickInteraction: Story = {
   },
   render: (args) => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-base"
+      className="relative cursor-pointer rounded-large border-token bg-surface shadow-token-base"
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
@@ -179,7 +179,7 @@ export const DirectionCompare: Story = {
   render: () => (
     <div className="flex flex-wrap gap-large">
       <div
-        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
+        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer rounded-large border-token bg-surface"
         role="presentation"
       >
         <Ripple color="neutral" direction="in" />
@@ -188,7 +188,7 @@ export const DirectionCompare: Story = {
         </div>
       </div>
       <div
-        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
+        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer rounded-large border-token bg-surface"
         role="presentation"
       >
         <Ripple color="neutral" direction="out" />
@@ -239,7 +239,7 @@ export const WithAlert: Story = {
   render: () => (
     <Alert
       status="info"
-      className="relative max-w-md cursor-pointer overflow-hidden"
+      className="relative max-w-md cursor-pointer"
     >
       <Ripple color="info" />
       <Alert.Message className="relative z-[1]">
@@ -260,7 +260,7 @@ export const WithInputShell: Story = {
       <Text variant="base" className="text-muted">
         Shared interactive card around the field
       </Text>
-      <div className="relative overflow-hidden rounded-base border-token bg-surface p-large shadow-token-base">
+      <div className="relative rounded-base border-token bg-surface p-large shadow-token-base">
         <Ripple color="neutral" />
         <div className="relative z-[1] flex flex-col gap-small">
           <Text variant="small" className="font-medium text-muted">
@@ -279,7 +279,7 @@ export const ArbitraryCssColor: Story = {
   name: "Arbitrary CSS color",
   render: () => (
     <div
-      className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border-token bg-surface p-mid"
+      className="relative max-w-xs cursor-pointer rounded-large border-token bg-surface p-mid"
       role="presentation"
     >
       <Ripple color="oklch(0.72 0.14 250 / 0.55)" duration={550} />
@@ -290,12 +290,27 @@ export const ArbitraryCssColor: Story = {
   ),
 };
 
+export const CustomClassNames: Story = {
+  name: "Custom className",
+  render: () => (
+    <div
+      className="relative max-w-xs cursor-pointer rounded-large border-token bg-surface"
+      role="presentation"
+    >
+      <Ripple color="info" className="rounded-[inherit]" />
+      <div className="relative z-[1] flex items-center px-large py-2xlarge">
+        <Text variant="base">className paints the ripple layer</Text>
+      </div>
+    </div>
+  ),
+};
+
 export const OnLightTheme: Story = {
   name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
+      className="relative cursor-pointer rounded-large border-token bg-surface"
       role="presentation"
     >
       <Ripple color="neutral" />

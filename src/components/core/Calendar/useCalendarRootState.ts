@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { EN_LOCALE } from "./calendarLocale";
+import { useSkinVariant } from "@/skins/skinContext";
+ 
+import { EN_LOCALE, resolveCalendarLocale } from "./calendarLocale";
 import {
   addCalendarMonths,
   addCalendarYears,
@@ -23,15 +25,15 @@ import type {
   CalendarView,
   UseCalendarRootStateProps,
 } from "./calendarTypes";
-
+ 
 export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
   const {
     mode = "single",
-    variant = "default",
+    variant: variantProp,
     size = "base",
     defaultMonth,
     initialView = "days",
-    locale = EN_LOCALE,
+    locale: localeProp = EN_LOCALE,
     minDate,
     maxDate,
     navPrevIcon,
@@ -41,19 +43,21 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     defaultValue,
     onValueChange,
   } = rawProps;
-
-  const isGloss = variant === "gloss";
+ 
+  const variant = useSkinVariant(variantProp);
+  const locale = useMemo(() => resolveCalendarLocale(localeProp), [localeProp]);
   const today = useMemo(() => startOfDay(new Date()), []);
   const isControlled = value !== undefined;
-
+ 
   const [internalValue, setInternalValue] = useState<unknown>(() =>
     createDefaultCalendarValue(mode as CalendarMode, defaultValue),
   );
-
+ 
   const resolvedValue = isControlled ? value : internalValue;
   const resolvedValueRef = useRef(resolvedValue);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   resolvedValueRef.current = resolvedValue;
-
+ 
   const setValue = useCallback(
     (newValOrUpdater: unknown | ((prev: unknown) => unknown)) => {
       const current = resolvedValueRef.current;
@@ -67,12 +71,12 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     },
     [isControlled, onValueChange],
   );
-
+ 
   const [view, setView] = useState<CalendarView>(initialView);
   const [viewDate, setViewDateRaw] = useState<Date>(() =>
     createInitialViewDate(defaultMonth, mode as CalendarMode, resolvedValue, today),
   );
-
+ 
   const [rangePending, setRangePending] = useState<Date | null>(null);
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
   const [focusedDate, setFocusedDateRaw] = useState<Date>(() =>
@@ -84,14 +88,14 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       maxDate,
     }),
   );
-
+ 
   const setFocusedDate = useCallback(
     (d: Date) => {
       setFocusedDateRaw(clampCalendarDate(d, minDate, maxDate));
     },
     [minDate, maxDate],
   );
-
+ 
   const moveDayFocus = useCallback(
     (d: Date) => {
       const next = clampCalendarDate(d, minDate, maxDate);
@@ -100,22 +104,22 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     },
     [minDate, maxDate],
   );
-
+ 
   const selectedDates = useMemo(
     () => resolveSelectedDates(mode as CalendarMode, resolvedValue),
     [mode, resolvedValue],
   );
-
+ 
   const rangeStart = useMemo(
     () => resolveRangeStart(mode as CalendarMode, rangePending, resolvedValue),
     [mode, rangePending, resolvedValue],
   );
-
+ 
   const rangeEnd = useMemo(
     () => resolveRangeEnd(mode as CalendarMode, rangePending, resolvedValue),
     [mode, rangePending, resolvedValue],
   );
-
+ 
   const navigate = useCallback(
     (delta: number) => {
       setViewDateRaw((prev) => navigateViewDate(prev, view, delta));
@@ -131,7 +135,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     },
     [view, minDate, maxDate],
   );
-
+ 
   const onDayPress = useCallback(
     (d: Date) => {
       const day = startOfDay(d);
@@ -164,7 +168,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     },
     [mode, rangePending, setValue],
   );
-
+ 
   const onMonthPress = useCallback(
     (month: number) => {
       const year = viewDate.getFullYear();
@@ -181,7 +185,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     },
     [viewDate, minDate, maxDate],
   );
-
+ 
   const onYearPress = useCallback(
     (year: number) => {
       setViewDateRaw(new Date(year, viewDate.getMonth(), 1));
@@ -196,7 +200,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     },
     [viewDate, minDate, maxDate],
   );
-
+ 
   const onClear = useCallback(() => {
     setRangePending(null);
     setHoverDate(null);
@@ -204,13 +208,13 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     else if (mode === "multiple") setValue([]);
     else setValue({ start: null, end: null } satisfies CalendarRangeValue);
   }, [mode, setValue]);
-
+ 
   const onToday = useCallback(() => {
     setViewDateRaw(new Date(today.getFullYear(), today.getMonth(), 1));
     setFocusedDateRaw(clampCalendarDate(today, minDate, maxDate));
     setView("days");
   }, [today, minDate, maxDate]);
-
+ 
   const contextValue: CalendarContextValue = useMemo(
     () => ({
       mode: mode as CalendarMode,
@@ -269,12 +273,12 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       renderDay,
     ],
   );
-
+ 
   return {
-    isGloss,
     variant,
     size,
     contextValue,
     today,
   };
 }
+ 

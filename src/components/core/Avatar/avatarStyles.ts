@@ -1,8 +1,10 @@
 import type { TextVariant } from "@/components/core/Text";
 
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-import type { AvatarSize } from "./avatarTypes";
+import type { AvatarSize, AvatarVariant } from "./avatarTypes";
+import { KIT_AVATAR_VARIANTS } from "./avatarTypes";
 
 export const AVATAR_SIZE_CLASS: Record<AvatarSize, { root: string }> = {
   small: { root: "avatar-size-small" },
@@ -21,29 +23,21 @@ export const AVATAR_FALLBACK_TEXT: Record<
   large: { variant: "header-2", className: "font-w-strong uppercase" },
 };
 
+const AVATAR_KIT_SURFACE = "rounded-full bg-surface border-token";
+
 export function avatarRootClass(
   size: AvatarSize,
-  isGloss: boolean,
+  variant: AvatarVariant,
   className?: string,
 ): string {
+  const visual = resolveVariantVisual(variant, KIT_AVATAR_VARIANTS, "avatar.root");
   return cn(
-    "relative inline-flex shrink-0 select-none overflow-hidden text-left",
-    isGloss
-      ? cn("gloss-panel size-full rounded-full border-token", AVATAR_SIZE_CLASS[size].root)
-      : cn("rounded-full bg-surface border-token", AVATAR_SIZE_CLASS[size].root),
-    !isGloss && className,
-  );
-}
-
-export function avatarGlossWrapClass(size: AvatarSize, className?: string): string {
-  return cn(
-    "gloss-wrap inline-flex shrink-0 rounded-full",
+    "relative inline-flex shrink-0 select-none overflow-hidden text-start",
+    visual.className !== undefined ? visual.className : AVATAR_KIT_SURFACE,
     AVATAR_SIZE_CLASS[size].root,
     className,
   );
 }
-
-export const AVATAR_GLOSS_SHADOW_CLASS = "gloss-shadow rounded-full";
 
 export function avatarImageClass(visible: boolean, className?: string): string {
   return cn(
@@ -62,11 +56,11 @@ export function avatarFallbackClass(show: boolean, className?: string): string {
 }
 
 export function avatarGroupClass(className?: string): string {
-  return cn("flex flex-row flex-nowrap items-center text-left", className);
+  return cn("flex flex-row flex-nowrap items-center text-start", className);
 }
 
 export function avatarGroupItemClass(stackIndex: number, className?: string): string {
-  return cn("relative inline-flex", stackIndex > 0 && "-ml-mid", className);
+  return cn("relative inline-flex", stackIndex > 0 && "-ms-mid", className);
 }
 
 export const AVATAR_GROUP_ITEM_TRANSFORM_ORIGIN = "center bottom";

@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode, Ref } from "react";
 import { Children, isValidElement, useCallback, useState } from "react";
-
+ 
 export const POPOVER_ARROW_DISPLAY_NAME = "PopoverArrow";
-
+ 
 export function mergePopoverRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
     for (const ref of refs) {
@@ -12,11 +12,11 @@ export function mergePopoverRefs<T>(...refs: Array<Ref<T> | undefined>) {
     }
   };
 }
-
+ 
 export function isPopoverArrowElement(el: ReactElement): boolean {
   return (el.type as { displayName?: string }).displayName === POPOVER_ARROW_DISPLAY_NAME;
 }
-
+ 
 export function partitionPopoverContentChildren(children: ReactNode) {
   const parts = Children.toArray(children);
   const customArrow = parts.find(
@@ -26,10 +26,10 @@ export function partitionPopoverContentChildren(children: ReactNode) {
   const panelChildren = parts.filter(
     (child) => !(isValidElement(child) && isPopoverArrowElement(child)),
   );
-
+ 
   return { customArrow, panelChildren };
 }
-
+ 
 export function useControllableOpen(
   openProp: boolean | undefined,
   defaultOpen: boolean,
@@ -47,3 +47,4 @@ export function useControllableOpen(
   );
   return [open, setOpen] as const;
 }
+ 

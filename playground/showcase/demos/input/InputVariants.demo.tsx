@@ -1,6 +1,6 @@
 import { Input } from "@/components/core/Input";
 
-const VARIANTS = ["default", "outline", "secondary", "gloss"] as const;
+const VARIANTS = ["default", "outline", "secondary"] as const;
 
 export function InputVariantsDemo() {
   return (

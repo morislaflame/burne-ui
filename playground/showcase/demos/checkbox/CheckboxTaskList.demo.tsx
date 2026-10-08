@@ -15,12 +15,24 @@ export function CheckboxTaskListDemo() {
     write: true,
     admin: false,
   });
+  const values = PERMISSIONS.map((perm) => granted[perm.id]);
+  const allGranted = values.every(Boolean);
+  const someGranted = values.some(Boolean);
 
   return (
     <div className="flex w-full max-w-xs flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
         Access rights
       </Text>
+      <Checkbox
+        label="All rights"
+        checked={allGranted}
+        indeterminate={!allGranted && someGranted}
+        onChange={(e) => {
+          const next = e.target.checked;
+          setGranted(Object.fromEntries(PERMISSIONS.map((perm) => [perm.id, next])));
+        }}
+      />
       <ul className="flex flex-col gap-base">
         {PERMISSIONS.map((perm) => (
           <li key={perm.id}>

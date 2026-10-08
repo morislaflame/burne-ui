@@ -4,10 +4,9 @@ export function SwitchClassNamesFullDemo() {
   return (
     <Switch
       defaultChecked
-      gloss
       color="var(--color-primary)"
       classNames={{
-        root: "max-w-md rounded-mid border border-info/25 p-base",
+        root: "max-w-md rounded-large border border-info/25 p-base",
         track: "ring-1 ring-info/20",
         fill: "opacity-95",
         thumbShell: "ring-info/30",

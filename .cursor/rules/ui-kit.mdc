@@ -65,12 +65,13 @@ ComponentName/
 
 - `variant` — визуальный стиль: `default` | `outline` | `secondary` | `gloss` (+ `primary` у Button/Badge)
 - `status` — семантика: `default` | `danger` | `success` | `info` | `warning`
-- Доменные исключения `variant` допустимы, только когда они описывают несводимую структуру или уровень поверхности: `Disclosure.card`, `Table.toned`, `Surface.tertiary`, `TimeField.segmented`. Их нужно документировать в API компонента.
+- Доменные исключения `variant` допустимы, только когда они описывают несводимую структуру или уровень поверхности: `Disclosure.card`, `Table.toned`, `Surface.tertiary`, `TimeField.segmented`. В API компонента (`Component.md` + site `component-docs`) каждое исключение нужно **явно пометить** как доменное — не как значение из канона `default | outline | secondary | gloss`.
 
 ## Стили
 
 - **Все Tailwind/CSS-классы** — только в `*Styles.ts`
-- В `.tsx` не оставлять сырые строки (`"font-medium"`, `"[&_svg]:icon-mid"`) — только импорт из Styles и `cn(..., className)` пропа пользователя
+- В `.tsx` не оставлять сырые строки (`"font-medium"`, `"icon-slot-mid"`) — только импорт из Styles и `cn(..., className)` пропа пользователя
+- Размер иконки — `icon-slot` + `icon-slot-*` на обёртке слота, не `[&_svg]:icon-*`
 - `*Styles.ts` **не импортирует** `*API` и `*Parts`
 
 

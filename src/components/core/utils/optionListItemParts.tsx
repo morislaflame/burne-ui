@@ -1,19 +1,19 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
-
+ 
 import { Text, type TextVariant } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { cn } from "@/utils/cn";
-
+ 
 import { optionListItemHintCellClass, optionListItemIconCellClass, optionListItemIndicatorCellClass, optionListItemLabelCellClass } from "./optionControlGridLayout";
 import { useOptionListItemContext } from "./optionListItemContext";
 import { OPTION_LIST_ITEM_ICON_WRAP_CLASS, OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS, OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS, OPTION_LIST_ITEM_LABEL_MOTION_CLASS, OPTION_LIST_ITEM_LABEL_TEXT_FILL_CLASS, OPTION_LIST_ITEM_LABEL_WRAP_CLASS, OPTION_LIST_ITEM_STRING_LABEL_CLASS, optionListItemHintToneClass, optionListItemLabelTextClass } from "./optionListItemStyles";
-
+ 
 export type OptionListItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
   /** Typography for the label text. @default "base" */
   textVariant?: TextVariant;
   ref?: Ref<HTMLSpanElement>;
 };
-
+ 
 export function OptionListItemLabel({
   className,
   children,
@@ -53,11 +53,11 @@ export function OptionListItemLabel({
     </span>
   );
 }
-
+ 
 export type OptionListItemHintProps = HTMLAttributes<HTMLSpanElement> & {
   ref?: Ref<HTMLElement>;
 };
-
+ 
 export function OptionListItemHint({ className, children, ref, ...rest }: OptionListItemHintProps) {
   const ctx = useOptionListItemContext("ItemHint");
   return (
@@ -77,7 +77,7 @@ export function OptionListItemHint({ className, children, ref, ...rest }: Option
     </Text>
   );
 }
-
+ 
 function OptionListItemStringLabel({ children }: { children: string }) {
   return (
     <Text as="span" variant="base" inheritColor className={OPTION_LIST_ITEM_STRING_LABEL_CLASS}>
@@ -85,15 +85,15 @@ function OptionListItemStringLabel({ children }: { children: string }) {
     </Text>
   );
 }
-
+ 
 export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement> & {
   ref?: Ref<HTMLSpanElement>;
 };
-
+ 
 export function OptionListItemIconText({ children }: { children: string }) {
   return <OptionListItemStringLabel>{children}</OptionListItemStringLabel>;
 }
-
+ 
 export function OptionListItemIcon({ className, children, ref, ...rest }: OptionListItemIconProps) {
   const ctx = useOptionListItemContext("ItemIcon");
   return (
@@ -111,11 +111,11 @@ export function OptionListItemIcon({ className, children, ref, ...rest }: Option
     </span>
   );
 }
-
+ 
 export type OptionListItemIndicatorShellProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
-
+ 
 export function OptionListItemIndicatorShell({
   className,
   children,
@@ -134,3 +134,4 @@ export function OptionListItemIndicatorShell({
     </span>
   );
 }
+ 

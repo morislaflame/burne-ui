@@ -1,7 +1,7 @@
 import type { TimeFieldSegId, TimeFieldStatus } from "./timeFieldTypes";
-
+ 
 import { DEFAULT_BURNE_LABELS, type BurneLabels } from "@/theme/burneLabels";
-
+ 
 export function timeFieldShellAria({
   labelConnected,
   labelId,
@@ -16,7 +16,7 @@ export function timeFieldShellAria({
     "aria-labelledby": labelConnected ? labelId : undefined,
   } as const;
 }
-
+ 
 export function timeFieldSegLabel(
   seg: TimeFieldSegId,
   labels: Pick<BurneLabels, "timeHours" | "timeMinutes" | "timeSeconds"> = DEFAULT_BURNE_LABELS,
@@ -30,13 +30,10 @@ export function timeFieldSegLabel(
       return labels.timeSeconds;
   }
 }
-
+ 
 export function timeFieldSegSpinbuttonA11y({
   seg,
   value,
-  required,
-  isDanger,
-  isFirstSegment,
   disabled,
   segLabel,
 }: {
@@ -55,12 +52,11 @@ export function timeFieldSegSpinbuttonA11y({
     "aria-valuemax": seg === "h" ? 23 : 59,
     "aria-valuenow": value,
     "aria-valuetext": String(value).padStart(2, "0"),
-    "aria-required": isFirstSegment && required ? true : undefined,
-    "aria-invalid": isFirstSegment && isDanger ? true : undefined,
     tabIndex: disabled ? -1 : 0,
   };
 }
-
+ 
 export function timeFieldHintStatus(status: TimeFieldStatus) {
-  return status === "danger" || status === "default" ? "default" : status;
+  return status;
 }
+ 

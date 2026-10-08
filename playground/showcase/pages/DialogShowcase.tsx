@@ -6,10 +6,10 @@ import { DialogBasicDemo } from "../demos/dialog/DialogBasic.demo";
 import dialogBasicSource from "../demos/dialog/DialogBasic.demo.tsx?raw";
 import { DialogCompactConfirmDemo } from "../demos/dialog/DialogCompactConfirm.demo";
 import dialogCompactConfirmSource from "../demos/dialog/DialogCompactConfirm.demo.tsx?raw";
-import { DialogGlossDemo } from "../demos/dialog/DialogGloss.demo";
-import dialogGlossSource from "../demos/dialog/DialogGloss.demo.tsx?raw";
 import { DialogInviteTeamDemo } from "../demos/dialog/DialogInviteTeam.demo";
 import dialogInviteTeamSource from "../demos/dialog/DialogInviteTeam.demo.tsx?raw";
+import { DialogInteractOutsideDemo } from "../demos/dialog/DialogInteractOutside.demo";
+import dialogInteractOutsideSource from "../demos/dialog/DialogInteractOutside.demo.tsx?raw";
 import { DialogPortalContainerDemo } from "../demos/dialog/DialogPortalContainer.demo";
 import dialogPortalContainerSource from "../demos/dialog/DialogPortalContainer.demo.tsx?raw";
 import { DialogSettingsModalDemo } from "../demos/dialog/DialogSettingsModal.demo";
@@ -38,12 +38,7 @@ export function DialogShowcase() {
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={DialogSizesDemo} source={dialogSizesSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass modal panel.">
-        <ShowcaseDemoFromFile Demo={DialogGlossDemo} source={dialogGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
+<ShowcaseSection
         title="portalContainer"
         description="Custom portal host — non-modal show() + absolute, overlay stays inside the container."
       >
@@ -55,6 +50,13 @@ export function DialogShowcase() {
         description="Trigger asChild merges id, data-*, className, and ref onto the child via mergeAsChildProps."
       >
         <ShowcaseDemoFromFile Demo={DialogAsChildMergedPropsDemo} source={dialogAsChildMergedPropsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="onInteractOutside"
+        description="Backdrop click: event.preventDefault() keeps the dialog open. Returning false does not."
+      >
+        <ShowcaseDemoFromFile Demo={DialogInteractOutsideDemo} source={dialogInteractOutsideSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion" description="One gallery: custom trigger press, instant panel, bounce factory, title stagger, headingBlock, per-part enter/leave, hover color, panel timeline.">
@@ -105,7 +107,7 @@ export function DialogShowcase() {
             description="Custom HTMLElement host. Contained portals use show() + absolute (not showModal top layer)."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             <code>size</code> and <code>variant</code> on the root. Closing by Escape and click on backdrop —
             custom props. Enter/leave — <code>configureMotion()</code>.

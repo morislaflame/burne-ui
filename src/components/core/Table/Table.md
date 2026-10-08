@@ -71,7 +71,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 ### `TableClassNames`
 
-`root`, `glossContent`, `scrollContainer`, `content`, `header`, `headerRow`, `column`, `columnInner`, `columnLabel`, `columnSortIcon`, `body`, `row`, `cell`, `footer`, `emptyCell`.
+`root`, `scrollContainer`, `content`, `header`, `headerRow`, `column`, `columnInner`, `columnButton`, `columnLabel`, `columnSortIcon`, `body`, `row`, `cell`, `footer`, `caption`, `emptyCell`.
 
 ### Compound-подчасти
 
@@ -82,7 +82,8 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `Table.Header` | `<thead>` |
 | `Table.HeaderRow` | `<tr>` в header (`className` / `ref`); если не передан — Header оборачивает колонки сам |
 | `Table.Column` | `<th>` + sort UI |
-| `Table.Label` | Текст заголовка колонки (`className` / `ref` / `motion`); simple children Column оборачиваются автоматически. Слот `classNames.columnLabel`; motion-слот `label` |
+| `Table.Label` | Текст заголовка колонки (`className` / `ref` / `motion`); simple children Column оборачиваются автоматически. Слот `classNames.columnLabel`; motion-слот `label`. Это не имя таблицы |
+| `Table.Caption` | `<caption>` — имя таблицы. Слот `classNames.caption`; motion-слот `caption` |
 | `Table.Body` | `<tbody>` + empty state |
 | `Table.Empty` | `<td>` empty placeholder; motion-слот `empty`, CSS `classNames.emptyCell` |
 | `Table.Row` | `<tr>` + tone/selection; вложенный motion scope (`motionController`, `playSlot("row")`) |
@@ -93,10 +94,12 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Variant | Поверхность |
 |---------|-------------|
-| `default` | `rounded-mid border-token bg-surface overflow-clip` |
+| `default` | `rounded-large border-token bg-surface overflow-clip` |
 | `secondary` | Прозрачный root; header `bg-secondary` на columns |
 | `toned` | `border-separate border-spacing-y-xsmall`; row strips через `tone` |
 | `gloss` | `gloss-panel gloss-deep` + inner `glossContent` |
+
+`toned` — **доменное исключение** `variant`: несводимая структура (полосы строк через `tone`), не канонический fill `default | outline | secondary | gloss`.
 
 ### Row `tone` (`TABLE_ROW_TONE_SURFACE`)
 
@@ -107,9 +110,18 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `secondary` | `bg-secondary` |
 | `danger` / `success` / `info` / `warning` | semantic `bg-surface-tint-*` |
 
-В `toned` variant ячейки получают `first:rounded-l-mid last:rounded-r-mid`; hover — `brightness-[0.97]`.
+В `toned` variant ячейки получают `first:rounded-s-mid last:rounded-e-mid`; hover — `brightness-[0.97]`.
 
 В `gloss` selectable rows: `hover:bg-primary-tint`, selected — `bg-primary-tint` + ring на cell.
+
+## Границы
+
+Table рисует строки, которые ему передали. Сортировка и выбор — состояние на `Table.Content`. Сами данные режет родитель.
+
+- Страницы — `Pagination` в `Table.Footer`. Родитель отдаёт в `Table.Body` срез текущей страницы. Диапазон (`Pagination.Summary`) слева, кнопки справа, одной строкой на ширину таблицы.
+- Ширина колонки — `className` на `Table.Column` и `Table.Cell`. Ручки resize нет: ширина это раскладка, не состояние таблицы.
+- Выравнивание — `text-start` у заголовка и ячеек. `className="text-center"` или `text-end` на `Table.Column` и на `Table.Cell` того же столбца (или слоты `classNames.column` / `classNames.cell`) меняет оба.
+- Раскрытие строки — вторая `Table.Row` или `Expandable` в ячейке. Своего `expanded` у Table нет.
 
 ## Анимации
 
@@ -117,9 +129,9 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`; nested `row`; `column` / `cell` / `label` / `empty` (repeated slots, multi-instance) | `enter` (opt-in); row `check` / `uncheck` on selection | empty |
+| `root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`, `caption`; nested `row`; `column` / `cell` / `label` / `empty` (repeated slots, multi-instance) | `enter` (opt-in); row `check` / `uncheck` on selection | empty |
 
-`glossContent` не слот motion. `emptyCell` — CSS для `Table.Empty` (слот `empty`). Поворот sort chevron — kit-internal.
+`glossContent` не слот motion. `emptyCell` — CSS для `Table.Empty` (слот `empty`). Поворот sort chevron — слот `columnSortIcon`, фазы `enter` / `leave`, рецепт `chevronRotate`.
 
 `enter` — mount (`useOptionalEnterOnMount`, в том числе у изначально выбранной строки). Selection после mount — `check` / `uncheck` (`skipFirst`, не второй `enter`). `column` / `label` — repeated на scope таблицы; `cell` — repeated на nested row scope (`part.targetRef`).
 
@@ -276,19 +288,20 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 | Слот | DOM | Когда использовать |
 |------|-----|-------------------|
 | `root` | Outer wrapper | Border, radius, max-width container |
-| `glossContent` | Gloss inner | Padding в gloss variant |
 | `scrollContainer` | Scroll div | Scrollbar, horizontal padding |
 | `content` | `<table>` | Border-collapse, width |
 | `header` | `<thead>` | Sticky header helpers |
 | `headerRow` | Header `<tr>` (`Table.HeaderRow`) | Bottom border, bg strip |
 | `column` | `<th>` | Header typography, padding |
-| `columnInner` | Flex row label+chevron | Gap, alignment |
+| `columnInner` | Flex row label+chevron | Gap, alignment. Общий для кнопки сортировки и статичного span |
+| `columnButton` | Кнопка сортировки | Только `allowsSorting` |
 | `columnLabel` | `Table.Label` | Font weight, color, truncate |
 | `columnSortIcon` | Chevron wrapper | Size/color sort icon |
 | `body` | `<tbody>` | Empty state container |
 | `row` | `<tr>` | Row hover, tone override |
 | `cell` | `<td>` | Cell padding, text color |
 | `footer` | Footer bar | Summary/actions layout |
+| `caption` | `<caption>` | Подпись таблицы |
 | `emptyCell` | Empty placeholder td | Centered empty message |
 
 ### Compound table (sort + selection)
@@ -297,7 +310,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 <Table
   variant="default"
   classNames={{
-    root: "rounded-mid border border-info/25 shadow-token-sm",
+    root: "rounded-large border border-info/25 shadow-token-sm",
     headerRow: "bg-info/10",
     column: "text-info font-semibold",
     columnSortIcon: "text-info",
@@ -362,6 +375,8 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 - **Sort:** `allowsSorting` + `sortDescriptor` / `defaultSortDescriptor` / `onSortChange`; без `allowsSorting` chevron decorative.
 - **`isRowHeader`** на первой колонке — screen reader row headers.
 - **`renderEmptyState` на `Table.Body`** — кастом empty UI. Для motion слота `empty` верните `<Table.Empty>` (CSS — `classNames.emptyCell`).
+- **`virtualized` на `Table.Body`** — вместе с `items` и render-функцией. Скролл — ближайший предок с `overflow-y: auto` (`Table.ScrollContainer` + max-height). Строки одной высоты. Заголовок колонок остаётся сверху (`sticky`).
+- **Края при скролле:** `Table.ScrollContainer` не тянется elastic overscroll (`overscroll-none`), ячейки не отрываются от рамки на macOS и iOS.
 - **Gloss:** children table внутри `glossContent` автоматически; не дублируйте `gloss-panel` в `classNames.root`.
 - **Не задавайте `transform` на `columnSortIcon`** — конфликт с GSAP rotate.
 - **Порядок мержа:** variant styles → `classNames.slot` → `className` подчасти.
@@ -376,7 +391,8 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 
 ## Доступность
 
-- `Table.Content`: `aria-label` на `<table>`
+- `Table.Content`: `aria-label` на `<table>`, либо `Table.Caption` (`<caption>`)
+- `Table.Label` — подпись колонки, не имя таблицы
 - Sortable columns: `aria-sort` на `<th>` + `<button>` (Tab / Enter/Space; ←/→ между кнопками сортировки)
 - Selection: `role="grid"` (+ `aria-multiselectable` при multiple); rows — `role="row"` + `aria-selected`; roving `tabIndex` (одна tab-остановка) + ↑/↓ / Home/End; Enter/Space — выбор
 - Cells: `role="gridcell"` при selection

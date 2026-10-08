@@ -1,19 +1,22 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
-
+ 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { focusElement } from "@/components/core/utils/focusElement";
+import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+import { SkinShell } from "@/skins/skinShell";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
-
-import { useDialogModalMotion, DIALOG_MOTION_DEFAULTS } from "./dialogAnimations";
+ 
+import { useDialogModalMotion, resolveDialogMotionDefaults } from "./dialogAnimations";
 import { useDialog, useDialogClassNames, useDialogMotionScope, useOptionalDialogMotionScope, DialogMotionProvider } from "./dialogContext";
-import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_GLOSS_CONTENT_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_TITLE_CLASS, DIALOG_TRIGGER_BASE_CLASS, dialogBodyClass, dialogContentClass, dialogGlossPanelClass, dialogNativeClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
+import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_PANEL_LAYER_CONTENT_CLASS, DIALOG_TITLE_CLASS, DIALOG_TRIGGER_BASE_CLASS, dialogBodyClass, dialogContentClass, dialogNativeClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
 import type {
   DialogBodyProps,
   DialogCloseProps,
@@ -28,9 +31,9 @@ import type {
   DialogTriggerProps,
 } from "./dialogTypes";
 import { useDialogFooterState } from "./useDialogFooterState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
   function DialogContent({ className, motion, ...rest }, ref) {
     const slotClassNames = useDialogClassNames();
@@ -40,7 +43,7 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -52,9 +55,9 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
     );
   },
 );
-
+ 
 DialogContent.displayName = "DialogContent";
-
+ 
 export const DialogHeader = forwardRef<HTMLDivElement, DialogHeaderProps>(
   function DialogHeader({ className, motion, ...rest }, ref) {
     const { sizePreset } = useDialog();
@@ -65,7 +68,7 @@ export const DialogHeader = forwardRef<HTMLDivElement, DialogHeaderProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -81,9 +84,9 @@ export const DialogHeader = forwardRef<HTMLDivElement, DialogHeaderProps>(
     );
   },
 );
-
+ 
 DialogHeader.displayName = "DialogHeader";
-
+ 
 export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   function DialogTitle(
     { className, id, motion, onPointerOver, onPointerOut, ...rest },
@@ -100,12 +103,12 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     useLayoutEffect(() => {
       setHasTitle(true);
       return () => setHasTitle(false);
     }, [setHasTitle]);
-
+ 
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
@@ -124,9 +127,9 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
     );
   },
 );
-
+ 
 DialogTitle.displayName = "DialogTitle";
-
+ 
 export const DialogDescription = forwardRef<
   HTMLParagraphElement,
   DialogDescriptionProps
@@ -145,12 +148,12 @@ export const DialogDescription = forwardRef<
     onPointerOver,
     onPointerOut,
   });
-
+ 
   useLayoutEffect(() => {
     setHasDescription(true);
     return () => setHasDescription(false);
   }, [setHasDescription]);
-
+ 
   return (
     <Text
       ref={setRef as Ref<HTMLElement>}
@@ -167,9 +170,9 @@ export const DialogDescription = forwardRef<
     />
   );
 });
-
+ 
 DialogDescription.displayName = "DialogDescription";
-
+ 
 export function DialogHeadingBlock({
   className,
   motion,
@@ -187,7 +190,7 @@ export function DialogHeadingBlock({
     onPointerOver,
     onPointerOut,
   });
-
+ 
   return (
     <div
       ref={setRef}
@@ -202,9 +205,9 @@ export function DialogHeadingBlock({
     />
   );
 }
-
+ 
 DialogHeadingBlock.displayName = "DialogHeadingBlock";
-
+ 
 export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
   function DialogClose(
     {
@@ -225,7 +228,7 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <CloseButton
         ref={setRef}
@@ -246,9 +249,9 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
     );
   },
 );
-
+ 
 DialogClose.displayName = "DialogClose";
-
+ 
 export const DialogBody = forwardRef<HTMLDivElement, DialogBodyProps>(
   function DialogBody({ className, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { sizePreset } = useDialog();
@@ -262,7 +265,7 @@ export const DialogBody = forwardRef<HTMLDivElement, DialogBodyProps>(
       onPointerOver,
       onPointerOut,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -276,9 +279,9 @@ export const DialogBody = forwardRef<HTMLDivElement, DialogBodyProps>(
     );
   },
 );
-
+ 
 DialogBody.displayName = "DialogBody";
-
+ 
 export const DialogFooter = forwardRef<HTMLDivElement, DialogFooterProps>(
   function DialogFooter({ className, children, motion, ...rest }, ref) {
     const { sizePreset } = useDialog();
@@ -290,7 +293,7 @@ export const DialogFooter = forwardRef<HTMLDivElement, DialogFooterProps>(
       motion,
       forwardedRef: ref,
     });
-
+ 
     return (
       <div
         ref={setRef}
@@ -307,11 +310,11 @@ export const DialogFooter = forwardRef<HTMLDivElement, DialogFooterProps>(
     );
   },
 );
-
+ 
 DialogFooter.displayName = "DialogFooter";
-
+ 
 // ─── Dialog.Trigger ──────────────────────────────────────────────────────────
-
+ 
 export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
   function DialogTrigger(
     {
@@ -341,12 +344,12 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         // Call e.preventDefault() BEFORE the child's handler so that
-        // Button's useFirstLevelInteractiveMotion sees defaultPrevented = true
+        // Button hover/press slot motion sees defaultPrevented = true
         // and skips its own animation (we drive it from here instead).
         e.preventDefault();
         focusElement(part.targetRef.current);
@@ -354,7 +357,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
       },
       [open, openingRef, openAfterSqueeze, onOpenChange, part.targetRef],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: ReactKeyboardEvent<HTMLElement>) => {
         onKeyDown?.(e as ReactKeyboardEvent<HTMLButtonElement>);
@@ -366,7 +369,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
       },
       [onKeyDown, open, openingRef, openAfterSqueeze, onOpenChange],
     );
-
+ 
     const handleClick = useCallback(
       (e: ReactMouseEvent<HTMLElement>) => {
         onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
@@ -379,7 +382,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
       },
       [onClick, open, openingRef, onOpenChange],
     );
-
+ 
     if (asChild && isValidElement(children)) {
       const onlyChild = Children.count(children) === 1 ? children : null;
       if (onlyChild) {
@@ -403,6 +406,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
               onClick: handleClick,
               "aria-haspopup": "dialog",
               "aria-expanded": open,
+              "data-state": dataOpenState(open),
             },
             part.setRef,
             { runBeforeChild: ["onPointerDown", "onKeyDown"] },
@@ -410,7 +414,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         );
       }
     }
-
+ 
     return (
       <button
         type="button"
@@ -426,20 +430,27 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
           part.pointerHandlers.onPointerDown(e);
           handlePointerDown(e);
         }}
+        data-state={dataOpenState(open)}
       >
         {children}
       </button>
     );
   },
 );
-
+ 
 DialogTrigger.displayName = "Dialog.Trigger";
-
+ 
 // ─── Dialog.Panel ─────────────────────────────────────────────────────────────
-
+ 
 export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
-  function DialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
+  function DialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props }, forwardedRef) {
     const parentScope = useOptionalDialogMotionScope();
+    const variant = useSkinVariant(variantProp);
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveDialogMotionDefaults(variant);
+    }, [skinRevision, variant]);
     const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
     const siblings = mergeMotionRootSiblings(
       { events: parentScope?.getEvents(), states: parentScope?.getStates() },
@@ -449,23 +460,24 @@ export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
     return (
       <DialogMotionProvider
         motion={merged}
-        defaults={DIALOG_MOTION_DEFAULTS}
+        defaults={motionDefaults}
         controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}
       >
-        <DialogPanelHost {...props} forwardedRef={forwardedRef} />
+        <DialogPanelHost {...props} variant={variant} forwardedRef={forwardedRef} />
       </DialogMotionProvider>
     );
   },
 );
-
+ 
 DialogPanel.displayName = "Dialog.Panel";
-
+ 
 function DialogPanelHost({
-  variant = "default",
+  variant: variantProp,
   dismissOnBackdrop = true,
+  onInteractOutside,
   className,
   style,
   themeAnchor,
@@ -474,6 +486,8 @@ function DialogPanelHost({
   forwardedRef,
   ...rest
 }: Omit<DialogPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
+  const variant = useSkinVariant(variantProp);
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const {
     open,
     onOpenChange,
@@ -481,36 +495,39 @@ function DialogPanelHost({
     descriptionId,
     hasTitle,
     hasDescription,
+    size,
     sizePreset,
     portalContainer: portalContainerFromRoot,
   } = useDialog();
   const motionScope = useDialogMotionScope();
-
+ 
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
   );
   const contained = isContainedPortal(portalHost);
-
+ 
   const motion = useDialogModalMotion({
     open,
     onOpenChange,
     variant,
     dismissOnBackdrop,
+    onInteractOutside,
     contained,
     motionScope,
   });
-
+ 
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
   const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
-
+ 
   if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
-
+ 
   return createPortal(
     <DialogPortalShell
       className={className}
-      style={style}
+      style={mergeSkinSurfaceStyle(surfaceStyle, style)}
       variant={variant}
+      size={size}
       sizePreset={sizePreset}
       portalTheme={portalTheme}
       lightUi={lightUi}
@@ -523,7 +540,6 @@ function DialogPanelHost({
       panelRef={motion.panelRef}
       panelForwardedRef={forwardedRef}
       panelRest={rest}
-      bindGlossPanelRef={motion.bindGlossPanelRef}
       onBackdropMouseDown={motion.handleBackdropPointerDown}
       onDialogClose={() => onOpenChange(false)}
       onDialogCancel={(e) => {
@@ -537,14 +553,15 @@ function DialogPanelHost({
     portalHost,
   );
 }
-
+ 
 // ─── DialogPortalShell ───────────────────────────────────────────────────────
-
+ 
 export function DialogPortalShell({
   children,
   className,
   style,
   variant,
+  size,
   sizePreset,
   portalTheme,
   lightUi,
@@ -557,22 +574,27 @@ export function DialogPortalShell({
   panelRef,
   panelForwardedRef,
   panelRest,
-  bindGlossPanelRef,
   onBackdropMouseDown,
   onDialogClose,
   onDialogCancel,
   contained = false,
 }: DialogPortalShellProps) {
-  const isGloss = variant === "gloss";
   const slotClassNames = useDialogClassNames();
   const motionScope = useOptionalDialogMotionScope();
+  useApplySkinPortal(dialogRef);
 
   return (
     <dialog
       {...portalTheme}
       ref={dialogRef}
-      onClose={onDialogClose}
-      onCancel={onDialogCancel}
+      onClose={(event) => {
+        if (!isOwnNativeDialogEvent(event)) return;
+        onDialogClose();
+      }}
+      onCancel={(event) => {
+        if (!isOwnNativeDialogEvent(event)) return;
+        onDialogCancel(event);
+      }}
       aria-labelledby={hasTitle ? titleId : undefined}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={cn(dialogNativeClass(contained), slotClassNames.dialog)}
@@ -584,43 +606,27 @@ export function DialogPortalShell({
         aria-hidden
         onMouseDown={onBackdropMouseDown}
       />
-      <div
-        ref={mergeRefs(panelRef, panelForwardedRef, (node) => motionScope?.registerTarget("panel", node))}
+      <SkinShell
         tabIndex={-1}
+        style={style}
+        {...panelRest}
+        {...dataVariantProps({ size, variant })}
+        part="dialog.panel"
+        variant={variant}
+        scope={motionScope}
+        slot="panel"
+        enterOnMount={false}
         className={dialogPanelClass({
           variant,
           sizePreset,
           className,
           slotClass: slotClassNames.panel,
         })}
-        style={style}
-        {...panelRest}
+        contentClassName={DIALOG_PANEL_LAYER_CONTENT_CLASS}
+        ref={mergeRefs(panelRef, panelForwardedRef)}
       >
-        {isGloss ? (
-          <div
-            ref={bindGlossPanelRef}
-            className={dialogGlossPanelClass({
-              maxHeight: sizePreset.maxHeight,
-              rounded: sizePreset.rounded,
-              slotClass: slotClassNames.glossPanel,
-            })}
-          >
-            <div
-              className={dialogContentClass(
-                cn(
-                  DIALOG_GLOSS_CONTENT_CLASS,
-                  slotClassNames.glossContent,
-                ),
-                true,
-              )}
-            >
-              {children}
-            </div>
-          </div>
-        ) : (
-          <DialogContent>{children}</DialogContent>
-        )}
-      </div>
+        <DialogContent>{children}</DialogContent>
+      </SkinShell>
     </dialog>
   );
 }

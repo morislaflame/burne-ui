@@ -2,6 +2,15 @@
   "name": "burne-ui",
   "version": "1.8.8",
   "description": "React UI kit (Burne UI)",
+  "browserslist": [
+    "chrome >= 111",
+    "and_chr >= 111",
+    "edge >= 111",
+    "firefox >= 128",
+    "and_ff >= 128",
+    "safari >= 16.4",
+    "ios_saf >= 16.4"
+  ],
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -31,32 +40,407 @@
     },
     "./styles.css": "./dist/ui.css",
     "./theme-bridge.css": "./cli/theme-bridge.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./Accordion": {
+      "types": "./dist/components/composite/Accordion/index.d.ts",
+      "import": "./dist/components/composite/Accordion/index.js",
+      "require": "./dist/components/composite/Accordion/index.cjs",
+      "default": "./dist/components/composite/Accordion/index.js"
+    },
+    "./Alert": {
+      "types": "./dist/components/core/Alert/index.d.ts",
+      "import": "./dist/components/core/Alert/index.js",
+      "require": "./dist/components/core/Alert/index.cjs",
+      "default": "./dist/components/core/Alert/index.js"
+    },
+    "./AlertDialog": {
+      "types": "./dist/components/composite/AlertDialog/index.d.ts",
+      "import": "./dist/components/composite/AlertDialog/index.js",
+      "require": "./dist/components/composite/AlertDialog/index.cjs",
+      "default": "./dist/components/composite/AlertDialog/index.js"
+    },
+    "./Avatar": {
+      "types": "./dist/components/core/Avatar/index.d.ts",
+      "import": "./dist/components/core/Avatar/index.js",
+      "require": "./dist/components/core/Avatar/index.cjs",
+      "default": "./dist/components/core/Avatar/index.js"
+    },
+    "./Badge": {
+      "types": "./dist/components/core/Badge/index.d.ts",
+      "import": "./dist/components/core/Badge/index.js",
+      "require": "./dist/components/core/Badge/index.cjs",
+      "default": "./dist/components/core/Badge/index.js"
+    },
+    "./Breadcrumbs": {
+      "types": "./dist/components/core/Breadcrumbs/index.d.ts",
+      "import": "./dist/components/core/Breadcrumbs/index.js",
+      "require": "./dist/components/core/Breadcrumbs/index.cjs",
+      "default": "./dist/components/core/Breadcrumbs/index.js"
+    },
+    "./Button": {
+      "types": "./dist/components/core/Button/index.d.ts",
+      "import": "./dist/components/core/Button/index.js",
+      "require": "./dist/components/core/Button/index.cjs",
+      "default": "./dist/components/core/Button/index.js"
+    },
+    "./ButtonGroup": {
+      "types": "./dist/components/composite/ButtonGroup/index.d.ts",
+      "import": "./dist/components/composite/ButtonGroup/index.js",
+      "require": "./dist/components/composite/ButtonGroup/index.cjs",
+      "default": "./dist/components/composite/ButtonGroup/index.js"
+    },
+    "./Calendar": {
+      "types": "./dist/components/core/Calendar/index.d.ts",
+      "import": "./dist/components/core/Calendar/index.js",
+      "require": "./dist/components/core/Calendar/index.cjs",
+      "default": "./dist/components/core/Calendar/index.js"
+    },
+    "./Card": {
+      "types": "./dist/components/core/Card/index.d.ts",
+      "import": "./dist/components/core/Card/index.js",
+      "require": "./dist/components/core/Card/index.cjs",
+      "default": "./dist/components/core/Card/index.js"
+    },
+    "./Checkbox": {
+      "types": "./dist/components/core/Checkbox/index.d.ts",
+      "import": "./dist/components/core/Checkbox/index.js",
+      "require": "./dist/components/core/Checkbox/index.cjs",
+      "default": "./dist/components/core/Checkbox/index.js"
+    },
+    "./CheckboxGroup": {
+      "types": "./dist/components/composite/CheckboxGroup/index.d.ts",
+      "import": "./dist/components/composite/CheckboxGroup/index.js",
+      "require": "./dist/components/composite/CheckboxGroup/index.cjs",
+      "default": "./dist/components/composite/CheckboxGroup/index.js"
+    },
+    "./CloseButton": {
+      "types": "./dist/components/core/CloseButton/index.d.ts",
+      "import": "./dist/components/core/CloseButton/index.js",
+      "require": "./dist/components/core/CloseButton/index.cjs",
+      "default": "./dist/components/core/CloseButton/index.js"
+    },
+    "./ColorPicker": {
+      "types": "./dist/components/core/ColorPicker/index.d.ts",
+      "import": "./dist/components/core/ColorPicker/index.js",
+      "require": "./dist/components/core/ColorPicker/index.cjs",
+      "default": "./dist/components/core/ColorPicker/index.js"
+    },
+    "./ComboBox": {
+      "types": "./dist/components/core/ComboBox/index.d.ts",
+      "import": "./dist/components/core/ComboBox/index.js",
+      "require": "./dist/components/core/ComboBox/index.cjs",
+      "default": "./dist/components/core/ComboBox/index.js"
+    },
+    "./ContextMenu": {
+      "types": "./dist/components/core/ContextMenu/index.d.ts",
+      "import": "./dist/components/core/ContextMenu/index.js",
+      "require": "./dist/components/core/ContextMenu/index.cjs",
+      "default": "./dist/components/core/ContextMenu/index.js"
+    },
+    "./DatePicker": {
+      "types": "./dist/components/core/DatePicker/index.d.ts",
+      "import": "./dist/components/core/DatePicker/index.js",
+      "require": "./dist/components/core/DatePicker/index.cjs",
+      "default": "./dist/components/core/DatePicker/index.js"
+    },
+    "./Dialog": {
+      "types": "./dist/components/core/Dialog/index.d.ts",
+      "import": "./dist/components/core/Dialog/index.js",
+      "require": "./dist/components/core/Dialog/index.cjs",
+      "default": "./dist/components/core/Dialog/index.js"
+    },
+    "./Disclosure": {
+      "types": "./dist/components/core/Disclosure/index.d.ts",
+      "import": "./dist/components/core/Disclosure/index.js",
+      "require": "./dist/components/core/Disclosure/index.cjs",
+      "default": "./dist/components/core/Disclosure/index.js"
+    },
+    "./Drawer": {
+      "types": "./dist/components/core/Drawer/index.d.ts",
+      "import": "./dist/components/core/Drawer/index.js",
+      "require": "./dist/components/core/Drawer/index.cjs",
+      "default": "./dist/components/core/Drawer/index.js"
+    },
+    "./Dropdown": {
+      "types": "./dist/components/core/Dropdown/index.d.ts",
+      "import": "./dist/components/core/Dropdown/index.js",
+      "require": "./dist/components/core/Dropdown/index.cjs",
+      "default": "./dist/components/core/Dropdown/index.js"
+    },
+    "./Expandable": {
+      "types": "./dist/components/core/Expandable/index.d.ts",
+      "import": "./dist/components/core/Expandable/index.js",
+      "require": "./dist/components/core/Expandable/index.cjs",
+      "default": "./dist/components/core/Expandable/index.js"
+    },
+    "./Field": {
+      "types": "./dist/components/core/Field/index.d.ts",
+      "import": "./dist/components/core/Field/index.js",
+      "require": "./dist/components/core/Field/index.cjs",
+      "default": "./dist/components/core/Field/index.js"
+    },
+    "./Form": {
+      "types": "./dist/components/composite/Form/index.d.ts",
+      "import": "./dist/components/composite/Form/index.js",
+      "require": "./dist/components/composite/Form/index.cjs",
+      "default": "./dist/components/composite/Form/index.js"
+    },
+    "./HoverCard": {
+      "types": "./dist/components/core/HoverCard/index.d.ts",
+      "import": "./dist/components/core/HoverCard/index.js",
+      "require": "./dist/components/core/HoverCard/index.cjs",
+      "default": "./dist/components/core/HoverCard/index.js"
+    },
+    "./Input": {
+      "types": "./dist/components/core/Input/index.d.ts",
+      "import": "./dist/components/core/Input/index.js",
+      "require": "./dist/components/core/Input/index.cjs",
+      "default": "./dist/components/core/Input/index.js"
+    },
+    "./Kbd": {
+      "types": "./dist/components/core/Kbd/index.d.ts",
+      "import": "./dist/components/core/Kbd/index.js",
+      "require": "./dist/components/core/Kbd/index.cjs",
+      "default": "./dist/components/core/Kbd/index.js"
+    },
+    "./Label": {
+      "types": "./dist/components/core/Label/index.d.ts",
+      "import": "./dist/components/core/Label/index.js",
+      "require": "./dist/components/core/Label/index.cjs",
+      "default": "./dist/components/core/Label/index.js"
+    },
+    "./Link": {
+      "types": "./dist/components/core/Link/index.d.ts",
+      "import": "./dist/components/core/Link/index.js",
+      "require": "./dist/components/core/Link/index.cjs",
+      "default": "./dist/components/core/Link/index.js"
+    },
+    "./ListBox": {
+      "types": "./dist/components/core/ListBox/index.d.ts",
+      "import": "./dist/components/core/ListBox/index.js",
+      "require": "./dist/components/core/ListBox/index.cjs",
+      "default": "./dist/components/core/ListBox/index.js"
+    },
+    "./Loading": {
+      "types": "./dist/components/core/Loading/index.d.ts",
+      "import": "./dist/components/core/Loading/index.js",
+      "require": "./dist/components/core/Loading/index.cjs",
+      "default": "./dist/components/core/Loading/index.js"
+    },
+    "./Meter": {
+      "types": "./dist/components/core/Meter/index.d.ts",
+      "import": "./dist/components/core/Meter/index.js",
+      "require": "./dist/components/core/Meter/index.cjs",
+      "default": "./dist/components/core/Meter/index.js"
+    },
+    "./NumberInput": {
+      "types": "./dist/components/core/NumberInput/index.d.ts",
+      "import": "./dist/components/core/NumberInput/index.js",
+      "require": "./dist/components/core/NumberInput/index.cjs",
+      "default": "./dist/components/core/NumberInput/index.js"
+    },
+    "./Pagination": {
+      "types": "./dist/components/core/Pagination/index.d.ts",
+      "import": "./dist/components/core/Pagination/index.js",
+      "require": "./dist/components/core/Pagination/index.cjs",
+      "default": "./dist/components/core/Pagination/index.js"
+    },
+    "./PinInput": {
+      "types": "./dist/components/core/PinInput/index.d.ts",
+      "import": "./dist/components/core/PinInput/index.js",
+      "require": "./dist/components/core/PinInput/index.cjs",
+      "default": "./dist/components/core/PinInput/index.js"
+    },
+    "./Popover": {
+      "types": "./dist/components/core/Popover/index.d.ts",
+      "import": "./dist/components/core/Popover/index.js",
+      "require": "./dist/components/core/Popover/index.cjs",
+      "default": "./dist/components/core/Popover/index.js"
+    },
+    "./ProgressBar": {
+      "types": "./dist/components/core/ProgressBar/index.d.ts",
+      "import": "./dist/components/core/ProgressBar/index.js",
+      "require": "./dist/components/core/ProgressBar/index.cjs",
+      "default": "./dist/components/core/ProgressBar/index.js"
+    },
+    "./Radio": {
+      "types": "./dist/components/core/Radio/index.d.ts",
+      "import": "./dist/components/core/Radio/index.js",
+      "require": "./dist/components/core/Radio/index.cjs",
+      "default": "./dist/components/core/Radio/index.js"
+    },
+    "./RadioGroup": {
+      "types": "./dist/components/composite/RadioGroup/index.d.ts",
+      "import": "./dist/components/composite/RadioGroup/index.js",
+      "require": "./dist/components/composite/RadioGroup/index.cjs",
+      "default": "./dist/components/composite/RadioGroup/index.js"
+    },
+    "./Ripple": {
+      "types": "./dist/components/core/Ripple/index.d.ts",
+      "import": "./dist/components/core/Ripple/index.js",
+      "require": "./dist/components/core/Ripple/index.cjs",
+      "default": "./dist/components/core/Ripple/index.js"
+    },
+    "./ScrollArea": {
+      "types": "./dist/components/core/ScrollArea/index.d.ts",
+      "import": "./dist/components/core/ScrollArea/index.js",
+      "require": "./dist/components/core/ScrollArea/index.cjs",
+      "default": "./dist/components/core/ScrollArea/index.js"
+    },
+    "./SearchInput": {
+      "types": "./dist/components/core/SearchInput/index.d.ts",
+      "import": "./dist/components/core/SearchInput/index.js",
+      "require": "./dist/components/core/SearchInput/index.cjs",
+      "default": "./dist/components/core/SearchInput/index.js"
+    },
+    "./Select": {
+      "types": "./dist/components/core/Select/index.d.ts",
+      "import": "./dist/components/core/Select/index.js",
+      "require": "./dist/components/core/Select/index.cjs",
+      "default": "./dist/components/core/Select/index.js"
+    },
+    "./SelectionIndicator": {
+      "types": "./dist/components/core/SelectionIndicator/index.d.ts",
+      "import": "./dist/components/core/SelectionIndicator/index.js",
+      "require": "./dist/components/core/SelectionIndicator/index.cjs",
+      "default": "./dist/components/core/SelectionIndicator/index.js"
+    },
+    "./SelectionThumb": {
+      "types": "./dist/components/core/SelectionThumb/index.d.ts",
+      "import": "./dist/components/core/SelectionThumb/index.js",
+      "require": "./dist/components/core/SelectionThumb/index.cjs",
+      "default": "./dist/components/core/SelectionThumb/index.js"
+    },
+    "./Separator": {
+      "types": "./dist/components/core/Separator/index.d.ts",
+      "import": "./dist/components/core/Separator/index.js",
+      "require": "./dist/components/core/Separator/index.cjs",
+      "default": "./dist/components/core/Separator/index.js"
+    },
+    "./Skeleton": {
+      "types": "./dist/components/core/Skeleton/index.d.ts",
+      "import": "./dist/components/core/Skeleton/index.js",
+      "require": "./dist/components/core/Skeleton/index.cjs",
+      "default": "./dist/components/core/Skeleton/index.js"
+    },
+    "./Slider": {
+      "types": "./dist/components/core/Slider/index.d.ts",
+      "import": "./dist/components/core/Slider/index.js",
+      "require": "./dist/components/core/Slider/index.cjs",
+      "default": "./dist/components/core/Slider/index.js"
+    },
+    "./Stepper": {
+      "types": "./dist/components/core/Stepper/index.d.ts",
+      "import": "./dist/components/core/Stepper/index.js",
+      "require": "./dist/components/core/Stepper/index.cjs",
+      "default": "./dist/components/core/Stepper/index.js"
+    },
+    "./Surface": {
+      "types": "./dist/components/core/Surface/index.d.ts",
+      "import": "./dist/components/core/Surface/index.js",
+      "require": "./dist/components/core/Surface/index.cjs",
+      "default": "./dist/components/core/Surface/index.js"
+    },
+    "./Switch": {
+      "types": "./dist/components/core/Switch/index.d.ts",
+      "import": "./dist/components/core/Switch/index.js",
+      "require": "./dist/components/core/Switch/index.cjs",
+      "default": "./dist/components/core/Switch/index.js"
+    },
+    "./Table": {
+      "types": "./dist/components/core/Table/index.d.ts",
+      "import": "./dist/components/core/Table/index.js",
+      "require": "./dist/components/core/Table/index.cjs",
+      "default": "./dist/components/core/Table/index.js"
+    },
+    "./Tabs": {
+      "types": "./dist/components/core/Tabs/index.d.ts",
+      "import": "./dist/components/core/Tabs/index.js",
+      "require": "./dist/components/core/Tabs/index.cjs",
+      "default": "./dist/components/core/Tabs/index.js"
+    },
+    "./TagsInput": {
+      "types": "./dist/components/core/TagsInput/index.d.ts",
+      "import": "./dist/components/core/TagsInput/index.js",
+      "require": "./dist/components/core/TagsInput/index.cjs",
+      "default": "./dist/components/core/TagsInput/index.js"
+    },
+    "./Text": {
+      "types": "./dist/components/core/Text/index.d.ts",
+      "import": "./dist/components/core/Text/index.js",
+      "require": "./dist/components/core/Text/index.cjs",
+      "default": "./dist/components/core/Text/index.js"
+    },
+    "./TextArea": {
+      "types": "./dist/components/core/TextArea/index.d.ts",
+      "import": "./dist/components/core/TextArea/index.js",
+      "require": "./dist/components/core/TextArea/index.cjs",
+      "default": "./dist/components/core/TextArea/index.js"
+    },
+    "./TimeField": {
+      "types": "./dist/components/core/TimeField/index.d.ts",
+      "import": "./dist/components/core/TimeField/index.js",
+      "require": "./dist/components/core/TimeField/index.cjs",
+      "default": "./dist/components/core/TimeField/index.js"
+    },
+    "./Toast": {
+      "types": "./dist/components/core/Toast/index.d.ts",
+      "import": "./dist/components/core/Toast/index.js",
+      "require": "./dist/components/core/Toast/index.cjs",
+      "default": "./dist/components/core/Toast/index.js"
+    },
+    "./ToggleButton": {
+      "types": "./dist/components/core/ToggleButton/index.d.ts",
+      "import": "./dist/components/core/ToggleButton/index.js",
+      "require": "./dist/components/core/ToggleButton/index.cjs",
+      "default": "./dist/components/core/ToggleButton/index.js"
+    },
+    "./ToggleButtonGroup": {
+      "types": "./dist/components/composite/ToggleButtonGroup/index.d.ts",
+      "import": "./dist/components/composite/ToggleButtonGroup/index.js",
+      "require": "./dist/components/composite/ToggleButtonGroup/index.cjs",
+      "default": "./dist/components/composite/ToggleButtonGroup/index.js"
+    },
+    "./Tooltip": {
+      "types": "./dist/components/core/Tooltip/index.d.ts",
+      "import": "./dist/components/core/Tooltip/index.js",
+      "require": "./dist/components/core/Tooltip/index.cjs",
+      "default": "./dist/components/core/Tooltip/index.js"
+    }
   },
   "scripts": {
-    "build": "node scripts/sync-generated-tokens.mjs && vite build && node scripts/check-kit-motion-recipes-dist.mjs",
+    "build": "node scripts/sync-generated-tokens.mjs && vite build && node scripts/check-kit-motion-recipes-dist.mjs && node scripts/check-tree-shaking.mjs",
     "dev": "vite build --watch",
     "playground": "vite --config vite.playground.config.ts",
     "playground:tunnel": "tuna http 5173 --subdomain=drus",
-    "lint": "node scripts/sync-generated-tokens.mjs --check && tsc -p tsconfig.json --noEmit && node scripts/check-package-export-parity.mjs && node scripts/check-motion-docs-parity.mjs",
+    "lint": "node scripts/sync-generated-tokens.mjs --check && tsc -p tsconfig.json --noEmit && node scripts/check-package-export-parity.mjs && node scripts/check-component-subpath-exports.mjs && node scripts/check-motion-docs-parity.mjs && node scripts/check-component-docs-heading-parity.mjs && node scripts/check-peer-imports.mjs && node scripts/check-shadow-single-owner.mjs && node scripts/check-color-single-owner.mjs && node scripts/check-skin-slots.mjs && node scripts/check-skin-forbidden-tokens.mjs && node scripts/check-aria-invalid-coverage.mjs && node scripts/check-data-state-coverage.mjs && node scripts/check-important-free.mjs && node scripts/check-raw-classes.mjs && node scripts/check-logical-directions.mjs && node scripts/check-classnames-docs-parity.mjs && node scripts/check-browser-floor.mjs && node scripts/check-raw-gsap.mjs && node scripts/check-skin-author-cli.mjs && eslint . --max-warnings 37",
+    "lint:eslint": "eslint . --max-warnings 37",
     "sync:tokens": "node scripts/sync-generated-tokens.mjs",
-    "check:exports": "node scripts/check-package-export-parity.mjs",
+    "check:exports": "node scripts/check-package-export-parity.mjs && node scripts/check-component-subpath-exports.mjs",
     "check:motion-docs": "node scripts/check-motion-docs-parity.mjs",
+    "check:docs-headings": "node scripts/check-component-docs-heading-parity.mjs",
     "storybook": "bash scripts/storybook.sh",
     "build-storybook": "storybook build -o storybook-static",
     "chromatic": "chromatic --build-script-name build-storybook",
     "playwright:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
-    "test": "PLAYWRIGHT_BROWSERS_PATH=0 vitest",
-    "test:coverage": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --coverage",
+    "test": "PLAYWRIGHT_BROWSERS_PATH=0 vitest --project=unit --project=components",
+    "test:run": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=unit --project=components",
+    "test:coverage": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=unit --project=components --coverage",
     "test-storybook": "PLAYWRIGHT_BROWSERS_PATH=0 vitest --project=storybook",
     "test-storybook:run": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=storybook",
-    "test-storybook:coverage": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=storybook --coverage"
+    "test-storybook:coverage": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=storybook --coverage",
+    "bench:providers": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=perf"
   },
   "peerDependencies": {
     "gsap": "^3.12.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "react-icons": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-icons": {
+      "optional": true
+    }
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -69,13 +453,22 @@
     "@storybook/addon-vitest": "10.4.6",
     "@storybook/react-vite": "10.4.6",
     "@tailwindcss/vite": "^4.1.5",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "@vitest/browser-playwright": "^4.1.9",
     "@vitest/coverage-v8": "^4.1.9",
     "chromatic": "^17.7.2",
+    "eslint": "^9",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.12.0",
     "gsap": "^3.15.0",
+    "happy-dom": "^20.14.5",
     "ogl": "^1.0.11",
     "playwright": "^1.61.1",
     "react": "^19.1.0",
@@ -84,6 +477,7 @@
     "storybook": "10.4.6",
     "tailwindcss": "^4.1.5",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.70.0",
     "vite": "^6.3.4",
     "vite-plugin-dts": "^4.5.3",
     "vitest": "^4.1.9"

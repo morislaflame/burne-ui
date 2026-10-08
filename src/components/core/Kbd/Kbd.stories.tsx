@@ -4,7 +4,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
-import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Kbd, type KbdVariant } from ".";
 import { KbdSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/kbd/slotMotion/gallery";
@@ -26,7 +25,6 @@ const KBD_VARIANTS: KbdVariant[] = [
   "primary",
   "outline",
   "secondary",
-  "gloss",
 ];
 
 const meta = {
@@ -65,7 +63,7 @@ export const Variants: Story = {
     <div className="flex flex-wrap items-center gap-small">
       {KBD_VARIANTS.map((variant) => (
         <Kbd key={variant} variant={variant}>
-          {variant === "gloss" ? "⌘ K" : variant}
+          {variant}
         </Kbd>
       ))}
     </div>
@@ -129,46 +127,6 @@ export const InContext: Story = {
       </Button>
     </div>
   ),
-};
-
-function KbdGlossDemo() {
-  return (
-    <div className="flex flex-col items-center gap-mid">
-      <Kbd variant="gloss" size="mid">
-        ⌘ K
-      </Kbd>
-      <Kbd.Group>
-        <Kbd variant="gloss">⌘</Kbd>
-        <Kbd variant="gloss">Shift</Kbd>
-        <Kbd variant="gloss">P</Kbd>
-      </Kbd.Group>
-      <Button variant="gloss" type="button" className="gap-mid">
-        <span>Save</span>
-        <Kbd.Group>
-          <Kbd variant="gloss" size="small">
-            ⌘
-          </Kbd>
-          <Kbd variant="gloss" size="small">
-            S
-          </Kbd>
-        </Kbd.Group>
-      </Button>
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <KbdGlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <KbdGlossDemo />,
 };
 
 export const CustomClassNames: Story = {

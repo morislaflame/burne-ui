@@ -43,11 +43,11 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `onValueChange` | — | `(value: string) => void` |
 | `format` | `HH:mm` | `HH:mm` \| `HH:mm:ss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` | `default` \| `outline` \| `segmented` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` \| `segmented` \| `gloss` |
 | `status` | `default` | `default` \| `danger` \| `success` \| `warning` |
 | `disabled` | `false` | Блокирует control |
 | `compact` | `false` | `w-fit` вместо `w-full` |
-| `required` | `false` | `aria-required` на сегментах |
+| `required` | `false` | `aria-required` на группе (`fieldset`) |
 | `prefix` / `suffix` | — | Affix slots в control |
 | `segmentSeparator` | `":"` | Символ/узел между сегментами (класс — слот `classNames.segmentSeparator`) |
 | `id` | auto | Связь label/control |
@@ -66,8 +66,11 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 |---------|-------|
 | `default` | `bg-surface border-token` |
 | `outline` | `bg-transparent border-token` |
+| `secondary` | `bg-secondary border-token` |
 | `segmented` | Ячейки сегментов с разделителями |
 | `gloss` | `gloss-control` + gloss shell motion |
+
+`segmented` — **доменное исключение** `variant`: несводимая структура (ячейки сегментов с разделителями), не канонический fill `default | outline | secondary | gloss`.
 
 | status | Эффект |
 |--------|--------|
@@ -194,7 +197,7 @@ function Nudge() {
 ### Validation compound
 
 ```tsx
-<TimeField status="danger" classNames={{ shell: "border-danger/40", error: "text-danger" }}>
+<TimeField classNames={{ shell: "border-danger/40", error: "text-danger" }}>
   <TimeField.Label>Время дедлайна</TimeField.Label>
   <TimeField.Control />
   <TimeField.Error>Укажите время в будущем</TimeField.Error>
@@ -222,7 +225,7 @@ function Nudge() {
 
 - Shell (`<fieldset>`): `aria-labelledby` при Label / `aria-label` fallback — **без** `label htmlFor` на fieldset (не labelable)
 - Segments: `role="spinbutton"`, `aria-valuemin/max/now/text`
-- `aria-required`, `aria-invalid` при `status="danger"`
+- `aria-required` и `aria-invalid` на группе (`role="group"`), не на сегментах
 - Separators: `aria-hidden`
 - Hidden input: `aria-hidden`, `tabIndex={-1}`
 - Error: `role="alert"` через `FieldError`

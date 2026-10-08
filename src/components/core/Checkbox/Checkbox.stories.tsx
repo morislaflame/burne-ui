@@ -184,7 +184,7 @@ export const States: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-large">
       <Checkbox label="Regular" hint="Without status" />
-      <Checkbox status="danger" label="With error" hint="Subtitle stays muted" />
+      <Checkbox error="Consent is required" label="With error" hint="Subtitle stays muted" />
       <Checkbox disabled label="Disabled" hint="Cannot toggle" />
       <Checkbox disabled defaultChecked label="Disabled, checked" />
     </div>
@@ -222,12 +222,12 @@ export const IndicatorShape: Story = {
       <Checkbox.Control>
         <Checkbox.Indicator
           classNames={{
-            root: "rounded-mid",
+            root: "rounded-large",
           }}
         />
       </Checkbox.Control>
       <Checkbox.Content>
-        <Checkbox.Label>rounded-mid</Checkbox.Label>
+        <Checkbox.Label>rounded-large</Checkbox.Label>
         <Checkbox.Hint>Fill follows shell radius automatically.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
@@ -239,7 +239,7 @@ export const IndicatorCompound: Story = {
   render: () => (
     <Checkbox defaultChecked variant="outline">
       <Checkbox.Control>
-        <Checkbox.Indicator classNames={{ root: "rounded-mid" }}>
+        <Checkbox.Indicator classNames={{ root: "rounded-large" }}>
           <Checkbox.Indicator.Fill />
           <Checkbox.Indicator.Mark>
             <IoStar aria-hidden className="text-primary" />
@@ -327,7 +327,7 @@ export const CustomClassNames: Story = {
         root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-mid",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
-        indicator: "rounded-mid",
+        indicator: "rounded-large",
         labelText: "text-primary font-semibold",
         hint: "text-foreground/80",
       }}
@@ -381,8 +381,7 @@ function fillFromTopRightCheck(el: HTMLElement) {
       transformOrigin: FILL_CORNER,
       overwrite: "auto",
       force3D: false,
-    },
-  );
+    });
 }
 
 function fillFromTopRightUncheck(el: HTMLElement) {
@@ -444,6 +443,11 @@ export const SlotMotion: Story = {
       </DualApiStoryPanel>
     </DualApiStoryPanels>
   ),
+};
+
+export const Indeterminate: Story = {
+  name: "Indeterminate",
+  render: () => <Checkbox label="Some files" indeterminate />,
 };
 
 export const SlotMotionGallery: Story = {

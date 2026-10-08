@@ -1,18 +1,21 @@
 import { cloneElement, forwardRef, isValidElement, useCallback, useId, useLayoutEffect, useMemo, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
-
+ 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+import { useSkinVariant } from "@/skins/skinContext";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-
+ 
 import { hasSwitchThumbChild, partitionSwitchControlChildren } from "./switchAPI";
 import { switchFallbackAriaLabel, switchInputId } from "./switchA11y";
 import { useOptionalSwitchFieldContext, useSwitchClassNames } from "./switchContext";
 import { SWITCH_INPUT_VISUALLY_HIDDEN_CLASS, switchControlCellClass, switchControlClass } from "./switchStyles";
 import type { SwitchControlProps } from "./switchTypes";
 import { SwitchFill, SwitchTrack } from "./switchTrackParts";
-
+ 
+import { dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
   function SwitchControl(
     {
@@ -20,7 +23,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       iconOff,
       iconOn,
       color,
-      gloss = false,
+      variant: variantProp,
       thickness,
       className,
       classNames: controlClassNames,
@@ -49,6 +52,8 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
     },
     ref,
   ) {
+    const variant = useSkinVariant(variantProp);
+    const unnamedLabel = useBurneLabel("switch");
     const fieldCtx = useOptionalSwitchFieldContext();
     const rootClassNames = useSwitchClassNames();
     const slotClassNames = useMemo(
@@ -56,21 +61,23 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       [controlClassNames, rootClassNames],
     );
     const autoId = useId();
-    const inputId = switchInputId(idProp, autoId, fieldCtx?.switchId);
+    const inputId = fieldCtx?.switchId ?? switchInputId(idProp, autoId);
+    const isCompound = fieldCtx?.isCompound === true;
+    const ControlTag = isCompound ? "label" : "span";
     const hintId = fieldCtx?.hintId ?? `${inputId}-hint`;
     const errorId = fieldCtx?.errorId ?? `${inputId}-error`;
     const size = sizeProp ?? fieldCtx?.size ?? "base";
-
+ 
     const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
       value: checked,
       defaultValue: Boolean(defaultChecked),
     });
     const [squeezeToken, setSqueezeToken] = useState(0);
-
+ 
     useLayoutEffect(() => {
       fieldCtx?.setMergedChecked(mergedChecked);
     }, [fieldCtx, mergedChecked]);
-
+ 
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
         const next = e.target.checked;
@@ -79,7 +86,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       },
       [isControlled, onChange, setMergedChecked],
     );
-
+ 
     const handlePointerDown = useCallback(
       (e: PointerEvent<HTMLInputElement>) => {
         onPointerDown?.(e);
@@ -89,7 +96,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       },
       [disabled, fieldCtx, onPointerDown],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: KeyboardEvent<HTMLInputElement>) => {
         onKeyDown?.(e);
@@ -99,16 +106,16 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       },
       [disabled, fieldCtx, onKeyDown],
     );
-
+ 
     const { "aria-label": ariaLabelProp, ...inputRest } = rest;
-
+ 
     const trackDefaults = {
       size,
       thickness,
       checked: mergedChecked,
       disabled,
       color,
-      gloss,
+      variant,
       squeezeToken,
       iconOff,
       iconOn,
@@ -117,10 +124,11 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
         fill: slotClassNames.fill,
         thumb: slotClassNames.thumb,
         thumbShell: slotClassNames.thumbShell,
-        icon: slotClassNames.icon,
+        iconOff: slotClassNames.iconOff,
+        iconOn: slotClassNames.iconOn,
       },
     };
-
+ 
     const { compoundTrack, hasThumbChild } = useMemo(() => {
       const { track } = partitionSwitchControlChildren(children);
       return {
@@ -129,7 +137,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       };
     }, [children]);
     let trackVisual: ReactNode;
-
+ 
     if (compoundTrack != null) {
       trackVisual = isValidElement(compoundTrack)
         ? cloneElement(compoundTrack, trackDefaults)
@@ -152,9 +160,9 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
                 motionPayload={motionPayload}
                 playInitialState={playInitialState} />;
     }
-
+ 
     return (
-      <span
+      <ControlTag
         className={cn(
           switchControlClass(size),
           fieldCtx != null
@@ -178,6 +186,8 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
           name={name}
           value={value}
           required={required}
+          aria-required={required || undefined}
+          aria-invalid={fieldCtx?.isInvalid ? true : undefined}
           form={form}
           autoFocus={autoFocus}
           tabIndex={tabIndex}
@@ -190,7 +200,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
           )}
           aria-label={
             ariaLabelProp ??
-            switchFallbackAriaLabel(fieldCtx?.hasTextColumn ?? false)
+            switchFallbackAriaLabel(fieldCtx?.hasTextColumn ?? false, unnamedLabel)
           }
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
@@ -198,12 +208,16 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
             ? { checked: mergedChecked, onChange: handleChange }
             : { defaultChecked, onChange: handleChange })}
           {...inputRest}
+          {...dataVariantProps({ size, variant })}
+          data-invalid={fieldCtx?.isInvalid ? "" : undefined}
+          data-state={dataOnState(mergedChecked)}
         />
         {trackVisual}
-      </span>
+      </ControlTag>
     );
   },
 );
-
+ 
 SwitchControl.displayName = "SwitchControl";
-
+ 
+ 

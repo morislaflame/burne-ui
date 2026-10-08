@@ -6,8 +6,6 @@ import { LabelClassNamesFullDemo } from "../demos/label/LabelClassNamesFull.demo
 import labelClassNamesFullSource from "../demos/label/LabelClassNamesFull.demo.tsx?raw";
 import { InputCompoundDemo } from "../demos/input/InputCompound.demo";
 import inputCompoundSource from "../demos/input/InputCompound.demo.tsx?raw";
-import { InputGlossDemo } from "../demos/input/InputGloss.demo";
-import inputGlossSource from "../demos/input/InputGloss.demo.tsx?raw";
 import { InputInlinePairDemo } from "../demos/input/InputInlinePair.demo";
 import inputInlinePairSource from "../demos/input/InputInlinePair.demo.tsx?raw";
 import { InputStatusesDemo } from "../demos/input/InputStatuses.demo";
@@ -33,7 +31,7 @@ export function InputShowcase() {
       importPath='import { Input } from "@/components/core/Input";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+      <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={InputVariantsDemo} source={inputVariantsSource} />
       </ShowcaseSection>
 
@@ -57,12 +55,7 @@ export function InputShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesCompoundDemo} source={inputClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LabelClassNamesFullDemo} source={labelClassNamesFullSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">
-        <ShowcaseDemoFromFile align="center" Demo={InputGlossDemo} source={inputGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Slot motion" description="One gallery: instant hover, affix orbit timeline, file-row leave factory, password toggle + press tint.">
+<ShowcaseSection title="Slot motion" description="One gallery: instant hover, affix orbit timeline, file-row leave factory, password toggle + press tint.">
         <InputSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -98,11 +91,11 @@ export function InputShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Options">
           <p>
-            <code>variant</code>: default, outline, secondary, gloss. <code>status</code>: default, danger,
+            <code>variant</code>: default, outline, secondary, default. <code>status</code>: default, danger,
             success, warning, info. Field tips — prop <code>hint</code>, not <code>description</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -10,7 +10,7 @@ import type {
   MotionPlayOptions,
   MotionRunResult,
 } from "./motionControllerTypes";
-
+ 
 /**
  * `playAll` on a group broadcasts to **members** (one `play` each, default slot `root`).
  * Slot-level `exclude` stays on the child controller. `stagger` is seconds between members.
@@ -23,15 +23,15 @@ export type MotionGroupPlayAllOptions = {
   waitForComplete?: boolean;
   signal?: AbortSignal;
 };
-
+ 
 export type MotionGroupTimelinePlayOptions = MotionPlayOptions & {
   position?: MotionTimelinePosition;
 };
-
+ 
 export type MotionGroupTimelinePlayAllOptions = MotionGroupPlayAllOptions & {
   position?: MotionTimelinePosition;
 };
-
+ 
 /**
  * Scheduler over registered members — GSAP positions (`0`, `"+=0.12"`), not a second tween engine.
  * `kill()` aborts remaining callbacks and cancels runs this timeline started.
@@ -61,7 +61,7 @@ export type MotionGroupTimeline<TEvent extends string = string & {}> = {
   call(fn: () => void, position?: MotionTimelinePosition): MotionGroupTimeline<TEvent>;
   kill(): void;
 };
-
+ 
 /**
  * Registry of child `MotionController` handles by string id.
  * Not a `motionId` prop on kit roots — the app registers existing handles.
@@ -91,3 +91,4 @@ export type MotionGroup<TEvent extends string = string & {}> = {
   cancel(id?: string, slot?: string, reason?: MotionCancelReason): void;
   timeline(): MotionGroupTimeline<TEvent>;
 };
+ 

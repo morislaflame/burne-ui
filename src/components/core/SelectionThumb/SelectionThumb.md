@@ -1,6 +1,6 @@
 # SelectionThumb
 
-Упрощённый thumb-индикатор для **Switch** и **Slider**: shell с `--selection-indicator-radius-*` (без внутреннего fill). Опционально `SelectionThumb.Icon` — цвет стабильный (`text-primary` / gloss `text-foreground`). Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
+Упрощённый thumb-индикатор для **Switch** и **Slider**: shell с `--selection-indicator-radius-*` (без внутреннего fill). Опционально `SelectionThumb.Icon` — цвет стабильный (`text-primary`; скин может перекрасить через `selectionThumbIcon.root`). Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
 
 ## Импорт
 
@@ -15,7 +15,7 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 ```tsx
 <SelectionThumb
   size="base"
-  gloss={false}
+  variant="default"
   className="shadow-token-sm"
 />
 ```
@@ -23,7 +23,7 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `size` | `base` | `SelectionIndicatorSize` → radius + icon scale |
-| `gloss` | `false` | `gloss-indicator` shell |
+| `variant` | `default` | Kit `default` или имя скина (`selectionIndicator.root`) |
 | `shellRef` | — | Ref на shell (для parent slide anim — Switch) |
 | `className` | — | На shell |
 | `children` | — | Обычно `SelectionThumb.Icon` |
@@ -33,24 +33,24 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 ### `SelectionThumb.Icon`
 
 ```tsx
-<SelectionThumb.Icon size="base" gloss={false}>
+<SelectionThumb.Icon size="base" variant="default">
   <IoMoon aria-hidden />
 </SelectionThumb.Icon>
 ```
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `gloss` | `false` | `text-foreground` в gloss mode, иначе `text-primary` |
+| `variant` | `default` | Kit `text-primary`; скин — `selectionThumbIcon.root` |
 | `iconRef` | — | Ref для parent icon crossfade (Switch) |
 | `className` | — | На wrapper иконки |
 | `size` | `base` | Размер SVG через `SELECTION_INDICATOR_ICON_CLASS` |
 
 ## variant / surface
 
-| `gloss` | Shell | Icon |
-|---------|-------|------|
-| `false` | `border border-primary bg-surface` | `text-primary` |
-| `true` | `gloss-indicator border-0` | `text-foreground` |
+| `variant` | Shell | Icon |
+|-----------|-------|------|
+| `default` | `border border-primary bg-surface` | `text-primary` |
+| skin name | `resolveVariantVisual` → `selectionIndicator.root` | `selectionThumbIcon.root` |
 
 ## Анимации
 
@@ -109,9 +109,13 @@ function Nudge() {
 
 ## Стилизация и кастомизация
 
-### `SelectionThumbClassNames` / `SelectionThumbIconClassNames`
+### `SelectionThumbClassNames`
 
-Thumb: `root`. Icon: `root`, `icon`.
+`root`.
+
+### `SelectionThumbIconClassNames`
+
+`root`, `icon`.
 
 `className` мержится в `root`.
 
@@ -135,7 +139,6 @@ Track/rail скругление — тот же `--selection-indicator-radius-*`
 
 - **Не standalone control** — нет role, label, keyboard; оборачивайте в Switch/Slider.
 - **shellRef** — для координации GSAP в Switch track animations.
-- **Тёмная/светлая тема** — gloss CSS из `glossPanel.css`.
 
 ## Доступность
 
@@ -158,7 +161,7 @@ SelectionThumb/
 └── index.ts
 ```
 
-Токены shell/radius: `../SelectionIndicator/selectionIndicatorTokens.ts`
+Токены shell/radius: `../SelectionIndicator/selectionIndicatorStyles.ts`
 
 ## Storybook
 

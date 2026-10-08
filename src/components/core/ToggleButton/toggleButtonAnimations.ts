@@ -10,8 +10,7 @@
  */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
-
-import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
+ 
 import {
   initElementShadow,
   isInteractivePressKey,
@@ -28,49 +27,55 @@ import {
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
-
+import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+ 
 import { useToggleButtonMotionScope } from "./toggleButtonContext";
 import type {
   ToggleButtonMotion,
   ToggleButtonVariant,
   UseToggleButtonAnimationsProps,
 } from "./toggleButtonTypes";
+import { KIT_TOGGLE_BUTTON_VARIANTS } from "./toggleButtonTypes";
 import {
   applyToggleButtonFillInstant,
   useToggleButtonFillAnimation,
 } from "./useToggleButtonFillAnimation";
-
+ 
 function isKitPressSqueeze(value: MotionValue | undefined): boolean {
   if (typeof value === "string") {
-    return value === "pressSqueeze" || value === "pressSqueezeGloss";
+    return value === "pressSqueeze";
   }
   if (value && typeof value === "object" && "recipe" in value) {
     const recipe = (value as { recipe?: unknown }).recipe;
-    return recipe === "pressSqueeze" || recipe === "pressSqueezeGloss";
+    return recipe === "pressSqueeze";
   }
   return false;
 }
-
+ 
 export function resolveToggleButtonMotionDefaults({
   variant,
 }: {
   variant: ToggleButtonVariant;
 }): ToggleButtonMotion {
-  const isGloss = variant === "gloss";
-  return {
-    root: {
-      hoverIn: isGloss ? "hoverLiftGloss" : "hoverLiftFirstLevel",
-      hoverOut: isGloss ? "hoverLiftGloss" : "hoverLiftFirstLevel",
-      pressIn: isGloss ? "pressSqueezeGloss" : "pressSqueeze",
-      pressOut: false,
+  return overlaySkinMotion(
+    {
+      root: {
+        hoverIn: "hoverLiftFirstLevel",
+        hoverOut: "hoverLiftFirstLevel",
+        pressIn: "pressSqueeze",
+        pressOut: false,
+      },
+      fill: {
+        check: "selectionFill",
+        uncheck: "selectionFill",
+      },
     },
-    fill: {
-      check: "selectionFill",
-      uncheck: "selectionFill",
-    },
-  };
+    variant,
+    KIT_TOGGLE_BUTTON_VARIANTS,
+    "toggleButton",
+  );
 }
-
+ 
 export function useToggleButtonAnimations({
   disabled,
   variant,
@@ -94,13 +99,15 @@ export function useToggleButtonAnimations({
   const deferFillFromPressRef = useRef(false);
   const pendingFillRef = useRef<boolean | null>(null);
   const pressReleaseStartedRef = useRef(false);
-
+ 
   const scope = useToggleButtonMotionScope();
   const rootMotionRef = useRef(motion?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
   const fillMotionRef = useRef(motion?.fill);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   fillMotionRef.current = motion?.fill;
-
+ 
   const playFill = useCallback(
     (fill: HTMLElement, next: boolean, reduceMotion: boolean) => {
       const phase = next ? "check" : "uncheck";
@@ -116,7 +123,7 @@ export function useToggleButtonAnimations({
     },
     [config, scope],
   );
-
+ 
   const { animateTo, bindFillRef, displayPressed } = useToggleButtonFillAnimation(
     pressed,
     fillRef,
@@ -126,13 +133,13 @@ export function useToggleButtonAnimations({
       playFill,
     },
   );
-
+ 
   const clearPressFillCoordination = useCallback(() => {
     deferFillFromPressRef.current = false;
     pendingFillRef.current = null;
     pressReleaseStartedRef.current = false;
   }, []);
-
+ 
   const runPendingFill = useCallback(() => {
     const next = pendingFillRef.current;
     if (next === null) return;
@@ -140,52 +147,45 @@ export function useToggleButtonAnimations({
     deferFillFromPressRef.current = false;
     animateTo(next);
   }, [animateTo]);
-
+ 
   onReleaseStartRef.current = () => {
     pressReleaseStartedRef.current = true;
     runPendingFill();
   };
-
+ 
   const reduceMotion = prefersReducedMotion();
   const shouldCoordinateFill = !disabled && !reduceMotion;
-
-  const isGloss = variant === "gloss";
+ 
   const useContentRef = Boolean(groupSegment);
-  const hasHoverShadow = !isGloss && !useContentRef;
+  const hasHoverShadow = isKitVariant(variant, KIT_TOGGLE_BUTTON_VARIANTS) && !useContentRef;
   const enabled = !disabled;
   const btnRef = useRef<HTMLButtonElement>(null);
   const contentMotionRef = useRef<HTMLSpanElement>(null);
-
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(btnRef, isGloss),
-    [isGloss],
-  );
-
+ 
   const motionTarget = useCallback(
     () => (useContentRef ? contentMotionRef.current : btnRef.current),
     [useContentRef],
   );
-
+ 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
-      bindGlossRef(node);
       btnRef.current = node;
       if (!useContentRef) scope.registerTarget("root", node);
       mergeForwardedRef(forwardedRef, node);
     },
-    [bindGlossRef, forwardedRef, scope, useContentRef],
+    [forwardedRef, scope, useContentRef],
   );
-
+ 
   const btnShadow = useMemo(
     () => (hasHoverShadow ? shadowMotionFor("none") : undefined),
     [hasHoverShadow],
   );
-
+ 
   useLayoutEffect(() => {
     if (!enabled || !btnShadow || useContentRef) return;
     initElementShadow(btnRef.current, shadowNone());
   }, [btnShadow, enabled, useContentRef]);
-
+ 
   useEffect(() => {
     if (enabled) return;
     hoverPointerInsideRef.current = false;
@@ -195,14 +195,14 @@ export function useToggleButtonAnimations({
       killMotion(el);
       el.style.removeProperty("--el-shadow");
       el.style.removeProperty("box-shadow");
-      gsap.set(el, { clearProps: "boxShadow,scale,transform" });
+      gsap.set(el, { clearProps: "scale,transform" });
     }
     if (content) {
       killMotion(content);
       content.style.transform = "";
     }
   }, [enabled, hoverPointerInsideRef]);
-
+ 
   useEffect(() => {
     const contentRef = contentMotionRef;
     const fill = fillRef;
@@ -211,7 +211,7 @@ export function useToggleButtonAnimations({
       if (fill.current) killMotion(fill.current);
     };
   }, []);
-
+ 
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       if (!enabled) return;
@@ -223,7 +223,7 @@ export function useToggleButtonAnimations({
     },
     [enabled, motionTarget, scope],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLButtonElement>({
     enabled,
     targetRef: btnRef,
@@ -232,7 +232,7 @@ export function useToggleButtonAnimations({
     onHoverIn: () => playRoot("hoverIn"),
     onHoverOut: () => playRoot("hoverOut"),
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -243,14 +243,14 @@ export function useToggleButtonAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOut, onPointerOver],
   );
-
+ 
   const beginPressFillCoordination = useCallback(() => {
     if (!shouldCoordinateFill) return;
     deferFillFromPressRef.current = true;
     pressReleaseStartedRef.current = false;
     pendingFillRef.current = null;
   }, [shouldCoordinateFill]);
-
+ 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDown?.(e);
@@ -263,7 +263,7 @@ export function useToggleButtonAnimations({
     },
     [beginPressFillCoordination, enabled, onPointerDown, playRoot, scope],
   );
-
+ 
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerUp?.(e);
@@ -272,14 +272,14 @@ export function useToggleButtonAnimations({
     },
     [enabled, onPointerUp, playRoot],
   );
-
+ 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnter?.(e);
     },
     [onPointerEnter],
   );
-
+ 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
@@ -287,7 +287,7 @@ export function useToggleButtonAnimations({
     },
     [clearPressFillCoordination, onPointerLeave],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
@@ -300,23 +300,23 @@ export function useToggleButtonAnimations({
     },
     [beginPressFillCoordination, enabled, onKeyDown, playRoot, scope],
   );
-
+ 
   const queueFillOnClick = useCallback(
     (next: boolean) => {
       if (!shouldCoordinateFill || !deferFillFromPressRef.current) {
         animateTo(next);
         return;
       }
-
+ 
       pendingFillRef.current = next;
-
+ 
       if (pressReleaseStartedRef.current) {
         runPendingFill();
       }
     },
     [animateTo, runPendingFill, shouldCoordinateFill],
   );
-
+ 
   return {
     setRefs,
     contentMotionRef,

@@ -197,7 +197,7 @@ export const CustomClassNames: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Slots root, text and icon via classNames prop.",
+        story: "Slots root, text, iconStart and iconEnd via classNames prop.",
       },
     },
   },
@@ -207,9 +207,9 @@ export const CustomClassNames: Story = {
       showDefaultIcon
       underline
       classNames={{
-        root: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
+        root: "gap-small rounded-large border border-primary/20 p-xsmall text-info",
         text: "font-semibold",
-        icon: "text-warning",
+        iconEnd: "text-warning",
       }}
     >
       Custom link

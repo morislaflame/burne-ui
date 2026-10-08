@@ -1,23 +1,26 @@
 import { forwardRef, memo, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
-
+ 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import { useSkinVariant } from "@/skins/skinContext";
 import { Text } from "@/components/core/Text";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
-import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT, iconSlotSizeClass } from "@/components/core/utils/sizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 import { OptionListItemContextProvider, useOptionListItemContext, type OptionListItemContextValue } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
+ 
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
-import { LISTBOX_EMPTY_DEFAULT_CHILDREN, listBoxActiveOptionId, listBoxOptionId } from "./listBoxA11y";
+import { listBoxActiveOptionId, listBoxOptionId } from "./listBoxA11y";
 import {
-  listBoxBumpActiveValue,
-  listBoxFirstEnabledValue,
-  listBoxLastEnabledValue,
+  listBoxCatalogTypeahead,
   listBoxPreferredInitialActiveValue,
   listBoxTypeaheadLabels,
+  nextListBoxKeyValue,
   resolveListBoxIndicatorSize,
   resolveListBoxItemIndicatorClassNames,
 } from "./listBoxAPI";
@@ -25,7 +28,6 @@ import {
   playListBoxItemPress,
   resolveListBoxMotionDefaults,
   useListBoxActiveOptionHighlight,
-  useListBoxRootGlossRef,
   useListBoxSlotMotion,
 } from "./listBoxAnimations";
 import {
@@ -52,7 +54,9 @@ import type {
   ListBoxSeparatorProps,
 } from "./listBoxTypes";
 import { useListBoxItemState } from "./useListBoxItemState";
+import { useListBoxVirtualWindow } from "./useListBoxVirtualWindow";
 
+ 
 import { cn } from "@/utils/cn";
 import {
   createTypeaheadBufferState,
@@ -60,10 +64,10 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
-
+ 
 export function ListBoxRootShell({
   listId,
-  variant = "default",
+  variant: variantProp,
   className,
   ariaLabel,
   ariaLabelledBy,
@@ -71,8 +75,11 @@ export function ListBoxRootShell({
   tabIndex: tabIndexProp,
   onKeyDown,
   onFocus,
+  virtualized = false,
+  virtualItemSize,
   ...rest
 }: ListBoxRootShellProps) {
+  const variant = useSkinVariant(variantProp);
   const slotClassNames = useListBoxClassNames();
   const motionScope = useListBoxMotionScope();
   const {
@@ -81,64 +88,50 @@ export function ListBoxRootShell({
     multiple,
     disabled,
     standaloneKeyboard,
+    size,
   } = useListBox("ListBox");
   const activeValue = useListBoxActiveValue();
-  const isGloss = variant === "gloss";
+  const { frame, catalog, setScrollNode } = useListBoxVirtualWindow({
+    enabled: virtualized,
+    itemSizeProp: virtualItemSize,
+    size,
+    children,
+  });
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const setGlossRef = useListBoxRootGlossRef(isGloss);
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
       rootRef.current = node;
-      setGlossRef(node);
+      setScrollNode(node);
     },
-    [setGlossRef],
+    [setScrollNode],
   );
   useListBoxActiveOptionHighlight({ listId, activeValue, rootRef });
   const typeaheadRef = useRef(createTypeaheadBufferState());
-
+ 
   const handleKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(event);
       if (event.defaultPrevented || !standaloneKeyboard || disabled) return;
-
+ 
       const root = event.currentTarget;
       const keepFocusOnList = () => {
         if (document.activeElement !== root) focusElement(root);
       };
-
-      if (event.key === "ArrowDown") {
+ 
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp" ||
+        event.key === "Home" ||
+        event.key === "End"
+      ) {
         event.preventDefault();
-        const next = listBoxBumpActiveValue({
+        const next = nextListBoxKeyValue({
+          catalog,
           root,
           activeValue,
-          delta: 1,
+          key: event.key,
         });
         if (next) setActiveValue(next);
-        keepFocusOnList();
-        return;
-      }
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        const next = listBoxBumpActiveValue({
-          root,
-          activeValue,
-          delta: -1,
-        });
-        if (next) setActiveValue(next);
-        keepFocusOnList();
-        return;
-      }
-      if (event.key === "Home") {
-        event.preventDefault();
-        const first = listBoxFirstEnabledValue(root);
-        if (first) setActiveValue(first);
-        keepFocusOnList();
-        return;
-      }
-      if (event.key === "End") {
-        event.preventDefault();
-        const last = listBoxLastEnabledValue(root);
-        if (last) setActiveValue(last);
         keepFocusOnList();
         return;
       }
@@ -162,10 +155,12 @@ export function ListBoxRootShell({
         keepFocusOnList();
         return;
       }
-
+ 
       if (isTypeaheadPrintableKey(event.key, event)) {
         event.preventDefault();
-        const { values, labels } = listBoxTypeaheadLabels(root);
+        const { values, labels } = catalog
+          ? listBoxCatalogTypeahead(catalog)
+          : listBoxTypeaheadLabels(root);
         const currentIdx = activeValue ? values.indexOf(activeValue) : -1;
         const nextIdx = typeaheadMatchIndex(
           labels,
@@ -184,12 +179,13 @@ export function ListBoxRootShell({
       listId,
       motionScope,
       onKeyDown,
+      catalog,
       selectItem,
       setActiveValue,
       standaloneKeyboard,
     ],
   );
-
+ 
   const handleFocus = useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {
       onFocus?.(event);
@@ -200,10 +196,10 @@ export function ListBoxRootShell({
     },
     [activeValue, disabled, onFocus, setActiveValue, standaloneKeyboard],
   );
-
+ 
   const tabIndex =
     tabIndexProp ?? (standaloneKeyboard && !disabled ? 0 : undefined);
-
+ 
   return (
     <div
       ref={setRootRef}
@@ -222,19 +218,21 @@ export function ListBoxRootShell({
       onKeyDown={handleKeyDown}
       onFocus={handleFocus}
       className={listBoxRootClass({
-        isGloss,
+        variant,
         slotClass: slotClassNames.root,
         className,
+        virtualized: catalog != null,
       })}
       {...rest}
+      {...dataVariantProps({ size, variant })}
     >
-      {children}
+      {frame}
     </div>
   );
 }
-
+ 
 ListBoxRootShell.displayName = "ListBox";
-
+ 
 export function ListBoxSection({
   className,
   children,
@@ -254,11 +252,11 @@ export function ListBoxSection({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   const registerLabel = useCallback((id: string | undefined) => {
     setLabelId(id);
   }, []);
-
+ 
   return (
     <ListBoxSectionLabelProvider value={registerLabel}>
       <div
@@ -277,9 +275,9 @@ export function ListBoxSection({
     </ListBoxSectionLabelProvider>
   );
 }
-
+ 
 ListBoxSection.displayName = "ListBoxSection";
-
+ 
 export function ListBoxHeader({
   className,
   textClassName,
@@ -303,12 +301,12 @@ export function ListBoxHeader({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   useEffect(() => {
     registerLabel?.(id);
     return () => registerLabel?.(undefined);
   }, [id, registerLabel]);
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -333,9 +331,9 @@ export function ListBoxHeader({
     </div>
   );
 }
-
+ 
 ListBoxHeader.displayName = "ListBoxHeader";
-
+ 
 export function ListBoxSeparator({
   className,
   motion,
@@ -353,7 +351,7 @@ export function ListBoxSeparator({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -368,9 +366,9 @@ export function ListBoxSeparator({
     />
   );
 }
-
+ 
 ListBoxSeparator.displayName = "ListBoxSeparator";
-
+ 
 export function ListBoxEmpty({
   className,
   children,
@@ -381,6 +379,7 @@ export function ListBoxEmpty({
   onPointerUp,
   ...rest
 }: ListBoxEmptyProps) {
+  const emptyLabel = useBurneLabel("listBoxEmpty");
   const slotClassNames = useListBoxClassNames();
   const part = useListBoxSlotMotion<HTMLElement>("empty", {
     motion,
@@ -389,7 +388,7 @@ export function ListBoxEmpty({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <Text
       ref={part.setRef}
@@ -402,13 +401,13 @@ export function ListBoxEmpty({
       {...rest}
       {...part.pointerHandlers}
     >
-      {children ?? LISTBOX_EMPTY_DEFAULT_CHILDREN}
+      {children ?? emptyLabel}
     </Text>
   );
 }
-
+ 
 ListBoxEmpty.displayName = "ListBoxEmpty";
-
+ 
 const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
   function ListBoxItem(
     {
@@ -439,7 +438,7 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       parentScope?.getRootMotion(),
       motion ? { item: motion } : undefined,
     );
-
+ 
     return (
       <ListBoxMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -467,7 +466,7 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
     );
   },
 );
-
+ 
 function ListBoxItemSurface({
   forwardedRef,
   children,
@@ -542,7 +541,7 @@ function ListBoxItemSurface({
       value,
       disabled: disabledProp,
     });
-
+ 
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalListBoxMotionScope(),
       slot: "item",
@@ -551,7 +550,7 @@ function ListBoxItemSurface({
       pressPhases: true,
       onPointerDown,
     });
-
+ 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
@@ -560,7 +559,7 @@ function ListBoxItemSurface({
       },
       [disabled, onClick, selectItem, value],
     );
-
+ 
     const handleEnter = useCallback(
       (event: React.PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(event);
@@ -569,7 +568,7 @@ function ListBoxItemSurface({
       },
       [disabled, onPointerEnter, setActiveValue, value],
     );
-
+ 
     const itemCtx: OptionListItemContextValue = useMemo(
       () => ({
         showIndicatorSlot,
@@ -583,10 +582,10 @@ function ListBoxItemSurface({
       }),
       [disabled, hasHint, hasIcon, indicatorMode, isSelected, showIndicatorSlot],
     );
-
+ 
     const autoIndicator =
       showIndicatorSlot && !hasCompoundIndicator ? <ListBoxItemIndicator /> : null;
-
+ 
     // Compound: slots + freeform rest (Dropdown.Item pattern).
     const itemBody = isCompound ? (
       <>
@@ -605,9 +604,9 @@ function ListBoxItemSurface({
         {icon != null ? <ListBoxIcon>{icon}</ListBoxIcon> : null}
       </>
     );
-
+ 
     const useItemGrid = showIndicatorSlot || hasHint || hasIcon || hasLabel;
-
+ 
     return (
       <OptionListItemContextProvider value={itemCtx}>
         <button
@@ -643,17 +642,18 @@ function ListBoxItemSurface({
           onKeyDown={onKeyDown}
           {...rest}
           {...pointerHandlers}
+          data-state={isSelected ? "selected" : undefined}
         >
           {itemBody}
         </button>
       </OptionListItemContextProvider>
     );
 }
-
+ 
 export const ListBoxItem = memo(ListBoxItemInner);
-
+ 
 ListBoxItem.displayName = "ListBoxItem";
-
+ 
 export function ListBoxLabel({
   className,
   motion,
@@ -672,7 +672,7 @@ export function ListBoxLabel({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <OptionListItemLabel
       ref={setRef}
@@ -683,9 +683,9 @@ export function ListBoxLabel({
     />
   );
 }
-
+ 
 ListBoxLabel.displayName = "ListBoxLabel";
-
+ 
 export function ListBoxHint({
   className,
   motion,
@@ -703,7 +703,7 @@ export function ListBoxHint({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <OptionListItemHint
       ref={setRef}
@@ -713,9 +713,9 @@ export function ListBoxHint({
     />
   );
 }
-
+ 
 ListBoxHint.displayName = "ListBoxHint";
-
+ 
 export function ListBoxIcon({
   className,
   motion,
@@ -734,12 +734,12 @@ export function ListBoxIcon({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <OptionListItemIcon
       ref={setRef}
       className={cn(
-        `[&_svg]:${CONTROL_SIZE_LAYOUT[size].icon}`,
+        iconSlotSizeClass(size),
         slotClassNames.icon,
         className,
       )}
@@ -748,11 +748,11 @@ export function ListBoxIcon({
     />
   );
 }
-
+ 
 ListBoxIcon.displayName = "ListBoxIcon";
-
+ 
 export function ListBoxItemIndicator({
-  variant = "default",
+  variant: variantProp,
   size: sizeProp,
   check,
   children,
@@ -760,15 +760,16 @@ export function ListBoxItemIndicator({
   classNames: classNamesProp,
   ...rest
 }: ListBoxItemIndicatorProps) {
+  const variant = useSkinVariant(variantProp);
   const ctx = useOptionListItemContext("ListBox.ItemIndicator");
   const { size: listSize } = useListBox("ListBox.ItemIndicator");
   const slotClassNames = useListBoxClassNames();
   const size = resolveListBoxIndicatorSize(listSize, sizeProp);
-
+ 
   if (!ctx.showIndicatorSlot) return null;
-
+ 
   const showCheck = check ?? ctx.indicatorMode === "multi";
-
+ 
   return (
     <OptionListItemIndicatorShell
       className={cn(
@@ -793,5 +794,6 @@ export function ListBoxItemIndicator({
     </OptionListItemIndicatorShell>
   );
 }
-
+ 
 ListBoxItemIndicator.displayName = "ListBoxItemIndicator";
+ 

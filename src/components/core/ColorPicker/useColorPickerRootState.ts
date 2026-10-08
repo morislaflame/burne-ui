@@ -1,9 +1,10 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
-
+ 
+import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { colorPickerInitialHsva, COLOR_PICKER_DEFAULT_HEX } from "./colorPickerAPI";
 import { hexToHsva, hsvaToHex, normalizeHex, type HSVA } from "./colorUtils";
 import type { ColorPickerContextValue, UseColorPickerRootStateProps } from "./colorPickerTypes";
-
+ 
 /**
  * HSVA is the source of truth (not hex).
  * Hex round-trip collapses hue 360 → 0 (same RGB), which would snap the hue
@@ -16,12 +17,14 @@ export function useColorPickerRootState({
   onValueChange,
   size = "base",
   disabled = false,
+  invalid: invalidProp,
+  "aria-invalid": ariaInvalid,
 }: UseColorPickerRootStateProps) {
   const isControlled = value !== undefined;
   const [hsva, setHsvaState] = useState<HSVA>(() =>
     colorPickerInitialHsva(value, defaultValue),
   );
-
+ 
   useLayoutEffect(() => {
     if (!isControlled || value == null) return;
     setHsvaState((current) => {
@@ -31,7 +34,7 @@ export function useColorPickerRootState({
       return hexToHsva(value) ?? current;
     });
   }, [isControlled, value]);
-
+ 
   const setHsva = useCallback(
     (next: HSVA) => {
       setHsvaState(next);
@@ -39,15 +42,20 @@ export function useColorPickerRootState({
     },
     [onValueChange],
   );
-
+ 
   const hex = hsvaToHex(hsva);
-
+ 
+  const invalid = resolveFieldInvalid({
+    invalid: invalidProp,
+    error: ariaInvalid === true ? true : undefined,
+  });
   const contextValue: ColorPickerContextValue = useMemo(
-    () => ({ hsva, setHsva, hex, disabled, size }),
-    [hsva, setHsva, hex, disabled, size],
+    () => ({ hsva, setHsva, hex, disabled, size, invalid }),
+    [hsva, setHsva, hex, disabled, size, invalid],
   );
-
+ 
   return {
     contextValue,
   };
 }
+ 

@@ -1,14 +1,14 @@
 import { forwardRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
-
+ 
 import { selectResolveHintStatus } from "./selectAPI";
 import { useSelectChromeSlot } from "./selectAnimations";
 import { useSelectClassNames, useSelectFieldContext } from "./selectContext";
 import type { SelectErrorProps, SelectHintProps, SelectLabelProps } from "./selectTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const SelectLabel = forwardRef<HTMLElement, SelectLabelProps>(
   function SelectLabel(
     {
@@ -32,7 +32,7 @@ export const SelectLabel = forwardRef<HTMLElement, SelectLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Label
         ref={part.setRef}
@@ -47,9 +47,9 @@ export const SelectLabel = forwardRef<HTMLElement, SelectLabelProps>(
     );
   },
 );
-
+ 
 SelectLabel.displayName = "SelectLabel";
-
+ 
 export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
   function SelectHint(
     {
@@ -77,7 +77,7 @@ export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -92,9 +92,9 @@ export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
     );
   },
 );
-
+ 
 SelectHint.displayName = "SelectHint";
-
+ 
 export const SelectError = forwardRef<HTMLElement, SelectErrorProps>(
   function SelectError(
     {
@@ -120,7 +120,7 @@ export const SelectError = forwardRef<HTMLElement, SelectErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -134,5 +134,6 @@ export const SelectError = forwardRef<HTMLElement, SelectErrorProps>(
     );
   },
 );
-
+ 
 SelectError.displayName = "Select.Error";
+ 

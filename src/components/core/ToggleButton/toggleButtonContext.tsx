@@ -1,25 +1,25 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   ToggleButtonClassNames,
   ToggleButtonContextValue,
   ToggleButtonGroupContextValue,
 } from "./toggleButtonTypes";
-
+ 
 /** Scope only. Defaults and host play live in `toggleButtonAnimations.ts`. */
 export const {
   MotionScopeProvider: ToggleButtonMotionProvider,
   useMotionScope: useToggleButtonMotionScope,
   useOptionalMotionScope: useOptionalToggleButtonMotionScope,
 } = createMotionScope("ToggleButton");
-
+ 
 const ToggleButtonGroupContext = createContext<ToggleButtonGroupContextValue | null>(null);
 const ToggleButtonContext = createContext<ToggleButtonContextValue | null>(null);
 const ToggleButtonClassNamesContext = createContext<ToggleButtonClassNames>({});
-
+ 
 export function ToggleButtonGroupProvider({
   value,
   children,
@@ -33,11 +33,11 @@ export function ToggleButtonGroupProvider({
     </ToggleButtonGroupContext.Provider>
   );
 }
-
+ 
 export function useOptionalToggleButtonGroupContext() {
   return useContext(ToggleButtonGroupContext);
 }
-
+ 
 function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
   const ctx = useContext(ToggleButtonGroupContext);
   if (!ctx) {
@@ -45,7 +45,7 @@ function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
   }
   return ctx;
 }
-
+ 
 export function ToggleButtonClassNamesProvider({
   classNames,
   children,
@@ -58,22 +58,22 @@ export function ToggleButtonClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <ToggleButtonClassNamesContext.Provider value={merged}>
       {children}
     </ToggleButtonClassNamesContext.Provider>
   );
 }
-
+ 
 export function useToggleButtonClassNames(): ToggleButtonClassNames {
   return useContext(ToggleButtonClassNamesContext);
 }
-
+ 
 export function useOptionalToggleButtonContext(): ToggleButtonContextValue | null {
   return useContext(ToggleButtonContext);
 }
-
+ 
 export function ToggleButtonContextProvider({
   value,
   children,
@@ -83,7 +83,8 @@ export function ToggleButtonContextProvider({
 }) {
   return <ToggleButtonContext.Provider value={value}>{children}</ToggleButtonContext.Provider>;
 }
-
+ 
 void useToggleButtonGroupContext;
-
+ 
 export { ToggleButtonGroupContext };
+ 

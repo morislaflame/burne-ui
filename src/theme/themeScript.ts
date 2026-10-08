@@ -1,7 +1,7 @@
 import { createElement, type ReactElement } from "react";
-
+ 
 import { DEFAULT_THEME_STORAGE_KEY, type BurneThemeMode } from "./themeConfig";
-
+ 
 export type ThemeScriptOptions = {
   /**
    * Same key as `ThemeProvider` / `BurneUIProvider` `storageKey`.
@@ -14,12 +14,12 @@ export type ThemeScriptOptions = {
    */
   defaultTheme?: BurneThemeMode;
 };
-
+ 
 export type ThemeScriptProps = ThemeScriptOptions & {
   /** CSP nonce for the inline `<script>`. */
   nonce?: string;
 };
-
+ 
 /**
  * Blocking inline script that applies `data-theme` before first paint.
  * Place in root layout `<head>` (or as first child of `<html>`) with
@@ -28,10 +28,10 @@ export type ThemeScriptProps = ThemeScriptOptions & {
 export function getThemeScript(options: ThemeScriptOptions = {}): string {
   const storageKey = JSON.stringify(options.storageKey ?? DEFAULT_THEME_STORAGE_KEY);
   const defaultTheme = JSON.stringify(options.defaultTheme ?? "dark");
-
+ 
   return `(function(){try{var k=${storageKey};var d=${defaultTheme};var s=localStorage.getItem(k);var t=(s==="light"||s==="dark"||s==="system")?s:d;var r=t==="system"?(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):t;var e=document.documentElement;if(r==="light")e.setAttribute("data-theme","light");else e.removeAttribute("data-theme");}catch(_){}})();`;
 }
-
+ 
 /**
  * Renders the no-flash theme bootstrap `<script>`.
  * No hooks — SSR still emits the inline script in initial HTML (Next.js App Router
@@ -50,5 +50,6 @@ export function ThemeScript({
     },
   });
 }
-
+ 
 export { DEFAULT_THEME_STORAGE_KEY };
+ 

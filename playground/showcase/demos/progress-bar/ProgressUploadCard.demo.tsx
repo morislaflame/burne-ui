@@ -14,7 +14,7 @@ export function ProgressUploadCardDemo() {
   }, []);
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-small rounded-mid border-token bg-secondary p-large">
+    <div className="flex w-full max-w-md flex-col gap-small rounded-large border-token bg-secondary p-large">
       <div className="flex items-center justify-between gap-large">
         <Text as="p" variant="small" className="font-medium">
           assets.zip

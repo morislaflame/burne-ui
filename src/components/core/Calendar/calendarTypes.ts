@@ -1,8 +1,10 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
+ 
 export type CalendarLocale = {
+  /** BCP 47 tag. `Intl` builds the names and the field date. */
+  locale: string;
   /** 7 items: Mon → Sun */
   weekDays: string[];
   /** 12 full month names */
@@ -12,13 +14,15 @@ export type CalendarLocale = {
   today: string;
   clear: string;
 };
-
+ 
 export type CalendarMode = "single" | "range" | "multiple";
 export type CalendarView = "days" | "months" | "years";
-export type CalendarVariant = "default" | "secondary" | "outline" | "gloss";
+export const KIT_CALENDAR_VARIANTS = ["default", "secondary", "outline"] as const;
+export type KitCalendarVariant = (typeof KIT_CALENDAR_VARIANTS)[number];
+export type CalendarVariant = KitCalendarVariant | (string & {});
 export type CalendarSize = "small" | "base" | "mid" | "large";
 export type CalendarRangeValue = { start: Date | null; end: Date | null };
-
+ 
 export type CalendarDayRenderState = {
   day: number;
   selected: boolean;
@@ -29,18 +33,19 @@ export type CalendarDayRenderState = {
   /** Day circle/fill is active (selected day or range endpoint). */
   circleActive: boolean;
 };
-
+ 
 export type CalendarRenderDay = (
   date: Date,
   state: CalendarDayRenderState,
 ) => ReactNode;
-
+ 
 export type CalendarClassNames = {
   root?: string;
-  glossContent?: string;
   header?: string;
   navPrev?: string;
   navNext?: string;
+  /** Wrapper around the default nav chevron. */
+  navIconWrap?: string;
   /** Default nav chevron icon (`IoChevronBack` / `IoChevronForward`). */
   navIcon?: string;
   headerTitle?: string;
@@ -65,7 +70,7 @@ export type CalendarClassNames = {
   footerToday?: string;
   footerClear?: string;
 };
-
+ 
 export type CalendarPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -73,9 +78,13 @@ export type CalendarPartMotion = {
   pressOut?: MotionValue;
   enter?: MotionValue;
   leave?: MotionValue;
+  check?: MotionValue;
+  uncheck?: MotionValue;
 };
-
+ 
 export type CalendarMotion = {
+  /** Shell. A skin `mount` (gloss shine) lands here. */
+  root?: CalendarPartMotion;
   navPrev?: CalendarPartMotion;
   navNext?: CalendarPartMotion;
   navPrevIcon?: CalendarPartMotion;
@@ -85,17 +94,22 @@ export type CalendarMotion = {
   grid?: CalendarPartMotion;
   cell?: CalendarPartMotion;
   cellText?: CalendarPartMotion;
+  /** Selected-cell fill. `check` / `uncheck` → `selectionFill`. */
+  cellFill?: CalendarPartMotion;
+  /** Range band. `enter` / `leave` → `contentFade`. */
+  rangeHalfFill?: CalendarPartMotion;
   footer?: CalendarPartMotion;
   footerToday?: CalendarPartMotion;
   footerClear?: CalendarPartMotion;
 };
-
-type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
+ 
+type CalendarCommonProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   variant?: CalendarVariant;
   size?: CalendarSize;
   defaultMonth?: Date;
   initialView?: CalendarView;
-  locale?: CalendarLocale;
+  /** BCP 47 tag (`"ru"`, `"en-GB"`) or a ready `CalendarLocale` from `createCalendarLocale`. */
+  locale?: string | CalendarLocale;
   minDate?: Date;
   maxDate?: Date;
   /** Replaces the default previous-month chevron. Pass `null` to hide. */
@@ -122,7 +136,7 @@ type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type CalendarProps =
   | (CalendarCommonProps & {
       mode?: "single";
@@ -142,7 +156,7 @@ export type CalendarProps =
       defaultValue?: Date[];
       onValueChange?: (dates: Date[]) => void;
     });
-
+ 
 export type CalendarHeaderProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<CalendarPartMotion>;
 };
@@ -152,12 +166,12 @@ export type CalendarGridProps = HTMLAttributes<HTMLDivElement> & {
 export type CalendarFooterProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<CalendarPartMotion>;
 };
-
+ 
 /** Header month/year drill-up control. `children` replace the default formatted title. */
 export type CalendarTitleProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<CalendarPartMotion>;
 };
-
+ 
 export type CalendarContextValue = {
   mode: CalendarMode;
   view: CalendarView;
@@ -189,24 +203,24 @@ export type CalendarContextValue = {
   navNextIcon?: ReactNode;
   renderDay?: CalendarRenderDay;
 };
-
+ 
 export type CalendarProviderProps = {
   value: CalendarContextValue;
   children: ReactNode;
 };
-
+ 
 export type CalendarClassNamesProviderProps = {
   classNames?: Prettify<CalendarClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseCalendarRootStateProps = CalendarCommonProps & {
   mode?: CalendarMode;
   value?: unknown;
   defaultValue?: unknown;
   onValueChange?: (v: unknown) => void;
 };
-
+ 
 export type CalendarNavButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children"
@@ -216,7 +230,7 @@ export type CalendarNavButtonProps = Omit<
   children?: ReactNode;
   motion?: Prettify<CalendarPartMotion>;
 };
-
+ 
 export type CalendarNavPrevProps = Omit<
   CalendarNavButtonProps,
   "direction" | "size" | "onClick"
@@ -224,9 +238,9 @@ export type CalendarNavPrevProps = Omit<
   size?: CalendarSize;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
 };
-
+ 
 export type CalendarNavNextProps = CalendarNavPrevProps;
-
+ 
 export type CalendarInteractiveCellProps = {
   selected: boolean;
   disabled?: boolean;
@@ -252,17 +266,17 @@ export type CalendarInteractiveCellProps = {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 /** Public `Calendar.Day` — size defaults from Calendar context. */
 export type CalendarDayProps = Omit<CalendarInteractiveCellProps, "size"> & {
   size?: CalendarSize;
 };
-
+ 
 export type CalendarRangeHalfFillProps = {
   visible: boolean;
   side: "left" | "right";
 };
-
+ 
 export type CalendarDayCellModel = {
   key: string;
   day: number | null;
@@ -277,17 +291,18 @@ export type CalendarDayCellModel = {
   circleActive?: boolean;
   ariaLabel?: string;
 };
-
+ 
 export type CalendarMonthCellModel = {
   month: number;
   name: string;
   isCurrentMonth: boolean;
   isSelected: boolean;
 };
-
+ 
 export type CalendarYearCellModel = {
   year: number;
   isCurrentYear: boolean;
   isSelected: boolean;
   outOfDecade: boolean;
 };
+ 

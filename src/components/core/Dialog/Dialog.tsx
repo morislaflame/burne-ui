@@ -1,11 +1,10 @@
-import "../utils/glossInteractive.css";
-
+ 
 import { DialogClassNamesProvider, DialogMotionProvider, DialogProvider } from "./dialogContext";
 import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogTitle, DialogTrigger } from "./dialogParts";
 import type { DialogProps } from "./dialogTypes";
 import { useDialogRootState } from "./useDialogRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
-
+ 
 export type {
   DialogProps,
   DialogPanelProps,
@@ -25,7 +24,7 @@ export type {
   DialogLifecycleMotion,
   DialogPartMotion,
 } from "./dialogTypes";
-
+ 
 export function DialogRoot({
   open,
   defaultOpen = false,
@@ -47,7 +46,7 @@ export function DialogRoot({
     size,
     portalContainer,
   });
-
+ 
   return (
     <DialogProvider value={state.contextValue}>
       <DialogClassNamesProvider classNames={classNames}>
@@ -62,9 +61,9 @@ export function DialogRoot({
     </DialogProvider>
   );
 }
-
+ 
 DialogRoot.displayName = "Dialog";
-
+ 
 export {
   DialogContent,
   DialogHeader,
@@ -77,3 +76,4 @@ export {
   DialogPanel,
   DialogTrigger,
 };
+ 

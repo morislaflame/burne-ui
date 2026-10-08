@@ -10,16 +10,18 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
-
-export type RadioVariant = "default" | "secondary" | "outline" | "gloss";
-
+ 
+export const KIT_RADIO_VARIANTS = ["default", "secondary", "outline"] as const;
+export type KitRadioVariant = (typeof KIT_RADIO_VARIANTS)[number];
+export type RadioVariant = KitRadioVariant | (string & {});
+ 
 export type RadioSize = "small" | "base" | "mid" | "large";
-
+ 
 export type RadioClassNames = {
   root?: string;
   control?: string;
@@ -37,14 +39,14 @@ export type RadioClassNames = {
   simpleLabelText?: string;
   input?: string;
 };
-
+ 
 export type RadioCheckMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 /** Root map. Indicator keys → SelectionIndicator; chrome (`label` / `hint` / `error`) is Radio's own scope. */
 export type RadioMotion = {
   indicator?: RadioCheckMotion;
@@ -54,7 +56,7 @@ export type RadioMotion = {
   hint?: RadioCheckMotion;
   error?: RadioCheckMotion;
 };
-
+ 
 export type RadioProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
@@ -64,6 +66,8 @@ export type RadioProps = Omit<
     label?: ReactNode;
     hint?: ReactNode;
     error?: ReactNode;
+    /** Danger label, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. `danger` stays visual only. */
+    invalid?: boolean;
     size?: RadioSize;
     variant?: RadioVariant;
     danger?: boolean;
@@ -84,8 +88,8 @@ export type RadioProps = Omit<
     motionController?: MotionController;
     onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
   } & MotionStateHostProps;
-
-
+ 
+ 
 export type RadioControlProps = HTMLAttributes<HTMLSpanElement> & {
   /**
    * Forwarded to an auto-created `Radio.Indicator` (simple / Control without an Indicator child).
@@ -93,10 +97,10 @@ export type RadioControlProps = HTMLAttributes<HTMLSpanElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type RadioIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<Pick<RadioClassNames, "indicator" | "indicatorFill" | "indicatorMark">>;
-
+ 
 export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: RadioSize;
@@ -108,23 +112,24 @@ export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
-
+ 
 export type RadioLabelProps = Omit<LabelProps, "htmlFor"> & {
   motion?: Prettify<RadioCheckMotion>;
 };
-
+ 
 export type RadioHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
   motion?: Prettify<RadioCheckMotion>;
 };
-
+ 
 export type RadioErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
   motion?: Prettify<RadioCheckMotion>;
 };
-
+ 
 export type RadioFieldContextValue = {
   inputId: string;
   hintId: string;
@@ -139,6 +144,7 @@ export type RadioFieldContextValue = {
   hasCompoundError: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
+  isInvalid: boolean;
   /** Visible label present (simple `label` or compound `Radio.Label`) — skips fallback `aria-label`. */
   hasLabel: boolean;
   useInlineCompoundMotion: boolean;
@@ -159,23 +165,23 @@ export type RadioFieldContextValue = {
     onFocus?: InputHTMLAttributes<HTMLInputElement>["onFocus"];
   };
 };
-
+ 
 export type RadioClassNamesProviderProps = {
   classNames?: Prettify<RadioClassNames>;
   children: ReactNode;
 };
-
+ 
 export type RadioMotionProviderProps = {
   motion?: Prettify<MotionMapWithEvents<RadioMotion>>;
   controller?: MotionController;
   children: ReactNode;
 };
-
+ 
 export type UseRadioRootStateProps = Omit<
   RadioProps,
   "children" | "className" | "classNames" | "onPointerDown" | "onClick" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
 >;
-
+ 
 export type UseRadioAnimationsProps = {
   isDisabled: boolean;
   enableTextMotion: boolean;
@@ -183,3 +189,4 @@ export type UseRadioAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLLabelElement>) => void;
 };
+ 

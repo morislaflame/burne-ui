@@ -1,14 +1,16 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "react";
 
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
-import "../utils/glossInteractive.css";
+import { useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
+import { useSkinRegistryRevision } from "@/skins/skinContext";
 
 import { resolveCalendarMotionDefaults } from "./calendarAnimations";
-import { CalendarClassNamesProvider, CalendarMotionProvider, CalendarProvider } from "./calendarContext";
+import { CalendarClassNamesProvider, CalendarMotionProvider, CalendarProvider, useCalendarMotionScope } from "./calendarContext";
 import { CalendarDefaultContent } from "./calendarParts";
-import { CALENDAR_GLOSS_CONTENT_CLASS, calendarRootClass } from "./calendarStyles";
+import { calendarRootClass } from "./calendarStyles";
 import type { CalendarProps, UseCalendarRootStateProps } from "./calendarTypes";
 import { useCalendarRootState } from "./useCalendarRootState";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
 
 export type {
@@ -63,11 +65,14 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       ...rest
     } = rawProps;
 
-    const { isGloss, contextValue } = useCalendarRootState(
+    const { contextValue } = useCalendarRootState(
       rawProps as UseCalendarRootStateProps,
     );
-    const setRootRef = useMergedGlossPanelRef(ref, isGloss);
-    const motionDefaults = useMemo(() => resolveCalendarMotionDefaults(), []);
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveCalendarMotionDefaults(contextValue.variant);
+    }, [contextValue.variant, skinRevision]);
 
     const content = children ?? <CalendarDefaultContent />;
 
@@ -78,24 +83,19 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
-          <div
-            ref={setRootRef}
+          <CalendarRootSurface
+            forwardedRef={ref}
             className={calendarRootClass(
               contextValue.variant,
               contextValue.size,
-              isGloss,
               cn("", classNames?.root, className),
             )}
-            {...rest}
+            rest={rest}
+            size={contextValue.size}
+            variant={contextValue.variant}
           >
-            {isGloss ? (
-              <div className={cn(CALENDAR_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
-                {content}
-              </div>
-            ) : (
-              content
-            )}
-          </div>
+            {content}
+          </CalendarRootSurface>
           </CalendarMotionProvider>
         </CalendarClassNamesProvider>
       </CalendarProvider>
@@ -104,6 +104,54 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
 );
 
 CalendarRoot.displayName = "Calendar";
+
+function CalendarRootSurface({
+  forwardedRef,
+  className,
+  rest,
+  size,
+  variant,
+  children,
+}: {
+  forwardedRef: ForwardedRef<HTMLDivElement>;
+  className: string;
+  rest: HTMLAttributes<HTMLDivElement>;
+  size: CalendarProps["size"];
+  variant: string;
+  children: CalendarProps["children"];
+}) {
+  const { onPointerOver, onPointerOut, ...domRest } = rest;
+  const scope = useCalendarMotionScope();
+  const part = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "root",
+    forwardedRef,
+  });
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
+  const shadow = useSecondLevelShadow(part.targetRef, true, {
+    shadowSize: "base",
+    liftScale: 1,
+    killMotionOnUnmount: false,
+  });
+  return (
+    <div
+      ref={part.setRef}
+      className={cn(className, shadow.motionClass)}
+      {...domRest}
+      onPointerOver={(event) => {
+        onPointerOver?.(event);
+        shadow.onPointerOver(event);
+      }}
+      onPointerOut={(event) => {
+        onPointerOut?.(event);
+        shadow.onPointerOut(event);
+      }}
+      {...dataVariantProps({ size, variant })}
+    >
+      {children}
+    </div>
+  );
+}
 
 export {
   CalendarHeader,

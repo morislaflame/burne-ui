@@ -25,23 +25,54 @@ npx burne-ui@latest init
 ## 1. Установка
 
 ```bash
-npm install burne-ui react-icons gsap
+npm install burne-ui gsap
 # или: pnpm / yarn / bun
 ```
+
+`react-icons` не обязателен: дефолтные глифы (chevron, close, check, search, folder, статусы) живут в ките. Ставьте `react-icons`, если прокидываете свои иконки в `icon` / compound-слоты.
+
+Корень `burne-ui` отдаёт весь публичный API. Один компонент — тот же набор имён, отдельным путём:
+
+```tsx
+import { Button } from "burne-ui/Button";
+import { Table } from "burne-ui/Table";
+```
+
+Имя пути совпадает с компонентом (`burne-ui/Accordion` тоже). Стили по-прежнему один раз из `burne-ui/styles.css`.
 
 ### Peer-зависимости
 
 В приложении должны быть установлены совместимые версии:
 
-| Пакет | Версия |
-|-------|--------|
-| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
-| `react-icons` | `^5.0.0` |
-| `gsap` | `^3.12.0` |
+| Пакет | Версия | Обязателен |
+|-------|--------|------------|
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` | да |
+| `gsap` | `^3.12.0` | да |
+| `react-icons` | `^5.0.0` | нет (`peerDependenciesMeta.optional`) |
 
 `gsap` — **peer** (не бандлится в `dist`): одно инстанс в приложении, tree-shaking у потребителя. `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
 
 `CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin`). Kit motion recipes регистрируются лениво из `runMotionPhase` при первом play (нет top-level `registerKitMotionRecipes()`). `sideEffects` — только CSS.
+
+Опубликованный ESM — `preserveModules` (дерево файлов, не один `index.js`). `import { cn } from "burne-ui"` не тянет компоненты и GSAP. `"use client"` стоит на модулях с React/GSAP, не на barrel / `cn` / токенах / `ThemeScript`.
+
+### Браузеры
+
+Кит **не** полифиллит современный CSS/DOM. Поддерживаемые движки:
+
+| Браузер | Мин. версия | Ограничивающая фича |
+|---------|-------------|---------------------|
+| Chrome / Edge / Android Chrome | 111 | `color-mix()` |
+| Safari / iOS Safari | 16.4 | `@property` |
+| Firefox / Firefox for Android | 128 | `@property` |
+
+JS-бандл — `build.target: "es2020"` (нет `.toSorted()` / ES2023). Та же матрица в `package.json` → `browserslist` (`chrome >= 111`, `firefox >= 128`, `safari >= 16.4`, плюс Edge / iOS / Android). Сборка кита **не** даунлевелит CSS по этому списку: `ui.css` уходит как написан.
+
+Фичи, из которых сложена планка: `color-mix()`, `@property`, `:has()`, `dvh`, `inert`. Gloss-бордер: `mask-composite: exclude` плюс `-webkit-mask-composite: xor` (Chrome 111–119; unprefixed — Chrome 120+).
+
+**Progressive enhancement:** `field-sizing: content` (автогрост TextArea) — Chromium 123+. В Safari / Firefox поле просто не растёт с контентом.
+
+Старые браузеры (Safari 15, Firefox 115, Chrome 109) не поддерживаются. Без `color-mix()` ломаются тени и прозрачности, раскладка остаётся. Почему порог не опускаем — [adr/0001-browser-floor.md](./adr/0001-browser-floor.md). Guard `check-browser-floor` сверяет эту таблицу с `browserslist` и со страницей сайта `/docs/browsers`.
 
 ---
 
@@ -97,9 +128,13 @@ import "burne-ui/styles.css";
 
 Правила приложения подключайте **после** `@import "burne-ui/styles.css"`, иначе утилиты из `ui.css` (например `.grid-cols-1`) могут перекрыть ваши responsive-классы при одинаковой специфичности.
 
+В `styles.css` есть `@media (forced-colors: active)`: focus-ring → `Highlight`, статусные поверхности сохраняют цвет, выбранные индикаторы (Checkbox / Radio / ToggleButton / Switch) остаются отличимы от невыбранных в Windows High Contrast.
+
 ---
 
 ## 4. Базовый layout (Next.js App Router)
+
+Сайтовые гайды: SSR / Next.js (`/docs/ssr`), доступность (`/docs/a11y`).
 
 ```tsx
 // app/layout.tsx
@@ -673,7 +708,8 @@ import { cn } from "burne-ui";
 
 ## 13. Checklist первой настройки
 
-- [ ] Установлены `burne-ui`, `react-icons` и `gsap` (peers)
+- [ ] Целевые браузеры ≥ Chrome 111 / Safari 16.4 / Firefox 128 (см. [Браузеры](#браузеры))
+- [ ] Установлены `burne-ui` и `gsap` (peers); `react-icons` — если нужны свои иконки
 - [ ] Подключён `burne-ui/styles.css`
 - [ ] Tailwind v4: `@source` на код приложения
 - [ ] Актуальный `burne-ui` (gloss blur CSS + Button async first-paint hide); для тяжёлых demo можно `ssr: false`
@@ -688,6 +724,6 @@ import { cn } from "burne-ui";
 
 ## 14. Связанные материалы
 
-- [README.md](../README.md) — обзор API, dual API полей, миграция `hint`, **`classNames` / `Prettify`**
+- [README.md](../README.md) — обзор API, dual API полей, миграция `hint`, **`classNames` / `Prettify`**, **браузеры**
 - [CHANGELOG.md](../CHANGELOG.md) — breaking changes между версиями
 - `playground/` в репозитории — theme builder и каталог компонентов (Vite, client-only)

@@ -1,22 +1,22 @@
 import { DEFAULT_BURNE_LABELS, formatBurneLabel, type BurneLabels } from "@/theme/burneLabels";
-
+ 
 import type { ToastLiveRole, ToastPlacement, ToastStatus } from "./toastTypes";
-
+ 
 /** Visually hidden, always-mounted live region for toast announcements. */
 export const TOAST_LIVE_REGION_CLASS =
   "sr-only absolute m-0 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0";
-
+ 
 export function resolveToastLiveRole(status: ToastStatus): ToastLiveRole {
   return status === "danger" || status === "warning" ? "alert" : "status";
 }
-
+ 
 export function toastViewportAriaLabel(
   placement: ToastPlacement,
   template: string = DEFAULT_BURNE_LABELS.toastNotifications,
 ): string {
   return formatBurneLabel(template, { placement });
 }
-
+ 
 /** Plain-text announcement for the permanent aria-live region. */
 export function toastAnnouncementText(
   title: unknown,
@@ -32,7 +32,7 @@ export function toastAnnouncementText(
   }
   return parts.join(". ");
 }
-
+ 
 export function toastFallbackAriaLabel(
   title: unknown,
   description: unknown,
@@ -40,5 +40,6 @@ export function toastFallbackAriaLabel(
   const text = toastAnnouncementText(title, description);
   return text || undefined;
 }
-
+ 
 export type ToastViewportLabelSource = Pick<BurneLabels, "toastNotifications">;
+ 

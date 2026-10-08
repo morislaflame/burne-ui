@@ -56,7 +56,7 @@
    * Written by `applyMotionFromState` / `configureMotion` / `applyMotionCssTokens` when `surfaceTransitionDuration` differs from default. Theme apply writes this per root; GSAP config is scoped via provider.
    * GSAP timings live in `motionConfig` (`interactiveDuration`, …) — separate from these CSS transitions.
    */
-  --motion-surface-duration: 600ms;
+  --motion-surface-duration: 180ms;
   --motion-surface-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-shadow-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-text-ease: var(--motion-shadow-ease);
@@ -77,6 +77,9 @@
    * menus cannot stack above them via z-index; use contained `portalContainer`
    * (`show()`) or portal into the dialog element for nested overlays.
    * Utilities: `z-dialog`, `z-dropdown`, `z-dropdown-sub`, `z-popover`, `z-toast`, `z-tooltip`.
+   * Numbers stay as published. A contained portal host (not `document.body`) adds
+   * `--z-overlay-nested-step` via `.portal-contained`. `showModal()` is the top layer:
+   * z-index cannot lift a body portal above it.
    */
   --z-dialog: 100;
   --z-dropdown: 200;
@@ -84,6 +87,7 @@
   --z-popover: 200;
   --z-toast: 300;
   --z-tooltip: 400;
+  --z-overlay-nested-step: 10;
 
   /**
    * INDICATOR — fill inside selection indicators (Radio, Checkbox, Switch, Slider track,
@@ -330,26 +334,33 @@
    * Global letter-spacing knob (`--letter-spacing`).
    * Apply on `html`/`body` (inherits): `letter-spacing: var(--letter-spacing)`.
    * Theme overrides write `${n}em` via `applyThemeTokens` / `BurneUIProvider`.
+   * Large steps add their own tracking (`--letter-spacing-xlarge` … `-3xlarge`)
+   * on top of this knob (`text-header-*`, `text-accent-header`).
    */
   --letter-spacing: 0em;
+  --letter-spacing-xlarge: -0.02em;
+  --letter-spacing-2xlarge: -0.025em;
+  --letter-spacing-3xlarge: -0.03em;
 
   /**
    * Base spacing step (gap, padding, margin).
-   * Design tokens: `--space` (knob) + `--space-*` (steps: xsmall…3xlarge).
-   * Tailwind bridge (`@theme`): `--spacing-*` → utilities `gap-*`, `p-*`, `m-*`, `space-*`
-   * (Tailwind’s spacing namespace is `spacing`, so names differ by design).
-   * Fluid: ~93.75% at narrow viewports → 100% from ~800px.
-   * Theme overrides (`applyThemeTokens` / playground) rewrite the same `clamp` curve scaled by the knob max — not a fixed rem.
+   * Design tokens: `--space` (knob) + `--space-*` (steps: xsmall…5xlarge).
+   * Default is a fixed 8px. Fluid density is opt-in: `--space: var(--space-fluid)`
+   * or theme `scalePreset: "fluid"` (writes the same clamp, scaled by the knob).
+   * Steps on an 4px grid, with 6px at `small`: 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48.
    */
-  --space: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
-  --space-xsmall: calc(var(--space) * 0.618);
-  --space-small: calc(var(--space) * 0.875);
+  --space: 0.5rem;
+  --space-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --space-xsmall: calc(var(--space) * 0.5);
+  --space-small: calc(var(--space) * 0.75);
   --space-base: calc(var(--space) * 1);
   --space-mid: calc(var(--space) * 1.5);
   --space-large: calc(var(--space) * 2);
   --space-xlarge: calc(var(--space) * 2.5);
-  --space-2xlarge: calc(var(--space) * 4);
-  --space-3xlarge: calc(var(--space) * 6);
+  --space-2xlarge: calc(var(--space) * 3);
+  --space-3xlarge: calc(var(--space) * 4);
+  --space-4xlarge: calc(var(--space) * 5);
+  --space-5xlarge: calc(var(--space) * 6);
 
   /**
    * Compact chip inset (Badge text/circle + Kbd) — fractions of `--space-*`.
@@ -396,16 +407,28 @@
   /**
    * Base border radius knob + step tokens.
    * Layers: `--radius` (knob) → `--radius-*` (steps) → `@theme` `--radius-*` (Tailwind `rounded-*`).
-   * Utilities: `rounded-xsmall` … `rounded-large`.
-   * Steps: `0.618 / 0.875 / 1 / 1.125 / 1.25` so size variants don’t jump in roundness.
-   * Fluid: same curve as `--space` (preserved by `applyThemeTokens` via scaled `clamp`).
+   * Default is a fixed 8px. Fluid: `--radius: var(--radius-fluid)` or `scalePreset: "fluid"`.
+   * `mid` is ×1.125 (9px), between `base` and `large`. `2xlarge` / `3xlarge` are 16px / 24px. `none` and `full` are absolute.
    */
-  --radius: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --radius: 0.5rem;
+  --radius-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --radius-none: 0px;
   --radius-xsmall: calc(var(--radius) * 0.618);
   --radius-small: calc(var(--radius) * 0.875);
   --radius-base: calc(var(--radius) * 1);
   --radius-mid: calc(var(--radius) * 1.125);
   --radius-large: calc(var(--radius) * 1.25);
+  --radius-2xlarge: calc(var(--radius) * 2);
+  --radius-3xlarge: calc(var(--radius) * 3);
+  --radius-full: 9999px;
+  /**
+   * Concentric inner corner: `max(0, outer − padding)`.
+   * A shell sets `--radius-outer` and `--radius-pad`; the child uses `rounded-nested`.
+   * Defaults: outer is the `--radius` knob, pad is 0 (nested equals the knob until a shell sets the pad).
+   */
+  --radius-outer: var(--radius);
+  --radius-pad: 0px;
+  --radius-nested: max(0px, calc(var(--radius-outer) - var(--radius-pad)));
 
   /**
    * Primitive typographic scale (`--text-scale-*`).
@@ -426,8 +449,8 @@
   --text-scale-mid: 1rem;
   --text-scale-mid--line-height: calc(1.5rem / 1rem);
 
-  --text-scale-large: 1.15rem;
-  --text-scale-large--line-height: calc(1.75rem / 1.15rem);
+  --text-scale-large: 1.125rem;
+  --text-scale-large--line-height: calc(1.75rem / 1.125rem);
 
   --text-scale-xlarge: 1.5rem;
   --text-scale-xlarge--line-height: calc(2rem / 1.5rem);
@@ -443,6 +466,7 @@
    * Primitive font-weight scale (`--font-w-*`).
    * Semantic text roles reference these tokens.
    */
+  --font-w-regular: 400;
   --font-w-small: 500;
   --font-w-base: 500;
   --font-w-mid: 600;
@@ -489,9 +513,10 @@
   /**
    * Base control size (icons, indicators, button min-width, modal width).
    * Separate from `--space` (spacing) and `--text-scale-*` (typography).
-   * Fluid: ~93.75% at narrow viewports → 100% from ~800px (same curve as `--space`; scaled `clamp` on theme override).
+   * Default is a fixed 16px. Fluid: `--size: var(--size-fluid)` or `scalePreset: "fluid"`.
    */
-  --size: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
+  --size: 1rem;
+  --size-fluid: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
 
   /** Primitive control size scale (`--size-scale-*`) */
   --size-scale-xsmall: calc(var(--size) * 0.675);
@@ -558,6 +583,9 @@
   --icon-size-xlarge: var(--size-scale-xlarge);
   --icon-size-2xlarge: var(--size-scale-2xlarge);
   --icon-size-3xlarge: var(--size-scale-3xlarge);
+  /** Round sizes beside the step scale (16px / 24px when `--size` is 1rem). */
+  --icon-size-16: var(--size);
+  --icon-size-24: calc(var(--size) * 1.5);
 
   /**
    * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
@@ -565,7 +593,10 @@
    * (`-inset` by `--border-width`) with `rounded-[inherit]` so custom shell radius
    * needs no extra public API.
    * Mark icons: `--icon-size-*` × 0.75 (see `SELECTION_INDICATOR_ICON_CLASS`).
-   * Corner radius follows `--radius-*` at 0.618× (not `rounded-full`).
+   * Corner radius is `--radius-nested`: a radius step minus `--space-xsmall` (4px),
+   * not a second ×0.618. `xsmall` steps up to `--radius-small` so the inset does not
+   * collapse the corner. `mid` uses `--radius-mid`; `large` uses `--radius-large`
+   * (`--radius-2xlarge` would turn the box into a pill). Not `rounded-full`.
    */
   --selection-indicator-xsmall: var(--size-scale-xsmall);
   --selection-indicator-small: var(--size-scale-small);
@@ -573,15 +604,18 @@
   --selection-indicator-mid: var(--size-scale-mid);
   --selection-indicator-large: var(--size-scale-large);
 
-  --selection-indicator-radius-xsmall: calc(var(--radius-xsmall) * 0.618);
-  --selection-indicator-radius-small: calc(var(--radius-small) * 0.618);
-  --selection-indicator-radius-base: calc(var(--radius-base) * 0.618);
-  --selection-indicator-radius-mid: calc(var(--radius-mid) * 0.618);
-  --selection-indicator-radius-large: calc(var(--radius-large) * 0.618);
+  --selection-indicator-radius-xsmall: max(0px, calc(var(--radius-small) - var(--space-xsmall)));
+  --selection-indicator-radius-small: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
+  --selection-indicator-radius-base: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
+  --selection-indicator-radius-mid: max(0px, calc(var(--radius-mid) - var(--space-xsmall)));
+  --selection-indicator-radius-large: max(0px, calc(var(--radius-large) - var(--space-xsmall)));
 
   /**
    * Component shadows — single layer, bottom only.
-   * Per size: `--shadow-{small|base|mid|large}` + `-hover` / `-press` (same family, not cross-tier).
+   * Per size: `--shadow-{small|base|mid|large|xlarge}` + `-hover` / `-press` (same family, not cross-tier).
+   * Each token is the full layer list: override `--shadow-mid` (and its `-hover` / `-press`)
+   * with a whole `box-shadow` value. Knobs only tune the generated default.
+   * A custom list must keep the same layer count as hover/press of that level (two layers).
    * `--shadow-lift` — first-level appear-from-none (Button); independent of sized rest tokens.
    * Knobs: `--shadow-opacity|blur|spread` (multipliers), `--shadow-offset-x|y` (px nudge).
    * Colors: `--color-shadow` (key) + `--color-shadow-secondary` (ambient).
@@ -641,47 +675,68 @@
       calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.045 * 100% * var(--shadow-opacity)), transparent);
   --shadow-mid:
-    calc(2px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
       calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
-    calc(2px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
       calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
   --shadow-mid-hover:
-    calc(2px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
       calc(4px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.24 * 100% * var(--shadow-opacity)), transparent),
-    calc(2px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
       calc(8px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.108 * 100% * var(--shadow-opacity)), transparent);
   --shadow-mid-press:
-    calc(1px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
       calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.14 * 100% * var(--shadow-opacity)), transparent),
-    calc(1px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
       calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.063 * 100% * var(--shadow-opacity)), transparent);
   --shadow-large:
-    calc(3px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
       calc(5px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.24 * 100% * var(--shadow-opacity)), transparent),
-    calc(3px + var(--shadow-offset-x)) calc(9px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(9px + var(--shadow-offset-y))
       calc(10px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.108 * 100% * var(--shadow-opacity)), transparent);
   --shadow-large-hover:
-    calc(3px + var(--shadow-offset-x)) calc(7px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(7px + var(--shadow-offset-y))
       calc(6px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.28 * 100% * var(--shadow-opacity)), transparent),
-    calc(3px + var(--shadow-offset-x)) calc(11px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(11px + var(--shadow-offset-y))
       calc(12px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.126 * 100% * var(--shadow-opacity)), transparent);
   --shadow-large-press:
-    calc(2px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
       calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.17 * 100% * var(--shadow-opacity)), transparent),
-    calc(2px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
       calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.077 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge:
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(20px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.28 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(18px + var(--shadow-offset-y))
+      calc(40px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.126 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-hover:
+    calc(0px + var(--shadow-offset-x)) calc(16px + var(--shadow-offset-y))
+      calc(25px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.32 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(24px + var(--shadow-offset-y))
+      calc(50px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.144 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-press:
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+      calc(12px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(24px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
   --shadow-lift:
     calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
       calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
@@ -723,39 +778,6 @@
     transparent 100%
   );
 
-  /**
-   * GLOSS — universal glass token system (dark theme).
-   * Base fill: --gloss-edge + color-mix(--gloss-tint-default) in glossPanel.css.
-   */
-
-  /* ── backdrop ─────────────────────────────────────────────────────────── */
-  --gloss-blur: clamp(1px, 0.125em, 4px);
-  --gloss-blur-deep: clamp(16px, 1.5em, 32px);
-  --gloss-shadow-cutoff: 2em;
-
-  /* ── surface fill (edge + tint mix — see :is(.gloss-panel, …) in glossPanel.css) */
-  --gloss-tint-default: rgba(135, 135, 140, 0.275);
-  --gloss-edge: rgb(255 255 255 / 0.05);
-  --gloss-inset-top: rgba(167, 166, 166, 0.1);
-  --gloss-inset-bottom: rgb(255 255 255 / 0.3);
-
-  /* ── shadows / glow (external bottom — like --shadow-base / --shadow-mid) ── */
-  --gloss-elevation: rgb(0 0 0 / 0.15);
-  --gloss-elevation-hover: rgb(0 0 0 / 0.20);
-  --gloss-inner-glow: rgb(255 255 255 / 0.08);
-  --gloss-glow-hover: rgba(255, 255, 255, 0.074);
-  --gloss-drop-shadow: linear-gradient(180deg, rgb(0 0 0 / 0.15), rgb(0 0 0 / 0));
-
-  /* ── conic outline ───────────────────────────────────────────────────── */
-  --gloss-outline-fade: rgba(0, 0, 0, 0.337);
-  --gloss-outline-base: rgb(255 255 255 / 0.26);
-
-  /* ── highlight (interactive only) ────────────────────────────────────────── */
-  --gloss-shine: rgba(255, 255, 255, 0.01);
-  /* --gloss-shine-blur: clamp(2px, 0.5em, 12px); */
-
-  /* ── interactive (press-inset for active) ─────────────────────────────── */
-  --gloss-press-inset: rgb(0 0 0 / 0.22);
 }
 
 [data-theme="light"] {
@@ -961,22 +983,6 @@
     transparent 100%
   );
 
-  /* ── GLOSS light theme ─────────────────────────────────────── */
-
-  --gloss-inset-top: rgb(0 0 0 / 0.05);
-  --gloss-inset-bottom: rgb(255 255 255 / 0.5);
-  --gloss-elevation: rgb(0 0 0 / 0.08);
-  --gloss-elevation-hover: rgb(0 0 0 / 0.12);
-  --gloss-inner-glow: rgba(185, 182, 182, 0.5);
-  --gloss-glow-hover: rgb(255 255 255 / 0.2);
-  --gloss-outline-fade: rgba(0, 0, 0, 0.2);
-  --gloss-outline-base: rgb(255 255 255 / 0.5);
-  --gloss-drop-shadow: linear-gradient(180deg, rgb(0 0 0 / 0.08), rgb(0 0 0 / 0));
-  --gloss-shine: rgba(255, 255, 255, 0.078);
-  --gloss-tint-default: rgb(255 255 255);
-  --gloss-edge: rgb(255 255 255 / 0.05);
-  --gloss-press-inset: rgba(0, 0, 0, 0.026);
-
   /* In light theme shadows are slightly more visible (less background/component contrast) */
   /* BEGIN GENERATED:shadows-light */
   --shadow-none:
@@ -1027,47 +1033,68 @@
       calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.023 * 100% * var(--shadow-opacity)), transparent);
   --shadow-mid:
-    calc(2px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
       calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.12 * 100% * var(--shadow-opacity)), transparent),
-    calc(2px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
       calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.054 * 100% * var(--shadow-opacity)), transparent);
   --shadow-mid-hover:
-    calc(2px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
       calc(4px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.15 * 100% * var(--shadow-opacity)), transparent),
-    calc(2px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
       calc(8px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.068 * 100% * var(--shadow-opacity)), transparent);
   --shadow-mid-press:
-    calc(1px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
       calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.08 * 100% * var(--shadow-opacity)), transparent),
-    calc(1px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
       calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.036 * 100% * var(--shadow-opacity)), transparent);
   --shadow-large:
-    calc(3px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
       calc(5px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.16 * 100% * var(--shadow-opacity)), transparent),
-    calc(3px + var(--shadow-offset-x)) calc(9px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(9px + var(--shadow-offset-y))
       calc(10px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.072 * 100% * var(--shadow-opacity)), transparent);
   --shadow-large-hover:
-    calc(3px + var(--shadow-offset-x)) calc(7px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(7px + var(--shadow-offset-y))
       calc(6px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
-    calc(3px + var(--shadow-offset-x)) calc(11px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(11px + var(--shadow-offset-y))
       calc(12px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
   --shadow-large-press:
-    calc(2px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
       calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow) calc(0.11 * 100% * var(--shadow-opacity)), transparent),
-    calc(2px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
       calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.05 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge:
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(20px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(18px + var(--shadow-offset-y))
+      calc(40px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-hover:
+    calc(0px + var(--shadow-offset-x)) calc(16px + var(--shadow-offset-y))
+      calc(25px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.24 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(24px + var(--shadow-offset-y))
+      calc(50px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.108 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-press:
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+      calc(12px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.14 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(24px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.063 * 100% * var(--shadow-opacity)), transparent);
   --shadow-lift:
     calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
       calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))

@@ -1,5 +1,7 @@
-import type { ProgressBarDisplayState } from "./progressBarTypes";
+import { formatLocaleNumber } from "@/components/core/utils/intlFormat";
 
+import type { ProgressBarDisplayState } from "./progressBarTypes";
+ 
 export function progressBarValueToPercent(
   value: number,
   min: number,
@@ -8,11 +10,11 @@ export function progressBarValueToPercent(
   if (max <= min) return 0;
   return ((value - min) / (max - min)) * 100;
 }
-
+ 
 export function defaultProgressBarFormatValue(value: number): string {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+  return formatLocaleNumber(value);
 }
-
+ 
 export function progressBarDisplayEqual(
   a: ProgressBarDisplayState | null,
   b: ProgressBarDisplayState | null,
@@ -27,3 +29,4 @@ export function progressBarDisplayEqual(
     a.indeterminate === b.indeterminate
   );
 }
+ 

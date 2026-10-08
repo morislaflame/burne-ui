@@ -1,25 +1,25 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-
+ 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   ExpandableClassNames,
   ExpandableClassNamesProviderProps,
   ExpandableContextValue,
 } from "./expandableTypes";
-
+ 
 const ExpandableContext = createContext<ExpandableContextValue | null>(null);
 const ExpandableClassNamesContext = createContext<ExpandableClassNames>({});
 const ExpandableTriggerGridContext = createContext<MessageBannerGridSlots | null>(null);
-
+ 
 /** Scope only. Defaults and host play live in `expandableAnimations.ts`. */
 export const {
   MotionScopeProvider: ExpandableMotionProvider,
   useMotionScope: useExpandableMotionScope,
   useOptionalMotionScope: useOptionalExpandableMotionScope,
 } = createMotionScope("Expandable");
-
+ 
 export function ExpandableProvider({
   value,
   children,
@@ -31,7 +31,7 @@ export function ExpandableProvider({
     <ExpandableContext.Provider value={value}>{children}</ExpandableContext.Provider>
   );
 }
-
+ 
 export function useExpandable(): ExpandableContextValue {
   const ctx = useContext(ExpandableContext);
   if (!ctx) {
@@ -39,9 +39,9 @@ export function useExpandable(): ExpandableContextValue {
   }
   return ctx;
 }
-
+ 
 export { useExpandable as useExpandableContext };
-
+ 
 export function ExpandableClassNamesProvider({
   classNames,
   children,
@@ -51,18 +51,18 @@ export function ExpandableClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <ExpandableClassNamesContext.Provider value={merged}>
       {children}
     </ExpandableClassNamesContext.Provider>
   );
 }
-
+ 
 export function useExpandableClassNames(): ExpandableClassNames {
   return useContext(ExpandableClassNamesContext);
 }
-
+ 
 export function ExpandableTriggerGridProvider({
   gridSlots,
   children,
@@ -76,7 +76,7 @@ export function ExpandableTriggerGridProvider({
     </ExpandableTriggerGridContext.Provider>
   );
 }
-
+ 
 export function useExpandableTriggerGrid(): MessageBannerGridSlots {
   const ctx = useContext(ExpandableTriggerGridContext);
   if (!ctx) {
@@ -84,7 +84,8 @@ export function useExpandableTriggerGrid(): MessageBannerGridSlots {
   }
   return ctx;
 }
-
+ 
 export function useOptionalExpandableTriggerGrid(): MessageBannerGridSlots | null {
   return useContext(ExpandableTriggerGridContext);
 }
+ 

@@ -1,22 +1,26 @@
 import { forwardRef, useMemo, type ForwardedRef, type PointerEvent as ReactPointerEvent } from "react";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import {
   hasPointerPhases,
   useMotionPart,
 } from "@/components/core/utils/slotMotion";
+ 
+import { useSkinRegistryRevision } from "@/skins/skinContext";
 
 import { resolveTabsMotionDefaults, useTabsRootEnter } from "./tabsAnimations";
 import {
   TabsClassNamesProvider,
   TabsContext,
   TabsMotionProvider,
+  useTabsContext,
   useTabsMotionScope,
 } from "./tabsContext";
 import { TabsList, TabsPanel, TabsTab } from "./tabsParts";
 import { tabsRootClass } from "./tabsStyles";
 import type { TabsProps } from "./tabsTypes";
 import { useTabsRootState } from "./useTabsRootState";
-
+ 
 export type {
   TabsProps,
   TabsListProps,
@@ -29,7 +33,7 @@ export type {
   TabsMotion,
   TabsPartMotion,
 } from "./tabsTypes";
-
+ 
 export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
   {
     children,
@@ -40,7 +44,7 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
     onValueChange,
     orientation = "horizontal",
     size = "base",
-    variant = "default",
+    variant,
     disabled = false,
     motion,
     motionController,
@@ -64,8 +68,12 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
     variant,
     disabled,
   });
-  const motionDefaults = useMemo(() => resolveTabsMotionDefaults(), []);
-
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveTabsMotionDefaults(contextValue.variant);
+  }, [contextValue.variant, skinRevision]);
+ 
   return (
     <TabsContext.Provider value={contextValue}>
       <TabsClassNamesProvider classNames={classNames}>
@@ -92,9 +100,9 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
     </TabsContext.Provider>
   );
 });
-
+ 
 TabsRoot.displayName = "Tabs";
-
+ 
 function TabsRootSurface({
   value,
   orientation,
@@ -152,7 +160,8 @@ function TabsRootSurface({
     onPointerUp,
   });
   useTabsRootEnter(scope, value);
-
+  const { size, variant } = useTabsContext();
+ 
   return (
     <div
       ref={part.setRef}
@@ -161,13 +170,15 @@ function TabsRootSurface({
         slotClass,
         className,
       })}
-      data-orientation={orientation}
       {...rest}
       {...part.pointerHandlers}
+      {...dataVariantProps({ size, variant })}
+      data-orientation={orientation}
     >
       {children}
     </div>
   );
 }
-
+ 
 export { TabsList, TabsTab, TabsPanel };
+ 

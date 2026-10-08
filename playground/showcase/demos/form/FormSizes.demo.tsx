@@ -13,7 +13,7 @@ export function FormSizesDemo() {
           key={size}
           size={size}
           aria-label={`Profile form size ${size}`}
-          className="rounded-mid border-token bg-tertiary/40 p-large"
+          className="rounded-large border-token bg-tertiary/40 p-large"
           onSubmit={() => undefined}
         >
           <Form.Header>

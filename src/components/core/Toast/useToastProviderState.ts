@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-
+ 
 import { createToastId, TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
 import { resolveToastLiveRole, toastAnnouncementText } from "./toastA11y";
 import type {
@@ -8,8 +8,9 @@ import type {
   ToastEntry,
   ToastLiveAnnouncement,
   ToastPlacement,
+  ToastVariant,
 } from "./toastTypes";
-
+ 
 export function useToastProviderState({
   defaultPlacement = "bottom-center",
   defaultVariant = "default",
@@ -17,7 +18,7 @@ export function useToastProviderState({
   classNames: providerClassNames,
 }: {
   defaultPlacement?: ToastPlacement;
-  defaultVariant?: "default" | "gloss";
+  defaultVariant?: ToastVariant;
   defaultSize?: AddToastOpts["size"];
   classNames?: AddToastOpts["classNames"];
 }) {
@@ -31,8 +32,9 @@ export function useToastProviderState({
   const orderRef = useRef(0);
   const announceNonceRef = useRef(0);
   const toastsRef = useRef(toasts);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   toastsRef.current = toasts;
-
+ 
   const announce = useCallback((entry: ToastEntry) => {
     const text = toastAnnouncementText(entry.title, entry.description);
     if (!text) return;
@@ -47,7 +49,7 @@ export function useToastProviderState({
       });
     });
   }, []);
-
+ 
   const add = useCallback(
     (opts: AddToastOpts): string => {
       const id = opts.id ?? createToastId();
@@ -76,7 +78,7 @@ export function useToastProviderState({
     },
     [announce, defaultPlacement, defaultSize, defaultVariant, providerClassNames],
   );
-
+ 
   const update = useCallback(
     (id: string, patch: Partial<Omit<ToastEntry, "id" | "createdAt">>) => {
       const current = toastsRef.current.find((t) => t.id === id);
@@ -94,11 +96,11 @@ export function useToastProviderState({
     },
     [announce],
   );
-
+ 
   const dismiss = useCallback((id: string) => {
     setDismissingIds((prev) => new Set([...prev, id]));
   }, []);
-
+ 
   const removeFinal = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
     setDismissingIds((prev) => {
@@ -107,17 +109,17 @@ export function useToastProviderState({
       return n;
     });
   }, []);
-
+ 
   const placements = useMemo(
     () => [...new Set(toasts.map((t) => t.placement))] as ToastPlacement[],
     [toasts],
   );
-
+ 
   const ctx: ToastContextValue = useMemo(
     () => ({ add, update, dismiss }),
     [add, dismiss, update],
   );
-
+ 
   const sortedByPlacement = useCallback(
     (placement: ToastPlacement) =>
       [...toasts.filter((t) => t.placement === placement)].sort(
@@ -125,7 +127,7 @@ export function useToastProviderState({
       ),
     [toasts],
   );
-
+ 
   return {
     toasts,
     dismissingIds,
@@ -139,3 +141,4 @@ export function useToastProviderState({
     liveAnnouncement,
   };
 }
+ 

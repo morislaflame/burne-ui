@@ -10,7 +10,7 @@ export function resolvePortalContainer(
   if (typeof document === "undefined") return null;
   return document.body;
 }
-
+ 
 /**
  * Custom portal hosts (not `document.body`) need non-modal `<dialog>.show()`
  * and `position: absolute` — `showModal()` promotes to the browser top layer
@@ -23,7 +23,7 @@ export function isContainedPortal(
   if (container == null) return false;
   return container !== document.body;
 }
-
+ 
 /**
  * Open a native `<dialog>`. Contained portals use non-modal `show()`.
  */
@@ -36,6 +36,18 @@ export function openNativeDialog(
   else dialog.showModal();
 }
 
+/**
+ * `close` / `cancel` do not bubble, but React still walks fibers and invokes
+ * `onClose` / `onCancel` on ancestor `<dialog>` hosts. Dismiss only the dialog
+ * that actually fired the event.
+ */
+export function isOwnNativeDialogEvent(event: {
+  target: EventTarget | null;
+  currentTarget: EventTarget | null;
+}): boolean {
+  return event.target === event.currentTarget;
+}
+ 
 /**
  * Place a floating panel from viewport-space coords (`getBoundingClientRect`).
  * - `document.body` → `position: fixed` with viewport coords
@@ -53,8 +65,9 @@ export function applyFloatingPortalPosition(
     panel.style.top = `${placement.top - hostRect.top + portalContainer.scrollTop}px`;
     return;
   }
-
+ 
   panel.style.position = "fixed";
   panel.style.left = `${placement.left}px`;
   panel.style.top = `${placement.top}px`;
 }
+ 

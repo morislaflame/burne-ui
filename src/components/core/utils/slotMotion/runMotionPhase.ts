@@ -5,8 +5,9 @@ import {
   type MotionConfig,
 } from "@/components/core/utils/motionConfig";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-
+ 
 import { getMotionRecipe } from "./motionRecipeRegistry";
+import { createMotionSurfaceApi } from "./motionSurface";
 import { createMotionTweenApi, playDeclarativeMotion } from "./motionTween";
 import { registerKitMotionRecipes } from "./recipes";
 import {
@@ -17,6 +18,7 @@ import {
   type MotionAnimation,
   type MotionCancelReason,
   type MotionContext,
+  isMotionHostLifecyclePhase,
   type MotionPhaseName,
   type MotionRecipeParams,
   type MotionRun,
@@ -24,34 +26,35 @@ import {
   type MotionValue,
   type MotionVars,
 } from "./slotMotionTypes";
-
+ 
 const running = new WeakMap<HTMLElement, MotionRun>();
-
+ 
 let nextRunId = 1;
-
+ 
 const VARS_KEYS = ["x", "y", "scale", "autoAlpha"] as const;
-
+ 
 export function killStoredMotion(
   el: HTMLElement,
   reason: MotionCancelReason = "killed",
+  supersededBy?: string,
 ): void {
   const run = running.get(el);
   if (run) {
-    run.cancel(reason);
+    run.cancel(reason, supersededBy);
     return;
   }
   killMotion(el);
 }
-
+ 
 function varsHaveTransform(vars: MotionVars): boolean {
   return VARS_KEYS.some((key) => vars[key] !== undefined);
 }
-
+ 
 /** `{ recipe: false }` with no transform keys is the same as `false` — skip without kill. */
 function isSilentDisable(value: MotionValue): boolean {
   return isMotionVarsObject(value) && value.recipe === false && !varsHaveTransform(value);
 }
-
+ 
 function applyMotionVars(
   el: HTMLElement,
   vars: MotionVars,
@@ -61,7 +64,7 @@ function applyMotionVars(
 ): MotionAnimation | undefined {
   return playDeclarativeMotion(el, vars, { phase, reduced, config: cfg });
 }
-
+ 
 type PhaseRun = {
   run: MotionRun;
   settle: (next: MotionRunStatus, options?: { invokeComplete?: boolean }) => void;
@@ -73,10 +76,11 @@ type PhaseRun = {
   invokeError: (error: unknown) => void;
   signal: AbortSignal;
 };
-
+ 
 function createPhaseRun(
   el: HTMLElement | null | undefined,
   waitForComplete: boolean,
+  phase: MotionPhaseName | (string & {}),
   userComplete?: () => void,
 ): PhaseRun {
   const id = nextRunId++;
@@ -84,6 +88,7 @@ function createPhaseRun(
   let status: MotionRunStatus = "running";
   let animation: MotionAnimation | undefined;
   let cancelReason: MotionCancelReason | undefined;
+  let supersededBy: string | undefined;
   const cleanups: Array<() => void> = [];
   const interruptCbs: Array<(reason?: MotionCancelReason) => void> = [];
   const errorCbs: Array<(error: unknown) => void> = [];
@@ -92,27 +97,27 @@ function createPhaseRun(
   const finished = new Promise<void>((resolve) => {
     resolveFinished = resolve;
   });
-
+ 
   const resolveWait = () => {
     if (waitResolved) return;
     waitResolved = true;
     resolveFinished();
   };
-
+ 
   const runCleanup = () => {
     while (cleanups.length > 0) {
       cleanups.pop()?.();
     }
   };
-
+ 
   const detach = () => {
     if (el && running.get(el) === run) running.delete(el);
   };
-
+ 
   const abortIfNeeded = () => {
     if (!abort.signal.aborted) abort.abort();
   };
-
+ 
   const invokeError = (error: unknown) => {
     for (const fn of errorCbs) {
       try {
@@ -122,7 +127,7 @@ function createPhaseRun(
       }
     }
   };
-
+ 
   const settle = (next: MotionRunStatus, options?: { invokeComplete?: boolean }) => {
     if (status !== "running") return;
     status = next;
@@ -141,9 +146,10 @@ function createPhaseRun(
     if (options?.invokeComplete && next !== "cancelled") userComplete?.();
     resolveWait();
   };
-
+ 
   const run: MotionRun = {
     id,
+    phase,
     get status() {
       return status;
     },
@@ -154,8 +160,12 @@ function createPhaseRun(
     get cancelReason() {
       return cancelReason;
     },
-    cancel: (reason: MotionCancelReason = "killed") => {
+    get supersededBy() {
+      return supersededBy;
+    },
+    cancel: (reason: MotionCancelReason = "killed", incomingPhase?: string) => {
       abortIfNeeded();
+      if (incomingPhase !== undefined) supersededBy = incomingPhase;
       if (status === "running") {
         cancelReason = reason;
         animation?.kill();
@@ -170,7 +180,7 @@ function createPhaseRun(
     cleanup: runCleanup,
     isCurrent: () => Boolean(el && running.get(el) === run),
   };
-
+ 
   return {
     run,
     settle,
@@ -191,7 +201,7 @@ function createPhaseRun(
     signal: abort.signal,
   };
 }
-
+ 
 function hookAnimationComplete(animation: MotionAnimation, onComplete: () => void): void {
   if (typeof animation.eventCallback !== "function") {
     onComplete();
@@ -205,7 +215,7 @@ function hookAnimationComplete(animation: MotionAnimation, onComplete: () => voi
     onComplete();
   });
 }
-
+ 
 export type RunMotionPhaseOptions = {
   el: HTMLElement | null | undefined;
   phase: MotionPhaseName | (string & {});
@@ -222,7 +232,7 @@ export type RunMotionPhaseOptions = {
   toState?: string;
   payload?: unknown;
 };
-
+ 
 function warnLeaveFallback(slot: string | undefined): void {
   if (process.env.NODE_ENV === "production") return;
   const label = slot ? `slot "${slot}"` : "motion";
@@ -230,7 +240,7 @@ function warnLeaveFallback(slot: string | undefined): void {
     `[burne-ui] ${label} leave factory did not return a tween/Promise or call complete(); falling back in ${LEAVE_COMPLETE_FALLBACK_MS}ms`,
   );
 }
-
+ 
 function warnUnknownRecipe(
   name: string,
   slot: string | undefined,
@@ -240,7 +250,7 @@ function warnUnknownRecipe(
   const where = slot ? `slot "${slot}", phase "${phase}"` : `phase "${phase}"`;
   console.error(`[burne-ui] unknown motion recipe "${name}" (${where})`);
 }
-
+ 
 function warnMotionProducerError(
   error: unknown,
   meta: {
@@ -258,7 +268,7 @@ function warnMotionProducerError(
   const detail = error instanceof Error ? error.message : String(error);
   console.error(`[burne-ui] ${who} ${meta.kind} (${where}): ${detail}`);
 }
-
+ 
 /**
  * Play one phase on one element. A new play cancels the previous run on that
  * element and always settles its `finished` (it does not hang).
@@ -280,21 +290,21 @@ export function runMotionPhase({
   toState,
   payload,
 }: RunMotionPhaseOptions): MotionRun {
-  const phaseRun = createPhaseRun(el, waitForComplete, complete);
+  const phaseRun = createPhaseRun(el, waitForComplete, phase, complete);
   const { run, settle, resolveWait, setAnimation, addCleanup, onInterrupt, onError, invokeError, signal } =
     phaseRun;
-
+ 
   const finishSuccess = () => {
     if (signal.aborted) return;
     settle("finished", { invokeComplete: true });
   };
-
+ 
   if (!el || value === undefined) {
     if (waitForComplete) finishSuccess();
     else resolveWait();
     return run;
   }
-
+ 
   // `false` disables this slot's phase. Do not kill — another slot may be
   // orchestrating this same target (fill factory → mark).
   if (value === false || isSilentDisable(value)) {
@@ -302,15 +312,25 @@ export function runMotionPhase({
     else resolveWait();
     return run;
   }
-
-  killStoredMotion(el, "superseded");
+ 
+  const current = running.get(el);
+  if (
+    current?.status === "running" &&
+    current.phase === "leave" &&
+    !isMotionHostLifecyclePhase(phase)
+  ) {
+    settle("finished");
+    return run;
+  }
+ 
+  killStoredMotion(el, "superseded", phase);
   running.set(el, run);
-
+ 
   // Snapshot at play start: config / reduced-motion changes apply to the next
   // play, not this run (see motion docs — “new runs only”).
   const cfg = config ?? getMotionConfig();
   const reduced = prefersReducedMotion() || !isMotionEnabledFor(cfg);
-
+ 
   const ctx = {
     el,
     phase,
@@ -329,6 +349,7 @@ export function runMotionPhase({
     kill: () => killStoredMotion(el, "killed"),
     reduced,
     config: cfg,
+    ...createMotionSurfaceApi({ el, config: cfg }),
     params,
     runId: run.id,
     isCurrent: run.isCurrent,
@@ -346,7 +367,7 @@ export function runMotionPhase({
       signal,
     }),
   } satisfies MotionContext;
-
+ 
   const runRecipe = (name: string, extraParams?: MotionRecipeParams) => {
     registerKitMotionRecipes();
     const recipe = getMotionRecipe(name);
@@ -359,11 +380,11 @@ export function runMotionPhase({
     const recipeCtx = extraParams ? { ...ctx, params: { ...params, ...extraParams } } : ctx;
     return recipe(recipeCtx);
   };
-
+ 
   let animation: MotionAnimation | undefined;
   let pending: Promise<void> | undefined;
   let recipeNameForError: string | undefined;
-
+ 
   try {
     if (isMotionFactory(value)) {
       const result = value(ctx);
@@ -409,18 +430,18 @@ export function runMotionPhase({
     settle("failed", { invokeComplete: true });
     return run;
   }
-
+ 
   if (run.status !== "running") {
     animation?.kill();
     return run;
   }
-
+ 
   if (animation) setAnimation(animation);
   const liveAnimation = animation ?? run.animation;
   if (waitForComplete && liveAnimation) {
     hookAnimationComplete(liveAnimation, finishSuccess);
   }
-
+ 
   if (
     waitForComplete &&
     liveAnimation &&
@@ -433,7 +454,7 @@ export function runMotionPhase({
       `[burne-ui] ${label} leave returned a repeating tween; call ctx.complete() or return a finite tween so the portal can unmount`,
     );
   }
-
+ 
   if (pending) {
     void pending.then(
       () => {
@@ -456,7 +477,7 @@ export function runMotionPhase({
     );
     return run;
   }
-
+ 
   if (waitForComplete) {
     if (liveAnimation) {
       // onComplete hooked above
@@ -470,6 +491,7 @@ export function runMotionPhase({
   } else {
     resolveWait();
   }
-
+ 
   return run;
 }
+ 

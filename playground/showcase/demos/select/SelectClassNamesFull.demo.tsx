@@ -33,6 +33,7 @@ export function SelectClassNamesFullDemo() {
         triggerGroup: "border-info/40 bg-info/5 shadow-token-base",
         value: "text-info",
         trigger: "text-info hover:text-info",
+        triggerIconWrap: "text-info",
         popoverBody: "bg-info/5",
         listBox: "p-xsmall",
         listBoxItem: "rounded-lg",

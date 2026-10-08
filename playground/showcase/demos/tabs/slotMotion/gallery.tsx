@@ -7,11 +7,14 @@ import { TabsMotionPanelWaveDemo } from "./TabsMotionPanelWave.demo";
 import tabsMotionPanelWaveSource from "./TabsMotionPanelWave.demo.tsx?raw";
 import { TabsMotionSelectionTintDemo } from "./TabsMotionSelectionTint.demo";
 import tabsMotionSelectionTintSource from "./TabsMotionSelectionTint.demo.tsx?raw";
+import { TabsMotionIndicatorSnapDemo } from "./TabsMotionIndicatorSnap.demo";
+import tabsMotionIndicatorSnapSource from "./TabsMotionIndicatorSnap.demo.tsx?raw";
 
 export const tabsSlotMotionGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "instant-enter", title: "Instant enter", Demo: TabsMotionInstantEnterDemo, source: tabsMotionInstantEnterSource },
   { id: "panel-wave", title: "Panel wave", Demo: TabsMotionPanelWaveDemo, source: tabsMotionPanelWaveSource },
   { id: "selection-tint", title: "Selection tint", Demo: TabsMotionSelectionTintDemo, source: tabsMotionSelectionTintSource },
+  { id: "indicator-snap", title: "Indicator snap", Demo: TabsMotionIndicatorSnapDemo, source: tabsMotionIndicatorSnapSource },
 ];
 
 export function TabsSlotMotionGalleryDemo() {

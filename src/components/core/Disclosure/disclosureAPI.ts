@@ -1,10 +1,8 @@
 import { Children, isValidElement, type ReactNode } from "react";
-
-import type { DisclosureVariant } from "./disclosureTypes";
-
+ 
 const DISCLOSURE_ICON_DISPLAY_NAMES = new Set(["DisclosureIcon"]);
 const DISCLOSURE_CHEVRON_DISPLAY_NAMES = new Set(["DisclosureChevron"]);
-
+ 
 export type ResolvedDisclosureTriggerBody = {
   icon: ReactNode | null;
   chevron: ReactNode | null;
@@ -12,26 +10,22 @@ export type ResolvedDisclosureTriggerBody = {
   hasIconPart: boolean;
   hasChevronPart: boolean;
 };
-
-export function isFramedVariant(variant: DisclosureVariant): boolean {
-  return variant === "outline" || variant === "secondary" || variant === "default";
-}
-
+ 
 export function readDisclosurePartDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;
 }
-
+ 
 export function resolveDisclosureTriggerBody(children: ReactNode): ResolvedDisclosureTriggerBody {
   const icons: ReactNode[] = [];
   const chevrons: ReactNode[] = [];
   const title: ReactNode[] = [];
-
+ 
   Children.forEach(children, (child) => {
     if (!isValidElement(child)) {
       if (child != null && child !== false) title.push(child);
       return;
     }
-
+ 
     const name = readDisclosurePartDisplayName(child.type);
     if (name && DISCLOSURE_ICON_DISPLAY_NAMES.has(name)) {
       icons.push(child);
@@ -43,7 +37,7 @@ export function resolveDisclosureTriggerBody(children: ReactNode): ResolvedDiscl
     }
     title.push(child);
   });
-
+ 
   return {
     icon: icons.length > 0 ? icons : null,
     chevron: chevrons.length > 0 ? chevrons : null,
@@ -52,13 +46,13 @@ export function resolveDisclosureTriggerBody(children: ReactNode): ResolvedDiscl
     hasChevronPart: chevrons.length > 0,
   };
 }
-
+ 
 export function orderDragHandleChildren(children: ReactNode): ReactNode[] {
   const trigger: ReactNode[] = [];
   const content: ReactNode[] = [];
   const handle: ReactNode[] = [];
   const other: ReactNode[] = [];
-
+ 
   Children.forEach(children, (child) => {
     if (!isValidElement(child)) {
       other.push(child);
@@ -70,6 +64,7 @@ export function orderDragHandleChildren(children: ReactNode): ReactNode[] {
     else if (name === "DisclosureHandle") handle.push(child);
     else other.push(child);
   });
-
+ 
   return [...trigger, ...content, ...handle, ...other];
 }
+ 

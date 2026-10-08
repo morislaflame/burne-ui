@@ -6,7 +6,7 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 const CARD_CLASS = cn(
-  "group relative flex flex-col gap-mid rounded-mid border-token bg-surface px-mid py-large transition-colors",
+  "group relative flex flex-col gap-mid rounded-large border-token bg-surface px-mid py-large transition-colors",
   "data-[selected=true]:border-primary data-[selected=true]:bg-primary-tint",
   "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-primary-tint",
 );

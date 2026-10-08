@@ -1,69 +1,84 @@
+import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import {
   SELECTION_INDICATOR_ICON_CLASS,
   SELECTION_INDICATOR_RADIUS_CLASS,
   SELECTION_INDICATOR_SHELL_CLASS,
-  type SelectionIndicatorSize,
-} from "../SelectionIndicator/selectionIndicatorTokens";
-
-export const SELECTION_THUMB_SHELL_GLOSS_CLASS =
-  "gloss-indicator size-full min-h-0 min-w-0 origin-center border-0";
+} from "../SelectionIndicator/selectionIndicatorStyles";
+import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTypes";
+import {
+  KIT_SELECTION_THUMB_VARIANTS,
+  type SelectionThumbVariant,
+} from "./selectionThumbTypes";
 
 export const SELECTION_THUMB_SHELL_DEFAULT_CLASS =
   "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface";
+
+export const SELECTION_THUMB_SHELL_LAYOUT_CLASS =
+  "size-full min-h-0 min-w-0 origin-center";
 
 export const SELECTION_THUMB_ICON_WRAP_CLASS =
   "pointer-events-none z-[2] flex items-center justify-center";
 
 export const SELECTION_THUMB_ICON_INNER_CLASS =
-  "inline-flex shrink-0 items-center justify-center [&_svg]:size-full";
+  "icon-slot inline-flex shrink-0 items-center justify-center";
 
 export function selectionThumbShellClass({
-  gloss,
+  variant = "default",
   size,
   className,
   slotRoot,
 }: {
-  gloss: boolean;
+  variant?: SelectionThumbVariant;
   size: SelectionIndicatorSize;
   className?: string;
   slotRoot?: string;
 }): string {
-  return gloss
-    ? cn(
-        SELECTION_INDICATOR_SHELL_CLASS,
-        SELECTION_INDICATOR_RADIUS_CLASS[size],
-        SELECTION_THUMB_SHELL_GLOSS_CLASS,
-        slotRoot,
-        className,
-      )
-    : cn(
-        SELECTION_INDICATOR_SHELL_CLASS,
-        SELECTION_INDICATOR_RADIUS_CLASS[size],
-        SELECTION_THUMB_SHELL_DEFAULT_CLASS,
-        slotRoot,
-        className,
-      );
+  const visual = resolveVariantVisual(
+    variant,
+    KIT_SELECTION_THUMB_VARIANTS,
+    "selectionIndicator.root",
+  );
+  const surface =
+    visual.className !== undefined
+      ? cn(SELECTION_THUMB_SHELL_LAYOUT_CLASS, visual.className)
+      : SELECTION_THUMB_SHELL_DEFAULT_CLASS;
+
+  return cn(
+    SELECTION_INDICATOR_SHELL_CLASS,
+    SELECTION_INDICATOR_RADIUS_CLASS[size],
+    surface,
+    slotRoot,
+    className,
+  );
 }
 
 /** Icon color is stable (no on/off / active tint swap). */
-export function selectionThumbIconColorClass(gloss: boolean): string {
-  return gloss ? "text-foreground" : "text-primary";
+export function selectionThumbIconColorClass(
+  variant: SelectionThumbVariant = "default",
+): string {
+  const visual = resolveVariantVisual(
+    variant,
+    KIT_SELECTION_THUMB_VARIANTS,
+    "selectionThumbIcon.root",
+  );
+  if (visual.className !== undefined) return visual.className;
+  return "text-primary";
 }
 
 export function selectionThumbIconRootClass({
-  gloss,
+  variant = "default",
   className,
   slotRoot,
 }: {
-  gloss: boolean;
+  variant?: SelectionThumbVariant;
   className?: string;
   slotRoot?: string;
 }): string {
   return cn(
     SELECTION_THUMB_ICON_WRAP_CLASS,
-    selectionThumbIconColorClass(gloss),
+    selectionThumbIconColorClass(variant),
     slotRoot,
     className,
   );

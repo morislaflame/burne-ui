@@ -1,37 +1,25 @@
 import { forwardRef, useMemo, useRef, type ButtonHTMLAttributes, type Ref } from "react";
-
-import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
-import { cn } from "@/utils/cn";
-
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+ 
 import {
   resolveColorSwatchMotionDefaults,
   resolveColorSwatchMotionParams,
   useColorSwatchAnimations,
 } from "./colorSwatchAnimations";
 import { ColorSwatchMotionProvider } from "./colorSwatchContext";
-import type { ColorSwatchProps, ColorSwatchShape, ColorSwatchSize } from "./colorSwatchTypes";
-
+import { colorSwatchClass } from "./colorSwatchStyles";
+import type { ColorSwatchClassNames, ColorSwatchProps, ColorSwatchShape, ColorSwatchSize } from "./colorSwatchTypes";
+ 
 export type {
+  ColorSwatchClassNames,
   ColorSwatchMotion,
   ColorSwatchPartMotion,
   ColorSwatchProps,
   ColorSwatchShape,
   ColorSwatchSize,
 } from "./colorSwatchTypes";
-
-const SIZE_CLASS: Record<ColorSwatchSize, string> = {
-  small: "h-5 w-5",
-  base: "h-6 w-6",
-  mid: "h-7 w-7",
-  large: "h-8 w-8",
-};
-
-const SHAPE_CLASS: Record<ColorSwatchShape, string> = {
-  circle: "rounded-full",
-  rounded: "rounded-small",
-  square: "rounded-none",
-};
-
+ 
 function swatchAccessibleName(
   color: string,
   props: ButtonHTMLAttributes<HTMLButtonElement>,
@@ -40,7 +28,7 @@ function swatchAccessibleName(
   if (typeof props["aria-labelledby"] === "string") return undefined;
   return `Select color ${color}`;
 }
-
+ 
 export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
   function ColorSwatch(props, ref) {
     const {
@@ -50,6 +38,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       selected = false,
       disabled = false,
       className = "",
+      classNames,
       onClick,
       motion,
       motionController,
@@ -69,23 +58,28 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
     const isInteractive = Boolean(onClick);
     const hasExplicitName =
       typeof ariaLabelProp === "string" || typeof buttonRest["aria-labelledby"] === "string";
-
+ 
     if (!isInteractive && !hasExplicitName) {
       return (
         <span
           ref={ref as Ref<HTMLSpanElement>}
           aria-hidden
-          className={cn(
-            "relative shrink-0 overflow-hidden",
-            SIZE_CLASS[size],
-            SHAPE_CLASS[shape],
+          className={colorSwatchClass({
+            size,
+            shape,
+            selected,
+            disabled,
+            interactive: false,
             className,
-          )}
+            classNames,
+          })}
           style={{ backgroundColor: color }}
+          {...dataVariantProps({ size })}
+          data-state={selected ? "selected" : undefined}
         />
       );
     }
-
+ 
     return (
       <ColorSwatchButton
         color={color}
@@ -94,6 +88,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         selected={selected}
         disabled={disabled}
         className={className}
+        classNames={classNames}
         onClick={onClick}
         motion={motion}
         motionController={motionController}
@@ -114,9 +109,9 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
     );
   },
 );
-
+ 
 ColorSwatch.displayName = "ColorSwatch";
-
+ 
 function ColorSwatchButton({
   color,
   size,
@@ -124,6 +119,7 @@ function ColorSwatchButton({
   selected,
   disabled,
   className,
+  classNames,
   onClick,
   motion,
   motionController,
@@ -147,6 +143,7 @@ function ColorSwatchButton({
   selected: boolean;
   disabled: boolean;
   className: string;
+  classNames?: ColorSwatchClassNames;
   onClick?: ColorSwatchProps["onClick"];
   motion?: ColorSwatchProps["motion"];
   motionController?: ColorSwatchProps["motionController"];
@@ -154,7 +151,7 @@ function ColorSwatchButton({
   motionPayload?: ColorSwatchProps["motionPayload"];
   playInitialState?: ColorSwatchProps["playInitialState"];
   ariaLabelProp?: string;
-  buttonRest: Omit<ColorSwatchProps, "color" | "size" | "shape" | "selected" | "disabled" | "className" | "onClick" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState" | "onPointerEnter" | "onPointerLeave" | "onPointerOver" | "onPointerOut" | "onPointerDown" | "onPointerUp" | "onKeyDown" | "aria-label">;
+  buttonRest: Omit<ColorSwatchProps, "color" | "size" | "shape" | "selected" | "disabled" | "className" | "classNames" | "onClick" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState" | "onPointerEnter" | "onPointerLeave" | "onPointerOver" | "onPointerOut" | "onPointerDown" | "onPointerUp" | "onKeyDown" | "aria-label">;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   onPointerEnter?: ColorSwatchProps["onPointerEnter"];
   onPointerLeave?: ColorSwatchProps["onPointerLeave"];
@@ -177,7 +174,7 @@ function ColorSwatchButton({
       }),
     [disabled],
   );
-
+ 
   return (
     <ColorSwatchMotionProvider motion={motion} defaults={motionDefaults} params={motionParams} controller={motionController}
         motionState={motionState}
@@ -190,6 +187,7 @@ function ColorSwatchButton({
         selected={selected}
         disabled={disabled}
         className={className}
+        classNames={classNames}
         onClick={onClick}
         motion={motion}
         ariaLabelProp={ariaLabelProp}
@@ -207,7 +205,7 @@ function ColorSwatchButton({
     </ColorSwatchMotionProvider>
   );
 }
-
+ 
 function ColorSwatchButtonSurface({
   color,
   size,
@@ -215,6 +213,7 @@ function ColorSwatchButtonSurface({
   selected,
   disabled,
   className,
+  classNames,
   onClick,
   motion,
   ariaLabelProp,
@@ -235,6 +234,7 @@ function ColorSwatchButtonSurface({
   selected: boolean;
   disabled: boolean;
   className: string;
+  classNames?: ColorSwatchClassNames;
   onClick?: ColorSwatchProps["onClick"];
   motion?: ColorSwatchProps["motion"];
   ariaLabelProp?: string;
@@ -270,13 +270,13 @@ function ColorSwatchButtonSurface({
     onPointerOut,
     onKeyDown,
   });
-
+ 
   const ariaLabel =
     ariaLabelProp ??
     (onClick
       ? swatchAccessibleName(color, { "aria-label": ariaLabelProp, ...buttonRest })
       : undefined);
-
+ 
   return (
     <button
       ref={setRefs}
@@ -291,18 +291,20 @@ function ColorSwatchButtonSurface({
       onPointerUp={handlePointerUp}
       onKeyDown={handleKeyDown}
       aria-label={ariaLabel}
-      className={cn(
-        "relative shrink-0 origin-center overflow-hidden",
-        "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
-        SHADOW_LIFT_MOTION_CLASS,
-        SIZE_CLASS[size],
-        SHAPE_CLASS[shape],
-        selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-        disabled ? "cursor-not-allowed opacity-40" : onClick ? "cursor-pointer" : "cursor-default",
+      className={colorSwatchClass({
+        size,
+        shape,
+        selected,
+        disabled,
+        interactive: true,
         className,
-      )}
+        classNames,
+      })}
       style={{ backgroundColor: color }}
       {...buttonRest}
+      {...dataVariantProps({ size })}
+      data-state={selected ? "selected" : undefined}
     />
   );
 }
+ 

@@ -1,13 +1,13 @@
 import type { FormFieldRules, FormValues } from "./formTypes";
-
+ 
 export function countFormErrors(errors: Record<string, string>): number {
   return Object.keys(errors).length;
 }
-
+ 
 export function formErrorEntries(errors: Record<string, string>): Array<[string, string]> {
   return Object.entries(errors);
 }
-
+ 
 export function setFormValueAtPath(
   values: FormValues,
   path: string,
@@ -16,11 +16,11 @@ export function setFormValueAtPath(
   if (!path.includes(".")) {
     return { ...values, [path]: value };
   }
-
+ 
   const keys = path.split(".");
   const root = { ...values };
   let cursor: Record<string, unknown> = root;
-
+ 
   for (let i = 0; i < keys.length - 1; i += 1) {
     const key = keys[i]!;
     const next = cursor[key];
@@ -31,11 +31,11 @@ export function setFormValueAtPath(
     cursor[key] = branch;
     cursor = branch;
   }
-
+ 
   cursor[keys[keys.length - 1]!] = value;
   return root;
 }
-
+ 
 export function isFormValueEmpty(value: unknown): boolean {
   if (value == null) return true;
   if (typeof value === "string") return value.trim().length === 0;
@@ -43,14 +43,14 @@ export function isFormValueEmpty(value: unknown): boolean {
   if (typeof value === "boolean") return false;
   return false;
 }
-
+ 
 export function validateFormFieldRules(
   value: unknown,
   values: FormValues,
   rules?: FormFieldRules,
 ): string | undefined {
   if (rules == null) return undefined;
-
+ 
   if (rules.required) {
     const message = typeof rules.required === "string" ? rules.required : "Required field";
     if (typeof value === "boolean") {
@@ -59,7 +59,7 @@ export function validateFormFieldRules(
       return message;
     }
   }
-
+ 
   if (typeof value === "string") {
     if (rules.minLength && value.length < rules.minLength.value) {
       return rules.minLength.message;
@@ -71,14 +71,14 @@ export function validateFormFieldRules(
       return rules.pattern.message;
     }
   }
-
+ 
   if (rules.validate) {
     return rules.validate(value, values);
   }
-
+ 
   return undefined;
 }
-
+ 
 export function mergeFormFieldRules(
   ...parts: Array<FormFieldRules | undefined>
 ): FormFieldRules | undefined {
@@ -89,16 +89,17 @@ export function mergeFormFieldRules(
   }
   return Object.keys(merged).length > 0 ? merged : undefined;
 }
-
+ 
 export function readControlValueFromEvent(event: unknown, type?: string): unknown {
   if (event == null || typeof event !== "object" || !("target" in event)) {
     return event;
   }
-
+ 
   const target = (event as { target: EventTarget | null }).target;
   if (!(target instanceof HTMLInputElement)) return undefined;
-
+ 
   if (type === "checkbox") return target.checked;
   if (type === "number") return target.value === "" ? undefined : Number(target.value);
   return target.value;
 }
+ 

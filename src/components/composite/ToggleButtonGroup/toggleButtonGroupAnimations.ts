@@ -9,21 +9,21 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useOptionalToggleButtonGroupMotionScope } from "./toggleButtonGroupContext";
 import type { ToggleButtonGroupMotion, ToggleButtonGroupPartMotion } from "./toggleButtonGroupTypes";
-
+ 
 export function resolveToggleButtonGroupMotionDefaults(): ToggleButtonGroupMotion {
   return {};
 }
-
+ 
 export function useToggleButtonGroupRootMotion({
   motion,
   forwardedRef,
@@ -62,3 +62,4 @@ export function useToggleButtonGroupRootMotion({
   });
   return part;
 }
+ 

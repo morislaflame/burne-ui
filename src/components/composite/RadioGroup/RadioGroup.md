@@ -47,7 +47,7 @@ Simple API нет.
 | `defaultValue` | — | Uncontrolled initial |
 | `onValueChange` | — | `(value: string \| undefined) => void` |
 | `name` | auto `radio-group-{id}` | Общий `name` для всех `Radio` |
-| `required` | `false` | Required mark; native `required` на первом radio |
+| `required` | `false` | Required mark; native `required` на первом radio и `aria-required` на группе |
 | `size` | `small` | `small` \| `base` \| `mid` \| `large` |
 | `disabled` | `false` | На fieldset + context → `Radio` |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
@@ -182,7 +182,7 @@ configureMotion({
   defaultValue="card"
   className="max-w-md"
   classNames={{
-    root: "rounded-mid border border-primary/20 p-base",
+    root: "rounded-large border border-primary/20 p-base",
     legend: "text-primary",
     legendHeader: "gap-xsmall",
     hint: "text-foreground/70",
@@ -272,7 +272,7 @@ configureMotion({
 | `Form` | Controlled `value`/`onValueChange` или кастом binding |
 | `CheckboxGroup` | Альтернатива single через checkbox UI |
 
-Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupParts.tsx`, `optionGroupClassNames.tsx`.
+Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupClassNames.tsx`.
 
 ## Доступность
 
@@ -280,7 +280,8 @@ Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `opti
 - `Legend`: native `<legend>`
 - `Radio`: native `<input type="radio">`, arrow keys в группе
 - `Error`: `role="alert"`
-- `required`: native `required` на первом radio (`claimRequiredAnchor`)
+- `required`: native `required` на первом radio и `aria-required` на группе
+- Forced colors (Windows HCM): selected Radio fill/dot через `Highlight` в `styles.css`
 
 ## Структура файлов
 
@@ -295,7 +296,7 @@ RadioGroup/
 ├── useRadioGroupRootState.ts
 └── RadioGroup.stories.tsx
 
-composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGroupParts`, `optionGroupClassNames`, `useOptionGroup*`)
+composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGroupClassNames`, `useOptionGroup*`)
 ```
 
 ## Storybook

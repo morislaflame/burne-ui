@@ -4,14 +4,14 @@ import { SurfaceDashboardWidgetDemo } from "../demos/surface/SurfaceDashboardWid
 import surfaceDashboardWidgetSource from "../demos/surface/SurfaceDashboardWidget.demo.tsx?raw";
 import { SurfaceGlassStackDemo } from "../demos/surface/SurfaceGlassStack.demo";
 import surfaceGlassStackSource from "../demos/surface/SurfaceGlassStack.demo.tsx?raw";
-import { SurfaceGlossDemo } from "../demos/surface/SurfaceGloss.demo";
-import surfaceGlossSource from "../demos/surface/SurfaceGloss.demo.tsx?raw";
 import { SurfaceNestedPanelsDemo } from "../demos/surface/SurfaceNestedPanels.demo";
 import surfaceNestedPanelsSource from "../demos/surface/SurfaceNestedPanels.demo.tsx?raw";
 import { SurfaceVariantsDemo } from "../demos/surface/SurfaceVariants.demo";
 import surfaceVariantsSource from "../demos/surface/SurfaceVariants.demo.tsx?raw";
 import { SurfaceMotionControllerGalleryDemo } from "../demos/surface/motionController/gallery";
 import { SurfaceSlotMotionGalleryDemo } from "../demos/surface/slotMotion/gallery";
+import { SeparatorClassNamesFullDemo } from "../demos/separator/SeparatorClassNamesFull.demo";
+import separatorClassNamesFullSource from "../demos/separator/SeparatorClassNamesFull.demo.tsx?raw";
 import { SeparatorSlotMotionGalleryDemo } from "../demos/separator/slotMotion/gallery";
 import { SeparatorMotionControllerGalleryDemo } from "../demos/separator/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -30,18 +30,13 @@ export function SurfaceShowcase() {
       <ShowcaseSection title="Options" description="default, secondary and tertiary.">
         <ShowcaseDemoFromFile Demo={SurfaceVariantsDemo} source={surfaceVariantsSource} />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
-        <ShowcaseDemoFromFile Demo={SurfaceGlossDemo} source={surfaceGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="classNames" description="Slots root and glossContent via classNames.">
+<ShowcaseSection title="classNames" description="Slot root via classNames.">
         <ShowcaseDemoFromFile Demo={SurfaceClassNamesFullDemo} source={surfaceClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="Custom Variations"
-        description="Nested panels, dashboard widget and gloss-stack — `demos/surface/`."
+        description="Nested panels, dashboard widget and default-stack — `demos/surface/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SurfaceNestedPanelsDemo} source={surfaceNestedPanelsSource} />
         <ShowcaseDemoFromFile Demo={SurfaceDashboardWidgetDemo} source={surfaceDashboardWidgetSource} />
@@ -57,6 +52,10 @@ export function SurfaceShowcase() {
         description="One gallery: playSlot / set, cancel a looping run, ping, timeline, waitForComplete."
       >
         <SurfaceMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="className (Separator)" description="Separator is one node. className tints the line.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorClassNamesFullDemo} source={separatorClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Slot motion (Separator)" description="Instant enter skip, scale-in timeline, enter tint.">
@@ -85,7 +84,7 @@ export function SurfaceShowcase() {
             <code>mid</code>, <code>plus</code>, <code>large</code> — preset padding inside Surface.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

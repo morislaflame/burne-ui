@@ -22,6 +22,7 @@ export function BadgeClassNamesFullDemo() {
           aria-label="icon-only slot"
           classNames={{
             root: "rounded-large",
+            icon: "icon-slot-large",
             iconOnly: "bg-success/15 text-success border-success/40",
           }}
         />
@@ -42,7 +43,12 @@ export function BadgeClassNamesFullDemo() {
         }}
       >
         <Avatar size="base" label="Demo user" />
-        <Badge dot status="success" aria-label="online" />
+        <Badge
+          dot
+          status="success"
+          aria-label="online"
+          classNames={{ splitShell: "ring-2 ring-primary/20" }}
+        />
       </Badge.Anchor>
     </div>
   );

@@ -1,3 +1,6 @@
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useSkinVariant } from "@/skins/skinContext";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
@@ -5,16 +8,15 @@ import {
   BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
-
+ 
 import { SelectClassNamesProvider, SelectFieldProvider, SelectMotionProvider, SelectProvider } from "./selectContext";
 import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectSimpleBody, SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectParts";
 import type { SelectProps } from "./selectTypes";
 import { useSelectRootState } from "./useSelectRootState";
-
-import "../utils/glossInteractive.css";
-
+ 
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   SelectProps,
   SelectSimpleProps,
@@ -30,13 +32,14 @@ export type {
   SelectMotion,
   SelectPartMotion,
 } from "./selectTypes";
-
-
+ 
+ 
 export function SelectRoot({
   children,
   label,
   hint,
   error,
+  invalid,
   className,
   classNames,
   id,
@@ -44,9 +47,13 @@ export function SelectRoot({
   status,
   size,
   options,
+  multiple,
   value,
   defaultValue,
   onValueChange,
+  values,
+  defaultValues,
+  onValuesChange,
   open,
   defaultOpen,
   onOpenChange,
@@ -54,6 +61,8 @@ export function SelectRoot({
   disabled,
   placeholder,
   menuMaxHeight,
+  virtualized,
+  virtualItemSize,
   name,
   motion,
   motionController,
@@ -66,24 +75,29 @@ export function SelectRoot({
   const fieldName = typeof name === "string" ? name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
   const resolvedError = error ?? formError;
-  const resolvedStatus = status === "default" && formError ? "danger" : status;
   const resolvedSize = size ?? "base";
+  const resolvedVariant = useSkinVariant(variant);
   const inJoinedButtonGroup = useInJoinedButtonGroup();
-
+ 
   const state = useSelectRootState({
     children,
     label,
     hint,
     error: resolvedError,
+    invalid,
     id,
     name,
     required,
-    status: resolvedStatus,
+    status,
     size: resolvedSize,
     options,
+    multiple,
     value,
     defaultValue,
     onValueChange,
+    values,
+    defaultValues,
+    onValuesChange,
     open,
     defaultOpen,
     onOpenChange,
@@ -91,8 +105,16 @@ export function SelectRoot({
     disabled,
     placeholder,
     menuMaxHeight,
+    virtualized,
+    virtualItemSize,
   });
-
+  const isInvalid = useResolvedFieldInvalid({
+    invalid,
+    errorConnected: resolvedError != null,
+    formInvalid: state.fieldCtx.formInvalid,
+  });
+  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
+ 
   return (
     <SelectFieldProvider value={state.fieldCtx}>
       <SelectProvider value={state.selectCtx}>
@@ -113,6 +135,11 @@ export function SelectRoot({
                 classNames?.root,
               )}
               {...rest}
+              {...dataVariantProps({
+                size: resolvedSize,
+                variant: resolvedVariant,
+                status: paintedStatus,
+              })}
             >
               {state.isCompound ? (
                 children
@@ -136,9 +163,9 @@ export function SelectRoot({
     </SelectFieldProvider>
   );
 }
-
+ 
 SelectRoot.displayName = "Select";
-
+ 
 export {
   SelectTriggerGroup,
   SelectValue,
@@ -148,3 +175,4 @@ export {
   SelectHint,
   SelectError,
 };
+ 

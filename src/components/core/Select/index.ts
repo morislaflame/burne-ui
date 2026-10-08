@@ -1,5 +1,5 @@
 import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectRoot, SelectTrigger, SelectTriggerGroup, SelectValue } from "./Select";
-
+ 
 export const Select = Object.assign(SelectRoot, {
   Label: SelectLabel,
   TriggerGroup: SelectTriggerGroup,
@@ -9,9 +9,9 @@ export const Select = Object.assign(SelectRoot, {
   Hint: SelectHint,
   Error: SelectError,
 });
-
+ 
 export type { SelectOption } from "./selectTypes";
-
+ 
 export type {
   SelectProps,
   SelectSimpleProps,
@@ -26,3 +26,4 @@ export type {
   SelectMotion,
   SelectPartMotion,
 } from "./selectTypes";
+ 

@@ -1,6 +1,6 @@
 import { MeterRoot, MeterTrack } from "./Meter";
 import { MeterError, MeterHeader, MeterHint, MeterLabel, MeterValue } from "./meterParts";
-
+ 
 export const Meter = Object.assign(MeterRoot, {
   Header: MeterHeader,
   Label: MeterLabel,
@@ -9,19 +9,19 @@ export const Meter = Object.assign(MeterRoot, {
   Error: MeterError,
   Track: MeterTrack,
 });
-
+ 
 export type {
   MeterTrackProps,
   MeterSize,
   MeterOrientation,
   MeterClassNames,
 } from "./Meter";
-
+ 
 export type {
   MeterMotion,
   MeterPartMotion,
 } from "./meterTypes";
-
+ 
 export type {
   MeterProps,
   MeterHeaderProps,
@@ -30,10 +30,11 @@ export type {
   MeterErrorProps,
   MeterLabelProps,
 } from "./Meter";
-
+ 
 export {
   useMeterFieldContext,
   useOptionalMeterFieldContext,
 } from "./Meter";
-
+ 
 export type { MeterDisplayState, MeterFieldContextValue } from "./meterTypes";
+ 

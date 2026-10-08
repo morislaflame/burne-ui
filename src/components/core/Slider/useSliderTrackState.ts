@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
-
+ 
 import { useControllableState } from "@/components/core/utils/useControllableState";
-
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
+import { useSkinVariant } from "@/skins/skinContext";
+ 
 import {
   clampSliderValue,
   defaultSliderFormatValue,
@@ -24,7 +26,7 @@ import { applySliderFillStyle, useSliderFillCleanup } from "./sliderAnimations";
 import { useOptionalSliderFieldContext, useSliderClassNames } from "./sliderContext";
 import { sliderFillClass, sliderRailClass, sliderTrackCrossStyle, sliderTrackHitAreaClass } from "./sliderStyles";
 import type { SliderThumbKind, SliderTrackContextValue, SliderTrackProps } from "./sliderTypes";
-
+ 
 export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTMLDivElement>) {
   const {
     orientation: orientationProp,
@@ -36,7 +38,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     marks: marksProp,
     formatValue = defaultSliderFormatValue,
     icon,
-    gloss = false,
+    variant: variantProp,
     thumbClassName,
     disabled = false,
     className,
@@ -53,19 +55,21 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     motionController: _motionController,
     ...trackRest
   } = props;
-
+ 
+  const labels = useBurneLabels();
+  const variant = useSkinVariant(variantProp);
   const fieldCtx = useOptionalSliderFieldContext();
   const rootClassNames = useSliderClassNames();
   const slotClassNames = useMemo(
     () => ({ ...rootClassNames, ...trackClassNames }),
     [rootClassNames, trackClassNames],
   );
-
+ 
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
   const labelId = fieldCtx?.labelId;
   const labelConnected = fieldCtx?.labelConnected ?? false;
   const explicitLabel = ariaLabelProp;
-
+ 
   const resolveThumbA11y = useCallback(
     (kind: SliderThumbKind) =>
       resolveSliderThumbA11y({
@@ -77,10 +81,11 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
         hintId: fieldCtx?.hintId ?? "",
         errorConnected: fieldCtx?.errorConnected ?? false,
         errorId: fieldCtx?.errorId ?? "",
+        labels,
       }),
-    [explicitLabel, fieldCtx?.errorConnected, fieldCtx?.errorId, fieldCtx?.hintConnected, fieldCtx?.hintId, labelConnected, labelId],
+    [explicitLabel, fieldCtx?.errorConnected, fieldCtx?.errorId, fieldCtx?.hintConnected, fieldCtx?.hintId, labelConnected, labelId, labels],
   );
-
+ 
   const trackRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLSpanElement>(null);
   const [trackSpanPx, setTrackSpanPx] = useState(0);
@@ -91,12 +96,12 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
   const [thumbSpanPx, setThumbSpanPx] = useState(fallbackThumbPx);
   const draggingRef = useRef<"start" | "end" | "single" | null>(null);
   const [activeThumb, setActiveThumb] = useState<"start" | "end" | "single" | null>(null);
-
+ 
   const marks = useMemo(
     () => normalizeSliderMarks(marksProp, min, max),
     [marksProp, min, max],
   );
-
+ 
   const snap = useCallback(
     (raw: number) => {
       const clamped = clampSliderValue(raw, min, max);
@@ -105,28 +110,28 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [marks, min, max, step],
   );
-
+ 
   const [singleValue, setSingleValue] = useControllableState({
     value: !range ? (props as Extract<SliderTrackProps, { range?: false }>).value : undefined,
     defaultValue:
       (!range ? (props as Extract<SliderTrackProps, { range?: false }>).defaultValue : undefined) ??
       min,
   });
-
+ 
   const [rangeValue, setRangeValue] = useControllableState<[number, number]>({
     value: range ? (props as Extract<SliderTrackProps, { range: true }>).value : undefined,
     defaultValue:
       (range ? (props as Extract<SliderTrackProps, { range: true }>).defaultValue : undefined) ??
       ([min, max] as [number, number]),
   });
-
+ 
   const onSingleChange = !range
     ? (props as Extract<SliderTrackProps, { range?: false }>).onValueChange
     : undefined;
   const onRangeChange = range
     ? (props as Extract<SliderTrackProps, { range: true }>).onValueChange
     : undefined;
-
+ 
   const emitSingle = useCallback(
     (next: number) => {
       const snapped = snap(next);
@@ -136,7 +141,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [onSingleChange, setSingleValue, singleValue, snap],
   );
-
+ 
   const emitRange = useCallback(
     (next: [number, number]) => {
       let [a, b] = next.map(snap) as [number, number];
@@ -148,13 +153,13 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [onRangeChange, rangeValue, setRangeValue, snap],
   );
-
+ 
   const syncFill = useCallback(
     (nextSingle = singleValue, nextRange = rangeValue) => {
       const track = trackRef.current;
       const fill = fillRef.current;
       if (!track || !fill) return;
-
+ 
       const rect = track.getBoundingClientRect();
       const { trackSpanPx: spanPx, thumbSpanPx: thumbPx } = readSliderTrackMetrics(
         rect,
@@ -164,7 +169,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       if (thumbPx > 0) {
         setThumbSpanPx((prev) => (prev === thumbPx ? prev : thumbPx));
       }
-
+ 
       const span = sliderFillSpanForValues(
         spanPx,
         thumbPx > 0 ? thumbPx : fallbackThumbPx,
@@ -178,21 +183,21 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [fallbackThumbPx, max, min, orientation, range, rangeValue, singleValue],
   );
-
+ 
   useLayoutEffect(() => {
     syncFill();
   }, [syncFill]);
-
+ 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track || typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(() => syncFill());
     ro.observe(track);
     return () => ro.disconnect();
   }, [orientation, syncFill]);
-
+ 
   useSliderFillCleanup(fillRef);
-
+ 
   const updateFromPointer = useCallback(
     (clientX: number, clientY: number, thumb: "start" | "end" | "single") => {
       const track = trackRef.current;
@@ -208,7 +213,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
         max,
         thumbPx > 0 ? thumbPx : fallbackThumbPx,
       );
-
+ 
       if (range) {
         const [lo, hi] = rangeValue;
         if (thumb === "start") {
@@ -241,7 +246,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       syncFill,
     ],
   );
-
+ 
   const pickRangeThumb = useCallback(
     (clientX: number, clientY: number): "start" | "end" => {
       const track = trackRef.current;
@@ -262,7 +267,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [fallbackThumbPx, max, min, orientation, rangeValue],
   );
-
+ 
   useEffect(() => {
     const onMove = (e: globalThis.PointerEvent) => {
       const thumb = draggingRef.current;
@@ -282,7 +287,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       window.removeEventListener("pointercancel", onUp);
     };
   }, [updateFromPointer]);
-
+ 
   const handleTrackPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       onPointerDownProp?.(e);
@@ -296,7 +301,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [disabled, onPointerDownProp, pickRangeThumb, range, updateFromPointer],
   );
-
+ 
   const onThumbPointerDown = useCallback(
     (thumb: "start" | "end" | "single") => (e: PointerEvent<HTMLButtonElement>) => {
       if (disabled || e.button !== 0) return;
@@ -308,7 +313,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [disabled],
   );
-
+ 
   const nudge = useCallback(
     (thumb: "start" | "end" | "single", delta: number) => {
       if (range) {
@@ -321,22 +326,22 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [emitRange, emitSingle, range, rangeValue, singleValue],
   );
-
+ 
   const onThumbKeyDown = useCallback(
     (thumb: "start" | "end" | "single") => (e: KeyboardEvent<HTMLButtonElement>) => {
       if (disabled) return;
       const action = sliderStepDelta(marks, step, e.key, orientation);
       if (action === 0) return;
-
+ 
       e.preventDefault();
-
+ 
       const current =
         thumb === "start"
           ? rangeValue[0]
           : thumb === "end"
             ? rangeValue[1]
             : singleValue;
-
+ 
       if (action === "home") {
         if (range) {
           if (thumb === "start") emitRange([min, rangeValue[1]]);
@@ -346,7 +351,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
         }
         return;
       }
-
+ 
       if (action === "end") {
         if (range) {
           if (thumb === "start") emitRange([max, rangeValue[1]]);
@@ -356,7 +361,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
         }
         return;
       }
-
+ 
       if (action === "mark-next" || action === "mark-prev") {
         if (!marks?.length) return;
         const next = sliderAdjacentMark(current, marks, action === "mark-next" ? 1 : -1);
@@ -368,7 +373,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
         }
         return;
       }
-
+ 
       if (typeof action === "number" && action !== 0) {
         nudge(thumb, action);
       }
@@ -388,7 +393,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       step,
     ],
   );
-
+ 
   const thumbPercent = useCallback(
     (kind: SliderThumbKind) => {
       const value =
@@ -401,12 +406,12 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [max, min, rangeValue, singleValue, thumbSpanPx, trackSpanPx],
   );
-
+ 
   const resolveThumbIcon = useCallback(
     (childrenOverride?: ReactNode) => resolveSliderThumbIcon(childrenOverride, icon),
     [icon],
   );
-
+ 
   const valueLabel = useMemo((): string => {
     if (range) {
       const [lo, hi] = rangeValue;
@@ -414,9 +419,9 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     }
     return formatValue(singleValue);
   }, [formatValue, range, rangeValue, singleValue]);
-
+ 
   const setDisplay = fieldCtx?.setDisplay;
-
+ 
   useLayoutEffect(() => {
     setDisplay?.({
       valueLabel,
@@ -428,22 +433,22 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       label: explicitLabel,
     });
   }, [explicitLabel, max, min, range, rangeValue, setDisplay, singleValue, valueLabel]);
-
+ 
   const isHorizontal = orientation === "horizontal";
-
+ 
   const fillClassResolved = sliderFillClass({
     isHorizontal,
-    gloss,
+    variant,
     slotClass: slotClassNames.fill,
   });
-
+ 
   const railClass = sliderRailClass({
     size,
     disabled,
-    gloss,
+    variant,
     slotClass: slotClassNames.rail,
   });
-
+ 
   const markItems = useMemo(
     () =>
       (marks ?? []).map((value) => ({
@@ -452,7 +457,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       })),
     [marks, max, min, thumbSpanPx, trackSpanPx],
   );
-
+ 
   const setTrackRef = useCallback(
     (node: HTMLDivElement | null) => {
       trackRef.current = node;
@@ -461,7 +466,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     },
     [ref],
   );
-
+ 
   const trackContextValue = useMemo<SliderTrackContextValue>(
     () => ({
       fillRef,
@@ -474,7 +479,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       disabled,
       icon,
       range,
-      gloss,
+      variant,
       thumbClassName,
       activeThumb,
       singleValue,
@@ -493,7 +498,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       disabled,
       fillClassResolved,
       formatValue,
-      gloss,
+      variant,
       icon,
       markItems,
       max,
@@ -513,26 +518,26 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       thumbPercent,
     ],
   );
-
+ 
   const { body: compoundBody, hasCompoundParts } = useMemo(
     () => partitionSliderTrackChildren(children),
     [children],
   );
-
+ 
   const trackCrossStyle = useMemo(
     () => ({ ...sliderTrackCrossStyle({ isHorizontal, thickness }), ...styleProp }),
     [isHorizontal, styleProp, thickness],
   );
-
+ 
   const trackHitClass = sliderTrackHitAreaClass({
     isHorizontal,
     size,
     thickness,
-    gloss,
+    variant,
     slotClass: slotClassNames.track,
     className,
   });
-
+ 
   return {
     setTrackRef,
     trackHitClass,
@@ -548,3 +553,4 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     disabled,
   };
 }
+ 

@@ -1,5 +1,5 @@
 import { PopoverArrow, PopoverBody, PopoverContent, PopoverHeader, PopoverDescription, PopoverTitle, PopoverRoot, PopoverTrigger } from "./Popover";
-
+ 
 export const Popover = Object.assign(PopoverRoot, {
   Trigger: PopoverTrigger,
   Content: PopoverContent,
@@ -9,7 +9,7 @@ export const Popover = Object.assign(PopoverRoot, {
   Body: PopoverBody,
   Arrow: PopoverArrow,
 });
-
+ 
 export type {
   PopoverProps,
   PopoverTriggerProps,
@@ -28,5 +28,6 @@ export type {
   PopoverLifecycleMotion,
   PopoverPartMotion,
 } from "./Popover";
-
+ 
 export type { FloatingAlign, FloatingAlign as PopoverAlign } from "@/components/core/Tooltip/tooltipPosition";
+ 

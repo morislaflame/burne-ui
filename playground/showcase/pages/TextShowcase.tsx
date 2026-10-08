@@ -1,3 +1,5 @@
+import { TextClassNamesFullDemo } from "../demos/text/TextClassNamesFull.demo";
+import textClassNamesFullSource from "../demos/text/TextClassNamesFull.demo.tsx?raw";
 import { TextEditorialArticleDemo } from "../demos/text/TextEditorialArticle.demo";
 import textEditorialArticleSource from "../demos/text/TextEditorialArticle.demo.tsx?raw";
 import { TextHeroBlockDemo } from "../demos/text/TextHeroBlock.demo";
@@ -25,6 +27,10 @@ export function TextShowcase() {
     >
       <ShowcaseSection title="Options" description="All preset-options variant on the component Text.">
         <ShowcaseDemoFromFile Demo={TextVariantsDemo} source={textVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="className" description="Text is one node. Color and measure come from className.">
+        <ShowcaseDemoFromFile Demo={TextClassNamesFullDemo} source={textClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Semantics" description="Prop as sets HTML-element without changing visual style.">

@@ -1,7 +1,7 @@
 export function avatarRootRole(role?: string): "group" {
   return (role as "group" | undefined) ?? "group";
 }
-
+ 
 /** Prefer explicit `aria-label`; fall back to trimmed visual `label` (initials source). */
 export function avatarRootAriaLabel(
   ariaLabel?: string,
@@ -12,9 +12,10 @@ export function avatarRootAriaLabel(
   const fromLabel = label?.trim();
   return fromLabel || undefined;
 }
-
+ 
 export function avatarGroupRole(): "group" {
   return "group";
 }
-
+ 
 export const AVATAR_FALLBACK_ARIA_HIDDEN = true;
+ 

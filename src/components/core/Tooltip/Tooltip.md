@@ -66,12 +66,12 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 | `Tooltip.Panel` | Поверхность bubble (simple title/description внутри) |
 | `Tooltip.Arrow` | Стрелка к триггеру |
 | `Tooltip.Icon` / `Indicator` | Semantic icon slot |
-| `Tooltip.Message` | Grid wrapper (`display: contents`) |
+| `Tooltip.Message` | Grid wrapper (`display: contents` — padding, border, background и width не рисуются) |
 | `Tooltip.Title` / `Description` | Текстовые слоты |
 
 ### `TooltipClassNames`
 
-`root`, `trigger`, `content`, `arrow`, `panel`, `glossPanel`, `glossContent`, `message`, `indicator`, `icon`, `title`, `description`.
+`root`, `trigger`, `content`, `panelRelative`, `arrow`, `panel`, `message`, `indicator`, `icon`, `title`, `description`.
 
 `root` и `trigger` применяются к триггеру (в т.ч. при `cloneElement` единственного child).
 
@@ -79,13 +79,13 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 
 ### Status
 
-Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral panel** (by `variant`) and accent **title + icon** only — same pattern as Alert / Toast. Auto icon via `SEMANTIC_STATUS_ICONS` (react-icons/io5) unless custom `icon` is passed.
+Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral panel** (by `variant`) and accent **title + icon** only — same pattern as Alert / Toast. Auto icon via `SEMANTIC_STATUS_ICONS` (kit inline SVG) unless custom `icon` is passed.
 
 ### Surface / variant
 
 | Surface | Поведение |
 |---------|-----------|
-| `default` | `bg-surface` + `shadow-token-large` |
+| `default` | `bg-surface` + `shadow-token-xlarge` |
 | `outline` / `secondary` | transparent / secondary shell |
 | `gloss` | `gloss-panel` + gloss interactive ref на panel |
 
@@ -200,6 +200,22 @@ function Nudge() {
 </Tooltip>
 ```
 
+### 1. Show / hide pipeline
+
+**Планирование показа:**
+
+1. `pointerenter` / `focus` → `scheduleShow()` после `delayShowMs`
+2. `pointerleave` / `blur` / `Escape` → `hide()` + отмена таймера
+
+**Монтаж портала + анимация:**
+
+1. `open=true` → mount portal
+2. `computeTooltipPlacement()` — fixed `left`/`top`, auto side flip
+3. `animatePortalOpen({ scale: 0.97→1, ...motionTooltip() })`
+4. Close: `animatePortalClose({ autoAlpha: 0 })` → unmount
+
+**Reduced motion:** `applyReducedPortalMotion` / мгновенный unmount.
+
 #### Кастомизация timing
 
 ```ts
@@ -215,14 +231,14 @@ configureMotion({
 
 | surface | Поведение |
 |---------|-----------|
-| `default` | `shadow-token-large` — large elevation на bubble |
+| `default` | `shadow-token-xlarge` — large elevation на bubble |
 | `gloss` | `createGlossInteractiveRefCallback` на gloss panel |
 
 Tooltip — floating overlay с постоянной large-тенью (как Popover / Dialog).
 
 ### 3. Reposition on reflow
 
-На `open`, `scroll`, `resize` — пересчёт placement без re-mount.
+На `open`, `scroll` (passive capture), `resize`, `visualViewport` — пересчёт placement без re-mount.
 
 Arrow position синхронизируется с `resolvedSide`.
 
@@ -243,7 +259,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
 | Show delay | `setTimeout` | — | `delayShowMs` |
-| Rest shadow | `shadow-token-large` | — | `variant="default"` |
+| Rest shadow | `shadow-token-xlarge` | — | `variant="default"` |
 | Gloss ref | gloss utils | — | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side` |
 
@@ -272,12 +288,11 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |------|-----|-------------------|
 | `root` / `trigger` | Trigger element | Ring, focus outline helpers |
 | `content` | Portal wrapper | Outer shell, ring |
+| `panelRelative` | Inner relative wrapper | Isolation, overflow |
 | `arrow` | Arrow span | Fill/border стрелки (matches panel, not status) |
 | `panel` | Bubble surface | Background, border, padding |
-| `glossPanel` | Gloss shell | При `variant="gloss"` (вместе с `panel`) |
-| `glossContent` | Inner gloss grid | Content area в gloss |
 | `message` | Grid wrapper (`display:contents`) | Compound layout spacing |
-| `indicator` / `icon` | Icon cell | Semantic icon color/size |
+| `indicator` / `icon` | Icon cell | Цвет и размер. Размер — `icon-slot-*` на обёртке (`classNames.icon="icon-slot-large"`) |
 | `title` / `description` | Text cells | Typography hierarchy |
 
 ### Simple text tooltip

@@ -1,8 +1,8 @@
 import { buttonGroupSeparatorClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
-
+ 
 import { useToggleButtonGroupClassNames } from "./toggleButtonGroupContext";
 import type { ToggleButtonGroupOrientation } from "./toggleButtonGroupTypes";
-
+ 
 export function ToggleButtonGroupSeparator({
   orientation,
 }: {
@@ -16,3 +16,4 @@ export function ToggleButtonGroupSeparator({
     />
   );
 }
+ 

@@ -37,8 +37,8 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 | Часть | Назначение |
 |-------|------------|
 | `Alert.Indicator` | Иконка слева; `status` prop переопределяет контекст |
-| `Alert.Message` | Обёртка (`display: contents`) для группировки |
-| `Alert.Content` | Группа title + description |
+| `Alert.Message` | Обёртка (`display: contents` — padding, border, background и width не рисуются) для группировки |
+| `Alert.Content` | Группа title + description (`display: contents` — padding, border, background и width не рисуются) |
 | `Alert.Title` | Заголовок (`font-medium`, `Text` base) |
 | `Alert.Description` | Текст (`text-muted`, `Text` small) |
 | `Alert.Action` | Слот действия справа |
@@ -194,7 +194,7 @@ import { Alert, killMotion, tweenCssColor } from "burne-ui";
 />
 ```
 
-Снаружи дерева — `useMotionControllerHandle()` / `createMotionController()` и проп `motionController` (не на DOM). Внутри Alert — `useMotionController()`. `play` — `MotionPlayEvent`: фазы и `motion.events` без дженерика. `set` — compositor snap без `MotionRun`. Несколько хостов (Alert + Card) — `MotionGroup`, не `querySelector`. Задержки в factory — `ctx.wait` / `sequence`, не `setTimeout`. Плагины GSAP — `registerMotionPlugins`. См. [Motion](/docs/motion#motioncontroller), [MotionGroup](/docs/motion#motiongroup) и [async helpers](/docs/motion#async-helpers).
+Снаружи дерева — `useMotionControllerHandle()` / `createMotionController()` и проп `motionController` (не на DOM). Внутри Alert — `useMotionController()`. `play` — `MotionPlayEvent`: фазы и `motion.events` без дженерика. `set` — compositor snap без `MotionRun`. Несколько хостов (Alert + Card) — `MotionGroup`, не `querySelector`. Задержки в factory — `ctx.wait` / `sequence`, не `setTimeout`. Плагины GSAP — `registerMotionPlugins`. См. [Motion](/docs/motion-controller), [MotionGroup](/docs/motion-group) и [async helpers](/docs/motion-async).
 
 ```tsx
 import { Alert, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -317,7 +317,6 @@ configureMotion({
 
 - `createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss)`
 - `useGlossInteractiveHandlers` на `onPointerOver` / `onPointerOut`
-- Класс: `GLOSS_INTERACTIVE_MOTION_CLASS` + `glossInteractive.css`
 
 Gloss lift — отдельная кривая (`glossInteractiveMotion`), не token shadow families.
 
@@ -325,7 +324,7 @@ Gloss lift — отдельная кривая (`glossInteractiveMotion`), не 
 
 - Press squeeze при клике (Alert не pressable; `--shadow-*-press` не используется)
 - Enter/leave при монтировании
-- Ripple (можно добавить вручную как child + `relative overflow-hidden`)
+- Ripple (можно добавить вручную как child внутри `relative`)
 
 ### Сводка: что настраивается где
 
@@ -358,7 +357,7 @@ Surface всегда по `variant` (как у `AlertDialog`). Status краси
 
 ### Индикатор
 
-`[&_svg]:icon-mid`; цвет: `text-primary` (default) или semantic text.
+Обёртка индикатора: `icon-slot` + `icon-slot-*` (base — `icon-slot-mid`). Цвет: `text-primary` (default) или semantic text. Свой размер: `classNames.indicator="icon-slot-large"`.
 
 ## Стилизация и кастомизация
 
@@ -433,7 +432,7 @@ Surface всегда по `variant` (как у `AlertDialog`). Status краси
 
 ### Практические заметки
 
-- **Ripple:** для press-эффекта оберните root в `relative overflow-hidden` и добавьте `<Ripple />` первым ребёнком (см. Ripple stories).
+- **Ripple:** для press-эффекта добавьте `<Ripple />` первым ребёнком (клип на самом слое, не на корне Alert — иначе обрежется тень). См. Ripple stories.
 - **2-й уровень:** тень покоя по `shadow` (default `base`); `hoverLift` усиливает до `--shadow-{size}-hover`. `hoverLift={false}` сохраняет rest elevation.
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти.
 

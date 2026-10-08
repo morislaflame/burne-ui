@@ -54,6 +54,22 @@ export const Basic: Story = {
   ),
 };
 
+export const Virtualized: Story = {
+  name: "Virtualized",
+  render: () => (
+    <ListBox
+      virtualized
+      aria-label="Items"
+      defaultValue="1"
+      style={{ maxHeight: "min(16rem, 50dvh)" }}
+    >
+      {Array.from({ length: 200 }, (_, index) => (
+        <ListBox.Item key={String(index + 1)} value={String(index + 1)} label={`Item ${index + 1}`} />
+      ))}
+    </ListBox>
+  ),
+};
+
 export const SelectInteraction: Story = {
   name: "Interaction: selection",
   render: () => (
@@ -203,7 +219,7 @@ export const CustomClassNames: Story = {
       defaultValue="ru"
       aria-label="Interface language"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         headerText: "text-primary",
         item: "rounded-lg",
         label: "font-semibold",

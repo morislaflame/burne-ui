@@ -110,7 +110,7 @@ Fill стартует в **release-фазе squeeze** (`params.onReleaseStart`),
 
 Цвет текста — **`tweenCssColor`**, не сырой `gsap.to({ color: "var(--…)" })`.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`like:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion#motionevents).
+Проп `motionController` + ключ `events` на `motion` — app-команды (`like:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
 
 ```tsx
 import { Button, ToggleButton, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -181,7 +181,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
   icon={<IoHeartOutline aria-hidden />}
   className="min-w-[8rem]"
   classNames={{
-    root: "rounded-mid ring-1 ring-danger/25",
+    root: "rounded-large ring-1 ring-danger/25",
     fill: "bg-danger/20",
     content: "gap-small",
     iconStart: "text-danger",
@@ -216,6 +216,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 - `aria-pressed` (multiple) / `aria-checked` (single)
 - `tabIndex` в group: roving `0` / `-1` (и `single`, и `multiple`)
 - Focus ring: `focus-ring`
+- Forced colors (Windows HCM): pressed fill — `Highlight` (`data-selection-fill` + `data-pressed`)
 
 ## Интеграция
 

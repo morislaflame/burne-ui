@@ -1,11 +1,12 @@
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type KeyboardEvent, type PointerEvent } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderPointerToValue, sliderThumbCenterPercent } from "@/components/core/Slider/sliderAPI";
 import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
 import { useControllableState } from "@/components/core/utils/useControllableState";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 import { mergeMotionRootSiblings } from "@/components/core/utils/slotMotion";
 import {
   mergeMotionSlotMaps,
@@ -17,7 +18,7 @@ import {
   ColorSliderMotionProvider,
   useOptionalColorSliderMotionScope,
 } from "./colorSliderContext";
-
+ 
 import { CHANNEL_A11Y_LABEL, COLOR_SLIDER_LABEL_ROW_CLASS, COLOR_SLIDER_LABEL_TEXT_CLASS, COLOR_SLIDER_ROOT_CLASS, COLOR_SLIDER_VALUE_TEXT_CLASS, colorSliderBackgroundStyle, colorSliderTrackClass } from "./colorSliderStyles";
 import type {
   ColorChannel,
@@ -25,7 +26,7 @@ import type {
   ColorSliderTrackProps,
 } from "./colorSliderTypes";
 import { clampN } from "./colorUtils";
-
+ 
 export type {
   ColorChannel,
   ColorSliderOrientation,
@@ -35,7 +36,7 @@ export type {
   ColorSliderMotion,
   ColorSliderPartMotion,
 } from "./colorSliderTypes";
-
+ 
 const CHANNEL_RANGE: Record<ColorChannel, { min: number; max: number; step: number }> = {
   hue:        { min: 0,   max: 360, step: 1   },
   saturation: { min: 0,   max: 100, step: 1   },
@@ -45,11 +46,11 @@ const CHANNEL_RANGE: Record<ColorChannel, { min: number; max: number; step: numb
   green:      { min: 0,   max: 255, step: 1   },
   blue:       { min: 0,   max: 255, step: 1   },
 };
-
+ 
 const CHANNEL_DEFAULT: Record<ColorChannel, number> = {
   hue: 0, saturation: 100, value: 100, alpha: 100, red: 255, green: 0, blue: 0,
 };
-
+ 
 export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps>(
   function ColorSliderTrack({ motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parent = useOptionalColorSliderMotionScope();
@@ -63,7 +64,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
     const motionDefaults = useMemo(() => resolveColorSliderMotionDefaults(), []);
-
+ 
     return (
       <ColorSliderMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -74,7 +75,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
     );
   },
 );
-
+ 
 const ColorSliderTrackSurface = forwardRef<
   HTMLDivElement,
   ColorSliderTrackProps & {
@@ -116,11 +117,11 @@ const ColorSliderTrackSurface = forwardRef<
       [size],
     );
     const [thumbSpanPx, setThumbSpanPx] = useState(fallbackThumbPx);
-
+ 
     useLayoutEffect(() => {
       const el = trackRef.current;
       if (!el) return;
-
+ 
       const measure = () => {
         const rect = el.getBoundingClientRect();
         const { trackSpanPx: spanPx, thumbSpanPx: thumbPx } = readSliderTrackMetrics(
@@ -132,13 +133,14 @@ const ColorSliderTrackSurface = forwardRef<
           setThumbSpanPx((prev) => (prev === thumbPx ? prev : thumbPx));
         }
       };
-
+ 
       measure();
+      if (typeof ResizeObserver === "undefined") return;
       const observer = new ResizeObserver(measure);
       observer.observe(el);
       return () => observer.disconnect();
     }, [orientation]);
-
+ 
     const emit = useCallback(
       (raw: number) => {
         const next = clampN(Math.round(raw / step) * step, min, max);
@@ -147,9 +149,9 @@ const ColorSliderTrackSurface = forwardRef<
       },
       [min, max, step, setValueInternal, onValueChange],
     );
-
+ 
     const effectiveThumbPx = thumbSpanPx > 0 ? thumbSpanPx : fallbackThumbPx;
-
+ 
     const updateFromPointer = useCallback(
       (clientX: number, clientY: number) => {
         const el = trackRef.current;
@@ -169,7 +171,7 @@ const ColorSliderTrackSurface = forwardRef<
       },
       [disabled, effectiveThumbPx, emit, max, min, orientation],
     );
-
+ 
     useEffect(() => {
       const onMove = (e: globalThis.PointerEvent) => {
         if (!dragging.current) return;
@@ -188,7 +190,7 @@ const ColorSliderTrackSurface = forwardRef<
         window.removeEventListener("pointercancel", onUp);
       };
     }, [updateFromPointer]);
-
+ 
     const handleTrackDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
         if (disabled || e.button !== 0) return;
@@ -199,7 +201,7 @@ const ColorSliderTrackSurface = forwardRef<
       },
       [disabled, updateFromPointer],
     );
-
+ 
     const part = useColorSliderTrackMotion({
       motion: itemMotion,
       forwardedRef,
@@ -212,7 +214,7 @@ const ColorSliderTrackSurface = forwardRef<
       },
       onPointerUp,
     });
-
+ 
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
         trackRef.current = node;
@@ -220,7 +222,7 @@ const ColorSliderTrackSurface = forwardRef<
       },
       [part.setRef],
     );
-
+ 
     const handleThumbDown = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         if (disabled || e.button !== 0) return;
@@ -231,7 +233,7 @@ const ColorSliderTrackSurface = forwardRef<
       },
       [disabled],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: KeyboardEvent<HTMLButtonElement>) => {
         if (disabled) return;
@@ -253,7 +255,7 @@ const ColorSliderTrackSurface = forwardRef<
       },
       [disabled, orientation, step, min, max, value, emit],
     );
-
+ 
     const thumbPercent = sliderThumbCenterPercent(
       value,
       min,
@@ -261,7 +263,7 @@ const ColorSliderTrackSurface = forwardRef<
       trackSpanPx,
       effectiveThumbPx,
     );
-
+ 
     return (
       <div
         ref={setRefs}
@@ -270,6 +272,7 @@ const ColorSliderTrackSurface = forwardRef<
         style={colorSliderBackgroundStyle(channel, color, orientation)}
         {...part.pointerHandlers}
         {...rest}
+        {...dataVariantProps({ size })}
       >
         <SliderThumbButton
           size={size}
@@ -288,9 +291,9 @@ const ColorSliderTrackSurface = forwardRef<
     );
   },
 );
-
+ 
 ColorSliderTrack.displayName = "ColorSliderTrack";
-
+ 
 export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
   function ColorSliderRoot(
     {
@@ -311,7 +314,7 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
     ref,
   ) {
     const motionDefaults = useMemo(() => resolveColorSliderMotionDefaults(), []);
-
+ 
     return (
       <ColorSliderMotionProvider
         motion={motion}
@@ -341,7 +344,7 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
     );
   },
 );
-
+ 
 function ColorSliderRootSurface({
   forwardedRef,
   channel,
@@ -386,10 +389,15 @@ function ColorSliderRootSurface({
   trackPlayInitialState: ColorSliderProps["playInitialState"];
 }) {
   const part = useColorSliderRootMotion({ forwardedRef });
-
+ 
   if (!children) {
     return (
-      <div ref={part.setRef} className={cn(COLOR_SLIDER_ROOT_CLASS, className)} {...part.pointerHandlers}>
+      <div
+        ref={part.setRef}
+        className={cn(COLOR_SLIDER_ROOT_CLASS, className)}
+        {...part.pointerHandlers}
+        {...dataVariantProps({ size })}
+      >
         {label ? (
           <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
             <Text as="span" variant="small" className={COLOR_SLIDER_LABEL_TEXT_CLASS}>{label}</Text>
@@ -413,10 +421,16 @@ function ColorSliderRootSurface({
     );
   }
   return (
-    <div ref={part.setRef} className={cn(COLOR_SLIDER_ROOT_CLASS, className)} {...part.pointerHandlers}>
+    <div
+      ref={part.setRef}
+      className={cn(COLOR_SLIDER_ROOT_CLASS, className)}
+      {...part.pointerHandlers}
+      {...dataVariantProps({ size })}
+    >
       {children}
     </div>
   );
 }
-
+ 
 ColorSliderRoot.displayName = "ColorSliderRoot";
+ 

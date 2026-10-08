@@ -1,5 +1,5 @@
 import { forwardRef, useMemo } from "react";
-
+ 
 import { skeletonPresentationProps } from "./skeletonA11y";
 import { resolveSkeletonMotionDefaults, useSkeletonSlotMotion } from "./skeletonAnimations";
 import { SkeletonMotionProvider, useSkeletonMotionScope } from "./skeletonContext";
@@ -13,9 +13,9 @@ import {
 import { SKELETON_BASE_CLASS, skeletonRadiusClass, skeletonVariantStyle } from "./skeletonStyles";
 import type { SkeletonPartMotion, SkeletonProps } from "./skeletonTypes";
 import { useSkeletonRootState } from "./useSkeletonRootState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export type {
   SkeletonProps,
   SkeletonCircleProps,
@@ -32,7 +32,7 @@ export type {
   SkeletonMotion,
   SkeletonPartMotion,
 } from "./skeletonTypes";
-
+ 
 export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonRoot(
   {
     animation: animationProp = "wave",
@@ -55,7 +55,7 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
     radius: radiusProp,
   });
   const motionDefaults = useMemo(() => resolveSkeletonMotionDefaults(), []);
-
+ 
   return (
     <SkeletonMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -77,7 +77,7 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
     </SkeletonMotionProvider>
   );
 });
-
+ 
 function SkeletonRootSurface({
   animation,
   radius,
@@ -117,7 +117,7 @@ function SkeletonRootSurface({
     motion: rootMotion,
     forwardedRef,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -137,7 +137,8 @@ function SkeletonRootSurface({
     </div>
   );
 }
-
+ 
 SkeletonRoot.displayName = "Skeleton";
-
+ 
 export { SkeletonCircle, SkeletonText, SkeletonBlock, SkeletonRegion };
+ 

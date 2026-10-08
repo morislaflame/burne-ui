@@ -24,7 +24,7 @@ import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTe
 <Skeleton.Region busy aria-label="Profile">
   <Skeleton.Block animation="wave">
     <div className="flex gap-base">
-      <Skeleton.Circle size="h-control-mid w-control-mid" />
+      <Skeleton.Circle size="min-h-control-mid w-control-mid" />
       <div className="flex-1">
         <Skeleton.Text lines={3} animation="wave" />
       </div>
@@ -32,6 +32,26 @@ import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTe
   </Skeleton.Block>
 </Skeleton.Region>
 ```
+
+### `SkeletonClassNames`
+
+`root`, `wave`.
+
+### `SkeletonCircleClassNames`
+
+`root`, `wave`.
+
+### `SkeletonTextClassNames`
+
+`root`, `line`, `wave`.
+
+### `SkeletonBlockClassNames`
+
+`root`, `wave`.
+
+### `SkeletonRegionClassNames`
+
+`root`.
 
 ### Root props (`Skeleton`)
 
@@ -111,10 +131,10 @@ const [busy, setBusy] = useState(true);
 |----------------------|-----|
 | `none` | без rounding |
 | `small` | `rounded-small` |
-| `mid` | `rounded-mid` |
+| `mid` | `rounded-large` |
 | `full` | `rounded-full` |
 
-Размеры не enum — через `className` / `size` prop (Tailwind: `h-8`, `w-full`, `h-control-base`).
+Размеры не enum — через `className` / `size` prop (Tailwind: `h-8`, `w-full`, `min-h-control-base`).
 
 `status` нет.
 
@@ -216,10 +236,10 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 | Base | `bg-primary-tint relative overflow-hidden skeleton-animate` |
 | Wave overlay | absolute inset, gradient slide |
 | Shimmer gradient | `var(--color-primary-tint)` → `strong` |
-| Circle default | `rounded-full h-control-base w-control-base` |
+| Circle default | `rounded-full min-h-control-base w-control-base` |
 | Text line | `h-[1em] rounded-small` |
 | Last line | `w-3/5` при `lastShort` |
-| Block | `rounded-mid px-large py-mid` |
+| Block | `rounded-large px-large py-mid` |
 
 ## Стилизация и кастомизация
 
@@ -245,13 +265,13 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 ```tsx
 <Skeleton.Block animation="wave" classNames={{ root: "rounded-large p-large" }}>
   <div className="flex gap-base">
-    <Skeleton.Circle size="h-control-large w-control-large" />
+    <Skeleton.Circle size="min-h-control-large w-control-large" />
     <div className="flex flex-1 flex-col gap-small">
       <Skeleton.Text lines={2} lastShort />
-      <Skeleton className="h-32 w-full rounded-mid" />
+      <Skeleton className="h-32 w-full rounded-large" />
       <div className="flex gap-small">
-        <Skeleton className="h-control-base w-24 rounded-mid" />
-        <Skeleton className="h-control-base w-24 rounded-mid" />
+        <Skeleton className="min-h-control-base w-24 rounded-large" />
+        <Skeleton className="min-h-control-base w-24 rounded-large" />
       </div>
     </div>
   </div>

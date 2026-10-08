@@ -1,13 +1,13 @@
 import { TabsList, TabsPanel, TabsRoot, TabsTab } from "./Tabs";
-
+ 
 export const Tabs = Object.assign(TabsRoot, {
   List: TabsList,
   Tab: TabsTab,
   Panel: TabsPanel,
 });
-
+ 
 export { useTabsContext, useTabsClassNames } from "./tabsContext";
-
+ 
 export type {
   TabsProps,
   TabsListProps,
@@ -20,3 +20,4 @@ export type {
   TabsMotion,
   TabsPartMotion,
 } from "./tabsTypes";
+ 

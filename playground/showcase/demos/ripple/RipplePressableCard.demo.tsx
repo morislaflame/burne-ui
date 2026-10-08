@@ -28,7 +28,7 @@ export function RipplePressableCardDemo() {
       </Card>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <Dialog.Trigger asChild>
-          <Card pressable variant="gloss" className="max-w-xs">
+          <Card pressable variant="default" className="max-w-xs">
             <Ripple color="neutral" />
           </Card>
         </Dialog.Trigger>

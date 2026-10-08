@@ -1,13 +1,13 @@
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-import type { IconBaseProps } from "react-icons";
+import { KitChevronBack, KitChevronForward, type KitIconProps } from "@/components/core/utils/kitIcons";
 import { forwardRef, useCallback, useMemo, type ForwardedRef, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
-
+ 
 import { Text } from "@/components/core/Text";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
+import { dataActiveState } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, resolvePaginationPageAriaLabel } from "./paginationA11y";
 import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
 import { resolvePaginationControlMotionDefaults, usePaginationContentRef, usePaginationEllipsisSlot, usePaginationSummarySlot } from "./paginationAnimations";
@@ -31,7 +31,7 @@ import type {
   PaginationProps,
   PaginationSummaryProps,
 } from "./paginationTypes";
-
+ 
 export const PaginationRootShell = forwardRef<HTMLElement, Omit<PaginationProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">>(
   function PaginationRootShell(
     {
@@ -47,7 +47,7 @@ export const PaginationRootShell = forwardRef<HTMLElement, Omit<PaginationProps,
     ref,
   ) {
     const slotClassNames = usePaginationClassNames();
-
+ 
     return (
       <nav
         ref={ref}
@@ -63,9 +63,9 @@ export const PaginationRootShell = forwardRef<HTMLElement, Omit<PaginationProps,
     );
   },
 );
-
+ 
 PaginationRootShell.displayName = "Pagination";
-
+ 
 const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiveProps>(
   function PaginationInteractive(
     {
@@ -90,7 +90,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       parentScope?.getRootMotion(),
       motion ? { control: motion } : undefined,
     );
-
+ 
     return (
       <PaginationMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -112,7 +112,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
     );
   },
 );
-
+ 
 function PaginationInteractiveSurface({
   children,
   className,
@@ -174,7 +174,7 @@ function PaginationInteractiveSurface({
       playControl("pressOut", e.currentTarget);
     },
   });
-
+ 
   return (
     <button
       ref={setRef}
@@ -195,14 +195,14 @@ function PaginationInteractiveSurface({
     </button>
   );
 }
-
+ 
 PaginationInteractive.displayName = "PaginationInteractive";
-
+ 
 export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryProps>(
   function PaginationSummary({ className, children, motion, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
     const { setRef } = usePaginationSummarySlot(motion, ref);
-
+ 
     return (
       <div
         ref={setRef}
@@ -225,9 +225,9 @@ export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryPro
     );
   },
 );
-
+ 
 PaginationSummary.displayName = "Pagination.Summary";
-
+ 
 export const PaginationContent = forwardRef<HTMLOListElement, PaginationContentProps>(
   function PaginationContent({ className, children, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
@@ -238,7 +238,7 @@ export const PaginationContent = forwardRef<HTMLOListElement, PaginationContentP
       siblingCount: ctx?.siblingCount,
       children,
     });
-
+ 
     return (
       <ol
         ref={setRefs}
@@ -253,13 +253,13 @@ export const PaginationContent = forwardRef<HTMLOListElement, PaginationContentP
     );
   },
 );
-
+ 
 PaginationContent.displayName = "Pagination.Content";
-
+ 
 export const PaginationItem = forwardRef<HTMLLIElement, PaginationItemProps>(
   function PaginationItem({ className, children, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
-
+ 
     return (
       <li
         ref={ref}
@@ -274,9 +274,9 @@ export const PaginationItem = forwardRef<HTMLLIElement, PaginationItemProps>(
     );
   },
 );
-
+ 
 PaginationItem.displayName = "Pagination.Item";
-
+ 
 export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationPrevious(
     { disabled, onClick, children, className, "aria-label": ariaLabel, ...rest },
@@ -287,7 +287,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
     const slotClassNames = usePaginationClassNames();
     const page = ctx?.page;
     const resolvedDisabled = resolvePaginationPreviousDisabled({ disabled, page });
-
+ 
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
@@ -298,7 +298,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
       },
       [ctx, onClick, page, resolvedDisabled],
     );
-
+ 
     return (
       <PaginationInteractive
         ref={ref}
@@ -327,9 +327,9 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
     );
   },
 );
-
+ 
 PaginationPrevious.displayName = "Pagination.Previous";
-
+ 
 export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationNext(
     { disabled, onClick, children, className, "aria-label": ariaLabel, ...rest },
@@ -345,7 +345,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
       page,
       totalPages,
     });
-
+ 
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
@@ -361,7 +361,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
       },
       [ctx, onClick, page, resolvedDisabled, totalPages],
     );
-
+ 
     return (
       <PaginationInteractive
         ref={ref}
@@ -390,16 +390,16 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
     );
   },
 );
-
+ 
 PaginationNext.displayName = "Pagination.Next";
-
+ 
 type PaginationChevronIcon = ForwardRefExoticComponent<
-  IconBaseProps & RefAttributes<SVGSVGElement>
+  KitIconProps & RefAttributes<SVGSVGElement>
 >;
-
-const PaginationBackIcon = IoChevronBack as PaginationChevronIcon;
-const PaginationForwardIcon = IoChevronForward as PaginationChevronIcon;
-
+ 
+const PaginationBackIcon = KitChevronBack as PaginationChevronIcon;
+const PaginationForwardIcon = KitChevronForward as PaginationChevronIcon;
+ 
 export const PaginationPreviousIcon = forwardRef<SVGSVGElement, PaginationIconProps>(
   function PaginationPreviousIcon({ className, motion, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
@@ -409,7 +409,7 @@ export const PaginationPreviousIcon = forwardRef<SVGSVGElement, PaginationIconPr
       motion,
       forwardedRef: ref as ForwardedRef<HTMLElement>,
     });
-
+ 
     return (
       <PaginationBackIcon
         ref={setRef as Ref<SVGSVGElement>}
@@ -423,9 +423,9 @@ export const PaginationPreviousIcon = forwardRef<SVGSVGElement, PaginationIconPr
     );
   },
 );
-
+ 
 PaginationPreviousIcon.displayName = "Pagination.PreviousIcon";
-
+ 
 export const PaginationNextIcon = forwardRef<SVGSVGElement, PaginationIconProps>(
   function PaginationNextIcon({ className, motion, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
@@ -435,7 +435,7 @@ export const PaginationNextIcon = forwardRef<SVGSVGElement, PaginationIconProps>
       motion,
       forwardedRef: ref as ForwardedRef<HTMLElement>,
     });
-
+ 
     return (
       <PaginationForwardIcon
         ref={setRef as Ref<SVGSVGElement>}
@@ -449,9 +449,9 @@ export const PaginationNextIcon = forwardRef<SVGSVGElement, PaginationIconProps>
     );
   },
 );
-
+ 
 PaginationNextIcon.displayName = "Pagination.NextIcon";
-
+ 
 export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
   function PaginationPage(
     {
@@ -475,7 +475,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     const slotClassNames = usePaginationClassNames();
     const active =
       activeProp ?? (ctx?.page != null ? ctx.page === pageNumber : false);
-
+ 
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
@@ -484,9 +484,9 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
       },
       [active, ctx, onClick, pageNumber],
     );
-
+ 
     const label = children ?? pageNumber;
-
+ 
     if (active) {
       return (
         <Text
@@ -501,19 +501,20 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
           onClick={onClick as ((event: MouseEvent<HTMLElement>) => void) | undefined}
           {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
           {...rest}
+          data-state={dataActiveState(active)}
         >
           {label}
         </Text>
       );
     }
-
+ 
     const pageAriaLabel = resolvePaginationPageAriaLabel({
       ariaLabel,
       children,
       pageNumber,
       pageTemplate: labels.paginationPage,
     });
-
+ 
     return (
       <PaginationInteractive
         ref={ref}
@@ -526,6 +527,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
                 motionPayload={motionPayload}
                 playInitialState={playInitialState}
         {...rest}
+        data-state={dataActiveState(active)}
       >
         <Text
           variant="small"
@@ -541,9 +543,9 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     );
   },
 );
-
+ 
 PaginationPage.displayName = "Pagination.Page";
-
+ 
 export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
   function PaginationEllipsis(
     {
@@ -567,7 +569,7 @@ export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsis
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Text
         ref={part.setRef}
@@ -586,25 +588,25 @@ export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsis
     );
   },
 );
-
+ 
 PaginationEllipsis.displayName = "Pagination.Ellipsis";
-
+ 
 export function PaginationPages() {
   const { page, totalPages, siblingCount } = usePagination();
-
+ 
   if (page == null || totalPages == null) {
     throw new Error(
       "Pagination.Pages requires `page` and `totalPages` on the root <Pagination>.",
     );
   }
-
+ 
   const range = useMemo(
     () => getPaginationRange(page, totalPages, siblingCount),
     [page, siblingCount, totalPages],
   );
-
+ 
   let ellipsisSeen = 0;
-
+ 
   return (
     <>
       {range.map((item) => {
@@ -627,5 +629,6 @@ export function PaginationPages() {
     </>
   );
 }
-
+ 
 PaginationPages.displayName = "Pagination.Pages";
+ 

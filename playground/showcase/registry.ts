@@ -9,20 +9,28 @@ import { BreadcrumbsShowcase } from "./pages/BreadcrumbsShowcase";
 import { ButtonGroupShowcase } from "./pages/ButtonGroupShowcase";
 import { ButtonShowcase } from "./pages/ButtonShowcase";
 import { CalendarShowcase } from "./pages/CalendarShowcase";
+import { DatePickerShowcase } from "./pages/DatePickerShowcase";
+import { NumberInputShowcase } from "./pages/NumberInputShowcase";
+import { PinInputShowcase } from "./pages/PinInputShowcase";
+import { TagsInputShowcase } from "./pages/TagsInputShowcase";
+import { StepperShowcase } from "./pages/StepperShowcase";
 import { CardShowcase } from "./pages/CardShowcase";
 import { CheckboxShowcase } from "./pages/CheckboxShowcase";
 import { CloseButtonShowcase } from "./pages/CloseButtonShowcase";
 import { ColorPickerShowcase } from "./pages/ColorPickerShowcase";
 import { ComboBoxShowcase } from "./pages/ComboBoxShowcase";
+import { ContextMenuShowcase } from "./pages/ContextMenuShowcase";
 import { DialogShowcase } from "./pages/DialogShowcase";
+import { DirectionShowcase } from "./pages/DirectionShowcase";
 import { DisclosureShowcase } from "./pages/DisclosureShowcase";
 import { DrawerShowcase } from "./pages/DrawerShowcase";
 import { DropdownShowcase } from "./pages/DropdownShowcase";
 import { ExpandableShowcase } from "./pages/ExpandableShowcase";
 import { FieldShowcase } from "./pages/FieldShowcase";
 import { FormShowcase } from "./pages/FormShowcase";
-import { GlossShowcase } from "./pages/GlossShowcase";
 import { MotionAsyncShowcase } from "./pages/MotionAsyncShowcase";
+import { SkinEditorShowcase } from "./pages/SkinEditorShowcase";
+import { MotionShowcase } from "./pages/MotionShowcase";
 import { MotionConfigShowcase } from "./pages/MotionConfigShowcase";
 import { MotionGroupShowcase } from "./pages/MotionGroupShowcase";
 import { InputShowcase } from "./pages/InputShowcase";
@@ -32,6 +40,7 @@ import { ListBoxShowcase } from "./pages/ListBoxShowcase";
 import { LoadingShowcase } from "./pages/LoadingShowcase";
 import { MeterShowcase } from "./pages/MeterShowcase";
 import { PaginationShowcase } from "./pages/PaginationShowcase";
+import { HoverCardShowcase } from "./pages/HoverCardShowcase";
 import { PopoverShowcase } from "./pages/PopoverShowcase";
 import { ProgressBarShowcase } from "./pages/ProgressBarShowcase";
 import { RadioGroupShowcase } from "./pages/RadioGroupShowcase";
@@ -41,6 +50,7 @@ import { SelectShowcase } from "./pages/SelectShowcase";
 import { SelectionIndicatorShowcase } from "./pages/SelectionIndicatorShowcase";
 import { SkeletonShowcase } from "./pages/SkeletonShowcase";
 import { SliderShowcase } from "./pages/SliderShowcase";
+import { ScrollAreaShowcase } from "./pages/ScrollAreaShowcase";
 import { SurfaceShowcase } from "./pages/SurfaceShowcase";
 import { SwitchShowcase } from "./pages/SwitchShowcase";
 import { TableShowcase } from "./pages/TableShowcase";
@@ -114,6 +124,10 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
       { id: "color-picker", label: "ColorPicker", Page: ColorPickerShowcase },
       { id: "selection-indicator", label: "SelectionIndicator", Page: SelectionIndicatorShowcase },
       { id: "calendar", label: "Calendar", Page: CalendarShowcase },
+      { id: "date-picker", label: "DatePicker", Page: DatePickerShowcase },
+      { id: "number-input", label: "NumberInput", Page: NumberInputShowcase },
+      { id: "pin-input", label: "PinInput", Page: PinInputShowcase },
+      { id: "tags-input", label: "TagsInput", Page: TagsInputShowcase },
     ],
   },
   {
@@ -123,6 +137,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
       { id: "breadcrumbs", label: "Breadcrumbs", Page: BreadcrumbsShowcase },
       { id: "link", label: "Link", Page: LinkShowcase },
       { id: "pagination", label: "Pagination", Page: PaginationShowcase },
+      { id: "stepper", label: "Stepper", Page: StepperShowcase },
       { id: "tabs", label: "Tabs", Page: TabsShowcase },
     ],
   },
@@ -132,7 +147,9 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
     pages: [
       { id: "tooltip", label: "Tooltip", Page: TooltipShowcase },
       { id: "popover", label: "Popover", Page: PopoverShowcase },
+      { id: "hover-card", label: "HoverCard", Page: HoverCardShowcase },
       { id: "dropdown", label: "Dropdown", Page: DropdownShowcase },
+      { id: "context-menu", label: "ContextMenu", Page: ContextMenuShowcase },
       { id: "dialog", label: "Dialog", Page: DialogShowcase },
       { id: "drawer", label: "Drawer", Page: DrawerShowcase },
       { id: "alert-dialog", label: "AlertDialog", Page: AlertDialogShowcase },
@@ -146,6 +163,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
       { id: "card", label: "Card", Page: CardShowcase },
       { id: "table", label: "Table", Page: TableShowcase },
       { id: "surface", label: "Surface", Page: SurfaceShowcase },
+      { id: "scroll-area", label: "ScrollArea", Page: ScrollAreaShowcase },
       { id: "avatar", label: "Avatar", Page: AvatarShowcase },
       { id: "skeleton", label: "Skeleton", Page: SkeletonShowcase },
     ],
@@ -163,7 +181,9 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
     id: "theme",
     label: "Theme",
     pages: [
-      { id: "gloss", label: "Gloss", Page: GlossShowcase },
+      { id: "skin", label: "Skin", Page: SkinEditorShowcase },
+      { id: "direction", label: "Direction", Page: DirectionShowcase },
+      { id: "motion", label: "Motion", Page: MotionShowcase },
       { id: "motion-group", label: "MotionGroup", Page: MotionGroupShowcase },
       { id: "motion-async", label: "MotionAsync", Page: MotionAsyncShowcase },
       { id: "motion-config", label: "MotionConfig", Page: MotionConfigShowcase },

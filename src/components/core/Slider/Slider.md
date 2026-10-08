@@ -43,7 +43,7 @@ import { Slider, sliderThicknessToCss, type SliderProps, type SliderSingleProps,
     <Slider.Label>Яркость</Slider.Label>
     <Slider.Value />
   </Slider.Header>
-  <Slider.Track icon={<IoSunny aria-hidden />} gloss />
+  <Slider.Track icon={<IoSunny aria-hidden />} variant="default" />
   <Slider.Hint>Перетащите ползунок</Slider.Hint>
 </Slider>
 ```
@@ -73,7 +73,7 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | `range` | `false` | Два thumb |
 | `value` / `defaultValue` | — | `number` или `[number, number]` |
 | `formatValue` | — | Формат текста в `Slider.Value` |
-| `gloss` | `false` | Gloss thumb shell |
+| `variant` | `default` | Kit thumb shell или имя скина |
 | `icon` | — | Иконка в thumb |
 | `disabled` | `false` | |
 | `showValue` | simple | Показать value в header |
@@ -83,7 +83,7 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 
 ### `SliderClassNames`
 
-`root`, `label`, `header`, `value`, `hint`, `error`, `track`, `rail`, `fill`, `thumb`, `thumbShell`, `mark`.
+`root`, `label`, `header`, `value`, `hint`, `error`, `track`, `rail`, `fill`, `thumb`, `thumbShell`, `icon`, `mark`.
 
 `Slider.Track` принимает локальный pick: `track`, `rail`, `fill`, `thumb`, `thumbShell`, `mark`.
 
@@ -160,11 +160,12 @@ configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
 | `header` | `Slider.Header` | Row label + value |
 | `value` | `Slider.Value` | Formatted value text |
 | `hint` / `error` | Field hint/error | Secondary |
-| `track` | Track hit area | Ring, gloss, orientation size |
+| `track` | Track hit area | Ring, orientation size |
 | `rail` | Rail background | Track bg |
+| `icon` | `Slider.Icon` | Glyph inside the thumb |
 | `fill` | Selected range fill | Primary tint |
 | `thumb` | Thumb button | Hit area |
-| `thumbShell` | SelectionThumb | Gloss/border |
+| `thumbShell` | SelectionThumb | Border / skin shell |
 | `mark` | Tick marks | Position dots |
 
 ### Simple API
@@ -175,7 +176,7 @@ configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
   showValue
   defaultValue={55}
   classNames={{
-    root: "rounded-mid border border-primary/25 p-base",
+    root: "rounded-large border border-primary/25 p-base",
     label: "text-primary",
     value: "font-semibold text-primary",
     track: "ring-1 ring-primary/20",
@@ -193,7 +194,7 @@ configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
   min={0}
   max={100}
   classNames={{
-    root: "rounded-mid border border-primary/25 p-base",
+    root: "rounded-large border border-primary/25 p-base",
     header: "text-primary",
     value: "font-semibold text-primary",
     track: "ring-1 ring-primary/20",
@@ -230,7 +231,7 @@ configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
 ## Утилиты
 
 ```tsx
-sliderThicknessToCss(thickness)  // number | string → CSS
+sliderThicknessToCss(thickness)  // number | string → CSS (`sliderStyles.ts`)
 ```
 
 ## Структура файлов
@@ -255,4 +256,4 @@ Slider/
 
 ## Storybook
 
-`Core Components/Slider` — single/range, vertical, marks, gloss, compound, `classNames`, slot motion gallery.
+`Core Components/Slider` — single/range, vertical, marks, variants, compound, `classNames`, slot motion gallery.

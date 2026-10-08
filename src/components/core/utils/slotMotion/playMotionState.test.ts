@@ -11,29 +11,24 @@ function fakeEl(name: string): HTMLElement {
 describe("nextMotionStateTransition", () => {
   it("skips the first commit unless playInitial", () => {
     expect(
-      nextMotionStateTransition(undefined, "idle", { isFirst: true, playInitial: false }),
-    ).toBeNull();
+      nextMotionStateTransition(undefined, "idle", { isFirst: true, playInitial: false })).toBeNull();
     expect(
-      nextMotionStateTransition(undefined, "idle", { isFirst: true, playInitial: true }),
-    ).toEqual({ from: undefined, to: "idle" });
+      nextMotionStateTransition(undefined, "idle", { isFirst: true, playInitial: true })).toEqual({ from: undefined, to: "idle" });
   });
 
   it("skips the same state", () => {
     expect(
-      nextMotionStateTransition("loading", "loading", { isFirst: false, playInitial: false }),
-    ).toBeNull();
+      nextMotionStateTransition("loading", "loading", { isFirst: false, playInitial: false })).toBeNull();
   });
 
   it("plays a change", () => {
     expect(
-      nextMotionStateTransition("idle", "loading", { isFirst: false, playInitial: false }),
-    ).toEqual({ from: "idle", to: "loading" });
+      nextMotionStateTransition("idle", "loading", { isFirst: false, playInitial: false })).toEqual({ from: "idle", to: "loading" });
   });
 
   it("skips an empty next", () => {
     expect(
-      nextMotionStateTransition("idle", undefined, { isFirst: false, playInitial: false }),
-    ).toBeNull();
+      nextMotionStateTransition("idle", undefined, { isFirst: false, playInitial: false })).toBeNull();
   });
 });
 

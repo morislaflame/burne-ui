@@ -4,12 +4,11 @@
  * DOM slots: `root` (`<button>`), `icon`
  *
  * Host: root (`useCloseButtonAnimations`) plays hover/press.
- * Defaults: first-level lift + squeeze; gloss recipes when gloss.
+ * Defaults: first-level lift + squeeze. A skin overlays its own recipes.
  * Ripple stays kit-internal.
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
-
-import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
+ 
 import {
   initElementShadow,
   isInteractivePressKey,
@@ -19,7 +18,8 @@ import {
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
-
+import { hasKitMember, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+ 
 import { useCloseButtonMotionScope } from "./closeButtonContext";
 import { CLOSE_BUTTON_HAS_HOVER_SHADOW } from "./closeButtonStyles";
 import type {
@@ -27,9 +27,9 @@ import type {
   CloseButtonVariant,
   UseCloseButtonAnimationsProps,
 } from "./closeButtonTypes";
-
-import "../utils/glossInteractive.css";
-
+import { KIT_CLOSE_BUTTON_VARIANTS } from "./closeButtonTypes";
+ 
+ 
 export function resolveCloseButtonMotionDefaults({
   variant,
   disabled,
@@ -37,18 +37,22 @@ export function resolveCloseButtonMotionDefaults({
   variant: CloseButtonVariant;
   disabled: boolean;
 }): CloseButtonMotion {
-  const isGloss = variant === "gloss";
   const enabled = !disabled;
-  return {
-    root: {
-      hoverIn: enabled ? (isGloss ? "hoverLiftGloss" : "hoverLiftFirstLevel") : false,
-      hoverOut: enabled ? (isGloss ? "hoverLiftGloss" : "hoverLiftFirstLevel") : false,
-      pressIn: enabled ? (isGloss ? "pressSqueezeGloss" : "pressSqueeze") : false,
-      pressOut: false,
+  return overlaySkinMotion(
+    {
+      root: {
+        hoverIn: enabled ? "hoverLiftFirstLevel" : false,
+        hoverOut: enabled ? "hoverLiftFirstLevel" : false,
+        pressIn: enabled ? "pressSqueeze" : false,
+        pressOut: false,
+      },
     },
-  };
+    variant,
+    KIT_CLOSE_BUTTON_VARIANTS,
+    "closeButton",
+  );
 }
-
+ 
 export function resolveCloseButtonMotionParams({
   variant,
   disabled,
@@ -60,11 +64,11 @@ export function resolveCloseButtonMotionParams({
 }) {
   return {
     pointerInside,
-    hasHoverShadow: !disabled && CLOSE_BUTTON_HAS_HOVER_SHADOW.has(variant),
-    isGloss: variant === "gloss",
+    hasHoverShadow:
+      !disabled && hasKitMember(variant, KIT_CLOSE_BUTTON_VARIANTS, CLOSE_BUTTON_HAS_HOVER_SHADOW),
   };
 }
-
+ 
 export function useCloseButtonAnimations({
   variant,
   disabled,
@@ -80,38 +84,36 @@ export function useCloseButtonAnimations({
   onKeyDown,
 }: UseCloseButtonAnimationsProps) {
   const enabled = !disabled;
-  const isGloss = variant === "gloss";
-  const hasHoverShadow = CLOSE_BUTTON_HAS_HOVER_SHADOW.has(variant);
+  const hasHoverShadow = hasKitMember(
+    variant,
+    KIT_CLOSE_BUTTON_VARIANTS,
+    CLOSE_BUTTON_HAS_HOVER_SHADOW,
+  );
   const btnRef = useRef<HTMLButtonElement>(null);
   const scope = useCloseButtonMotionScope();
   const rootMotionRef = useRef(motion?.root);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
-
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(btnRef, isGloss),
-    [isGloss],
-  );
-
+ 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
-      bindGlossRef(node);
       btnRef.current = node;
       scope.registerTarget("root", node);
       mergeForwardedRef(forwardedRef, node);
     },
-    [bindGlossRef, forwardedRef, scope],
+    [forwardedRef, scope],
   );
-
+ 
   const btnShadow = useMemo(
-    () => (hasHoverShadow && !isGloss ? shadowMotionFor("none") : undefined),
-    [hasHoverShadow, isGloss],
+    () => (hasHoverShadow ? shadowMotionFor("none") : undefined),
+    [hasHoverShadow],
   );
-
+ 
   useLayoutEffect(() => {
     if (!enabled || !btnShadow) return;
     initElementShadow(btnRef.current, shadowNone());
   }, [btnShadow, enabled]);
-
+ 
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       if (!enabled) return;
@@ -123,7 +125,7 @@ export function useCloseButtonAnimations({
     },
     [enabled, scope],
   );
-
+ 
   const motionPointer = useMotionPointerPhases<HTMLButtonElement>({
     enabled,
     targetRef: btnRef,
@@ -132,7 +134,7 @@ export function useCloseButtonAnimations({
     onHoverIn: () => playRoot("hoverIn"),
     onHoverOut: () => playRoot("hoverOut"),
   });
-
+ 
   const hoverHandlers = useMemo(
     () =>
       mergeMotionPointerHandlers(
@@ -143,7 +145,7 @@ export function useCloseButtonAnimations({
       ),
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOut, onPointerOver],
   );
-
+ 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDown?.(e);
@@ -152,7 +154,7 @@ export function useCloseButtonAnimations({
     },
     [enabled, onPointerDown, playRoot],
   );
-
+ 
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerUp?.(e);
@@ -161,21 +163,21 @@ export function useCloseButtonAnimations({
     },
     [enabled, onPointerUp, playRoot],
   );
-
+ 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnter?.(e);
     },
     [onPointerEnter],
   );
-
+ 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
     },
     [onPointerLeave],
   );
-
+ 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
@@ -184,7 +186,7 @@ export function useCloseButtonAnimations({
     },
     [enabled, onKeyDown, playRoot],
   );
-
+ 
   return {
     setRefs,
     handlePointerEnter,

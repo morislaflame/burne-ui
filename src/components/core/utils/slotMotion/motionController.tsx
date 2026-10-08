@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-
+ 
 import { gsap } from "@/components/core/utils/gsapMotion";
-
+ 
 import type { MotionRegistration } from "./createMotionRegistry";
 import type { MotionScopeValue } from "./createMotionScope";
 import { killStoredMotion } from "./runMotionPhase";
@@ -16,7 +16,7 @@ import type {
   MotionController,
   MotionPlayOptions,
 } from "./motionControllerTypes";
-
+ 
 const SET_KEYS = [
   "x",
   "y",
@@ -28,20 +28,27 @@ const SET_KEYS = [
   "autoAlpha",
   "opacity",
 ] as const;
-
+ 
 const attachments = new WeakMap<MotionController<string>, MotionScopeValue | null>();
-
+ 
 let idleRunId = 0;
-
+ 
 function warnDev(message: string): void {
   if (process.env.NODE_ENV !== "production") {
     console.error(`[burne-ui] MotionController: ${message}`);
   }
 }
 
+function noteDev(message: string): void {
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(`[burne-ui] MotionController: ${message}`);
+  }
+}
+ 
 function settledRun(status: MotionRunStatus): MotionRun {
   return {
     id: --idleRunId,
+    phase: "",
     status,
     finished: Promise.resolve(),
     animation: undefined,
@@ -50,7 +57,7 @@ function settledRun(status: MotionRunStatus): MotionRun {
     isCurrent: () => false,
   };
 }
-
+ 
 function pickSetVars(vars: MotionTransformVars): Record<string, number | string> {
   const out: Record<string, number | string> = {};
   for (const key of SET_KEYS) {
@@ -59,7 +66,7 @@ function pickSetVars(vars: MotionTransformVars): Record<string, number | string>
   }
   return out;
 }
-
+ 
 function bindExternalSignal(signal: AbortSignal | undefined, run: MotionRun): void {
   if (!signal) return;
   const abort = () => run.cancel("killed");
@@ -70,7 +77,7 @@ function bindExternalSignal(signal: AbortSignal | undefined, run: MotionRun): vo
   signal.addEventListener("abort", abort, { once: true });
   void run.finished.then(() => signal.removeEventListener("abort", abort));
 }
-
+ 
 function waitMs(ms: number, signal?: AbortSignal): Promise<boolean> {
   if (!(ms > 0)) return Promise.resolve(!signal?.aborted);
   return new Promise((resolve) => {
@@ -89,7 +96,7 @@ function waitMs(ms: number, signal?: AbortSignal): Promise<boolean> {
     );
   });
 }
-
+ 
 function playOnScope(
   scope: MotionScopeValue,
   slot: string,
@@ -98,7 +105,12 @@ function playOnScope(
 ): MotionRun {
   const isPhase = isMotionPhaseName(event);
   const eventValue = isPhase ? undefined : (options?.value ?? scope.getEvents()?.[event]);
-  if (!isPhase && (eventValue === undefined || eventValue === false)) {
+  if (!isPhase && eventValue === undefined) {
+    warnDev(`missing event "${event}"`);
+    noteDev(`skipped unknown event "${event}"`);
+    return settledRun("skipped");
+  }
+  if (!isPhase && eventValue === false) {
     warnDev(`missing event "${event}"`);
     return settledRun("finished");
   }
@@ -115,14 +127,14 @@ function playOnScope(
   bindExternalSignal(options?.signal, run);
   return run;
 }
-
+ 
 function createBoundController(getScope: () => MotionScopeValue | null): MotionController {
   let playAllGeneration = 0;
-
+ 
   const invalidatePlayAll = () => {
     playAllGeneration += 1;
   };
-
+ 
   const play: MotionController["play"] = (event, options) => {
     const scope = getScope();
     if (!scope) {
@@ -132,11 +144,11 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
     invalidatePlayAll();
     return playOnScope(scope, options?.slot ?? "root", event, options);
   };
-
+ 
   const playSlot: MotionController["playSlot"] = (slot, event, options) => {
     return play(event, { ...options, slot });
   };
-
+ 
   const playAll: MotionController["playAll"] = async (event, options) => {
     const scope = getScope();
     if (!scope) {
@@ -146,11 +158,16 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
     const generation = ++playAllGeneration;
     const isPhase = isMotionPhaseName(event);
     const eventValue = isPhase ? undefined : scope.getEvents()?.[event];
-    if (!isPhase && (eventValue === undefined || eventValue === false)) {
+    if (!isPhase && eventValue === undefined) {
       warnDev(`missing event "${event}"`);
-      return { runs: [] };
+      noteDev(`skipped unknown event "${event}"`);
+      return { runs: [settledRun("skipped")] };
     }
-
+    if (!isPhase && eventValue === false) {
+      warnDev(`missing event "${event}"`);
+      return { runs: [settledRun("finished")] };
+    }
+ 
     const exclude = new Set(options?.exclude ?? []);
     const staggerSec = options?.stagger;
     const staggerMs =
@@ -158,7 +175,7 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
     if (staggerSec != null && !(Number.isFinite(staggerSec) && staggerSec >= 0)) {
       warnDev(`stagger=${String(staggerSec)} ignored (need a finite number ≥ 0, seconds)`);
     }
-
+ 
     const byNode = new Map<HTMLElement, MotionRegistration[]>();
     for (const reg of scope.getRegistrations()) {
       if (exclude.has(reg.slot)) continue;
@@ -166,7 +183,7 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
       if (list) list.push(reg);
       else byNode.set(reg.node, [reg]);
     }
-
+ 
     const items = [...byNode.values()];
     const runs: MotionRun[] = [];
     let index = 0;
@@ -199,13 +216,13 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
       );
       index += 1;
     }
-
+ 
     if (options?.waitForComplete) {
       await Promise.all(runs.map((run) => run.finished));
     }
     return { runs };
   };
-
+ 
   const set: MotionController["set"] = (slot, vars) => {
     const scope = getScope();
     if (!scope) {
@@ -225,7 +242,7 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
       gsap.set(el, { ...props, force3D: false });
     }
   };
-
+ 
   const cancel: MotionController["cancel"] = (slot, reason: MotionCancelReason = "killed") => {
     const scope = getScope();
     if (!scope) return;
@@ -243,7 +260,7 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
       killStoredMotion(el, reason);
     }
   };
-
+ 
   return {
     play,
     playSlot,
@@ -254,7 +271,7 @@ function createBoundController(getScope: () => MotionScopeValue | null): MotionC
     getTargets: (slot) => getScope()?.getTargets(slot) ?? [],
   };
 }
-
+ 
 /** Deferred handle. Pass to `motionController` / Provider `controller`; attach on mount. */
 export function createMotionController(): MotionController;
 export function createMotionController<TEvent extends string>(): MotionController<TEvent>;
@@ -265,14 +282,14 @@ export function createMotionController<TEvent extends string>(): MotionControlle
   attachments.set(controller as MotionController<string>, null);
   return controller;
 }
-
+ 
 /** Stable handle for the current scope (tests / `createMotionScopeController`). */
 export function createMotionControllerFromScope(
   scope: MotionScopeValue,
 ): MotionController {
   return createBoundController(() => scope);
 }
-
+ 
 /** Bind a deferred handle to a live scope. `null` detaches (unmount). One handle → one scope. */
 export function attachMotionController(
   controller: MotionController<string>,
@@ -286,9 +303,9 @@ export function attachMotionController(
   }
   attachments.set(controller, scope);
 }
-
+ 
 const MotionControllerContext = createContext<MotionController | null>(null);
-
+ 
 export function MotionControllerProvider({
   controller,
   children,
@@ -302,7 +319,7 @@ export function MotionControllerProvider({
     </MotionControllerContext.Provider>
   );
 }
-
+ 
 /** Nearest motion scope (Alert / Dialog / …). Throws outside a scope. */
 export function useMotionController(): MotionController {
   const ctx = useContext(MotionControllerContext);
@@ -311,11 +328,11 @@ export function useMotionController(): MotionController {
   }
   return ctx;
 }
-
+ 
 export function useOptionalMotionController(): MotionController | null {
   return useContext(MotionControllerContext);
 }
-
+ 
 /** Stable `createMotionController()` for the lifetime of the component. */
 export function useMotionControllerHandle(): MotionController;
 export function useMotionControllerHandle<TEvent extends string>(): MotionController<TEvent>;
@@ -323,3 +340,4 @@ export function useMotionControllerHandle<TEvent extends string>(): MotionContro
   const [controller] = useState(() => createMotionController<TEvent>());
   return controller;
 }
+ 

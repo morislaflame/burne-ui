@@ -11,7 +11,7 @@ export function RadioGroupCustomIndicatorDemo() {
       <RadioGroup.List>
         <Radio value="design">
           <Radio.Control>
-            <Radio.Indicator className="rounded-mid" />
+            <Radio.Indicator className="rounded-large" />
           </Radio.Control>
           <Radio.Content>
             <Radio.Label>Design</Radio.Label>
@@ -19,7 +19,7 @@ export function RadioGroupCustomIndicatorDemo() {
         </Radio>
         <Radio value="dev">
           <Radio.Control>
-            <Radio.Indicator className="rounded-mid" />
+            <Radio.Indicator className="rounded-large" />
           </Radio.Control>
           <Radio.Content>
             <Radio.Label>Development</Radio.Label>
@@ -27,7 +27,7 @@ export function RadioGroupCustomIndicatorDemo() {
         </Radio>
         <Radio value="qa">
           <Radio.Control>
-            <Radio.Indicator className="rounded-mid" />
+            <Radio.Indicator className="rounded-large" />
           </Radio.Control>
           <Radio.Content>
             <Radio.Label>Testing</Radio.Label>

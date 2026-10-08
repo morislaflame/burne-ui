@@ -7,53 +7,58 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
-
-export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
-
-export type BadgeStatus = "default" | "danger" | "success" | "info" | "warning";
-
+ 
+export const KIT_BADGE_VARIANTS = ["default", "primary", "outline", "secondary"] as const;
+export type KitBadgeVariant = (typeof KIT_BADGE_VARIANTS)[number];
+export type BadgeVariant = KitBadgeVariant | (string & {});
+ 
+export type BadgeStatus = SemanticStatus;
+ 
 export type BadgeSize = "small" | "base" | "mid" | "large";
-
+ 
 export type BadgePlacement =
   | "top-right"
   | "top-left"
   | "bottom-right"
   | "bottom-left";
-
-export type BadgeIconPosition = IconPosition;
-
+ 
 export type BadgeInlineIconPosition = "inline-start" | "inline-end";
-
+ 
 export type BadgeClassNames = {
   root?: string;
   text?: string;
+  /** Wrapper around `icon` and inline `data-icon` children. */
+  icon?: string;
   iconOnly?: string;
   dot?: string;
   anchor?: string;
+  /** Outer shell when the badge lift splits from the anchor. `root` stays on the inner badge. */
+  splitShell?: string;
 };
-
+ 
 export type BadgePartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
 };
-
+ 
 export type BadgeMotion = {
   root?: BadgePartMotion;
   anchor?: BadgePartMotion;
 };
-
+ 
 export type BadgeLayoutKind = "dot" | "iconOnly" | "text";
-
+ 
 export type BadgeLiftContextValue = {
   registerLiftTarget: (el: HTMLElement | null) => void;
   anchorRef: RefObject<HTMLDivElement | null>;
   anchorCommitGen: number;
   hoverLift: boolean;
 };
-
+ 
 export type BadgeShellProps = {
   setMergedRef: Ref<HTMLSpanElement>;
   splitLift: boolean;
@@ -61,29 +66,34 @@ export type BadgeShellProps = {
   splitLiftMotionCls: string;
   selfLiftMotionCls: string;
   isDirectAnchorChild: boolean;
-  isGloss: boolean;
+  kitSurface: boolean;
   innerLiftRef: Ref<HTMLSpanElement>;
   pointerHandlers: {
     onPointerOver: (e: React.PointerEvent<HTMLSpanElement>) => void;
     onPointerOut: (e: React.PointerEvent<HTMLSpanElement>) => void;
   };
   rest: HTMLAttributes<HTMLSpanElement>;
+  variantData?: {
+    "data-size"?: string;
+    "data-variant"?: string;
+    "data-status"?: string;
+  };
   className: string;
   dataIcon?: string;
   children: ReactNode;
   withA11y?: boolean;
 };
-
+ 
 export type BadgeDotShellProps = Omit<
   BadgeShellProps,
   "children" | "className" | "withA11y" | "dataIcon"
 >;
-
+ 
 export type BadgeTextShellProps = Omit<
   BadgeShellProps,
   "children" | "className" | "withA11y"
 >;
-
+ 
 export type BadgeDotViewProps = {
   size: BadgeSize;
   variant: BadgeVariant;
@@ -92,7 +102,7 @@ export type BadgeDotViewProps = {
   className: string;
   rest: HTMLAttributes<HTMLSpanElement>;
 };
-
+ 
 export type BadgeIconOnlyViewProps = {
   size: BadgeSize;
   surfaceClass: string;
@@ -101,7 +111,7 @@ export type BadgeIconOnlyViewProps = {
   rest: HTMLAttributes<HTMLSpanElement>;
   iconOnlyBody: ReactNode;
 };
-
+ 
 export type BadgeTextViewProps = {
   size: BadgeSize;
   surfaceClass: string;
@@ -111,25 +121,26 @@ export type BadgeTextViewProps = {
   bodyContent: ReactNode;
   dataIcon?: string;
 };
-
+ 
 export type ResolveBadgeBodyProps = {
   size: BadgeSize;
   children?: ReactNode;
   icon?: ReactNode;
   iconOnly: boolean;
-  iconPosition: BadgeIconPosition;
+  iconPosition: IconPosition;
   inlineIconMode: boolean;
   meaningChild: boolean;
   dot: boolean;
+  iconSlotClass?: string;
 };
-
+ 
 export type ResolvedBadgeBody = {
   layoutKind: BadgeLayoutKind;
   bodyContent: ReactNode;
   iconOnlyBody: ReactNode;
-  dataIcon: BadgeIconPosition | undefined;
+  dataIcon: IconPosition | undefined;
 };
-
+ 
 export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children?: ReactNode;
   classNames?: Prettify<BadgeClassNames>;
@@ -146,13 +157,13 @@ export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   variant?: BadgeVariant;
   status?: BadgeStatus;
   size?: BadgeSize;
   icon?: ReactNode;
-  iconPosition?: BadgeIconPosition;
+  iconPosition?: IconPosition;
   iconOnly?: boolean;
   dot?: boolean;
   placement?: BadgePlacement;
@@ -177,12 +188,13 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type BadgeInlineChildProps = {
   node: ReactNode;
   size: BadgeSize;
+  iconSlotClass?: string;
 };
-
+ 
 export type UseBadgeRootStateProps = {
   variant: BadgeVariant;
   status: BadgeStatus;
@@ -190,11 +202,12 @@ export type UseBadgeRootStateProps = {
   children?: ReactNode;
   icon?: ReactNode;
   iconOnly: boolean;
-  iconPosition: BadgeIconPosition;
+  iconPosition: IconPosition;
   dot: boolean;
   placement?: BadgePlacement;
+  iconSlotClass?: string;
 };
-
+ 
 export type BadgeAnimationsSyncDeps = {
   meaningChild: boolean;
   icon: ReactNode;
@@ -202,7 +215,7 @@ export type BadgeAnimationsSyncDeps = {
   iconOnly: boolean;
   children: ReactNode;
 };
-
+ 
 export type UseBadgeAnimationsProps = {
   variant: BadgeVariant;
   hoverLift?: boolean;
@@ -214,17 +227,18 @@ export type UseBadgeAnimationsProps = {
   onPointerOut?: (e: ReactPointerEvent<HTMLSpanElement>) => void;
   syncDeps: BadgeAnimationsSyncDeps;
 };
-
+ 
 export type BadgeLiftTargetProviderProps = {
   value: BadgeLiftContextValue;
   children: ReactNode;
 };
-
+ 
 export type BadgeDirectAnchorChildProviderProps = {
   children: ReactNode;
 };
-
+ 
 export type BadgeClassNamesProviderProps = {
   classNames?: Prettify<BadgeClassNames>;
   children: ReactNode;
 };
+ 

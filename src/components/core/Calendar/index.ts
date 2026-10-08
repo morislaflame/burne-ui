@@ -8,7 +8,7 @@ import {
   CalendarRoot,
   CalendarTitle,
 } from "./Calendar";
-
+ 
 export const Calendar = Object.assign(CalendarRoot, {
   Header: CalendarHeader,
   Grid: CalendarGrid,
@@ -18,10 +18,11 @@ export const Calendar = Object.assign(CalendarRoot, {
   Title: CalendarTitle,
   Day: CalendarDay,
 });
-
-export { EN_LOCALE } from "./calendarLocale";
+ 
+export { EN_LOCALE, createCalendarLocale, resolveCalendarLocale } from "./calendarLocale";
+export type { CalendarLocaleLabels } from "./calendarLocale";
 export { useCalendar } from "./calendarContext";
-
+ 
 export type {
   CalendarProps,
   CalendarHeaderProps,
@@ -43,3 +44,4 @@ export type {
   CalendarMotion,
   CalendarPartMotion,
 } from "./calendarTypes";
+ 

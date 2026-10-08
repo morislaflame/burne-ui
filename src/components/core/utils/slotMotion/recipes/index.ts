@@ -2,7 +2,6 @@ import { registerKitMotionRecipe } from "../motionRecipeRegistry";
 import { chevronRotateRecipe } from "./chevronRotate";
 import { collapsibleHeightRecipe } from "./collapsibleHeight";
 import { hoverLiftFirstLevelRecipe } from "./hoverLiftFirstLevel";
-import { hoverLiftGlossRecipe } from "./hoverLiftGloss";
 import { hoverLiftSecondLevelRecipe } from "./hoverLiftSecondLevel";
 import {
   modalOverlayEnterRecipe,
@@ -12,7 +11,7 @@ import {
 } from "./modalSurface";
 import { drawerSlideEnterRecipe, drawerSlideLeaveRecipe } from "./drawerSlide";
 import { portalSurfaceEnterRecipe, portalSurfaceLeaveRecipe } from "./portalSurface";
-import { pressSqueezeGlossRecipe, pressSqueezeRecipe } from "./pressSqueeze";
+import { pressSqueezeRecipe } from "./pressSqueeze";
 import { selectionFillRecipe } from "./selectionFill";
 import { selectionMarkRecipe } from "./selectionMark";
 import {
@@ -26,14 +25,16 @@ import { contentFadeRecipe } from "./contentFade";
 import { fileRowExitRecipe } from "./fileRowExit";
 import { searchExpandRecipe, searchIconShiftRecipe } from "./searchExpand";
 import { progressFillRecipe, progressIndeterminateRecipe } from "./progressFill";
-
+import { toastStackShiftRecipe } from "./toastStackShift";
+import { toastScrimFadeRecipe } from "./toastScrimFade";
+import { tabsIndicatorMoveRecipe } from "./tabsIndicatorMove";
+import { loadingDotsRecipe } from "./loadingDots";
+ 
 /** Idempotent kit-layer write. Does not clear app overrides (`{ override: true }`). */
 export function registerKitMotionRecipes(): void {
   registerKitMotionRecipe("hoverLiftSecondLevel", hoverLiftSecondLevelRecipe);
-  registerKitMotionRecipe("hoverLiftGloss", hoverLiftGlossRecipe);
   registerKitMotionRecipe("hoverLiftFirstLevel", hoverLiftFirstLevelRecipe);
   registerKitMotionRecipe("pressSqueeze", pressSqueezeRecipe);
-  registerKitMotionRecipe("pressSqueezeGloss", pressSqueezeGlossRecipe);
   registerKitMotionRecipe("collapsibleHeight", collapsibleHeightRecipe);
   registerKitMotionRecipe("chevronRotate", chevronRotateRecipe);
   registerKitMotionRecipe("portalSurfaceEnter", portalSurfaceEnterRecipe);
@@ -58,4 +59,9 @@ export function registerKitMotionRecipes(): void {
   registerKitMotionRecipe("fileRowExit", fileRowExitRecipe);
   registerKitMotionRecipe("progressFill", progressFillRecipe);
   registerKitMotionRecipe("progressIndeterminate", progressIndeterminateRecipe);
+  registerKitMotionRecipe("toastStackShift", toastStackShiftRecipe);
+  registerKitMotionRecipe("toastScrimFade", toastScrimFadeRecipe);
+  registerKitMotionRecipe("tabsIndicatorMove", tabsIndicatorMoveRecipe);
+  registerKitMotionRecipe("loadingDots", loadingDotsRecipe);
 }
+ 

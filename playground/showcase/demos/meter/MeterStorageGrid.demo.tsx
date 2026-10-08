@@ -13,7 +13,7 @@ export function MeterStorageGridDemo() {
       {METRICS.map((metric) => (
         <Meter
           key={metric.label}
-          className="flex flex-col gap-small rounded-mid border-token bg-secondary p-large"
+          className="flex flex-col gap-small rounded-large border-token bg-secondary p-large"
         >
           <Meter.Header className="flex-col items-start gap-0">
             <Meter.Label>

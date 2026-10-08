@@ -1,14 +1,14 @@
 import { forwardRef } from "react";
-
+ 
 import { Field } from "@/components/core/Field";
-
+ 
 import { comboBoxResolveHintStatus } from "./comboBoxA11y";
 import { useComboBoxChromeSlot } from "./comboBoxAnimations";
 import { useComboBoxClassNames, useComboBoxFieldContext } from "./comboBoxContext";
 import type { ComboBoxErrorProps, ComboBoxHintProps, ComboBoxLabelProps } from "./comboBoxTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export const ComboBoxLabel = forwardRef<HTMLElement, ComboBoxLabelProps>(
   function ComboBoxLabel(
     {
@@ -32,7 +32,7 @@ export const ComboBoxLabel = forwardRef<HTMLElement, ComboBoxLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Label
         ref={part.setRef}
@@ -47,9 +47,9 @@ export const ComboBoxLabel = forwardRef<HTMLElement, ComboBoxLabelProps>(
     );
   },
 );
-
+ 
 ComboBoxLabel.displayName = "ComboBoxLabel";
-
+ 
 export const ComboBoxHint = forwardRef<HTMLElement, ComboBoxHintProps>(
   function ComboBoxHint(
     {
@@ -77,7 +77,7 @@ export const ComboBoxHint = forwardRef<HTMLElement, ComboBoxHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -92,9 +92,9 @@ export const ComboBoxHint = forwardRef<HTMLElement, ComboBoxHintProps>(
     );
   },
 );
-
+ 
 ComboBoxHint.displayName = "ComboBoxHint";
-
+ 
 export const ComboBoxError = forwardRef<HTMLElement, ComboBoxErrorProps>(
   function ComboBoxError(
     {
@@ -120,7 +120,7 @@ export const ComboBoxError = forwardRef<HTMLElement, ComboBoxErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -134,5 +134,6 @@ export const ComboBoxError = forwardRef<HTMLElement, ComboBoxErrorProps>(
     );
   },
 );
-
+ 
 ComboBoxError.displayName = "ComboBoxError";
+ 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ColorPicker } from "@/components/core/ColorPicker";
+import { ColorPicker, ColorSwatch } from "@/components/core/ColorPicker";
 import { Text } from "@/components/core/Text";
 
 export function ColorPickerClassNamesFullDemo() {
@@ -23,6 +23,18 @@ export function ColorPickerClassNamesFullDemo() {
         <ColorPicker.Trigger />
         <ColorPicker.Content />
       </ColorPicker>
+      <div className="flex gap-small">
+        <ColorSwatch
+          color={color}
+          selected
+          aria-label="Current color"
+          onClick={() => undefined}
+          classNames={{
+            root: "shadow-token-base",
+            selected: "ring-offset-4",
+          }}
+        />
+      </div>
       <Text as="p" variant="small" className="font-mono text-muted">
         {color}
       </Text>

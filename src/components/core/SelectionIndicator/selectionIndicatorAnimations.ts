@@ -7,31 +7,45 @@
  * Checkbox (and Radio / ListBox) embed this host via mapped slot names.
  */
 import { useLayoutEffect, useRef, type RefObject } from "react";
-
+ 
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabledFor, motionSelectionFillFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-
+ 
 import {
   useOptionalSelectionIndicatorMotionScope,
   useSelectionIndicatorContext,
 } from "./selectionIndicatorContext";
-import type { SelectionIndicatorMotion } from "./selectionIndicatorTypes";
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
+import type { SelectionIndicatorMotion, SelectionIndicatorVariant } from "./selectionIndicatorTypes";
+import { KIT_SELECTION_INDICATOR_VARIANTS } from "./selectionIndicatorTypes";
+ 
 export const SELECTION_INDICATOR_MOTION_DEFAULTS: SelectionIndicatorMotion = {
   fill: { check: "selectionFill", uncheck: "selectionFill" },
   mark: { check: "selectionMark", uncheck: "selectionMark" },
 };
 
+export function resolveSelectionIndicatorMotionDefaults(
+  variant: SelectionIndicatorVariant,
+): SelectionIndicatorMotion {
+  return overlaySkinMotion(
+    SELECTION_INDICATOR_MOTION_DEFAULTS,
+    variant,
+    KIT_SELECTION_INDICATOR_VARIANTS,
+    "selectionIndicator",
+  );
+}
+ 
 function applyFillInstant(fill: HTMLElement, on: boolean) {
   gsap.set(fill, { scale: on ? 1 : 0, autoAlpha: on ? 1 : 0, force3D: false });
 }
-
+ 
 function applyMarkInstant(icon: HTMLElement, on: boolean) {
   gsap.set(icon, { autoAlpha: on ? 1 : 0, scale: 1, force3D: false });
 }
-
+ 
 export function useSelectionIndicatorAnimation(
   active: boolean,
   fillRef?: RefObject<HTMLElement | null>,
@@ -43,14 +57,14 @@ export function useSelectionIndicatorAnimation(
   const reduceMotion =
     usePrefersReducedMotion() ||
     !isMotionFeatureEnabledFor(config, "enableSelectionFill");
-
+ 
   useLayoutEffect(() => {
     const fill = fillRef?.current;
     const icon = iconRef?.current;
-
+ 
     // Refs attach in the same commit — don't consume firstLayout if Fill/Mark aren't in the DOM yet.
     if (!fill && !icon) return;
-
+ 
     if (firstLayoutRef.current) {
       firstLayoutRef.current = false;
       if (fill) {
@@ -63,9 +77,9 @@ export function useSelectionIndicatorAnimation(
       }
       return;
     }
-
+ 
     const phase = active ? "check" : "uncheck";
-
+ 
     if (scope) {
       const root = scope.getTarget("root");
       if (root) scope.play("root", phase, { el: root });
@@ -73,7 +87,7 @@ export function useSelectionIndicatorAnimation(
       if (icon) scope.play("mark", phase, { el: icon });
       return;
     }
-
+ 
     if (reduceMotion) {
       if (fill) {
         killMotion(fill);
@@ -85,10 +99,10 @@ export function useSelectionIndicatorAnimation(
       }
       return;
     }
-
+ 
     const fillVars = { ...motionSelectionFillFor(config), overwrite: "auto" as const };
     const markVars = { ...motionSelectionFillFor(config), overwrite: "auto" as const };
-
+ 
     if (fill) {
       killMotion(fill);
       if (active) {
@@ -97,7 +111,7 @@ export function useSelectionIndicatorAnimation(
         gsap.to(fill, { scale: 0, autoAlpha: 0, ...fillVars });
       }
     }
-
+ 
     if (icon) {
       killMotion(icon);
       if (active) {
@@ -108,7 +122,7 @@ export function useSelectionIndicatorAnimation(
     }
   }, [active, config, fillRef, iconRef, reduceMotion, scope]);
 }
-
+ 
 export function SelectionIndicatorMotionSync({
   selected,
   showsFill,
@@ -126,3 +140,4 @@ export function SelectionIndicatorMotionSync({
   );
   return null;
 }
+ 

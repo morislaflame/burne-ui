@@ -11,6 +11,7 @@ import { Ripple } from "@/components/core/Ripple";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
 import { Card, type CardSize, type CardVariant } from ".";
+import type { KitCardVariant } from "./cardTypes";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/mockImages";
 import { IoArrowForward, IoTimeOutline } from "react-icons/io5";
 import { CardSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/card/slotMotion/gallery";
@@ -18,11 +19,10 @@ import { CardMotionControllerGalleryDemo } from "../../../../playground/showcase
 
 const CARD_SIZES: CardSize[] = ["small", "base", "mid", "large"];
 
-const CARD_RIPPLE_COLOR: Record<CardVariant, "neutral"> = {
+const CARD_RIPPLE_COLOR: Record<KitCardVariant, "neutral"> = {
   default: "neutral",
   outline: "neutral",
   secondary: "neutral",
-  gloss: "neutral",
 };
 
 const darkThemeDecorator = [
@@ -295,7 +295,7 @@ export const WithImageBody: Story = {
       <Card.Body className="px-0 pb-0 pt-base">
         <img
           src={PIN_IMAGE1}
-          alt="Portrait in glossy red helmet, text on visor"
+          alt="Portrait in shiny red helmet, text on visor"
           className="max-h-[min(380px,48vh)] w-full object-cover"
           loading="lazy"
         />
@@ -730,9 +730,9 @@ export const LightThemeVariants: Story = {
           <Card.Description>Accent-wash on surface.</Card.Description>
         </Card.Header>
       </Card>
-      <Card variant="gloss">
+      <Card variant="default">
         <Card.Header>
-          <Card.Title>Gloss</Card.Title>
+          <Card.Title>Surface</Card.Title>
           <Card.Description>Glass panel with conic border and highlight.</Card.Description>
         </Card.Header>
       </Card>
@@ -740,81 +740,7 @@ export const LightThemeVariants: Story = {
   ),
 };
 
-// ─── Gloss variant ───────────────────────────────────────────────────────────
 
-const dottedGridStyle = {
-  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
-  backgroundSize: "30px 30px",
-  backgroundPosition: "2px 2px",
-} as const;
-
-function glossDottedDecorator(light = false) {
-  return (Story: ComponentType) => (
-    <div
-      data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
-      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
-    >
-      <div className="w-full max-w-md">
-        <Story />
-      </div>
-    </div>
-  );
-}
-
-function GlossDemo() {
-  const [n, setN] = useState(0);
-  return (
-    <div className="flex flex-col gap-large">
-      <Card variant="gloss">
-        <Card.Header>
-          <Card.Title>Glass card</Card.Title>
-          <Card.Description>
-            variant=&quot;gloss&quot; — static glass panel with conic border.
-          </Card.Description>
-        </Card.Header>
-        <Card.Body>
-          <Text as="p" variant="base" className="text-muted">
-            Content inside the gloss panel reads over the highlight and border.
-          </Text>
-        </Card.Body>
-        <Card.Footer className="flex items-center justify-end gap-base">
-          <Button variant="gloss" size="base">
-            Gloss
-          </Button>
-          <Button variant="primary" size="base" ripple>
-            Primary
-          </Button>
-        </Card.Footer>
-      </Card>
-      <Card variant="gloss" pressable onPress={() => setN((c) => c + 1)}>
-        <Ripple color={CARD_RIPPLE_COLOR.gloss} direction="out" />
-        <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
-          <Card.Header>
-            <Card.Title>Gloss + pressable</Card.Title>
-            <Card.Description>
-              Presses: {n}. Pressable card with the same glass styling.
-            </Card.Description>
-          </Card.Header>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-export const Gloss: Story = {
-  name: "Gloss",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(false)],
-  render: () => <GlossDemo />,
-};
-
-export const GlossLight: Story = {
-  name: "Gloss — light theme",
-  parameters: { controls: { disable: true } },
-  decorators: [glossDottedDecorator(true)],
-  render: () => <GlossDemo />,
-};
 
 export const CustomClassNames: Story = {
   name: "Full classNames customization",

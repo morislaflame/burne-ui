@@ -1,5 +1,5 @@
 import { ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableRoot, ExpandableTitle, ExpandableTrigger } from "./Expandable";
-
+ 
 export const Expandable = Object.assign(ExpandableRoot, {
   Trigger: ExpandableTrigger,
   Message: ExpandableMessage,
@@ -10,9 +10,9 @@ export const Expandable = Object.assign(ExpandableRoot, {
   Chevron: ExpandableChevron,
   Panel: ExpandablePanel,
 });
-
+ 
 export { useExpandableContext } from "./expandableContext";
-
+ 
 export type {
   ExpandableProps,
   ExpandableTriggerProps,
@@ -30,3 +30,4 @@ export type {
   ExpandableLifecycleMotion,
   ExpandableTriggerLiftMotion,
 } from "./expandableTypes";
+ 

@@ -16,10 +16,13 @@ export function CardMotionEventsFinishedDemo() {
 
   async function pay() {
     setBusy(true);
-    await controller.play("checkout:saving", { waitForComplete: true }).finished;
-    await controller.play("checkout:success", { waitForComplete: true }).finished;
-    await controller.play("checkout:rest", { waitForComplete: true }).finished;
-    setBusy(false);
+    try {
+      await controller.play("checkout:saving", { waitForComplete: true }).finished;
+      await controller.play("checkout:success", { waitForComplete: true }).finished;
+      await controller.play("checkout:rest", { waitForComplete: true }).finished;
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

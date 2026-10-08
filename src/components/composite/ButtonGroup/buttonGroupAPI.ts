@@ -1,5 +1,5 @@
 import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
-
+ 
 import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { Dropdown } from "@/components/core/Dropdown";
@@ -11,7 +11,7 @@ import type {
   ButtonGroupSegment,
   ButtonGroupSegmentPosition,
 } from "./buttonGroupTypes";
-
+ 
 export function flattenFragmentChildren(children: ReactNode): ReactElement[] {
   const out: ReactElement[] = [];
   Children.forEach(children, (node) => {
@@ -25,7 +25,7 @@ export function flattenFragmentChildren(children: ReactNode): ReactElement[] {
   });
   return out;
 }
-
+ 
 export function isGroupSegmentSlot(child: ReactElement): boolean {
   return (
     child.type === Button ||
@@ -37,7 +37,7 @@ export function isGroupSegmentSlot(child: ReactElement): boolean {
     (child.type as { displayName?: string }).displayName === "ButtonGroupText"
   );
 }
-
+ 
 export function resolveButtonGroupSegmentPosition(
   segmentIndex: number,
   segmentCount: number,
@@ -47,14 +47,15 @@ export function resolveButtonGroupSegmentPosition(
   if (segmentIndex === segmentCount - 1) return "last";
   return "middle";
 }
-
+ 
 export function buildButtonGroupSegment(
   orientation: ButtonGroupOrientation,
   position: ButtonGroupSegmentPosition,
 ): ButtonGroupSegment {
   return { orientation, position };
 }
-
+ 
 export function countGroupSegmentSlots(children: ReactElement[]): number {
   return children.reduce((n, el) => n + (isGroupSegmentSlot(el) ? 1 : 0), 0);
 }
+ 

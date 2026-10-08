@@ -1,11 +1,11 @@
 import { DropdownGroup, DropdownItem, DropdownItemHint, DropdownItemIcon, DropdownItemIndicator, DropdownItemLabel, DropdownLabel, DropdownPopover, DropdownRoot, DropdownSeparator, DropdownSub, DropdownSubContent, DropdownSubTrigger, DropdownTrigger } from "./Dropdown";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-
+ 
 const DropdownItemIndicatorCompound = Object.assign(DropdownItemIndicator, {
   Fill: SelectionIndicator.Fill,
   Mark: SelectionIndicator.Mark,
 });
-
+ 
 export const Dropdown = Object.assign(DropdownRoot, {
   Trigger: DropdownTrigger,
   /** Floating menu panel host. Not `Popover.Content` (body inside a Popover). */
@@ -22,7 +22,7 @@ export const Dropdown = Object.assign(DropdownRoot, {
   SubTrigger: DropdownSubTrigger,
   SubContent: DropdownSubContent,
 });
-
+ 
 export type {
   DropdownProps,
   DropdownClassNames,
@@ -45,3 +45,4 @@ export type {
   DropdownPartMotion,
   DropdownPopoverMotion,
 } from "./dropdownTypes";
+ 

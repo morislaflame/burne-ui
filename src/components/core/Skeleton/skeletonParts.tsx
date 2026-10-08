@@ -1,12 +1,13 @@
 import { forwardRef, useMemo } from "react";
-
+ 
 import { skeletonPresentationProps, skeletonRegionA11yProps } from "./skeletonA11y";
 import { resolveSkeletonMotionDefaults, useSkeletonSlotMotion } from "./skeletonAnimations";
 import { SkeletonMotionProvider, useSkeletonMotionScope } from "./skeletonContext";
 import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantStyle, skeletonWaveOverlayStyle } from "./skeletonStyles";
 import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
+ 
 import type {
   SkeletonBlockProps,
   SkeletonCircleProps,
@@ -16,7 +17,7 @@ import type {
   SkeletonTextProps,
   SkeletonWaveProps,
 } from "./skeletonTypes";
-
+ 
 export function SkeletonWave({ className, style }: SkeletonWaveProps) {
   return (
     <span
@@ -26,7 +27,7 @@ export function SkeletonWave({ className, style }: SkeletonWaveProps) {
     />
   );
 }
-
+ 
 function SkeletonPartProvider({
   motion,
   controller,
@@ -49,7 +50,7 @@ function SkeletonPartProvider({
     </SkeletonMotionProvider>
   );
 }
-
+ 
 export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
   function SkeletonCircle(
     {
@@ -86,7 +87,7 @@ export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
     );
   },
 );
-
+ 
 function SkeletonCircleSurface({
   animation,
   size,
@@ -115,7 +116,7 @@ function SkeletonCircleSurface({
     motion: rootMotion,
     forwardedRef,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -130,14 +131,15 @@ function SkeletonCircleSurface({
       {...skeletonPresentationProps()}
       {...part.pointerHandlers}
       {...rest}
+      {...dataVariantProps({ size })}
     >
       {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
     </div>
   );
 }
-
+ 
 SkeletonCircle.displayName = "SkeletonCircle";
-
+ 
 export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(function SkeletonText(
   {
     animation = "wave",
@@ -174,7 +176,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
     </SkeletonPartProvider>
   );
 });
-
+ 
 function SkeletonTextSurface({
   animation,
   lines,
@@ -209,7 +211,7 @@ function SkeletonTextSurface({
     if (lastShort && index === lines - 1) return SKELETON_TEXT_LINE_LAST_SHORT_CLASS;
     return SKELETON_TEXT_LINE_FULL_CLASS;
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -239,9 +241,9 @@ function SkeletonTextSurface({
     </div>
   );
 }
-
+ 
 SkeletonText.displayName = "SkeletonText";
-
+ 
 export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(function SkeletonBlock(
   { animation = "wave", className, classNames, style, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
@@ -265,7 +267,7 @@ export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(func
     </SkeletonPartProvider>
   );
 });
-
+ 
 function SkeletonBlockSurface({
   animation,
   className,
@@ -294,7 +296,7 @@ function SkeletonBlockSurface({
     motion: rootMotion,
     forwardedRef,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -314,9 +316,9 @@ function SkeletonBlockSurface({
     </div>
   );
 }
-
+ 
 SkeletonBlock.displayName = "SkeletonBlock";
-
+ 
 export const SkeletonRegion = forwardRef<HTMLDivElement, SkeletonRegionProps>(
   function SkeletonRegion(
     { busy = true, className, classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
@@ -341,7 +343,7 @@ export const SkeletonRegion = forwardRef<HTMLDivElement, SkeletonRegionProps>(
     );
   },
 );
-
+ 
 function SkeletonRegionSurface({
   busy,
   className,
@@ -368,7 +370,7 @@ function SkeletonRegionSurface({
     motion: regionMotion,
     forwardedRef,
   });
-
+ 
   return (
     <div
       ref={part.setRef}
@@ -381,5 +383,6 @@ function SkeletonRegionSurface({
     </div>
   );
 }
-
+ 
 SkeletonRegion.displayName = "SkeletonRegion";
+ 

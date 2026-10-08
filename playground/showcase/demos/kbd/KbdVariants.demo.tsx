@@ -7,7 +7,7 @@ export function KbdVariantsDemo() {
       <Kbd variant="primary">Primary</Kbd>
       <Kbd variant="secondary">Secondary</Kbd>
       <Kbd variant="outline">Outline</Kbd>
-      <Kbd variant="gloss">Gloss</Kbd>
+      <Kbd variant="default">Default</Kbd>
     </div>
   );
 }

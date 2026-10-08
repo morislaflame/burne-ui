@@ -7,7 +7,7 @@ export function ToggleButtonViewSwitchDemo() {
   const [view, setView] = useState<"list" | "grid">("list");
 
   return (
-    <div className="inline-flex rounded-mid border-token bg-tertiary p-xsmall gap-xsmall">
+    <div className="inline-flex rounded-large border-token bg-tertiary p-xsmall gap-xsmall">
       <ToggleButton
         pressed={view === "list"}
         onPressedChange={(pressed) => pressed && setView("list")}

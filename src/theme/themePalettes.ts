@@ -1,10 +1,10 @@
 import type { ThemeColors } from "./themeDefaults";
-
+ 
 /**
  * Default dark/light palettes — flat ThemeColors snapshots (same shape as Copy config).
  * Named presets live on the docs site / playground.
  */
-
+ 
 const DARK_RIPPLE = {
   convergeRipplePrimaryFill:
     "color-mix(in oklab, var(--color-primary-foreground) 38%, transparent)",
@@ -17,7 +17,7 @@ const DARK_RIPPLE = {
   convergeRippleWarning:
     "color-mix(in oklab, var(--color-warning-foreground) 38%, transparent)",
 } as const;
-
+ 
 const LIGHT_RIPPLE = {
   convergeRipplePrimaryFill:
     "color-mix(in oklab, var(--color-primary-foreground) 52%, var(--color-primary))",
@@ -30,7 +30,7 @@ const LIGHT_RIPPLE = {
   convergeRippleWarning:
     "color-mix(in oklab, var(--color-warning-foreground) 38%, transparent)",
 } as const;
-
+ 
 export const DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
   surface: "#171717",
@@ -82,7 +82,7 @@ export const DARK_COLORS: ThemeColors = {
   warningFillHover: "color-mix(in oklab, var(--color-warning) 80%, transparent)",
   ...DARK_RIPPLE,
 };
-
+ 
 export const LIGHT_COLORS: ThemeColors = {
   background: "#f5f5f5",
   surface: "#ffffff",
@@ -134,3 +134,4 @@ export const LIGHT_COLORS: ThemeColors = {
   warningFillHover: "color-mix(in oklab, var(--color-warning) 80%, transparent)",
   ...LIGHT_RIPPLE,
 };
+ 

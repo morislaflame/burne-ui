@@ -8,7 +8,7 @@ const options = [
   { value: "vue", label: "Vue" },
 ];
 
-const VARIANTS = ["default", "outline", "secondary", "gloss"] as const;
+const VARIANTS = ["default", "outline", "secondary"] as const;
 
 export function ComboBoxVariantsDemo() {
   const [value, setValue] = useState("react");

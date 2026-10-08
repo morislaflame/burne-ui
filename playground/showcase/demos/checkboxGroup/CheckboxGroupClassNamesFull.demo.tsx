@@ -8,7 +8,7 @@ export function CheckboxGroupClassNamesFullDemo() {
       required
       className="max-w-md"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         legend: "text-primary",
         legendHeader: "gap-xsmall",
         hint: "text-foreground/70",

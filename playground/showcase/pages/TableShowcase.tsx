@@ -1,5 +1,11 @@
+import { TableAlignDemo } from "../demos/table/TableAlign.demo";
+import tableAlignSource from "../demos/table/TableAlign.demo.tsx?raw";
 import { TableActivityFeedDemo } from "../demos/table/TableActivityFeed.demo";
 import tableActivityFeedSource from "../demos/table/TableActivityFeed.demo.tsx?raw";
+import { TablePagesDemo } from "../demos/table/TablePages.demo";
+import tablePagesSource from "../demos/table/TablePages.demo.tsx?raw";
+import { TableVirtualizedDemo } from "../demos/table/TableVirtualized.demo";
+import tableVirtualizedSource from "../demos/table/TableVirtualized.demo.tsx?raw";
 import { TableBasicDemo } from "../demos/table/TableBasic.demo";
 import tableBasicSource from "../demos/table/TableBasic.demo.tsx?raw";
 import { TableClassNamesFullDemo } from "../demos/table/TableClassNamesFull.demo";
@@ -8,10 +14,6 @@ import { TableColumnLabelDemo } from "../demos/table/TableColumnLabel.demo";
 import tableColumnLabelSource from "../demos/table/TableColumnLabel.demo.tsx?raw";
 import { TableCustomSortIconDemo } from "../demos/table/TableCustomSortIcon.demo";
 import tableCustomSortIconSource from "../demos/table/TableCustomSortIcon.demo.tsx?raw";
-import { TableGlossDemo } from "../demos/table/TableGloss.demo";
-import tableGlossSource from "../demos/table/TableGloss.demo.tsx?raw";
-import { TableGlossSelectionDemo } from "../demos/table/TableGlossSelection.demo";
-import tableGlossSelectionSource from "../demos/table/TableGlossSelection.demo.tsx?raw";
 import { TableInvoiceToolbarDemo } from "../demos/table/TableInvoiceToolbar.demo";
 import tableInvoiceToolbarSource from "../demos/table/TableInvoiceToolbar.demo.tsx?raw";
 import { TableRowSelectionDemo } from "../demos/table/TableRowSelection.demo";
@@ -29,12 +31,30 @@ export function TableShowcase() {
   return (
     <ShowcasePage
       title="Table"
-      description="Data tables with sorting, row selection and scrolling."
+      description="Data tables with sorting, row selection and scrolling. Pages, column width and detail rows stay with the parent."
       importPath='import { Table } from "@/components/core/Table";'
       tags={["core", "data"]}
     >
       <ShowcaseSection title="Basic" description="ScrollContainer, Header, Body and Badge in cells.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableBasicDemo} source={tableBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Pages"
+        description="Pagination sits in the footer. The parent slices the rows; Table does not page, resize columns, or expand them."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={TablePagesDemo} source={tablePagesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Alignment"
+        description="Headers and cells start on the same edge. text-center on Column and Cell moves that column."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={TableAlignDemo} source={tableAlignSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Virtualized" description="Table.Body virtualized with items. ScrollContainer needs overflow-y and a max height.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TableVirtualizedDemo} source={tableVirtualizedSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Row selection" description="selectionMode multiple and control selectedKeys.">
@@ -62,19 +82,14 @@ export function TableShowcase() {
           source={tableColumnLabelSource}
         />
       </ShowcaseSection>
-
-      <ShowcaseSection title="Gloss" description="variant gloss — hover lines primary-tint, hover-lift panels.">
-        <ShowcaseDemoFromFile align="stretch" Demo={TableGlossDemo} source={tableGlossSource} />
-      </ShowcaseSection>
-
-      <ShowcaseSection
-        title="Gloss + choice"
+<ShowcaseSection
+        title="default + choice"
         description="selectionMode multiple — selected rows too primary-tint."
       >
         <ShowcaseDemoFromFile
           align="stretch"
-          Demo={TableGlossSelectionDemo}
-          source={tableGlossSelectionSource}
+          Demo={TableRowSelectionDemo}
+          source={tableRowSelectionSource}
         />
       </ShowcaseSection>
 
@@ -98,7 +113,7 @@ export function TableShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TableActivityFeedDemo} source={tableActivityFeedSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="Instant enter skip, root/content timeline, row check/uncheck, column Label enter, headerRow and body, Table.Empty. Sort chevron stays kit-internal.">
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root/content timeline, row check/uncheck, column Label enter, headerRow and body, Table.Empty. Sort chevron is columnSortIcon (chevronRotate).">
         <TableSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -126,7 +141,7 @@ export function TableShowcase() {
             <code>selectedKeys</code> and <code>onSelectionChange</code> — for selection.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

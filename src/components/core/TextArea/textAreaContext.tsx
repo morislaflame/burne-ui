@@ -1,16 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-
+ 
 import { createMotionScope } from "@/components/core/utils/slotMotion";
-
+ 
 import type {
   TextAreaClassNames,
   TextAreaClassNamesProviderProps,
   TextAreaFieldContextValue,
 } from "./textAreaTypes";
-
+ 
 const TextAreaFieldContext = createContext<TextAreaFieldContextValue | null>(null);
 const TextAreaClassNamesContext = createContext<TextAreaClassNames>({});
-
+ 
 export function TextAreaFieldProvider({
   value,
   children,
@@ -22,7 +22,7 @@ export function TextAreaFieldProvider({
     <TextAreaFieldContext.Provider value={value}>{children}</TextAreaFieldContext.Provider>
   );
 }
-
+ 
 export function TextAreaClassNamesProvider({
   classNames,
   children,
@@ -32,14 +32,14 @@ export function TextAreaClassNamesProvider({
     () => ({ ...parent, ...classNames }),
     [classNames, parent],
   );
-
+ 
   return (
     <TextAreaClassNamesContext.Provider value={merged}>
       {children}
     </TextAreaClassNamesContext.Provider>
   );
 }
-
+ 
 export function useTextAreaFieldContext(): TextAreaFieldContextValue {
   const ctx = useContext(TextAreaFieldContext);
   if (!ctx) {
@@ -47,20 +47,21 @@ export function useTextAreaFieldContext(): TextAreaFieldContextValue {
   }
   return ctx;
 }
-
+ 
 export function useOptionalTextAreaFieldContext() {
   return useContext(TextAreaFieldContext);
 }
-
+ 
 export function useTextAreaClassNames(): TextAreaClassNames {
   return useContext(TextAreaClassNamesContext);
 }
-
+ 
 /** Scope only. Defaults and host play live in `textAreaAnimations.ts`. */
 export const {
   MotionScopeProvider: TextAreaMotionProvider,
   useMotionScope: useTextAreaMotionScope,
   useOptionalMotionScope: useOptionalTextAreaMotionScope,
 } = createMotionScope("TextArea");
-
+ 
 export { TextAreaFieldContext };
+ 

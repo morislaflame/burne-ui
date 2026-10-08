@@ -7,7 +7,7 @@ export function DisclosureClassNamesFullDemo() {
       variant="outline"
       defaultOpen
       classNames={{
-        trigger: "border border-info/30 rounded-mid",
+        trigger: "border border-info/30 rounded-large",
         title: "text-info font-semibold",
         icon: "text-info",
         chevron: "text-info",

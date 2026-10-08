@@ -41,12 +41,12 @@ export function ToastShowcase() {
 
       <ShowcaseSection
         title="Modifications"
-        description="status, variant gloss, action, loading and timeout: 0."
+        description="status, variant default, action, loading and timeout: 0."
       >
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Slot motion" description="One gallery: instant leave, bounce factory, title stagger.">
+      <ShowcaseSection title="Slot motion" description="One gallery: instant leave, bounce factory, title stagger, stack snap.">
         <ToastSlotMotionGalleryDemo />
       </ShowcaseSection>
 
@@ -106,7 +106,7 @@ export function ToastShowcase() {
             <code>useToast</code> will not be able to display notifications.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss>
+        <ShowcaseDoc.Customization>
           <p>
             Stack and reposition — <code>configureMotion()</code> (<code>enableToastStack</code>).
             Card enter/leave — <code>motion</code> on <code>Toast.Provider</code> or{" "}

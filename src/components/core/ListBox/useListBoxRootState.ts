@@ -1,10 +1,10 @@
 import { useCallback, useId, useMemo, useRef, useState } from "react";
-
+ 
 import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
-
+ 
 import { normalizeListBoxValues } from "./listBoxAPI";
 import type { ListBoxContextValue, UseListBoxRootStateProps } from "./listBoxTypes";
-
+ 
 export function useListBoxRootState({
   size = "base",
   multiple = false,
@@ -18,7 +18,7 @@ export function useListBoxRootState({
 }: UseListBoxRootStateProps) {
   const autoId = useId();
   const listId = listIdProp ?? `listbox-${autoId}`;
-
+ 
   const isControlledValue = valueProp !== undefined;
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
     normalizeListBoxValues(defaultValue),
@@ -28,12 +28,13 @@ export function useListBoxRootState({
     : internalSelected;
   const selected = useMemo(() => new Set(selectedArr), [selectedArr]);
   const latestSelectedRef = useRef(selectedArr);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   latestSelectedRef.current = selectedArr;
-
+ 
   const [internalActive, setInternalActive] = useState<string | null>(null);
   const isControlledActive = activeValueProp !== undefined;
   const activeValue = isControlledActive ? activeValueProp : internalActive;
-
+ 
   const setActiveValue = useCallback(
     (next: string | null) => {
       if (!isControlledActive) setInternalActive(next);
@@ -41,7 +42,7 @@ export function useListBoxRootState({
     },
     [isControlledActive, onActiveValueChange],
   );
-
+ 
   const setSelectedArr = useCallback(
     (next: string[]) => {
       if (!isControlledValue) setInternalSelected(next);
@@ -49,7 +50,7 @@ export function useListBoxRootState({
     },
     [isControlledValue, multiple, onValueChange],
   );
-
+ 
   const selectItem = useCallback(
     (itemValue: string) => {
       const next = toggleOptionListSelection(
@@ -62,7 +63,7 @@ export function useListBoxRootState({
     },
     [multiple, setSelectedArr],
   );
-
+ 
   // `activeValue` lives in a separate context so arrow/hover highlight does not
   // invalidate this value (and re-render every item + layout walk).
   const contextValue = useMemo<ListBoxContextValue>(
@@ -88,6 +89,7 @@ export function useListBoxRootState({
       size,
     ],
   );
-
+ 
   return { listId, contextValue, activeValue };
 }
+ 

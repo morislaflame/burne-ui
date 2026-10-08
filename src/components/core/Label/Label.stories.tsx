@@ -77,7 +77,7 @@ export const CustomClassNames: Story = {
       htmlFor="label-custom"
       required
       classNames={{
-        root: "rounded-mid border border-primary/30 px-base py-xsmall",
+        root: "rounded-large border border-primary/30 px-base py-xsmall",
         text: "text-primary font-semibold",
         required: "text-warning",
       }}

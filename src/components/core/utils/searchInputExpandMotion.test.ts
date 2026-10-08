@@ -117,8 +117,7 @@ describe("searchInputExpandMotion layout exception", () => {
     shell.style.width = "120px";
     const tween = animateSearchShellExpand(shell, true, METRICS);
     expect(searchShellRadiusForWidth(120, METRICS)).toBeCloseTo(
-      18 + ((120 - 36) / (280 - 36)) * (8 - 18),
-    );
+      18 + ((120 - 36) / (280 - 36)) * (8 - 18));
     expect(tween.vars.width).toBe(280);
     tween.kill();
   });

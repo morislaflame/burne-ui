@@ -1,6 +1,6 @@
 import type { HTMLAttributes, RefObject, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
+ 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 import type { LabelProps } from "@/components/core/Label";
@@ -8,7 +8,7 @@ import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
-
+ 
 export type SelectOption = {
   value: string;
   label: ReactNode;
@@ -16,7 +16,7 @@ export type SelectOption = {
   icon?: ReactNode;
   disabled?: boolean;
 };
-
+ 
 export type SelectClassNames = {
   root?: string;
   label?: string;
@@ -24,6 +24,7 @@ export type SelectClassNames = {
   value?: string;
   trigger?: string;
   triggerIcon?: string;
+  triggerIconWrap?: string;
   popover?: string;
   popoverBody?: string;
   listBox?: string;
@@ -37,7 +38,7 @@ export type SelectClassNames = {
   hint?: string;
   error?: string;
 };
-
+ 
 export type SelectPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -46,7 +47,7 @@ export type SelectPartMotion = {
   enter?: MotionValue;
   leave?: MotionValue;
 };
-
+ 
 export type SelectMotion = {
   triggerGroup?: SelectPartMotion;
   value?: SelectPartMotion;
@@ -56,21 +57,30 @@ export type SelectMotion = {
   hint?: SelectPartMotion;
   error?: SelectPartMotion;
 };
-
+ 
 export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  /** Danger visual, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. */
+  invalid?: boolean;
   id?: string;
   name?: string;
   required?: boolean;
   status?: InputStatus;
   size?: InputSize;
   options?: SelectOption[];
+  /** Several values. The menu stays open; each choice toggles. */
+  multiple?: boolean;
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  /** Controlled selection when `multiple`. */
+  values?: string[];
+  /** Uncontrolled selection when `multiple`. */
+  defaultValues?: string[];
+  onValuesChange?: (values: string[]) => void;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -78,6 +88,10 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   placeholder?: string;
   menuMaxHeight?: string;
+  /** Mount only the visible options. Flat `options` list. */
+  virtualized?: boolean;
+  /** Fixed option height in px. Measured from the first row when omitted. */
+  virtualItemSize?: number;
   classNames?: Prettify<SelectClassNames>;
   /**
    * Per-slot motion (`triggerGroup`, `value`, `trigger`, `triggerIcon`, `label`, `hint`, `error`).
@@ -95,11 +109,11 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SelectSimpleProps = SelectProps & {
   options: SelectOption[];
 };
-
+ 
 export type SelectFieldContextValue = {
   selectId: string;
   hintId: string;
@@ -108,17 +122,22 @@ export type SelectFieldContextValue = {
   labelConnected: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
+  invalid?: boolean;
+  formInvalid?: boolean;
   required: boolean;
   status: InputStatus;
   size: InputSize;
   errorMessage?: ReactNode;
 };
-
+ 
 export type SelectContextValue = SelectFieldContextValue & {
   open: boolean;
   setOpen: (open: boolean) => void;
+  multiple: boolean;
   value: string;
   setValue: (value: string) => void;
+  values: string[];
+  setValues: (values: string[]) => void;
   listId: string;
   activeValue: string | null;
   setActiveValue: (value: string | null) => void;
@@ -128,17 +147,19 @@ export type SelectContextValue = SelectFieldContextValue & {
   disabled: boolean;
   placeholder: string;
   menuMaxHeight: string;
+  virtualized: boolean;
+  virtualItemSize?: number;
   options: SelectOption[];
   optionValues: string[];
   formValueRef?: (node: HTMLButtonElement | null) => void;
   formOnBlur?: () => void;
 };
-
+ 
 export type SelectClassNamesProviderProps = {
   classNames?: Prettify<SelectClassNames>;
   children: ReactNode;
 };
-
+ 
 export type SelectTriggerGroupProps = HTMLAttributes<HTMLDivElement> & {
   groupSegment?: ButtonGroupSegment;
   /** Part motion for the `triggerGroup` host slot. Root `motion.triggerGroup` still applies. */
@@ -149,16 +170,16 @@ export type SelectTriggerGroupProps = HTMLAttributes<HTMLDivElement> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type SelectValueProps = HTMLAttributes<HTMLButtonElement> & {
   placeholder?: string;
   motion?: Prettify<SelectPartMotion>;
 };
-
+ 
 export type SelectTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   motion?: Prettify<SelectPartMotion>;
 };
-
+ 
 export type UseSelectShellAnimationsProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   disabled: boolean;
@@ -167,7 +188,7 @@ export type UseSelectShellAnimationsProps = {
   motion?: SelectPartMotion;
   pointerInsideRef: RefObject<boolean>;
 };
-
+ 
 export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   /** Preferred side relative to the trigger. Default: `bottom`. */
@@ -185,22 +206,24 @@ export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
     | "activeValue"
     | "onActiveValueChange"
     | "listId"
+    | "multiple"
   >;
 };
-
+ 
 export type SelectLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   motion?: Prettify<SelectPartMotion>;
 };
-
+ 
 export type SelectHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: Exclude<InputStatus, "danger"> | "default";
+  status?: InputStatus;
   motion?: Prettify<SelectPartMotion>;
 };
-
+ 
 export type SelectErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
   motion?: Prettify<SelectPartMotion>;
 };
-
+ 
 export type UseSelectRootStateProps = SelectProps;
+ 

@@ -1,7 +1,7 @@
 import { LINK_TEXT_VARIANT } from "./linkStyles";
 import { resolveLinkBodyIcons } from "./linkAPI";
 import type { UseLinkRootStateProps } from "./linkTypes";
-
+ 
 export function useLinkRootState({
   size = "base",
   underline = false,
@@ -20,7 +20,7 @@ export function useLinkRootState({
     defaultIconPosition,
     children,
   });
-
+ 
   return {
     size,
     underline,
@@ -28,3 +28,4 @@ export function useLinkRootState({
     ...icons,
   };
 }
+ 

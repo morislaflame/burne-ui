@@ -7,8 +7,8 @@ const CHANGES = [
   {
     version: "1.2.0",
     badge: "Latest",
-    title: "Gloss and playground",
-    items: ["Custom variations in showcase", "SelectionIndicator rounded-mid", "Slider thumbClassName"],
+    title: "Showcase and playground",
+    items: ["Custom variations in showcase", "SelectionIndicator rounded-large", "Slider thumbClassName"],
   },
   {
     version: "1.1.0",

@@ -33,6 +33,8 @@ describe("MotionController play event types", () => {
     const event: PlayArg = "card:rise";
     // @ts-expect-error unknown event name
     const typo: PlayArg = "card:typo";
+    expect(Object.keys(events)).toEqual(["card:rise", "card:rest"]);
+    expect(typeof controller.play).toBe("function");
     expect(phase).toBe("hoverIn");
     expect(event).toBe("card:rise");
     expect(typo).toBe("card:typo");

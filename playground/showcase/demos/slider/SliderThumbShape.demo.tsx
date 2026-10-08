@@ -21,20 +21,20 @@ export function SliderThumbShapeDemo() {
       />
       <Slider className="w-full">
         <Slider.Header>
-          <Slider.Label>rounded-mid thumb</Slider.Label>
+          <Slider.Label>rounded-large thumb</Slider.Label>
           <Slider.Value />
         </Slider.Header>
         <Slider.Track
           value={square}
           onValueChange={setSquare}
-          thumbClassName="rounded-mid"
+          thumbClassName="rounded-large"
         >
-          <Slider.Rail className="rounded-mid">
-            <Slider.Fill className="rounded-mid" />
+          <Slider.Rail className="rounded-large">
+            <Slider.Fill className="rounded-large" />
           </Slider.Rail>
           <Slider.Thumb />
         </Slider.Track>
-        <Slider.Hint>thumbClassName=&quot;rounded-mid&quot;</Slider.Hint>
+        <Slider.Hint>thumbClassName=&quot;rounded-large&quot;</Slider.Hint>
       </Slider>
     </div>
   );

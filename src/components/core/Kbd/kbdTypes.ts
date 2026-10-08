@@ -6,11 +6,13 @@ import type {
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
-
-export type KbdVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
-
+ 
+export const KIT_KBD_VARIANTS = ["default", "primary", "outline", "secondary"] as const;
+export type KitKbdVariant = (typeof KIT_KBD_VARIANTS)[number];
+export type KbdVariant = KitKbdVariant | (string & {});
+ 
 export type KbdSize = "small" | "base" | "mid" | "large";
-
+ 
 export type KbdClassNames = {
   root?: string;
   text?: string;
@@ -18,19 +20,19 @@ export type KbdClassNames = {
   /** Separator between keys in `Kbd.Group` (prop `separator`, not a compound part). */
   separator?: string;
 };
-
+ 
 export type KbdPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
   enter?: MotionValue;
 };
-
+ 
 export type KbdMotion = {
   root?: KbdPartMotion;
   text?: KbdPartMotion;
   group?: KbdPartMotion;
 };
-
+ 
 export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   variant?: KbdVariant;
   size?: KbdSize;
@@ -53,7 +55,7 @@ export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type KbdGroupProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   classNames?: Prettify<KbdClassNames>;
   /**
@@ -73,19 +75,19 @@ export type KbdGroupProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & 
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
-
+ 
 export type KbdClassNamesProviderProps = {
   classNames?: Prettify<KbdClassNames>;
   children: ReactNode;
 };
-
+ 
 export type UseKbdRootStateProps = {
-  variant: KbdVariant;
+  variant?: KbdVariant;
   size: KbdSize;
   className?: string;
   classNames?: Prettify<KbdClassNames>;
 };
-
+ 
 export type UseKbdAnimationsProps = {
   variant: KbdVariant;
   hoverLift?: boolean;
@@ -94,8 +96,9 @@ export type UseKbdAnimationsProps = {
   onPointerOver?: (e: ReactPointerEvent<HTMLElement>) => void;
   onPointerOut?: (e: ReactPointerEvent<HTMLElement>) => void;
 };
-
+ 
 export type KbdTextProps = HTMLAttributes<HTMLSpanElement> & {
   size: KbdSize;
   motion?: Prettify<KbdPartMotion>;
 };
+ 

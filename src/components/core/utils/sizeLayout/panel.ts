@@ -1,14 +1,14 @@
 import type { TextVariant } from "@/components/core/Text";
-
+ 
 import type { ComponentSize } from "./componentSize";
 import { resolveComponentSize } from "./componentSize";
 import { CONTROL_SIZE_LAYOUT } from "./control";
-
+ 
 export type PanelSize = ComponentSize;
-
+ 
 /** Alias — Card shares the panel size grid. */
 export type CardSize = PanelSize;
-
+ 
 /**
  * Shared size grid for surface panels:
  * Dialog, AlertDialog, Popover, Card, Drawer.
@@ -52,7 +52,7 @@ export type PanelSizeLayout = {
   /** Dialog / AlertDialog / Drawer header CloseButton */
   closeButtonSize: ComponentSize;
 };
-
+ 
 export const PANEL_SIZE_LAYOUT: Record<PanelSize, PanelSizeLayout> = {
   small: {
     rounded: CONTROL_SIZE_LAYOUT.small.rounded,
@@ -143,15 +143,16 @@ export const PANEL_SIZE_LAYOUT: Record<PanelSize, PanelSizeLayout> = {
     closeButtonSize: "base",
   },
 };
-
+ 
 export function resolvePanelSize(size?: PanelSize): PanelSize {
   return resolveComponentSize(size);
 }
-
+ 
 export function panelSizeLayout(size?: PanelSize): PanelSizeLayout {
   return PANEL_SIZE_LAYOUT[resolvePanelSize(size)];
 }
-
+ 
 export const resolveCardSize = resolvePanelSize;
 export const cardSizeLayout = panelSizeLayout;
 export const CARD_SIZE_LAYOUT = PANEL_SIZE_LAYOUT;
+ 

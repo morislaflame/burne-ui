@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, type MouseEvent, type RefObject } from "react";
-
+ 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { focusElement } from "@/components/core/utils/focusElement";
+import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
 import { useControllableState } from "@/components/core/utils/useControllableState";
+import { useSkinVariant } from "@/skins/skinContext";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
-
+ 
 import { timeFieldShellAria } from "./timeFieldA11y";
 import { formatTime, parseTime, segmentsForFormat, segValue, TIME_FIELD_SEG_MAX, withSeg } from "./timeFieldAPI";
 import { useOptionalTimeFieldContext } from "./timeFieldContext";
@@ -13,7 +15,7 @@ import type {
   TimeFieldControlProps,
   TimeFieldSegId,
 } from "./timeFieldTypes";
-
+ 
 export function useTimeFieldControlState({
   value: valueProp,
   defaultValue = "00:00",
@@ -29,26 +31,29 @@ export function useTimeFieldControlState({
   const timeLabel = useBurneLabel("time");
   const ctx = useOptionalTimeFieldContext();
   const size = sizeProp ?? ctx?.size ?? "base";
-  const status = statusProp ?? ctx?.status ?? "default";
-  const variant = variantProp ?? ctx?.variant ?? "default";
+  const isInvalid = useResolvedFieldInvalid({
+    invalid: ctx?.invalid,
+    errorConnected: ctx?.errorConnected ?? false,
+  });
+  const status = visualStatusForInvalid(statusProp ?? ctx?.status, isInvalid, "default");
+  const variant = useSkinVariant(variantProp ?? ctx?.variant);
   const compact = compactProp ?? ctx?.compact ?? false;
-  const isGloss = variant === "gloss";
   const fieldId = ctx?.fieldId;
   const labelId = ctx?.labelId ?? "";
   const labelConnected = ctx?.labelConnected ?? false;
   const required = ctx?.required ?? false;
-
+ 
   const [hms, setHms] = useControllableState({
     value: valueProp !== undefined ? parseTime(valueProp) : undefined,
     defaultValue: () => parseTime(defaultValue),
     onChange: (next) => onValueChange?.(formatTime(next, format)),
   });
-
+ 
   const pendingRef = useRef<{ seg: TimeFieldSegId; digit: number } | null>(null);
   const [focusedSeg, setFocusedSeg] = useState<TimeFieldSegId | null>(null);
   const shellRef = useRef<HTMLFieldSetElement>(null);
   const keyboardInputRef = useRef<HTMLInputElement>(null);
-
+ 
   const hSegRef = useRef<HTMLSpanElement>(null);
   const mSegRef = useRef<HTMLSpanElement>(null);
   const sSegRef = useRef<HTMLSpanElement>(null);
@@ -61,23 +66,23 @@ export function useTimeFieldControlState({
       }) satisfies Record<TimeFieldSegId, RefObject<HTMLSpanElement | null>>,
     [],
   );
-
+ 
   const segments = useMemo(() => segmentsForFormat(format), [format]);
-
+ 
   const setShellRef = useCallback(
     (node: HTMLFieldSetElement | null) => {
       shellRef.current = node;
     },
     [],
   );
-
+ 
   const focusSeg = useCallback((seg: TimeFieldSegId) => {
     pendingRef.current = null;
     setFocusedSeg(seg);
     shellRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
     focusElement(keyboardInputRef.current);
   }, []);
-
+ 
   const navigate = useCallback(
     (from: TimeFieldSegId, dir: "prev" | "next") => {
       const idx = segments.indexOf(from);
@@ -86,19 +91,19 @@ export function useTimeFieldControlState({
     },
     [segments, focusSeg],
   );
-
+ 
   const commitPending = useCallback(() => {
     const p = pendingRef.current;
     if (!p) return;
     setHms(withSeg(hms, p.seg, p.digit));
     pendingRef.current = null;
   }, [hms, setHms]);
-
+ 
   const applyDigit = useCallback(
     (seg: TimeFieldSegId, digit: number) => {
       const max = TIME_FIELD_SEG_MAX[seg];
       const pending = pendingRef.current;
-
+ 
       if (pending && pending.seg === seg) {
         const combined = pending.digit * 10 + digit;
         if (combined > max) {
@@ -126,13 +131,13 @@ export function useTimeFieldControlState({
     },
     [hms, navigate, setHms],
   );
-
+ 
   const handleSegKeyDown = useCallback(
     (e: KeyboardEvent<HTMLSpanElement | HTMLInputElement>, seg: TimeFieldSegId) => {
       if (disabled) return;
       const max = TIME_FIELD_SEG_MAX[seg];
       const digit = parseInt(e.key, 10);
-
+ 
       if (!Number.isNaN(digit)) {
         e.preventDefault();
         applyDigit(seg, digit);
@@ -160,13 +165,13 @@ export function useTimeFieldControlState({
     },
     [applyDigit, commitPending, disabled, hms, navigate, setHms],
   );
-
+ 
   const handleFieldBlur = useCallback(
     (e: FocusEvent<HTMLSpanElement | HTMLInputElement>) => {
       const shell = shellRef.current;
       const related = e.relatedTarget as Node | null;
       if (shell && related && shell.contains(related)) return;
-
+ 
       if (shell && related == null) {
         requestAnimationFrame(() => {
           const active = document.activeElement;
@@ -176,18 +181,18 @@ export function useTimeFieldControlState({
         });
         return;
       }
-
+ 
       commitPending();
       setFocusedSeg(null);
     },
     [commitPending],
   );
-
+ 
   const handleSegFocus = useCallback((seg: TimeFieldSegId) => {
     pendingRef.current = null;
     setFocusedSeg(seg);
   }, []);
-
+ 
   const handleKeyboardInput = useCallback(
     (e: FormEvent<HTMLInputElement>) => {
       const raw = e.currentTarget.value;
@@ -200,7 +205,7 @@ export function useTimeFieldControlState({
     },
     [applyDigit, disabled, focusedSeg],
   );
-
+ 
   const handleKeyboardInputKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (disabled || !focusedSeg) return;
@@ -208,7 +213,7 @@ export function useTimeFieldControlState({
     },
     [disabled, focusedSeg, handleSegKeyDown],
   );
-
+ 
   const handleSegClick = useCallback(
     (e: MouseEvent, seg: TimeFieldSegId) => {
       e.stopPropagation();
@@ -216,7 +221,7 @@ export function useTimeFieldControlState({
     },
     [focusSeg],
   );
-
+ 
   const handleShellClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       if (disabled) return;
@@ -227,41 +232,42 @@ export function useTimeFieldControlState({
     },
     [disabled, focusSeg, segments],
   );
-
+ 
   const isPending = (seg: TimeFieldSegId) =>
     pendingRef.current?.seg === seg && focusedSeg === seg;
-
+ 
   const segDisplay = (seg: TimeFieldSegId) => {
     if (isPending(seg)) return String(pendingRef.current!.digit);
     return String(hms[seg]).padStart(2, "0");
   };
-
+ 
   const shellSurface = timeFieldShellSurfaceClass({ variant, status });
-
+ 
   const shellAria = timeFieldShellAria({
     labelConnected,
     labelId,
     timeLabel,
   });
-
+ 
   const ariaDescribedBy = joinFieldDescribedBy(
     ctx?.hintConnected ? ctx.hintId : undefined,
     ctx?.errorConnected ? ctx.errorId : undefined,
   );
-
+ 
   return {
     size,
     status,
     variant,
     compact,
     disabled,
-    isGloss,
     format,
     fieldId,
     controlId: id ?? fieldId,
     shellAria,
     ariaDescribedBy,
     required,
+    errorConnected: ctx?.errorConnected ?? false,
+    isInvalid,
     hms,
     segments,
     segRefById,
@@ -280,3 +286,4 @@ export function useTimeFieldControlState({
     segDisplay,
   };
 }
+ 

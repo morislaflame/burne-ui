@@ -48,10 +48,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const CARD_RADIO_CLASS = cn(
-  "group relative flex flex-col gap-mid rounded-mid border-token bg-surface px-mid py-large transition-colors",
+  "group relative flex flex-col gap-mid rounded-large border-token bg-surface px-mid py-large transition-colors",
   "data-[selected=true]:border-primary data-[selected=true]:bg-default-hover",
-  "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-default-hover",
-);
+  "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-default-hover");
 
 export const Playground: Story = {
   render: (args) => (
@@ -275,7 +274,7 @@ export const CustomClassNames: Story = {
       defaultValue="card"
       className="max-w-md"
       classNames={{
-        root: "rounded-mid border border-primary/20 p-base",
+        root: "rounded-large border border-primary/20 p-base",
         legend: "text-primary",
         legendHeader: "gap-xsmall",
         hint: "text-foreground/70",

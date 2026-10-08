@@ -1,5 +1,5 @@
 import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxRoot, ComboBoxTrigger } from "./ComboBox";
-
+ 
 export const ComboBox = Object.assign(ComboBoxRoot, {
   Label: ComboBoxLabel,
   InputGroup: ComboBoxInputGroup,
@@ -9,9 +9,9 @@ export const ComboBox = Object.assign(ComboBoxRoot, {
   Hint: ComboBoxHint,
   Error: ComboBoxError,
 });
-
+ 
 export type { ComboBoxOption } from "./comboBoxTypes";
-
+ 
 export type {
   ComboBoxProps,
   ComboBoxSimpleProps,
@@ -26,5 +26,6 @@ export type {
   ComboBoxMotion,
   ComboBoxPartMotion,
 } from "./comboBoxTypes";
-
+ 
 export { comboBoxFilteredValues } from "./comboBoxAPI";
+ 

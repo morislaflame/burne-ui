@@ -1,19 +1,20 @@
 import { memo, useImperativeHandle, useLayoutEffect, useRef, forwardRef } from "react";
-
+ 
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 import { cn } from "@/utils/cn";
-
+ 
 import { rippleLayerA11yProps } from "./rippleA11y";
 import { resolveRippleEventTarget, resolveRipplePaint } from "./rippleAPI";
 import { RIPPLE_LAYER_CLASS } from "./rippleStyles";
 import type { RippleProps } from "./rippleTypes";
-
+ 
 export type { RippleProps, RippleDirection } from "./rippleTypes";
-
+ 
 type ConvergeRipplePaintHandle = {
   pushAtClientCoords: (
     target: HTMLElement,
@@ -21,14 +22,14 @@ type ConvergeRipplePaintHandle = {
     clientY: number,
   ) => void;
 };
-
+ 
 type ConvergeRipplePaintProps = {
   tone: string;
   durationMs: number;
   opacityFrom: number;
   direction: NonNullable<RippleProps["direction"]>;
 };
-
+ 
 /** Owns ripple `useState` so push/dismiss re-render only this leaf, not the host. */
 const ConvergeRipplePaint = memo(
   forwardRef<ConvergeRipplePaintHandle, ConvergeRipplePaintProps>(
@@ -37,13 +38,13 @@ const ConvergeRipplePaint = memo(
       ref,
     ) {
       const { ripples, pushAtClientCoords, dismiss } = useConvergeRipples();
-
+ 
       useImperativeHandle(
         ref,
         () => ({ pushAtClientCoords }),
         [pushAtClientCoords],
       );
-
+ 
       return (
         <ConvergeRippleLayer
           ripples={ripples}
@@ -57,48 +58,51 @@ const ConvergeRipplePaint = memo(
     },
   ),
 );
-
+ 
 ConvergeRipplePaint.displayName = "ConvergeRipplePaint";
-
+ 
 /**
  * Event host without ripple state — parent re-renders do not replay dots;
  * paint/dismiss stays inside memoized `ConvergeRipplePaint`.
  */
-export function Ripple({
-  color,
-  disabled = false,
-  duration,
-  direction = "out",
-  className = "",
-}: RippleProps) {
+export const Ripple = forwardRef<HTMLSpanElement, RippleProps>(function Ripple(
+  {
+    color,
+    disabled = false,
+    duration,
+    direction = "out",
+    className = "",
+  },
+  ref,
+) {
   const motion = useMotionConfig();
   const resolvedDuration = duration ?? motion.rippleDefaultDuration;
   const layerRef = useRef<HTMLSpanElement>(null);
   const paintRef = useRef<ConvergeRipplePaintHandle>(null);
   const paint = resolveRipplePaint(color);
   const opacityFrom = motion.rippleDefaultOpacityFrom;
-
+ 
   useLayoutEffect(() => {
     const layer = layerRef.current;
     if (!layer || disabled) return;
-
+ 
     const target = resolveRippleEventTarget(layer);
     if (!target) return;
-
+ 
     const handler = (ev: PointerEvent) => {
       if (disabled || prefersReducedMotion() || !isMotionFeatureEnabledFor(motion, "enableRipple")) return;
       if (ev.defaultPrevented) return;
       if (ev.pointerType === "mouse" && ev.button !== 0) return;
       paintRef.current?.pushAtClientCoords(target, ev.clientX, ev.clientY);
     };
-
+ 
     target.addEventListener("pointerdown", handler);
     return () => target.removeEventListener("pointerdown", handler);
   }, [disabled, motion]);
-
+ 
   return (
     <span
-      ref={layerRef}
+      ref={mergeRefs(layerRef, ref)}
       className={cn(RIPPLE_LAYER_CLASS, className)}
       {...rippleLayerA11yProps()}
     >
@@ -111,4 +115,7 @@ export function Ripple({
       />
     </span>
   );
-}
+});
+
+Ripple.displayName = "Ripple";
+ 

@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from "react";
-
+ 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
-
+ 
 import { resolvePaginationAriaLabel } from "./paginationA11y";
 import type {
   PaginationContextValue,
   UsePaginationRootStateProps,
 } from "./paginationTypes";
-
+ 
 export function usePaginationRootState({
   page: pageProp,
   defaultPage,
@@ -27,14 +27,14 @@ export function usePaginationRootState({
         }
       : undefined,
   });
-
+ 
   const setPage = useCallback(
     (next: number) => {
       setPageRaw(next);
     },
     [setPageRaw],
   );
-
+ 
   const contextValue = useMemo<PaginationContextValue>(
     () => ({
       page,
@@ -44,9 +44,10 @@ export function usePaginationRootState({
     }),
     [page, setPage, siblingCount, totalPages],
   );
-
+ 
   return {
     contextValue,
     ariaLabel: resolvePaginationAriaLabel(ariaLabel, paginationLabel),
   };
 }
+ 

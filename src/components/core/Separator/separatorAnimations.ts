@@ -8,20 +8,20 @@
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-
+ 
 import {
   hasPointerPhases,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
-
+ 
 import { useSeparatorMotionScope } from "./separatorContext";
 import type { SeparatorPartMotion } from "./separatorTypes";
-
+ 
 export function resolveSeparatorMotionDefaults() {
   return {};
 }
-
+ 
 export function useSeparatorRootMotion({
   forwardedRef,
   motion,
@@ -54,3 +54,4 @@ export function useSeparatorRootMotion({
   useOptionalEnterOnMount(scope, "root", part.targetRef);
   return part;
 }
+ 

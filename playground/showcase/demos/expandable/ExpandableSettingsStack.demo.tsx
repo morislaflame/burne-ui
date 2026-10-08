@@ -7,19 +7,19 @@ const SECTIONS = [
   {
     title: "Notifications",
     description: "Email and push",
-    icon: <IoNotificationsOutline aria-hidden className="size-full" />,
+    icon: <IoNotificationsOutline aria-hidden />,
     body: "Set up alert channels and digest frequency.",
   },
   {
     title: "Safety",
     description: "2FA and sessions",
-    icon: <IoShieldCheckmarkOutline aria-hidden className="size-full" />,
+    icon: <IoShieldCheckmarkOutline aria-hidden />,
     body: "Enable two-factor authentication and view active sessions.",
   },
   {
     title: "Payment",
     description: "Cards and accounts",
-    icon: <IoCardOutline aria-hidden className="size-full" />,
+    icon: <IoCardOutline aria-hidden />,
     body: "Payment methods and transaction history.",
   },
 ] as const;

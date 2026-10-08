@@ -1,14 +1,14 @@
-import { IoChevronForward } from "react-icons/io5";
+import { KitChevronForward } from "@/components/core/utils/kitIcons";
 import { forwardRef, useCallback, useMemo } from "react";
-
+ 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
-
+ 
 import { Dropdown } from "@/components/core/Dropdown";
 import { Text } from "@/components/core/Text";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-
+ 
 import { breadcrumbsEllipsisPopoverAriaLabel, ellipsisTriggerAriaLabel } from "./breadcrumbsA11y";
 import { breadcrumbListItemKey } from "./breadcrumbsAPI";
 import {
@@ -35,15 +35,15 @@ import type {
   BreadcrumbsSeparatorProps,
   InteractiveCrumbProps,
 } from "./breadcrumbsTypes";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
   return null;
 }
-
+ 
 BreadcrumbsItem.displayName = "Breadcrumbs.Item";
-
+ 
 export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps>(
   function BreadcrumbsList(
     {
@@ -60,7 +60,7 @@ export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps
     ref,
   ) {
     const { pieces } = useBreadcrumbsListState(children);
-
+ 
     return (
       <BreadcrumbsClassNamesProvider classNames={classNames}>
         <BreadcrumbsPiecesList
@@ -78,9 +78,9 @@ export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps
     );
   },
 );
-
+ 
 BreadcrumbsList.displayName = "Breadcrumbs.List";
-
+ 
 export const BreadcrumbsPiecesList = forwardRef<HTMLOListElement, BreadcrumbsPiecesListProps>(
 function BreadcrumbsPiecesList(
   {
@@ -104,7 +104,7 @@ function BreadcrumbsPiecesList(
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <ol
       ref={part.setRef}
@@ -122,15 +122,15 @@ function BreadcrumbsPiecesList(
     </ol>
   );
 });
-
+ 
 BreadcrumbsPiecesList.displayName = "BreadcrumbsPiecesList";
-
+ 
 function BreadcrumbListItem({
   piece,
   showSeparator,
 }: BreadcrumbListItemProps) {
   const slotClassNames = useBreadcrumbsClassNames();
-
+ 
   return (
     <li className={breadcrumbListItemClass(slotClassNames.item)}>
       {showSeparator ? <BreadcrumbChevronSeparator /> : null}
@@ -142,7 +142,7 @@ function BreadcrumbListItem({
     </li>
   );
 }
-
+ 
 export function BreadcrumbsSeparator({
   className,
   iconClassName,
@@ -161,7 +161,7 @@ export function BreadcrumbsSeparator({
     onPointerDown,
     onPointerUp,
   });
-
+ 
   return (
     <span
       ref={part.setRef}
@@ -171,7 +171,7 @@ export function BreadcrumbsSeparator({
       {...rest}
       {...part.pointerHandlers}
     >
-      <IoChevronForward
+      <KitChevronForward
         className={breadcrumbChevronClass(
           cn("", slotClassNames.separator, iconClassName),
         )}
@@ -180,13 +180,13 @@ export function BreadcrumbsSeparator({
     </span>
   );
 }
-
+ 
 BreadcrumbsSeparator.displayName = "Breadcrumbs.Separator";
-
+ 
 function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
   const slotClassNames = useBreadcrumbsClassNames();
   const { item, isLast } = piece;
-
+ 
   if (isLast) {
     return (
       <Text
@@ -201,7 +201,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
       </Text>
     );
   }
-
+ 
   if (item.href || item.onClick) {
     return (
       <InteractiveCrumb
@@ -217,7 +217,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
       </InteractiveCrumb>
     );
   }
-
+ 
   return (
     <Text
       as="span"
@@ -230,11 +230,11 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
     </Text>
   );
 }
-
+ 
 function BreadcrumbChevronSeparator() {
   const slotClassNames = useBreadcrumbsClassNames();
   const part = useBreadcrumbsSlotMotion<HTMLSpanElement>("separator");
-
+ 
   return (
     <span
       ref={part.setRef}
@@ -242,14 +242,14 @@ function BreadcrumbChevronSeparator() {
       aria-hidden
       {...part.pointerHandlers}
     >
-      <IoChevronForward
+      <KitChevronForward
         className={breadcrumbChevronClass(slotClassNames.separator)}
         aria-hidden
       />
     </span>
   );
 }
-
+ 
 export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
   function InteractiveCrumb(
     {
@@ -274,7 +274,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
       parentScope?.getRootMotion(),
       motion ? { itemLink: motion } : undefined,
     );
-
+ 
     return (
       <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -295,7 +295,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
     );
   },
 );
-
+ 
 function InteractiveCrumbSurface({
   href,
   onClick,
@@ -327,7 +327,7 @@ function InteractiveCrumbSurface({
       slot: "itemLinkText",
       pointerPhases: true,
     });
-
+ 
     const setTextMerged = useCallback(
       (node: HTMLSpanElement | null) => {
         setTextRef(node);
@@ -335,7 +335,7 @@ function InteractiveCrumbSurface({
       },
       [forwardedRef, setTextRef],
     );
-
+ 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLAnchorElement | HTMLButtonElement>) => {
         if (!isInteractivePressKey(e) || !scope) return;
@@ -346,11 +346,11 @@ function InteractiveCrumbSurface({
       },
       [scope],
     );
-
+ 
     const innerCls = href
       ? crumbInteractiveInnerClass(innerClassName)
       : crumbInteractiveButtonClass(innerClassName);
-
+ 
     const text = (
       <Text
         ref={setTextMerged}
@@ -363,7 +363,7 @@ function InteractiveCrumbSurface({
         {children}
       </Text>
     );
-
+ 
     return (
       <span className={crumbInteractiveWrapperClass(className)}>
         {href ? (
@@ -394,9 +394,9 @@ function InteractiveCrumbSurface({
       </span>
     );
 }
-
+ 
 InteractiveCrumb.displayName = "BreadcrumbsInteractiveCrumb";
-
+ 
 export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
   const slotClassNames = useBreadcrumbsClassNames();
   const labels = useBurneLabels();
@@ -404,9 +404,9 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
   const parentScope = useOptionalBreadcrumbsMotionScope();
   const motionDefaults = useMemo(() => resolveBreadcrumbsEllipsisMotionDefaults(), []);
   const mergedMotion = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
-
+ 
   if (count === 0) return null;
-
+ 
   return (
     <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults}>
       <BreadcrumbsEllipsisMenuSurface
@@ -418,7 +418,7 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
     </BreadcrumbsMotionProvider>
   );
 }
-
+ 
 function BreadcrumbsEllipsisMenuSurface({
   hiddenItems,
   slotClassNames,
@@ -435,7 +435,7 @@ function BreadcrumbsEllipsisMenuSurface({
     slot: "ellipsisLiftWrapper",
     pressPhases: true,
   });
-
+ 
   return (
     <Dropdown>
       <Dropdown.Trigger
@@ -476,13 +476,13 @@ function BreadcrumbsEllipsisMenuSurface({
     </Dropdown>
   );
 }
-
+ 
 function BreadcrumbsEllipsisDropdownItem({
   item,
   className,
 }: BreadcrumbsEllipsisDropdownItemProps) {
   const itemKey = item.href ?? `hidden-${String(item.label)}`;
-
+ 
   if (item.href) {
     return (
       <Dropdown.Item
@@ -495,7 +495,7 @@ function BreadcrumbsEllipsisDropdownItem({
       </Dropdown.Item>
     );
   }
-
+ 
   return (
     <Dropdown.Item
       value={itemKey}
@@ -507,3 +507,4 @@ function BreadcrumbsEllipsisDropdownItem({
     </Dropdown.Item>
   );
 }
+ 

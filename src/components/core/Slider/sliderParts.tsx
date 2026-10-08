@@ -1,11 +1,12 @@
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { forwardRef } from "react";
 
-import "@/components/core/utils/glossPanel.css";
+import { useSkinVariant } from "@/skins/skinContext";
+ 
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { renderSliderSimpleLayout, SliderScaleFieldHeader, SliderScaleFieldValue } from "./sliderScaleField";
-
+ 
 import { resolveSliderMotionDefaults, useSliderChromeSlot, useSliderTrackSlotMotion } from "./sliderAnimations";
 import {
   SliderMotionProvider,
@@ -25,17 +26,18 @@ import type {
   SliderTrackProps,
   SliderValueProps,
 } from "./sliderTypes";
+import { SLIDER_LABEL_DANGER_CLASS } from "./sliderStyles";
 import { useSliderTrackState } from "./useSliderTrackState";
-
+ 
 import { cn } from "@/utils/cn";
-
+ 
 export {
   SliderCompoundThumb,
   SliderFill,
   SliderIcon,
   SliderRail,
 } from "./sliderTrackParts";
-
+ 
 export function SliderSimpleBody({
   label,
   showValue,
@@ -65,7 +67,7 @@ export function SliderSimpleBody({
     track: <SliderTrack {...trackProps} />,
   });
 }
-
+ 
 export const SliderLabel = forwardRef<HTMLElement, SliderLabelProps>(
   function SliderLabel(
     {
@@ -80,6 +82,7 @@ export const SliderLabel = forwardRef<HTMLElement, SliderLabelProps>(
     },
     ref,
   ) {
+    const fieldCtx = useSliderFieldContext();
     const slotClassNames = useSliderClassNames();
     const part = useSliderChromeSlot("label", {
       motion,
@@ -89,11 +92,11 @@ export const SliderLabel = forwardRef<HTMLElement, SliderLabelProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Label
         ref={part.setRef}
-        className={className}
+        className={cn(fieldCtx.isInvalid && SLIDER_LABEL_DANGER_CLASS, className)}
         classNames={{
           ...classNames,
           root: cn(slotClassNames.label, classNames?.root),
@@ -104,9 +107,9 @@ export const SliderLabel = forwardRef<HTMLElement, SliderLabelProps>(
     );
   },
 );
-
+ 
 SliderLabel.displayName = "SliderLabel";
-
+ 
 export function SliderHeader({ children, className, ...rest }: SliderHeaderProps) {
   const { orientation } = useSliderFieldContext();
   const slotClassNames = useSliderClassNames();
@@ -115,7 +118,7 @@ export function SliderHeader({ children, className, ...rest }: SliderHeaderProps
     slot: "header",
     pointerPhases: true,
   });
-
+ 
   return (
     <SliderScaleFieldHeader
       ref={setRef}
@@ -128,9 +131,9 @@ export function SliderHeader({ children, className, ...rest }: SliderHeaderProps
     </SliderScaleFieldHeader>
   );
 }
-
+ 
 SliderHeader.displayName = "Slider.Header";
-
+ 
 export function SliderValue({ children, className, ...rest }: SliderValueProps) {
   const { display } = useSliderFieldContext();
   const slotClassNames = useSliderClassNames();
@@ -139,7 +142,7 @@ export function SliderValue({ children, className, ...rest }: SliderValueProps) 
     slot: "value",
     pointerPhases: true,
   });
-
+ 
   return (
     <SliderScaleFieldValue
       ref={setRef}
@@ -152,9 +155,9 @@ export function SliderValue({ children, className, ...rest }: SliderValueProps) 
     </SliderScaleFieldValue>
   );
 }
-
+ 
 SliderValue.displayName = "Slider.Value";
-
+ 
 export const SliderHint = forwardRef<HTMLElement, SliderHintProps>(
   function SliderHint(
     {
@@ -180,7 +183,7 @@ export const SliderHint = forwardRef<HTMLElement, SliderHintProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Hint
         ref={part.setRef}
@@ -194,9 +197,9 @@ export const SliderHint = forwardRef<HTMLElement, SliderHintProps>(
     );
   },
 );
-
+ 
 SliderHint.displayName = "Slider.Hint";
-
+ 
 export const SliderError = forwardRef<HTMLElement, SliderErrorProps>(
   function SliderError(
     {
@@ -222,7 +225,7 @@ export const SliderError = forwardRef<HTMLElement, SliderErrorProps>(
       onPointerDown,
       onPointerUp,
     });
-
+ 
     return (
       <Field.Error
         ref={part.setRef}
@@ -236,20 +239,24 @@ export const SliderError = forwardRef<HTMLElement, SliderErrorProps>(
     );
   },
 );
-
+ 
 SliderError.displayName = "Slider.Error";
-
+ 
 export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function SliderTrack(
   { motion, motionController, motionState, motionPayload, playInitialState, ...props },
   ref,
 ) {
   const parent = useOptionalSliderMotionScope();
+  const variant = useSkinVariant(props.variant);
   const host = <SliderTrackHost {...props} motion={motion} forwardedRef={ref} />;
   if (parent) return host;
   return (
     <SliderMotionProvider
       motion={motion}
-      defaults={resolveSliderMotionDefaults({ disabled: props.disabled })}
+      defaults={resolveSliderMotionDefaults({
+        disabled: props.disabled,
+        variant,
+      })}
       controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
@@ -259,9 +266,9 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
     </SliderMotionProvider>
   );
 });
-
+ 
 SliderTrack.displayName = "SliderTrack";
-
+ 
 function SliderTrackHost({
   forwardedRef,
   ...props
@@ -276,7 +283,7 @@ function SliderTrackHost({
     pointerPhases: true,
     onPointerDown: state.handleTrackPointerDown,
   });
-
+ 
   return (
     <div
       {...state.trackRest}
@@ -296,3 +303,4 @@ function SliderTrackHost({
     </div>
   );
 }
+ 

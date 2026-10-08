@@ -1,5 +1,5 @@
 import type { FocusEvent, PointerEvent } from "react";
-
+ 
 export function mergeDescribedBy(
   existing: string | undefined,
   tooltipId: string,
@@ -10,7 +10,7 @@ export function mergeDescribedBy(
   if (existing.split(/\s+/).includes(tooltipId)) return existing;
   return `${existing} ${tooltipId}`;
 }
-
+ 
 export function bindTriggerEvents<T extends HTMLElement>(
   handlers: {
     onPointerEnter?: (e: PointerEvent<T>) => void;
@@ -44,3 +44,4 @@ export function bindTriggerEvents<T extends HTMLElement>(
     },
   };
 }
+ 
