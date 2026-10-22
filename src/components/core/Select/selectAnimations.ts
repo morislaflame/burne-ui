@@ -1,13 +1,14 @@
 /**
  * Slot motion for Select — look here first.
  *
- * DOM slots: `triggerGroup` (host), `value`, `trigger`, `triggerIcon`, `label`, `hint`, `error`
+ * DOM slots: `shell` (host), `value`, `trigger`, `triggerIconWrap`, `label`, `hint`, `error`
  *
- * Root passes the `motion` map. Host is `Select.TriggerGroup` (defaults + `play`).
+ * Pass-through: `popover` → inner Popover `content` (not registered on this scope).
+ * Root passes the `motion` map. Host is `Select.Shell` (defaults + `play`).
  * Chrome (`label` / `hint` / `error`) registers on the Root scope.
  * Open-after-squeeze plays slot `pressIn`.
  *
- * Not slots: Field's own scope; Popover / ListBox (menu enter lives on Popover).
+ * Not slots: Field's own scope; ListBox rows.
  */
 import { useCallback, useMemo, useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler, type RefObject } from "react";
  
@@ -23,7 +24,7 @@ import {
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
  
 import { useOptionalSelectMotionScope, useSelectMotionScope } from "./selectContext";
@@ -32,6 +33,14 @@ import type {
   SelectPartMotion,
   UseSelectShellAnimationsProps,
 } from "./selectTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindChevronRecipe } from "@/components/core/utils/slotMotion/recipes/bindChevron";
+import { bindPortalRecipes } from "@/components/core/utils/slotMotion/recipes/bindPortal";
+
+bindLiftRecipes();
+bindChevronRecipe();
+bindPortalRecipes();
  
 export function resolveSelectMotionDefaults({
   variant,
@@ -45,13 +54,14 @@ export function resolveSelectMotionDefaults({
   const active = !disabled && groupSegment == null;
   return overlaySkinMotion(
     {
-      triggerGroup: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+      shell: {
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
         pressIn: active ? "pressSqueeze" : false,
         pressOut: false,
       },
-      triggerIcon: { enter: "chevronRotate", leave: "chevronRotate" },
+      triggerIconWrap: { enter: "chevronRotate", leave: "chevronRotate" },
+      popover: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
     },
     variant,
     KIT_INPUT_VARIANTS,
@@ -59,6 +69,17 @@ export function resolveSelectMotionDefaults({
   );
 }
  
+/** Root `motion.popover` and `Select.Popover` `motion`, with the portal-surface default underneath. */
+export function resolveSelectPopoverPanelMotion(
+  variant: InputVariant,
+  disabled: boolean,
+  rootPopover: SelectPartMotion | undefined,
+  partMotion: SelectPartMotion | undefined,
+): SelectPartMotion {
+  const skinned = resolveSelectMotionDefaults({ variant, disabled }).popover;
+  return { ...skinned, ...rootPopover, ...partMotion };
+}
+
 export function resolveSelectMotionParams({
   variant,
   disabled,
@@ -70,9 +91,9 @@ export function resolveSelectMotionParams({
   groupSegment?: unknown;
   pointerInside: MutableRefObject<boolean>;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return {
-    shadowSize: "base" as const,
+    shadowSize: "none" as const,
     hasHoverShadow: !disabled && kitSurface && groupSegment == null,
     pointerInside,
   };
@@ -88,9 +109,9 @@ async function playSelectOpenSqueeze({
   partMotion?: SelectPartMotion;
 }): Promise<void> {
   if (prefersReducedMotion()) return;
-  const value = scope.resolve("triggerGroup", "pressIn", partMotion);
+  const value = scope.resolve("shell", "pressIn", partMotion);
   if (value === false || value === undefined) return;
-  await scope.play("triggerGroup", "pressIn", { partMotion, el }).finished;
+  await scope.play("shell", "pressIn", { partMotion, el }).finished;
 }
  
 export function useSelectOpenAfterSqueeze({
@@ -137,15 +158,16 @@ export function useSelectShellAnimations({
   const shellMotionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   shellMotionRef.current = motion;
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const shellActive = !disabled && groupSegment == null;
 
-  useOptionalEnterOnMount(scope, "triggerGroup", shellRef);
+  useOptionalEnterOnMount(scope, "shell", shellRef);
 
   const standardShellHover = useSecondLevelShadow(
     shellRef,
     shellActive && kitSurface,
     {
+      shadowSize: "none",
       interactive: false,
       pointerInsideRef,
     },
@@ -160,7 +182,7 @@ export function useSelectShellAnimations({
   const bindShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       shellRef.current = node;
-      scope.registerTarget("triggerGroup", node);
+      scope.registerTarget("shell", node);
     },
     [scope, shellRef],
   );
@@ -170,9 +192,9 @@ export function useSelectShellAnimations({
       if (!shellActive) return;
       const el = shellRef.current;
       if (!el) return;
-      const value = scope.resolve("triggerGroup", phase, shellMotionRef.current);
+      const value = scope.resolve("shell", phase, shellMotionRef.current);
       if (value === undefined || value === false) return;
-      scope.play("triggerGroup", phase, { partMotion: shellMotionRef.current, el });
+      scope.play("shell", phase, { partMotion: shellMotionRef.current, el });
     },
     [scope, shellActive, shellRef],
   );

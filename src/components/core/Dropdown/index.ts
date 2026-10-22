@@ -1,4 +1,4 @@
-import { DropdownGroup, DropdownItem, DropdownItemHint, DropdownItemIcon, DropdownItemIndicator, DropdownItemLabel, DropdownLabel, DropdownPopover, DropdownRoot, DropdownSeparator, DropdownSub, DropdownSubContent, DropdownSubTrigger, DropdownTrigger } from "./Dropdown";
+import { DropdownGroup, DropdownItem, DropdownItemHint, DropdownItemIcon, DropdownItemIndicator, DropdownItemLabel, DropdownLabel, DropdownPopover, DropdownRoot, DropdownSeparator, DropdownSub, DropdownSubPopover, DropdownSubTrigger, DropdownTrigger } from "./Dropdown";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
  
 const DropdownItemIndicatorCompound = Object.assign(DropdownItemIndicator, {
@@ -20,7 +20,7 @@ export const Dropdown = Object.assign(DropdownRoot, {
   ItemIndicator: DropdownItemIndicatorCompound,
   Sub: DropdownSub,
   SubTrigger: DropdownSubTrigger,
-  SubContent: DropdownSubContent,
+  SubPopover: DropdownSubPopover,
 });
  
 export type {
@@ -39,10 +39,11 @@ export type {
   DropdownItemStatus,
   DropdownSubProps,
   DropdownSubTriggerProps,
-  DropdownSubContentProps,
+  DropdownSubPopoverProps,
   DropdownMotion,
   DropdownLifecycleMotion,
   DropdownPartMotion,
   DropdownPopoverMotion,
+  DropdownItemData,
 } from "./dropdownTypes";
  

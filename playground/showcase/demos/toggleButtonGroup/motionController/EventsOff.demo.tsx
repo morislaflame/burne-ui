@@ -24,7 +24,7 @@ export function ToggleButtonGroupMotionEventsOffDemo() {
       </div>
       <div className="flex flex-wrap items-center gap-large">
         <ToggleButtonGroup
-          type="single"
+          selectionMode="single"
           defaultValue="list"
           aria-label="Live view"
           motionController={liveController}
@@ -34,7 +34,7 @@ export function ToggleButtonGroupMotionEventsOffDemo() {
           <ToggleButton value="grid">Grid</ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
-          type="single"
+          selectionMode="single"
           defaultValue="list"
           aria-label="Off view"
           variant="outline"

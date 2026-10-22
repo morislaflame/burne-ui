@@ -31,10 +31,10 @@ export function TabsMotionPanelWaveDemo() {
         <Tabs.Tab value="two">Two</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="one">
-        <Text variant="base">Panel wave</Text>
+        <Text textStyle="base">Panel wave</Text>
       </Tabs.Panel>
       <Tabs.Panel value="two">
-        <Text variant="base">Second panel</Text>
+        <Text textStyle="base">Second panel</Text>
       </Tabs.Panel>
     </Tabs>
   );

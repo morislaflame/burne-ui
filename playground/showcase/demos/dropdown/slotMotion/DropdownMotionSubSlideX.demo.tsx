@@ -13,7 +13,7 @@ export function DropdownMotionSubSlideXDemo() {
         <Dropdown.Group>
           <Dropdown.Sub>
             <Dropdown.SubTrigger>Invite</Dropdown.SubTrigger>
-            <Dropdown.SubContent
+            <Dropdown.SubPopover
               motion={{
                 enter: (ctx) =>
                   ctx.fromTo(
@@ -34,7 +34,7 @@ export function DropdownMotionSubSlideXDemo() {
               <Dropdown.Item value="link" selection={false}>
                 <Dropdown.ItemLabel>Copy link</Dropdown.ItemLabel>
               </Dropdown.Item>
-            </Dropdown.SubContent>
+            </Dropdown.SubPopover>
           </Dropdown.Sub>
         </Dropdown.Group>
       </Dropdown.Popover>

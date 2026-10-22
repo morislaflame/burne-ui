@@ -19,9 +19,11 @@ export function resolvePortalContainer(
 export function isContainedPortal(
   container?: HTMLElement | null,
 ): boolean {
-  if (typeof document === "undefined") return false;
   if (container == null) return false;
-  return container !== document.body;
+  const body = container.ownerDocument?.body
+    ?? (typeof document === "undefined" ? null : document.body);
+  if (!body) return false;
+  return container !== body;
 }
  
 /**

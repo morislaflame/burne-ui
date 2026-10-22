@@ -3,7 +3,7 @@ import { Dropdown } from "@/components/core/Dropdown";
 
 export function DropdownMultipleDemo() {
   return (
-    <Dropdown multiple defaultValue={["ru", "en"]}>
+    <Dropdown selectionMode="multiple" defaultValues={["ru", "en"]}>
       <Dropdown.Trigger asChild>
         <Button variant="outline">Multi-select</Button>
       </Dropdown.Trigger>

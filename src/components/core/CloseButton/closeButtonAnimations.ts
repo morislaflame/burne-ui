@@ -18,7 +18,7 @@ import {
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
-import { hasKitMember, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { overlaySkinMotion, usesKitElevationMember } from "@/skins/resolveVariantVisual";
  
 import { useCloseButtonMotionScope } from "./closeButtonContext";
 import { CLOSE_BUTTON_HAS_HOVER_SHADOW } from "./closeButtonStyles";
@@ -28,6 +28,10 @@ import type {
   UseCloseButtonAnimationsProps,
 } from "./closeButtonTypes";
 import { KIT_CLOSE_BUTTON_VARIANTS } from "./closeButtonTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
  
 export function resolveCloseButtonMotionDefaults({
@@ -65,7 +69,7 @@ export function resolveCloseButtonMotionParams({
   return {
     pointerInside,
     hasHoverShadow:
-      !disabled && hasKitMember(variant, KIT_CLOSE_BUTTON_VARIANTS, CLOSE_BUTTON_HAS_HOVER_SHADOW),
+      !disabled && usesKitElevationMember(variant, KIT_CLOSE_BUTTON_VARIANTS, CLOSE_BUTTON_HAS_HOVER_SHADOW),
   };
 }
  
@@ -84,7 +88,7 @@ export function useCloseButtonAnimations({
   onKeyDown,
 }: UseCloseButtonAnimationsProps) {
   const enabled = !disabled;
-  const hasHoverShadow = hasKitMember(
+  const hasHoverShadow = usesKitElevationMember(
     variant,
     KIT_CLOSE_BUTTON_VARIANTS,
     CLOSE_BUTTON_HAS_HOVER_SHADOW,

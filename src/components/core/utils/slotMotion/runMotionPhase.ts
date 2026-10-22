@@ -9,7 +9,7 @@ import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { getMotionRecipe } from "./motionRecipeRegistry";
 import { createMotionSurfaceApi } from "./motionSurface";
 import { createMotionTweenApi, playDeclarativeMotion } from "./motionTween";
-import { registerKitMotionRecipes } from "./recipes";
+import { loadKitRecipe } from "./recipes/loadKitRecipe";
 import {
   isMotionAbortError,
   isMotionFactory,
@@ -31,7 +31,7 @@ const running = new WeakMap<HTMLElement, MotionRun>();
  
 let nextRunId = 1;
  
-const VARS_KEYS = ["x", "y", "scale", "autoAlpha"] as const;
+const VARS_KEYS = ["x", "y", "scale", "scaleX", "scaleY", "rotation", "autoAlpha", "opacity"] as const;
  
 export function killStoredMotion(
   el: HTMLElement,
@@ -368,17 +368,31 @@ export function runMotionPhase({
     }),
   } satisfies MotionContext;
  
+  let loadedAnimation: MotionAnimation | undefined;
   const runRecipe = (name: string, extraParams?: MotionRecipeParams) => {
-    registerKitMotionRecipes();
-    const recipe = getMotionRecipe(name);
-    if (!recipe) {
-      warnUnknownRecipe(name, slot, phase);
-      if (waitForComplete) finishSuccess();
-      else resolveWait();
-      return undefined;
-    }
     const recipeCtx = extraParams ? { ...ctx, params: { ...params, ...extraParams } } : ctx;
-    return recipe(recipeCtx);
+    const recipe = getMotionRecipe(name);
+    if (recipe) return recipe(recipeCtx);
+    return loadKitRecipe(name).then(async (loaded) => {
+      if (signal.aborted || !run.isCurrent()) return;
+      if (!loaded) {
+        warnUnknownRecipe(name, slot, phase);
+        return;
+      }
+      const produced = loaded(recipeCtx);
+      if (produced && typeof produced === "object" && "then" in produced) {
+        await produced;
+        return;
+      }
+      if (
+        produced &&
+        typeof produced === "object" &&
+        "kill" in produced &&
+        "eventCallback" in produced
+      ) {
+        loadedAnimation = produced as MotionAnimation;
+      }
+    });
   };
  
   let animation: MotionAnimation | undefined;
@@ -459,6 +473,11 @@ export function runMotionPhase({
     void pending.then(
       () => {
         if (signal.aborted || run.status !== "running" || !run.isCurrent()) return;
+        if (waitForComplete && loadedAnimation) {
+          setAnimation(loadedAnimation);
+          hookAnimationComplete(loadedAnimation, finishSuccess);
+          return;
+        }
         if (waitForComplete) finishSuccess();
         else resolveWait();
       },

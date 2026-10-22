@@ -19,7 +19,7 @@ export function TextMotionControllerDemo() {
         </Button>
       </div>
       <Text
-        variant="large"
+        textStyle="large"
         motionController={controller}
         motion={{
           root: {

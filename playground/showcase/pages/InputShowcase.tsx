@@ -2,14 +2,14 @@ import { InputAuthPanelDemo } from "../demos/input/InputAuthPanel.demo";
 import inputAuthPanelSource from "../demos/input/InputAuthPanel.demo.tsx?raw";
 import { InputClassNamesCompoundDemo, InputClassNamesFullDemo } from "../demos/input/InputClassNamesFull.demo";
 import inputClassNamesFullSource from "../demos/input/InputClassNamesFull.demo.tsx?raw";
+import { LabelPartsDemo } from "../demos/label/LabelParts.demo";
+import labelPartsSource from "../demos/label/LabelParts.demo.tsx?raw";
 import { LabelClassNamesFullDemo } from "../demos/label/LabelClassNamesFull.demo";
 import labelClassNamesFullSource from "../demos/label/LabelClassNamesFull.demo.tsx?raw";
 import { InputCompoundDemo } from "../demos/input/InputCompound.demo";
 import inputCompoundSource from "../demos/input/InputCompound.demo.tsx?raw";
 import { InputInlinePairDemo } from "../demos/input/InputInlinePair.demo";
 import inputInlinePairSource from "../demos/input/InputInlinePair.demo.tsx?raw";
-import { InputStatusesDemo } from "../demos/input/InputStatuses.demo";
-import inputStatusesSource from "../demos/input/InputStatuses.demo.tsx?raw";
 import { InputUrlAffixesDemo } from "../demos/input/InputUrlAffixes.demo";
 import inputUrlAffixesSource from "../demos/input/InputUrlAffixes.demo.tsx?raw";
 import { InputSizesDemo } from "../demos/input/InputSizes.demo";
@@ -39,10 +39,6 @@ export function InputShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={InputSizesDemo} source={inputSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
-        <ShowcaseDemoFromFile align="stretch" Demo={InputStatusesDemo} source={inputStatusesSource} />
-      </ShowcaseSection>
-
       <ShowcaseSection title="Compound API" description="Input.Label, Input.Control, Input.Hint — explicit markup.">
         <ShowcaseDemoFromFile align="center" Demo={InputCompoundDemo} source={inputCompoundSource} />
       </ShowcaseSection>
@@ -54,6 +50,7 @@ export function InputShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesFullDemo} source={inputClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesCompoundDemo} source={inputClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LabelClassNamesFullDemo} source={labelClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={LabelPartsDemo} source={labelPartsSource} />
       </ShowcaseSection>
 <ShowcaseSection title="Slot motion" description="One gallery: instant hover, affix orbit timeline, file-row leave factory, password toggle + press tint.">
         <InputSlotMotionGalleryDemo />

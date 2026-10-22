@@ -9,7 +9,7 @@ export function accordionRootClass({
 }): string {
   return cn(
     "accordion-root flex w-full flex-col text-start",
-    "[&>[data-accordion-item]:not(:first-child)]:-mt-px",
+    "[&>.accordion-item:not(:first-child)]:-mt-px",
     slotClass,
     className,
   );

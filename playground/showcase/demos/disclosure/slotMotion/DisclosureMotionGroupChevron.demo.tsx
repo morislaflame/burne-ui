@@ -12,7 +12,7 @@ export function DisclosureMotionGroupChevronDemo() {
       <Disclosure value="one">
         <Disclosure.Trigger>Group chevron snap</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             `Disclosure.Group` motion merges into every item. Chevrons snap; height still tweens.
           </Text>
         </Disclosure.Content>
@@ -20,7 +20,7 @@ export function DisclosureMotionGroupChevronDemo() {
       <Disclosure value="two">
         <Disclosure.Trigger>Second item</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Same map — no per-item `motion` needed.
           </Text>
         </Disclosure.Content>

@@ -2,10 +2,13 @@
 
 Баннер уведомления с семантическими статусами, grid-компоновкой и hover-lift (компонент **второго уровня** — тень в покое и усиление **в том же размере** при наведении). Simple и compound API.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, type AlertProps, type AlertVariant, type AlertStatus, type AlertLiveRole, type AlertClassNames, type AlertMotion, type AlertPartMotion } from "burne-ui";
+import { Alert, type AlertProps, type AlertVariant, type AlertStatus, type AlertLiveRole, type AlertClassNames, type AlertMotion, type AlertPartMotion } from "burne-ui";
+import { resolveAlertLiveRole, resolveAlertStatus, resolveAlertVariant } from "burne-ui/internal";
 ```
 
 ## API
@@ -14,7 +17,7 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
-| `variant` | `default` \| `outline` \| `secondary` \| `gloss` | `default` | Визуальный стиль |
+| `variant` | `default` \| `outline` \| `secondary` | `default` | Визуальный стиль |
 | `status` | `default` \| `danger` \| `success` \| `info` \| `warning` | `default` | Семантический тон |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Padding, icon, type и **radius** (`CONTROL_SIZE_LAYOUT.rounded`) |
 | `role` | `status` \| `alert` | auto | Live region; danger/warning → `alert` |
@@ -90,7 +93,6 @@ Compound включается автоматически при наличии �
 | `default` | `bg-surface border-token` | тот же surface; status на индикаторе и title |
 | `outline` | прозрачный + `border-token-outline` | тот же surface; status на индикаторе и title |
 | `secondary` | `bg-secondary` | тот же surface; status на индикаторе и title |
-| `gloss` | `gloss-panel border-0` | тот же surface; status на индикаторе и title |
 
 ### Индикатор по умолчанию
 
@@ -104,7 +106,7 @@ Compound включается автоматически при наличии �
 
 ## Анимации
 
-Компонент **2-го уровня** — тень в покое по `shadow` (default `base`), усиление при hover в той же семье (`--shadow-{size}-hover`). Логика: `alertAnimations.ts` → slot motion (`hoverLiftSecondLevel` / `hoverLiftGloss`) + rest-тень через `useSecondLevelShadow(..., { interactive: false })`.
+Компонент **2-го уровня** — тень в покое по `shadow` (default `base`), усиление при hover в той же семье (`--shadow-{size}-hover`). Логика: `alertAnimations.ts` → slot motion (`hoverLiftSecondLevel`) + rest-тень через `useSecondLevelShadow(., { interactive: false })`.
 
 ### Slot motion
 
@@ -112,7 +114,7 @@ Compound включается автоматически при наличии �
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss` по `variant`; `params.shadowSize` из `shadow` |
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` по `variant`; `params.shadowSize` из `shadow` |
 | `indicator` / `title` / `description` / `action` | `hoverIn` / `hoverOut` | нет (локально, если задать) |
 
 `hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). Явный `motion.root.hoverIn` важнее `hoverLift`. Simple API монтирует те же части — `motion.title` работает без compound.
@@ -122,7 +124,8 @@ Compound включается автоматически при наличии �
 **Где в коде:** типы — `alertTypes.ts`; scope — `alertContext.tsx`; defaults + host — `alertAnimations.ts` (`resolveAlertMotionDefaults`, `useAlertAnimations`); слоты — `alertParts.tsx` (`useMotionPart`); Provider — `Alert.tsx`.
 
 ```tsx
-import { Alert, killMotion, tweenCssColor } from "burne-ui";
+import { Alert } from "burne-ui";
+import { killMotion, tweenCssColor } from "burne-ui/internal";
 
 <Alert title="Saved" motion={{ title: { hoverIn: { y: -2 }, hoverOut: { y: 0 } } }} />
 
@@ -278,7 +281,7 @@ const states = createMotionStates({
 
 ### 1. Hover lift — default / outline / secondary (`hoverLift={true}`)
 
-`useSecondLevelShadow(rootRef, !isGloss, { shadowSize: shadow, interactive: hoverLift })`:
+`useSecondLevelShadow(rootRef, kitSurface, { shadowSize: shadow, interactive: false })`. Рост играет слот `root`; `hoverLift={false}` этот слот глушит, rest-тень остаётся:
 
 **Init (mount):** `initElementShadow(el, var(--shadow-{shadow}))` — покой всегда (независимо от `hoverLift`).
 
@@ -290,7 +293,7 @@ const states = createMotionStates({
 
 **Pointer leave:** обратно к rest, scale `1`.
 
-Класс на root: `animate-shadow origin-center` (`SHADOW_LIFT_MOTION_CLASS`) — пока elevation включена (не gloss).
+Класс на root: `animate-shadow origin-center` (`SHADOW_LIFT_MOTION_CLASS`) — пока elevation включена.
 
 **Отличие от Button (1-й уровень):** Alert **всегда** имеет тень в покое; Button — `none` → `--shadow-lift` при hover.
 
@@ -311,15 +314,6 @@ configureMotion({
 
 **Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень остаётся на rest, без scale.
 
-### 2. Gloss variant (`variant="gloss"`)
-
-Вместо `useSecondLevelShadow`:
-
-- `createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss)`
-- `useGlossInteractiveHandlers` на `onPointerOver` / `onPointerOut`
-
-Gloss lift — отдельная кривая (`glossInteractiveMotion`), не token shadow families.
-
 ### 3. Чего нет
 
 - Press squeeze при клике (Alert не pressable; `--shadow-*-press` не используется)
@@ -331,8 +325,7 @@ Gloss lift — отдельная кривая (`glossInteractiveMotion`), не 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
 | Shadow rest→hover + lift | `useSecondLevelShadow` + `shadow` | `hoverLiftScale`, `enableHoverLift`, `interactiveDuration` | `hoverLift`, `shadow` |
-| Gloss hover | `useGlossInteractiveHandlers` | interactive-токены | `variant="gloss"` |
-| Тень покоя | `initElementShadow` + `--shadow-{shadow}` | — | всегда (non-gloss) |
+| Тень покоя | `initElementShadow` + `--shadow-{shadow}` | — | всегда |
 
 ## Grid-layout
 
@@ -440,7 +433,7 @@ Surface всегда по `variant` (как у `AlertDialog`). Status краси
 
 - `role`: `alert` для danger/warning; иначе `status` (или явный `role` prop).
 - `aria-labelledby` / `aria-describedby` — auto из `titleId` / `descriptionId`.
-- Экспортируемые helpers: `resolveAlertLiveRole`, `resolveAlertStatus`, `resolveAlertVariant`.
+- Хелперы `resolveAlertLiveRole`, `resolveAlertStatus`, `resolveAlertVariant` — `burne-ui/internal`.
 
 ## Экспортируемые утилиты
 
@@ -470,4 +463,4 @@ Alert/
 
 ## Storybook
 
-`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, slot motion gallery, `motionController`, `motionState`, светлая/тёмная тема.
+`Core Components/Alert` — варианты × статусы, compound, hoverLift, кастомизация `classNames`, slot motion gallery, `motionController`, `motionState`, светлая/тёмная тема.

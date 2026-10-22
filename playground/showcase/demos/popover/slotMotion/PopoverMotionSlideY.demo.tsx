@@ -32,7 +32,7 @@ export function PopoverMotionSlideYDemo() {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Custom content factory instead of portalSurface.
           </Text>
         </Popover.Body>

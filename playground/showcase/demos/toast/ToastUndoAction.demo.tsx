@@ -1,5 +1,6 @@
 import { Button } from "@/components/core/Button";
-import { useToast, useToastContext } from "@/components/core/Toast";
+import { useToast } from "@/components/core/Toast";
+import { useToastContext } from "@/components/core/Toast/toastContext";
 
 export function ToastUndoActionDemo() {
   const { toast } = useToast();

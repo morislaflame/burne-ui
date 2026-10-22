@@ -5,7 +5,7 @@ import { focusKeyboard } from "@/components/core/utils/focusElement";
 import type { ToggleButtonGroupOrientation } from "./toggleButtonGroupTypes";
  
 export function collectToggleButtons(root: HTMLElement): HTMLButtonElement[] {
-  return Array.from(root.querySelectorAll('[data-toggle-button-value]:not([disabled])')).filter(
+  return Array.from(root.querySelectorAll('[data-value]:not([disabled])')).filter(
     (el): el is HTMLButtonElement => el instanceof HTMLButtonElement,
   );
 }
@@ -93,7 +93,7 @@ export function createToggleButtonGroupKeyDownHandler({
  
     event.preventDefault();
     const next = items[nextIndex]!;
-    const nextValue = next.dataset.toggleButtonValue;
+    const nextValue = next.dataset.value;
     if (nextValue) setRovingValue(nextValue);
     focusKeyboard(next);
   };

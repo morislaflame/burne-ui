@@ -23,7 +23,7 @@ export function SearchInputClassNamesFullDemo() {
       <SearchInput
         placeholder="Find"
         aria-label="Collapsed search"
-        classNames={{ expandTrigger: "text-primary" }}
+        classNames={{ root: "w-control-large", expandTrigger: "text-primary" }}
       />
     </div>
   );

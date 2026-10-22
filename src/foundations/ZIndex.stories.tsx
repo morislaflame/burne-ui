@@ -21,7 +21,7 @@ import {
 const LAYER_NOTE: Record<ZIndexLayer, string> = {
   dialog: "Dialog / Drawer / AlertDialog",
   dropdown: "Dropdown menu",
-  "dropdown-sub": "Dropdown.SubContent",
+  "dropdown-sub": "Dropdown.SubPopover",
   popover: "Popover / Select / ComboBox",
   toast: "Toast viewport",
   tooltip: "Tooltip",
@@ -184,7 +184,7 @@ function ContainedOverlayStackDemo() {
                   <Select
                     label="Language"
                     placeholder="Choose…"
-                    options={[
+                    items={[
                       { value: "en", label: "English" },
                       { value: "ru", label: "Russian" },
                       { value: "de", label: "Deutsch" },
@@ -205,14 +205,14 @@ function ContainedOverlayStackDemo() {
                           </Dropdown.Item>
                           <Dropdown.Sub>
                             <Dropdown.SubTrigger>More</Dropdown.SubTrigger>
-                            <Dropdown.SubContent>
+                            <Dropdown.SubPopover>
                               <Dropdown.Item value="b" selection={false}>
                                 <Dropdown.ItemLabel>Sub item</Dropdown.ItemLabel>
                                 <Dropdown.ItemIcon>
                                   <IoChevronForward aria-hidden />
                                 </Dropdown.ItemIcon>
                               </Dropdown.Item>
-                            </Dropdown.SubContent>
+                            </Dropdown.SubPopover>
                           </Dropdown.Sub>
                         </Dropdown.Group>
                       </Dropdown.Popover>
@@ -236,7 +236,7 @@ function ContainedOverlayStackDemo() {
                       </Popover.Content>
                     </Popover>
 
-                    <Tooltip delayShowMs={0}>
+                    <Tooltip openDelay={0}>
                       <Tooltip.Trigger asChild>
                         <Button type="button" variant="ghost" size="small">
                           Tip

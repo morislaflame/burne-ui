@@ -9,7 +9,7 @@ export function AlertCompoundBannerDemo() {
         <Alert.Content>
           <Alert.Title className="text-large">Early access to the theme</Alert.Title>
           <Alert.Description>
-            <Text as="span" variant="small" className="text-muted">
+            <Text as="span" textStyle="small" className="text-muted">
               Enable the experiment in the workspace settings — available until the end of the month.
             </Text>
           </Alert.Description>

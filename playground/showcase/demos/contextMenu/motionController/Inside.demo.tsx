@@ -22,10 +22,10 @@ export function ContextMenuMotionControllerInsideDemo() {
     <div className="flex min-h-[22rem] w-full max-w-lg flex-col">
       <ContextMenu open>
         <ContextMenu.Trigger className={surface}>Menu</ContextMenu.Trigger>
-        <ContextMenu.Content motion={{ events }}>
+        <ContextMenu.Popover motion={{ events }}>
           <ItemPulse />
           <ContextMenu.Item>Quiet</ContextMenu.Item>
-        </ContextMenu.Content>
+        </ContextMenu.Popover>
       </ContextMenu>
     </div>
   );

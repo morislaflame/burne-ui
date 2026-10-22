@@ -12,7 +12,7 @@ import paginationMotionNavTintSource from "./PaginationMotionNavTint.demo.tsx?ra
 
 export const paginationSlotMotionGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "instant-press", title: "Instant press", Demo: PaginationMotionInstantPressDemo, source: paginationMotionInstantPressSource },
-  { id: "control-wave", title: "Control wave", Demo: PaginationMotionControlWaveDemo, source: paginationMotionControlWaveSource },
+  { id: "control-wave", title: "Page and next", Demo: PaginationMotionControlWaveDemo, source: paginationMotionControlWaveSource },
   { id: "ellipsis", title: "Ellipsis", Demo: PaginationMotionEllipsisDemo, source: paginationMotionEllipsisSource },
   { id: "nav-tint", title: "Nav tint", Demo: PaginationMotionNavTintDemo, source: paginationMotionNavTintSource },
 ];

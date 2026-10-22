@@ -50,7 +50,7 @@ export function DisclosureShowcase() {
 
       <ShowcaseSection
         title="MotionController"
-        description="One gallery: playSlot(titleLift) — no root slot, play vs playSlot, stagger, exclude, inside tree, cancel, disclosure events."
+        description="One gallery: playSlot(titleLift), play vs playSlot, stagger, exclude, inside tree, cancel, disclosure events. Card shell hover is the root slot."
       >
         <DisclosureMotionControllerGalleryDemo />
       </ShowcaseSection>
@@ -86,7 +86,7 @@ export function DisclosureShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, trigger, titleLift, title, contentPanel, handle, group."
+            description="root, trigger, titleLift, title, content, handle, group."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Groups">

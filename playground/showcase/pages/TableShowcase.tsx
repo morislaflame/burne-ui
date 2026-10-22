@@ -6,6 +6,8 @@ import { TablePagesDemo } from "../demos/table/TablePages.demo";
 import tablePagesSource from "../demos/table/TablePages.demo.tsx?raw";
 import { TableVirtualizedDemo } from "../demos/table/TableVirtualized.demo";
 import tableVirtualizedSource from "../demos/table/TableVirtualized.demo.tsx?raw";
+import { TableColumnResizeDemo } from "../demos/table/TableColumnResize.demo";
+import tableColumnResizeSource from "../demos/table/TableColumnResize.demo.tsx?raw";
 import { TableBasicDemo } from "../demos/table/TableBasic.demo";
 import tableBasicSource from "../demos/table/TableBasic.demo.tsx?raw";
 import { TableClassNamesFullDemo } from "../demos/table/TableClassNamesFull.demo";
@@ -41,9 +43,13 @@ export function TableShowcase() {
 
       <ShowcaseSection
         title="Pages"
-        description="Pagination sits in the footer. The parent slices the rows; Table does not page, resize columns, or expand them."
+        description="Pagination sits in the footer. The parent slices the rows. Table does not page or expand rows."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={TablePagesDemo} source={tablePagesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Column resize" description="columnResize puts a handle on every Column that has an id. Drag or arrow keys set that column width.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TableColumnResizeDemo} source={tableColumnResizeSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

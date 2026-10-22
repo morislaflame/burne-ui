@@ -20,7 +20,11 @@ export function TabsClassNamesFullDemo() {
         panel: "rounded-small bg-info/5 p-large",
       }}
     >
-      <Tabs.List>
+      <Tabs.List
+        classNames={{
+          list: "bg-primary/10",
+        }}
+      >
         {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
           <Tabs.Tab key={value} value={value}>
             <Icon aria-hidden className="icon-base shrink-0" />

@@ -1,7 +1,8 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
  
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
+import { snapSelectionFill } from "@/components/core/utils/slotMotion/recipes/selectionFill";
 import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
  
@@ -23,7 +24,7 @@ export function applyToggleButtonFillInstant(fill: HTMLElement, pressed: boolean
   killMotion(fill);
   fill.setAttribute(SELECTION_FILL_READY_ATTR, "");
   fill.dataset.pressed = pressed ? "true" : "false";
-  gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
+  snapSelectionFill(fill, pressed);
 }
  
 export function createToggleButtonFillRefCallback(

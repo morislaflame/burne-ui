@@ -4,7 +4,7 @@ import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 export function TextMotionEnterTintDemo() {
   return (
     <Text
-      variant="header-2"
+      textStyle="header-2"
       motion={{
         root: {
           enter: (ctx) => {

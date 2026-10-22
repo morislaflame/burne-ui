@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -27,11 +27,11 @@ export function ComboBoxMotionControllerStaggerDemo() {
       </div>
       <ComboBox
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{
-          inputGroup: {
+          shell: {
             hoverIn: { y: -2, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },
           },

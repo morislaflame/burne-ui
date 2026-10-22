@@ -32,6 +32,14 @@ describe("TagsInput", () => {
     expect(screen.queryByRole("button", { name: "Remove design" })).not.toBeInTheDocument();
   });
 
+  it("removes a chip from the keyboard", async () => {
+    const { user } = render(<TagsInput label="Topics" defaultValues={["design"]} />);
+    const remove = screen.getByRole("button", { name: "Remove design" });
+    remove.focus();
+    await user.keyboard("{Enter}");
+    expect(screen.queryByRole("button", { name: "Remove design" })).not.toBeInTheDocument();
+  });
+
   it("removes a chip from its button and stops at max", () => {
     const onValuesChange = vi.fn();
     render(<TagsInput label="Topics" max={1} onValuesChange={onValuesChange} />);

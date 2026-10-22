@@ -1,3 +1,4 @@
+import { forwardRef, type ForwardedRef } from "react";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
@@ -38,7 +39,7 @@ export {
   useOptionalMeterFieldContext,
 } from "./meterContext";
  
-export function MeterRoot({
+export const MeterRoot = forwardRef(function MeterRoot({
   children,
   className,
   classNames,
@@ -55,6 +56,7 @@ export function MeterRoot({
   size,
   thickness,
   color,
+  status,
   formatValue,
   motion,
   motionController,
@@ -62,7 +64,7 @@ export function MeterRoot({
   motionPayload,
   playInitialState,
   ...divRest
-}: MeterProps) {
+}: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   const state = useMeterRootState({
     children,
     id,
@@ -78,6 +80,7 @@ export function MeterRoot({
     size,
     thickness,
     color,
+    status,
     formatValue,
   });
  
@@ -113,6 +116,7 @@ export function MeterRoot({
                 className,
               })}
               {...divRest}
+              ref={ref}
               {...dataVariantProps({ size: size ?? "base" })}
             >
               {body}
@@ -122,7 +126,7 @@ export function MeterRoot({
       </MeterClassNamesProvider>
     </MeterFieldProvider>
   );
-}
+});
  
 MeterRoot.displayName = "Meter";
  

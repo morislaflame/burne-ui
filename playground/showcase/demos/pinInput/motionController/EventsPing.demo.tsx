@@ -11,7 +11,7 @@ export function PinInputMotionEventsPingDemo() {
 
   return (
     <div className="flex flex-col gap-2xlarge">
-      <Button size="small" variant="outline" onClick={() => controller.playSlot("group", "pin:ping")}>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "pin:ping")}>
         Ping
       </Button>
       <PinInput label="Code" length={4} motionController={controller} motion={{ events }} />

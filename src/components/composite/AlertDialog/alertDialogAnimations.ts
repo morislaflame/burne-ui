@@ -24,6 +24,10 @@ import {
 } from "@/components/core/utils/slotMotion/recipes/modalSurface";
  
 import type { AlertDialogMotion, UseAlertDialogModalMotionProps } from "./alertDialogTypes";
+
+import { bindModalRecipes } from "@/components/core/utils/slotMotion/recipes/bindModal";
+
+bindModalRecipes();
  
 export const ALERT_DIALOG_MOTION_HOST_SLOTS = ["overlay", "panel"] as const;
  
@@ -44,6 +48,12 @@ function applyAlertDialogHostInstant(
  
 export function useAlertDialogModalMotion({
   open,
+  onOpenChange,
+  closeOnEscape = true,
+  closeOnInteractOutside = false,
+  onEscapeKeyDown,
+  onInteractOutside,
+  initialFocus,
   contained = false,
   motionScope,
 }: UseAlertDialogModalMotionProps & { motionScope?: MotionScopeValue | null }) {
@@ -52,8 +62,13 @@ export function useAlertDialogModalMotion({
  
   const motion = useModalMotion({
     open,
+    onOpenChange,
     contained,
-    // APG: backdrop does not dismiss; Escape is handled on <dialog cancel> via closeOnEscape.
+    closeOnEscape,
+    closeOnInteractOutside,
+    onEscapeKeyDown,
+    onInteractOutside,
+    initialFocus,
     slotMotion,
   });
  
@@ -63,6 +78,8 @@ export function useAlertDialogModalMotion({
     dialogRef: motion.dialogRef,
     overlayRef: motion.overlayRef,
     panelRef: motion.panelRef,
+    handleBackdropPointerDown: motion.handleBackdropPointerDown,
+    handleDialogCancel: motion.handleDialogCancel,
   };
 }
  

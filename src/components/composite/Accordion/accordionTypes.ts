@@ -2,19 +2,22 @@ import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
+import type { ExpandableVariant } from "@/components/core/Expandable";
 import type {
   ExpandableContentProps,
   ExpandableDescriptionProps,
   ExpandableIconProps,
   ExpandableLifecycleMotion,
   ExpandableMessageProps,
-  ExpandableMotion,
   ExpandableSize,
   ExpandableTitleProps,
   ExpandableTriggerLiftMotion,
   ExpandableTriggerProps,
 } from "@/components/core/Expandable";
  
+/** Domain alias of `ExpandableSize` (`ComponentSize`). */
+export type AccordionSize = ExpandableSize;
+
 export type AccordionClassNames = {
   root?: string;
   item?: string;
@@ -28,31 +31,59 @@ export type AccordionClassNames = {
   description?: string;
   chevron?: string;
   panelShell?: string;
+  contentWrap?: string;
+  triggerRippleOverlay?: string;
   panel?: string;
   body?: string;
 };
- 
-export type AccordionMotion = ExpandableMotion;
+
+export type AccordionMotion = {
+  triggerLift?: ExpandableTriggerLiftMotion;
+  chevron?: ExpandableLifecycleMotion;
+  panelShell?: ExpandableLifecycleMotion;
+  title?: ExpandableLifecycleMotion;
+  icon?: ExpandableLifecycleMotion;
+  description?: ExpandableLifecycleMotion;
+  /** Panel `<section>` (`Accordion.Panel` / `Expandable.Panel`). */
+  panel?: ExpandableLifecycleMotion;
+  /** `Accordion.Body` muted wrap — not the Panel `<section>`. */
+  body?: ExpandableLifecycleMotion;
+};
 export type AccordionLifecycleMotion = ExpandableLifecycleMotion;
 export type AccordionTriggerLiftMotion = ExpandableTriggerLiftMotion;
+
+export type AccordionItemData = {
+  value: string;
+  title: ReactNode;
+  content: ReactNode;
+  icon?: ReactNode;
+  disabled?: boolean;
+};
  
 export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue"> & {
-  /** Controlled: id of the open item (`null` = all closed). */
+  /** `single` — one open item (`value`). `multiple` — `values`. Default `single`. */
+  selectionMode?: "single" | "multiple";
+  /** Controlled open item when `selectionMode` is `single` (`null` = all closed). */
   value?: string | null;
-  /** Uncontrolled initial id (takes priority over `defaultOpenIndex`). */
+  /** Uncontrolled initial id. Items without `value` use their sibling index (`"0"`, `"1"`, …). */
   defaultValue?: string | null;
-  /** Initial open item by index (0-based), if `defaultValue` is not provided. */
-  defaultOpenIndex?: number | null;
   onValueChange?: (value: string | null) => void;
+  /** Controlled open items when `selectionMode` is `multiple`. */
+  values?: string[];
+  defaultValues?: string[];
+  onValuesChange?: (values: string[]) => void;
+  variant?: ExpandableVariant;
   size?: ExpandableSize;
   classNames?: Prettify<AccordionClassNames>;
   /**
-   * Per-slot motion forwarded to each Item's Expandable (including `body` on the
-   * Panel `<section>`). Item `motion` overrides the same slots. `Accordion.Heading`
-   * is not a slot. `Accordion.Body` is optional muted text, not a motion slot.
+   * Per-slot motion forwarded to each Item's Expandable. `panel` is the Panel
+   * `<section>`; `body` is `Accordion.Body`. Item `motion` overrides the same slots.
+   * `Accordion.Heading` is not a slot. Group root has no motion (`root` lives on Expandable).
    * `events` — namespaced app commands; each Item is its own Expandable scope.
    */
   motion?: Prettify<MotionMapWithEvents<AccordionMotion>>;
+  /** Data-driven items. Fills items that children do not already render. */
+  items?: readonly AccordionItemData[];
   children?: ReactNode;
 };
  
@@ -95,13 +126,18 @@ export type AccordionPanelProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AccordionLifecycleMotion>;
 };
  
-export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
+export type AccordionBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AccordionLifecycleMotion>;
+};
  
 export type AccordionContextValue = {
+  selectionMode: "single" | "multiple";
   value: string | null;
-  setValue: (value: string | null) => void;
+  values: string[];
+  setItemOpen: (id: string, open: boolean) => void;
   /** Stable auto-id for an Item without explicit `value` (call once per Item mount). */
   allocateAutoItemId: () => string;
+  variant: ExpandableVariant;
   size: ExpandableSize;
   motion?: MotionMapWithEvents<AccordionMotion>;
 };

@@ -4,8 +4,6 @@ import { TextAreaBasicDemo } from "../demos/textarea/TextAreaBasic.demo";
 import textAreaBasicSource from "../demos/textarea/TextAreaBasic.demo.tsx?raw";
 import { TextAreaVariantsDemo } from "../demos/textarea/TextAreaVariants.demo";
 import textAreaVariantsSource from "../demos/textarea/TextAreaVariants.demo.tsx?raw";
-import { TextAreaStatusesDemo } from "../demos/textarea/TextAreaStatuses.demo";
-import textAreaStatusesSource from "../demos/textarea/TextAreaStatuses.demo.tsx?raw";
 import { TextAreaSizesDemo } from "../demos/textarea/TextAreaSizes.demo";
 import textAreaSizesSource from "../demos/textarea/TextAreaSizes.demo.tsx?raw";
 import { TextAreaNotResizableDemo } from "../demos/textarea/TextAreaNotResizable.demo";
@@ -47,15 +45,11 @@ export function TextAreaShowcase() {
       <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={TextAreaVariantsDemo} source={textAreaVariantsSource} />
       </ShowcaseSection>
-      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
-        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaStatusesDemo} source={textAreaStatusesSource} />
-      </ShowcaseSection>
-
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaSizesDemo} source={textAreaSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="With an error" description="Validation message via error. status is color only and is not required.">
+      <ShowcaseSection title="With an error" description="Validation message via error. invalid paints the danger ring.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaWithErrorDemo} source={textAreaWithErrorSource} />
       </ShowcaseSection>
 <ShowcaseSection title="Slot motion" description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor.">

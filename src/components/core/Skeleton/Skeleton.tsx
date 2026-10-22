@@ -111,11 +111,16 @@ function SkeletonRootSurface({
     | "motionController"
   >;
 }) {
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...domRest } = rest;
   const part = useSkeletonSlotMotion<HTMLDivElement>({
     scope: useSkeletonMotionScope(),
     slot: "root",
     motion: rootMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -129,8 +134,8 @@ function SkeletonRootSurface({
       )}
       style={{ ...skeletonVariantStyle(animation), ...style }}
       {...skeletonPresentationProps()}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     >
       {isWave ? <SkeletonWave className={classNames?.wave} /> : null}
       {children}

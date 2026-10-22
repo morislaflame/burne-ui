@@ -132,14 +132,11 @@ export const ToggleButtonLabel = forwardRef<HTMLSpanElement, ToggleButtonLabelPr
  
 ToggleButtonLabel.displayName = "ToggleButtonLabel";
  
-export function ToggleButtonIconStart({
-  className = "",
-  children,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: ToggleButtonIconStartProps) {
+export const ToggleButtonIconStart = forwardRef<HTMLSpanElement, ToggleButtonIconStartProps>(
+  function ToggleButtonIconStart(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const ctx = useOptionalToggleButtonContext();
   const slotClassNames = useToggleButtonClassNames();
   const size = ctx?.size ?? "base";
@@ -147,6 +144,7 @@ export function ToggleButtonIconStart({
     scope: useOptionalToggleButtonMotionScope(),
     slot: "iconStart",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -163,18 +161,16 @@ export function ToggleButtonIconStart({
       {children}
     </span>
   );
-}
+},
+);
  
 ToggleButtonIconStart.displayName = "ToggleButtonIconStart";
  
-export function ToggleButtonIconEnd({
-  className = "",
-  children,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: ToggleButtonIconEndProps) {
+export const ToggleButtonIconEnd = forwardRef<HTMLSpanElement, ToggleButtonIconEndProps>(
+  function ToggleButtonIconEnd(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const ctx = useOptionalToggleButtonContext();
   const slotClassNames = useToggleButtonClassNames();
   const size = ctx?.size ?? "base";
@@ -182,6 +178,7 @@ export function ToggleButtonIconEnd({
     scope: useOptionalToggleButtonMotionScope(),
     slot: "iconEnd",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -198,18 +195,16 @@ export function ToggleButtonIconEnd({
       {children}
     </span>
   );
-}
+},
+);
  
 ToggleButtonIconEnd.displayName = "ToggleButtonIconEnd";
  
-export function ToggleButtonText({
-  className = "",
-  children,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: ToggleButtonTextProps) {
+export const ToggleButtonText = forwardRef<HTMLSpanElement, ToggleButtonTextProps>(
+  function ToggleButtonText(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const ctx = useOptionalToggleButtonContext();
   const slotClassNames = useToggleButtonClassNames();
   const size = ctx?.size ?? "base";
@@ -217,6 +212,7 @@ export function ToggleButtonText({
     scope: useOptionalToggleButtonMotionScope(),
     slot: "text",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -225,7 +221,7 @@ export function ToggleButtonText({
   return (
     <Text
       ref={setRef}
-      variant={TOGGLE_BUTTON_TEXT_VARIANT[size]}
+      textStyle={TOGGLE_BUTTON_TEXT_VARIANT[size]}
       as="span"
       inheritColor
       className={toggleButtonTextClass(slotClassNames.text, className)}
@@ -235,7 +231,8 @@ export function ToggleButtonText({
       {children}
     </Text>
   );
-}
+},
+);
  
 ToggleButtonText.displayName = "ToggleButtonText";
  

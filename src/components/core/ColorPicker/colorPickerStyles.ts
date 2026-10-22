@@ -31,7 +31,7 @@ export const COLOR_PICKER_AREA_CLASS =
  
 /** Dual ring: theme background inner + foreground hairline — readable on any swatch hue. */
 export const COLOR_PICKER_AREA_THUMB_CLASS =
-  "absolute z-10 size-[length:var(--size-scale-small)] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background [box-shadow:0_0_0_1px_var(--color-foreground),var(--shadow-mid)] focus-ring";
+  "absolute z-10 size-[length:var(--size-scale-small)] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background [box-shadow:0_0_0_1px_var(--color-foreground)] hover:[box-shadow:0_0_0_1px_var(--color-foreground),var(--shadow-lift)] focus-ring";
  
 export const COLOR_PICKER_SLIDERS_ROW_CLASS = "flex items-center gap-small";
  

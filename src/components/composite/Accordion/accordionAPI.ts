@@ -2,15 +2,6 @@ import type { ExpandableClassNames } from "@/components/core/Expandable";
  
 import type { AccordionClassNames } from "./accordionTypes";
  
-export function accordionDefaultValue(
-  defaultValue: string | null | undefined,
-  defaultOpenIndex: number | null | undefined,
-): string | null {
-  if (defaultValue != null) return defaultValue;
-  if (defaultOpenIndex != null) return String(defaultOpenIndex);
-  return null;
-}
- 
 /** Maps Accordion slots onto the `Expandable` instance wrapped by `Accordion.Item`. */
 export function resolveAccordionItemExpandableClassNames(
   classNames: AccordionClassNames,
@@ -26,6 +17,8 @@ export function resolveAccordionItemExpandableClassNames(
     description: classNames.description,
     chevron: classNames.chevron,
     panelShell: classNames.panelShell,
+    contentWrap: classNames.contentWrap,
+    triggerRippleOverlay: classNames.triggerRippleOverlay,
     panel: classNames.panel,
   };
 }

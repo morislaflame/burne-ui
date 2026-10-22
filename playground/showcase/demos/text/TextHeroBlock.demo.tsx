@@ -3,16 +3,16 @@ import { Text } from "@/components/core/Text";
 export function TextHeroBlockDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-small rounded-large border border-primary/20 bg-gradient-to-br from-primary/10 via-surface to-surface p-large">
-      <Text as="span" variant="xsmall" className="uppercase tracking-widest text-primary">
+      <Text as="span" textStyle="xsmall" className="uppercase tracking-widest text-primary">
         Burne UI · Showcase
       </Text>
       <Text
         as="h2"
-        variant="accent-header"
+        textStyle="accent-header"
       >
         Custom hero-block
       </Text>
-      <Text as="p" variant="mid" className="max-w-md text-muted">
+      <Text as="p" textStyle="mid" className="max-w-md text-muted">
         Gradient on the header and background solid - via utility-classes on top preset variant.
       </Text>
     </div>

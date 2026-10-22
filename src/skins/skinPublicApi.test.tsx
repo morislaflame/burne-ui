@@ -44,10 +44,11 @@ describe("skin public API", () => {
     expect(typeof useSkin).toBe("function");
   });
 
-  it("resolves tokens from burne-ui/internal and drops the focus ring", () => {
+  it("resolves tokens from burne-ui/internal and keeps a focus-ring color", () => {
     const tokens = resolveSkinTokens(skin);
     expect(tokens["--radius"]).toBe("0px");
-    expect(tokens["--color-focus-ring"]).toBeUndefined();
+    expect(tokens["--color-focus-ring"]).toBe("red");
+    expect(tokens["--color-focus-ring-danger"]).toBe("var(--color-foreground)");
     expect(isForbiddenSkinToken(SKIN_FORBIDDEN_TOKENS[0]!)).toBe(true);
     expect(SKIN_SLOTS).toContain("button.root");
 

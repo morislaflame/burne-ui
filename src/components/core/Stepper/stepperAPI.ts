@@ -4,6 +4,12 @@ import type { StepperStep, StepperStepState } from "./stepperTypes";
 
 export const STEPPER_ITEM_NAME = "StepperItem";
 
+export const STEPPER_TRIGGER_NAME = "StepperTrigger";
+
+export function isStepperTrigger(node: ReactNode): boolean {
+  return isValidElement(node) && (node.type as { displayName?: string }).displayName === STEPPER_TRIGGER_NAME;
+}
+
 export function isStepperItem(node: ReactNode): boolean {
   return isValidElement(node) && (node.type as { displayName?: string }).displayName === STEPPER_ITEM_NAME;
 }

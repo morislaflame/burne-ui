@@ -10,7 +10,7 @@ export function SelectMotionHintEnterDemo() {
   return (
     <Select
       className="w-64"
-      options={options}
+      items={options}
       defaultValue="pro"
       label="Plan"
       hint="You can change this later."

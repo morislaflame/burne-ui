@@ -9,7 +9,7 @@ export function TableBasicDemo() {
       <Table.ScrollContainer>
         <Table.Content aria-label="Team" className="min-w-[480px]">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
             <Table.Column>Status</Table.Column>
           </Table.Header>

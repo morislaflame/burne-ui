@@ -76,7 +76,7 @@ export const CheckboxGroupHint = forwardRef<HTMLElement, CheckboxGroupHintProps>
       <Field.Hint
         ref={part.setRef}
         as="span"
-        variant="small"
+        textStyle="small"
         id={id ?? hintId}
         className={cn(slotClass, className)}
         {...rest}

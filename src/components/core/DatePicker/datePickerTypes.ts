@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { CalendarLocale, CalendarRangeValue } from "@/components/core/Calendar";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { CalendarLocale, CalendarRangeValue, CalendarView } from "@/components/core/Calendar";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import type { PopoverSide } from "@/components/core/Popover";
 import type {
   MotionController,
@@ -11,7 +11,9 @@ import type {
   MotionValue,
 } from "@/components/core/utils/slotMotion";
 
-export type DatePickerMode = "single" | "range";
+export type DatePickerMode = "single" | "range" | "multiple";
+export type DatePickerSize = InputSize;
+export type DatePickerVariant = InputVariant;
 
 export type DatePickerClassNames = {
   root?: string;
@@ -41,6 +43,14 @@ export type DatePickerMotion = {
   label?: DatePickerPartMotion;
   hint?: DatePickerPartMotion;
   error?: DatePickerPartMotion;
+  /**
+   * Menu panel. Forwarded to the inner Popover `content` slot (not registered on the field scope).
+   */
+  popover?: DatePickerPartMotion;
+  /**
+   * Nested calendar shell. Forwarded to Calendar `root` (not registered on the field scope).
+   */
+  calendar?: DatePickerPartMotion;
 };
 
 type DatePickerSharedProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange"> &
@@ -54,9 +64,11 @@ type DatePickerSharedProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"
     id?: string;
     name?: string;
     required?: boolean;
-    status?: InputStatus;
     size?: InputSize;
+    /** Chevron beside the value. A node replaces it. `null` hides it. Trigger children still replace the whole trigger. */
+    icon?: ReactNode | null;
     disabled?: boolean;
+  readOnly?: boolean;
     placeholder?: string;
     open?: boolean;
     defaultOpen?: boolean;
@@ -65,29 +77,59 @@ type DatePickerSharedProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"
     locale?: string | CalendarLocale;
     minDate?: Date;
     maxDate?: Date;
+    /** Forwarded to the calendar. Unavailable days stay visible and are not selectable. */
+    isDateUnavailable?: (date: Date) => boolean;
     /** Month shown before a value is chosen. */
     defaultMonth?: Date;
+    /** Controlled visible month. */
+    month?: Date;
+    onMonthChange?: (month: Date) => void;
+    view?: CalendarView;
+    defaultView?: CalendarView;
+    onViewChange?: (view: CalendarView) => void;
     side?: PopoverSide;
+    align?: "start" | "center" | "end";
+    offset?: number;
+    collisionPadding?: number;
+    avoidCollisions?: boolean;
+    /** Calendar portal host. Default: `document.body`. */
+    portalContainer?: HTMLElement | null;
     classNames?: Prettify<DatePickerClassNames>;
     motion?: Prettify<MotionMapWithEvents<DatePickerMotion>>;
     motionController?: MotionController;
   };
 
 export type DatePickerSingleProps = DatePickerSharedProps & {
-  mode?: "single";
+  selectionMode?: "single";
   value?: Date | null;
   defaultValue?: Date | null;
   onValueChange?: (value: Date | null) => void;
+  values?: never;
+  defaultValues?: never;
+  onValuesChange?: never;
 };
 
 export type DatePickerRangeProps = DatePickerSharedProps & {
-  mode: "range";
+  selectionMode: "range";
   value?: CalendarRangeValue;
   defaultValue?: CalendarRangeValue;
   onValueChange?: (value: CalendarRangeValue) => void;
+  values?: never;
+  defaultValues?: never;
+  onValuesChange?: never;
 };
 
-export type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps;
+export type DatePickerMultipleProps = DatePickerSharedProps & {
+  selectionMode: "multiple";
+  value?: never;
+  defaultValue?: never;
+  onValueChange?: never;
+  values?: Date[];
+  defaultValues?: Date[];
+  onValuesChange?: (values: Date[]) => void;
+};
+
+export type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps | DatePickerMultipleProps;
 
 export type DatePickerLabelProps = HTMLAttributes<HTMLElement> & {
   children?: ReactNode;
@@ -101,6 +143,11 @@ export type DatePickerTriggerProps = Omit<ButtonHTMLAttributes<HTMLButtonElement
 
 export type DatePickerPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  /**
+   * Menu panel motion. Wins over `motion.popover` on the root.
+   * Forwarded to the inner Popover `content` slot.
+   */
+  motion?: Prettify<DatePickerPartMotion>;
 };
 
 export type DatePickerHintProps = HTMLAttributes<HTMLElement> & {
@@ -113,7 +160,7 @@ export type DatePickerErrorProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<DatePickerPartMotion>;
 };
 
-export type DatePickerStoredValue = Date | null | CalendarRangeValue;
+export type DatePickerStoredValue = Date | null | CalendarRangeValue | Date[];
 
 export type DatePickerContextValue = {
   mode: DatePickerMode;
@@ -122,16 +169,23 @@ export type DatePickerContextValue = {
   open: boolean;
   setOpen: (open: boolean) => void;
   disabled: boolean;
+  readOnly: boolean;
   placeholder: string;
   display: string;
   empty: boolean;
   size: InputSize;
+  icon?: ReactNode | null;
   variant: InputVariant;
-  status: InputStatus;
   locale: CalendarLocale;
   minDate?: Date;
   maxDate?: Date;
+  isDateUnavailable?: (date: Date) => boolean;
   defaultMonth?: Date;
+  month?: Date;
+  onMonthChange?: (month: Date) => void;
+  view?: CalendarView;
+  defaultView?: CalendarView;
+  onViewChange?: (view: CalendarView) => void;
   side: PopoverSide;
   triggerId: string;
   panelId: string;

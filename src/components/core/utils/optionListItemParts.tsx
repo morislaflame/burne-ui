@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode, Ref } from "react";
+import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
  
 import { Text, type TextVariant } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -11,16 +11,15 @@ import { OPTION_LIST_ITEM_ICON_WRAP_CLASS, OPTION_LIST_ITEM_INDICATOR_SHELL_CLAS
 export type OptionListItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
   /** Typography for the label text. @default "base" */
   textVariant?: TextVariant;
-  ref?: Ref<HTMLSpanElement>;
 };
- 
-export function OptionListItemLabel({
+
+export const OptionListItemLabel = forwardRef<HTMLSpanElement, OptionListItemLabelProps>(
+  function OptionListItemLabel({
   className,
   children,
   textVariant = "base",
-  ref,
   ...rest
-}: OptionListItemLabelProps) {
+}, ref) {
   const ctx = useOptionListItemContext("ItemLabel");
   return (
     <span
@@ -41,7 +40,7 @@ export function OptionListItemLabel({
     >
       <Text
         as="span"
-        variant={textVariant}
+        textStyle={textVariant}
         inheritColor
         className={cn(
           OPTION_LIST_ITEM_LABEL_TEXT_FILL_CLASS,
@@ -52,19 +51,18 @@ export function OptionListItemLabel({
       </Text>
     </span>
   );
-}
- 
-export type OptionListItemHintProps = HTMLAttributes<HTMLSpanElement> & {
-  ref?: Ref<HTMLElement>;
-};
- 
-export function OptionListItemHint({ className, children, ref, ...rest }: OptionListItemHintProps) {
+});
+
+export type OptionListItemHintProps = HTMLAttributes<HTMLSpanElement>;
+
+export const OptionListItemHint = forwardRef<HTMLElement, OptionListItemHintProps>(
+  function OptionListItemHint({ className, children, ...rest }, ref) {
   const ctx = useOptionListItemContext("ItemHint");
   return (
     <Text
       ref={ref}
       as="span"
-      variant="xsmall"
+      textStyle="xsmall"
       inheritColor
       className={cn(
         optionListItemHintCellClass(ctx.showIndicatorSlot),
@@ -76,25 +74,24 @@ export function OptionListItemHint({ className, children, ref, ...rest }: Option
       {children}
     </Text>
   );
-}
+});
  
 function OptionListItemStringLabel({ children }: { children: string }) {
   return (
-    <Text as="span" variant="base" inheritColor className={OPTION_LIST_ITEM_STRING_LABEL_CLASS}>
+    <Text as="span" textStyle="base" inheritColor className={OPTION_LIST_ITEM_STRING_LABEL_CLASS}>
       {children}
     </Text>
   );
 }
  
-export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement> & {
-  ref?: Ref<HTMLSpanElement>;
-};
+export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement>;
  
 export function OptionListItemIconText({ children }: { children: string }) {
   return <OptionListItemStringLabel>{children}</OptionListItemStringLabel>;
 }
  
-export function OptionListItemIcon({ className, children, ref, ...rest }: OptionListItemIconProps) {
+export const OptionListItemIcon = forwardRef<HTMLSpanElement, OptionListItemIconProps>(
+  function OptionListItemIcon({ className, children, ...rest }, ref) {
   const ctx = useOptionListItemContext("ItemIcon");
   return (
     <span
@@ -110,28 +107,27 @@ export function OptionListItemIcon({ className, children, ref, ...rest }: Option
       {children}
     </span>
   );
-}
+});
  
 export type OptionListItemIndicatorShellProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
  
-export function OptionListItemIndicatorShell({
-  className,
-  children,
-  ...rest
-}: OptionListItemIndicatorShellProps) {
-  return (
-    <span
-      className={cn(
-        OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS,
-        optionListItemIndicatorCellClass(),
-        className,
-      )}
-      {...rest}
-    >
-      {children}
-    </span>
-  );
-}
+export const OptionListItemIndicatorShell = forwardRef<HTMLSpanElement, OptionListItemIndicatorShellProps>(
+  function OptionListItemIndicatorShell({ className, children, ...rest }, ref) {
+    return (
+      <span
+        className={cn(
+          OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS,
+          optionListItemIndicatorCellClass(),
+          className,
+        )}
+        {...rest}
+        ref={ref}
+      >
+        {children}
+      </span>
+    );
+  },
+);
  

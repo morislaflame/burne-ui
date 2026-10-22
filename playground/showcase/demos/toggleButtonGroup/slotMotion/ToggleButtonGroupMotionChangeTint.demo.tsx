@@ -5,7 +5,7 @@ import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 export function ToggleButtonGroupMotionChangeTintDemo() {
   return (
     <ToggleButtonGroup
-      type="single"
+      selectionMode="single"
       defaultValue="a"
       motion={{
         root: {

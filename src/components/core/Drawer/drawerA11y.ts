@@ -9,8 +9,3 @@ export function drawerHandleAriaLabel(
   return labels.close;
 }
  
-/** Enter / Space on Handle = close (least destructive dismiss). */
-export function isDrawerHandleActivateKey(key: string): boolean {
-  return key === "Enter" || key === " ";
-}
- 

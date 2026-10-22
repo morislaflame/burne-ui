@@ -7,7 +7,7 @@ export function CalendarLocaleDemo() {
   return (
     <div className="flex flex-wrap items-start gap-2xlarge">
       <div className="flex flex-col items-start gap-large">
-        <Text as="span" variant="small" className="font-medium">
+        <Text as="span" textStyle="small" className="font-medium">
           en-GB
         </Text>
         <Calendar locale="en-GB" defaultMonth={OCTOBER}>
@@ -17,7 +17,7 @@ export function CalendarLocaleDemo() {
         </Calendar>
       </div>
       <div className="flex flex-col items-start gap-large">
-        <Text as="span" variant="small" className="font-medium">
+        <Text as="span" textStyle="small" className="font-medium">
           ru
         </Text>
         <Calendar locale="ru" defaultMonth={OCTOBER}>

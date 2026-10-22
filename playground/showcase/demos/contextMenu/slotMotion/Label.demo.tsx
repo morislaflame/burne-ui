@@ -18,16 +18,16 @@ export function ContextMenuMotionLabelDemo() {
       }}
     >
       <ContextMenu.Trigger className={surface}>Label</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Label>Share</ContextMenu.Label>
         <ContextMenu.Item>Copy link</ContextMenu.Item>
         <ContextMenu.Sub>
           <ContextMenu.SubTrigger>Invite</ContextMenu.SubTrigger>
-          <ContextMenu.SubContent>
+          <ContextMenu.SubPopover>
             <ContextMenu.Item>Email</ContextMenu.Item>
-          </ContextMenu.SubContent>
+          </ContextMenu.SubPopover>
         </ContextMenu.Sub>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

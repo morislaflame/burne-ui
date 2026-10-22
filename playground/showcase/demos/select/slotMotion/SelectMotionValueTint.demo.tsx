@@ -9,9 +9,9 @@ const options = [
 
 export function SelectMotionValueTintDemo() {
   return (
-    <Select className="w-64" options={options} defaultValue="vue">
+    <Select className="w-64" items={options} defaultValue="vue">
       <Select.Label>Value tint</Select.Label>
-      <Select.TriggerGroup>
+      <Select.Shell>
         <Select.Value
           motion={{
             hoverIn: (ctx) => {
@@ -36,7 +36,7 @@ export function SelectMotionValueTintDemo() {
               ctx.to({ rotate: 0, scale: 1, duration: 0.18, ease: "power2.inOut" }),
           }}
         />
-      </Select.TriggerGroup>
+      </Select.Shell>
       <Select.Hint>Compound motion on Value + Trigger</Select.Hint>
       <Select.Popover />
     </Select>

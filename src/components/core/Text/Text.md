@@ -13,11 +13,11 @@ import { Text, type TextProps, type TextVariant } from "burne-ui";
 ### Simple API
 
 ```tsx
-<Text variant="base">
+<Text textStyle="base">
   Пример текста дизайн-системы Burne UI
 </Text>
 
-<Text variant="header-2" as="span" className="break-words break-all">
+<Text textStyle="header-2" as="span" className="break-words break-all">
   Очень_длинное_имя_файла.tsx
 </Text>
 ```
@@ -80,6 +80,8 @@ Compound API нет: компонент leaf-level и не имеет подча
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`text:nudge`, `text:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
 
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { Button, Text, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -94,7 +96,7 @@ function Nudge() {
       <Button size="small" variant="outline" onClick={() => controller.play("text:nudge")}>
         Nudge
       </Button>
-      <Text variant="large" motionController={controller} motion={{ events }}>
+      <Text textStyle="large" motionController={controller} motion={{ events }}>
         Nudge the copy
       </Text>
     </>
@@ -132,7 +134,7 @@ createElement(as ?? defaultTag, {
 `Text` принимает только `className`. `classNames` нет, потому что у компонента один DOM-узел.
 
 ```tsx
-<Text variant="small" className="text-muted">
+<Text textStyle="small" className="text-muted">
   Secondary text
 </Text>
 ```
@@ -142,7 +144,7 @@ createElement(as ?? defaultTag, {
 По умолчанию добавляется `text-foreground`.
 
 ```tsx
-<Text variant="base" className="text-info">
+<Text textStyle="base" className="text-info">
   Info text
 </Text>
 ```
@@ -150,7 +152,7 @@ createElement(as ?? defaultTag, {
 Если цвет должен наследоваться от родителя:
 
 ```tsx
-<Text variant="base" inheritColor>
+<Text textStyle="base" inheritColor>
   Inherits parent color
 </Text>
 ```
@@ -158,11 +160,11 @@ createElement(as ?? defaultTag, {
 ### Семантика через `as`
 
 ```tsx
-<Text variant="header-1" as="h1">
+<Text textStyle="header-1" as="h1">
   Заголовок страницы
 </Text>
 
-<Text variant="small" as="span" className="text-muted">
+<Text textStyle="small" as="span" className="text-muted">
   Inline meta
 </Text>
 ```

@@ -1,3 +1,4 @@
+import { forwardRef, type ForwardedRef } from "react";
 import { Text } from "@/components/core/Text";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
@@ -6,7 +7,7 @@ import { useKbdClassNames, useOptionalKbdMotionScope } from "./kbdContext";
 import { KBD_TEXT_CLASS, KBD_TEXT_VARIANT } from "./kbdStyles";
 import type { KbdTextProps } from "./kbdTypes";
  
-export function KbdText({
+export const KbdText = forwardRef(function KbdText({
   size,
   className,
   children,
@@ -14,9 +15,10 @@ export function KbdText({
   onPointerOver,
   onPointerOut,
   ...rest
-}: KbdTextProps) {
+}: KbdTextProps, ref: ForwardedRef<HTMLSpanElement>) {
   const slotClassNames = useKbdClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
     scope: useOptionalKbdMotionScope(),
     slot: "text",
     motion,
@@ -29,7 +31,7 @@ export function KbdText({
     <Text
       ref={setRef as never}
       as="span"
-      variant={KBD_TEXT_VARIANT[size]}
+      textStyle={KBD_TEXT_VARIANT[size]}
       inheritColor
       className={cn(KBD_TEXT_CLASS, slotClassNames.text, className)}
       {...rest}
@@ -38,7 +40,7 @@ export function KbdText({
       {children}
     </Text>
   );
-}
+});
  
 KbdText.displayName = "Kbd.Text";
  

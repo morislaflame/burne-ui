@@ -1,9 +1,8 @@
-import { forwardRef, useMemo, useRef } from "react";
+import { forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactNode } from "react";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
-import { useFirstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
  
@@ -13,6 +12,7 @@ import {
   DisclosureMotionProvider,
   DisclosureProvider,
   useDisclosureGroupContext,
+  useDisclosureMotionScope,
 } from "./disclosureContext";
 import { DISCLOSURE_CARD_CLIP_CLASS, disclosureRootClass } from "./disclosureStyles";
 import {
@@ -88,49 +88,35 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       void skinRevision;
       return resolveDisclosureMotionDefaults(state.variant);
     }, [skinRevision, state.variant]);
-    const rootRef = useRef<HTMLDivElement>(null);
     const elevationCard = state.variant === "card" && !state.groupedCardShell;
-    const shadow = useFirstLevelHoverShadow(rootRef, elevationCard);
-    const { onPointerOver, onPointerOut, ...domRest } = rest;
  
     return (
       <DisclosureProvider value={state.contextValue}>
         <DisclosureClassNamesProvider classNames={classNames}>
-          <DisclosureMotionProvider motion={mergedMotion} defaults={defaults} controller={motionController}
-        motionState={motionState}
-        motionPayload={motionPayload}
-        playInitialState={playInitialState}>
-          <div
-            ref={mergeRefs(rootRef, ref)}
-            className={cn(
-              disclosureRootClass({
-                variant: state.variant,
-                groupedCardShell: state.groupedCardShell,
-                className,
-                slotClass: classNames?.root,
-              }),
-              shadow.motionClass,
-            )}
-            {...domRest}
-            onPointerOver={(event) => {
-              onPointerOver?.(event);
-              shadow.onPointerOver(event);
-            }}
-            onPointerOut={(event) => {
-              onPointerOut?.(event);
-              shadow.onPointerOut(event);
-            }}
-            {...dataVariantProps({
-              size: state.contextValue.size,
-              variant: state.variant,
-            })}
+          <DisclosureMotionProvider
+            motion={mergedMotion}
+            defaults={defaults}
+            params={{ hasHoverShadow: true, liftScale: 1 }}
+            controller={motionController}
+            motionState={motionState}
+            motionPayload={motionPayload}
+            playInitialState={playInitialState}
           >
-            {elevationCard ? (
-              <div className={DISCLOSURE_CARD_CLIP_CLASS}>{state.orderedChildren}</div>
-            ) : (
-              state.orderedChildren
-            )}
-          </div>
+          <DisclosureRootSurface
+            forwardedRef={ref}
+            elevationCard={elevationCard}
+            className={disclosureRootClass({
+              variant: state.variant,
+              groupedCardShell: state.groupedCardShell,
+              className,
+              slotClass: classNames?.root,
+            })}
+            rest={rest}
+            size={state.contextValue.size}
+            variant={state.variant}
+          >
+            {state.orderedChildren}
+          </DisclosureRootSurface>
           </DisclosureMotionProvider>
         </DisclosureClassNamesProvider>
       </DisclosureProvider>
@@ -139,6 +125,55 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
 );
  
 DisclosureRoot.displayName = "Disclosure";
+
+function DisclosureRootSurface({
+  forwardedRef,
+  elevationCard,
+  className,
+  rest,
+  size,
+  variant,
+  children,
+}: {
+  forwardedRef: ForwardedRef<HTMLDivElement>;
+  elevationCard: boolean;
+  className: string;
+  rest: HTMLAttributes<HTMLDivElement>;
+  size: string;
+  variant: string;
+  children: ReactNode;
+}) {
+  const { onPointerOver, onPointerOut, ...domRest } = rest;
+  const scope = useDisclosureMotionScope();
+  const customHover = scope.getRootMotion()?.root;
+  const part = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "root",
+    forwardedRef,
+    pointerPhases:
+      elevationCard || customHover?.hoverIn != null || customHover?.hoverOut != null,
+    onPointerOver,
+    onPointerOut,
+  });
+  const shadow = useSecondLevelShadow(part.targetRef, elevationCard, {
+    shadowSize: "none",
+    liftScale: 1,
+    interactive: false,
+    killMotionOnUnmount: false,
+  });
+
+  return (
+    <div
+      ref={part.setRef}
+      className={cn(className, shadow.motionClass)}
+      {...domRest}
+      {...part.pointerHandlers}
+      {...dataVariantProps({ size, variant })}
+    >
+      {elevationCard ? <div className={DISCLOSURE_CARD_CLIP_CLASS}>{children}</div> : children}
+    </div>
+  );
+}
  
 export {
   DisclosureTrigger,

@@ -1,18 +1,22 @@
 import type { CalendarLocale, CalendarRangeValue } from "@/components/core/Calendar";
 import { formatCalendarFieldDay } from "@/components/core/utils/intlFormat";
 
-import type { DatePickerMode, DatePickerStoredValue } from "./datePickerTypes";
+import type { BurneLabels } from "@/theme/burneLabels";
 
-export const DATE_PICKER_SINGLE_PLACEHOLDER = "Select a date";
-export const DATE_PICKER_RANGE_PLACEHOLDER = "Select a range";
+import type { DatePickerMode, DatePickerStoredValue } from "./datePickerTypes";
 
 export function isDatePickerRangeValue(value: DatePickerStoredValue): value is CalendarRangeValue {
   return value != null && !(value instanceof Date) && "start" in value && "end" in value;
 }
 
-export function datePickerPlaceholder(mode: DatePickerMode, placeholder?: string): string {
+export function datePickerPlaceholder(
+  mode: DatePickerMode,
+  placeholder: string | undefined,
+  labels: Pick<BurneLabels, "selectDate" | "selectDateRange">,
+): string {
   if (placeholder != null) return placeholder;
-  return mode === "range" ? DATE_PICKER_RANGE_PLACEHOLDER : DATE_PICKER_SINGLE_PLACEHOLDER;
+  if (mode === "range") return labels.selectDateRange;
+  return labels.selectDate;
 }
 
 function formatDatePickerDay(date: Date, locale: CalendarLocale): string {
@@ -29,6 +33,14 @@ export function formatDatePickerDisplay(
     if (range.start == null || range.end == null) return { text: "", empty: true };
     return {
       text: `${formatDatePickerDay(range.start, locale)} – ${formatDatePickerDay(range.end, locale)}`,
+      empty: false,
+    };
+  }
+  if (mode === "multiple") {
+    const dates = Array.isArray(value) ? value : [];
+    if (dates.length === 0) return { text: "", empty: true };
+    return {
+      text: dates.map((date) => formatDatePickerDay(date, locale)).join(", "),
       empty: false,
     };
   }
@@ -49,6 +61,10 @@ export function serializeDatePickerValue(value: DatePickerStoredValue, mode: Dat
     if (range.start == null || range.end == null) return "";
     return `${datePickerIsoDay(range.start)}/${datePickerIsoDay(range.end)}`;
   }
+  if (mode === "multiple") {
+    const dates = Array.isArray(value) ? value : [];
+    return dates.map((date) => datePickerIsoDay(date)).join(",");
+  }
   return value instanceof Date ? datePickerIsoDay(value) : "";
 }
 
@@ -56,5 +72,6 @@ export function datePickerSelectionComplete(next: DatePickerStoredValue, mode: D
   if (mode === "range") {
     return isDatePickerRangeValue(next) && next.start != null && next.end != null;
   }
+  if (mode === "multiple") return false;
   return next instanceof Date;
 }

@@ -1,5 +1,4 @@
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
-import type { InputStatus } from "@/components/core/Input";
 import { DEFAULT_BURNE_LABELS } from "@/theme/burneLabels";
  
 export function comboBoxLabelId(comboBoxId: string): string {
@@ -37,10 +36,4 @@ export function comboBoxTriggerAriaLabel(
   return open ? labels.closeList : labels.openList;
 }
  
-export function comboBoxResolveHintStatus(
-  status: InputStatus | undefined,
-  fieldStatus: InputStatus,
-): InputStatus {
-  return status ?? fieldStatus;
-}
  

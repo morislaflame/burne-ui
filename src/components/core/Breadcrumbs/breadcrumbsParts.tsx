@@ -1,6 +1,7 @@
 import { KitChevronForward } from "@/components/core/utils/kitIcons";
-import { forwardRef, useCallback, useMemo } from "react";
+import { cloneElement, forwardRef, useCallback, useMemo, type ReactElement } from "react";
  
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
@@ -143,19 +144,24 @@ function BreadcrumbListItem({
   );
 }
  
-export function BreadcrumbsSeparator({
-  className,
-  iconClassName,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-  ...rest
-}: BreadcrumbsSeparatorProps) {
+export const BreadcrumbsSeparator = forwardRef<HTMLSpanElement, BreadcrumbsSeparatorProps>(
+  function BreadcrumbsSeparator(
+    {
+      className,
+      iconClassName,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
   const slotClassNames = useBreadcrumbsClassNames();
   const part = useBreadcrumbsSlotMotion<HTMLSpanElement>("separator", {
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -179,7 +185,8 @@ export function BreadcrumbsSeparator({
       />
     </span>
   );
-}
+},
+);
  
 BreadcrumbsSeparator.displayName = "Breadcrumbs.Separator";
  
@@ -191,7 +198,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
     return (
       <Text
         as="span"
-        variant="small"
+        textStyle="small"
         aria-current="page"
         className={breadcrumbCurrentClass(
           cn("", slotClassNames.itemActive, item.className),
@@ -206,6 +213,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
     return (
       <InteractiveCrumb
         href={item.href}
+        link={item.link}
         onClick={item.onClick}
         className={slotClassNames.itemLinkWrapper}
         innerClassName={cn("", slotClassNames.itemLink, item.className)}
@@ -221,7 +229,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
   return (
     <Text
       as="span"
-      variant="small"
+      textStyle="small"
       className={breadcrumbStaticClass(
         cn("", slotClassNames.itemStatic, item.className),
       )}
@@ -254,6 +262,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
   function InteractiveCrumb(
     {
       href,
+      link,
       onClick,
       children,
       className = "",
@@ -282,6 +291,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
         playInitialState={playInitialState}>
         <InteractiveCrumbSurface
           href={href}
+          link={link}
           onClick={onClick}
           className={className}
           innerClassName={innerClassName}
@@ -298,6 +308,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
  
 function InteractiveCrumbSurface({
   href,
+  link,
   onClick,
   children,
   className,
@@ -307,6 +318,7 @@ function InteractiveCrumbSurface({
   forwardedRef,
 }: {
   href?: InteractiveCrumbProps["href"];
+  link?: InteractiveCrumbProps["link"];
   onClick?: InteractiveCrumbProps["onClick"];
   children: React.ReactNode;
   className: string;
@@ -354,7 +366,7 @@ function InteractiveCrumbSurface({
     const text = (
       <Text
         ref={setTextMerged}
-        variant="small"
+        textStyle="small"
         inheritColor
         as="span"
         className={crumbInteractiveTextClass(textClassName)}
@@ -366,7 +378,19 @@ function InteractiveCrumbSurface({
  
     return (
       <span className={crumbInteractiveWrapperClass(className)}>
-        {href ? (
+        {link ? (
+          cloneElement(
+            link as ReactElement,
+            mergeAsChildProps(link, {
+              className: crumbInteractiveInnerClass(innerClassName),
+              onClick,
+              onKeyDown: handleKeyDown,
+              "aria-current": ariaCurrent,
+              ...pointerHandlers,
+            }, setLinkRef as React.Ref<HTMLElement>),
+            text,
+          )
+        ) : href ? (
           <a
             ref={setLinkRef as React.Ref<HTMLAnchorElement>}
             href={href}
@@ -439,6 +463,7 @@ function BreadcrumbsEllipsisMenuSurface({
   return (
     <Dropdown>
       <Dropdown.Trigger
+        asChild={false}
         aria-label={ellipsisTriggerAriaLabel(count, labels.breadcrumbsShowHidden)}
         className={breadcrumbsEllipsisTriggerClass(slotClassNames.ellipsisTrigger)}
       >
@@ -449,7 +474,7 @@ function BreadcrumbsEllipsisMenuSurface({
         >
           <Text
             as="span"
-            variant="small"
+            textStyle="small"
             className={breadcrumbsEllipsisTextClass(slotClassNames.ellipsisText)}
           >
             …
@@ -458,7 +483,9 @@ function BreadcrumbsEllipsisMenuSurface({
       </Dropdown.Trigger>
       <Dropdown.Popover
         aria-label={breadcrumbsEllipsisPopoverAriaLabel(labels.breadcrumbsHiddenSections)}
-        bodyClassName={breadcrumbsEllipsisPopoverBodyClass(slotClassNames.ellipsisPopover)}
+        classNames={{
+          popoverBody: breadcrumbsEllipsisPopoverBodyClass(slotClassNames.ellipsisPopover),
+        }}
       >
         {hiddenItems.map((item) => {
           const itemKey = item.href ?? `hidden-${String(item.label)}`;

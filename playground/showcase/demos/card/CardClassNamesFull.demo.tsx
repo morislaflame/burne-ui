@@ -21,7 +21,7 @@ export function CardClassNamesFullDemo() {
         <Card.Description>Setting up slots via classNames on root.</Card.Description>
       </Card.Header>
       <Card.Body>
-        <Text variant="small">Example body-slots with additional space at the top.</Text>
+        <Text textStyle="small">Example body-slots with additional space at the top.</Text>
       </Card.Body>
       <Card.Footer>
         <Button size="small" variant="outline">

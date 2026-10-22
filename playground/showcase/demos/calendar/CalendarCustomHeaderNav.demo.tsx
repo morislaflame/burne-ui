@@ -22,7 +22,7 @@ function CustomTitleLabel() {
 
 export function CalendarCustomHeaderNavDemo() {
   return (
-    <Calendar mode="single">
+    <Calendar selectionMode="single">
       <Calendar.Header>
         <Calendar.NavNext className="text-primary" />
         <Calendar.Title className="font-semibold text-primary">

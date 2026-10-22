@@ -17,7 +17,8 @@
           "react-doctor/exhaustive-deps",
           "react-doctor/no-adjust-state-on-prop-change",
           "react-doctor/no-derived-state",
-          "react-doctor/no-derived-state-effect"
+          "react-doctor/no-derived-state-effect",
+          "react-doctor/only-export-components"
         ]
       }
     ]

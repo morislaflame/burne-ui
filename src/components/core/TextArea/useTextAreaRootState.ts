@@ -14,7 +14,6 @@ export function useTextAreaRootState({
   invalid,
   id: idProp,
   required = false,
-  status = "default",
   size = "base",
 }: UseTextAreaRootStateProps) {
   const autoId = useId();
@@ -41,10 +40,9 @@ export function useTextAreaRootState({
       errorConnected: hasError,
       invalid,
       required,
-      status,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, invalid, required, labelId, size, status, textareaId],
+    [errorId, hasError, hasHint, hintId, invalid, required, labelId, size, textareaId],
   );
  
   const fieldLabelCtx = useMemo(
@@ -60,7 +58,6 @@ export function useTextAreaRootState({
     label,
     hint,
     error,
-    status,
     size,
   };
 }

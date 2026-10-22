@@ -6,9 +6,9 @@
  * Host play and kit defaults live in `expandableAnimations.ts`.
  *
  * DOM slots (per Item, same as Expandable): `triggerLift`, `chevron`, `panelShell`,
- * `title`, `icon`, `description`, `body` (`Expandable.Panel` `<section>`).
+ * `title`, `icon`, `description`, `panel` (`Expandable.Panel` `<section>`).
+ * Extra Accordion slot: `body` (`Accordion.Body` muted wrap).
  * `panelInner` is an internal height-recipe target, not a public slot.
- * `Accordion.Body` is optional `text-muted` wrap, not a motion slot.
  * `Accordion.Heading` is not a slot (a11y wrapper).
  *
  * `Accordion.Chevron` registers the Expandable `chevron` target (Trigger

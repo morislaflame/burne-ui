@@ -39,12 +39,12 @@ export function TabsMotionControllerPlayTabDemo() {
           <Tabs.Tab value="two">Two</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="one" className="pt-large">
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Nested Tab scope — play() would skip (no root).
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="two" className="pt-large">
-          <Text as="p" variant="small">Second panel.</Text>
+          <Text as="p" textStyle="small">Second panel.</Text>
         </Tabs.Panel>
       </Tabs>
     </div>

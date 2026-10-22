@@ -32,7 +32,7 @@ export function DisclosureMotionEventsFinishedDemo() {
       <Disclosure motionController={controller} motion={{ events }}>
         <Disclosure.Trigger>waitForComplete</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">Disabled only on the trigger button.</Text>
+          <Text as="p" textStyle="small" className="text-muted">Disabled only on the trigger button.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

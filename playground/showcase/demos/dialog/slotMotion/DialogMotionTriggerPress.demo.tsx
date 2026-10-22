@@ -40,7 +40,7 @@ export function DialogMotionTriggerPressDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Pass a factory or another recipe name. `pressIn: false` skips the squeeze.
           </Text>
         </Dialog.Body>

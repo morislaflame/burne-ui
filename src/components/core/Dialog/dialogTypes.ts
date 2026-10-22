@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, MouseEvent, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
  
 import type { ButtonSize } from "@/components/core/Button";
@@ -7,9 +7,10 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
+import type { OverlayDismissEvent, OverlayDismissProps } from "@/components/core/utils/overlayLayer";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
-export const KIT_DIALOG_VARIANTS = ["default"] as const;
+export const KIT_DIALOG_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitDialogVariant = (typeof KIT_DIALOG_VARIANTS)[number];
 export type DialogVariant = KitDialogVariant | (string & {});
  
@@ -101,14 +102,8 @@ export type DialogProps = {
   motionController?: MotionController;
 } & MotionStateHostProps;
  
-export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
+export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & OverlayDismissProps & {
   variant?: DialogVariant;
-  dismissOnBackdrop?: boolean;
-  /**
-   * Backdrop pointerdown. `event.preventDefault()` keeps the dialog open.
-   * Returning `false` does not cancel dismiss.
-   */
-  onInteractOutside?: (event: MouseEvent<HTMLDivElement>) => void;
   themeAnchor?: HTMLElement | null;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
@@ -179,12 +174,17 @@ export type UseDialogRootStateProps = Pick<
   "open" | "defaultOpen" | "onOpenChange" | "size" | "portalContainer"
 >;
  
+export type DialogOverlayProps = OverlayDismissProps;
+
 export type UseDialogModalMotionProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   variant: DialogVariant;
-  dismissOnBackdrop: boolean;
-  onInteractOutside?: (event: MouseEvent<HTMLDivElement>) => void;
+  closeOnInteractOutside: boolean;
+  closeOnEscape?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: (event: OverlayDismissEvent) => void;
+  initialFocus?: OverlayDismissProps["initialFocus"];
   /** When true, open with `show()` + absolute positioning inside a custom portal host. */
   contained?: boolean;
 };

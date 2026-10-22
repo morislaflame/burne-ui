@@ -4,6 +4,7 @@ import type {
   KeyboardEvent,
   PointerEvent,
   ReactNode,
+  Ref,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
  
@@ -81,11 +82,16 @@ export type LinkProps =
 export type LinkIconProps = {
   iconPosition?: IconPosition;
   children?: ReactNode;
+  /** Extra classes on the icon wrapper. */
+  className?: string;
+  ref?: Ref<HTMLSpanElement>;
 };
  
 export type ResolvedLinkIconSlot = {
   node: ReactNode | "default";
   muted: boolean;
+  className?: string;
+  ref?: Ref<HTMLSpanElement>;
 };
  
 export type ResolvedLinkCompoundBody = {
@@ -123,6 +129,10 @@ export type LinkBodyContentProps = {
   textChildren: ReactNode;
   startIcon: ReactNode | null;
   endIcon: ReactNode | null;
+  startIconClassName?: string;
+  endIconClassName?: string;
+  startIconRef?: Ref<HTMLSpanElement>;
+  endIconRef?: Ref<HTMLSpanElement>;
   startIconMuted: boolean;
   endIconMuted: boolean;
   usesDefaultAtStart: boolean;
@@ -149,6 +159,8 @@ export type LinkIconSlotProps = {
   size: LinkSize;
   muted?: boolean;
   slotClass?: string;
+  className?: string;
+  forwardedRef?: Ref<HTMLSpanElement>;
   slot: "iconStart" | "iconEnd";
 };
  

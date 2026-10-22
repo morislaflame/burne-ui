@@ -1,4 +1,12 @@
 /** Burne UI — design tokens (CSS variables) */
+/**
+ * `:root` holds every token. `<html>` in dark mode has no attribute, so the page reads it.
+ * Mode colors, computed shadows and scrim gradients are repeated on
+ * `:root, [data-theme="dark"]` — the same keys as `[data-theme="light"]`.
+ * A dark island inside a light page matches that block and repaints those keys.
+ * Scale, type, motion, z-index and shadow knobs stay on `:root` only,
+ * so an island inherits overrides written on `<html>`.
+ */
 :root {
   /**
    * BORDER WIDTH — default surfaces / non-outline variants (`border-token`).
@@ -12,42 +20,7 @@
    */
   --border-width-outline: 1px;
 
-  --color-background: #0c0d10;
-  --color-surface: #171717;
-  --color-foreground: #f4f5f7;
-  --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
-  --color-shadow: #000000;
-  --color-shadow-secondary: #000000;
-
-  /**
-   * MUTED surface — soft panel / placeholder (`bg-muted`).
-   * Text on muted surfaces and secondary copy: `--color-muted-foreground`
-   * (utility `text-muted` maps here, not to `--color-muted`).
-   */
-  --color-muted: color-mix(
-    in oklab,
-    var(--color-foreground) 6%,
-    var(--color-surface)
-  );
-  --color-muted-foreground: #858994;
-
-  /**
-   * PRIMARY (brand) — primary button fill, links, active text states.
-   * Text color on this fill: `--color-primary-foreground`.
-   */
-  --color-primary: #ebebef;
-  --color-primary-foreground: #0c0c0e;
-
-  /**
-   * FOCUS RING — final paint color / width / offset for focus-ring* utilities.
-   * Soft by default (60% source + transparent). Status variants for field shells / status controls.
-   * Override independently, or retarget via `[--color-focus-ring:var(--color-focus-ring-danger)]`.
-   */
-  --color-focus-ring: color-mix(in oklab, var(--color-primary) 60%, transparent);
-  --color-focus-ring-danger: color-mix(in oklab, var(--color-danger) 60%, transparent);
-  --color-focus-ring-success: color-mix(in oklab, var(--color-success) 60%, transparent);
-  --color-focus-ring-info: color-mix(in oklab, var(--color-info) 60%, transparent);
-  --color-focus-ring-warning: color-mix(in oklab, var(--color-warning) 60%, transparent);
+  /** Focus ring width and offset. The paint color is in the mode block. */
   --focus-ring-width: 2px;
   --focus-ring-offset: 0px;
 
@@ -76,11 +49,13 @@
    * Default Dialog/Drawer use `showModal()` (browser top layer) — body-portaled
    * menus cannot stack above them via z-index; use contained `portalContainer`
    * (`show()`) or portal into the dialog element for nested overlays.
-   * Utilities: `z-dialog`, `z-dropdown`, `z-dropdown-sub`, `z-popover`, `z-toast`, `z-tooltip`.
+   * Utilities: `z-sticky`, `z-dialog`, `z-dropdown`, `z-dropdown-sub`, `z-popover`, `z-toast`, `z-tooltip`.
+   * `z-sticky` is page chrome (a sticky header). It stays under every overlay.
    * Numbers stay as published. A contained portal host (not `document.body`) adds
    * `--z-overlay-nested-step` via `.portal-contained`. `showModal()` is the top layer:
    * z-index cannot lift a body portal above it.
    */
+  --z-sticky: 10;
   --z-dialog: 100;
   --z-dropdown: 200;
   --z-dropdown-sub: calc(var(--z-dropdown) + 10);
@@ -88,6 +63,380 @@
   --z-toast: 300;
   --z-tooltip: 400;
   --z-overlay-nested-step: 10;
+
+
+  /* BEGIN GENERATED:fonts */
+  --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* END GENERATED:fonts */
+
+  /**
+   * Global letter-spacing knob (`--letter-spacing`).
+   * Apply on `html`/`body` (inherits): `letter-spacing: var(--letter-spacing)`.
+   * Theme overrides write `${n}em` via `applyThemeTokens` / `BurneUIProvider`.
+   * Large steps add their own tracking (`--letter-spacing-xlarge` … `-3xlarge`)
+   * on top of this knob (`text-header-*`, `text-accent-header`).
+   */
+  --letter-spacing: 0em;
+  --letter-spacing-xlarge: -0.02em;
+  --letter-spacing-2xlarge: -0.025em;
+  --letter-spacing-3xlarge: -0.03em;
+
+  /**
+   * Base spacing step (gap, padding, margin).
+   * Design tokens: `--space` (knob) + `--space-*` (steps: xsmall…5xlarge).
+   * Default is a fixed 8px. Fluid density is opt-in: `--space: var(--space-fluid)`
+   * or theme `scalePreset: "fluid"` (writes the same clamp, scaled by the knob).
+   * Steps on an 4px grid, with 6px at `small`: 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48.
+   */
+  --space: 0.5rem;
+  --space-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --space-xsmall: calc(var(--space) * 0.5);
+  --space-small: calc(var(--space) * 0.75);
+  --space-base: calc(var(--space) * 1);
+  --space-mid: calc(var(--space) * 1.5);
+  --space-large: calc(var(--space) * 2);
+  --space-xlarge: calc(var(--space) * 2.5);
+  --space-2xlarge: calc(var(--space) * 3);
+  --space-3xlarge: calc(var(--space) * 4);
+  --space-4xlarge: calc(var(--space) * 5);
+  --space-5xlarge: calc(var(--space) * 6);
+
+  /**
+   * Compact chip inset (Badge text/circle + Kbd) — fractions of `--space-*`.
+   * Internal only: not exported from the public token API / `@utility` catalog.
+   * py/px must ascend with size (base never taller than mid).
+   */
+  --chip-px-small: calc(var(--space-xsmall));
+  --chip-py-small: calc(var(--space-xsmall) * 0.35);
+  --chip-px-base: calc(var(--space-small));
+  --chip-py-base: calc(var(--space-small) * 0.5);
+  --chip-px-mid: calc(var(--space-base));
+  --chip-py-mid: calc(var(--space-small) * 0.5);
+  --chip-px-large: calc(var(--space-mid));
+  --chip-py-large: calc(var(--space-base) * 0.5);
+  --chip-gap-small: calc(var(--space-xsmall));
+  --chip-gap-base: calc(var(--space-xsmall));
+  --chip-gap-mid: calc(var(--space-small));
+  --chip-gap-large: var(--space-small);
+  --chip-box-small: calc(var(--space-xsmall) * 0.2);
+  --chip-box-base: calc(var(--space-xsmall) * 0.3);
+  --chip-box-mid: calc(var(--space-small) * 0.5);
+  --chip-box-large: calc(var(--space-small) * 0.55);
+  /**
+   * Equal diameter for circular Badge (digit / icon-only).
+   * Text in Badge uses `leading-none` (line-height 1), so size ≈ font-size — not role line-box.
+   */
+  --chip-size-small: calc(
+    max(var(--icon-size-small), var(--text-xsmall-size)) + var(--chip-box-small) * 2 +
+      var(--border-width) * 2
+  );
+  --chip-size-base: calc(
+    max(var(--icon-size-base), var(--text-small-size)) + var(--chip-box-base) * 2 +
+      var(--border-width) * 2
+  );
+  --chip-size-mid: calc(
+    max(var(--icon-size-base), var(--text-base-size)) + var(--chip-box-mid) * 2 +
+      var(--border-width) * 2
+  );
+  --chip-size-large: calc(
+    max(var(--icon-size-large), var(--text-mid-size)) + var(--chip-box-large) * 2 +
+      var(--border-width) * 2
+  );
+
+  /**
+   * Base border radius knob + step tokens.
+   * Layers: `--radius` (knob) → `--radius-*` (steps) → `@theme` `--radius-*` (Tailwind `rounded-*`).
+   * Default is a fixed 8px. Fluid: `--radius: var(--radius-fluid)` or `scalePreset: "fluid"`.
+   * `mid` is ×1.125 (9px), between `base` and `large`. `2xlarge` / `3xlarge` are 16px / 24px. `none` and `full` are absolute.
+   */
+  --radius: 0.5rem;
+  --radius-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --radius-none: 0px;
+  --radius-xsmall: calc(var(--radius) * 0.618);
+  --radius-small: calc(var(--radius) * 0.875);
+  --radius-base: calc(var(--radius) * 1);
+  --radius-mid: calc(var(--radius) * 1.125);
+  --radius-large: calc(var(--radius) * 1.25);
+  --radius-2xlarge: calc(var(--radius) * 2);
+  --radius-3xlarge: calc(var(--radius) * 3);
+  --radius-full: 9999px;
+  /**
+   * Concentric inner corner: `max(0, outer − padding)`.
+   * A shell sets `--radius-outer` and `--radius-pad`; the child uses `rounded-nested`.
+   * Defaults: outer is the `--radius` knob, pad is 0 (nested equals the knob until a shell sets the pad).
+   */
+  --radius-outer: var(--radius);
+  --radius-pad: 0px;
+  --radius-nested: max(0px, calc(var(--radius-outer) - var(--radius-pad)));
+
+  /**
+   * Primitive typographic scale (`--text-scale-*`).
+   * Steps: `xsmall`, `small` … `3xlarge` — names match rem sizes.
+   * Semantic UI roles (`text-base`, `text-mid`, …) map 1:1 to the same step names.
+   * line-height = calc(line_height / font-size) — unitless, like Tailwind v4.
+   */
+  /* BEGIN GENERATED:text-scale */
+  --text-scale-xsmall: 0.6875rem;
+  --text-scale-xsmall--line-height: calc(0.875rem / 0.6875rem);
+
+  --text-scale-small: 0.75rem;
+  --text-scale-small--line-height: calc(1rem / 0.75rem);
+
+  --text-scale-base: 0.875rem;
+  --text-scale-base--line-height: calc(1.25rem / 0.875rem);
+
+  --text-scale-mid: 1rem;
+  --text-scale-mid--line-height: calc(1.5rem / 1rem);
+
+  --text-scale-large: 1.125rem;
+  --text-scale-large--line-height: calc(1.75rem / 1.125rem);
+
+  --text-scale-xlarge: 1.5rem;
+  --text-scale-xlarge--line-height: calc(2rem / 1.5rem);
+
+  --text-scale-2xlarge: 1.875rem;
+  --text-scale-2xlarge--line-height: calc(2.25rem / 1.875rem);
+
+  --text-scale-3xlarge: 2.25rem;
+  --text-scale-3xlarge--line-height: calc(2.5rem / 2.25rem);
+  /* END GENERATED:text-scale */
+
+  /**
+   * Primitive font-weight scale (`--font-w-*`).
+   * Semantic text roles reference these tokens.
+   */
+  --font-w-small: 500;
+  --font-w-base: 500;
+  --font-w-mid: 600;
+  --font-w-strong: 700;
+  --font-w-bold: 800;
+
+
+  /**
+   * Semantic UI text roles — 1:1 with `--text-scale-*` of the same name
+   * (`text-base` → `--text-scale-base`, headers → `xlarge` / `2xlarge` / `3xlarge`).
+   */
+  --text-accent-header-size: var(--text-scale-3xlarge);
+  --text-accent-header-line-height: var(--text-scale-3xlarge--line-height);
+  --text-accent-header-weight: var(--font-w-bold);
+
+  --text-header-1-size: var(--text-scale-2xlarge);
+  --text-header-1-line-height: var(--text-scale-2xlarge--line-height);
+  --text-header-1-weight: var(--font-w-strong);
+
+  --text-header-2-size: var(--text-scale-xlarge);
+  --text-header-2-line-height: var(--text-scale-xlarge--line-height);
+  --text-header-2-weight: var(--font-w-strong);
+
+  --text-large-size: var(--text-scale-large);
+  --text-large-line-height: var(--text-scale-large--line-height);
+  --text-large-weight: var(--font-w-mid);
+
+  --text-mid-size: var(--text-scale-mid);
+  --text-mid-line-height: var(--text-scale-mid--line-height);
+  --text-mid-weight: var(--font-w-base);
+
+  --text-base-size: var(--text-scale-base);
+  --text-base-line-height: var(--text-scale-base--line-height);
+  --text-base-weight: var(--font-w-base);
+
+  --text-small-size: var(--text-scale-small);
+  --text-small-line-height: var(--text-scale-small--line-height);
+  --text-small-weight: var(--font-w-small);
+
+  --text-xsmall-size: var(--text-scale-xsmall);
+  --text-xsmall-line-height: var(--text-scale-xsmall--line-height);
+  --text-xsmall-weight: var(--font-w-small);
+
+  /**
+   * Base control size (icons, indicators, button min-width, modal width).
+   * Separate from `--space` (spacing) and `--text-scale-*` (typography).
+   * Default is a fixed 16px. Fluid: `--size: var(--size-fluid)` or `scalePreset: "fluid"`.
+   */
+  --size: 1rem;
+  --size-fluid: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
+
+  /** Primitive control size scale (`--size-scale-*`) */
+  --size-scale-xsmall: calc(var(--size) * 0.675);
+  --size-scale-small: calc(var(--size) * 0.875);
+  --size-scale-base: calc(var(--size) * 1.125);
+  --size-scale-mid: calc(var(--size) * 1.25);
+  --size-scale-large: calc(var(--size) * 1.375);
+  --size-scale-xlarge: calc(var(--size) * 1.75);
+  --size-scale-2xlarge: calc(var(--size) * 2);
+  --size-scale-3xlarge: calc(var(--size) * 2.25);
+
+  /**
+   * Container / panel width scale — `min-w-component-*` / `max-w-component-*`.
+   * Steps (× `--size` ≈ rem): xsmall 12 · small 16 · base 20 · mid 24 ·
+   * large 28 · xlarge 32 · 2xlarge 36.
+   * Dialog/Alert size props map to base→2xlarge (not 1:1 with step names).
+   */
+  --max-component-xsmall: calc(var(--size) * 12);
+  --max-component-small: calc(var(--size) * 16);
+  --max-component-base: calc(var(--size) * 20);
+  --max-component-mid: calc(var(--size) * 24);
+  --max-component-large: calc(var(--size) * 28);
+  --max-component-xlarge: calc(var(--size) * 32);
+  --max-component-2xlarge: calc(var(--size) * 36);
+
+  /**
+   * Page column scale — `max-w-page-*` (Container `maxWidth`) and `w-page-*`
+   * (Sidebar `width`). Not the panel scale `--max-component-*`.
+   * Steps (× `--size` ≈ rem): xsmall 16 · small 20 · base 24 · mid 48 ·
+   * large 80 · xlarge 90 · 2xlarge 112.
+   */
+  --max-page-xsmall: calc(var(--size) * 16);
+  --max-page-small: calc(var(--size) * 20);
+  --max-page-base: calc(var(--size) * 24);
+  --max-page-mid: calc(var(--size) * 48);
+  --max-page-large: calc(var(--size) * 80);
+  --max-page-xlarge: calc(var(--size) * 90);
+  --max-page-2xlarge: calc(var(--size) * 112);
+
+  --button-min-width-small: calc(var(--control-height-small) * 2.5);
+  --button-min-width-base: calc(var(--control-height-base) * 2.5);
+  --button-min-width-mid: calc(var(--control-height-mid) * 2.7);
+  --button-min-width-large: calc(var(--control-height-large) * 2.6);
+
+  /**
+   * Interactive control box size (Button, Input, Selector, SearchInput, square hit targets).
+   * `--control-height-*` — canonical (computed from text + padding + border).
+   * `--control-size-*` — aliases for width utilities (`w-control-*`, `min-w-control-*`, …)
+   * so width does not read a `*-height-*` token by name.
+   */
+  --control-height-xsmall: calc(var(--text-xsmall-size) * var(--text-xsmall-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
+  --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
+  --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + var(--border-width) * 2);
+  --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + var(--border-width) * 2);
+  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-mid) * 2 + var(--border-width) * 2);
+
+  --control-size-xsmall: var(--control-height-xsmall);
+  --control-size-small: var(--control-height-small);
+  --control-size-base: var(--control-height-base);
+  --control-size-mid: var(--control-height-mid);
+  --control-size-large: var(--control-height-large);
+
+  /** Avatar diameter per size step. */
+  --avatar-size-small: calc(var(--size) * 2);
+  --avatar-size-base: calc(var(--size) * 2.5);
+  --avatar-size-mid: calc(var(--size) * 3);
+  --avatar-size-large: calc(var(--size) * 3.5);
+
+  /**
+   * Icons (react-icons, etc.) — 1:1 with `--size-scale-*`; utilities `icon-xsmall` … `icon-3xlarge`.
+   * SelectionIndicator / SelectionThumb marks scale icons further (×0.75) in component tokens.
+   */
+  --icon-size-xsmall: var(--size-scale-xsmall);
+  --icon-size-small: var(--size-scale-small);
+  --icon-size-base: var(--size-scale-base);
+  --icon-size-mid: var(--size-scale-mid);
+  --icon-size-large: var(--size-scale-large);
+  --icon-size-xlarge: var(--size-scale-xlarge);
+  --icon-size-2xlarge: var(--size-scale-2xlarge);
+  --icon-size-3xlarge: var(--size-scale-3xlarge);
+  /** Round sizes beside the step scale (16px / 24px when `--size` is 1rem). */
+  --icon-size-16: var(--size);
+  --icon-size-24: calc(var(--size) * 1.5);
+
+  /**
+   * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
+   * Outer ring diameter (= `--size-scale-*`); fill paints under the border
+   * (`-inset` by `--border-width`) with `rounded-[inherit]` so custom shell radius
+   * needs no extra public API.
+   * Mark icons: `--icon-size-*` × 0.75 (see `SELECTION_INDICATOR_ICON_CLASS`).
+   * Corner radius is `--radius-nested`: a radius step minus `--space-xsmall` (4px),
+   * not a second ×0.618. `xsmall` steps up to `--radius-small` so the inset does not
+   * collapse the corner. `mid` uses `--radius-mid`; `large` uses `--radius-large`
+   * (`--radius-2xlarge` would turn the box into a pill). Not `rounded-full`.
+   */
+  --selection-indicator-xsmall: var(--size-scale-xsmall);
+  --selection-indicator-small: var(--size-scale-small);
+  --selection-indicator-base: var(--size-scale-base);
+  --selection-indicator-mid: var(--size-scale-mid);
+  --selection-indicator-large: var(--size-scale-large);
+
+  --selection-indicator-radius-xsmall: max(0px, calc(var(--radius-small) - var(--space-xsmall)));
+  --selection-indicator-radius-small: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
+  --selection-indicator-radius-base: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
+  --selection-indicator-radius-mid: max(0px, calc(var(--radius-mid) - var(--space-xsmall)));
+  --selection-indicator-radius-large: max(0px, calc(var(--radius-large) - var(--space-xsmall)));
+
+  /** Shadow knobs. Composites live with the mode colors, so a dark island inherits these. */
+  /* BEGIN GENERATED:shadow-knobs */
+  --shadow-opacity: 1;
+  --shadow-blur: 1;
+  --shadow-spread: 1;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 0px;
+  /* END GENERATED:shadow-knobs */
+
+  /**
+   * Toast scrim — soft backdrop behind the notification stack (gradient to transparency).
+   * --toast-scrim-size — height and horizontal inset multiplier.
+   * --toast-scrim-density — color-mix density multiplier (center / mid).
+   */
+  --toast-scrim-size: 1;
+  --toast-scrim-density: 1;
+  --toast-scrim-height: calc(300px * var(--toast-scrim-size));
+  --toast-scrim-inset-x: calc(80px * var(--toast-scrim-size));
+  --toast-scrim-offset-y: calc(24px * var(--toast-scrim-size));
+  --toast-scrim-center-mix: calc(55% * var(--toast-scrim-density));
+  --toast-scrim-mid-mix: calc(25% * var(--toast-scrim-density));
+  --toast-scrim-mask: linear-gradient(
+    to right,
+    transparent 0%,
+    black 18%,
+    black 82%,
+    transparent 100%
+  );
+
+}
+
+/**
+ * Dark mode colors. Same keys as the light block below.
+ * Declared on `:root` (the page) and on `[data-theme="dark"]` (an island).
+ */
+:root,
+[data-theme="dark"] {
+
+  --color-background: #0c0d10;
+  --color-surface: #171717;
+  --color-foreground: #f4f5f7;
+  --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
+  --color-shadow: #000000;
+  --color-shadow-secondary: #000000;
+
+  /**
+   * MUTED surface — soft panel / placeholder (`bg-muted`).
+   * Text on muted surfaces and secondary copy: `--color-muted-foreground`
+   * (utility `text-muted` maps here, not to `--color-muted`).
+   */
+  --color-muted: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-surface)
+  );
+  --color-muted-foreground: #858994;
+
+  /**
+   * PRIMARY (brand) — primary button fill, links, active text states.
+   * Text color on this fill: `--color-primary-foreground`.
+   */
+  --color-primary: #ebebef;
+  --color-primary-foreground: #0c0c0e;
+
+  /**
+   * FOCUS RING — paint color for focus-ring* utilities. Width and offset stay on `:root`.
+   * Soft by default (60% source + transparent). Status variants for field shells / status controls.
+   * Override independently, or retarget via `[--color-focus-ring:var(--color-focus-ring-danger)]`.
+   */
+  --color-focus-ring: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --color-focus-ring-danger: color-mix(in oklab, var(--color-danger) 60%, transparent);
+  --color-focus-ring-success: color-mix(in oklab, var(--color-success) 60%, transparent);
+  --color-focus-ring-info: color-mix(in oklab, var(--color-info) 60%, transparent);
+  --color-focus-ring-warning: color-mix(in oklab, var(--color-warning) 60%, transparent);
 
   /**
    * INDICATOR — fill inside selection indicators (Radio, Checkbox, Switch, Slider track,
@@ -110,7 +459,7 @@
    * (15% tint, 25% tint hover, 80% fill hover).
    */
   --color-danger: #d73737;
-  --color-danger-foreground: #fafafa;
+  --color-danger-foreground: #ffffff;
   --color-surface-tint-danger: color-mix(
     in oklab,
     var(--color-danger) 15%,
@@ -135,7 +484,7 @@
    * 4) --color-success-fill-hover          (hover over bg-success)
    */
   --color-success: #35b664;
-  --color-success-foreground: #fafafa;
+  --color-success-foreground: #0c0c0e;
   --color-surface-tint-success: color-mix(
     in oklab,
     var(--color-success) 15%,
@@ -160,7 +509,7 @@
    * 4) --color-info-fill-hover          (hover over bg-info)
    */
   --color-info: #389dcc;
-  --color-info-foreground: #fafafa;
+  --color-info-foreground: #0c0c0e;
   --color-surface-tint-info: color-mix(
     in oklab,
     var(--color-info) 15%,
@@ -324,292 +673,6 @@
     transparent
   );
 
-
-  /* BEGIN GENERATED:fonts */
-  --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  /* END GENERATED:fonts */
-
-  /**
-   * Global letter-spacing knob (`--letter-spacing`).
-   * Apply on `html`/`body` (inherits): `letter-spacing: var(--letter-spacing)`.
-   * Theme overrides write `${n}em` via `applyThemeTokens` / `BurneUIProvider`.
-   * Large steps add their own tracking (`--letter-spacing-xlarge` … `-3xlarge`)
-   * on top of this knob (`text-header-*`, `text-accent-header`).
-   */
-  --letter-spacing: 0em;
-  --letter-spacing-xlarge: -0.02em;
-  --letter-spacing-2xlarge: -0.025em;
-  --letter-spacing-3xlarge: -0.03em;
-
-  /**
-   * Base spacing step (gap, padding, margin).
-   * Design tokens: `--space` (knob) + `--space-*` (steps: xsmall…5xlarge).
-   * Default is a fixed 8px. Fluid density is opt-in: `--space: var(--space-fluid)`
-   * or theme `scalePreset: "fluid"` (writes the same clamp, scaled by the knob).
-   * Steps on an 4px grid, with 6px at `small`: 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48.
-   */
-  --space: 0.5rem;
-  --space-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
-  --space-xsmall: calc(var(--space) * 0.5);
-  --space-small: calc(var(--space) * 0.75);
-  --space-base: calc(var(--space) * 1);
-  --space-mid: calc(var(--space) * 1.5);
-  --space-large: calc(var(--space) * 2);
-  --space-xlarge: calc(var(--space) * 2.5);
-  --space-2xlarge: calc(var(--space) * 3);
-  --space-3xlarge: calc(var(--space) * 4);
-  --space-4xlarge: calc(var(--space) * 5);
-  --space-5xlarge: calc(var(--space) * 6);
-
-  /**
-   * Compact chip inset (Badge text/circle + Kbd) — fractions of `--space-*`.
-   * Internal only: not exported from the public token API / `@utility` catalog.
-   * py/px must ascend with size (base never taller than mid).
-   */
-  --chip-px-small: calc(var(--space-xsmall));
-  --chip-py-small: calc(var(--space-xsmall) * 0.35);
-  --chip-px-base: calc(var(--space-small));
-  --chip-py-base: calc(var(--space-small) * 0.5);
-  --chip-px-mid: calc(var(--space-base));
-  --chip-py-mid: calc(var(--space-small) * 0.5);
-  --chip-px-large: calc(var(--space-mid));
-  --chip-py-large: calc(var(--space-base) * 0.5);
-  --chip-gap-small: calc(var(--space-xsmall));
-  --chip-gap-base: calc(var(--space-xsmall));
-  --chip-gap-mid: calc(var(--space-small));
-  --chip-gap-large: var(--space-small);
-  --chip-box-small: calc(var(--space-xsmall) * 0.2);
-  --chip-box-base: calc(var(--space-xsmall) * 0.3);
-  --chip-box-mid: calc(var(--space-small) * 0.5);
-  --chip-box-large: calc(var(--space-small) * 0.55);
-  /**
-   * Equal diameter for circular Badge (digit / icon-only).
-   * Text in Badge uses `leading-none` (line-height 1), so size ≈ font-size — not role line-box.
-   */
-  --chip-size-small: calc(
-    max(var(--icon-size-small), var(--text-xsmall-size)) + var(--chip-box-small) * 2 +
-      var(--border-width) * 2
-  );
-  --chip-size-base: calc(
-    max(var(--icon-size-base), var(--text-small-size)) + var(--chip-box-base) * 2 +
-      var(--border-width) * 2
-  );
-  --chip-size-mid: calc(
-    max(var(--icon-size-base), var(--text-base-size)) + var(--chip-box-mid) * 2 +
-      var(--border-width) * 2
-  );
-  --chip-size-large: calc(
-    max(var(--icon-size-large), var(--text-mid-size)) + var(--chip-box-large) * 2 +
-      var(--border-width) * 2
-  );
-
-  /**
-   * Base border radius knob + step tokens.
-   * Layers: `--radius` (knob) → `--radius-*` (steps) → `@theme` `--radius-*` (Tailwind `rounded-*`).
-   * Default is a fixed 8px. Fluid: `--radius: var(--radius-fluid)` or `scalePreset: "fluid"`.
-   * `mid` is ×1.125 (9px), between `base` and `large`. `2xlarge` / `3xlarge` are 16px / 24px. `none` and `full` are absolute.
-   */
-  --radius: 0.5rem;
-  --radius-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
-  --radius-none: 0px;
-  --radius-xsmall: calc(var(--radius) * 0.618);
-  --radius-small: calc(var(--radius) * 0.875);
-  --radius-base: calc(var(--radius) * 1);
-  --radius-mid: calc(var(--radius) * 1.125);
-  --radius-large: calc(var(--radius) * 1.25);
-  --radius-2xlarge: calc(var(--radius) * 2);
-  --radius-3xlarge: calc(var(--radius) * 3);
-  --radius-full: 9999px;
-  /**
-   * Concentric inner corner: `max(0, outer − padding)`.
-   * A shell sets `--radius-outer` and `--radius-pad`; the child uses `rounded-nested`.
-   * Defaults: outer is the `--radius` knob, pad is 0 (nested equals the knob until a shell sets the pad).
-   */
-  --radius-outer: var(--radius);
-  --radius-pad: 0px;
-  --radius-nested: max(0px, calc(var(--radius-outer) - var(--radius-pad)));
-
-  /**
-   * Primitive typographic scale (`--text-scale-*`).
-   * Steps: `xsmall`, `small` … `3xlarge` — names match rem sizes.
-   * Semantic UI roles (`text-base`, `text-mid`, …) map 1:1 to the same step names.
-   * line-height = calc(line_height / font-size) — unitless, like Tailwind v4.
-   */
-  /* BEGIN GENERATED:text-scale */
-  --text-scale-xsmall: 0.6875rem;
-  --text-scale-xsmall--line-height: calc(0.875rem / 0.6875rem);
-
-  --text-scale-small: 0.75rem;
-  --text-scale-small--line-height: calc(1rem / 0.75rem);
-
-  --text-scale-base: 0.875rem;
-  --text-scale-base--line-height: calc(1.25rem / 0.875rem);
-
-  --text-scale-mid: 1rem;
-  --text-scale-mid--line-height: calc(1.5rem / 1rem);
-
-  --text-scale-large: 1.125rem;
-  --text-scale-large--line-height: calc(1.75rem / 1.125rem);
-
-  --text-scale-xlarge: 1.5rem;
-  --text-scale-xlarge--line-height: calc(2rem / 1.5rem);
-
-  --text-scale-2xlarge: 1.875rem;
-  --text-scale-2xlarge--line-height: calc(2.25rem / 1.875rem);
-
-  --text-scale-3xlarge: 2.25rem;
-  --text-scale-3xlarge--line-height: calc(2.5rem / 2.25rem);
-  /* END GENERATED:text-scale */
-
-  /**
-   * Primitive font-weight scale (`--font-w-*`).
-   * Semantic text roles reference these tokens.
-   */
-  --font-w-regular: 400;
-  --font-w-small: 500;
-  --font-w-base: 500;
-  --font-w-mid: 600;
-  --font-w-strong: 700;
-  --font-w-bold: 800;
-
-
-  /**
-   * Semantic UI text roles — 1:1 with `--text-scale-*` of the same name
-   * (`text-base` → `--text-scale-base`, headers → `xlarge` / `2xlarge` / `3xlarge`).
-   */
-  --text-accent-header-size: var(--text-scale-3xlarge);
-  --text-accent-header-line-height: var(--text-scale-3xlarge--line-height);
-  --text-accent-header-weight: var(--font-w-bold);
-
-  --text-header-1-size: var(--text-scale-2xlarge);
-  --text-header-1-line-height: var(--text-scale-2xlarge--line-height);
-  --text-header-1-weight: var(--font-w-strong);
-
-  --text-header-2-size: var(--text-scale-xlarge);
-  --text-header-2-line-height: var(--text-scale-xlarge--line-height);
-  --text-header-2-weight: var(--font-w-strong);
-
-  --text-large-size: var(--text-scale-large);
-  --text-large-line-height: var(--text-scale-large--line-height);
-  --text-large-weight: var(--font-w-mid);
-
-  --text-mid-size: var(--text-scale-mid);
-  --text-mid-line-height: var(--text-scale-mid--line-height);
-  --text-mid-weight: var(--font-w-base);
-
-  --text-base-size: var(--text-scale-base);
-  --text-base-line-height: var(--text-scale-base--line-height);
-  --text-base-weight: var(--font-w-base);
-
-  --text-small-size: var(--text-scale-small);
-  --text-small-line-height: var(--text-scale-small--line-height);
-  --text-small-weight: var(--font-w-small);
-
-  --text-xsmall-size: var(--text-scale-xsmall);
-  --text-xsmall-line-height: var(--text-scale-xsmall--line-height);
-  --text-xsmall-weight: var(--font-w-small);
-
-  /**
-   * Base control size (icons, indicators, button min-width, modal width).
-   * Separate from `--space` (spacing) and `--text-scale-*` (typography).
-   * Default is a fixed 16px. Fluid: `--size: var(--size-fluid)` or `scalePreset: "fluid"`.
-   */
-  --size: 1rem;
-  --size-fluid: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
-
-  /** Primitive control size scale (`--size-scale-*`) */
-  --size-scale-xsmall: calc(var(--size) * 0.675);
-  --size-scale-small: calc(var(--size) * 0.875);
-  --size-scale-base: calc(var(--size) * 1.125);
-  --size-scale-mid: calc(var(--size) * 1.25);
-  --size-scale-large: calc(var(--size) * 1.375);
-  --size-scale-xlarge: calc(var(--size) * 1.75);
-  --size-scale-2xlarge: calc(var(--size) * 2);
-  --size-scale-3xlarge: calc(var(--size) * 2.25);
-
-  /**
-   * Container / panel width scale — `min-w-component-*` / `max-w-component-*`.
-   * Steps (× `--size` ≈ rem): xsmall 12 · small 16 · base 20 · mid 24 ·
-   * large 28 · xlarge 32 · 2xlarge 36.
-   * Dialog/Alert size props map to base→2xlarge (not 1:1 with step names).
-   */
-  --max-component-xsmall: calc(var(--size) * 12);
-  --max-component-small: calc(var(--size) * 16);
-  --max-component-base: calc(var(--size) * 20);
-  --max-component-mid: calc(var(--size) * 24);
-  --max-component-large: calc(var(--size) * 28);
-  --max-component-xlarge: calc(var(--size) * 32);
-  --max-component-2xlarge: calc(var(--size) * 36);
-
-  --button-min-width-small: calc(var(--control-height-small) * 2.5);
-  --button-min-width-base: calc(var(--control-height-base) * 2.5);
-  --button-min-width-mid: calc(var(--control-height-mid) * 2.7);
-  --button-min-width-large: calc(var(--control-height-large) * 2.6);
-
-  /**
-   * Interactive control box size (Button, Input, Selector, SearchInput, square hit targets).
-   * `--control-height-*` — canonical (computed from text + padding + border).
-   * `--control-size-*` — aliases for width utilities (`w-control-*`, `min-w-control-*`, …)
-   * so width does not read a `*-height-*` token by name.
-   */
-  --control-height-xsmall: calc(var(--text-xsmall-size) * var(--text-xsmall-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
-  --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
-  --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + var(--border-width) * 2);
-  --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + var(--border-width) * 2);
-  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-mid) * 2 + var(--border-width) * 2);
-
-  --control-size-xsmall: var(--control-height-xsmall);
-  --control-size-small: var(--control-height-small);
-  --control-size-base: var(--control-height-base);
-  --control-size-mid: var(--control-height-mid);
-  --control-size-large: var(--control-height-large);
-
-  /** Avatar diameter per size step. */
-  --avatar-size-small: calc(var(--size) * 2);
-  --avatar-size-base: calc(var(--size) * 2.5);
-  --avatar-size-mid: calc(var(--size) * 3);
-  --avatar-size-large: calc(var(--size) * 3.5);
-
-  /**
-   * Icons (react-icons, etc.) — 1:1 with `--size-scale-*`; utilities `icon-xsmall` … `icon-3xlarge`.
-   * SelectionIndicator / SelectionThumb marks scale icons further (×0.75) in component tokens.
-   */
-  --icon-size-xsmall: var(--size-scale-xsmall);
-  --icon-size-small: var(--size-scale-small);
-  --icon-size-base: var(--size-scale-base);
-  --icon-size-mid: var(--size-scale-mid);
-  --icon-size-large: var(--size-scale-large);
-  --icon-size-xlarge: var(--size-scale-xlarge);
-  --icon-size-2xlarge: var(--size-scale-2xlarge);
-  --icon-size-3xlarge: var(--size-scale-3xlarge);
-  /** Round sizes beside the step scale (16px / 24px when `--size` is 1rem). */
-  --icon-size-16: var(--size);
-  --icon-size-24: calc(var(--size) * 1.5);
-
-  /**
-   * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
-   * Outer ring diameter (= `--size-scale-*`); fill paints under the border
-   * (`-inset` by `--border-width`) with `rounded-[inherit]` so custom shell radius
-   * needs no extra public API.
-   * Mark icons: `--icon-size-*` × 0.75 (see `SELECTION_INDICATOR_ICON_CLASS`).
-   * Corner radius is `--radius-nested`: a radius step minus `--space-xsmall` (4px),
-   * not a second ×0.618. `xsmall` steps up to `--radius-small` so the inset does not
-   * collapse the corner. `mid` uses `--radius-mid`; `large` uses `--radius-large`
-   * (`--radius-2xlarge` would turn the box into a pill). Not `rounded-full`.
-   */
-  --selection-indicator-xsmall: var(--size-scale-xsmall);
-  --selection-indicator-small: var(--size-scale-small);
-  --selection-indicator-base: var(--size-scale-base);
-  --selection-indicator-mid: var(--size-scale-mid);
-  --selection-indicator-large: var(--size-scale-large);
-
-  --selection-indicator-radius-xsmall: max(0px, calc(var(--radius-small) - var(--space-xsmall)));
-  --selection-indicator-radius-small: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
-  --selection-indicator-radius-base: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
-  --selection-indicator-radius-mid: max(0px, calc(var(--radius-mid) - var(--space-xsmall)));
-  --selection-indicator-radius-large: max(0px, calc(var(--radius-large) - var(--space-xsmall)));
-
   /**
    * Component shadows — single layer, bottom only.
    * Per size: `--shadow-{small|base|mid|large|xlarge}` + `-hover` / `-press` (same family, not cross-tier).
@@ -622,11 +685,6 @@
    * none: collapsed `0 0 0 0` / alpha 0 — GSAP morphs into sized / lift shadows.
    */
   /* BEGIN GENERATED:shadows-dark */
-  --shadow-opacity: 1;
-  --shadow-blur: 1;
-  --shadow-spread: 1;
-  --shadow-offset-x: 0px;
-  --shadow-offset-y: 0px;
   --shadow-none:
     0px 0px 0px 0px
       color-mix(in oklab, var(--color-shadow) 0%, transparent),
@@ -745,19 +803,6 @@
       calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
       color-mix(in oklab, var(--color-shadow-secondary) calc(0.068 * 100% * var(--shadow-opacity)), transparent);
   /* END GENERATED:shadows-dark */
-
-  /**
-   * Toast scrim — soft backdrop behind the notification stack (gradient to transparency).
-   * --toast-scrim-size — height and horizontal inset multiplier.
-   * --toast-scrim-density — color-mix density multiplier (center / mid).
-   */
-  --toast-scrim-size: 1;
-  --toast-scrim-density: 1;
-  --toast-scrim-height: calc(300px * var(--toast-scrim-size));
-  --toast-scrim-inset-x: calc(80px * var(--toast-scrim-size));
-  --toast-scrim-offset-y: calc(24px * var(--toast-scrim-size));
-  --toast-scrim-center-mix: calc(55% * var(--toast-scrim-density));
-  --toast-scrim-mid-mix: calc(25% * var(--toast-scrim-density));
   --toast-scrim-gradient-top: radial-gradient(
     ellipse 90% 60% at 50% 0%,
     color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
@@ -770,14 +815,6 @@
     color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
     transparent 100%
   );
-  --toast-scrim-mask: linear-gradient(
-    to right,
-    transparent 0%,
-    black 18%,
-    black 82%,
-    transparent 100%
-  );
-
 }
 
 [data-theme="light"] {
@@ -820,11 +857,11 @@
     transparent
   );
 
-  --color-danger: #df4e4e;
+  --color-danger: #d14143;
   --color-danger-foreground: #ffffff;
-  --color-success: #2ebd62;
+  --color-success: #00873f;
   --color-success-foreground: #ffffff;
-  --color-info: #31a0d3;
+  --color-info: #007dac;
   --color-info-foreground: #ffffff;
   --color-warning: #e1a53d;
   --color-warning-foreground: #0c0c0e;

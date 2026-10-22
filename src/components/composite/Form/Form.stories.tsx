@@ -7,7 +7,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { Checkbox } from "@/components/core/Checkbox";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
-import type { ComboBoxOption } from "@/components/core/ComboBox";
+import type { ComboBoxItem } from "@/components/core/ComboBox";
 import { ComboBox } from "@/components/core/ComboBox";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Surface } from "@/components/core/Surface";
@@ -16,14 +16,15 @@ import type { FormValues } from "./formTypes";
 import { Form } from "./index";
 import { FormSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/form/slotMotion/gallery";
 import { FormMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/form/motionController/gallery";
+import { Label } from "@/components/core/Label";
 
-const localeOptions: ComboBoxOption[] = [
+const localeOptions: ComboBoxItem[] = [
   { value: "ru", label: "Russian", hint: "UI and emails in Russian" },
   { value: "en", label: "English", hint: "UI and emails in English" },
   { value: "de", label: "Deutsch", hint: "Oberfläche und E-Mails auf Deutsch" },
 ];
 
-const countryOptions: ComboBoxOption[] = [
+const countryOptions: ComboBoxItem[] = [
   { value: "ru", label: "Russia" },
   { value: "kz", label: "Kazakhstan" },
   { value: "by", label: "Belarus" },
@@ -85,12 +86,12 @@ function ProfileForm() {
       </Form.Header>
       <Form.Section>
         <Form.Field name="locale">
-          <ComboBox name="locale" options={localeOptions}>
+          <ComboBox name="locale" items={localeOptions}>
             <ComboBox.Label>Interface language</ComboBox.Label>
-            <ComboBox.InputGroup>
+            <ComboBox.Shell>
               <ComboBox.Input placeholder="Select language" />
               <ComboBox.Trigger />
-            </ComboBox.InputGroup>
+            </ComboBox.Shell>
             <ComboBox.Popover />
             <ComboBox.Hint>Description is visible in the list; the field shows only the name.</ComboBox.Hint>
           </ComboBox>
@@ -112,17 +113,17 @@ function ProfileForm() {
             required
             name="password"
             label="Password"
-            inputType="password"
+            type="password"
             autoComplete="new-password"
             hint="At least 8 characters."
           />
         </Form.Field>
-        <Input name="avatar" label="Avatar" inputType="file" accept="image/*" placeholder="PNG or JPEG" />
+        <Input name="avatar" label="Avatar" type="file" accept="image/*" placeholder="PNG or JPEG" />
       </Form.Section>
       <Form.Section>
-        <CheckboxGroup selection="single" required>
+        <CheckboxGroup selectionMode="single" required>
           <CheckboxGroup.Legend>
-            <CheckboxGroup.Label>Notifications</CheckboxGroup.Label>
+            <Label>Notifications</Label>
             <CheckboxGroup.Hint>
               Single channel: selecting another clears the previous one.
             </CheckboxGroup.Hint>
@@ -196,12 +197,12 @@ function ValidationForm() {
           />
         </Form.Field>
         <Form.Field name="locale">
-          <ComboBox name="locale" required options={localeOptions}>
+          <ComboBox name="locale" required items={localeOptions}>
             <ComboBox.Label>Interface language</ComboBox.Label>
-            <ComboBox.InputGroup>
+            <ComboBox.Shell>
               <ComboBox.Input placeholder="Select language" />
               <ComboBox.Trigger />
-            </ComboBox.InputGroup>
+            </ComboBox.Shell>
             <ComboBox.Popover />
             <ComboBox.Error />
           </ComboBox>
@@ -305,7 +306,7 @@ function LoginForm() {
               required
               name="password"
               label="Password"
-              inputType="password"
+              type="password"
               autoComplete="current-password"
             />
           </Form.Field>
@@ -330,7 +331,7 @@ function ControlledForm() {
 
   return (
     <div className="flex flex-col gap-large">
-      <Text as="p" variant="small" className="text-muted">
+      <Text as="p" textStyle="small" className="text-muted">
         Current values: {JSON.stringify(values)}
       </Text>
       <Form
@@ -404,7 +405,7 @@ function AsyncSubmitForm() {
   return (
     <div className="flex flex-col gap-large">
       {submitted ? (
-        <Text as="p" variant="small" className="text-success">
+        <Text as="p" textStyle="small" className="text-success">
           Submitted (demo)
         </Text>
       ) : null}
@@ -485,27 +486,27 @@ function BillingForm() {
         <Form.Description>Card details and address.</Form.Description>
       </Form.Header>
       <Form.Section>
-        <Text as="h3" variant="mid" className="font-medium">
+        <Text as="h3" textStyle="mid" className="font-medium">
           Card
         </Text>
         <Form.Field name="cardName">
           <Input name="cardName" label="Name on card" autoComplete="cc-name" />
         </Form.Field>
         <Form.Field name="cardNumber">
-          <Input name="cardNumber" label="Number" inputType="text" placeholder="0000000000000000" />
+          <Input name="cardNumber" label="Number" type="text" placeholder="0000000000000000" />
         </Form.Field>
       </Form.Section>
       <Form.Section>
-        <Text as="h3" variant="mid" className="font-medium">
+        <Text as="h3" textStyle="mid" className="font-medium">
           Address
         </Text>
         <Form.Field name="country">
-          <ComboBox name="country" options={countryOptions} required>
+          <ComboBox name="country" items={countryOptions} required>
             <ComboBox.Label>Country</ComboBox.Label>
-            <ComboBox.InputGroup>
+            <ComboBox.Shell>
               <ComboBox.Input />
               <ComboBox.Trigger />
-            </ComboBox.InputGroup>
+            </ComboBox.Shell>
             <ComboBox.Popover />
             <ComboBox.Error />
           </ComboBox>
@@ -582,7 +583,7 @@ function ClassNamesForm() {
         <Form.Description>Slots include errorSummary and announce.</Form.Description>
       </Form.Header>
       <Form.Section>
-        <Form.Field name="topic">
+        <Form.Field name="topic" className="bg-primary/10">
           <Input name="topic" label="Topic" />
         </Form.Field>
       </Form.Section>

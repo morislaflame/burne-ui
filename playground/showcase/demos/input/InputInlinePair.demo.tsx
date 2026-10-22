@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 export function InputInlinePairDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-small">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Contact person
       </Text>
       <div className="grid grid-cols-1 gap-large sm:grid-cols-2">

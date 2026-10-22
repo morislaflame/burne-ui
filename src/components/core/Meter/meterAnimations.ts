@@ -22,6 +22,10 @@ import { progressScaleFromPercent } from "@/components/core/utils/slotMotion/rec
  
 import { useOptionalMeterMotionScope } from "./meterContext";
 import type { MeterMotion, MeterPartMotion } from "./meterTypes";
+
+import { bindProgressRecipes } from "@/components/core/utils/slotMotion/recipes/bindProgress";
+
+bindProgressRecipes();
  
 export { progressScaleFromPercent };
  

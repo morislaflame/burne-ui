@@ -4,7 +4,7 @@ import { Accordion } from "@/components/composite/Accordion";
 
 export function AccordionMotionChevronDemo() {
   return (
-    <Accordion className="w-full max-w-lg" defaultOpenIndex={0}>
+    <Accordion className="w-full max-w-lg" defaultValue="0">
       <Accordion.Item value="0">
         <Accordion.Heading>
           <Accordion.Trigger>

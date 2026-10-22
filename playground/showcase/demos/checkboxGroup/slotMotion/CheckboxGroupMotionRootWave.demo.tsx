@@ -1,5 +1,6 @@
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Checkbox } from "@/components/core/Checkbox";
+import { Label } from "@/components/core/Label";
 
 export function CheckboxGroupMotionRootWaveDemo() {
   return (
@@ -15,7 +16,7 @@ export function CheckboxGroupMotionRootWaveDemo() {
       }}
     >
       <CheckboxGroup.Legend>
-        <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+        <Label>Plan</Label>
       </CheckboxGroup.Legend>
       <CheckboxGroup.List>
         <Checkbox value="pro" label="Pro" />

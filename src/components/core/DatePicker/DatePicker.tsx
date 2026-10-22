@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label/labelContext";
 import { Popover } from "@/components/core/Popover";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 
 import {
@@ -21,7 +23,7 @@ import type { DatePickerProps, DatePickerStoredValue } from "./datePickerTypes";
 import { useDatePickerRootState } from "./useDatePickerRootState";
 import { cn } from "@/utils/cn";
 
-export function DatePickerRoot(props: DatePickerProps) {
+export const DatePickerRoot = forwardRef(function DatePickerRoot(props: DatePickerProps, ref: ForwardedRef<HTMLDivElement>) {
   const {
     children,
     className,
@@ -33,9 +35,12 @@ export function DatePickerRoot(props: DatePickerProps) {
     id,
     name,
     required,
-    status,
     size = "base",
+    icon,
     disabled,
+    readOnly,
+    autoFocus,
+    tabIndex,
     placeholder,
     open,
     defaultOpen,
@@ -44,21 +49,37 @@ export function DatePickerRoot(props: DatePickerProps) {
     locale,
     minDate,
     maxDate,
+    isDateUnavailable,
     defaultMonth,
+    month,
+    onMonthChange,
+    view,
+    defaultView,
+    onViewChange,
     side,
+    align,
+    offset,
+    collisionPadding,
+    avoidCollisions,
+    portalContainer,
     motion,
     motionController,
     motionState,
     motionPayload,
     playInitialState,
-    mode: modeProp,
+    selectionMode: modeProp,
     value,
     defaultValue,
     onValueChange,
+    values,
+    defaultValues,
+    onValuesChange,
     ...rest
   } = props;
 
   const mode = modeProp ?? "single";
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   const resolvedVariant = useSkinVariant(variant);
   const state = useDatePickerRootState({
     children,
@@ -70,13 +91,16 @@ export function DatePickerRoot(props: DatePickerProps) {
     id,
     name,
     required,
-    status,
     size,
+    icon,
     disabled,
+    readOnly,
     placeholder,
-    value,
-    defaultValue,
-    onValueChange: onValueChange as ((value: DatePickerStoredValue) => void) | undefined,
+    value: mode === "multiple" ? values : value,
+    defaultValue: mode === "multiple" ? defaultValues : defaultValue,
+    onValueChange: (mode === "multiple" ? onValuesChange : onValueChange) as
+      | ((value: DatePickerStoredValue) => void)
+      | undefined,
     open,
     defaultOpen,
     onOpenChange,
@@ -84,7 +108,13 @@ export function DatePickerRoot(props: DatePickerProps) {
     locale,
     minDate,
     maxDate,
+    isDateUnavailable,
     defaultMonth,
+    month,
+    onMonthChange,
+    view,
+    defaultView,
+    onViewChange,
     side,
   });
 
@@ -123,17 +153,23 @@ export function DatePickerRoot(props: DatePickerProps) {
               size={size}
               className={cn(DATE_PICKER_ROOT_CLASS, classNames?.root, className)}
               {...rest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size,
                 variant: resolvedVariant,
-                status: state.contextValue.status,
               })}
+              data-readonly={readOnlyData(state.contextValue.readOnly)}
             >
               <Popover
                 open={state.contextValue.open}
                 onOpenChange={state.contextValue.setOpen}
                 anchorRef={state.contextValue.triggerRef}
                 side={state.contextValue.side}
+                align={align}
+                offset={offset}
+                collisionPadding={collisionPadding}
+                avoidCollisions={avoidCollisions}
+                portalContainer={portalContainer}
                 classNames={{ panel: DATE_PICKER_POPOVER_PANEL_CLASS }}
               >
                 {state.isCompound ? children : <DatePickerSimpleBody />}
@@ -147,6 +183,6 @@ export function DatePickerRoot(props: DatePickerProps) {
       </DatePickerClassNamesProvider>
     </DatePickerProvider>
   );
-}
+});
 
 DatePickerRoot.displayName = "DatePicker";

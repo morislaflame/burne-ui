@@ -1,12 +1,12 @@
 import type { PointerEventHandler, ReactNode } from "react";
 import { forwardRef, useMemo, useRef } from "react";
  
+import { FieldHiddenValues } from "@/components/core/utils/fieldFormDom";
 import { Field } from "@/components/core/Field";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
  
@@ -16,7 +16,7 @@ import {
   useTimeFieldChromeSlot,
   useTimeFieldShellAnimations,
 } from "./timeFieldAnimations";
-import { timeFieldHintStatus, timeFieldSegLabel, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
+import { timeFieldSegLabel, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
 import {
   TimeFieldMotionProvider,
   useOptionalTimeFieldMotionScope,
@@ -24,7 +24,7 @@ import {
   useOptionalTimeFieldContext,
   useTimeFieldContext,
 } from "./timeFieldContext";
-import { TIME_FIELD_KEYBOARD_INPUT_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentGroupClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
+import { TIME_FIELD_KEYBOARD_INPUT_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentGroupClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldSegmentsMotionClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
 import type {
   TimeFieldControlProps,
   TimeFieldErrorProps,
@@ -39,13 +39,11 @@ import { cn } from "@/utils/cn";
  
 function TimeFieldAffixSlot({
   side,
-  status,
   size,
   className,
   children,
 }: {
   side: "prefix" | "suffix";
-  status: ReturnType<typeof useTimeFieldControlState>["status"];
   size: ReturnType<typeof useTimeFieldControlState>["size"];
   className?: string;
   children: ReactNode;
@@ -59,7 +57,7 @@ function TimeFieldAffixSlot({
   return (
     <span
       ref={setRef}
-      className={timeFieldAffixSlotClass({ side, status, size, slotClass: className })}
+      className={timeFieldAffixSlotClass({ side, size, slotClass: className })}
       {...pointerHandlers}
     >
       {children}
@@ -67,7 +65,7 @@ function TimeFieldAffixSlot({
   );
 }
  
-export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControlProps>(
+export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps>(
   function TimeFieldControl(props, ref) {
     const {
       value,
@@ -75,8 +73,9 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       onValueChange,
       format,
       disabled,
+      readOnly,
+      name,
       size,
-      status,
       variant,
       compact,
       prefix,
@@ -140,8 +139,9 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
           onValueChange={onValueChange}
           format={format}
           disabled={disabled}
+          readOnly={readOnly}
+          name={name}
           size={size}
-          status={status}
           variant={variant}
           compact={compact}
           prefix={prefix}
@@ -161,7 +161,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
   },
 );
  
-TimeFieldControl.displayName = "TimeFieldControl";
+TimeFieldControl.displayName = "TimeField.Control";
  
 function TimeFieldControlSurface({
   forwardedRef,
@@ -170,8 +170,9 @@ function TimeFieldControlSurface({
   onValueChange,
   format,
   disabled,
+  readOnly,
+  name,
   size,
-  status,
   variant,
   compact,
   prefix,
@@ -186,14 +187,15 @@ function TimeFieldControlSurface({
   shellPartMotion,
   rest,
 }: {
-  forwardedRef: React.ForwardedRef<HTMLFieldSetElement>;
+  forwardedRef: React.ForwardedRef<HTMLDivElement>;
   value?: TimeFieldControlProps["value"];
   defaultValue?: TimeFieldControlProps["defaultValue"];
   onValueChange?: TimeFieldControlProps["onValueChange"];
   format?: TimeFieldControlProps["format"];
   disabled?: TimeFieldControlProps["disabled"];
+  readOnly?: TimeFieldControlProps["readOnly"];
+  name?: TimeFieldControlProps["name"];
   size?: TimeFieldControlProps["size"];
-  status?: TimeFieldControlProps["status"];
   variant?: TimeFieldControlProps["variant"];
   compact?: TimeFieldControlProps["compact"];
   prefix?: TimeFieldControlProps["prefix"];
@@ -213,6 +215,8 @@ function TimeFieldControlSurface({
     | "onValueChange"
     | "format"
     | "disabled"
+    | "readOnly"
+    | "name"
     | "size"
     | "status"
     | "variant"
@@ -237,8 +241,9 @@ function TimeFieldControlSurface({
     onValueChange,
     format,
     disabled,
+    readOnly,
+    name,
     size,
-    status,
     variant,
     compact,
     id,
@@ -267,7 +272,6 @@ function TimeFieldControlSurface({
   return (
     <fieldset
       ref={(node) => {
-        mergeForwardedRef(forwardedRef, node);
         state.bindShellRef(node);
         bindShellRef(node);
       }}
@@ -277,6 +281,7 @@ function TimeFieldControlSurface({
       aria-describedby={state.ariaDescribedBy}
       aria-required={state.required || undefined}
       aria-invalid={state.isInvalid ? true : undefined}
+      aria-readonly={state.readOnly || undefined}
       data-slot="timefield-shell"
       onPointerDown={shellPointerDown}
       onPointerUp={shellPointerUp}
@@ -299,15 +304,14 @@ function TimeFieldControlSurface({
         shellSurface: state.shellSurface,
         shellHoverMotionClass,
         slotClass: slotClassNames.shell,
-        className,
       })}
       {...rest}
       {...dataVariantProps({
         size: state.size,
         variant: state.variant,
-        status: state.status,
       })}
       data-invalid={state.isInvalid ? "" : undefined}
+      data-readonly={state.readOnly ? "" : undefined}
     >
       <div
         className={timeFieldShellInnerClass({
@@ -319,7 +323,6 @@ function TimeFieldControlSurface({
         {prefix != null ? (
           <TimeFieldAffixSlot
             side="prefix"
-            status={state.status}
             size={state.size}
             className={slotClassNames.prefix}
           >
@@ -328,13 +331,20 @@ function TimeFieldControlSurface({
         ) : null}
  
         <div
+          ref={forwardedRef}
+          className={cn(
+            timeFieldSegmentsClass({
+              variant: state.variant,
+              size: state.size,
+              compact: state.compact,
+            }),
+            slotClassNames.control,
+            className,
+          )}
+        >
+        <div
           ref={setSegmentsRef}
-          className={timeFieldSegmentsClass({
-            variant: state.variant,
-            size: state.size,
-            compact: state.compact,
-            slotClass: slotClassNames.segments,
-          })}
+          className={timeFieldSegmentsMotionClass(slotClassNames.segments)}
           {...segmentsPointer}
         >
           <input
@@ -355,6 +365,7 @@ function TimeFieldControlSurface({
             onKeyDown={state.handleKeyboardInputKeyDown}
             onBlur={state.handleFieldBlur}
           />
+          <FieldHiddenValues name={state.name} value={state.text} />
           {state.segments.map((seg, i) => (
             <span
               key={seg}
@@ -400,11 +411,11 @@ function TimeFieldControlSurface({
             </span>
           ))}
         </div>
+        </div>
  
         {suffix != null ? (
           <TimeFieldAffixSlot
             side="suffix"
-            status={state.status}
             size={state.size}
             className={slotClassNames.suffix}
           >
@@ -487,7 +498,6 @@ export const TimeFieldHint = forwardRef<HTMLElement, TimeFieldHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? ctx.hintId}
-        status={timeFieldHintStatus(ctx.status)}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}

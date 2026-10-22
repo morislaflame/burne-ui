@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupClassNames, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLabelProps, type RadioGroupLegendProps, type RadioGroupListProps, type RadioGroupMotion, type RadioGroupPartMotion } from "burne-ui";
+import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupClassNames, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLegendProps, type RadioGroupListProps, type RadioGroupMotion, type RadioGroupPartMotion } from "burne-ui";
 import { Radio } from "burne-ui";
 ```
 
@@ -16,7 +16,7 @@ import { Radio } from "burne-ui";
 ```tsx
 <RadioGroup defaultValue="card" name="payment" size="base">
   <RadioGroup.Legend>
-    <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
+    <Label>Способ оплаты</Label>
     <RadioGroup.Hint>Можно выбрать только один вариант.</RadioGroup.Hint>
   </RadioGroup.Legend>
   <RadioGroup.List>
@@ -48,12 +48,17 @@ Simple API нет.
 | `onValueChange` | — | `(value: string \| undefined) => void` |
 | `name` | auto `radio-group-{id}` | Общий `name` для всех `Radio` |
 | `required` | `false` | Required mark; native `required` на первом radio и `aria-required` на группе |
+| `readOnly` | `false` | Не меняет выбор. `aria-readonly` на группе (`role="radiogroup"`), не на `input` |
 | `size` | `small` | `small` \| `base` \| `mid` \| `large` |
 | `disabled` | `false` | На fieldset + context → `Radio` |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
 | `className` | — | На `<fieldset>` |
 | `classNames` | — | Слоты `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` |
-| `motion` | — | Слоты `root`, `list`, `legend`, `hint`, `error`, `actions` |
+| `motion` | — | Слоты `root`, `list`, `legend`, `hint`, `error`, `actions`. Рядом — `events` и `states` |
+| `motionController` | — | Handle на Provider (`play` / `playSlot` / `playAll` / `set` / `cancel`), не на `<fieldset>` |
+| `motionState` | — | Имя режима из `motion.states`. Повтор того же имени — тишина |
+| `motionPayload` | — | Снимок для фабрики (`ctx.payload`) на переходе `motionState` |
+| `playInitialState` | — | Сыграть начальный `motionState` при монтировании |
 
 `variant`, `status` на root **нет**.
 
@@ -63,7 +68,7 @@ Simple API нет.
 |-------|-----|------------|
 | `RadioGroup` | `<fieldset>` | Root |
 | `RadioGroup.Legend` | `<legend>` | Accessible name |
-| `RadioGroup.Label` | core `Label` | Заголовок в legend |
+| `Label` | core `Label` | Заголовок в legend |
 | `RadioGroup.Hint` | `FieldHint` | Подсказка |
 | `RadioGroup.Error` | `FieldError` | Ошибка (`role="alert"`) |
 | `RadioGroup.List` | `<div>` | Список опций; `orientation` |
@@ -91,7 +96,7 @@ Simple API нет.
 | `vertical` | `flex flex-col gap-mid` |
 | `horizontal` | `flex flex-row flex-wrap gap-x-large gap-y-mid` |
 
-Визуал опций — через `Radio` (`variant`, `danger` на отдельной опции).
+Визуал опций — через `Radio` (`variant`; красный текст лейбла при `invalid` / `error`).
 
 ## Анимации
 
@@ -120,6 +125,32 @@ Simple API нет.
 ### 1. Group slot motion
 
 `motion` на `RadioGroup`: `root` / `list` / `legend` / `hint` / `error` / `actions`. `change` на `root` при смене `value`.
+
+Проп `motionController` и ключ `events` на `motion` — команды хрома группы (`choice:nudge`), не фазы. `play()` ищет слот `root`. Один handle — scope RadioGroup, не Radio / SelectionIndicator. `motionState` играет `motion.states[name]`. Галерея — playground / Storybook **MotionController (group)**.
+
+```tsx
+import { Button, Radio, RadioGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "choice:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("choice:nudge")}>
+        Nudge
+      </Button>
+      <RadioGroup aria-label="Shipping" motionController={controller} motion={{ events }}>
+        <RadioGroup.List>
+          <Radio value="ground" label="Ground" />
+        </RadioGroup.List>
+      </RadioGroup>
+    </>
+  );
+}
+```
 
 ### 2. Dot indicator (slot motion)
 
@@ -165,7 +196,7 @@ configureMotion({
 | Источник | Назначение |
 |----------|------------|
 | `optionGroupFieldset.tsx` | `FIELD_SET_CLASS`, legend header |
-| `optionGroupLayout.ts` | `OPTION_GROUP_ORIENTATION_LAYOUT` |
+| `optionGroupStyles.ts` | `OPTION_GROUP_ORIENTATION_LAYOUT` |
 | `fieldStyles.ts` | `FIELD_SET_SIZE_LAYOUT` per size |
 | `Radio` | Визуал каждой опции |
 
@@ -193,7 +224,7 @@ configureMotion({
   }}
 >
   <RadioGroup.Legend>
-    <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
+    <Label>Способ оплаты</Label>
     <RadioGroup.Hint>Слоты через classNames.</RadioGroup.Hint>
   </RadioGroup.Legend>
   <RadioGroup.Group>
@@ -231,7 +262,7 @@ configureMotion({
 ```tsx
 <RadioGroup defaultValue="standard">
   <RadioGroup.Legend>
-    <RadioGroup.Label>Тариф</RadioGroup.Label>
+    <Label>Тариф</Label>
   </RadioGroup.Legend>
   <RadioGroup.List>
     <Radio value="standard" label="Стандарт" description="Базовый набор" />
@@ -245,7 +276,7 @@ configureMotion({
 ```tsx
 <RadioGroup required>
   <RadioGroup.Legend>
-    <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
+    <Label>Способ оплаты</Label>
   </RadioGroup.Legend>
   <RadioGroup.List>
     <Radio value="card" label="Карта" />
@@ -260,7 +291,7 @@ configureMotion({
 - `name` на root — общий для всех `Radio` (auto-generate если не задан).
 - `required` — `selectValue(undefined)` блокируется; required anchor на первом radio.
 - При `required={false}` повторный клик снимает выбор.
-- Сравнение с `CheckboxGroup selection="single"`: native radio semantics + arrow keys.
+- Сравнение с `CheckboxGroup selectionMode="single"`: native radio semantics + arrow keys.
 - Стили опций — через `Radio`, не через группу.
 
 ## Интеграции
@@ -276,11 +307,12 @@ Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `opti
 
 ## Доступность
 
-- Root: native `<fieldset>` + `aria-describedby`
+- Root: native `<fieldset role="radiogroup">` + `aria-describedby`. Имя — `legend` через `aria-labelledby`
 - `Legend`: native `<legend>`
-- `Radio`: native `<input type="radio">`, arrow keys в группе
+- `Radio`: native `<input type="radio">`, arrow keys в группе. `aria-readonly` на input нет
 - `Error`: `role="alert"`
 - `required`: native `required` на первом radio и `aria-required` на группе
+- `readOnly`: `aria-readonly` на группе. Клик по пункту не меняет значение; на input остаётся `data-readonly`
 - Forced colors (Windows HCM): selected Radio fill/dot через `Highlight` в `styles.css`
 
 ## Структура файлов
@@ -301,4 +333,8 @@ composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGr
 
 ## Storybook
 
-`Composite Components/RadioGroup` — playground, card layout, horizontal, descriptions, required, error, controlled, sizes, `classNames` customization, slot motion gallery, accessibility.
+`Composite Components/RadioGroup` — playground, card layout, horizontal, descriptions, required, error, controlled, sizes, `classNames` customization, slot motion gallery, MotionController gallery, accessibility.
+
+## Данные
+
+`items` рисует список, если дети ещё не содержат `Radio` или `RadioGroup.List`. Совпадение пишет ошибку в dev. Подпись и подсказка рядом с `items` остаются.

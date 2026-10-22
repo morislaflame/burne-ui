@@ -1,58 +1,83 @@
-import { forwardRef, Fragment, useRef, useState, type ReactNode } from "react";
+import {
+  Children,
+  cloneElement,
+  createContext,
+  forwardRef,
+  Fragment,
+  isValidElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 import { Field } from "@/components/core/Field";
-import { ariaInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { ariaInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { cn } from "@/utils/cn";
 
 import { pinInputCellLabel } from "./pinInputA11y";
 import { pinInputChar, pinInputChars, pinInputKeyAction, pinInputSeparatorIndex } from "./pinInputAPI";
 import {
   usePinInputChromeSlot,
-  usePinInputFieldMotion,
-  usePinInputGroupMotion,
+  usePinInputControlMotion,
+  usePinInputShellMotion,
 } from "./pinInputAnimations";
 import { usePinInputClassNames, usePinInputContext } from "./pinInputContext";
 import { pinInputFieldClass, pinInputGroupClass, pinInputSeparatorClass } from "./pinInputStyles";
 import type {
   PinInputErrorProps,
-  PinInputGroupProps,
+  PinInputControlProps,
+  PinInputShellProps,
   PinInputHintProps,
   PinInputLabelProps,
 } from "./pinInputTypes";
 
-function PinInputCell({
-  index,
-  focused,
-  onFocusIndex,
-  onMove,
-  register,
-}: {
-  index: number;
-  focused: boolean;
-  onFocusIndex: (index: number) => void;
-  onMove: (index: number) => void;
+type PinFieldHost = {
+  focusedIndex: number;
+  setFocusedIndex: (index: number) => void;
   register: (index: number, node: HTMLInputElement | null) => void;
-}) {
+  move: (index: number) => void;
+};
+
+const PinFieldHostContext = createContext<PinFieldHost | null>(null);
+
+function isPinInputControl(child: ReactNode): child is ReactElement<PinInputControlProps> {
+  return isValidElement(child) && child.type === PinInputControl;
+}
+
+export const PinInputControl = forwardRef<HTMLInputElement, PinInputControlProps>(function PinInputControl(
+  { index: indexProp = 0, className, ...rest },
+  ref,
+) {
   const field = usePinInputContext();
+  const host = useContext(PinFieldHostContext);
   const slotClassNames = usePinInputClassNames();
-  const motion = usePinInputFieldMotion();
+  const motion = usePinInputControlMotion();
+  const index = indexProp;
   const chars = pinInputChars(field.value, field.length);
   const value = chars[index] ?? "";
+  const focused = host != null && index === host.focusedIndex;
 
   return (
     <input
-      ref={(node) => {
-        motion.setRef(node);
-        register(index, node);
-      }}
+      ref={mergeRefs(ref, motion.setRef, (node: HTMLInputElement | null) => {
+        host?.register(index, node);
+      })}
+      {...rest}
       className={pinInputFieldClass({
         size: field.size,
         variant: field.variant,
-        status: field.status,
+        status: fieldPaintStatus(field.isInvalid),
         disabled: field.disabled,
         mask: field.mask,
         motionClass: motion.motionClass,
-        slotClass: slotClassNames.field,
+        slotClass: slotClassNames.control,
+        className,
       })}
       value={value}
       placeholder={field.placeholder}
@@ -67,41 +92,56 @@ function PinInputCell({
       aria-invalid={ariaInvalidValue(field.isInvalid)}
       aria-describedby={field.describedBy}
       onFocus={() => {
+        if (host == null) return;
         if (index > field.value.length) {
-          onMove(field.value.length);
+          host.move(field.value.length);
           return;
         }
-        onFocusIndex(index);
+        host.setFocusedIndex(index);
       }}
       onChange={(event) => {
+        if (host == null) return;
         const incoming = [...event.target.value]
           .map((char) => pinInputChar(char, field.type))
           .filter(Boolean);
         if (incoming.length === 0) return;
         if (incoming.length === 1) {
-          onMove(field.write(index, incoming[0] ?? ""));
+          host.move(field.write(index, incoming[0] ?? ""));
           return;
         }
-        onMove(field.paste(index, incoming.join("")));
+        host.move(field.paste(index, incoming.join("")));
       }}
       onPaste={(event) => {
+        if (host == null) return;
         event.preventDefault();
-        onMove(field.paste(index, event.clipboardData.getData("text")));
+        host.move(field.paste(index, event.clipboardData.getData("text")));
       }}
       onKeyDown={(event) => {
+        if (host == null) return;
         const action = pinInputKeyAction(event.key, index, field.length, field.value);
         if (action.type === "none") return;
         event.preventDefault();
-        if (action.type === "move") onMove(action.index);
-        if (action.type === "delete") onMove(field.remove(index));
+        if (action.type === "move") host.move(action.index);
+        if (action.type === "delete") host.move(field.remove(index));
       }}
       {...motion.pointerHandlers}
     />
   );
+});
+
+PinInputControl.displayName = "PinInput.Control";
+
+function pinInputFieldCount(children: ReactNode): number {
+  let count = 0;
+  Children.forEach(children, (child) => {
+    if (isPinInputControl(child)) count += 1;
+  });
+  return count;
 }
 
-export const PinInputGroup = forwardRef<HTMLDivElement, PinInputGroupProps>(function PinInputGroup(
+export const PinInputShell = forwardRef<HTMLDivElement, PinInputShellProps>(function PinInputShell(
   {
+    children,
     className,
     motion,
     onPointerOver,
@@ -114,7 +154,7 @@ export const PinInputGroup = forwardRef<HTMLDivElement, PinInputGroupProps>(func
 ) {
   const field = usePinInputContext();
   const slotClassNames = usePinInputClassNames();
-  const part = usePinInputGroupMotion({
+  const part = usePinInputShellMotion({
     motion,
     forwardedRef: ref,
     onPointerOver,
@@ -125,49 +165,96 @@ export const PinInputGroup = forwardRef<HTMLDivElement, PinInputGroupProps>(func
   const cells = useRef<Array<HTMLInputElement | null>>([]);
   const [focusIndex, setFocusIndex] = useState(0);
   const separatorAt = field.separator != null ? pinInputSeparatorIndex(field.length) : -1;
+  const fieldCount = pinInputFieldCount(children);
 
-  const move = (index: number) => {
+  const register = useCallback((index: number, node: HTMLInputElement | null) => {
+    cells.current[index] = node;
+  }, []);
+
+  const move = useCallback((index: number) => {
     const next = Math.min(Math.max(0, index), field.length - 1);
     setFocusIndex(next);
     cells.current[next]?.focus();
-  };
+  }, [field.length]);
+
+  const host = useMemo<PinFieldHost>(
+    () => ({
+      focusedIndex: focusIndex,
+      setFocusedIndex: setFocusIndex,
+      register,
+      move,
+    }),
+    [focusIndex, register, move],
+  );
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    if (fieldCount > 0 && fieldCount !== field.length) {
+      console.warn(
+        `PinInput: ${fieldCount} PinInput.Control children, length is ${field.length}. Use the same count.`,
+      );
+    }
+  }, [fieldCount, field.length]);
+
+  let nextIndex = 0;
+  const customCells =
+    fieldCount > 0
+      ? Children.map(children, (child) => {
+          if (!isPinInputControl(child)) return child;
+          let index = child.props.index;
+          if (index == null) {
+            index = nextIndex;
+            nextIndex += 1;
+          } else {
+            nextIndex = Math.max(nextIndex, index + 1);
+          }
+          const fieldNode = cloneElement(child, { index });
+          if (index !== separatorAt) return fieldNode;
+          return (
+            <Fragment key={child.key ?? `pin-field-${index}`}>
+              {fieldNode}
+              <span
+                aria-hidden
+                className={pinInputSeparatorClass({ slotClass: slotClassNames.separator })}
+              >
+                {field.separator}
+              </span>
+            </Fragment>
+          );
+        })
+      : null;
 
   return (
-    <div
-      ref={part.setRef}
-      role="group"
-      aria-labelledby={field.labelled ? field.labelId : undefined}
-      className={pinInputGroupClass({ slotClass: slotClassNames.group, className })}
-      {...rest}
-      {...part.pointerHandlers}
-    >
-      {Array.from({ length: field.length }, (_, index) => (
-        <Fragment key={`cell-${index}`}>
-          <PinInputCell
-            index={index}
-            focused={index === focusIndex}
-            onFocusIndex={setFocusIndex}
-            onMove={move}
-            register={(cell, node) => {
-              cells.current[cell] = node;
-            }}
-          />
-          {index === separatorAt ? (
-            <span
-              aria-hidden
-              className={pinInputSeparatorClass({ slotClass: slotClassNames.separator })}
-            >
-              {field.separator}
-            </span>
-          ) : null}
-        </Fragment>
-      ))}
-      {field.name ? <input type="hidden" name={field.name} value={field.value} /> : null}
-    </div>
+    <PinFieldHostContext.Provider value={host}>
+      <div
+        ref={part.setRef}
+        role="group"
+        aria-labelledby={field.labelled ? field.labelId : undefined}
+        className={pinInputGroupClass({ slotClass: slotClassNames.shell, className })}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {customCells ??
+          Array.from({ length: field.length }, (_, index) => (
+            <Fragment key={`cell-${index}`}>
+              <PinInputControl index={index} />
+              {index === separatorAt ? (
+                <span
+                  aria-hidden
+                  className={pinInputSeparatorClass({ slotClass: slotClassNames.separator })}
+                >
+                  {field.separator}
+                </span>
+              ) : null}
+            </Fragment>
+          ))}
+        {field.name ? <input type="hidden" name={field.name} value={field.value} /> : null}
+      </div>
+    </PinFieldHostContext.Provider>
   );
 });
 
-PinInputGroup.displayName = "PinInputGroup";
+PinInputShell.displayName = "PinInput.Shell";
 
 export const PinInputLabel = forwardRef<HTMLElement, PinInputLabelProps>(function PinInputLabel(
   {
@@ -238,7 +325,6 @@ export const PinInputHint = forwardRef<HTMLElement, PinInputHintProps>(function 
     <Field.Hint
       ref={part.setRef}
       id={idProp ?? field.hintId}
-      status={field.status}
       className={cn(slotClassNames.hint, className)}
       {...rest}
       {...part.pointerHandlers}
@@ -295,7 +381,7 @@ export function PinInputSimpleBody() {
   return (
     <>
       {field.label != null ? <PinInputLabel /> : null}
-      <PinInputGroup />
+      <PinInputShell />
       {field.hint != null ? <PinInputHint /> : null}
       {field.error != null ? <PinInputError /> : null}
     </>

@@ -1,15 +1,16 @@
-import type { ButtonHTMLAttributes, KeyboardEvent, MutableRefObject, PointerEvent } from "react";
+import type { ButtonHTMLAttributes, KeyboardEvent, MutableRefObject, PointerEvent, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
  
+import { ACTION_VARIANTS, type ActionVariant } from "@/components/core/utils/actionVariant";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type {
   MotionController,
   MotionMapWithEvents,
   MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
  
-export const KIT_CLOSE_BUTTON_VARIANTS = ["default", "primary", "outline", "secondary", "ghost"] as const;
-export type KitCloseButtonVariant = (typeof KIT_CLOSE_BUTTON_VARIANTS)[number];
-export type CloseButtonVariant = KitCloseButtonVariant | (string & {});
+export const KIT_CLOSE_BUTTON_VARIANTS = ACTION_VARIANTS;
+export type KitCloseButtonVariant = ActionVariant;
+export type CloseButtonVariant = ActionVariant | (string & {});
  
 export type CloseButtonSize = ComponentSize;
  
@@ -37,6 +38,8 @@ export type CloseButtonProps = Omit<
 > & {
   variant?: CloseButtonVariant;
   size?: CloseButtonSize;
+  /** Glyph inside the button. Default kit close. `null` hides it. */
+  icon?: ReactNode | null;
   ripple?: boolean;
   classNames?: Prettify<CloseButtonClassNames>;
   /**

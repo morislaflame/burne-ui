@@ -14,10 +14,10 @@ export function PinInputMotionEventsOffDemo() {
   return (
     <div className="flex flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => liveController.playSlot("group", "pin:nudge")}>
+        <Button size="small" variant="outline" onClick={() => liveController.playSlot("shell", "pin:nudge")}>
           Live nudge
         </Button>
-        <Button size="small" variant="ghost" onClick={() => offController.playSlot("group", "pin:nudge")}>
+        <Button size="small" variant="ghost" onClick={() => offController.playSlot("shell", "pin:nudge")}>
           Off nudge
         </Button>
       </div>

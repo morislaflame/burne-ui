@@ -47,7 +47,14 @@ export function HoverCardRoot({
   onOpenChange,
   openDelay,
   closeDelay,
-  shouldDismiss,
+  closeOnEscape,
+  closeOnInteractOutside,
+  onEscapeKeyDown,
+  onInteractOutside,
+  align,
+  offset,
+  collisionPadding,
+  avoidCollisions,
   portalContainer,
   motion,
   motionController,
@@ -83,7 +90,14 @@ export function HoverCardRoot({
           side={side}
           open={openState}
           onOpenChange={setOpen}
-          shouldDismiss={shouldDismiss}
+          closeOnEscape={closeOnEscape}
+          closeOnInteractOutside={closeOnInteractOutside}
+          onEscapeKeyDown={onEscapeKeyDown}
+          onInteractOutside={onInteractOutside}
+          align={align}
+          offset={offset}
+          collisionPadding={collisionPadding}
+          avoidCollisions={avoidCollisions}
           restoreFocus={false}
           portalContainer={portalContainer}
           motion={popoverMotion}

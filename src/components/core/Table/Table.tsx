@@ -5,9 +5,10 @@ import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
 
 import { resolveTableMotionDefaults, useTableSlotMotion } from "./tableAnimations";
-import { TableClassNamesProvider, TableMotionProvider, TableVariantProvider } from "./tableContext";
+import { TableClassNamesProvider, TableContentProvider, TableMotionProvider, TableSizeProvider, TableVariantProvider, useTableContent } from "./tableContext";
 import { tableRootClass } from "./tableStyles";
 import type { TableProps } from "./tableTypes";
+import { useTableContentState } from "./useTableContentState";
 import { useTableRootState } from "./useTableRootState";
 
 export type {
@@ -37,13 +38,45 @@ export type {
   TablePartMotion,
 } from "./tableTypes";
 
-export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
-
 export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
-  { variant: variantProp, className, classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
+  {
+    variant: variantProp,
+    size = "base",
+    className,
+    classNames,
+    children,
+    motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
+    selectionMode,
+    selectedKeys,
+    defaultSelectedKeys,
+    onSelectionChange,
+    sortDescriptor,
+    defaultSortDescriptor,
+    onSortChange,
+    disabledKeys,
+    stickyHeader,
+    columnResize,
+    ...rest
+  },
   ref,
 ) {
   const { variant } = useTableRootState({ variant: variantProp });
+  const contentState = useTableContentState({
+    selectionMode,
+    selectedKeys,
+    defaultSelectedKeys,
+    onSelectionChange,
+    sortDescriptor,
+    defaultSortDescriptor,
+    onSortChange,
+    disabledKeys,
+    stickyHeader,
+    columnResize,
+  });
   const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(() => {
     void skinRevision;
@@ -52,22 +85,27 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
 
   return (
     <TableVariantProvider variant={variant}>
+      <TableSizeProvider size={size}>
       <TableClassNamesProvider classNames={classNames}>
         <TableMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
+          <TableContentProvider value={contentState}>
           <TableRootSurface
             forwardedRef={ref}
             variant={variant}
+            size={size}
             slotClass={classNames?.root}
             className={className}
             rest={rest}
           >
             {children}
           </TableRootSurface>
+          </TableContentProvider>
         </TableMotionProvider>
       </TableClassNamesProvider>
+      </TableSizeProvider>
     </TableVariantProvider>
   );
 });
@@ -75,6 +113,7 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
 function TableRootSurface({
   forwardedRef,
   variant,
+  size,
   slotClass,
   className,
   rest,
@@ -82,6 +121,7 @@ function TableRootSurface({
 }: {
   forwardedRef: ForwardedRef<HTMLDivElement>;
   variant: ReturnType<typeof useTableRootState>["variant"];
+  size: TableProps["size"];
   slotClass?: string;
   className?: string;
   rest: Omit<TableProps, "variant" | "className" | "classNames" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">;
@@ -100,6 +140,7 @@ function TableRootSurface({
     onPointerDown,
     onPointerUp,
   });
+  const { stickyHeader } = useTableContent();
   const setSlotRef = part.setRef;
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -115,12 +156,13 @@ function TableRootSurface({
       ref={setRootRef}
       className={tableRootClass({
         variant,
+        stickyHeader,
         slotClass,
         className,
       })}
       {...domRest}
       {...part.pointerHandlers}
-      {...dataVariantProps({ variant })}
+      {...dataVariantProps({ variant, size })}
     >
       {children}
     </div>

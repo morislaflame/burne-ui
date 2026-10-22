@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Loading, type LoadingProps, type LoadingVariant, type LoadingSize, type LoadingColor } from "burne-ui";
+import { Loading, type LoadingProps, type LoadingIndicator, type LoadingSize, type LoadingColor } from "burne-ui";
 ```
 
 ## API
@@ -16,24 +16,26 @@ Simple API — один `<span role="status">`.
 
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
-| `variant` | `spinner` \| `dots` | `spinner` | Тип индикатора |
+| `indicator` | `spinner` \| `dots` | `spinner` | Вид индикатора |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер |
-| `color` | см. ниже | `primary` | Семантический цвет |
-| `label` | `string` | из `BurneLabels` (`"Loading"`) | `aria-label` для screen reader |
+| `status` | `SemanticStatus` | — | Семантическая заливка |
+| `color` | токен или CSS | — | `primary` \| `foreground` \| `muted` \| `secondary`, либо свой цвет. Если задан, перекрывает `status` |
+| `aria-label` | `string` | из `BurneLabels` (`"Loading"`) | Имя для screen reader. Видимого текста нет |
 | `className` | `string` | — | На root |
+| `classNames` | — | — | Слоты `root`, `spinner`, `dots`, `dot`. `className` мержится в `root` |
 | `motion` | — | — | Per-slot (`root`, `spinner`, `dots`). `events` — app-команды `MotionController` |
 | `motionController` | — | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 
 ### `LoadingColor`
 
-`primary` | `foreground` | `muted` | `secondary` | `danger` | `success` | `info` | `warning`
+Токены: `primary` | `foreground` | `muted` | `secondary`. Семантика — `status`: `default` | `danger` | `success` | `info` | `warning`. Любая другая строка в `color` — CSS-цвет.
 
 ### Примеры
 
 ```tsx
 <Loading />
 
-<Loading type="dots" size="mid" color="success" label="Сохранение…" />
+<Loading indicator="dots" size="mid" status="success" aria-label="Сохранение…" />
 
 // В Toast при loading
 <Toast status="default" loading title="Загрузка" />
@@ -78,6 +80,8 @@ Simple API — один `<span role="status">`.
 `false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет индикатор видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`load:nudge`, `load:pulse`), не фазы. `createMotionEvents`. `play` ищет слот `root`; `playSlot("spinner")` — кольцо (лучше `opacity` / `filter`, не transform: CSS `animate-spin` живёт на том же узле). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Loading, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -210,15 +214,15 @@ configureMotion({
 | `size` | Размер spinner / dots layout |
 | `color` | Semantic tint (`primary`, `info`, `danger`, …) |
 | `className` | Opacity, margin, display на root |
-| `label` | Только a11y (`aria-label`), не визуальный текст |
+| `aria-label` | Только a11y, не визуальный текст. Без пропа — `BurneLabels.loading` |
 
 ```tsx
 <Loading
-  type="dots"
+  indicator="dots"
   size="large"
   color="info"
   className="opacity-90 mx-auto"
-  label="Идёт синхронизация"
+  aria-label="Идёт синхронизация"
 />
 ```
 
@@ -231,7 +235,7 @@ configureMotion({
 
 ```tsx
 <Button disabled className="gap-small">
-  <Loading type="spinner" size="small" color="foreground" className="shrink-0" />
+  <Loading indicator="spinner" size="small" color="foreground" className="shrink-0" />
   Сохранение…
 </Button>
 ```
@@ -240,9 +244,9 @@ configureMotion({
 
 ## Доступность
 
-- Root: `role="status"`, `aria-live="polite"`, `aria-label={label}`
+- Root: `role="status"`, `aria-live="polite"`, `aria-label` (проп или `BurneLabels.loading`)
 - Визуальные части: `aria-hidden`
-- Задавайте осмысленный `label`: «Сохранение…», «Загрузка списка»
+- Задавайте осмысленный `aria-label`: «Сохранение…», «Загрузка списка»
 
 ## Структура файлов
 

@@ -9,7 +9,7 @@ import { Link } from "@/components/core/Link";
 import { Tabs } from "@/components/core/Tabs";
 
 export function CardAuthPanelDemo() {
-  const [tab, setTab] = useState("login");
+  const [tab, setTab] = useState<string | null>("login");
 
   const onSubmit = useCallback((values: FormValues) => {
     void values;
@@ -35,12 +35,12 @@ export function CardAuthPanelDemo() {
           <Tabs.Panel value="login" className="">
             <Form onSubmit={onSubmit} aria-label="Login" className="gap-xlarge">
               <Form.Section>
-                <Input required label="Email" name="login-email" autoComplete="email" placeholder="you@example.com" />
+                <Input required label="Email" name="login-email" type="email" autoComplete="email" placeholder="you@example.com" />
                 <Input
                   required
                   label="Password"
                   name="login-password"
-                  inputType="password"
+                  type="password"
                   autoComplete="current-password"
                   placeholder="••••••••"
                 />
@@ -60,12 +60,12 @@ export function CardAuthPanelDemo() {
             <Form onSubmit={onSubmit} aria-label="Registration" className="gap-xlarge">
               <Form.Section>
                 <Input required label="Name" name="register-name" autoComplete="name" placeholder="Ivan"/>
-                <Input required label="Email" name="register-email" autoComplete="email" placeholder="you@example.com" />
+                <Input required label="Email" name="register-email" type="email" autoComplete="email" placeholder="you@example.com" />
                 <Input
                   required
                   label="Password"
                   name="register-password"
-                  inputType="password"
+                  type="password"
                   autoComplete="new-password"
                   placeholder="••••••••"
                 />

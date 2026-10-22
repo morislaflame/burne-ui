@@ -13,10 +13,10 @@ export function ProgressPipelineDemo() {
       {STEPS.map((step) => (
         <div key={step.label} className="flex flex-col gap-xsmall">
           <div className="flex items-center justify-between">
-            <Text as="span" variant="small" className="font-medium">
+            <Text as="span" textStyle="small" className="font-medium">
               {step.label}
             </Text>
-            <Text as="span" variant="xsmall" className="tabular-nums text-muted">
+            <Text as="span" textStyle="xsmall" className="tabular-nums text-muted">
               {step.value}%
             </Text>
           </div>

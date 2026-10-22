@@ -12,7 +12,7 @@ export function ToastMotionInstantLeaveDemo() {
         toast.show({
           title: "Instant leave",
           description: "root.enter/leave: false — host snaps closed.",
-          timeout: 4000,
+          duration: 4000,
           motion: { root: { enter: false, leave: false } },
         })
       }

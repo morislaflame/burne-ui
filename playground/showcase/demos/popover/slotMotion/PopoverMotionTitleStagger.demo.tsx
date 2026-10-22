@@ -43,7 +43,7 @@ export function PopoverMotionTitleStaggerDemo() {
           <Popover.Description>Title and description enter after the panel.</Popover.Description>
         </Popover.Header>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Content keeps the kit portalSurface recipe.
           </Text>
         </Popover.Body>

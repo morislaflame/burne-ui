@@ -1,11 +1,13 @@
 # Select
 
-Выпадающий список. Одно значение или несколько (`multiple`). Без фильтрации (в отличие от ComboBox): отображаемое значение — кнопка `Select.Value`. Simple API (`options` на root) и compound (`TriggerGroup` / `Value` / `Trigger` / `Popover`).
+Выпадающий список. Одно значение или несколько (`selectionMode="multiple"`). Без фильтрации (в отличие от ComboBox): отображаемое значение — кнопка `Select.Value`. Simple API (`items` на root) и compound (`TriggerGroup` / `Value` / `Trigger` / `Popover`).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
 ```tsx
-import { Select, type SelectOption, type SelectProps, type SelectSimpleProps, type SelectClassNames, type SelectMotion } from "burne-ui";
+import { Select, type SelectItem, type SelectProps, type SelectSimpleProps, type SelectClassNames, type SelectMotion } from "burne-ui";
 ```
 
 ## API
@@ -13,14 +15,14 @@ import { Select, type SelectOption, type SelectProps, type SelectSimpleProps, ty
 ### Simple API
 
 ```tsx
-const options = [
+const items = [
   { value: "ru", label: "Русский", hint: "RU" },
   { value: "en", label: "English", disabled: true },
 ];
 
 <Select
   label="Язык"
-  options={options}
+  items={items}
   value={lang}
   onValueChange={setLang}
   placeholder="Выберите язык"
@@ -30,12 +32,12 @@ const options = [
 ### Compound API
 
 ```tsx
-<Select options={options} value={lang} onValueChange={setLang}>
+<Select items={items} value={lang} onValueChange={setLang}>
   <Select.Label>Язык</Select.Label>
-  <Select.TriggerGroup>
+  <Select.Shell>
     <Select.Value />
     <Select.Trigger />
-  </Select.TriggerGroup>
+  </Select.Shell>
   <Select.Popover />
   <Select.Hint>Язык интерфейса</Select.Hint>
 </Select>
@@ -45,81 +47,86 @@ const options = [
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `options` | `[]` | `{ value, label, hint?, icon?, disabled? }` |
-| `value` / `defaultValue` | — | Controlled / uncontrolled значение |
-| `onValueChange` | — | Колбэк выбора |
-| `multiple` | `false` | Несколько значений. Выбор переключает пункт и не закрывает меню |
-| `values` / `defaultValues` | — | Controlled / uncontrolled список при `multiple` |
+| `items` | `[]` | `{ value, label, hint?, icon?, disabled? }` |
+| `selectionMode` | `single` | `single` \| `multiple`. Несколько значений: выбор переключает пункт и не закрывает меню |
+| `value` / `defaultValue` | — | Одно значение, `string \| null`. Пустой выбор — `null` |
+| `onValueChange` | — | `(value: string \| null) => void`, только `single` |
+| `values` / `defaultValues` | — | Controlled / uncontrolled список при `selectionMode="multiple"` |
 | `onValuesChange` | — | `(values: string[]) => void` |
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled попап |
 | `onOpenChange` | — | `(open: boolean) => void` |
-| `variant` | `default` / gloss из ButtonGroup | как Input |
-| `status` | `default` | Только цвет: danger/success/warning/info — постоянный статусный ring. Не ставит `aria-invalid` |
+| `variant` | — | как Input |
 | `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `size` | `base` | размер trigger shell и пунктов ListBox в Popover |
 | `disabled` | `false` | |
-| `placeholder` | `"Выберите значение"` | muted-текст без выбора |
+| `placeholder` | `BurneLabels.selectValue` | muted-текст без выбора. По умолчанию `"Select a value"`, в `BURNE_LABELS_RU` — `"Выберите значение"` |
+| `icon` | шеврон | Simple API: узел заменяет шеврон, `null` прячет. Дети `Select.Trigger` по-прежнему заменяют шеврон |
 | `menuMaxHeight` | `min(24rem, 70dvh)` | scroll ListBox |
-| `virtualized` | `false` | В DOM только видимые options. Строки одной высоты |
+| `portalContainer` | `document.body` | Хост портала меню. Узел внутри документа — contained |
+| `virtualized` | `false` | В DOM только видимые items. Строки одной высоты |
 | `name` | — | Form binding |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Root / simple: карта слотов + `events`. На `Select.TriggerGroup` — part motion слота `triggerGroup` |
-| `motionController` | — | Simple: форвардится на TriggerGroup (хост `triggerGroup`). Compound: Root chrome; для shell — второй handle на `Select.TriggerGroup`. Не на DOM |
+| `motion` | — | Root / simple: карта слотов + `events`. На `Select.Shell` — part motion слота `shell` |
+| `motionController` | — | Simple: форвардится на TriggerGroup (хост `shell`). Compound: Root chrome; для shell — второй handle на `Select.Shell`. Не на DOM |
 
 ### `SelectClassNames`
 
-`root`, `label`, `triggerGroup`, `value`, `trigger`, `triggerIcon`, `triggerIconWrap`, `popover`, `popoverBody`, `listBox`, `listBoxItem`, `listBoxLabel`, `listBoxHint`, `listBoxIcon`, `listBoxEmpty`, `listBoxHeader`, `listBoxHeaderText`, `hint`, `error`.
+`root`, `label`, `shell`, `value`, `trigger`, `triggerIcon`, `triggerIconWrap`, `popover`, `popoverBody`, `listBox`, `listBoxItem`, `listBoxLabel`, `listBoxHint`, `listBoxIcon`, `listBoxEmpty`, `listBoxHeader`, `listBoxHeaderText`, `hint`, `error`.
 
-`Select.Popover` принимает `listBoxProps` (пропы внутреннего `ListBox`, кроме controlled `value` / `onValueChange` / `activeValue` / `listId` / `multiple` / `children`) и мержит вложенные `listBox*` слоты в `ListBox.classNames`.
+`Select.Popover` принимает `listBoxProps` (пропы внутреннего `ListBox`, кроме controlled `value` / `values` / `onValueChange` / `onValuesChange` / `activeValue` / `listId` / `selectionMode` / `children`) и мержит вложенные `listBox*` слоты в `ListBox.classNames`.
 
 ### Compound-подчасти
 
 | Часть | Роль |
 |-------|------|
-| `Select.TriggerGroup` | Shell anchor, open squeeze |
+| `Select.Shell` | Shell anchor, open squeeze |
 | `Select.Value` | Кнопка `role="combobox"` + keyboard |
-| `Select.Trigger` | Chevron, toggle open |
+| `Select.Trigger` | Chevron, toggle open. Children заменяют SVG, остаются в `triggerIconWrap` |
 | `Select.Popover` | `Popover` + `ListBox` |
 
 ## Поведение
 
-- Закрыт: `Select.Value` показывает `label` выбранной опции или `placeholder` (muted). При `multiple` — подписи в порядке `options`, через запятую
+- Закрыт: `Select.Value` показывает `label` выбранной опции или `placeholder` (muted). При `selectionMode="multiple"` — подписи в порядке `items`, через запятую
 - Открыт: `ListBox` с `activeValue`, keyboard navigation
 - Клавиатура на Value: ArrowDown/Up, Enter, Space — open; в списке — navigate + Enter выбирает; Escape закрывает; typeahead по первым буквам (string `label` / `value`)
-- `multiple`: Enter и клик переключают пункт и оставляют меню открытым
+- `selectionMode="multiple"`: Enter и клик переключают пункт и оставляют меню открытым
 - Нет type-ahead / filter (см. ComboBox)
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `Select.TriggerGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `triggerGroup.pressIn` (non-gloss) или kit gloss squeeze. Шеврон — слот `triggerIcon`, фазы `enter` / `leave`, рецепт `chevronRotate`. Menu enter — на Popover, не дублируется.
+Публичный slot motion. Root передаёт карту `motion`; хост — `Select.Shell` (defaults + `play`). Шеврон — слот `triggerIconWrap`, фазы `enter` / `leave`, рецепт `chevronRotate`. Слот `popover` прокидывается на `content` внутреннего Popover (`portalSurfaceEnter` / `portalSurfaceLeave`) и в scope поля не регистрируется.
 
 ### Slot motion
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `triggerGroup` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
-| `value` / `trigger` / `triggerIcon` | hover/press | нет |
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | — |
+| `value` / `trigger` | hover/press | нет |
+| `triggerIconWrap` | `enter` / `leave` | `chevronRotate` |
 | `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope |
+| `popover` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave`. Ключ не регистрируется в scope поля: карта уходит на внутренний Popover `content`. `Select.Popover` `motion` побеждает карту корня |
 
-`false` на `triggerGroup.hoverIn/Out` — rest-тень остаётся, lift не играет. `false` на `pressIn` — open без squeeze. Не анимируйте layout в публичных MotionVars.
+`false` на `shell.hoverIn/Out` — rest-тень остаётся, lift не играет. `false` на `pressIn` — open без squeeze. Не анимируйте layout в публичных MotionVars.
 
 **Где в коде:** типы — `selectTypes.ts`; scope — `selectContext.tsx`; defaults + host — `selectAnimations.ts`; слоты — `selectTriggerParts.tsx`; карта на Root — `Select.tsx`.
 
 ```tsx
 <Select
   label="Language"
-  options={options}
+  items={items}
   motion={{
-    triggerGroup: { hoverIn: false, hoverOut: false },
+    shell: { hoverIn: false, hoverOut: false },
   }}
 />
 ```
 
-Compound: `motion` на `Select.TriggerGroup` — part motion слота `triggerGroup`; на `Select.Value` / `Select.Trigger` — свои слоты. На `Select.Label` / `Hint` / `Error` — chrome Root scope.
+Compound: `motion` на `Select.Shell` — part motion слота `shell`; на `Select.Value` / `Select.Trigger` — свои слоты. На `Select.Label` / `Hint` / `Error` — chrome Root scope.
 
-Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("triggerGroup", …)` / `playSlot("value", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `Select.TriggerGroup`. Один handle ≠ два scope. Меню — Popover, не этот scope.
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("value", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `Select.Shell`. Один handle ≠ два scope. `playSlot("popover")` на контроллере поля цели не найдёт: панель живёт в scope Popover. Меню меняет `motion.popover` на корне или `motion` на `Select.Popover`.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`select:nudge`, `select:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("triggerGroup", event)` (карта `events` с корня мержится в TriggerGroup). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+Проп `motionController` + ключ `events` на `motion` — app-команды (`select:nudge`, `select:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в TriggerGroup). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на группе триггера. Simple API мержит карту корня в неё. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Select, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -132,10 +139,10 @@ function Nudge() {
   const controller = useMotionControllerHandle();
   return (
     <>
-      <Button size="small" variant="outline" onClick={() => controller.playSlot("triggerGroup", "select:nudge")}>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "select:nudge")}>
         Nudge
       </Button>
-      <Select label="Framework" options={options} motionController={controller} motion={{ events }} />
+      <Select label="Framework" items={items} motionController={controller} motion={{ events }} />
     </>
   );
 }
@@ -145,8 +152,8 @@ function Nudge() {
 
 ### Chevron / Popover / ListBox
 
-- Chevron: слот `triggerIcon`, рецепт `chevronRotate` (`enter` / `leave`)
-- Popover enter/leave — публичный slot motion Popover
+- Chevron: слот `triggerIconWrap`, рецепт `chevronRotate` (`enter` / `leave`)
+- Панель меню: слот `popover` на карте Select → внутренний Popover `content`. Дефолт `portalSurfaceEnter` / `portalSurfaceLeave`. `Select.Popover` `motion` побеждает карту корня. Другие Popover этот ключ не получают
 - ListBox items — slot motion ListBox (если подключён)
 
 ## Стилизация и кастомизация
@@ -158,7 +165,7 @@ function Nudge() {
 
 Подчасти принимают **`className`** поверх слота контекста.
 
-`Select.Trigger` и `Select.Value` публикуют `data-state="open" | "closed"`. Поворот шеврона без JS — класс на кнопке, у которой есть атрибут:
+`Select.Trigger` и `Select.Value` публикуют `data-state="open" | "closed"`. Children у `Select.Trigger` заменяют дефолтный SVG; kit крутит обёртку `triggerIconWrap` (`chevronRotate`). CSS на кнопке крутит весь Trigger, не только иконку:
 
 ```tsx
 <Select.Trigger className="data-[state=open]:rotate-180" />
@@ -170,11 +177,11 @@ function Nudge() {
 |------|-----|------------|
 | `root` | `Field` | Max-width, gap поля |
 | `label` | `Label` | Типографика |
-| `triggerGroup` | Shell | Border, hover, squeeze target |
+| `shell` | Shell | Border, hover, squeeze target |
 | `value` | `Select.Value` `role="combobox"` | Текст значения, muted placeholder |
 | `trigger` | Chevron button | Hit-area триггера |
-| `triggerIcon` | `IoChevronDown` | Размер/цвет шеврона |
-| `triggerIconWrap` | Обёртка шеврона | Отступ, motion-хост |
+| `triggerIcon` | `IoChevronDown` | Цвет шеврона |
+| `triggerIconWrap` | Обёртка шеврона | Размер (`icon-slot-*`), motion `chevronRotate` |
 | `popover` | `Popover.Content` | Shadow, `z-popover` |
 | `popoverBody` | `Popover.Body` | Padding меню |
 | `listBox` | `ListBox` | Scroll area |
@@ -188,14 +195,15 @@ function Nudge() {
 <Select
   className="max-w-sm"
   classNames={{
-    triggerGroup: "ring-1 ring-primary/20",
+    shell: "ring-1 ring-primary/20",
     value: "text-primary font-medium",
     trigger: "text-primary",
+    triggerIconWrap: "icon-slot-large",
     popover: "ring-1 ring-primary/15",
     listBox: "p-small",
   }}
   label="Кастомные слоты"
-  options={options}
+  items={items}
   defaultValue="ru"
 />
 ```
@@ -204,14 +212,14 @@ function Nudge() {
 
 ```tsx
 <Select
-  options={options}
-  classNames={{ triggerGroup: "border-primary/30" }}
+  items={items}
+  classNames={{ shell: "border-primary/30" }}
 >
   <Select.Label className="font-semibold">Регион</Select.Label>
-  <Select.TriggerGroup className="shadow-token-sm">
+  <Select.Shell className="shadow-token-sm">
     <Select.Value className="text-left" placeholder="—" />
     <Select.Trigger className="px-large" />
-  </Select.TriggerGroup>
+  </Select.Shell>
   <Select.Popover className="shadow-token-lg" />
 </Select>
 ```
@@ -219,12 +227,12 @@ function Nudge() {
 Кастомный список: `children` в `Select.Popover` + стили пунктов через `classNames.listBoxItem` / `listBoxProps.classNames`, либо полная замена пунктов через `ListBox.Item`.
 
 ```tsx
-<Select options={options} defaultValue="ru">
+<Select items={items} defaultValue="ru">
   <Select.Label>Регион</Select.Label>
-  <Select.TriggerGroup>
+  <Select.Shell>
     <Select.Value />
     <Select.Trigger />
-  </Select.TriggerGroup>
+  </Select.Shell>
   <Select.Popover
     listBoxProps={{ classNames: { item: "rounded-lg bg-primary/5" } }}
   />
@@ -243,12 +251,12 @@ function Nudge() {
 | Контекст | Поведение |
 |----------|-----------|
 | `Form` | `name`, `value`, `error`, `size` |
-| `ButtonGroup` | `variant` gloss, `groupSegment` |
+| `ButtonGroup` | — |
 
 ## Доступность
 
 - `Select.Value`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-activedescendant` при open, `aria-invalid` / `aria-required` / `aria-describedby`, `aria-labelledby` (при Label) / `aria-label` (placeholder). Единственный tab-stop. `disabled` — нативный, без `aria-disabled`. Ring — `focus-within-ring` на shell
-- `error` или `invalid` ставят `aria-invalid` на `Select.Value` и пустой `data-invalid` на корне. `status` этого не делает
+- `error` или `invalid` ставят `aria-invalid` на `Select.Value`, пустой `data-invalid` на корне и danger-кольцо на оболочке
 - `Select.Trigger`: `aria-label`, `tabIndex={-1}`, `focus-ring-inset`
 - `ListBox`: `aria-labelledby` / `aria-label`
 
@@ -272,4 +280,8 @@ Select/
 
 ## Storybook
 
-`Core Components/Select` — simple/compound, status, gloss, Form, `classNames`, keyboard, Slot motion, MotionController.
+`Core Components/Select` — simple/compound, invalid, Form, `classNames`, keyboard, Slot motion, MotionController.
+
+## Опции
+
+`items` принимает плоский список и группы `{ label, items }`. `clearable` показывает кнопку очистки: одно значение становится пустым, `multiple` — `[]`.

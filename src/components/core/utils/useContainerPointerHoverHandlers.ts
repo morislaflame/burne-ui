@@ -8,6 +8,8 @@ import type { PointerEvent as ReactPointerEvent } from "react";
  
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { killMotion } from "./gsapMotion";
+import type { MotionConfig } from "./motionConfig";
+import { useMotionConfig } from "./motionConfigContext";
  
 export type UseContainerPointerHoverHandlersOptions<
   Element extends HTMLElement = HTMLElement,
@@ -18,9 +20,10 @@ export type UseContainerPointerHoverHandlersOptions<
   pointerInsideRef?: RefObject<boolean> | RefObject<boolean>;
   /**
    * Skip hover motion (touch / reduced-motion / feature flag).
-   * Pass `shouldSkipInteractiveHoverLift` from hover-lift utils.
+   * Called with the scoped config from `useMotionConfig()`, not the global singleton.
+   * Pass `shouldSkipInteractiveHoverLift`.
    */
-  skipHover?: () => boolean;
+  skipHover?: (config: Readonly<MotionConfig>) => boolean;
   /**
    * Kill GSAP on the target when the hook unmounts (default true).
    * Slot motion must pass `false`: this node also plays `enter`, and Strict Mode
@@ -45,6 +48,8 @@ export function useContainerPointerHoverHandlers<
   onPointerOver: (e: ReactPointerEvent<Element>) => void;
   onPointerOut: (e: ReactPointerEvent<Element>) => void;
 } {
+  const config = useMotionConfig();
+
   useEffect(() => {
     if (!killMotionOnUnmount) return;
     const t = targetRef.current;
@@ -60,7 +65,7 @@ export function useContainerPointerHoverHandlers<
       const c = e.currentTarget;
       if (!(e.target instanceof Node) || !c.contains(e.target)) return;
       if (!cameFromOutsideContainer(c, e.relatedTarget)) return;
-      if (skipHover?.()) return;
+      if (skipHover?.(config)) return;
       const el = targetRef.current;
       if (!el) return;
       if (pointerInsideRef) pointerInsideRef.current = true;
@@ -74,13 +79,13 @@ export function useContainerPointerHoverHandlers<
  
       if (pointerInsideRef) pointerInsideRef.current = false;
       if (!enabled) return;
-      if (skipHover?.()) return;
+      if (skipHover?.(config)) return;
       const el = targetRef.current;
       if (!el) return;
       onLeave(el, e);
     };
  
     return { onPointerOver, onPointerOut };
-  }, [enabled, onEnter, onLeave, pointerInsideRef, skipHover, targetRef]);
+  }, [config, enabled, onEnter, onLeave, pointerInsideRef, skipHover, targetRef]);
 }
  

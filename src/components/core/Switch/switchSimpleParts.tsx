@@ -16,7 +16,7 @@ import {
   switchLabelCellClass,
   switchSecondaryCellClass,
 } from "./switchStyles";
-import type { SwitchControlProps, SwitchSize } from "./switchTypes";
+import type { SwitchControlProps, SwitchLabelPosition, SwitchSize } from "./switchTypes";
  
 import { cn } from "@/utils/cn";
  
@@ -46,7 +46,7 @@ export function SwitchSimpleBody({
   textColRef: React.RefObject<HTMLElement | null>;
   size: SwitchSize;
   disabled?: boolean;
-  labelPosition: "left" | "right";
+  labelPosition: SwitchLabelPosition;
   hintId: string;
   errorId: string;
   controlProps: SwitchControlProps;
@@ -78,7 +78,7 @@ export function SwitchSimpleBody({
           >
             <Text
               as="span"
-              variant={sz.title}
+              textStyle={sz.title}
               inheritColor
               className={cn(
                 SWITCH_SIMPLE_LABEL_TEXT_CLASS,
@@ -95,7 +95,7 @@ export function SwitchSimpleBody({
               ref={setHintMotionRef}
               as="span"
               id={hintId}
-              variant={sz.desc}
+              textStyle={sz.desc}
               className={cn(
                 switchSecondaryCellClass(2, labelPosition),
                 disabled && SWITCH_HINT_DISABLED_CLASS,
@@ -110,7 +110,7 @@ export function SwitchSimpleBody({
               ref={setErrorMotionRef}
               as="span"
               id={errorId}
-              variant={sz.desc}
+              textStyle={sz.desc}
               className={cn(
                 switchSecondaryCellClass(hasHint ? 3 : 2, labelPosition),
                 disabled && SWITCH_ERROR_DISABLED_CLASS,

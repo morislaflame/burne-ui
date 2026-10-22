@@ -14,7 +14,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
     {
       children,
       className = "",
-      buttonSize: buttonSizeProp,
+      size: buttonSizeProp,
       groupSegment: groupSegmentProp,
       motion,
       onPointerOver,
@@ -28,7 +28,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
     const slotClassNames = useButtonGroupClassNames();
-    const buttonSize = buttonSizeProp ?? groupCtx?.buttonSize ?? "base";
+    const size = buttonSizeProp ?? groupCtx?.size ?? "base";
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
@@ -49,14 +49,14 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
         className={buttonGroupTextClass({
           groupSegment,
           groupVariant,
-          buttonSize,
+          size,
           className: cn(slotClassNames.text, className),
         })}
         {...part.pointerHandlers}
         data-group-segment={dataGroupSegment(groupSegment != null)}
       >
         <Text
-          variant={BUTTON_GROUP_TEXT_VARIANT[buttonSize]}
+          textStyle={BUTTON_GROUP_TEXT_VARIANT[size]}
           inheritColor
           as="span"
           className={cn(BUTTON_GROUP_TEXT_LABEL_CLASS, slotClassNames.textLabel)}

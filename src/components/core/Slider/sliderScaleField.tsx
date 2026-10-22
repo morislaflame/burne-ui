@@ -50,7 +50,7 @@ export const SliderScaleFieldValue = forwardRef<HTMLElement, SliderScaleFieldVal
       <Text
         ref={ref}
         as="span"
-        variant="base"
+        textStyle="base"
         className={cn(SLIDER_SCALE_VALUE_CLASS, className)}
         {...rest}
       >

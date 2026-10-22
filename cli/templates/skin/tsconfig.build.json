@@ -4,7 +4,7 @@
     "noEmit": false,
     "outDir": "dist",
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": false
   },
   "include": ["src/index.ts", "src/skin.json"]
 }

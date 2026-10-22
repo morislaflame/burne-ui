@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { AlertDialog, primaryButtonVariantForAlertTone } from "@/components/composite/AlertDialog";
+import { primaryButtonVariantForAlertTone } from "@/components/composite/AlertDialog/alertDialogAPI";
+import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Button } from "@/components/core/Button";
 
 export function AlertDialogStatusDemo() {

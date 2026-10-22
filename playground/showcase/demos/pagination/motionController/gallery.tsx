@@ -28,7 +28,7 @@ export const paginationMotionControllerGallery: readonly ShowcaseDemoGalleryItem
   { id: "play-summary", title: "playSlot summary", Demo: PaginationMotionControllerDemo, source: playSummarySource },
   { id: "play-vs-slot", title: "play vs playSlot", Demo: PaginationMotionControllerPlayVsSlotDemo, source: playVsSlotSource },
   { id: "stagger", title: "playAll chrome", Demo: PaginationMotionControllerStaggerDemo, source: staggerSource },
-  { id: "play-control", title: "playSlot(control)", Demo: PaginationMotionControllerPlayControlDemo, source: playControlSource },
+  { id: "play-control", title: "playSlot(previous)", Demo: PaginationMotionControllerPlayControlDemo, source: playControlSource },
   { id: "exclude", title: "exclude summary", Demo: PaginationMotionControllerExcludeDemo, source: excludeSource },
   { id: "inside", title: "inside tree", Demo: PaginationMotionControllerInsideDemo, source: insideSource },
   { id: "cancel", title: "cancel loop", Demo: PaginationMotionControllerCancelDemo, source: cancelSource },

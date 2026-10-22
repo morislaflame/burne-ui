@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
  
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
@@ -6,16 +6,10 @@ import { SkinProvider, type SkinProviderProps } from "@/skins/skinContext";
  
 import { resolveTheme, DEFAULT_THEME_STORAGE_KEY, type BurneThemeMode } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";
- 
-export type BurneThemeContextValue = {
-  /** User preference: light | dark | system */
-  theme: BurneThemeMode;
-  /** Resolved light | dark after system preference */
-  resolvedTheme: ThemeMode;
-  setTheme: (theme: BurneThemeMode) => void;
-};
- 
-const BurneThemeContext = createContext<BurneThemeContextValue | null>(null);
+import { BurneThemeContext, type BurneThemeContextValue } from "./themeContext";
+
+export type { BurneThemeContextValue } from "./themeContext";
+export { useBurneTheme, useBurneThemeOptional } from "./themeContext";
  
 function readStoredTheme(storageKey: string | null): BurneThemeMode | null {
   if (!storageKey || typeof window === "undefined") return null;
@@ -37,15 +31,23 @@ function writeStoredTheme(storageKey: string | null, theme: BurneThemeMode) {
   }
 }
  
-/** Apply `data-theme` on the root element (light → attribute, dark → remove). */
+/**
+ * Light sets `data-theme="light"`.
+ * Dark on `<html>` removes the attribute (`:root` is the dark sheet).
+ * A nested root sets `data-theme="dark"` so a light page can hold a dark island.
+ */
 export function applyThemeMode(theme: ThemeMode, root?: HTMLElement) {
   if (typeof document === "undefined") return;
   const target = root ?? document.documentElement;
   if (theme === "light") {
     target.dataset.theme = "light";
-  } else {
-    delete target.dataset.theme;
+    return;
   }
+  if (target === document.documentElement) {
+    delete target.dataset.theme;
+    return;
+  }
+  target.dataset.theme = "dark";
 }
  
 export type ThemeProviderProps = {
@@ -128,9 +130,11 @@ export function ThemeProvider({
     return () => mq.removeEventListener("change", onChange);
   }, [theme]);
  
+  const themeRoot =
+    root ?? (typeof document !== "undefined" ? document.documentElement : null);
   const value = useMemo<BurneThemeContextValue>(
-    () => ({ theme, resolvedTheme, setTheme }),
-    [theme, resolvedTheme, setTheme],
+    () => ({ theme, resolvedTheme, setTheme, root: themeRoot }),
+    [theme, resolvedTheme, setTheme, themeRoot],
   );
  
   const motionTree = <MotionConfigProvider motion={motion}>{children}</MotionConfigProvider>;
@@ -147,16 +151,4 @@ export function ThemeProvider({
   );
 }
  
-export function useBurneTheme(): BurneThemeContextValue {
-  const ctx = useContext(BurneThemeContext);
-  if (!ctx) {
-    throw new Error("useBurneTheme must be used within ThemeProvider or BurneUIProvider.");
-  }
-  return ctx;
-}
- 
-/** Optional hook — returns null outside provider (for progressive enhancement). */
-export function useBurneThemeOptional(): BurneThemeContextValue | null {
-  return useContext(BurneThemeContext);
-}
  

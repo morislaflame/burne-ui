@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -20,23 +20,23 @@ export function ComboBoxMotionEventsOffDemo() {
   return (
     <div className="flex max-w-sm flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => liveController.playSlot("inputGroup", "combo:nudge")}>
+        <Button size="small" variant="outline" onClick={() => liveController.playSlot("shell", "combo:nudge")}>
           Live nudge
         </Button>
-        <Button size="small" variant="ghost" onClick={() => offController.playSlot("inputGroup", "combo:nudge")}>
+        <Button size="small" variant="ghost" onClick={() => offController.playSlot("shell", "combo:nudge")}>
           Off nudge
         </Button>
       </div>
       <ComboBox
         label="Live"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={liveController}
         motion={{ events: live }}
       />
       <ComboBox
         label="Off"
-        options={options}
+        items={items}
         defaultValue="svelte"
         motionController={offController}
         motion={{ events: off }}

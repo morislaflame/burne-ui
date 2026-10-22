@@ -4,6 +4,7 @@ import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
+import { Label } from "@/components/core/Label";
 
 const events = createMotionEvents({
   "checks:out": { y: -8, duration: 0.28, ease: "power2.out", replay: "rest" },
@@ -31,7 +32,7 @@ export function CheckboxGroupMotionEventsFinishedDemo() {
       </Button>
       <CheckboxGroup motionController={controller} motion={{ events }}>
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+          <Label>Plan</Label>
           <CheckboxGroup.Hint>waitForComplete on the trigger, not the group.</CheckboxGroup.Hint>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>

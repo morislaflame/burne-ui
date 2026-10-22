@@ -25,7 +25,7 @@ const SECTIONS = [
 
 export function AccordionDocsSectionsDemo() {
   return (
-    <Accordion className="w-full max-w-lg" defaultOpenIndex={0}>
+    <Accordion className="w-full max-w-lg" defaultValue="0">
       {SECTIONS.map((section) => (
         <Accordion.Item key={section.title}>
           <Accordion.Heading>

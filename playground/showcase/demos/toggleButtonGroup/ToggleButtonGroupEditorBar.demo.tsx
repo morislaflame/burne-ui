@@ -11,16 +11,16 @@ export function ToggleButtonGroupEditorBarDemo() {
   return (
     <Surface variant="secondary" padding="small" className="w-full max-w-md">
       <div className="flex flex-col gap-small">
-        <Text as="span" variant="xsmall" className="text-muted">
+        <Text as="span" textStyle="xsmall" className="text-muted">
           Format panel
         </Text>
         <ToggleButtonGroup
-          type="multiple"
+          selectionMode="multiple"
           size="small"
           variant="outline"
           aria-label="Formatting text"
-          value={formats}
-          onValueChange={(v) => setFormats(v as string[])}
+          values={formats}
+          onValuesChange={setFormats}
         >
           <ToggleButton value="bold">B</ToggleButton>
           <ToggleButton value="italic">I</ToggleButton>

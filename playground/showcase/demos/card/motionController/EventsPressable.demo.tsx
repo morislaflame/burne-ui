@@ -14,12 +14,12 @@ export function CardMotionEventsPressableDemo() {
       className="max-w-xs"
       motionController={controller}
       motion={{ events }}
-      onPress={() => controller.play("card:select")}
+      onClick={() => controller.play("card:select")}
     >
       <Card.Header>
         <Card.Title>Pressable + events</Card.Title>
         <Card.Description>
-          Hover lift stays on the root. onPress plays card:select — not hoverIn.
+          Hover lift stays on the root. onClick plays card:select — not hoverIn.
         </Card.Description>
       </Card.Header>
     </Card>

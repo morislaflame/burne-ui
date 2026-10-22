@@ -2,6 +2,8 @@
 
 Радиокнопка с dot-индикатором (`SelectionIndicator`), simple API и compound (`Control` / `Content` / `Label`). Интеграция с `RadioGroup` и `Form`. Структура близка к Checkbox, но всегда `<label>` root и `dot` вместо check.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -24,31 +26,20 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 
 ### Compound API
 
-```tsx
-<Radio name="shipping" value="express" defaultChecked variant="gloss">
-  <Radio.Control>
-    <Radio.Indicator />
-  </Radio.Control>
-  <Radio.Content>
-    <Radio.Label required>Курьер</Radio.Label>
-    <Radio.Hint>Доставка в день заказа</Radio.Hint>
-    <Radio.Error>Недоступно в регионе</Radio.Error>
-  </Radio.Content>
-</Radio>
-```
-
 ### Root props (ключевые)
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `gloss` |
+| `variant` | `default` | `default` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `labelPosition` | `end` | `start` \| `end`. `start` ставит подпись слева от контрола |
 | `checked` / `defaultChecked` | — | Controlled / uncontrolled (вне группы) |
 | `value` | — | Значение option (обязательно с `name` / группой) |
 | `name` | — | Группа radios / RadioGroup |
+| `inputRef` | — | Нативный `<input type="radio">`. `ref` корня остаётся на `<label>` |
 | `onChange` | — | Native change |
 | `disabled` | `false` | + track opacity anim |
-| `danger` | `false` | Красный label text |
+| `invalid` | — | Красный label, `aria-invalid` и `data-invalid`. `error` делает то же и показывает сообщение |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
 | `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`). `events` — app-команды |
@@ -69,14 +60,13 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 | `Radio.Content` | Label column (`display: contents` — padding, border, background и width не рисуются) |
 | `Radio.Label` / `Hint` / `Error` | Текстовые слоты |
 
-`Radio.Indicator` compound: `.Fill`, `.Mark` (от `SelectionIndicator`).
+`Radio.Indicator` compound: `.Fill`, `.Mark` (от `SelectionIndicator`). Своя иконка — проп `icon` на `Radio.Indicator` (вместо точки). Прямой ребёнок, кроме `.Fill` и `.Mark`, иконкой не становится.
 
 ## variant
 
 | variant | Indicator |
 |---------|-----------|
 | `default` | `SelectionIndicator` variant `base` — border + dot |
-| `gloss` | variant `gloss` — `gloss-indicator` |
 
 ## Размеры
 
@@ -119,6 +109,8 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 Simple API — `motionController` форвардится в SelectionIndicator: `play()` играет слот `root`, `playSlot("fill")`. Compound chrome — handle на Root (`playSlot("label")`); индикатор — отдельный handle на `Radio.Indicator`. Явный `<Radio.Indicator motionController>` побеждает форвард с корня.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`radio:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("root", event)`. playground / Storybook **MotionController**.
+
+Пропы есть на корне, на `Radio.Control` и на `Radio.Indicator`. У каждой части свой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Radio, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -204,7 +196,7 @@ function Nudge() {
 | `root` | `<label>` | Grid, padding, card border |
 | `control` | Control cell | Alignment |
 | `controlTrack` | Track вокруг indicator | Ring/border |
-| `indicator` | SelectionIndicator shell | Size, gloss |
+| `indicator` | SelectionIndicator shell | Size |
 | `indicatorFill` | Fill layer | Checked tint |
 | `indicatorMark` | Dot mark | Dot color/size |
 | `content` | Content column | Gap hint/error |
@@ -241,7 +233,6 @@ function Nudge() {
   name="classnames"
   value="custom"
   defaultChecked
-  variant="gloss"
   classNames={{
     root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-md",
     control: "ring-primary/30",
@@ -273,7 +264,7 @@ function Nudge() {
 | Контекст | Поведение |
 |----------|-----------|
 | `RadioGroup` | `selectedValue`, `name`, `disabled`, `required` |
-| `Form` | `name`, errors → `danger` на label |
+| `Form` | `name`, errors → красный label и `aria-invalid` |
 
 ```tsx
 <RadioGroup label="Доставка" name="shipping" defaultValue="standard">
@@ -285,9 +276,10 @@ function Nudge() {
 ## Доступность
 
 - Native `<input type="radio">` — focus, arrow keys в группе
+- `readOnly` блокирует смену. `aria-readonly` объявляет `RadioGroup`, не сам `input`
 - Имя из видимой подписи (обёртка `<label>` / `Radio.Label`); `aria-label` из `value` — только fallback без подписи
 - `aria-describedby` hint/error
-- `aria-required` на input, когда рисуется `*` (`required`)
+- Нативный `required` на input, когда рисуется `*` (`required`). Отдельного `aria-required` нет
 - `data-selected` на label при checked
 - Forced colors (Windows HCM): selected fill/dot через `Highlight` в `styles.css`
 
@@ -310,4 +302,4 @@ Radio/
 
 ## Storybook
 
-`Core Components/Radio` — simple/compound, gloss, RadioGroup, clear selection, `classNames`, a11y, slot motion gallery.
+`Core Components/Radio` — simple/compound, RadioGroup, clear selection, `classNames`, a11y, slot motion gallery.

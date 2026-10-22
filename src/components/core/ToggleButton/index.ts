@@ -1,27 +1,3 @@
-export {
-  ToggleButtonRoot,
-  ToggleButtonContent,
-  ToggleButtonFill,
-  ToggleButtonLabel,
-  ToggleButtonIconStart,
-  ToggleButtonIconEnd,
-  ToggleButtonText,
-  type ToggleButtonProps,
-  type ToggleButtonSize,
-  type ToggleButtonVariant,
-  type ToggleButtonClassNames,
-  type ToggleButtonFillProps,
-  type ToggleButtonContentProps,
-  type ToggleButtonLabelProps,
-  type ToggleButtonIconStartProps,
-  type ToggleButtonIconEndProps,
-  type ToggleButtonTextProps,
-  type ToggleButtonMotion,
-  type ToggleButtonPartMotion,
-  type ToggleButtonPointerMotion,
-  type ToggleButtonCheckMotion,
-} from "./ToggleButton";
- 
 import { ToggleButtonRoot, ToggleButtonContent, ToggleButtonFill, ToggleButtonLabel, ToggleButtonIconStart, ToggleButtonIconEnd, ToggleButtonText } from "./ToggleButton";
  
 export const ToggleButton = Object.assign(ToggleButtonRoot, {
@@ -33,6 +9,22 @@ export const ToggleButton = Object.assign(ToggleButtonRoot, {
   Text: ToggleButtonText,
 });
  
+export type {
+  ToggleButtonProps,
+  ToggleButtonSize,
+  ToggleButtonVariant,
+  ToggleButtonClassNames,
+  ToggleButtonFillProps,
+  ToggleButtonContentProps,
+  ToggleButtonLabelProps,
+  ToggleButtonIconStartProps,
+  ToggleButtonIconEndProps,
+  ToggleButtonTextProps,
+  ToggleButtonMotion,
+  ToggleButtonPartMotion,
+  ToggleButtonPointerMotion,
+} from "./ToggleButton";
+
 export { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
  
 export type {

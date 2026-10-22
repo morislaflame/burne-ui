@@ -2,6 +2,8 @@ import { ToastPortalContainerDemo } from "../demos/toast/ToastPortalContainer.de
 import toastPortalContainerSource from "../demos/toast/ToastPortalContainer.demo.tsx?raw";
 import { ToastClassNamesCompoundDemo, ToastClassNamesFullDemo } from "../demos/toast/ToastClassNamesFull.demo";
 import toastClassNamesFullSource from "../demos/toast/ToastClassNamesFull.demo.tsx?raw";
+import { ToastImperativeDemo } from "../demos/toast/ToastImperative.demo";
+import toastImperativeSource from "../demos/toast/ToastImperative.demo.tsx?raw";
 import { ToastDefaultDemo } from "../demos/toast/ToastDefault.demo";
 import toastDefaultSource from "../demos/toast/ToastDefault.demo.tsx?raw";
 import { ToastDeployPanelDemo } from "../demos/toast/ToastDeployPanel.demo";
@@ -35,13 +37,17 @@ export function ToastShowcase() {
         <ShowcaseDemoFromFile Demo={ToastDefaultDemo} source={toastDefaultSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Outside React" description="toast.show talks to the last mounted Toast.Provider. No useToast in the caller.">
+        <ShowcaseDemoFromFile Demo={ToastImperativeDemo} source={toastImperativeSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large — padding, typography and width viewport.">
         <ShowcaseDemoFromFile Demo={ToastSizesDemo} source={toastSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="Modifications"
-        description="status, variant default, action, loading and timeout: 0."
+        description="status, variant default, action, loading and duration: 0."
       >
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
       </ShowcaseSection>
@@ -97,7 +103,7 @@ export function ToastShowcase() {
             Imperative API: <code>useToast()</code> → <code>toast.show</code>, <code>toast.success</code>,{" "}
             <code>toast.danger</code>, <code>toast.promise</code> etc. Parameters: <code>title</code>,{" "}
             <code>description</code>, <code>status</code>, <code>variant</code>, <code>size</code>,{" "}
-            <code>placement</code>, <code>timeout</code>, <code>action</code>.
+            <code>placement</code>, <code>duration</code>, <code>action</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Provider">

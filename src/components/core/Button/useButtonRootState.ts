@@ -33,7 +33,7 @@ export function useButtonRootState({
   const groupSegment = layoutCtx?.segmented
     ? undefined
     : (groupSegmentProp ?? groupCtx?.segment);
-  const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
+  const size = sizeProp ?? groupCtx?.size ?? "base";
   const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
   const surfaceStyle = useSkinSurfaceStyle(variant);
   const userDisabled = Boolean(disabledProp ?? formCtx?.disabled ?? formCtx?.isSubmitting);
@@ -51,7 +51,6 @@ export function useButtonRootState({
     : sizeRounded;
  
   const isCompound = useMemo(() => hasButtonCompoundChildren(children), [children]);
-  const labelLayoutClass = !isCompound ? className : undefined;
  
   const buttonClass = cn(
     BUTTON_BASE_INTERACTIVE_CLASS,
@@ -88,7 +87,6 @@ export function useButtonRootState({
     children,
     classNames,
     isCompound,
-    labelLayoutClass,
     onClick,
   };
 }

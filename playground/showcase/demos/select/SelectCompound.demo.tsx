@@ -1,6 +1,6 @@
 import { Select } from "@/components/core/Select";
 
-const options = [
+const items = [
   { value: "draft", label: "Draft" },
   { value: "review", label: "For review" },
   { value: "published", label: "Published" },
@@ -8,12 +8,12 @@ const options = [
 
 export function SelectCompoundDemo() {
   return (
-    <Select options={options} defaultValue="draft" className="w-64">
+    <Select items={items} defaultValue="draft" className="w-64">
       <Select.Label>Status</Select.Label>
-      <Select.TriggerGroup>
+      <Select.Shell>
         <Select.Value placeholder="Select status" />
         <Select.Trigger />
-      </Select.TriggerGroup>
+      </Select.Shell>
       <Select.Popover />
       <Select.Hint>Status changes are saved automatically.</Select.Hint>
     </Select>

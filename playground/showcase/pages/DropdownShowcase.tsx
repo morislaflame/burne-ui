@@ -33,7 +33,7 @@ export function DropdownShowcase() {
       importPath='import { Dropdown } from "@/components/core/Dropdown";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Single selection" description="selectionIndicator and grouping of items.">
+      <ShowcaseSection title="Single selection" description="Item indicator and grouping of items.">
         <ShowcaseDemoFromFile Demo={DropdownSingleSelectDemo} source={dropdownSingleSelectSource} />
       </ShowcaseSection>
 
@@ -122,8 +122,8 @@ export function DropdownShowcase() {
           <p>
             <code>variant=&quot;default&quot;</code> on <code>Dropdown.Popover</code>. Items with{" "}
             <code>href</code> rendered as links with a role menuitem. Slot motion —{" "}
-            <code>motion.content</code> forwarded to Popover; <code>subContent</code> on{" "}
-            <code>Dropdown.SubContent</code>.
+            <code>motion.content</code> forwarded to Popover; <code>subPopover</code> on{" "}
+            <code>Dropdown.SubPopover</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

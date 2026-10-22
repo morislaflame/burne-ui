@@ -23,7 +23,7 @@ export function ShowcasePage({
     <article className={cn("flex flex-col gap-2xlarge", className)}>
       <header className="flex flex-col gap-small">
         <div className="flex flex-wrap items-center gap-small">
-          <Text as="h1" variant="header-1">
+          <Text as="h1" textStyle="header-1">
             {title}
           </Text>
           {tags?.map((tag) => (
@@ -33,12 +33,12 @@ export function ShowcasePage({
           ))}
         </div>
         {description ? (
-          <Text as="p" variant="base" className="text-muted max-w-2xl">
+          <Text as="p" textStyle="base" className="text-muted max-w-2xl">
             {description}
           </Text>
         ) : null}
         {importPath ? (
-          <Text as="p" variant="small" className="font-mono text-primary">
+          <Text as="p" textStyle="small" className="font-mono text-primary">
             {importPath}
           </Text>
         ) : null}

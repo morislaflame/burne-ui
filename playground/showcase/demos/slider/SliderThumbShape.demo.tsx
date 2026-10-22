@@ -9,7 +9,7 @@ export function SliderThumbShapeDemo() {
 
   return (
     <div className="flex w-full max-w-md flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Form thumb
       </Text>
       <Slider
@@ -19,7 +19,7 @@ export function SliderThumbShapeDemo() {
         onValueChange={setRound}
         className="w-full"
       />
-      <Slider className="w-full">
+      <Slider className="w-full" classNames={{ thumbShell: "rounded-large" }}>
         <Slider.Header>
           <Slider.Label>rounded-large thumb</Slider.Label>
           <Slider.Value />
@@ -27,14 +27,13 @@ export function SliderThumbShapeDemo() {
         <Slider.Track
           value={square}
           onValueChange={setSquare}
-          thumbClassName="rounded-large"
         >
           <Slider.Rail className="rounded-large">
             <Slider.Fill className="rounded-large" />
           </Slider.Rail>
           <Slider.Thumb />
         </Slider.Track>
-        <Slider.Hint>thumbClassName=&quot;rounded-large&quot;</Slider.Hint>
+        <Slider.Hint>classNames.thumbShell=&quot;rounded-large&quot;</Slider.Hint>
       </Slider>
     </div>
   );

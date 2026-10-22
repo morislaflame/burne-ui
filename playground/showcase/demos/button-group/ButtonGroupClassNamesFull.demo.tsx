@@ -5,7 +5,7 @@ export function ButtonGroupClassNamesFullDemo() {
   return (
     <ButtonGroup
       aria-label="Custom slots"
-      buttonSize="base"
+      size="base"
       classNames={{
         root: "rounded-large border border-primary/25 p-xsmall",
         separator: "border-primary/40",

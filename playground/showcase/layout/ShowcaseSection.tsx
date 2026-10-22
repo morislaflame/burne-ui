@@ -19,11 +19,11 @@ export function ShowcaseSection({
   return (
     <section id={id} className={cn("flex flex-col gap-large scroll-mt-24", className)}>
       <div>
-        <Text as="h2" variant="header-2">
+        <Text as="h2" textStyle="header-2">
           {title}
         </Text>
         {description ? (
-          <Text as="p" variant="small" className="mt-xsmall text-muted">
+          <Text as="p" textStyle="small" className="mt-xsmall text-muted">
             {description}
           </Text>
         ) : null}

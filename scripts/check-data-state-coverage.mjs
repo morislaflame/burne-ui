@@ -57,7 +57,50 @@ const VOCAB = new Set([
 
 const FORBIDDEN = ["data-search-expanded", "data-search-expand", "data-allows-sorting"];
 
-const KIT_DATA_ATTR = /\bdata-(?:state|side|align|selected|invalid|size|variant|status)\s*=/g;
+const ALLOWED_DATA = new Set([
+  "state",
+  "invalid",
+  "readonly",
+  "required",
+  "disabled",
+  "orientation",
+  "side",
+  "align",
+  "size",
+  "variant",
+  "status",
+  "value",
+  "selected",
+  "pressed",
+  "checked",
+  "group-segment",
+  "theme",
+  "selection-fill",
+  "selection-mark",
+  "selection-fill-ready",
+  "slot",
+  "only",
+  "flip-key",
+  "loading-dot",
+  "file-row",
+  "virtual-index",
+  "table-row-key",
+  "shadow-fade",
+  "burne-shadow-fade",
+  "collapsible-init",
+  "chevron-init",
+  "search-icon-init",
+  "calendar-roving",
+  "calendar-focus-day",
+  "textarea-resize-handle",
+  "badge-lift-target",
+  "badge-anchor",
+  "icon",
+  "badge-root",
+]);
+
+const KIT_DATA_ATTR =
+  /\bdata-(?:state|side|align|selected|invalid|size|variant|status|value|disabled|readonly|required|orientation)\s*=/g;
 
 function isSource(file) {
   return (
@@ -192,6 +235,12 @@ for (const file of files) {
   }
   for (const hit of kitAttrsBeforeSpread(text)) {
     errors.push(`${path.relative(root, file)} ${hit}`);
+  }
+  const attrNames = text.matchAll(/\bdata-([a-z][a-z0-9-]*)\s*=/g);
+  for (const match of attrNames) {
+    if (!ALLOWED_DATA.has(match[1])) {
+      errors.push(`${path.relative(root, file)} data-${match[1]} is outside the kit data dictionary`);
+    }
   }
   for (const expr of expressions(text)) {
     const literals = expr.match(/"([a-z]+)"|'([a-z]+)'/g) ?? [];

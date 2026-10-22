@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { SelectionIndicatorMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/selectionIndicator/motionController/gallery";
+import { SelectionIndicatorSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/selectionIndicator/slotMotion/gallery";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -49,6 +50,12 @@ export const CustomClassNames: Story = {
       <SelectionIndicator size="large" selected check />
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  args: { selected: true, check: true },
+  name: "Slot motion",
+  render: () => <SelectionIndicatorSlotMotionGalleryDemo />,
 };
 
 export const MotionControllerGallery: Story = {

@@ -22,7 +22,7 @@ export type {
   RadioVariant,
   RadioClassNames,
   RadioMotion,
-  RadioCheckMotion,
+  RadioPartMotion,
 } from "./radioTypes";
  
 export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function RadioRoot(
@@ -33,8 +33,8 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     error,
     invalid,
     size,
+    labelPosition,
     variant,
-    danger,
     disabled,
     checked,
     defaultChecked,
@@ -49,6 +49,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     readOnly,
     onBlur,
     onFocus,
+    inputRef,
     className,
       classNames,
       motion,
@@ -66,8 +67,8 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
   const state = useRadioRootState(
     {
       size,
+      labelPosition,
       variant,
-      danger,
       disabled,
       checked,
       defaultChecked,
@@ -82,6 +83,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
       readOnly,
       onBlur,
       onFocus,
+      inputRef,
       label,
       hint,
       error,
@@ -101,9 +103,10 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
   });
  
   const gridClass = cn(
-    radioGridClass(state.secondaryLines, state.sz.gridGap, className),
+    radioGridClass(state.secondaryLines, state.sz.gridGap, state.contextValue.labelPosition),
     state.isDisabled && RADIO_ROOT_DISABLED_CLASS,
     classNames?.root,
+    className,
   );
  
   return (

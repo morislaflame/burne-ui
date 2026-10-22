@@ -22,7 +22,7 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `size` | `base` | `SelectionIndicatorSize` → radius + icon scale |
+| `size` | `base` | `SelectionThumbSize` = `SelectionIndicatorSize`: `xsmall` \| `small` \| `base` \| `mid` \| `large`. `xsmall` — доменный размер вне `ComponentSize` |
 | `variant` | `default` | Kit `default` или имя скина (`selectionIndicator.root`) |
 | `shellRef` | — | Ref на shell (для parent slide anim — Switch) |
 | `className` | — | На shell |
@@ -63,6 +63,8 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 Switch/Slider не передают `motion` — pointer-фазы выключены. Standalone: есть слот `root`, `play()` работает.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`thumb:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на этом scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, SelectionThumb, createMotionEvents, useMotionControllerHandle } from "burne-ui";

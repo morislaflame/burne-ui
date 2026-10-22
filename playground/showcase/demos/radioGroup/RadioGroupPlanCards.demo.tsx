@@ -4,6 +4,7 @@ import { RadioGroup } from "@/components/composite/RadioGroup";
 import { Radio } from "@/components/core/Radio";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
+import { Label } from "@/components/core/Label";
 
 const CARD_CLASS = cn(
   "group relative flex flex-col gap-mid rounded-large border-token bg-surface px-mid py-large transition-colors",
@@ -39,7 +40,7 @@ export function RadioGroupPlanCardsDemo() {
   return (
     <RadioGroup defaultValue="team" name="plan" className="w-full max-w-2xl">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Tariff plan</RadioGroup.Label>
+        <Label>Tariff plan</Label>
         <RadioGroup.Hint>Cards with compound Radio — indicator in the corner.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <div className="grid gap-large md:grid-cols-3">
@@ -54,7 +55,7 @@ export function RadioGroupPlanCardsDemo() {
                 <Radio.Label>{plan.title}</Radio.Label>
                 <Radio.Hint>{plan.hint}</Radio.Hint>
               </div>
-              <Text as="span" variant="small" className="font-semibold">
+              <Text as="span" textStyle="small" className="font-semibold">
                 {plan.price}
               </Text>
             </Radio.Content>

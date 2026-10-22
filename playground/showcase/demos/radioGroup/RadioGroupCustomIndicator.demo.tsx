@@ -1,11 +1,12 @@
 import { RadioGroup } from "@/components/composite/RadioGroup";
 import { Radio } from "@/components/core/Radio";
+import { Label } from "@/components/core/Label";
 
 export function RadioGroupCustomIndicatorDemo() {
   return (
     <RadioGroup defaultValue="design" className="w-full max-w-sm">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Department</RadioGroup.Label>
+        <Label>Department</Label>
         <RadioGroup.Hint>Square indicator through Radio.Indicator className.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List>

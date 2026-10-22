@@ -11,11 +11,11 @@ export function ComboBoxMotionInputWaveDemo() {
     <ComboBox
       className="w-64"
       label="Input wave"
-      options={options}
+      items={options}
       defaultValue="svelte"
-      hint="Timeline: inputGroup / input / trigger via ctx.targets"
+      hint="Timeline: shell / input / trigger via ctx.targets"
       motion={{
-        inputGroup: {
+        shell: {
           hoverIn: (ctx) => {
             const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: -1.2, y: -2, duration: 0.22 }, 0);

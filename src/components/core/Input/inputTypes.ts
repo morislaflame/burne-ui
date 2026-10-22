@@ -5,6 +5,7 @@ import type {
   PointerEvent,
   PointerEventHandler,
   ReactNode,
+  Ref,
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
@@ -12,13 +13,11 @@ import type { Prettify } from "@/utils/prettify";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { LabelProps } from "@/components/core/Label";
-import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
- 
+
 export const KIT_INPUT_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitInputVariant = (typeof KIT_INPUT_VARIANTS)[number];
 export type InputVariant = KitInputVariant | (string & {});
-export type InputStatus = SemanticStatus;
 export type InputSize = ComponentSize;
  
 export type InputClassNames = {
@@ -63,13 +62,13 @@ export type InputMotion = {
  
 export type InputControlProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  "size" | "type" | "prefix" | "onPointerDown"
+  "size" | "prefix" | "onPointerDown"
 > & {
   variant?: InputVariant;
   size?: InputSize;
   groupSegment?: ButtonGroupSegment;
-  status?: InputStatus;
-  inputType?: "text" | "number" | "password" | "file";
+  /** Native input type. `password` shows the visibility toggle; `file` shows the file area. */
+  type?: InputHTMLAttributes<HTMLInputElement>["type"];
   prefix?: ReactNode;
   suffix?: ReactNode;
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
@@ -92,7 +91,6 @@ export type InputFieldContextValue = {
   errorConnected: boolean;
   invalid?: boolean;
   required: boolean;
-  status: InputStatus;
   size: InputSize;
 };
  
@@ -110,7 +108,6 @@ export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
   invalid?: boolean;
   id?: string;
   required?: boolean;
-  status?: InputStatus;
   size?: InputSize;
   classNames?: Prettify<InputClassNames>;
   /**
@@ -149,7 +146,6 @@ export type InputLabelProps = Omit<LabelProps, "motion" | "motionController" | "
  
 export type InputHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: InputStatus;
   motion?: Prettify<InputPartMotion>;
 };
  
@@ -169,7 +165,7 @@ export type InputSimpleBodyProps = {
   inputId: string;
   labelId: string;
   size: InputSize;
-  status: InputStatus;
   controlProps: InputControlProps;
+  inputRef?: Ref<HTMLInputElement>;
 };
  

@@ -12,7 +12,7 @@ export function SearchInputVariantsDemo() {
     <div className="grid w-full max-w-2xl gap-xlarge sm:grid-cols-2">
       {VARIANTS.map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
-          <Text as="span" variant="small" className="font-w-mid text-muted">
+          <Text as="span" textStyle="small" className="font-w-mid text-muted">
             {variant}
           </Text>
           <SearchInput

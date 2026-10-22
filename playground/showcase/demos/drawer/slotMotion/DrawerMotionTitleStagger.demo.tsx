@@ -36,7 +36,7 @@ export function DrawerMotionTitleStaggerDemo() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <Text as="p" variant="base">
+            <Text as="p" textStyle="base">
               Overlay and panel keep the kit recipes.
             </Text>
           </Drawer.Body>

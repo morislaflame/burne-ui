@@ -28,7 +28,7 @@ export function LoadingMotionEventsFinishedDemo() {
       <Button size="small" variant="outline" disabled={busy} onClick={() => void bounce()}>
         Bounce
       </Button>
-      <Loading size="large" label="Loading" motionController={controller} motion={{ events }} />
+      <Loading size="large" aria-label="Loading" motionController={controller} motion={{ events }} />
     </div>
   );
 }

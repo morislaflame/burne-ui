@@ -40,6 +40,18 @@ describe("Stepper", () => {
     expect(screen.getByRole("button", { name: /Payment/ })).toHaveAttribute("aria-current", "step");
   });
 
+  it("roves across enabled steps with arrows, Home, and End", () => {
+    render(<Harness linear={false} />);
+    const current = screen.getByRole("button", { name: /Shipping/ });
+    current.focus();
+    fireEvent.keyDown(current, { key: "Home" });
+    expect(screen.getByRole("button", { name: /Account/ })).toHaveAttribute("aria-current", "step");
+    fireEvent.keyDown(screen.getByRole("button", { name: /Account/ }), { key: "End" });
+    expect(screen.getByRole("button", { name: /Payment/ })).toHaveAttribute("aria-current", "step");
+    fireEvent.keyDown(screen.getByRole("button", { name: /Payment/ }), { key: "ArrowLeft" });
+    expect(screen.getByRole("button", { name: /Shipping/ })).toHaveAttribute("aria-current", "step");
+  });
+
   it("moves to the previous step with the arrow key", () => {
     render(<Harness />);
     const current = screen.getByRole("button", { name: /Shipping/ });

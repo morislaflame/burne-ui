@@ -23,7 +23,7 @@ export function DisclosureMotionControllerCancelDemo() {
       <Disclosure motionController={controller} motion={{ events }}>
         <Disclosure.Trigger>cancel loop</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">cancel() stops the looping run.</Text>
+          <Text as="p" textStyle="small" className="text-muted">cancel() stops the looping run.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

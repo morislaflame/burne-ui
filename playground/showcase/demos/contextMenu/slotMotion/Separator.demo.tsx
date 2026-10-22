@@ -17,11 +17,11 @@ export function ContextMenuMotionSeparatorDemo() {
       }}
     >
       <ContextMenu.Trigger className={surface}>Separator</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Item>Rename</ContextMenu.Item>
         <ContextMenu.Separator />
         <ContextMenu.Item status="danger">Delete</ContextMenu.Item>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

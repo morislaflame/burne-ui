@@ -27,7 +27,9 @@ export function AccordionMotionBodyDemo() {
           </Accordion.Trigger>
         </Accordion.Heading>
         <Accordion.Panel>
-          `delay: "expand"` starts body after the panel height tween.
+          <Accordion.Body>
+            `delay: "expand"` starts `motion.body` after the panel height tween.
+          </Accordion.Body>
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item value="1">
@@ -41,7 +43,9 @@ export function AccordionMotionBodyDemo() {
             </Accordion.Message>
           </Accordion.Trigger>
         </Accordion.Heading>
-        <Accordion.Panel>Same delay token on every item.</Accordion.Panel>
+        <Accordion.Panel>
+          <Accordion.Body>Same delay token on every item.</Accordion.Body>
+        </Accordion.Panel>
       </Accordion.Item>
     </Accordion>
   );

@@ -1,7 +1,4 @@
-import type { SkinDefinition, SkinLayerRenderer, SkinSlot } from "./skinTypes";
-import { SKIN_SLOTS } from "./skinSlots.generated";
-
-const SLOT_SET = new Set<string>(SKIN_SLOTS);
+import type { SkinDefinition, SkinLayerRenderer } from "./skinTypes";
 
 type SkinEntry = {
   skin: SkinDefinition;
@@ -26,10 +23,6 @@ function warn(message: string) {
   if (process.env.NODE_ENV !== "production") console.warn(`[burne-ui] ${message}`);
 }
 
-function error(message: string) {
-  if (process.env.NODE_ENV !== "production") console.error(`[burne-ui] ${message}`);
-}
-
 function validate(skin: SkinDefinition) {
   if (!skin.name) {
     warn("registerSkin: name must be a non-empty string");
@@ -38,27 +31,8 @@ function validate(skin: SkinDefinition) {
   if ((skin.layers || skin.layersDeclarative) && !skin.styleUrl) {
     warn(`skin "${skin.name}" has layers without styleUrl`);
   }
-  if (skin.targets) {
-    for (const slot of Object.keys(skin.targets)) {
-      if (!SLOT_SET.has(slot)) {
-        error(`skin "${skin.name}" targets unknown slot "${slot}"`);
-      }
-    }
-  }
-  if (skin.motion) {
-    for (const slot of Object.keys(skin.motion)) {
-      if (!SLOT_SET.has(slot)) {
-        error(`skin "${skin.name}" motion unknown slot "${slot}"`);
-      }
-    }
-  }
-  for (const slot of [
-    ...Object.keys(skin.layers ?? {}),
-    ...Object.keys(skin.layersDeclarative ?? {}),
-  ]) {
-    if (!SLOT_SET.has(slot)) {
-      error(`skin "${skin.name}" layers unknown slot "${slot}"`);
-    }
+  if (process.env.NODE_ENV !== "production") {
+    void import("./skinSlotChecks").then(({ warnSkinSlots }) => warnSkinSlots(skin));
   }
   return true;
 }
@@ -197,4 +171,4 @@ export function getSkinRevision(): number {
   return revision;
 }
 
-export type { SkinSlot };
+export type { SkinSlot } from "./skinTypes";

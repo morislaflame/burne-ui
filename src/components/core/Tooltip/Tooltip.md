@@ -1,6 +1,8 @@
 # Tooltip
 
-Подсказка по **hover** и **focus**. Рендерится в portal (`document.body`), позиционируется относительно триггера. Compound API: `Tooltip.Trigger` + `Tooltip.Content`; опционально grid-слоты как у `Alert` (`Icon`, `Title`, `Description`).
+Подсказка по **hover** и **focus**. Рендерится в portal (`document.body`), позиционируется относительно триггера. Compound API: `Tooltip.Trigger` + `Tooltip.Content`; опционально grid-слоты как у `Alert` (`Indicator`, `Title`, `Description`).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
@@ -13,7 +15,7 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 ### Базовое использование
 
 ```tsx
-<Tooltip delayShowMs={240} variant="default" side="top">
+<Tooltip openDelay={240} variant="default" side="top">
   <Tooltip.Trigger>
     <Button variant="outline" type="button">
       Наведи или сфокусируй
@@ -28,20 +30,6 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 
 ### Compound с title / description
 
-```tsx
-<Tooltip status="info" variant="gloss" delayShowMs={0}>
-  <Tooltip.Trigger>
-    <Button type="button">Статус</Button>
-  </Tooltip.Trigger>
-  <Tooltip.Content showArrow>
-    <Tooltip.Arrow />
-    <Tooltip.Icon />
-    <Tooltip.Title>Информация</Tooltip.Title>
-    <Tooltip.Description>Дополнительный контекст</Tooltip.Description>
-  </Tooltip.Content>
-</Tooltip>
-```
-
 ### Root props
 
 | Prop | По умолчанию | Описание |
@@ -50,10 +38,10 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 | `status` | `default` | `default` | `danger` | `success` | `info` | `warning` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `side` | `top` | `top` \| `bottom` \| `left` \| `right` (+ auto-flip) |
-| `delayShowMs` | `240` | Задержка перед показом |
+| `openDelay` | `240` | Задержка перед показом |
 | `open` / `defaultOpen` / `onOpenChange` | — | Controlled / uncontrolled. Галерея MotionController держит `open` |
 | `icon` | — | Иконка для semantic variants |
-| `showIcon` | auto | Показать/скрыть indicator |
+| `icon` | status glyph | `null` прячет indicator, узел заменяет иконку статуса |
 | `classNames` | — | Слоты (см. ниже) |
 | `motion` | — | Карта слотов; хост — `Tooltip.Content` (`content.enter` / `leave`). `events` — app-команды |
 
@@ -65,15 +53,15 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 | `Tooltip.Content` | Portal wrapper + positioning |
 | `Tooltip.Panel` | Поверхность bubble (simple title/description внутри) |
 | `Tooltip.Arrow` | Стрелка к триггеру |
-| `Tooltip.Icon` / `Indicator` | Semantic icon slot |
+| `Tooltip.Indicator` | Semantic icon slot |
 | `Tooltip.Message` | Grid wrapper (`display: contents` — padding, border, background и width не рисуются) |
 | `Tooltip.Title` / `Description` | Текстовые слоты |
 
 ### `TooltipClassNames`
 
-`root`, `trigger`, `content`, `panelRelative`, `arrow`, `panel`, `message`, `indicator`, `icon`, `title`, `description`.
+`trigger`, `content`, `panelRelative`, `arrow`, `panel`, `message`, `indicator`, `title`, `description`.
 
-`root` и `trigger` применяются к триггеру (в т.ч. при `cloneElement` единственного child).
+`trigger` применяется к триггеру (в т.ч. при `cloneElement` единственного child).
 
 ## Variant / status / размеры
 
@@ -87,7 +75,6 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 |---------|-----------|
 | `default` | `bg-surface` + `shadow-token-xlarge` |
 | `outline` / `secondary` | transparent / secondary shell |
-| `gloss` | `gloss-panel` + gloss interactive ref на panel |
 
 Размер влияет на padding panel, typography (`Text` variants) и icon box.
 
@@ -104,12 +91,10 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 **DOM:**
 
 ```
-<div class=root>                         ← wraps trigger
-  <button|span|asChild> Trigger        ← aria-describedby when open
-  portal → document.body
-    <div role=tooltip id=tooltipId ref=tipRef>   ← слот `content`
+<button|span|asChild> Trigger          ← слот `trigger`, aria-describedby when open
+portal → document.body
+    <div role=tooltip id=tooltipId ref=tipRef>   ← позиция, не слот
       [Tooltip.Arrow]
-      <Tooltip.Panel | gloss-panel>
 ```
 
 Нет trigger squeeze (в отличие от Popover) — show по hover/focus.
@@ -118,7 +103,7 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` (`motionTooltip()`) |
+| `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` на том же узле, что классы `panel` |
 | `title` / `description` / `indicator` / `arrow` / `panel` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 
 `leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Nested `enter` — следующий кадр после host (`scheduleNestedEnterBroadcast`).
@@ -126,6 +111,8 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 **Где в коде:** типы — `tooltipTypes.ts`; scope — `tooltipContext.tsx`; defaults + host — `tooltipAnimations.ts`; Content-provider — `tooltipParts.tsx`; карта на корне — `Tooltip.tsx`.
 
 Проп `motionController` на **`Tooltip.Content`**. `play()` skip — нет `root`; `playSlot("content")`. Controlled `open` оставляет слоты живыми. playground / Storybook **MotionController**.
+
+На корне — scope карты. На `Tooltip.Content` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Tooltip, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -141,7 +128,7 @@ function Nudge() {
       <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "tooltip:nudge")}>
         Nudge
       </Button>
-      <Tooltip open delayShowMs={0}>
+      <Tooltip open openDelay={0}>
         <Tooltip.Trigger>
           <Button size="small" variant="outline">Trigger</Button>
         </Tooltip.Trigger>
@@ -171,7 +158,7 @@ function Nudge() {
 
 ```tsx
 <Tooltip
-  delayShowMs={0}
+  openDelay={0}
   status="info"
   classNames={{
     panel: "border-token-info",
@@ -204,7 +191,7 @@ function Nudge() {
 
 **Планирование показа:**
 
-1. `pointerenter` / `focus` → `scheduleShow()` после `delayShowMs`
+1. `pointerenter` / `focus` → `scheduleShow()` после `openDelay`
 2. `pointerleave` / `blur` / `Escape` → `hide()` + отмена таймера
 
 **Монтаж портала + анимация:**
@@ -225,14 +212,13 @@ configureMotion({
 });
 ```
 
-Локально: `delayShowMs` на root (default `240`). **Reduced motion:** `applyReducedPortalMotion` / instant unmount.
+Локально: `openDelay` на root (default `240`). **Reduced motion:** `applyReducedPortalMotion` / instant unmount.
 
-### 2. Shadow / gloss surface
+### 2. Shadow surface
 
 | surface | Поведение |
 |---------|-----------|
 | `default` | `shadow-token-xlarge` — large elevation на bubble |
-| `gloss` | `createGlossInteractiveRefCallback` на gloss panel |
 
 Tooltip — floating overlay с постоянной large-тенью (как Popover / Dialog).
 
@@ -258,9 +244,8 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
-| Show delay | `setTimeout` | — | `delayShowMs` |
+| Show delay | `setTimeout` | — | `openDelay` |
 | Rest shadow | `shadow-token-xlarge` | — | `variant="default"` |
-| Gloss ref | gloss utils | — | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side` |
 
 ## Токены и CSS
@@ -270,7 +255,6 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 | `TOOLTIP_PANEL_CLASS` | Bubble surface, border, padding per size |
 | `TOOLTIP_MESSAGE_GRID` | Alert-like grid для Icon/Title/Description |
 | status accents | `text-*` on title + indicator only (neutral shell) |
-| `gloss-panel` + `gloss-content` | Gloss surface |
 | `burneLightThemePortalProps` | Light theme inheritance в portal |
 
 ## Стилизация и кастомизация
@@ -280,25 +264,25 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 1. **`className` на подчастях** — `Trigger`, `Content`, `Panel`, `Arrow` merge в слот.
 2. **`classNames` на root `Tooltip`** — все слоты через `TooltipClassNamesProvider`.
 
-`root` и `trigger` применяются к trigger element (в т.ч. `cloneElement` единственного child).
+`trigger` применяется к trigger element (в т.ч. `cloneElement` единственного child).
 
 ### Слоты `TooltipClassNames`
 
 | Слот | DOM | Когда использовать |
 |------|-----|-------------------|
-| `root` / `trigger` | Trigger element | Ring, focus outline helpers |
-| `content` | Portal wrapper | Outer shell, ring |
+| `trigger` | Trigger element | Ring, focus outline helpers |
+| `content` | Bubble, тот же узел, что `panel` | Ring вместе с поверхностью |
 | `panelRelative` | Inner relative wrapper | Isolation, overflow |
 | `arrow` | Arrow span | Fill/border стрелки (matches panel, not status) |
 | `panel` | Bubble surface | Background, border, padding |
 | `message` | Grid wrapper (`display:contents`) | Compound layout spacing |
-| `indicator` / `icon` | Icon cell | Цвет и размер. Размер — `icon-slot-*` на обёртке (`classNames.icon="icon-slot-large"`) |
+| `indicator` | Icon cell | Цвет и размер. Размер — `icon-slot-*` на обёртке (`classNames.indicator="icon-slot-large"` или `className` на `Tooltip.Indicator`) |
 | `title` / `description` | Text cells | Typography hierarchy |
 
 ### Simple text tooltip
 
 ```tsx
-<Tooltip delayShowMs={240} side="top">
+<Tooltip openDelay={240} side="top">
   <Tooltip.Trigger>
     <Button variant="outline" type="button">Наведи</Button>
   </Tooltip.Trigger>
@@ -313,9 +297,8 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 
 ```tsx
 <Tooltip
-  delayShowMs={0}
+  openDelay={0}
   status="info"
-  variant="gloss"
   classNames={{
     panel: "border-primary/30",
     title: "text-primary font-semibold",
@@ -327,7 +310,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
   </Tooltip.Trigger>
   <Tooltip.Content showArrow>
     <Tooltip.Arrow />
-    <Tooltip.Icon />
+    <Tooltip.Indicator />
     <Tooltip.Title>Информация</Tooltip.Title>
     <Tooltip.Description>Дополнительный контекст</Tooltip.Description>
   </Tooltip.Content>
@@ -340,11 +323,10 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 
 ### Практические заметки
 
-- `delayShowMs={0}` — Storybook / instant tooltips.
+- `openDelay={0}` — Storybook / instant tooltips.
 - Portal наследует light theme через `burneLightThemePortalProps`.
 - **Не фиксируйте `transform`/`left`/`top` на `content`** — positioning + GSAP.
-- Semantic variants: icon auto unless `showIcon={false}` или custom `icon`.
-- Gloss grid: `Tooltip.Message` + Icon/Title/Description как у `Alert`.
+- Semantic variants: icon auto unless `icon={null}` или свой `icon`.
 - **Порядок мержа:** variant/status → `classNames.slot` → `className` подчасти.
 
 ## Интеграции
@@ -384,4 +366,4 @@ Tooltip/
 
 ## Storybook
 
-`Core Components/Tooltip` — variants, statuses, gloss grid, semantic icons, light theme, a11y, `classNames`.
+`Core Components/Tooltip` — variants, statuses grid, semantic icons, light theme, a11y, `classNames`.

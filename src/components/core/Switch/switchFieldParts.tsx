@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes, type LabelHTMLAttributes, type Ref } from "react";
+import { forwardRef, type HTMLAttributes, type LabelHTMLAttributes, type Ref, type ForwardedRef } from "react";
  
 import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
@@ -80,7 +80,7 @@ export const SwitchContent = forwardRef<HTMLDivElement, SwitchContentProps>(
  
 SwitchContent.displayName = "SwitchContent";
  
-export function SwitchLabel({ children, className, motion, id: idProp, ...rest }: SwitchLabelProps) {
+export const SwitchLabel = forwardRef(function SwitchLabel({ children, className, motion, id: idProp, ...rest }: SwitchLabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   const field = useSwitchFieldContext();
   const slotClassNames = useSwitchClassNames();
   const sz = SWITCH_LAYOUT[field.size];
@@ -91,7 +91,7 @@ export function SwitchLabel({ children, className, motion, id: idProp, ...rest }
       {...rest}
       htmlFor={field.switchId}
       id={idProp ?? field.labelId}
-      ref={mergeRefs(setRef, (node) => {
+      ref={mergeRefs(setRef, ref, (node) => {
         if (field.isCompound && field.useInlineCompoundMotion) {
           field.textMotionRef.current = node;
         }
@@ -109,7 +109,7 @@ export function SwitchLabel({ children, className, motion, id: idProp, ...rest }
     >
       <Text
         as="span"
-        variant={sz.title}
+        textStyle={sz.title}
         inheritColor
         className={cn(
           SWITCH_LABEL_TEXT_CLASS,
@@ -122,21 +122,21 @@ export function SwitchLabel({ children, className, motion, id: idProp, ...rest }
       </Text>
     </label>
   );
-}
+});
  
 SwitchLabel.displayName = "SwitchLabel";
  
-export function SwitchHint({ children, className, variant, motion, ...rest }: SwitchHintProps) {
+export const SwitchHint = forwardRef(function SwitchHint({ children, className, textStyle, motion, ...rest }: SwitchHintProps, ref: ForwardedRef<HTMLElement>) {
   const ctx = useSwitchFieldContext();
   const slotClassNames = useSwitchClassNames();
   const { setRef } = useSwitchChromeSlot("hint", motion);
  
   return (
     <Field.Hint
-      ref={setRef}
+      ref={mergeRefs(setRef, ref)}
       as="span"
       id={ctx.hintId}
-      variant={variant ?? SWITCH_LAYOUT[ctx.size].desc}
+      textStyle={textStyle ?? SWITCH_LAYOUT[ctx.size].desc}
       className={cn(
         ctx.isCompound && switchSecondaryCellClass(2, ctx.labelPosition),
         ctx.disabled && SWITCH_HINT_DISABLED_CLASS,
@@ -148,21 +148,21 @@ export function SwitchHint({ children, className, variant, motion, ...rest }: Sw
       {children}
     </Field.Hint>
   );
-}
+});
  
 SwitchHint.displayName = "Switch.Hint";
  
-export function SwitchError({ children, className, motion, ...rest }: SwitchErrorProps) {
+export const SwitchError = forwardRef(function SwitchError({ children, className, motion, ...rest }: SwitchErrorProps, ref: ForwardedRef<HTMLElement>) {
   const ctx = useSwitchFieldContext();
   const slotClassNames = useSwitchClassNames();
   const { setRef } = useSwitchChromeSlot("error", motion);
  
   return (
     <Field.Error
-      ref={setRef}
+      ref={mergeRefs(setRef, ref)}
       as="span"
       id={ctx.errorId}
-      variant={SWITCH_LAYOUT[ctx.size].desc}
+      textStyle={SWITCH_LAYOUT[ctx.size].desc}
       className={cn(
         ctx.isCompound &&
           switchSecondaryCellClass(switchErrorRow(ctx.hasCompoundHint), ctx.labelPosition),
@@ -175,7 +175,7 @@ export function SwitchError({ children, className, motion, ...rest }: SwitchErro
       {children}
     </Field.Error>
   );
-}
+});
  
 SwitchError.displayName = "Switch.Error";
  

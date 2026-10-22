@@ -1,5 +1,7 @@
+import { forwardRef, useRef, type ForwardedRef } from "react";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { FieldHiddenValues, readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
@@ -10,7 +12,7 @@ import {
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
  
 import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxMotionProvider, ComboBoxProvider } from "./comboBoxContext";
-import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
+import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxShell, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
 import type { ComboBoxProps } from "./comboBoxTypes";
 import { useComboBoxRootState } from "./useComboBoxRootState";
  
@@ -23,18 +25,18 @@ export type {
   ComboBoxHintProps,
   ComboBoxLabelProps,
   ComboBoxErrorProps,
-  ComboBoxInputGroupProps,
+  ComboBoxShellProps,
   ComboBoxInputProps,
   ComboBoxTriggerProps,
   ComboBoxPopoverProps,
-  ComboBoxOption,
+  ComboBoxItem,
   ComboBoxClassNames,
   ComboBoxMotion,
   ComboBoxPartMotion,
 } from "./comboBoxTypes";
  
  
-export function ComboBoxRoot({
+export const ComboBoxRoot = forwardRef(function ComboBoxRoot({
   children,
   label,
   hint,
@@ -44,9 +46,8 @@ export function ComboBoxRoot({
   classNames,
   id,
   required,
-  status,
   size,
-  options,
+  items,
   value,
   defaultValue,
   onValueChange,
@@ -55,10 +56,20 @@ export function ComboBoxRoot({
   onOpenChange,
   variant,
   disabled,
+  readOnly,
+  autoFocus,
+  tabIndex,
   placeholder,
+  inputValue,
+  defaultInputValue,
+  onInputValueChange,
   menuMaxHeight,
+  portalContainer,
   virtualized,
   virtualItemSize,
+  filter,
+  allowsCustomValue,
+  loading,
   name,
   motion,
   motionController,
@@ -66,7 +77,7 @@ export function ComboBoxRoot({
   motionPayload,
   playInitialState,
   ...rest
-}: ComboBoxProps) {
+}: ComboBoxProps, ref: ForwardedRef<HTMLDivElement>) {
   const formCtx = useOptionalFormBindingContext();
   const fieldName = typeof name === "string" ? name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
@@ -84,9 +95,8 @@ export function ComboBoxRoot({
     id,
     name,
     required,
-    status,
     size: resolvedSize,
-    options,
+    items,
     value,
     defaultValue,
     onValueChange,
@@ -95,18 +105,21 @@ export function ComboBoxRoot({
     onOpenChange,
     variant,
     disabled,
+    readOnly,
     placeholder,
+    inputValue,
+    defaultInputValue,
+    onInputValueChange,
     menuMaxHeight,
+    portalContainer,
     virtualized,
     virtualItemSize,
+    filter,
+    allowsCustomValue,
+    loading,
   });
-  const isInvalid = useResolvedFieldInvalid({
-    invalid,
-    errorConnected: resolvedError != null,
-    formInvalid: state.fieldCtx.formInvalid,
-  });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
- 
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   return (
     <ComboBoxFieldProvider value={state.fieldCtx}>
       <ComboBoxProvider value={state.comboCtx}>
@@ -123,15 +136,16 @@ export function ComboBoxRoot({
               size={resolvedSize}
               className={cn(
                 inJoinedButtonGroup && BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
-                className,
                 classNames?.root,
+                className,
               )}
               {...rest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size: resolvedSize,
                 variant: resolvedVariant,
-                status: paintedStatus,
               })}
+              data-readonly={readOnlyData(state.readOnly)}
             >
               {state.isCompound ? (
                 children
@@ -147,6 +161,7 @@ export function ComboBoxRoot({
                 playInitialState={playInitialState}
                 />
               )}
+              <FieldHiddenValues name={name} value={state.comboCtx.value} />
             </Field>
           </FieldLabelContext.Provider>
           </ComboBoxMotionProvider>
@@ -154,13 +169,13 @@ export function ComboBoxRoot({
       </ComboBoxProvider>
     </ComboBoxFieldProvider>
   );
-}
+});
  
 ComboBoxRoot.displayName = "ComboBox";
  
 export {
   ComboBoxInput,
-  ComboBoxInputGroup,
+  ComboBoxShell,
   ComboBoxTrigger,
   ComboBoxPopover,
   ComboBoxLabel,

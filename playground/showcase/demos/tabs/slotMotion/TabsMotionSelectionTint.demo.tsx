@@ -28,10 +28,10 @@ export function TabsMotionSelectionTintDemo() {
         <Tabs.Tab value="two">Two</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="one">
-        <Text variant="base">check / uncheck on tab</Text>
+        <Text textStyle="base">check / uncheck on tab</Text>
       </Tabs.Panel>
       <Tabs.Panel value="two">
-        <Text variant="base">Indicator FLIP stays kit-internal</Text>
+        <Text textStyle="base">Indicator FLIP stays kit-internal</Text>
       </Tabs.Panel>
     </Tabs>
   );

@@ -4,12 +4,12 @@ import { ComboBoxCustomTriggerIconDemo } from "../demos/combobox/ComboBoxCustomT
 import comboBoxCustomTriggerIconSource from "../demos/combobox/ComboBoxCustomTriggerIcon.demo.tsx?raw";
 import { ComboBoxVirtualizedDemo } from "../demos/combobox/ComboBoxVirtualized.demo";
 import comboBoxVirtualizedSource from "../demos/combobox/ComboBoxVirtualized.demo.tsx?raw";
+import { ComboBoxFilterDemo } from "../demos/combobox/ComboBoxFilter.demo";
+import comboBoxFilterSource from "../demos/combobox/ComboBoxFilter.demo.tsx?raw";
 import { ComboBoxDefaultDemo } from "../demos/combobox/ComboBoxDefault.demo";
 import comboBoxDefaultSource from "../demos/combobox/ComboBoxDefault.demo.tsx?raw";
 import { ComboBoxVariantsDemo } from "../demos/combobox/ComboBoxVariants.demo";
 import comboBoxVariantsSource from "../demos/combobox/ComboBoxVariants.demo.tsx?raw";
-import { ComboBoxStatusesDemo } from "../demos/combobox/ComboBoxStatuses.demo";
-import comboBoxStatusesSource from "../demos/combobox/ComboBoxStatuses.demo.tsx?raw";
 import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
 import comboBoxSizesSource from "../demos/combobox/ComboBoxSizes.demo.tsx?raw";
 import { ComboBoxPopoverSideDemo } from "../demos/combobox/ComboBoxPopoverSide.demo";
@@ -35,21 +35,21 @@ export function ComboBoxShowcase() {
       importPath='import { ComboBox } from "@/components/core/ComboBox";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Default" description="options, value and onValueChange — controlled mode.">
+      <ShowcaseSection title="Default" description="items, value and onValueChange — controlled mode.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxDefaultDemo} source={comboBoxDefaultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Virtualized" description="virtualized mounts only the visible options. Filtering still searches the full list.">
+      <ShowcaseSection title="Filter" description="filter replaces the text match. allowsCustomValue commits typed text on Enter. loading shows a status instead of items.">
+        <ShowcaseDemoFromFile align="center" Demo={ComboBoxFilterDemo} source={comboBoxFilterSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Virtualized" description="virtualized mounts only the visible items. Filtering still searches the full list.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxVirtualizedDemo} source={comboBoxVirtualizedSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxVariantsDemo} source={comboBoxVariantsSource} />
       </ShowcaseSection>
-      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
-        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxStatusesDemo} source={comboBoxStatusesSource} />
-      </ShowcaseSection>
-
       <ShowcaseSection
         title="Custom trigger icon"
         description="ComboBox.Trigger children replace the default chevron."
@@ -77,7 +77,7 @@ export function ComboBoxShowcase() {
       </ShowcaseSection>
 <ShowcaseSection
         title="classNames"
-        description="Slot customization inputGroup, input, trigger, popover and listBox."
+        description="Slot customization shell, input, trigger, popover and listBox."
       >
         <ShowcaseDemoFromFile
           align="center"
@@ -101,7 +101,7 @@ export function ComboBoxShowcase() {
 
       <ShowcaseSection
         title="MotionController"
-        description="One gallery: playSlot on inputGroup (no play: no root slot), chrome label on Root, cancel loop, combo events."
+        description="One gallery: playSlot on shell (no play: no root slot), chrome label on Root, cancel loop, combo events."
       >
         <ComboBoxMotionControllerGalleryDemo />
       </ShowcaseSection>
@@ -113,16 +113,16 @@ export function ComboBoxShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="options: { value, label }[], value, onValueChange, label, hint, variant."
+            description="items: { value, label }[], value, onValueChange, label, hint, variant."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, inputGroup, input, trigger, popover, popoverBody, listBox, hint, error."
+            description="root, shell, input, trigger, popover, popoverBody, listBox, hint, error."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Options">
           <p>
-            Array <code>options</code> with margins <code>value</code> and <code>label</code>. For default-style
+            Array <code>items</code> with margins <code>value</code> and <code>label</code>. For default-style
             pass it on <code>variant=&quot;default&quot;</code>.
           </p>
         </ShowcaseDoc.Block>

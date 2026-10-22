@@ -6,8 +6,7 @@ export function PopoverClassNamesFullDemo() {
   return (
     <Popover
       classNames={{
-        root: "rounded-large ring-2 ring-primary/40",
-        trigger: "rounded-large",
+        trigger: "rounded-large ring-2 ring-primary/40",
         content: "ring-1 ring-primary/25",
         panelRelative: "isolate",
         panel: "border-primary/30 bg-surface/95",
@@ -24,10 +23,10 @@ export function PopoverClassNamesFullDemo() {
       <Popover.Content>
         <Popover.Header>
           <Popover.Title>Display Settings</Popover.Title>
-          <Popover.Description>root on the trigger, panel/title/body through classNames</Popover.Description>
+          <Popover.Description>trigger, panel, title and body through classNames</Popover.Description>
         </Popover.Header>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Example of customizing a pop-up panel.
           </Text>
         </Popover.Body>

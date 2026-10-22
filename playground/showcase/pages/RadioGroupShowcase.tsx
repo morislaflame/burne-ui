@@ -17,6 +17,7 @@ import radioGroupPlanCardsSource from "../demos/radioGroup/RadioGroupPlanCards.d
 import { RadioSlotMotionGalleryDemo } from "../demos/radio/slotMotion/gallery";
 import { RadioMotionControllerGalleryDemo } from "../demos/radio/motionController/gallery";
 import { RadioGroupSlotMotionGalleryDemo } from "../demos/radioGroup/slotMotion/gallery";
+import { RadioGroupMotionControllerGalleryDemo } from "../demos/radioGroup/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -50,6 +51,13 @@ export function RadioGroupShowcase() {
 
       <ShowcaseSection title="Group slot motion" description="RadioGroup scope: instant enter skip, change tint, chrome enter on legend / hint. Radio items keep Radio motion.">
         <RadioGroupSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (group)"
+        description="Handle on the group chrome scope: root, legend, hint, list. Radio dots stay on Radio motion."
+      >
+        <RadioGroupMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -90,7 +98,7 @@ export function RadioGroupShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="RadioGroup.Legend, RadioGroup.Label, RadioGroup.List — wrapper. Radio — separate item with value and label."
+            description="RadioGroup.Legend, Label, RadioGroup.List — wrapper. Radio — separate item with value and label."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="State">

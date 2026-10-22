@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import { render } from "@/__tests__/helpers";
+import { SkinProvider } from "@/skins/skinContext";
 import { registerSkin, unregisterSkin } from "@/skins/skinRegistry";
 
 import { Surface } from "./Surface";
@@ -25,7 +26,11 @@ describe("Surface SkinShell", () => {
   it("mounts layersDeclarative for surface.root", () => {
     registerSkin(LAYER);
 
-    const { container } = render(<Surface variant="surface-layer">pane</Surface>);
+    const { container } = render(
+      <SkinProvider>
+        <Surface variant="surface-layer">pane</Surface>
+      </SkinProvider>,
+    );
 
     const panel = container.querySelector(".skin-panel");
     expect(panel).toBeTruthy();

@@ -11,11 +11,11 @@ export function ToggleButtonGroupViewToolbarDemo() {
 
   return (
     <Surface variant="secondary" padding="large" className="flex w-full max-w-md items-center justify-between gap-large">
-      <Text as="span" variant="small" className="font-medium">
+      <Text as="span" textStyle="small" className="font-medium">
         Catalog view
       </Text>
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         variant="outline"
         size="small"
         aria-label="Catalog view"

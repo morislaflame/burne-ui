@@ -129,7 +129,7 @@ export const Controlled: Story = {
         >
           {pressed ? "Like" : "Like"}
         </ToggleButton>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           pressed={String(pressed)}
         </Text>
       </div>
@@ -168,6 +168,7 @@ export const CustomClassNames: Story = {
     <ToggleButton
       defaultPressed
       icon={<IoHeartOutline aria-hidden />}
+      className="px-xlarge"
       classNames={{
         root: "rounded-large ring-1 ring-danger/25",
         fill: "bg-danger/20",
@@ -184,7 +185,11 @@ export const CustomClassNames: Story = {
 export const LabelLayout: Story = {
   name: "Label + trailing layout",
   render: () => (
-    <ToggleButton className="w-full max-w-xs justify-between gap-mid" icon={<IoHeartOutline aria-hidden />}>
+    <ToggleButton
+      className="w-full max-w-xs"
+      classNames={{ content: "justify-between gap-mid" }}
+      icon={<IoHeartOutline aria-hidden />}
+    >
       <span>Like</span>
       <span className="text-xsmall">128</span>
     </ToggleButton>

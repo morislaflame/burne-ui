@@ -9,8 +9,7 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
-  type RefObject,
-} from "react";
+  type RefObject } from "react";
  
 import { Ripple } from "@/components/core/Ripple";
 import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
@@ -27,10 +26,9 @@ import { ButtonContent, ButtonLabel } from "./buttonParts";
 import { ButtonSimpleContent } from "./buttonSimpleContent";
 import type { ButtonMotion, ButtonProps } from "./buttonTypes";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision } from "@/skins/skinContext";
-import { hasKitMember } from "@/skins/resolveVariantVisual";
+import { usesKitElevationMember } from "@/skins/resolveVariantVisual";
 import { KIT_BUTTON_VARIANTS } from "./buttonTypes";
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
-import { cn } from "@/utils/cn";
 import { useButtonRootState } from "./useButtonRootState";
  
 export type {
@@ -66,16 +64,12 @@ function resolveButtonInner({
   hasCompoundContent,
   icon,
   iconPosition,
-  classNames,
-  labelLayoutClass,
 }: {
   children: ReactNode;
   isCompound: boolean;
   hasCompoundContent: boolean;
   icon?: ReactNode;
   iconPosition?: ButtonProps["iconPosition"];
-  classNames?: ButtonProps["classNames"];
-  labelLayoutClass?: string;
 }) {
   if (isCompound) {
     if (hasCompoundContent) return children;
@@ -84,7 +78,7 @@ function resolveButtonInner({
  
   return (
     <ButtonContent>
-      <ButtonLabel className={cn(classNames?.label, labelLayoutClass)}>
+      <ButtonLabel>
         <ButtonSimpleContent icon={icon} iconPosition={iconPosition}>
           {children}
         </ButtonSimpleContent>
@@ -183,8 +177,6 @@ function ButtonSurface({
           hasCompoundContent,
           icon: state.icon,
           iconPosition: state.iconPosition,
-          classNames: state.classNames,
-          labelLayoutClass: state.labelLayoutClass,
         })}
       </>
     );
@@ -341,7 +333,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     () => ({
       pointerInside: hoverPointerInsideRef,
       hasHoverShadow:
-        hasKitMember(state.variant, KIT_BUTTON_VARIANTS, BUTTON_VARIANT_HAS_HOVER_SHADOW) && !state.groupSegment,
+        usesKitElevationMember(state.variant, KIT_BUTTON_VARIANTS, BUTTON_VARIANT_HAS_HOVER_SHADOW) && !state.groupSegment,
     }),
     [state.groupSegment, state.variant],
   );

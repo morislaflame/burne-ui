@@ -38,13 +38,17 @@ import {
   useSwitchMotionScope,
 } from "./switchContext";
 import type {
-  SwitchCheckMotion,
+  SwitchPartMotion,
   SwitchMotion,
   SwitchVariant,
   UseSwitchAnimationsProps,
   UseSwitchTrackAnimationsProps,
 } from "./switchTypes";
 import { KIT_SWITCH_VARIANTS } from "./switchTypes";
+
+import { bindSwitchRecipes } from "@/components/core/utils/slotMotion/recipes/bindSwitch";
+
+bindSwitchRecipes();
 
 export const SWITCH_MOTION_DEFAULTS: SwitchMotion = {
   thumb: { check: "switchThumb", uncheck: "switchThumb" },
@@ -68,7 +72,7 @@ export type SwitchChromeSlot = "label" | "hint" | "error";
  
 export function useSwitchChromeSlot(
   slot: SwitchChromeSlot,
-  motion?: SwitchCheckMotion,
+  motion?: SwitchPartMotion,
 ) {
   const ctx = useOptionalSwitchFieldContext();
   const scope = useOptionalSwitchMotionScope();

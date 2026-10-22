@@ -5,7 +5,7 @@ const eventDays = new Set([3, 12, 18, 25]);
 export function CalendarRenderDayDemo() {
   return (
     <Calendar
-      mode="single"
+      selectionMode="single"
       renderDay={(date, { day, selected }) => (
         <span className="relative inline-flex flex-col items-center gap-[2px]">
           <span>{day}</span>

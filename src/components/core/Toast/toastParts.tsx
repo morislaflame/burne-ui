@@ -8,7 +8,7 @@ import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIco
 import { useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { useToastClassNames, useToastItem, useOptionalToastMotionScope } from "./toastContext";
-import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, toastIndicatorClass, toastLoadingColor, toastTitleClass } from "./toastStyles";
+import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, toastIndicatorClass, toastTitleClass } from "./toastStyles";
 import type {
   ToastActionProps,
   ToastCloseProps,
@@ -63,7 +63,7 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
           )}
           {...rest}
         >
-          <Loading size={sizePreset.loadingSize} color={toastLoadingColor(status)} />
+          <Loading size={sizePreset.loadingSize} status={status} />
         </span>
       );
     }
@@ -140,7 +140,7 @@ export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="div"
-        variant={sizePreset.titleVariant}
+        textStyle={sizePreset.titleVariant}
         id={idProp ?? titleId}
         className={cn(
           toastTitleClass(status),
@@ -175,7 +175,7 @@ export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="div"
-        variant={sizePreset.descVariant}
+        textStyle={sizePreset.descVariant}
         id={idProp ?? descriptionId}
         className={cn(
           TOAST_DESCRIPTION_CLASS,

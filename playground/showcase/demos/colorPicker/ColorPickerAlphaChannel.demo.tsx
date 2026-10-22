@@ -8,7 +8,7 @@ export function ColorPickerAlphaChannelDemo() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Transparency channel
       </Text>
       <div className="flex items-center gap-large">
@@ -17,7 +17,7 @@ export function ColorPickerAlphaChannelDemo() {
           <ColorPicker.Content showAlpha />
         </ColorPicker>
         <ColorSwatch color={color} size="large" />
-        <Text as="span" variant="small" className="font-mono text-muted">
+        <Text as="span" textStyle="small" className="font-mono text-muted">
           {color}
         </Text>
       </div>

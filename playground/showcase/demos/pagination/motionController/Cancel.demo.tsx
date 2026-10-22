@@ -42,7 +42,9 @@ export function PaginationMotionControllerCancelDemo() {
         onPageChange={setPage}
         motionController={controller}
         motion={{
-          control: { pressIn: false, pressOut: false },
+          previous: { pressIn: false, pressOut: false },
+          next: { pressIn: false, pressOut: false },
+          page: { pressIn: false, pressOut: false },
           events,
         }}
       >

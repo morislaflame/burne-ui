@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -28,12 +28,12 @@ export function ComboBoxMotionEventsKickDemo() {
 
   return (
     <div className="flex max-w-sm flex-col gap-2xlarge">
-      <Button size="small" variant="outline" onClick={() => controller.playSlot("inputGroup", "combo:kick")}>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "combo:kick")}>
         Kick
       </Button>
       <ComboBox
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{ events }}

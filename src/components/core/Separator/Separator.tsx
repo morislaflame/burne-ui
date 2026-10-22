@@ -16,6 +16,7 @@ export type {
 export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separator(
   {
     orientation = "horizontal",
+    decorative = false,
     className = "",
     motion,
     motionController,
@@ -39,6 +40,7 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
         playInitialState={playInitialState}>
       <SeparatorSurface
         orientation={orientation}
+        decorative={decorative}
         className={className}
         forwardedRef={ref}
         rootMotion={motion?.root}
@@ -54,6 +56,7 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
  
 function SeparatorSurface({
   orientation,
+  decorative,
   className,
   forwardedRef,
   rootMotion,
@@ -64,6 +67,7 @@ function SeparatorSurface({
   rest,
 }: {
   orientation: NonNullable<SeparatorProps["orientation"]>;
+  decorative: boolean;
   className: string;
   forwardedRef: React.ForwardedRef<HTMLElement>;
   rootMotion?: SeparatorPartMotion;
@@ -74,6 +78,7 @@ function SeparatorSurface({
   rest: Omit<
     SeparatorProps,
     | "orientation"
+    | "decorative"
     | "className"
     | "motion"
     | "motionController"
@@ -98,8 +103,10 @@ function SeparatorSurface({
       <hr
         ref={part.setRef as Ref<HTMLHRElement>}
         className={sharedClassName}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
+        role={decorative ? "none" : undefined}
+        aria-hidden={decorative ? true : undefined}
         data-orientation={orientation}
       />
     );
@@ -108,11 +115,12 @@ function SeparatorSurface({
   return (
     <div
       ref={part.setRef as Ref<HTMLDivElement>}
-      role="separator"
-      aria-orientation={separatorAriaOrientation(orientation)}
+      role={decorative ? "none" : "separator"}
+      aria-orientation={decorative ? undefined : separatorAriaOrientation(orientation)}
+      aria-hidden={decorative ? true : undefined}
       className={sharedClassName}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       data-orientation={orientation}
     />
   );

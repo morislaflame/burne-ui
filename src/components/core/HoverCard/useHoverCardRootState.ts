@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useControllableOpen } from "@/components/core/Popover/popoverAPI";
+import { useOverlayDelay } from "@/components/core/utils/overlayLayer";
 
 import { HOVER_CARD_CLOSE_DELAY, HOVER_CARD_OPEN_DELAY } from "./hoverCardTypes";
 import type { HoverCardHostContextValue, UseHoverCardRootStateProps } from "./hoverCardTypes";
@@ -9,13 +10,16 @@ export function useHoverCardRootState({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
-  openDelay = HOVER_CARD_OPEN_DELAY,
-  closeDelay = HOVER_CARD_CLOSE_DELAY,
+  openDelay: openDelayProp,
+  closeDelay: closeDelayProp,
   motionController,
   motionState,
   motionPayload,
   playInitialState,
 }: UseHoverCardRootStateProps) {
+  const delays = useOverlayDelay();
+  const openDelay = openDelayProp ?? delays?.openDelay ?? HOVER_CARD_OPEN_DELAY;
+  const closeDelay = closeDelayProp ?? delays?.closeDelay ?? HOVER_CARD_CLOSE_DELAY;
   const [open, setOpen] = useControllableOpen(openProp, defaultOpen, onOpenChange);
   const openRef = useRef(open);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

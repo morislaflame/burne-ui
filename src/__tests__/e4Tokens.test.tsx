@@ -66,8 +66,11 @@ describe("Э4 tokens", () => {
     expect(app).toContain("@utility shadow-token-xlarge");
   });
 
-  it("adds weight 400, header tracking, round icon sizes, and generated breakpoints", () => {
-    expect(tokens).toContain("--font-w-regular: 400;");
+  it("keeps the five-step weight scale, header tracking, round icon sizes, and generated breakpoints", () => {
+    expect(tokens).not.toContain("--font-w-regular");
+    expect(app).not.toContain("font-w-regular");
+    expect(tokens).toContain("--font-w-small: 500;");
+    expect(tokens).toContain("--font-w-base: 500;");
     expect(tokens).toContain("--letter-spacing-xlarge: -0.02em;");
     expect(tokens).toContain("--letter-spacing-2xlarge: -0.025em;");
     expect(tokens).toContain("--letter-spacing-3xlarge: -0.03em;");

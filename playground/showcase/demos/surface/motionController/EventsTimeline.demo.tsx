@@ -29,7 +29,7 @@ export function SurfaceMotionEventsTimelineDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small">
+        <Text as="p" textStyle="small">
           One event, three tweens on a timeline — lift, scale, settle.
         </Text>
       </Surface>

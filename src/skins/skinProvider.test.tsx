@@ -4,13 +4,16 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ButtonGroup } from "@/components/composite/ButtonGroup";
 import { resolveButtonMotionDefaults } from "@/components/core/Button/buttonAnimations";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import { Table } from "@/components/core/Table";
 import { Dialog } from "@/components/core/Dialog";
+import { renderSkinStylesheet } from "@/skins/skinDocument";
 import { SkinProvider, useSkin, useSkinRegistryRevision } from "@/skins/skinContext";
-import { clearSkinsForTests, getSkinRevision, registerKitSkin, registerSkin } from "@/skins/skinRegistry";
+import { clearSkinsForTests, getSkinRevision, listSkins, registerKitSkin, registerSkin } from "@/skins/skinRegistry";
 import type { SkinDefinition } from "@/skins/skinTypes";
+import { ThemeProvider } from "@/theme/ThemeProvider";
 
 import { render } from "../__tests__/helpers";
 
@@ -65,6 +68,7 @@ describe("SkinProvider", () => {
       html.style.removeProperty(key);
     }
     delete html.dataset.skin;
+    delete html.dataset.theme;
   });
 
   it("restores kit variables and drops classes under skin={null}", () => {
@@ -206,23 +210,29 @@ describe("SkinProvider", () => {
     expect(host("soft").style.getPropertyValue("--radius").trim()).toBe("12px");
   });
 
-  it("drops a forbidden focus-ring token and keeps the kit ring", () => {
+  it("writes a skin focus ring and falls back to foreground", () => {
     seedKit();
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
-    const bad: SkinDefinition = {
+    const painted: SkinDefinition = {
       name: "bad",
       tokens: { "--color-focus-ring": "red", "--radius": "0px" },
     };
-    const { getByTestId } = render(
-      <SkinProvider skin={bad}>
+    const { getByTestId, rerender } = render(
+      <SkinProvider skin={painted}>
         <Read id="ring" />
       </SkinProvider>);
     const node = getByTestId("ring");
-    expect(host("bad").style.getPropertyValue("--color-focus-ring").trim()).toBe("");
+    expect(host("bad").style.getPropertyValue("--color-focus-ring").trim()).toBe("red");
     expect(host("bad").style.getPropertyValue("--radius").trim()).toBe("0px");
     expect(html.style.getPropertyValue("--color-focus-ring").trim()).toBe("Highlight");
-    expect(node.dataset.ring).toBe("");
-    expect(error).toHaveBeenCalled();
+    expect(node.dataset.ring).toBe("red");
+    const plain: SkinDefinition = { name: "plain", tokens: { "--radius": "2px" } };
+    rerender(
+      <SkinProvider skin={plain}>
+        <Read id="ring" />
+      </SkinProvider>);
+    expect(host("plain").style.getPropertyValue("--color-focus-ring").trim()).toBe("var(--color-foreground)");
+    expect(error).not.toHaveBeenCalled();
     error.mockRestore();
   });
 
@@ -285,10 +295,11 @@ describe("SkinProvider", () => {
 
   it("repaints a memoized table row when the registry changes", () => {
     const { container } = render(
+      <SkinProvider>
       <Table variant="late">
         <Table.Content aria-label="Late">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
           </Table.Header>
           <Table.Body>
             <Table.Row>
@@ -296,7 +307,8 @@ describe("SkinProvider", () => {
             </Table.Row>
           </Table.Body>
         </Table.Content>
-      </Table>,
+      </Table>
+      </SkinProvider>,
     );
     const row = container.querySelector("tbody tr");
     expect(row?.className).not.toContain("skin-row");
@@ -316,7 +328,11 @@ describe("SkinProvider", () => {
   });
 
   it("repaints a mounted button when the registry changes", () => {
-    const { getByRole } = render(<Button type="button" variant="late">Late</Button>);
+    const { getByRole } = render(
+      <SkinProvider>
+        <Button type="button" variant="late">Late</Button>
+      </SkinProvider>,
+    );
     const button = getByRole("button", { name: "Late" });
     expect(button.className).not.toContain("skin-a");
     act(() => {
@@ -341,14 +357,129 @@ describe("SkinProvider", () => {
       const label = typeof hover === "string" ? hover : "";
       return <span data-testid="hover">{label}</span>;
     }
-    const { getByTestId } = render(<HoverProbe />);
-    expect(getByTestId("hover").textContent).not.toBe("cyberGlowIn");
+    const { getByTestId } = render(
+      <SkinProvider>
+        <HoverProbe />
+      </SkinProvider>,
+    );
+    expect(getByTestId("hover").textContent).not.toBe("cybercore:glow-in");
     act(() => {
       registerSkin({
         name: "late",
-        motion: { "button.root": { hoverIn: "cyberGlowIn" } },
+        motion: { "button.root": { hoverIn: "cybercore:glow-in" } },
       });
     });
-    expect(getByTestId("hover").textContent).toBe("cyberGlowIn");
+    expect(getByTestId("hover").textContent).toBe("cybercore:glow-in");
+  });
+
+  it("follows the nested theme mode, not the document palette", () => {
+    seedKit();
+    html.style.setProperty("--color-primary", "dark-blue");
+    const island = document.createElement("div");
+    document.body.appendChild(island);
+    island.style.setProperty("--color-primary", "light-blue");
+    const dual: SkinDefinition = {
+      name: "dual",
+      tokens: { "--color-primary": "red" },
+      tokensDark: { "--color-primary": "maroon" },
+      tokensLight: { "--color-primary": "pink" },
+    };
+    render(
+      <ThemeProvider theme="dark" storageKey={null}>
+        <ThemeProvider theme="light" storageKey={null} root={island}>
+          <SkinProvider skin={dual}>
+            <Read id="nested" />
+          </SkinProvider>
+        </ThemeProvider>
+      </ThemeProvider>,
+      { container: island },
+    );
+    expect(host("dual").style.getPropertyValue("--color-primary").trim()).toBe("pink");
+    island.remove();
+  });
+
+  it("refreshes the kit snapshot after the theme mode changes", () => {
+    seedKit();
+    html.style.setProperty("--color-primary", "dark-blue");
+    const dual: SkinDefinition = {
+      name: "dual",
+      tokens: { "--color-primary": "red" },
+      tokensDark: { "--color-primary": "maroon" },
+      tokensLight: { "--color-primary": "pink" },
+    };
+    const tree = (theme: "dark" | "light") => (
+      <ThemeProvider theme={theme} storageKey={null}>
+        <SkinProvider skin={dual}>
+          <SkinProvider skin={null}>
+            <Read id="off" />
+          </SkinProvider>
+        </SkinProvider>
+      </ThemeProvider>
+    );
+    const { rerender } = render(tree("dark"));
+    expect(host("dual").style.getPropertyValue("--color-primary").trim()).toBe("maroon");
+    expect(host("none").style.getPropertyValue("--color-primary").trim()).toBe("dark-blue");
+    html.style.setProperty("--color-primary", "light-blue");
+    rerender(tree("light"));
+    expect(host("dual").style.getPropertyValue("--color-primary").trim()).toBe("pink");
+    expect(host("none").style.getPropertyValue("--color-primary").trim()).toBe("light-blue");
+  });
+
+  it("lets a light ancestor override the dark skin stylesheet", () => {
+    const style = document.createElement("style");
+    style.textContent = renderSkinStylesheet({
+      name: "sheet",
+      tokens: { "--color-primary": "red" },
+      tokensDark: { "--color-primary": "maroon", "--shadow-base": "0 0 0 1px black" },
+      tokensLight: { "--color-primary": "pink" },
+    });
+    document.head.appendChild(style);
+    const island = document.createElement("div");
+    island.dataset.theme = "light";
+    const node = document.createElement("div");
+    node.dataset.skin = "sheet";
+    island.appendChild(node);
+    document.body.appendChild(island);
+    expect(getComputedStyle(node).getPropertyValue("--color-primary").trim()).toBe("pink");
+    delete island.dataset.theme;
+    expect(getComputedStyle(node).getPropertyValue("--color-primary").trim()).toBe("maroon");
+    island.remove();
+    style.remove();
+  });
+
+  it("does not apply a registered skin without a provider", () => {
+    registerSkin({
+      name: "gloss",
+      targets: { "button.root": "gloss-btn" },
+    });
+    const { getByRole } = render(<Button type="button" variant="gloss">Gloss</Button>);
+    expect(getByRole("button", { name: "Gloss" }).className).not.toContain("gloss-btn");
+  });
+
+  it("applies a skin from the provider without writing the registry", () => {
+    const draft: SkinDefinition = {
+      name: "preview-only",
+      targets: { "button.root": "preview-btn" },
+    };
+    const { getByRole } = render(
+      <SkinProvider skin={draft}>
+        <Button type="button">Preview</Button>
+      </SkinProvider>,
+    );
+    expect(listSkins()).not.toContain("preview-only");
+    expect(getByRole("button", { name: "Preview" }).className).toContain("preview-btn");
+  });
+
+  it("passes motion.config into the motion scope", () => {
+    function ReadMotion() {
+      const duration = useMotionConfig().interactiveDuration;
+      return <span data-testid="dur">{duration}</span>;
+    }
+    const { getByTestId } = render(
+      <SkinProvider skin={{ name: "fast", motion: { config: { interactiveDuration: 80 } } }}>
+        <ReadMotion />
+      </SkinProvider>,
+    );
+    expect(getByTestId("dur").textContent).toBe("80");
   });
 });

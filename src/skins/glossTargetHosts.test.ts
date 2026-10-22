@@ -4,7 +4,7 @@ import { avatarRootClass } from "@/components/core/Avatar/avatarStyles";
 import { ALERT_DIALOG_SIZE, alertDialogPanelClass } from "@/components/composite/AlertDialog/alertDialogStyles";
 import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { closeButtonRootClass } from "@/components/core/CloseButton/closeButtonStyles";
-import { dropdownSubContentClass } from "@/components/core/Dropdown/dropdownStyles";
+import { DROPDOWN_SUB_CONTENT_BODY_CLASS, dropdownSubContentClass } from "@/components/core/Dropdown/dropdownStyles";
 import { listBoxRootClass } from "@/components/core/ListBox/listBoxStyles";
 import { popoverArrowClass, popoverDefaultPanelClass } from "@/components/core/Popover/popoverStyles";
 import {
@@ -36,13 +36,13 @@ describe("gloss target hosts", () => {
         "avatar.root": "rounded-full gloss-panel border-0",
         "alertDialog.panel": GLOSS_PANEL_DEEP,
         "popover.panel": GLOSS_PANEL_DEEP,
-        "popover.arrow": "border-0 bg-[var(--color-surface)]",
+        "popover.arrow": "border-0 gloss-arrow",
         "tooltip.panel": GLOSS_PANEL,
         "dropdown.subPopover": GLOSS_PANEL_DEEP,
         "listBox.root": "gloss-panel gloss-deep rounded-large p-mid",
         "buttonGroup.root": "gloss-panel border-0",
         "toggleButtonGroup.root": "gloss-panel border-0",
-        "selectionIndicator.root": "gloss-indicator border-0 [--border-width:0px]",
+        "selectionIndicator.root": "gloss-indicator",
         "selectionIndicator.fill": "gloss-indicator-fill",
       },
     });
@@ -91,7 +91,7 @@ describe("gloss target hosts", () => {
       variant: NAME,
       resolvedSide: "top",
       arrowSideClass: "",
-    })).toContain("border-0");
+    })).toContain("gloss-arrow");
 
     const tooltip = tooltipPanelClass({
       variant: NAME,
@@ -115,8 +115,9 @@ describe("gloss target hosts", () => {
       portalMounted: true,
     });
     expect(submenu).toContain("gloss-deep");
-    expect(submenu).toContain("p-base");
+    expect(submenu).toContain("flex");
     expect(submenu).not.toContain("bg-surface");
+    expect(DROPDOWN_SUB_CONTENT_BODY_CLASS).toContain("p-base");
 
     const list = listBoxRootClass({ variant: NAME });
     expect(list).toContain("gloss-panel");

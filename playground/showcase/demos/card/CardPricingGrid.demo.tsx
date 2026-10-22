@@ -33,9 +33,9 @@ export function CardPricingGridDemo() {
             <Card.Description>{plan.description}</Card.Description>
           </Card.Header>
           <Card.Body className="flex flex-col gap-large">
-            <Text as="p" variant="large" className="font-semibold">
+            <Text as="p" textStyle="large" className="font-semibold">
               {plan.price}
-              <Text as="span" variant="xsmall" className="font-normal text-muted">
+              <Text as="span" textStyle="xsmall" className="font-normal text-muted">
                 {" "}
                 / months
               </Text>

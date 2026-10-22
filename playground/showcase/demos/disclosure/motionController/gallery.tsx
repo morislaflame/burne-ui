@@ -26,7 +26,7 @@ import eventsoffSource from "./EventsOff.demo.tsx?raw";
 
 export const disclosureMotionControllerGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "play-title", title: "playSlot titleLift", Demo: DisclosureMotionControllerDemo, source: playtitleSource },
-  { id: "play-body", title: "playSlot body", Demo: DisclosureMotionControllerPlayBodyDemo, source: playbodySource },
+  { id: "play-content", title: "playSlot content", Demo: DisclosureMotionControllerPlayBodyDemo, source: playbodySource },
   { id: "play-vs-slot", title: "play vs playSlot", Demo: DisclosureMotionControllerPlayVsSlotDemo, source: playvsslotSource },
   { id: "stagger", title: "playAll stagger", Demo: DisclosureMotionControllerStaggerDemo, source: staggerSource },
   { id: "exclude", title: "exclude titleLift", Demo: DisclosureMotionControllerExcludeDemo, source: excludeSource },

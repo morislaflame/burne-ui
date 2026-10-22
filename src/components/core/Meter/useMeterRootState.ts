@@ -27,6 +27,7 @@ export function useMeterRootState({
   size,
   thickness,
   color,
+  status,
   formatValue,
 }: UseMeterRootStateProps) {
   const autoId = useId();
@@ -74,6 +75,7 @@ export function useMeterRootState({
     size,
     thickness,
     color,
+    status,
     formatValue,
     orientation,
   };

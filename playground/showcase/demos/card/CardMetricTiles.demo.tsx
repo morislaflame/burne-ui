@@ -17,10 +17,10 @@ export function CardMetricTilesDemo() {
             <Card.Title className="text-xl font-bold">{metric.value}</Card.Title>
           </Card.Header>
           <Card.Body>
-            <Text as="span" variant="xsmall" className="font-medium text-success">
+            <Text as="span" textStyle="xsmall" className="font-medium text-success">
               {metric.delta}
             </Text>
-            <Text as="span" variant="xsmall" className="text-muted">
+            <Text as="span" textStyle="xsmall" className="text-muted">
               {" "}
               in 30 days
             </Text>

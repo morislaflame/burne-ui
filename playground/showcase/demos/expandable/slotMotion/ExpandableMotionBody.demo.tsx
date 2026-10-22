@@ -5,9 +5,9 @@ export function ExpandableMotionBodyDemo() {
   return (
     <Expandable
       className="max-w-lg"
-      title="Body slot"
+      title="Panel slot"
       motion={{
-        body: {
+        panel: {
           enter: (ctx) =>
             ctx.fromTo(
               { y: 8, autoAlpha: 0 },
@@ -17,8 +17,8 @@ export function ExpandableMotionBodyDemo() {
         },
       }}
     >
-      <Text as="p" variant="small" className="text-muted">
-        `delay: "expand"` starts `motion.body` after collapsibleHeight.
+      <Text as="p" textStyle="small" className="text-muted">
+        `delay: "expand"` starts `motion.panel` after collapsibleHeight.
       </Text>
     </Expandable>
   );

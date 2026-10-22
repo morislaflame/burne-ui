@@ -5,7 +5,7 @@ export function TableMotionInstantEnterDemo() {
     <Table motion={{ root: { enter: false } }}>
       <Table.Content aria-label="Skip">
             <Table.Header>
-          <Table.Column isRowHeader>Name</Table.Column>
+          <Table.Column rowHeader>Name</Table.Column>
         </Table.Header>
         <Table.Body>
           <Table.Row>

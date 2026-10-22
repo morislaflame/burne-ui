@@ -13,7 +13,7 @@ export function DirectionCornerDemo() {
               3
             </Badge>
           </Badge.Anchor>
-          <Text variant="small" className="text-muted">
+          <Text textStyle="small" className="text-muted">
             placement=&quot;top-right&quot;
           </Text>
         </div>

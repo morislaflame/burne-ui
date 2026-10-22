@@ -7,10 +7,10 @@ export function ButtonDangerBannerDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-large rounded-large border border-danger/30 bg-danger/5 p-large sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex flex-col gap-xsmall">
-        <Text as="p" variant="base" className="font-medium text-danger">
+        <Text as="p" textStyle="base" className="font-medium text-danger">
           Delete all drafts?
         </Text>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           The action is irreversible.
         </Text>
       </div>

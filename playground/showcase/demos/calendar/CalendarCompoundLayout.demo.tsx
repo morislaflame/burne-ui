@@ -13,15 +13,15 @@ export function CalendarCompoundLayoutDemo() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Compound layout
       </Text>
-      <Calendar mode="single" value={date} onValueChange={setDate}>
+      <Calendar selectionMode="single" value={date} onValueChange={setDate}>
         <Calendar.Header />
         <Calendar.Grid />
         <Calendar.Footer />
       </Calendar>
-      <Text as="p" variant="xsmall" className="text-muted">
+      <Text as="p" textStyle="xsmall" className="text-muted">
         {formatDate(date)}
       </Text>
     </div>

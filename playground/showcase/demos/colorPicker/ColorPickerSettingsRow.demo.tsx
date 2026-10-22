@@ -11,10 +11,10 @@ export function ColorPickerSettingsRowDemo() {
     <Surface variant="secondary" padding="large" className="w-full max-w-md">
       <div className="flex items-center justify-between gap-large">
         <div className="flex min-w-0 flex-col gap-xsmall">
-          <Text as="span" variant="small" className="font-medium">
+          <Text as="span" textStyle="small" className="font-medium">
             Accent color
           </Text>
-          <Text as="span" variant="xsmall" className="font-mono text-muted">
+          <Text as="span" textStyle="xsmall" className="font-mono text-muted">
             {accent}
           </Text>
         </div>

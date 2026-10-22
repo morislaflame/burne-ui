@@ -17,7 +17,7 @@ export function SurfaceMotionEnterTintDemo() {
         },
       }}
     >
-      <Text variant="base">Enter tint</Text>
+      <Text textStyle="base">Enter tint</Text>
     </Surface>
   );
 }

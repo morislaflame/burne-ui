@@ -4,7 +4,7 @@
  * DOM slots: `root` (fieldset), `list`, `legend`, `hint`, `error`, `actions`
  *
  * Not slots: `Group` (Field.Set.Group layout), item Checkbox hosts (Checkbox motion).
- * Host: root plays optional `enter` and `change` when single-selection value updates.
+ * Host: root plays optional `enter` and `change` when the group selection updates.
  * Chrome enter is per-slot (`useOptionalEnterOnMount` + `targetRef`). Defaults: empty.
  */
 import type { ForwardedRef } from "react";

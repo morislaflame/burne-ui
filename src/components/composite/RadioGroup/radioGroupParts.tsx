@@ -19,6 +19,7 @@ export const RadioGroupLegend = forwardRef<HTMLLegendElement, RadioGroupLegendPr
   function RadioGroupLegend(
     {
       children,
+      id,
       motion,
       onPointerOver,
       onPointerOut,
@@ -28,6 +29,7 @@ export const RadioGroupLegend = forwardRef<HTMLLegendElement, RadioGroupLegendPr
     },
     ref,
   ) {
+    const { legendId } = useRadioGroupContext();
     const part = useRadioGroupSlotMotion<HTMLLegendElement>("legend", {
       motion,
       forwardedRef: ref,
@@ -38,7 +40,7 @@ export const RadioGroupLegend = forwardRef<HTMLLegendElement, RadioGroupLegendPr
     });
  
     return (
-      <Field.Legend ref={part.setRef} {...rest} {...part.pointerHandlers}>
+      <Field.Legend ref={part.setRef} {...rest} {...part.pointerHandlers} id={id ?? legendId}>
         <OptionGroupHeader>{children}</OptionGroupHeader>
       </Field.Legend>
     );
@@ -76,7 +78,7 @@ export const RadioGroupHint = forwardRef<HTMLElement, RadioGroupHintProps>(
       <Field.Hint
         ref={part.setRef}
         as="span"
-        variant="small"
+        textStyle="small"
         id={id ?? hintId}
         className={cn(slotClass, className)}
         {...rest}

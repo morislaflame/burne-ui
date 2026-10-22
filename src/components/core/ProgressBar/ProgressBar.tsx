@@ -1,3 +1,4 @@
+import { forwardRef, type ForwardedRef } from "react";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
@@ -38,7 +39,7 @@ export {
   useOptionalProgressBarFieldContext,
 } from "./progressBarContext";
  
-export function ProgressBarRoot({
+export const ProgressBarRoot = forwardRef(function ProgressBarRoot({
   children,
   className,
   classNames,
@@ -56,6 +57,7 @@ export function ProgressBarRoot({
   size,
   thickness,
   color,
+  status,
   formatValue,
   motion,
   motionController,
@@ -63,7 +65,7 @@ export function ProgressBarRoot({
   motionPayload,
   playInitialState,
   ...divRest
-}: ProgressBarProps) {
+}: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
   const state = useProgressBarRootState({
     children,
     id,
@@ -80,6 +82,7 @@ export function ProgressBarRoot({
     size,
     thickness,
     color,
+    status,
     formatValue,
   });
  
@@ -115,6 +118,7 @@ export function ProgressBarRoot({
                 className,
               })}
               {...divRest}
+              ref={ref}
               {...dataVariantProps({ size: size ?? "base" })}
             >
               {body}
@@ -124,7 +128,7 @@ export function ProgressBarRoot({
       </ProgressBarClassNamesProvider>
     </ProgressBarFieldProvider>
   );
-}
+});
  
 ProgressBarRoot.displayName = "ProgressBar";
  

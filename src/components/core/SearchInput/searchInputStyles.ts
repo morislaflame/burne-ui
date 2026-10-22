@@ -13,7 +13,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { cn } from "@/utils/cn";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { KIT_SEARCH_INPUT_VARIANTS } from "./searchInputTypes";
  
 import type {
@@ -208,7 +208,7 @@ export function searchInputRootClass({
   if (variant === "outline") filledVariant = "outline";
   else if (variant === "secondary") filledVariant = "secondary";
   const visual = resolveVariantVisual(variant, KIT_SEARCH_INPUT_VARIANTS, "searchInput.root");
-  const kitSurface = isKitVariant(variant, KIT_SEARCH_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_SEARCH_INPUT_VARIANTS);
 
   return cn(
     groupSegment
@@ -227,9 +227,9 @@ export function searchInputRootClass({
     expanded ? SEARCH_INPUT_CURSOR_TEXT_CLASS : "",
     !expanded && !blocked ? SEARCH_INPUT_CURSOR_POINTER_CLASS : "",
     blocked ? SEARCH_INPUT_BLOCKED_CLASS : "",
+    !expanded && !groupSegment && layout.shellWCollapsed,
     slotRoot,
     className,
-    !expanded && !groupSegment && layout.shellWCollapsed,
   );
 }
  

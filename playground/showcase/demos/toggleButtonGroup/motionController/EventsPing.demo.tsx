@@ -16,7 +16,7 @@ export function ToggleButtonGroupMotionEventsPingDemo() {
         Nudge
       </Button>
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         defaultValue="list"
         aria-label="View"
         motionController={controller}

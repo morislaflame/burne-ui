@@ -34,11 +34,13 @@ export function colorSliderTrackClass({
   size,
   orientation,
   disabled,
+  slotClass,
   className,
 }: {
   size: ColorSliderSize;
   orientation: ColorSliderOrientation;
   disabled?: boolean;
+  slotClass?: string;
   className?: string;
 }): string {
   const isHorizontal = orientation === "horizontal";
@@ -47,11 +49,12 @@ export function colorSliderTrackClass({
     sliderTrackHitAreaClass({
       isHorizontal,
       size,
-      className,
     }),
     COLOR_SLIDER_TRACK_OVERFLOW_CLASS,
     SELECTION_INDICATOR_RADIUS_CLASS[size],
     disabled && COLOR_SLIDER_DISABLED_CLASS,
+    slotClass,
+    className,
   );
 }
  

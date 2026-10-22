@@ -2,6 +2,8 @@
 
 Группа раскрывающихся секций на базе `Expandable`. **Только compound API.** В один момент открыт не более одного пункта (аккордеон); повторный клик по открытому пункту сворачивает всё.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -13,7 +15,7 @@ import { Accordion, type AccordionProps, type AccordionItemProps, type Accordion
 ### Compound API
 
 ```tsx
-<Accordion defaultOpenIndex={0} size="base" className="max-w-2xl">
+<Accordion defaultValue="shipping" size="base" className="max-w-2xl">
   <Accordion.Item value="shipping">
     <Accordion.Heading>
       <Accordion.Trigger>
@@ -42,15 +44,18 @@ Simple API нет.
 |------|--------------|----------|
 | `value` | — | Controlled: ID открытого пункта (`null` = все закрыты) |
 | `onValueChange` | — | `(value: string \| null) => void` |
-| `defaultValue` | `null` | Начальный ID (приоритет над `defaultOpenIndex`) |
-| `defaultOpenIndex` | `null` | Начальный индекс (0-based), если у Item нет `value` |
+| `defaultValue` | `null` | Начальный ID открытого пункта. У Item без `value` id — индекс среди соседей (`"0"`, `"1"`, …) |
+| `selectionMode` | `single` | `single` — один открытый (`value`). `multiple` — несколько (`values`) |
+| `values` / `defaultValues` | — | Открытые пункты при `selectionMode="multiple"` |
+| `onValuesChange` | — | `(values: string[]) => void` |
+| `variant` | `default` | `default` \| `outline` \| `secondary`. Каскад на каждый Item. Имя скина — строка |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — для всех Item |
 | `className` | — | На root `<div>` |
 | `classNames` | — | `AccordionClassNames` — слоты root + все Item (наследуются через `AccordionClassNamesProvider`) |
-| `motion` | — | `AccordionMotion` — слоты Expandable (`triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description` / `body`). Item перекрывает root. `events` — app-команды |
+| `motion` | — | `AccordionMotion` — слоты Expandable (`triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description` / `panel`) плюс `body` на `Accordion.Body`. Item перекрывает root. `events` — app-команды |
 | `children` | — | `Accordion.Item` |
 
-`variant` на root **нет**.
+`variant` на root каскадирует на каждый Item (`default` \| `outline` \| `secondary`).
 
 ### `Accordion.Item` props
 
@@ -63,7 +68,7 @@ Simple API нет.
 | `motion` | — | Локально перекрывает root `motion` (мерж по слотам). `events` мержатся с root |
 | `motionController` | — | Handle этого Item → Expandable. Accordion без group-scope: один handle → один Item |
 
-Каждый Item — обёртка над `Expandable` (`compound={true}`, controlled `open`). Слоты `trigger`, `triggerLift`, `message`, `icon`, `content`, `title`, `description`, `chevron`, `panelShell`, `panel` прокидываются в `classNames` вложенного `Expandable`; `item` прокидывается в `Expandable`'s `classNames.root`.
+Каждый Item — обёртка над `Expandable` (compound по слотам, controlled `open`). Слоты `trigger`, `triggerLift`, `triggerRippleOverlay`, `message`, `icon`, `content`, `title`, `description`, `chevron`, `panelShell`, `contentWrap`, `panel` прокидываются в `classNames` вложенного `Expandable`; `item` прокидывается в `Expandable`'s `classNames.root`. `body` остаётся на `Accordion.Body`.
 
 ### Compound-подчасти
 
@@ -78,16 +83,20 @@ Simple API нет.
 | `Accordion.Title` | `Expandable.Title` | Заголовок |
 | `Accordion.Description` | `Expandable.Description` | Подзаголовок muted |
 | `Accordion.Chevron` | Custom chevron span | Шеврон вместо `Expandable.Chevron`; регистрирует слот `chevron` Expandable |
-| `Accordion.Panel` | `Expandable.Panel` | Раскрываемая `<section>` (слот `body`) |
-| `Accordion.Body` | `Text as="div"` | Опционально: muted-текст. Не motion-слот — контент можно класть сразу в `Accordion.Panel` |
+| `Accordion.Panel` | `Expandable.Panel` | Раскрываемая `<section>` (слот `panel`) |
+| `Accordion.Body` | `Text as="div"` | Опционально: muted-текст. Motion-слот `body`. Контент можно класть сразу в `Accordion.Panel` |
 
 `Accordion.Trigger` props: те же что `Expandable.Trigger` (`asChild`, `hideChevron`, …).
+
+### Compound-части и обёртка
+
+`Accordion.Trigger`, `Accordion.Heading`, `Accordion.Panel` и остальные части кладутся прямо в `Accordion.Item`. Компонент, который сам создаёт части внутри `Item`, скрывает `displayName`: пункт остаётся в simple API и рисует второй триггер. Обёртка должна рендерить весь `Accordion.Item`. В dev `console.error`, если `Expandable.Trigger` или `Accordion.Heading` монтируется в простом режиме.
 
 ### Controlled / uncontrolled
 
 ```tsx
 // Uncontrolled
-<Accordion defaultOpenIndex={0} onValueChange={(id) => console.log(id)} />
+<Accordion defaultValue="0" onValueChange={(id) => console.log(id)} />
 
 // Controlled
 const [value, setValue] = useState<string | null>("shipping");
@@ -113,7 +122,7 @@ const [value, setValue] = useState<string | null>("shipping");
 
 ## Анимации
 
-Accordion — **embedder** в Expandable: своего `createMotionScope` нет. Root/Item `motion` мержится и передаётся в `Expandable`. Хост play и дефолты — `expandableAnimations.ts` (`pressSqueeze`, `chevronRotate`, `collapsibleHeight`). `Accordion.Chevron` регистрирует слот `chevron` (Trigger по умолчанию `hideChevron`). Слот `body` — `<section>` `Accordion.Panel` (= `Expandable.Panel`). `Accordion.Body` — опциональная обёртка `text-muted`, не слот. `Accordion.Heading` — a11y-обёртка, не слот. Слоты `title` / `icon` / `description` те же, что у Expandable (`ctx.getTarget` из factory шеврона).
+Accordion — **embedder** в Expandable: своего `createMotionScope` нет. Root/Item `motion` мержится и передаётся в `Expandable`. Хост play и дефолты — `expandableAnimations.ts` (`pressSqueeze`, `chevronRotate`, `collapsibleHeight`). `Accordion.Chevron` регистрирует слот `chevron` (Trigger по умолчанию `hideChevron`). Слот `panel` — `<section>` `Accordion.Panel` (= `Expandable.Panel`). `Accordion.Body` — опциональная обёртка `text-muted`, слот `body` на том же scope. `Accordion.Heading` — a11y-обёртка, не слот. Слоты `title` / `icon` / `description` те же, что у Expandable (`ctx.getTarget` из factory шеврона).
 
 ```tsx
 <Accordion motion={{ panelShell: { enter: false, leave: false } }}>…</Accordion>
@@ -126,7 +135,7 @@ Accordion — **embedder** в Expandable: своего `createMotionScope` не�
 />
 ```
 
-`leave: false` на `panelShell` — хост сразу ставит closed height (как Expandable). Factory leave должна свернуть высоту в `0`. `delay: "expand"` (или `"expandDuration"`) на enter `motion.body` — старт после `collapsibleHeight`. На `leave` delay не ставьте.
+`leave: false` на `panelShell` — хост сразу ставит closed height (как Expandable). Factory leave должна свернуть высоту в `0`. `delay: "expand"` (или `"expandDuration"`) на enter `motion.panel` / `motion.body` — старт после `collapsibleHeight`. На `leave` delay не ставьте.
 
 ```tsx
 <Accordion
@@ -143,16 +152,20 @@ Accordion — **embedder** в Expandable: своего `createMotionScope` не�
 >
   <Accordion.Item value="0">
     …
-    <Accordion.Panel>…</Accordion.Panel>
+    <Accordion.Panel>
+      <Accordion.Body>…</Accordion.Body>
+    </Accordion.Panel>
   </Accordion.Item>
 </Accordion>
 ```
 
-**Где в коде:** карта — `accordionAnimations.ts` (`resolveAccordionItemMotion`); Chevron — `accordionParts.tsx` (`useMotionPart` на scope Expandable); `body` — `expandableParts.tsx` (`Expandable.Panel`).
+**Где в коде:** карта — `accordionAnimations.ts` (`resolveAccordionItemMotion`); Chevron — `accordionParts.tsx` (`useMotionPart` на scope Expandable); `panel` — `expandableParts.tsx` (`Expandable.Panel`); `body` — `Accordion.Body`.
 
 См. [Motion](/docs/motion) и `Expandable.md`.
 
 Проп `motionController` на **`Accordion.Item`**. `play()` skip — нет `root`; `playSlot("title")`. Один handle не играет соседние Item. `events` на Root мержатся в Item. playground / Storybook **MotionController**.
+
+Тройка на `Accordion.Item`, не на корне списка. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Accordion, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -199,8 +212,8 @@ function Nudge() {
       <Accordion.Message grid>
         <Icon /> <Title/> <Chevron/>  ← slot `chevron`
   <div class=panelShell>               ← slot `panelShell` / collapsibleHeight
-    <section class=panel>              ← slot `body`
-      children (optional Accordion.Body)
+    <section class=panel>              ← slot `panel`
+      <Accordion.Body>                 ← slot `body`
 ```
 
 ### 1. Panel height (`Expandable.Panel`)
@@ -237,7 +250,6 @@ configureMotion({
 ### Чего нет
 
 - Group-level FLIP при смене `value`
-- `variant="gloss"` на Accordion
 - Анимация `Accordion.Heading` как публичный слот (a11y-обёртка)
 
 ### Сводка: что настраивается где
@@ -247,8 +259,8 @@ configureMotion({
 | Panel height | `panelShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Item / Panel |
 | Trigger squeeze | `triggerLift` → `pressSqueeze` | `pressSqueezeScale` | `motion` на Trigger |
 | Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
-| Nested title / icon / body | slot broadcast | — | `motion.title` / `icon` / `body` |
-| Accordion body | `body` на Expandable.Panel `<section>` | `expandDuration` (через `delay: "expand"`) | `motion.body` на Root / Item |
+| Nested title / icon / panel | slot broadcast | — | `motion.title` / `icon` / `panel` |
+| Accordion.Body | `body` на muted-обёртке | `expandDuration` (через `delay: "expand"`) | `motion.body` на Root / Item |
 | Ripple | `<Ripple />` | `rippleExpandableDuration` | в Trigger children |
 
 ## Токены и CSS
@@ -287,6 +299,8 @@ type AccordionClassNames = {
   description?: string;
   chevron?: string;
   panelShell?: string;
+  contentWrap?: string;
+  triggerRippleOverlay?: string;
   panel?: string;
   body?: string;
 };
@@ -308,8 +322,10 @@ type AccordionClassNames = {
 | `title` | `Accordion.Title` → `Expandable.Title` |
 | `description` | `Accordion.Description` → `Expandable.Description` |
 | `chevron` | `Accordion.Chevron` (свой компонент, не `Expandable.Chevron`) |
-| `panelShell` / `panel` | `Accordion.Panel` → `Expandable.Panel` |
-| `body` | `Accordion.Body` (опциональный muted-текст; не motion-слот) |
+| `panelShell` / `panel` | `Accordion.Panel` → `Expandable.Panel` (`panel` — `<section>`) |
+| `contentWrap` | Внутренняя обёртка панели Expandable |
+| `triggerRippleOverlay` | Ripple clip на Trigger |
+| `body` | `Accordion.Body` (опциональный muted-текст; motion-слот `body`) |
 
 ### Пример: переопределение на одном Item
 
@@ -326,7 +342,7 @@ type AccordionClassNames = {
 ### FAQ-группа
 
 ```tsx
-<Accordion defaultOpenIndex={0} size="base" className="max-w-2xl">
+<Accordion defaultValue={items[0].id} size="base" className="max-w-2xl">
   {items.map((item, i) => (
     <Accordion.Item key={item.id} value={item.id}>
       <Accordion.Heading>
@@ -411,3 +427,7 @@ A11y — в `Expandable/expandableA11y.ts` (display names Accordion зареги
 `Composite Components/Accordion` — default FAQ, interaction test, trigger ripple, slot motion gallery, MotionController gallery.
 
 Playground: `playground/showcase/demos/accordion/` — sizes, checkout FAQ, release notes, slot motion, MotionController.
+
+## Данные
+
+`items` рисует пункты, если дети ещё не содержат `Accordion.Item`. Совпадение пишет ошибку в dev.

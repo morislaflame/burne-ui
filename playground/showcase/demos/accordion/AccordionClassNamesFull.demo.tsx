@@ -15,7 +15,7 @@ export function AccordionClassNamesFullDemo() {
   return (
     <Accordion
       className="max-w-lg"
-      defaultOpenIndex={0}
+      defaultValue="0"
       classNames={{
         root: "gap-px",
         item: "border-primary/30",

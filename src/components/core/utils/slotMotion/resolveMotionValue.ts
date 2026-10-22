@@ -4,6 +4,35 @@ import type {
   MotionSlotMap,
   MotionValue,
 } from "./slotMotionTypes";
+
+/** Public maps must not tween layout. `margin*` counts as `margin`. */
+const MOTION_LAYOUT_KEYS = ["width", "height", "top", "left", "margin"] as const;
+
+const warnedLayoutValues = new WeakSet<object>();
+
+function layoutKeysOf(value: object): string[] {
+  return Object.keys(value).filter(
+    (key) =>
+      (MOTION_LAYOUT_KEYS as readonly string[]).includes(key) || key.startsWith("margin"),
+  );
+}
+
+/**
+ * Dev-only. A vars object (`as any`) or factory vars (`ctx.to`) with layout keys
+ * warns once per object. The kit recipe `searchExpand` tweens shell width inside
+ * the recipe, not through this map, so a recipe name never warns.
+ */
+export function warnMotionLayoutKeys(value: unknown): void {
+  if (process.env.NODE_ENV === "production") return;
+  if (value === undefined || value === false || typeof value !== "object" || value === null) return;
+  if (warnedLayoutValues.has(value)) return;
+  const keys = layoutKeysOf(value);
+  if (keys.length === 0) return;
+  warnedLayoutValues.add(value);
+  console.warn(
+    `[burne-ui] motion: layout key "${keys.join(", ")}" is not a public var. Use x, y, or scale. SearchInput shell width is the kit recipe searchExpand.`,
+  );
+}
  
 /**
  * Precedence: part prop → root `motion[slot]` → kit default.
@@ -14,9 +43,9 @@ export function resolveMotionValue(
   slotValue: MotionValue | undefined,
   defaultValue: MotionValue | undefined,
 ): MotionValue | undefined {
-  if (partValue !== undefined) return partValue;
-  if (slotValue !== undefined) return slotValue;
-  return defaultValue;
+  const resolved = partValue !== undefined ? partValue : slotValue !== undefined ? slotValue : defaultValue;
+  warnMotionLayoutKeys(resolved);
+  return resolved;
 }
  
 export function resolveSlotPhase(

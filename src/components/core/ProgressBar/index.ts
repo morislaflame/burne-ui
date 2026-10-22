@@ -37,6 +37,5 @@ export {
  
 export type {
   ProgressBarDisplayState,
-  ProgressBarFieldContextValue,
 } from "./progressBarTypes";
  

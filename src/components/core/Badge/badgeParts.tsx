@@ -79,8 +79,8 @@ function BadgeShell({
         placementClass,
         className,
       )}
-      {...pointerHandlers}
       {...rest}
+      {...pointerHandlers}
       {...a11y}
       {...variantData}
     >
@@ -218,6 +218,16 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
  
 BadgeAnchor.displayName = "BadgeAnchor";
  
+function anchorClassFromBadgeChildren(children: ReactNode): string | undefined {
+  const classes: string[] = [];
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child) || !isBadgeElement(child)) return;
+    const anchor = (child.props as { classNames?: { anchor?: string } }).classNames?.anchor;
+    if (anchor) classes.push(anchor);
+  });
+  return classes.length > 0 ? cn(...classes) : undefined;
+}
+
 function BadgeAnchorSurface({
   className,
   classNames,
@@ -302,7 +312,13 @@ function BadgeAnchorSurface({
       <div
         ref={setMergedRef}
         data-badge-anchor
-        className={cn(BADGE_ANCHOR_ROOT_CLASS, slotClassNames.anchor, classNames?.anchor, className)}
+        className={cn(
+          BADGE_ANCHOR_ROOT_CLASS,
+          slotClassNames.anchor,
+          anchorClassFromBadgeChildren(children),
+          classNames?.anchor,
+          className,
+        )}
         {...rest}
         {...pointerHandlers}
       >

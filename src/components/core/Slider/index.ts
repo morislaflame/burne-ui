@@ -1,5 +1,4 @@
 import { SliderError, SliderFill, SliderHeader, SliderHint, SliderIcon, SliderLabel, SliderRail, SliderRoot, SliderThumb, SliderTrack, SliderValue } from "./Slider";
-import { sliderThicknessToCss } from "./sliderStyles";
 import { useOptionalSliderFieldContext, useSliderFieldContext } from "./sliderContext";
  
 export const Slider = Object.assign(SliderRoot, {
@@ -38,7 +37,6 @@ export type {
   SliderPartMotion,
   SliderVariant,
 } from "./sliderTypes";
-export { sliderThicknessToCss };
  
 export {
   useOptionalSliderFieldContext,

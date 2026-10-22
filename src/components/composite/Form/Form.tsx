@@ -1,9 +1,11 @@
 import { forwardRef, useMemo, type FormEventHandler, type ForwardedRef, type ReactNode } from "react";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { FormBindingContext } from "./formContext";
  
 import { formRootDescribedBy, formRootLabelledBy } from "./formA11y";
+import { withFormAnnounceMessage } from "./formAPI";
 import { resolveFormMotionDefaults, useFormSlotMotion } from "./formAnimations";
 import { FormClassNamesProvider, FormMotionProvider, FormShellProvider } from "./formContext";
 import { FormActions, FormAnnounce, FormDescription, FormErrorSummary, FormField, FormHeader, FormSection, FormTitle } from "./formParts";
@@ -197,13 +199,19 @@ function FormRootSurface({
         hasErrors,
       })}
       className={formRootClass(resolvedSize, className, classNames)}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size: resolvedSize })}
     >
-      <FormAnnounce message={announce} />
-      <FormErrorSummary>{errorSummary}</FormErrorSummary>
-      {children}
+      {hasCompoundChild(children, "Form.Announce") ? null : (
+        <FormAnnounce message={announce} />
+      )}
+      {hasCompoundChild(children, "Form.ErrorSummary") ? null : (
+        <FormErrorSummary>{errorSummary}</FormErrorSummary>
+      )}
+      {hasCompoundChild(children, "Form.Announce")
+        ? withFormAnnounceMessage(children, announce)
+        : children}
     </form>
   );
 }

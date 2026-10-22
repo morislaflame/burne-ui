@@ -1,6 +1,5 @@
 import { createElement, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "react";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { resolveTextAs } from "./textA11y";
 import { resolveTextMotionDefaults, useTextRootMotion } from "./textAnimations";
 import { TextMotionProvider } from "./textContext";
@@ -11,7 +10,7 @@ export type { TextProps, TextVariant, TextMotion, TextPartMotion } from "./textT
  
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   {
-    variant,
+    textStyle = "base",
     as,
     inheritColor,
     className,
@@ -37,7 +36,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
       <TextSurface
-        variant={variant}
+        textStyle={textStyle}
         as={as}
         inheritColor={inheritColor}
         className={className}
@@ -56,7 +55,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
 });
  
 function TextSurface({
-  variant,
+  textStyle,
   as,
   inheritColor,
   className,
@@ -69,7 +68,7 @@ function TextSurface({
   onPointerUp,
   rest,
 }: {
-  variant: TextProps["variant"];
+  textStyle: TextProps["textStyle"];
   as: TextProps["as"];
   inheritColor: TextProps["inheritColor"];
   className: TextProps["className"];
@@ -90,7 +89,8 @@ function TextSurface({
     | "onPointerUp"
   >;
 }) {
-  const Comp = resolveTextAs(as, TEXT_VARIANT_DEFAULT_AS[variant]);
+  const style = textStyle ?? "base";
+  const Comp = resolveTextAs(as, TEXT_VARIANT_DEFAULT_AS[style]);
   const part = useTextRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -105,9 +105,8 @@ function TextSurface({
     {
       ...rest,
       ref: part.setRef,
-      className: textRootClass(variant, inheritColor, className),
+      className: textRootClass(style, inheritColor, className),
       ...part.pointerHandlers,
-      ...dataVariantProps({ variant }),
     },
     children,
   );

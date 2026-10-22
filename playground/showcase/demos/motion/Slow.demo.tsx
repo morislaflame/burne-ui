@@ -6,7 +6,7 @@ function Pace({ title, testId }: { title: string; testId: string }) {
   const config = useMotionConfig();
   return (
     <div className="flex flex-col gap-small">
-      <Text variant="small" className="text-muted" data-testid={testId}>
+      <Text textStyle="small" className="text-muted" data-testid={testId}>
         {title}: {config.interactiveDuration}ms
       </Text>
       <Button>{title}</Button>

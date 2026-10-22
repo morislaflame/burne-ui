@@ -1,7 +1,7 @@
 import { Select } from "@/components/core/Select";
 import { createMotionEvents, useMotionController } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -21,12 +21,12 @@ function ValuePulse() {
 export function SelectMotionControllerInsideDemo() {
   return (
     <div className="w-full max-w-sm">
-      <Select options={options} defaultValue="react" motion={{ events }}>
+      <Select items={items} defaultValue="react" motion={{ events }}>
         <Select.Label>Hover the value</Select.Label>
-        <Select.TriggerGroup>
+        <Select.Shell>
           <ValuePulse />
           <Select.Trigger />
-        </Select.TriggerGroup>
+        </Select.Shell>
         <Select.Popover />
       </Select>
     </div>

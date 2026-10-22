@@ -14,7 +14,6 @@ export function useInputRootState({
   invalid,
   id: idProp,
   required = false,
-  status = "default",
   size = "base",
 }: UseInputRootStateProps) {
   const autoId = useId();
@@ -41,10 +40,9 @@ export function useInputRootState({
       errorConnected: hasError,
       invalid,
       required,
-      status,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, inputId, invalid, required, labelId, size, status],
+    [errorId, hasError, hasHint, hintId, inputId, invalid, required, labelId, size],
   );
  
   const fieldLabelCtx = useMemo(
@@ -60,7 +58,6 @@ export function useInputRootState({
     label,
     hint,
     error,
-    status,
     size,
   };
 }

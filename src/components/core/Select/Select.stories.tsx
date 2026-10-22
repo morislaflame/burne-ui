@@ -9,7 +9,7 @@ import { Button } from "@/components/core/Button";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
-import type { SelectOption } from "./selectTypes";
+import type { SelectItem } from "./selectTypes";
 import { Select } from ".";
 import { SelectSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/select/slotMotion/gallery";
 import { SelectMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/select/motionController/gallery";
@@ -27,7 +27,7 @@ const darkThemeDecorator = [
   ),
 ] as const;
 
-const sampleOptions: SelectOption[] = [
+const sampleOptions: SelectItem[] = [
   {
     value: "ru",
     label: "Russian",
@@ -57,7 +57,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Select without search. **Simple** — `options` on root; **Compound** — `<Select.Label>`, `<Select.TriggerGroup>` + `<Select.Value>` / `<Select.Trigger>`, `<Select.Popover>` with `<ListBox>`.",
+          "Select without search. **Simple** — `items` on root; **Compound** — `<Select.Label>`, `<Select.Shell>` + `<Select.Value>` / `<Select.Trigger>`, `<Select.Popover>` with `<ListBox>`.",
       },
     },
   },
@@ -65,10 +65,6 @@ const meta = {
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
     variant: { control: "select", options: ["default", "outline", "secondary"] },
-    status: {
-      control: "select",
-      options: ["default", "danger", "success", "warning"],
-    },
   },
 } satisfies Meta<typeof Select>;
 
@@ -86,17 +82,17 @@ export const Default: Story = {
           label="Interface language"
           hint="No search field — list selection only."
           placeholder="Select language"
-          options={sampleOptions}
+          items={sampleOptions}
           defaultValue="ru"
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
-        <Select options={sampleOptions} defaultValue="en">
+        <Select items={sampleOptions} defaultValue="en">
           <Select.Label>Interface language</Select.Label>
-          <Select.TriggerGroup>
+          <Select.Shell>
             <Select.Value placeholder="Select language" />
             <Select.Trigger />
-          </Select.TriggerGroup>
+          </Select.Shell>
           <Select.Popover />
           <Select.Hint>Item description is visible only in the list.</Select.Hint>
         </Select>
@@ -108,12 +104,12 @@ export const Default: Story = {
 export const CustomListBox: Story = {
   name: "Compound ListBox",
   render: () => (
-    <Select options={sampleOptions} defaultValue="ru">
+    <Select items={sampleOptions} defaultValue="ru">
       <Select.Label>Interface language</Select.Label>
-      <Select.TriggerGroup>
+      <Select.Shell>
         <Select.Value placeholder="Select language" />
         <Select.Trigger />
-      </Select.TriggerGroup>
+      </Select.Shell>
       <Select.Popover>
         <ListBox.Section>
           <ListBox.Header>Available languages</ListBox.Header>
@@ -141,8 +137,8 @@ type SelectStoryProps = ComponentProps<typeof Select>;
 export const Controlled: Story = {
   name: "Controlled value",
   render: function ControlledStory() {
-    const [value, setValue] = useState("react");
-    const options: SelectOption[] = [
+    const [value, setValue] = useState<string | null>("react");
+    const items: SelectItem[] = [
       { value: "react", label: "React" },
       { value: "svelte", label: "Svelte" },
       { value: "vue", label: "Vue" },
@@ -150,7 +146,7 @@ export const Controlled: Story = {
     return (
       <Select
         label="Framework"
-        options={options}
+        items={items}
         value={value}
         onValueChange={setValue}
         hint={`Selected: ${value}`}
@@ -163,16 +159,16 @@ export const Multiple: Story = {
   name: "Multiple",
   render: function MultipleStory() {
     const [values, setValues] = useState<string[]>(["react", "vue"]);
-    const options: SelectOption[] = [
+    const items: SelectItem[] = [
       { value: "react", label: "React" },
       { value: "svelte", label: "Svelte" },
       { value: "vue", label: "Vue" },
     ];
     return (
       <Select
-        multiple
+        selectionMode="multiple"
         label="Frameworks"
-        options={options}
+        items={items}
         values={values}
         onValuesChange={setValues}
         hint={values.length > 0 ? `Selected: ${values.join(", ")}` : "None selected"}
@@ -187,7 +183,7 @@ export const Virtualized: Story = {
     virtualized: true,
     label: "Item",
     defaultValue: "1",
-    options: Array.from({ length: 200 }, (_, index) => ({
+    items: Array.from({ length: 200 }, (_, index) => ({
       value: String(index + 1),
       label: `Item ${index + 1}`,
     })),
@@ -212,7 +208,7 @@ export const ControlledOpen: Story = {
         </Button>
         <Select
           label="Framework"
-          options={sampleOptions}
+          items={sampleOptions}
           defaultValue="ru"
           open={open}
           onOpenChange={setOpen}
@@ -235,7 +231,7 @@ export const DefaultOpen: Story = {
   render: () => (
     <Select
       label="Language"
-      options={sampleOptions}
+      items={sampleOptions}
       defaultValue="en"
       defaultOpen
       hint="Popup starts open via defaultOpen"
@@ -260,7 +256,7 @@ export const Sizes: Story = {
           key={size}
           size={size}
           label={`size="${size}"`}
-          options={sampleOptions}
+          items={sampleOptions}
           defaultValue="ru"
         />
       ))}
@@ -273,7 +269,7 @@ export const Keyboard: Story = {
   render: () => (
     <Select
       label="Framework"
-      options={[
+      items={[
         { value: "react", label: "React" },
         { value: "vue", label: "Vue" },
       ]}
@@ -283,7 +279,7 @@ export const Keyboard: Story = {
   play: async ({ canvas, userEvent }) => {
     const trigger = canvas.getByRole("combobox");
     await userEvent.click(trigger);
-    await expect(screen.getByRole("listbox")).toBeInTheDocument();
+    await expect(await screen.findByRole("listbox")).toBeInTheDocument();
   },
 };
 
@@ -292,11 +288,11 @@ export const CustomClassNames: Story = {
   render: () => (
     <Select
       label="Custom slots"
-      options={sampleOptions}
+      items={sampleOptions}
       defaultValue="ru"
       classNames={{
-        triggerGroup: "ring-1 ring-primary/20",
-        triggerIconWrap: "text-primary",
+        shell: "ring-1 ring-primary/20",
+        triggerIconWrap: "icon-slot-large text-primary",
         value: "text-primary",
         popover: "ring-1 ring-primary/15",
         listBoxItem: "rounded-lg",
@@ -318,12 +314,12 @@ export const ListBoxItemSlots: Story = {
     },
   },
   render: () => (
-    <Select options={sampleOptions} defaultValue="ru">
+    <Select items={sampleOptions} defaultValue="ru">
       <Select.Label>Styled list items</Select.Label>
-      <Select.TriggerGroup>
+      <Select.Shell>
         <Select.Value placeholder="Select language" />
         <Select.Trigger />
-      </Select.TriggerGroup>
+      </Select.Shell>
       <Select.Popover
         listBoxProps={{
           classNames: {
@@ -348,14 +344,14 @@ export const CustomTriggerIcon: Story = {
     },
   },
   render: () => (
-    <Select options={sampleOptions} defaultValue="ru">
+    <Select items={sampleOptions} defaultValue="ru">
       <Select.Label>Interface language</Select.Label>
-      <Select.TriggerGroup>
+      <Select.Shell>
         <Select.Value placeholder="Select language" />
         <Select.Trigger>
           <IoCaretDown aria-hidden className="icon-small text-primary" />
         </Select.Trigger>
-      </Select.TriggerGroup>
+      </Select.Shell>
       <Select.Popover />
     </Select>
   ),
@@ -373,12 +369,12 @@ export const PopoverSideTop: Story = {
     },
   },
   render: () => (
-    <Select options={sampleOptions} defaultValue="ru">
+    <Select items={sampleOptions} defaultValue="ru">
       <Select.Label>Opens upward</Select.Label>
-      <Select.TriggerGroup>
+      <Select.Shell>
         <Select.Value placeholder="Select language" />
         <Select.Trigger />
-      </Select.TriggerGroup>
+      </Select.Shell>
       <Select.Popover side="top" />
     </Select>
   ),
@@ -390,7 +386,7 @@ export const Validation: Story = {
     <Select
       label="Required field"
       error="Select a value"
-      options={sampleOptions}
+      items={sampleOptions}
       required
     />
   ),
@@ -407,7 +403,7 @@ export const MotionControllerGallery: Story = {
     docs: {
       description: {
         story:
-          "`useMotionControllerHandle()` — playSlot on triggerGroup/value (no play: no root slot), chrome label on Root, cancel loop, select events.",
+          "`useMotionControllerHandle()` — playSlot on shell/value (no play: no root slot), chrome label on Root, cancel loop, select events.",
       },
     },
   },
@@ -419,10 +415,9 @@ export const Playground: Story = {
   args: {
     label: "Language",
     placeholder: "Select language",
-    options: sampleOptions,
+    items: sampleOptions,
     defaultValue: "ru",
     size: "base",
     variant: "default",
-    status: "default",
   } satisfies SelectStoryProps,
 };

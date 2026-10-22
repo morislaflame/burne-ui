@@ -11,9 +11,13 @@ export function PaginationMotionControlWaveDemo() {
       totalPages={12}
       onPageChange={setPage}
       motion={{
-        control: {
+        page: {
           pressIn: (ctx) => ctx.to({ y: 2, scale: 0.94, duration: 0.1 }),
           pressOut: (ctx) => ctx.to({ y: 0, scale: 1, duration: 0.16 }),
+        },
+        next: {
+          pressIn: (ctx) => ctx.to({ x: 6, duration: 0.12 }),
+          pressOut: (ctx) => ctx.to({ x: 0, duration: 0.16 }),
         },
         previousIcon: {
           pressIn: { y: -3, duration: 0.14 },

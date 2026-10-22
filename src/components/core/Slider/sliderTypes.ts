@@ -9,10 +9,11 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
 export type SliderOrientation = "horizontal" | "vertical";
 
-export type SliderSize = "small" | "base" | "mid" | "large";
+export type SliderSize = ComponentSize;
 
 export const KIT_SLIDER_VARIANTS = ["default"] as const;
 export type KitSliderVariant = (typeof KIT_SLIDER_VARIANTS)[number];
@@ -110,7 +111,6 @@ export type SliderTrackContextValue = {
   icon?: ReactNode;
   range: boolean;
   variant: SliderVariant;
-  thumbClassName?: string;
   activeThumb: SliderThumbKind | null;
   singleValue: number;
   rangeValue: [number, number];
@@ -139,14 +139,13 @@ type SliderCommonProps = {
   formatValue?: (value: number) => string;
   icon?: ReactNode;
   variant?: SliderVariant;
-  thumbClassName?: string;
   disabled?: boolean;
+  readOnly?: boolean;
   className?: string;
   style?: CSSProperties;
   classNames?: Prettify<
     Pick<SliderClassNames, "track" | "rail" | "fill" | "thumb" | "thumbShell" | "mark">
   >;
-  ariaLabel?: string;
   children?: ReactNode;
 } & Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -163,6 +162,8 @@ export type SliderSingleProps = SliderCommonProps & {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
+  /** Fires when a drag or key press finishes, with the value at that moment. */
+  onValueCommit?: (value: number) => void;
 };
  
 export type SliderRangeProps = SliderCommonProps & {
@@ -170,6 +171,8 @@ export type SliderRangeProps = SliderCommonProps & {
   value?: [number, number];
   defaultValue?: [number, number];
   onValueChange?: (value: [number, number]) => void;
+  /** Fires when a drag or key press finishes, with the value at that moment. */
+  onValueCommit?: (value: [number, number]) => void;
 };
  
 export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
@@ -184,6 +187,7 @@ export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
 export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   children?: ReactNode;
   id?: string;
+  name?: string;
   orientation?: SliderOrientation;
   label?: ReactNode;
   showValue?: boolean;
@@ -262,7 +266,6 @@ export type SliderThumbButtonProps = {
   size: SliderSize;
   icon?: ReactNode;
   variant?: SliderVariant;
-  thumbClassName?: string;
   className?: string;
   style?: CSSProperties;
   percent: number;
@@ -298,4 +301,53 @@ export type UseSliderRootStateProps = Omit<
 >;
  
 export type FillSpan = { start: number; end: number };
+
+/** DOM rest of `Slider.Track` after the hook reads its own props. */
+export type SliderTrackRestProps = Omit<
+  SliderTrackProps,
+  | "orientation"
+  | "size"
+  | "thickness"
+  | "min"
+  | "max"
+  | "step"
+  | "marks"
+  | "formatValue"
+  | "icon"
+  | "variant"
+  | "disabled"
+  | "readOnly"
+  | "className"
+  | "style"
+  | "classNames"
+  | "aria-label"
+  | "aria-labelledby"
+  | "range"
+  | "children"
+  | "onPointerDown"
+  | "value"
+  | "defaultValue"
+  | "onValueChange"
+  | "motion"
+  | "motionController"
+  | "motionState"
+  | "motionPayload"
+  | "playInitialState"
+>;
+
+/** Named so declaration emit does not inline `CSSProperties`. */
+export type UseSliderTrackStateResult = {
+  setTrackRef: (node: HTMLDivElement | null) => void;
+  trackHitClass: string;
+  trackCrossStyle: CSSProperties;
+  trackRest: SliderTrackRestProps;
+  handleTrackPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
+  trackContextValue: SliderTrackContextValue;
+  compoundBody: ReactNode | null;
+  hasCompoundParts: boolean;
+  range: boolean;
+  icon?: ReactNode;
+  valueIdentity: string;
+  disabled?: boolean;
+};
  

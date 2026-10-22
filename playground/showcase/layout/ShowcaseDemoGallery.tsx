@@ -91,10 +91,10 @@ export function ShowcaseDemoGallery({
             icon={<IoChevronBack aria-hidden />}
             onClick={() => go(index - 1)}
           />
-          <Text as="p" variant="small" className="min-w-0 flex-1 font-w-mid">
+          <Text as="p" textStyle="small" className="min-w-0 flex-1 font-w-mid">
             {item.title}
           </Text>
-          <Text as="span" variant="xsmall" className="shrink-0 text-muted">
+          <Text as="span" textStyle="xsmall" className="shrink-0 text-muted">
             {index + 1} / {count}
           </Text>
           <Button

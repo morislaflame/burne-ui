@@ -2,14 +2,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
  
 import type { DropdownSubContextValue } from "./dropdownTypes";
  
-export function useDropdownSubState(menuOpen: boolean) {
+export function useDropdownSubState() {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<number | undefined>(undefined);
- 
+
   useEffect(() => {
-    if (!menuOpen) setOpen(false);
-  }, [menuOpen]);
+    return () => {
+      window.clearTimeout(closeTimerRef.current);
+    };
+  }, []);
  
   const cancelClose = useCallback(() => {
     window.clearTimeout(closeTimerRef.current);

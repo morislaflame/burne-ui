@@ -38,18 +38,18 @@ export function ButtonGroupLayoutProvider({
  
 export function ButtonGroupSegmentProvider({
   segment,
-  buttonSize,
+  size,
   variant,
   children,
 }: {
   segment: ButtonGroupSegment;
-  buttonSize: ButtonSize;
+  size: ButtonSize;
   variant?: ButtonVariant;
   children: ReactNode;
 }) {
   const value = useMemo(
-    () => ({ segment, buttonSize, variant }),
-    [buttonSize, segment, variant],
+    () => ({ segment, size, variant }),
+    [size, segment, variant],
   );
  
   return (

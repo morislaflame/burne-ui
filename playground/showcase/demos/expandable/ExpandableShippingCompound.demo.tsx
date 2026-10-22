@@ -19,10 +19,10 @@ export function ExpandableShippingCompoundDemo() {
       </Expandable.Trigger>
       <Expandable.Panel>
         <div className="flex flex-col gap-small">
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             <span className="font-medium">Across Russia:</span> 2–5 working days, from 290 ₽.
           </Text>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Return within 14 days if the product is in original condition.
           </Text>
         </div>

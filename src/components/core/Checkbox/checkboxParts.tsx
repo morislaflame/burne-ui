@@ -41,7 +41,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
         ref={ref}
         className={cn(
           CHECKBOX_CONTROL_CLASS,
-          checkboxControlCellClass(),
+          checkboxControlCellClass(ctx.labelPosition),
           slotClassNames.control,
           className,
         )}
@@ -72,12 +72,16 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
             }
             disabled={ctx.isDisabled}
             name={ctx.inputProps.name}
-            value={ctx.inputProps.value}
+            {...(ctx.inputProps.value != null ? { value: ctx.inputProps.value } : null)}
             required={ctx.inputProps.required}
             form={ctx.inputProps.form}
             autoFocus={ctx.inputProps.autoFocus}
             tabIndex={ctx.inputProps.tabIndex}
             readOnly={ctx.inputProps.readOnly}
+            aria-readonly={ctx.inputProps.readOnly || undefined}
+            onClick={(event) => {
+              if (ctx.inputProps.readOnly) event.preventDefault();
+            }}
             onBlur={ctx.inputProps.onBlur}
             onFocus={ctx.inputProps.onFocus}
             aria-invalid={ctx.inputProps.ariaInvalid ? true : undefined}
@@ -95,6 +99,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
                   onChange: ctx.onChange,
                 })}
             data-invalid={ctx.inputProps.ariaInvalid ? "" : undefined}
+            data-readonly={ctx.inputProps.readOnly ? "" : undefined}
           />
           {children ?? <CheckboxIndicator motionController={motionController}
                 motionState={motionState}
@@ -108,8 +113,10 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
  
 CheckboxControl.displayName = "CheckboxControl";
  
-export function CheckboxIndicator({
+export const CheckboxIndicator = forwardRef<HTMLSpanElement, CheckboxIndicatorProps>(
+  function CheckboxIndicator({
   children,
+  icon,
   className,
   classNames: classNamesProp,
   size: sizeProp,
@@ -119,7 +126,7 @@ export function CheckboxIndicator({
   motionPayload,
   playInitialState,
   ...rest
-}: CheckboxIndicatorProps) {
+}, ref) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   const rootMotion = useCheckboxMotion();
@@ -137,7 +144,7 @@ export function CheckboxIndicator({
       size={sizeProp ?? ctx.size}
       selected={ctx.mergedChecked || ctx.indeterminate}
       indeterminate={ctx.indeterminate}
-      icon={ctx.icon ?? undefined}
+      icon={icon !== undefined ? icon : ctx.icon ?? undefined}
       check
       classNames={resolveCheckboxIndicatorClassNames({
         slotClassNames,
@@ -150,11 +157,12 @@ export function CheckboxIndicator({
                 motionPayload={motionPayload}
                 playInitialState={playInitialState}
       {...rest}
+      ref={ref}
     >
       {children}
     </SelectionIndicator>
   );
-}
+});
  
 CheckboxIndicator.displayName = "CheckboxIndicator";
  
@@ -199,14 +207,15 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
  
 CheckboxContent.displayName = "CheckboxContent";
  
-export function CheckboxLabel({
+export const CheckboxLabel = forwardRef<HTMLSpanElement, CheckboxLabelProps>(
+  function CheckboxLabel({
   children,
   className,
   required: requiredProp,
   id: idProp,
   motion,
   ...rest
-}: CheckboxLabelProps) {
+}, ref) {
   const field = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   const labelCtx = useOptionalFieldLabelContext();
@@ -217,14 +226,14 @@ export function CheckboxLabel({
   return (
     <span
       id={idProp}
-      ref={mergeRefs(setRef, (node) => {
+      ref={mergeRefs(setRef, ref, (node) => {
         if (field.isCompound && field.useInlineCompoundMotion) {
           field.textMotionRef.current = node;
         }
       })}
       className={cn(
         CHECKBOX_LABEL_CLASS,
-        field.isCompound && checkboxLabelCellClass(),
+        field.isCompound && checkboxLabelCellClass(field.labelPosition),
         field.isCompound &&
           (field.hasCompoundHint || field.hasCompoundError) &&
           CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS,
@@ -236,11 +245,11 @@ export function CheckboxLabel({
     >
       <Text
         as="span"
-        variant={sz.title}
+        textStyle={sz.title}
         inheritColor
         className={cn(
           field.isDisabled && CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
-          !field.isDisabled && field.status === "danger" && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
+          !field.isDisabled && field.isDanger && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
           slotClassNames.labelText,
         )}
       >
@@ -259,22 +268,28 @@ export function CheckboxLabel({
       ) : null}
     </span>
   );
-}
+});
  
 CheckboxLabel.displayName = "CheckboxLabel";
  
-export function CheckboxHint({ children, className, variant, motion, ...rest }: CheckboxHintProps) {
+export const CheckboxHint = forwardRef<HTMLElement, CheckboxHintProps>(function CheckboxHint({
+  children,
+  className,
+  textStyle,
+  motion,
+  ...rest
+}, ref) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   const { setRef } = useCheckboxChromeSlot("hint", motion);
   return (
     <Field.Hint
-      ref={setRef}
+      ref={mergeRefs(setRef, ref)}
       as="span"
       id={ctx.hintId}
-      variant={variant ?? CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
+      textStyle={textStyle ?? CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
       className={cn(
-        ctx.isCompound && checkboxSecondaryCellClass(2),
+        ctx.isCompound && checkboxSecondaryCellClass(2, ctx.labelPosition),
         ctx.isDisabled && CHECKBOX_HINT_DISABLED_CLASS,
         slotClassNames.hint,
         className,
@@ -284,22 +299,27 @@ export function CheckboxHint({ children, className, variant, motion, ...rest }: 
       {children}
     </Field.Hint>
   );
-}
+});
  
 CheckboxHint.displayName = "CheckboxHint";
  
-export function CheckboxError({ children, className, motion, ...rest }: CheckboxErrorProps) {
+export const CheckboxError = forwardRef<HTMLElement, CheckboxErrorProps>(function CheckboxError({
+  children,
+  className,
+  motion,
+  ...rest
+}, ref) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   const { setRef } = useCheckboxChromeSlot("error", motion);
   return (
     <Field.Error
-      ref={setRef}
+      ref={mergeRefs(setRef, ref)}
       as="span"
       id={ctx.errorId}
-      variant={CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
+      textStyle={CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
       className={cn(
-        ctx.isCompound && checkboxSecondaryCellClass(checkboxErrorRow(ctx.hasCompoundHint)),
+        ctx.isCompound && checkboxSecondaryCellClass(checkboxErrorRow(ctx.hasCompoundHint), ctx.labelPosition),
         ctx.isDisabled && CHECKBOX_ERROR_DISABLED_CLASS,
         slotClassNames.error,
         className,
@@ -309,7 +329,7 @@ export function CheckboxError({ children, className, motion, ...rest }: Checkbox
       {children}
     </Field.Error>
   );
-}
+});
  
 CheckboxError.displayName = "CheckboxError";
  
@@ -323,7 +343,7 @@ export function CheckboxSimpleBody({
   textColRef,
   size,
   isDisabled,
-  status,
+  isDanger,
   hintId,
   errorId,
   motionController,
@@ -340,12 +360,13 @@ export function CheckboxSimpleBody({
   textColRef: React.RefObject<HTMLElement | null>;
   size: CheckboxSize;
   isDisabled: boolean;
-  status: boolean;
+  isDanger: boolean;
   hintId: string;
   errorId: string;
   motionController?: MotionController;
 } & MotionStateHostProps) {
   const slotClassNames = useCheckboxClassNames();
+  const { labelPosition } = useCheckboxFieldContext();
   const sz = CHECKBOX_SIZE_LAYOUT[size];
   const { setRef: setLabelMotionRef } = useCheckboxLabelSlot();
   const { setRef: setHintMotionRef } = useCheckboxChromeSlot("hint");
@@ -360,7 +381,7 @@ export function CheckboxSimpleBody({
       <span
         ref={mergeRefs(textColRef, setLabelMotionRef)}
         className={cn(
-          checkboxLabelCellClass(),
+          checkboxLabelCellClass(labelPosition),
           !secondaryLines && CHECKBOX_SIMPLE_LABEL_WRAP_CLASS,
           slotClassNames.simpleLabelWrap,
           slotClassNames.label,
@@ -368,12 +389,12 @@ export function CheckboxSimpleBody({
       >
         <Text
           as="span"
-          variant={sz.title}
+          textStyle={sz.title}
           inheritColor
           className={cn(
             CHECKBOX_SIMPLE_LABEL_TEXT_CLASS,
             isDisabled && CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
-            !isDisabled && status && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
+            !isDisabled && isDanger && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
             slotClassNames.simpleLabelText,
             slotClassNames.labelText,
           )}
@@ -386,9 +407,9 @@ export function CheckboxSimpleBody({
           ref={setHintMotionRef}
           as="span"
           id={hintId}
-          variant={sz.desc as "small"}
+          textStyle={sz.desc as "small"}
           className={cn(
-            checkboxSecondaryCellClass(2),
+            checkboxSecondaryCellClass(2, labelPosition),
             isDisabled && CHECKBOX_HINT_DISABLED_CLASS,
             slotClassNames.hint,
           )}
@@ -401,9 +422,9 @@ export function CheckboxSimpleBody({
           ref={setErrorMotionRef}
           as="span"
           id={errorId}
-          variant={sz.desc as "small"}
+          textStyle={sz.desc as "small"}
           className={cn(
-            checkboxSecondaryCellClass(checkboxErrorRow(hasHint)),
+            checkboxSecondaryCellClass(checkboxErrorRow(hasHint), labelPosition),
             isDisabled && CHECKBOX_ERROR_DISABLED_CLASS,
             slotClassNames.error,
           )}

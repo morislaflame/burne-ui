@@ -6,21 +6,16 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
  
+import { ACTION_VARIANTS, type ActionVariant } from "@/components/core/utils/actionVariant";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
  
-export const KIT_BUTTON_VARIANTS = [
-  "default",
-  "primary",
-  "outline",
-  "secondary",
-  "ghost",
-] as const;
-export type KitButtonVariant = (typeof KIT_BUTTON_VARIANTS)[number];
-export type ButtonVariant = KitButtonVariant | (string & {});
+export const KIT_BUTTON_VARIANTS = ACTION_VARIANTS;
+export type KitButtonVariant = ActionVariant;
+export type ButtonVariant = ActionVariant | (string & {});
  
 export type ButtonStatus = SemanticStatus;
  

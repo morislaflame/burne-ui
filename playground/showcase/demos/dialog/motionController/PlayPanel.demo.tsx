@@ -27,7 +27,7 @@ export function DialogMotionControllerDemo() {
       >
       {container ? (
         <Dialog open portalContainer={container} size="small">
-          <Dialog.Panel motionController={controller} dismissOnBackdrop={false} motion={{
+          <Dialog.Panel motionController={controller} closeOnInteractOutside={false} motion={{
           panel: {
             hoverIn: { y: -6, duration: 0.28, replay: "rest" },
             hoverOut: { y: 0, duration: 0.2 },

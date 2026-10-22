@@ -39,16 +39,16 @@ export function TableTeamRosterDemo() {
 
   return (
     <Surface variant="secondary" padding="large" className="w-full max-w-xl">
-      <Table>
+      <Table
+            sortDescriptor={sort}
+            onSortChange={setSort}>
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Team"
             className="min-w-[28rem]"
-            sortDescriptor={sort}
-            onSortChange={setSort}
           >
             <Table.Header>
-              <Table.Column id="name" isRowHeader allowsSorting>
+              <Table.Column id="name" rowHeader sortable>
                 Participant
               </Table.Column>
               <Table.Column id="role">Role</Table.Column>

@@ -78,7 +78,6 @@ export type {
 } from "./motionControllerTypes";
 export {
   createMotionGroup,
-  MotionGroupMember,
   MotionGroupProvider,
   useMotionGroup,
   useMotionGroupHandle,

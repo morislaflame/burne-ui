@@ -4,6 +4,7 @@ import { FIELD_LEGEND_DISPLAY_NAMES } from "./fieldA11y";
 import type { UseFieldSetRootStateResult } from "./fieldTypes";
  
 export function readFieldPartDisplayName(type: unknown): string | undefined {
+  if (typeof type !== "function" && (typeof type !== "object" || type == null)) return undefined;
   return (type as { displayName?: string }).displayName;
 }
  
@@ -80,7 +81,7 @@ export function splitFieldSetChildren(children: ReactNode): {
  
 export function partitionFieldSetBody(body: ReactNode[]): Omit<
   UseFieldSetRootStateResult,
-  "legend" | "hasHint" | "hasError"
+  "legend" | "hintConnected" | "errorConnected"
 > {
   const loose: ReactNode[] = [];
   const groups: ReactNode[] = [];

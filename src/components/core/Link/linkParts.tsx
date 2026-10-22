@@ -1,8 +1,10 @@
+import { forwardRef } from "react";
+
 import type { LinkIconProps } from "./linkTypes";
  
-export function LinkIcon(_props: LinkIconProps) {
+export const LinkIcon = forwardRef<HTMLSpanElement, LinkIconProps>(function LinkIcon(_props, _ref) {
   return null;
-}
+});
  
 LinkIcon.displayName = "Link.Icon";
  

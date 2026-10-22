@@ -452,7 +452,7 @@ export const WithForm: Story = {
                     <Input.Label>Email</Input.Label>
                     <Input.Control
                       name="email"
-                      inputType="text"
+                      type="text"
                       placeholder="you@example.com"
                       autoComplete="email"
                     />

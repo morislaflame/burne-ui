@@ -55,6 +55,8 @@ Compound API нет.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`sep:nudge`, `sep:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
 
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { Button, Separator, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -130,3 +132,7 @@ Separator/
 ```
 
 Storybook: `Core Components/Separator` — playground, Slot motion, MotionController. Также dependency в `Card` / `Surface`.
+
+## Декор
+
+`decorative` снимает семантику разделителя: `role="none"` и `aria-hidden`. Без пропа горизонтальная линия остаётся `<hr>`, вертикальная — `role="separator"`.

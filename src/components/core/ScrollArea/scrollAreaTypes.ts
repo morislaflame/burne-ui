@@ -98,13 +98,13 @@ export type ScrollAreaViewportProps = HTMLAttributes<HTMLDivElement>;
 export type ScrollAreaScrollbarProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children?: ReactNode;
   orientation?: ScrollAxis;
-  motion?: ScrollAreaPartMotion;
+  motion?: Prettify<ScrollAreaPartMotion>;
 };
 
 export type ScrollAreaThumbProps = HTMLAttributes<HTMLDivElement> & {
-  motion?: ScrollAreaPartMotion;
+  motion?: Prettify<ScrollAreaPartMotion>;
 };
 
 export type ScrollAreaCornerProps = HTMLAttributes<HTMLDivElement> & {
-  motion?: ScrollAreaPartMotion;
+  motion?: Prettify<ScrollAreaPartMotion>;
 };

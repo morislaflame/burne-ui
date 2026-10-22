@@ -1,7 +1,7 @@
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from "react";
 
 import { useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
-import { hasKitMember } from "@/skins/resolveVariantVisual";
+import { usesKitElevationMember } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import { resolveCardMotionDefaults, useCardAnimations } from "./cardAnimations";
@@ -13,7 +13,6 @@ import { KIT_CARD_VARIANTS } from "./cardTypes";
 import { useCardRootState } from "./useCardRootState";
 
 export type {
-  CardPressEvent,
   CardProps,
   CardSize,
   CardVariant,
@@ -43,13 +42,14 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     size = "base",
     shadow = "base",
     pressable = false,
+    href,
+    asChild = false,
     classNames,
     motion,
     motionController,
     motionState,
     motionPayload,
     playInitialState,
-    onPress,
     onPointerOver: onPointerOverProp,
     onPointerOut: onPointerOutProp,
     onPointerDown: onPointerDownProp,
@@ -60,10 +60,11 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     ...rest
   },
   ref) {
+  const interactive = pressable || href != null || asChild;
   const state = useCardRootState({
     variant,
     size,
-    pressable,
+    pressable: interactive,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,
     onPointerDown: onPointerDownProp,
@@ -75,18 +76,18 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const motionDefaults = useMemo(
     () => {
       void skinRevision;
-      return resolveCardMotionDefaults({ variant: state.variant, pressable });
+      return resolveCardMotionDefaults({ variant: state.variant, pressable: interactive });
     },
-    [pressable, skinRevision, state.variant]);
+    [interactive, skinRevision, state.variant]);
   const motionParams = useMemo(
     () => ({
       pointerInside: hoverPointerInsideRef,
       hasHoverShadow:
-        pressable &&
-        hasKitMember(state.variant, KIT_CARD_VARIANTS, CARD_VARIANT_HAS_HOVER_SHADOW),
+        interactive &&
+        usesKitElevationMember(state.variant, KIT_CARD_VARIANTS, CARD_VARIANT_HAS_HOVER_SHADOW),
       shadowSize: shadow,
     }),
-    [pressable, shadow, state.variant]);
+    [interactive, shadow, state.variant]);
 
   return (
     <CardProvider classNames={classNames} size={state.size}>
@@ -100,7 +101,9 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         playInitialState={playInitialState}
       >
         <CardSurface
-          pressable={pressable}
+          pressable={interactive}
+          href={href}
+          asChild={asChild}
           renderAsButton={state.renderAsButton}
           variant={state.variant}
           size={state.size}
@@ -108,7 +111,6 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
           classNames={classNames}
           className={className}
           motion={motion}
-          onPress={onPress}
           onPointerOver={onPointerOverProp}
           onPointerOut={onPointerOutProp}
           onPointerDown={onPointerDownProp}
@@ -131,13 +133,14 @@ CardRoot.displayName = "Card";
 function CardSurface({
   pressable,
   renderAsButton,
+  href,
+  asChild,
   variant,
   size,
   shadow,
   classNames,
   className,
   motion,
-  onPress,
   onPointerOver,
   onPointerOut,
   onPointerDown,
@@ -151,13 +154,14 @@ function CardSurface({
 }: {
   pressable: boolean;
   renderAsButton: boolean;
+  href?: string;
+  asChild?: boolean;
   variant: CardVariant;
   size: ReturnType<typeof useCardRootState>["size"];
   shadow: NonNullable<CardProps["shadow"]>;
   classNames: CardProps["classNames"];
   className: string;
   motion?: CardMotion;
-  onPress: CardProps["onPress"];
   onPointerOver: CardProps["onPointerOver"];
   onPointerOut: CardProps["onPointerOut"];
   onPointerDown: CardProps["onPointerDown"];
@@ -174,7 +178,6 @@ function CardSurface({
     variant,
     shadow,
     motion,
-    onPress,
     onClick,
     onKeyDown,
     onPointerDown,
@@ -196,7 +199,9 @@ function CardSurface({
   return (
     <CardRootShell
       pressable={pressable}
-      renderAsButton={renderAsButton}
+      renderAsButton={renderAsButton && href == null && !asChild}
+      href={href}
+      asChild={asChild}
       variant={variant}
       size={size}
       rootClassName={rootClassName}

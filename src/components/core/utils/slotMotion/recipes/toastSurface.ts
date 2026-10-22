@@ -34,7 +34,7 @@ export function applyToastRootInstant(el: HTMLElement, open: boolean, slideDir: 
  
 export function toastSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const slideDir = slideDirOf(ctx);
-  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     applyReducedPortalMotion(ctx.el);
     return undefined;
   }
@@ -48,7 +48,7 @@ export function toastSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | u
  
 export function toastSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const slideDir = slideDirOf(ctx);
-  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     applyToastRootInstant(ctx.el, false, slideDir);
     ctx.complete();
     return undefined;

@@ -32,6 +32,10 @@ import type { SortDirection, TableMotion, TablePartMotion, TableVariant } from "
 import { KIT_TABLE_VARIANTS } from "./tableTypes";
  
 import { cn } from "@/utils/cn";
+
+import { bindChevronRecipe } from "@/components/core/utils/slotMotion/recipes/bindChevron";
+
+bindChevronRecipe();
  
 export function resolveTableMotionDefaults(variant: TableVariant = "default"): TableMotion {
   return overlaySkinMotion(

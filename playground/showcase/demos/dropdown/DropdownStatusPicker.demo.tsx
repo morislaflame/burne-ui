@@ -15,7 +15,7 @@ export function DropdownStatusPickerDemo() {
   const current = STATUSES.find((s) => s.value === status) ?? STATUSES[0];
 
   return (
-    <Dropdown selectionIndicator value={status} onValueChange={(v) => setStatus(v as string)}>
+    <Dropdown value={status} onValueChange={(v) => setStatus(v as string)}>
       <Dropdown.Trigger asChild>
         <Button variant="outline" icon={<current.icon aria-hidden className="size-4" />}>
           {current.label}

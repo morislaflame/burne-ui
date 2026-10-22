@@ -21,7 +21,6 @@ export function useToggleButtonRootState({
   fillColor = "bg-primary-tint",
   size: sizeProp,
   disabled: disabledProp = false,
-  className,
   classNames,
   children,
   onClick,
@@ -34,7 +33,7 @@ export function useToggleButtonRootState({
   const inGroup = groupCtx != null && itemValue != null;
   const isSingleGroup = groupCtx?.type === "single";
  
-  const size = sizeProp ?? groupCtx?.size ?? segmentCtx?.buttonSize ?? "base";
+  const size = sizeProp ?? groupCtx?.size ?? segmentCtx?.size ?? "base";
   const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
   const disabled = disabledProp || Boolean(groupCtx?.disabled);
  
@@ -55,7 +54,6 @@ export function useToggleButtonRootState({
   const roundingClass = toggleButtonRoundingClass(groupSegment, size);
  
   const isCompound = useMemo(() => hasToggleButtonCompoundChildren(children), [children]);
-  const contentLayoutClass = !isCompound ? className : undefined;
  
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>, queueFillOnClick: (next: boolean) => void) => {
@@ -116,7 +114,6 @@ export function useToggleButtonRootState({
     ariaChecked: toggleButtonAriaChecked({ inGroup, isSingleGroup, pressed }),
     tabIndex: inGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined,
     isCompound,
-    contentLayoutClass,
     children,
     handleClick,
     handleFocus,

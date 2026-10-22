@@ -2,9 +2,11 @@
   "name": "burne-ui-skin-__SKIN_NAME__",
   "version": "0.1.0",
   "description": "__SKIN_TITLE__ skin for Burne UI",
+  "license": "MIT",
   "type": "module",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./dist/index.js"
   ],
   "files": [
     "dist",
@@ -16,17 +18,19 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
-    "./styles.css": "./src/skin.css",
+    "./styles.css": "./dist/styles.css",
+    "./skin.json": "./dist/skin.json",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && cp src/skin.css dist/styles.css && cp src/skin.json dist/skin.json && rm -f dist/*.map",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
   "peerDependencies": {
-    "burne-ui": "^1.8.8"
+    "burne-ui": "^2.0.0"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

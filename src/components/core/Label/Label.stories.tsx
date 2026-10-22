@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
+import { LabelPartsDemo } from "../../../../playground/showcase/demos/label/LabelParts.demo";
 import { LabelMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/label/motionController/gallery";
 import { LabelSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/label/slotMotion/gallery";
 
@@ -26,7 +27,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Form field label. Supports `htmlFor`, `required`, and `FieldLabelContext` from Input/ComboBox. `Label.Slot` — null component for compound layout.",
+          "Form field label. Supports `htmlFor`, `required`, and `FieldLabelContext` from Input/ComboBox. `Label.Text` and `Label.Required` place the text and star. `Label.Slot` renders null.",
       },
     },
   },
@@ -61,6 +62,11 @@ export const WithInput: Story = {
 export const LegendSpan: Story = {
   name: "Without htmlFor (span)",
   render: () => <Label id="legend-label">Section title</Label>,
+};
+
+export const Parts: Story = {
+  name: "Text and Required",
+  render: () => <LabelPartsDemo />,
 };
 
 export const CustomClassNames: Story = {

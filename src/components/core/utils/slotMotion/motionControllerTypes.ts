@@ -51,6 +51,10 @@ export type MotionPlayEvent<TEvent extends string = string & {}> = [TEvent] exte
  * resolve `motion.events`. Default `TEvent` is loose (`string & {}`).
  */
 export type MotionController<TEvent extends string = string & {}> = {
+  /**
+   * Plays `event` on slot `root`.
+   * No slot means `root`. If the host has no `root` slot, use `playSlot`.
+   */
   play(event: MotionPlayEvent<TEvent>, options?: MotionPlayOptions): MotionRun;
   playSlot(slot: string, event: MotionPlayEvent<TEvent>, options?: MotionPlayOptions): MotionRun;
   playAll(

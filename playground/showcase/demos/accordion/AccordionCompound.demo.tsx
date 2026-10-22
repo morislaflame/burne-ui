@@ -4,7 +4,7 @@ import { EXPANDABLE_INFO_ICON } from "../../shared/constants";
 
 export function AccordionCompoundDemo() {
   return (
-    <Accordion className="max-w-lg" defaultOpenIndex={0}>
+    <Accordion className="max-w-lg" defaultValue="0">
       <Accordion.Item>
         <Accordion.Heading>
           <Accordion.Trigger>

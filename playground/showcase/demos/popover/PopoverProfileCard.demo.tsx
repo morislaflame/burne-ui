@@ -21,10 +21,10 @@ export function PopoverProfileCardDemo() {
           <div className="flex items-center gap-base">
             <Avatar size="base" label="AK" />
             <div className="flex min-w-0 flex-col">
-              <Text as="span" variant="small" className="font-medium">
+              <Text as="span" textStyle="small" className="font-medium">
                 Andrey K.
               </Text>
-              <Text as="span" variant="xsmall" className="truncate text-muted">
+              <Text as="span" textStyle="xsmall" className="truncate text-muted">
                 andrey@example.com
               </Text>
             </div>

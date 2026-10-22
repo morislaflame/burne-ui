@@ -16,7 +16,7 @@ export function TableMotionEmptyDemo() {
     >
       <Table.Content aria-label="Empty members">
         <Table.Header>
-          <Table.Column isRowHeader>Name</Table.Column>
+          <Table.Column rowHeader>Name</Table.Column>
           <Table.Column>Role</Table.Column>
         </Table.Header>
         <Table.Body

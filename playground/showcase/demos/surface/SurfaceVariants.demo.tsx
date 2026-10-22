@@ -5,17 +5,17 @@ export function SurfaceVariantsDemo() {
   return (
     <div className="flex flex-wrap gap-small">
       <Surface variant="default" padding="large" className="min-w-[8rem]">
-        <Text as="span" variant="small">
+        <Text as="span" textStyle="small">
           default
         </Text>
       </Surface>
       <Surface variant="secondary" padding="large" className="min-w-[8rem]">
-        <Text as="span" variant="small">
+        <Text as="span" textStyle="small">
           secondary
         </Text>
       </Surface>
       <Surface variant="tertiary" padding="large" className="min-w-[8rem]">
-        <Text as="span" variant="small">
+        <Text as="span" textStyle="small">
           tertiary
         </Text>
       </Surface>

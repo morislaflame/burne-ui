@@ -18,7 +18,7 @@ function portalVars(ctx: MotionContext) {
 }
  
 export function portalSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     applyReducedPortalMotion(ctx.el);
     return undefined;
   }
@@ -29,7 +29,7 @@ export function portalSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | 
 }
  
 export function portalSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     applyReducedPortalMotion(ctx.el);
     ctx.complete();
     return undefined;

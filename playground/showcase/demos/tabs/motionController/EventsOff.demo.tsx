@@ -34,7 +34,7 @@ export function TabsMotionEventsOffDemo() {
           <Tabs.Tab value="one">Live</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="one" className="pt-large">
-          <Text as="p" variant="small">Events play.</Text>
+          <Text as="p" textStyle="small">Events play.</Text>
         </Tabs.Panel>
       </Tabs>
       <Tabs
@@ -49,7 +49,7 @@ export function TabsMotionEventsOffDemo() {
           <Tabs.Tab value="one">Off</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="one" className="pt-large">
-          <Text as="p" variant="small">events: false skips.</Text>
+          <Text as="p" textStyle="small">events: false skips.</Text>
         </Tabs.Panel>
       </Tabs>
     </div>

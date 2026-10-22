@@ -13,6 +13,7 @@
     "src/**/*.stories.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
+    "src/__tests__/**",
     "src/stories-utils/**",
     "src/styles.entry.ts"
   ]

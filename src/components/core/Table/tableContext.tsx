@@ -4,6 +4,7 @@ import { createMotionScope } from "@/components/core/utils/slotMotion";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
  
 import { EMPTY_TABLE_SELECTION } from "./tableAPI";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type {
   TableClassNames,
   TableClassNamesProviderProps,
@@ -27,6 +28,7 @@ const noopStore: TableRowSelectionStore = {
 };
  
 const TableVariantContext = createContext<TableVariant>("default");
+const TableSizeContext = createContext<ComponentSize>("base");
 const TableClassNamesContext = createContext<TableClassNames>({});
 const TableContentContext = createContext<TableContentContextValue>({
   selectionMode: "none",
@@ -36,10 +38,29 @@ const TableContentContext = createContext<TableContentContextValue>({
   setFocusedRowKey: () => {},
   claimFocusedRowKey: () => {},
   rowStore: noopStore,
+  isRowDisabled: () => false,
+  stickyHeader: false,
+  columnResize: false,
+  columnWidths: {},
+  setColumnWidth: () => {},
 });
 const TableRowContext = createContext<TableRowContextValue | null>(null);
 const TableVirtualContext = createContext<TableVirtualMove | null>(null);
  
+export function TableSizeProvider({
+  size,
+  children,
+}: {
+  size: ComponentSize;
+  children: React.ReactNode;
+}) {
+  return <TableSizeContext.Provider value={size}>{children}</TableSizeContext.Provider>;
+}
+
+export function useTableSize(): ComponentSize {
+  return useContext(TableSizeContext);
+}
+
 export function TableVariantProvider({
   variant,
   children,

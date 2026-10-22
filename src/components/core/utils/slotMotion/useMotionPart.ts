@@ -2,7 +2,15 @@ import { useCallback, useLayoutEffect, useMemo, useRef, type ForwardedRef, type 
 import type { PointerEvent as ReactPointerEvent } from "react";
  
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  applyStudioSlotMark,
+  studioSlotIds,
+  useStudioSlotCheck,
+  type StudioSlotMark,
+} from "@/studio/studioModeContext";
+import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useLazyRef } from "@/components/core/utils/useLazyRef";
  
 import type { MotionScopeValue } from "./createMotionScope";
 import type { MotionPartPhases } from "./slotMotionTypes";
@@ -66,6 +74,7 @@ export function useMotionPart<T extends HTMLElement>({
   onPointerOut,
   onPointerDown,
   onPointerUp,
+  studioSlot,
 }: {
   scope: MotionScopeValue | null;
   slot: string;
@@ -75,11 +84,16 @@ export function useMotionPart<T extends HTMLElement>({
   pointerPhases?: boolean;
   /** When true, pressIn/pressOut on pointer down/up (trigger = this part). */
   pressPhases?: boolean;
-  skipHover?: () => boolean;
+  skipHover?: (config: Readonly<MotionConfig>) => boolean;
   onPointerOver?: PointerEventHandler<T>;
   onPointerOut?: PointerEventHandler<T>;
   onPointerDown?: PointerEventHandler<T>;
   onPointerUp?: PointerEventHandler<T>;
+  /**
+   * Skin target id when it differs from `debugName.slot`
+   * (`popover.panel` on the content node, `selectionThumbIcon.root` on the icon).
+   */
+  studioSlot?: string;
 }): {
   setRef: (node: T | null) => void;
   targetRef: RefObject<T | null>;
@@ -90,11 +104,13 @@ export function useMotionPart<T extends HTMLElement>({
     onPointerUp: (e: ReactPointerEvent<T>) => void;
   };
 } {
+  const isLiveSlot = useStudioSlotCheck();
   const targetRef = useRef<T | null>(null);
+  const studioMarkRef = useRef<StudioSlotMark | null>(null);
   const motionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   motionRef.current = motion;
-  const idRef = useRef(Symbol(slot));
+  const idRef = useLazyRef(() => Symbol(slot));
  
   const syncRegistration = useCallback(
     (node: T | null, partMotion: MotionPartPhases | undefined) => {
@@ -106,13 +122,13 @@ export function useMotionPart<T extends HTMLElement>({
         motion: partMotion,
       });
     },
-    [scope, slot],
+    [idRef, scope, slot],
   );
  
   useLayoutEffect(() => {
     syncRegistration(targetRef.current, motion);
   }, [motion, syncRegistration]);
- 
+
   useLayoutEffect(() => {
     return () => {
       syncRegistration(null, undefined);
@@ -124,8 +140,12 @@ export function useMotionPart<T extends HTMLElement>({
       targetRef.current = node;
       syncRegistration(node, motionRef.current);
       if (forwardedRef != null) mergeForwardedRef(forwardedRef, node);
+      const ids = node && isLiveSlot
+        ? studioSlotIds(scope?.debugName, slot, studioSlot, isLiveSlot)
+        : [];
+      studioMarkRef.current = applyStudioSlotMark(studioMarkRef.current, node, ids, scope);
     },
-    [forwardedRef, syncRegistration],
+    [forwardedRef, isLiveSlot, scope, slot, studioSlot, syncRegistration],
   );
  
   const motionPointer = useMotionPointerPhases<T>({

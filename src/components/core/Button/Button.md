@@ -2,6 +2,8 @@
 
 Интерактивная кнопка первого уровня: варианты поверхности, семантические статусы, converge-ripple и GSAP-анимации hover/press.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -16,10 +18,10 @@ import type {
 } from "burne-ui";
 ```
 
-Дополнительно из пакета экспортируются утилиты стилей (для кастомных контролов с тем же shell):
+Утилиты стилей для своих контролов с тем же shell — `burne-ui/internal`:
 
 ```tsx
-import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTone } from "burne-ui";
+import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTone } from "burne-ui/internal";
 ```
 
 ## API
@@ -30,7 +32,7 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
-| `variant` | `default` \| `primary` \| `outline` \| `secondary` \| `ghost` \| `gloss` | `default` | Визуальный стиль поверхности |
+| `variant` | `default` \| `primary` \| `outline` \| `secondary` \| `ghost` | `default` | Визуальный стиль поверхности |
 | `status` | `default` \| `danger` \| `success` \| `info` \| `warning` | `default` | Семантический тон (цвет, hover, focus, ripple) |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер; наследуется из `ButtonGroup` / `Form` |
 | `ripple` | `boolean` | `false` | Converge-ripple от точки нажатия (`<Ripple />`) |
@@ -111,7 +113,7 @@ const states = createMotionStates({
 
 ## variant и status
 
-- **`variant`** — визуальный стиль: фон, бордер, тень.
+- **`variant`** — `ActionVariant`: `default` | `primary` | `outline` | `secondary` | `ghost`. Фон, бордер, тень. Тот же список у CloseButton. Имя скина в этот список не входит.
 - **`status`** — семантика: danger / success / info / warning накладываются поверх variant.
 
 | variant | Поверхность | Тень при hover | Примечание |
@@ -121,7 +123,6 @@ const states = createMotionStates({
 | `outline` | прозрачный фон, `border-token-outline` | да | Hover: `bg-transparent-hover`; при status ≠ default бордер/текст по статусу |
 | `secondary` | `bg-secondary` | да | Вторичная |
 | `ghost` | прозрачный, без бордера | да | Hover: `bg-transparent-hover` |
-| `gloss` | CSS-класс `gloss-btn` | нет (gloss-motion) | Статус через `gloss-btn-*` |
 
 При `status !== "default"` hover-вариант пересчитывается (например, `primary` + `danger` → fill-danger).
 
@@ -161,8 +162,8 @@ const states = createMotionStates({
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
-| `root` | `pressIn` | `pressSqueeze` или `pressSqueezeGloss` (полный in+release; `pressOut` по умолчанию `false`) |
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` |
+| `root` | `pressIn` | `pressSqueeze` (полный in+release; `pressOut` по умолчанию `false`) |
 | `label` / `icon` / `text` | hover / press | нет; хост **рассылает** |
 | `loader` / `success` / `error` | hover / press | нет; CSS rest скрыт, поза — `motion.states` |
 
@@ -279,7 +280,7 @@ function Nudge() {
 </Button>
 ```
 
-**Тень 1-го уровня:** `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount ставит токен `--el-shadow` и статичный rest-слой. Hover / press — отдельные слои (`--shadow-lift` / `--shadow-none`); GSAP кросс-фейдит только `opacity`. Класс `animate-shadow`. Gloss — свои три CSS-тени (`--gloss-shadow-rest|hover|press`), рецепты `hoverLiftGloss` / `pressSqueezeGloss`.
+**Тень 1-го уровня:** `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount ставит токен `--el-shadow` и статичный rest-слой. Hover / press — отдельные слои (`--shadow-lift` / `--shadow-none`); GSAP кросс-фейдит только `opacity`. Класс `animate-shadow`.
 
 **ButtonGroup:** lift/squeeze на content span, не на glue-корне.
 
@@ -287,11 +288,9 @@ function Nudge() {
 
 `useButtonAnimations` — цель: root `<button>` или `contentMotionRef` при `groupSegment`.
 
-**Pointer enter (hover lift):** адаптивный `scale` (cap = `hoverLiftScale`), тень `firstLevelHoverShadow()` (`--shadow-none` → `--shadow-sm`).
+**Pointer enter (hover lift):** адаптивный `scale` (cap = `hoverLiftScale`), тень `shadowMotionFor("none")` (`--shadow-none` → `--shadow-lift`).
 
 **Pointer down (press squeeze):** 3 keyframes scale `1 → adaptiveSqueeze → 1`. После release, если курсор внутри — возвращает hover lift.
-
-**Gloss:** вместо тени — `hoverLiftGloss` / `pressSqueezeGloss`.
 
 **ButtonGroup:** lift/squeeze на content span, не на glue-корне.
 
@@ -349,11 +348,10 @@ Simple API монтирует только label. Overlay-части — compoun
 
 | Анимация | Файл / утилита | Ключи `configureMotion` | Условие |
 |----------|----------------|---------------------------|---------|
-| Hover lift | slot motion `hoverLiftFirstLevel` / `hoverLiftGloss` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `!blocked` |
-| Press squeeze | slot motion `pressSqueeze` / `pressSqueezeGloss` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `!blocked` |
+| Hover lift | slot motion `hoverLiftFirstLevel` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `!blocked` |
+| Press squeeze | slot motion `pressSqueeze` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `!blocked` |
 | Ripple | `<Ripple />` | `rippleDefaultDuration`, `rippleDefaultOpacityFrom`, `enableRipple` | `ripple` |
 | Overlay save | `motion.states` + compound Loader/Success/Error | — | приложение |
-| Gloss motion | `glossInteractiveMotion` | те же interactive | `variant="gloss"` |
 
 ## Токены и CSS-классы
 
@@ -361,7 +359,7 @@ Simple API монтирует только label. Overlay-части — compoun
 
 | Токен | Использование |
 |-------|---------------|
-| `converge-ripple-neutral` | default, outline, secondary, ghost, gloss |
+| `converge-ripple-neutral` | default, outline, secondary, ghost |
 | `converge-ripple-primary-fill` | primary + default status |
 | `converge-ripple-danger` | status danger |
 | `converge-ripple-success` | status success |
@@ -376,10 +374,6 @@ Simple API монтирует только label. Overlay-части — compoun
 
 `BUTTON_STATUS_FOCUS_OUTLINE`: retarget `--color-focus-ring` на `--color-focus-ring-{status}` (default — soft primary token).
 
-### Gloss
-
-Классы: `gloss-btn`, `gloss-btn-danger`, `gloss-btn-success`, `gloss-btn-info`, `gloss-btn-warning`.
-
 ### Размерные токены
 
 `--control-height-*`, `min-w-button-*`, spacing (`px-mid`, `py-small`, …). Размер иконки в слоте — `icon-slot-small` … `icon-slot-large` (переменная `--icon-size` на обёртке). Свой размер: `classNames.icon="icon-slot-large"` или `icon-large` на самом `<svg>`.
@@ -387,6 +381,8 @@ Simple API монтирует только label. Overlay-части — compoun
 ## Стилизация и кастомизация
 
 Два уровня: **`className` на корне** и **`classNames` на слотах**. Compound-части (`Button.Icon`, `Button.Text`, `Button.Label`, …) принимают **`className`** поверх слота.
+
+`className` попадает только на `<button>`. Раскладка иконки и текста — `classNames.label` (или `className` на `Button.Label`). `className="px-xlarge"` увеличивает отступ кнопки, а не лейбла.
 
 ```tsx
 <Button
@@ -414,7 +410,7 @@ Simple API монтирует только label. Overlay-части — compoun
 
 | Prop | Что стилизует |
 |------|---------------|
-| `variant` | Surface: default, outline, secondary, gloss, primary |
+| `variant` | Surface: default, outline, secondary, primary |
 | `status` | Semantic tint / border |
 | `size` | Height, padding, icon size, min-width |
 | `iconOnly` | Квадратный hit-area |
@@ -429,7 +425,7 @@ Simple: `icon` + `iconPosition`. Compound: `Button.Icon` / `Button.Text` вну�
 Для нестандартной разметки внутри кнопки используйте children, стилизуя обёртки сами:
 
 ```tsx
-<Button variant="ghost" className="justify-between gap-xlarge px-xlarge">
+<Button variant="ghost" className="px-xlarge" classNames={{ label: "justify-between gap-xlarge" }}>
   <span className="flex flex-col items-start text-left">
     <span className="font-semibold">Заголовок</span>
     <span className="text-small text-muted">Подпись</span>
@@ -443,7 +439,7 @@ Simple: `icon` + `iconPosition`. Compound: `Button.Icon` / `Button.Text` вну�
 Для своих контролов с тем же layout:
 
 ```tsx
-import { buttonRootClass, controlShellClass, buttonRippleTone } from "burne-ui";
+import { buttonRootClass, controlShellClass, buttonRippleTone } from "burne-ui/internal";
 
 const shell = controlShellClass("base");
 const root = buttonRootClass("base", false);
@@ -496,4 +492,4 @@ Button/
 
 ## Storybook
 
-`Core Components/Button` — варианты, статусы, размеры, motionState save, gloss, светлая/тёмная тема (`data-theme="light"`).
+`Core Components/Button` — варианты, статусы, размеры, motionState save, светлая/тёмная тема (`data-theme="light"`).

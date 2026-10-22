@@ -3,7 +3,12 @@ import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { cn } from "@/utils/cn";
  
-import type { RadioSize } from "./radioTypes";
+import type { OptionControlLabelSide } from "@/components/core/utils/optionControlGridLayout";
+import type { RadioLabelPosition, RadioSize } from "./radioTypes";
+
+function radioLabelSide(labelPosition: RadioLabelPosition = "end"): OptionControlLabelSide {
+  return labelPosition === "start" ? "left" : "right";
+}
  
 export const RADIO_SIZE_LAYOUT = OPTION_CONTROL_SIZE_LAYOUT;
  
@@ -49,28 +54,32 @@ export const RADIO_ROOT_DISABLED_CLASS = "cursor-not-allowed";
  
 export const RADIO_CONTENT_PASS_THROUGH_CLASS = "contents";
  
-export function radioControlCellClass(): string {
-  return optionControlCellClass();
+export function radioControlCellClass(labelPosition: RadioLabelPosition = "end"): string {
+  return optionControlCellClass(radioLabelSide(labelPosition));
 }
  
 export function radioGridClass(
   secondaryLines: number,
   gridGap: string,
+  labelPosition: RadioLabelPosition = "end",
   className?: string,
 ): string {
   return cn(
     RADIO_ROOT_BASE_CLASS,
-    optionControlGridClass(secondaryLines, gridGap),
+    optionControlGridClass(secondaryLines, gridGap, radioLabelSide(labelPosition)),
     className,
   );
 }
  
-export function radioLabelCellClass(): string {
-  return optionLabelCellClass();
+export function radioLabelCellClass(labelPosition: RadioLabelPosition = "end"): string {
+  return optionLabelCellClass(radioLabelSide(labelPosition));
 }
  
-export function radioSecondaryCellClass(row: 2 | 3): string {
-  return optionSecondaryCellClass(row);
+export function radioSecondaryCellClass(
+  row: 2 | 3,
+  labelPosition: RadioLabelPosition = "end",
+): string {
+  return optionSecondaryCellClass(row, radioLabelSide(labelPosition));
 }
  
 export function radioErrorRow(hasHint: boolean): 2 | 3 {

@@ -7,9 +7,9 @@ function PinnedDay({ controller }: { controller: ReturnType<typeof useMotionCont
   return (
     <Calendar.Day
       selected
-      isToday
+      today
       size={size}
-      onPress={() => onDayPress(today)}
+      onClick={() => onDayPress(today)}
       motionController={controller}
       motion={{
         hoverIn: { y: -6, duration: 0.22, replay: "rest" },

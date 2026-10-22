@@ -1,11 +1,12 @@
 import type { PointerEventHandler } from "react";
 import { forwardRef, useId, useMemo, useRef } from "react";
  
+import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { Field } from "@/components/core/Field";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
@@ -94,7 +95,6 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
   function TextAreaControl(
     {
       variant: variantProp,
-      status: statusProp,
       size: sizeProp,
       rows = 1,
       resizable = true,
@@ -102,6 +102,11 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
       id: idProp,
       disabled,
       readOnly,
+      name,
+      value,
+      defaultValue,
+      onChange,
+      onBlur,
       className,
       onPointerDown,
       "aria-describedby": ariaDescribedByProp,
@@ -115,6 +120,16 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
     ref,
   ) {
     const variant = useSkinVariant(variantProp);
+    const formBinding = useFormControlProps({
+      name: typeof name === "string" ? name : undefined,
+      value,
+      onChange: onChange as ((event: unknown) => void) | undefined,
+      onBlur: onBlur as ((event: unknown) => void) | undefined,
+      disabled,
+      readOnly,
+    });
+    const resolvedDisabled = formBinding.disabled ?? disabled;
+    const resolvedReadOnly = formBinding.readOnly ?? readOnly;
     const fieldCtx = useOptionalTextAreaFieldContext();
     const slotClassNames = useTextAreaClassNames();
     const genId = useId();
@@ -122,8 +137,9 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
     const isInvalid = useResolvedFieldInvalid({
       invalid: fieldCtx?.invalid,
       errorConnected: fieldCtx?.errorConnected ?? false,
+      formInvalid: formBinding["aria-invalid"] === true,
     });
-    const status = visualStatusForInvalid(statusProp ?? fieldCtx?.status, isInvalid, "default");
+    const status = fieldPaintStatus(isInvalid);
     const size = sizeProp ?? fieldCtx?.size ?? "base";
     const required = fieldCtx?.required ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;
@@ -139,7 +155,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
  
     const shellRef = useRef<HTMLDivElement>(null);
     const pointerInsideRef = useRef(false);
-    const blocked = Boolean(disabled || readOnly);
+    const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
  
     const parentScope = useOptionalTextAreaMotionScope();
     const skinRevision = useSkinRegistryRevision();
@@ -179,8 +195,24 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
           resizable={resizable}
           placeholder={placeholder}
           id={id}
-          disabled={disabled}
-          readOnly={readOnly}
+          disabled={resolvedDisabled}
+          readOnly={resolvedReadOnly}
+          name={formBinding.name ?? name}
+          value={
+            formBinding.bound
+              ? typeof formBinding.value === "string" || typeof formBinding.value === "number"
+                ? formBinding.value
+                : ""
+              : value
+          }
+          defaultValue={formBinding.bound ? undefined : defaultValue}
+          onChange={formBinding.onChange}
+          onBlur={formBinding.onBlur}
+          forwardedRef={(node) => {
+            formBinding.ref(node);
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
+          }}
           className={className}
           onPointerDown={onPointerDown}
           required={required}
@@ -191,7 +223,6 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
           pointerInsideRef={pointerInsideRef}
           shellPartMotion={motion}
           blocked={blocked}
-          forwardedRef={ref}
           rest={rest}
         />
       </TextAreaMotionProvider>
@@ -211,6 +242,11 @@ function TextAreaControlSurface({
   id,
   disabled,
   readOnly,
+  name,
+  value,
+  defaultValue,
+  onChange,
+  onBlur,
   className,
   onPointerDown,
   required,
@@ -225,7 +261,7 @@ function TextAreaControlSurface({
   rest,
 }: {
   variant: NonNullable<TextAreaControlProps["variant"]>;
-  status: NonNullable<TextAreaControlProps["status"]>;
+  status: "default" | "danger";
   size: NonNullable<TextAreaControlProps["size"]>;
   rows: number;
   resizable: boolean;
@@ -233,6 +269,11 @@ function TextAreaControlSurface({
   id: string;
   disabled?: boolean;
   readOnly?: boolean;
+  name?: string;
+  value?: TextAreaControlProps["value"];
+  defaultValue?: TextAreaControlProps["defaultValue"];
+  onChange?: (event: unknown) => void;
+  onBlur?: (event: unknown) => void;
   className?: string;
   onPointerDown?: TextAreaControlProps["onPointerDown"];
   required: boolean;
@@ -255,6 +296,11 @@ function TextAreaControlSurface({
     | "id"
     | "disabled"
     | "readOnly"
+    | "name"
+    | "value"
+    | "defaultValue"
+    | "onChange"
+    | "onBlur"
     | "className"
     | "onPointerDown"
     | "aria-describedby"
@@ -262,7 +308,7 @@ function TextAreaControlSurface({
     | "motionController"
   >;
 }) {
-  const shellSurface = textareaShellSurfaceClass({ variant, status });
+  const shellSurface = textareaShellSurfaceClass({ variant });
   const shellMotion = useTextAreaShellAnimations({
     shellRef,
     blocked,
@@ -301,9 +347,8 @@ function TextAreaControlSurface({
         shellSurface,
         shellHoverMotionClass: shellMotion.shellHoverMotionClass,
         slotClass: slotClassNames.shell,
-        className,
       })}
-      {...dataVariantProps({ size, variant, status })}
+      {...dataVariantProps({ size, variant })}
     >
       <textarea
         ref={setRef}
@@ -311,11 +356,17 @@ function TextAreaControlSurface({
         rows={rows}
         disabled={disabled}
         readOnly={readOnly}
+        name={name}
+        value={value as string | number | readonly string[] | undefined}
+        defaultValue={defaultValue}
+        onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
+        onBlur={onBlur as React.FocusEventHandler<HTMLTextAreaElement>}
         placeholder={placeholder}
         className={textareaControlClassNames({
           size,
           resizable,
           slotClass: slotClassNames.control,
+          className,
         })}
         {...rest}
         {...pointerHandlers}
@@ -382,7 +433,6 @@ export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
   function TextAreaHint(
     {
       children,
-      status,
       className,
       id: idProp,
       motion,
@@ -396,7 +446,6 @@ export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
   ) {
     const field = useTextAreaFieldContext();
     const slotClassNames = useTextAreaClassNames();
-    const hintStatus = status ?? field.status;
     const part = useTextAreaChromeSlot("hint", {
       motion,
       forwardedRef: ref,
@@ -410,7 +459,6 @@ export const TextAreaHint = forwardRef<HTMLElement, TextAreaHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? field.hintId}
-        status={hintStatus}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}
@@ -472,8 +520,8 @@ export function TextAreaSimpleBody({
   textareaId,
   labelId,
   size,
-  status,
   controlProps,
+  textareaRef,
 }: TextAreaSimpleBodyProps) {
   const slotClassNames = useTextAreaClassNames();
  
@@ -484,7 +532,7 @@ export function TextAreaSimpleBody({
           {label}
         </TextAreaLabel>
       ) : null}
-      <TextAreaControl id={textareaId} size={size} status={status} {...controlProps} />
+      <TextAreaControl ref={textareaRef} id={textareaId} size={size} {...controlProps} />
       {hint != null ? <TextAreaHint>{hint}</TextAreaHint> : null}
       {error != null ? <TextAreaError>{error}</TextAreaError> : null}
     </>

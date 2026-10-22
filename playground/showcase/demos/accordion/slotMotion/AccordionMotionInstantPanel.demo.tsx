@@ -2,7 +2,7 @@ import { Accordion } from "@/components/composite/Accordion";
 
 export function AccordionMotionInstantPanelDemo() {
   return (
-    <Accordion className="w-full max-w-lg" defaultOpenIndex={0} motion={{ panelShell: { enter: false, leave: false } }}>
+    <Accordion className="w-full max-w-lg" defaultValue="0" motion={{ panelShell: { enter: false, leave: false } }}>
       <Accordion.Item value="0">
         <Accordion.Heading>
           <Accordion.Trigger>

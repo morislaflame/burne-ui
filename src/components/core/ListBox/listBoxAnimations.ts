@@ -24,6 +24,10 @@ import {
 import { listBoxOptionId } from "./listBoxA11y";
 import { useOptionalListBoxMotionScope } from "./listBoxContext";
 import type { ListBoxMotion, ListBoxPartMotion } from "./listBoxTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export function resolveListBoxMotionDefaults(): ListBoxMotion {
   return {
@@ -80,8 +84,7 @@ export function playListBoxItemPress(scope: MotionScopeValue, el: HTMLElement | 
 }
  
 /**
- * Sync `data-active` on the active option. Highlight CSS is the static
- * `data-active:bg-default-hover` class on every item — no React `isActive`.
+ * Highlight the active option with a class. No React `isActive` on every row.
  */
 export function useListBoxActiveOptionHighlight({
   listId,
@@ -97,15 +100,15 @@ export function useListBoxActiveOptionHighlight({
     if (!root) return;
  
     for (const el of root.querySelectorAll<HTMLElement>(
-      '[role="option"][data-active]',
+      '[role="option"].listbox-option-active',
     )) {
-      el.removeAttribute("data-active");
+      el.classList.remove("listbox-option-active", "bg-default-hover");
     }
  
     if (!activeValue) return;
     const option = document.getElementById(listBoxOptionId(listId, activeValue));
     if (option && root.contains(option)) {
-      option.setAttribute("data-active", "");
+      option.classList.add("listbox-option-active", "bg-default-hover");
     }
   }, [activeValue, listId, rootRef]);
 }

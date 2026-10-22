@@ -1,7 +1,7 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import type {
   MotionController,
   MotionMapWithEvents,
@@ -10,12 +10,16 @@ import type {
 } from "@/components/core/utils/slotMotion";
 
 export type PinInputType = "number" | "text";
+export type PinInputSize = InputSize;
+export type PinInputVariant = InputVariant;
 
 export type PinInputClassNames = {
   root?: string;
   label?: string;
-  group?: string;
-  field?: string;
+  /** Row around the cells. */
+  shell?: string;
+  /** One cell `<input>`. */
+  control?: string;
   separator?: string;
   hint?: string;
   error?: string;
@@ -30,10 +34,10 @@ export type PinInputPartMotion = {
   leave?: MotionValue;
 };
 
-/** DOM slots: `group`, `field` (one per cell), `label`, `hint`, `error`. */
+/** DOM slots: `shell` (row), `control` (one per cell), `label`, `hint`, `error`. */
 export type PinInputMotion = {
-  group?: PinInputPartMotion;
-  field?: PinInputPartMotion;
+  shell?: PinInputPartMotion;
+  control?: PinInputPartMotion;
   label?: PinInputPartMotion;
   hint?: PinInputPartMotion;
   error?: PinInputPartMotion;
@@ -52,7 +56,6 @@ export type PinInputProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" 
     required?: boolean;
     disabled?: boolean;
     readOnly?: boolean;
-    status?: InputStatus;
     size?: InputSize;
     variant?: InputVariant;
     /** Shown in every empty cell. One glyph. */
@@ -61,10 +64,12 @@ export type PinInputProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" 
     value?: string;
     defaultValue?: string;
     onValueChange?: (value: string) => void;
+    /** Fires when the last empty cell is filled. */
+    onComplete?: (value: string) => void;
     /** How many cells. Default `6`. Clamped to 1…12. */
     length?: number;
     /** `number` keeps digits. `text` keeps letters and digits. Default `number`. */
-    type?: PinInputType;
+    charset?: PinInputType;
     /** Render cells as password dots. */
     mask?: boolean;
     /** Drawn once, after the first half of the cells. */
@@ -79,8 +84,19 @@ export type PinInputLabelProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<PinInputPartMotion>;
 };
 
-export type PinInputGroupProps = HTMLAttributes<HTMLDivElement> & {
+export type PinInputShellProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<PinInputPartMotion>;
+};
+
+export type PinInputControlProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "value" | "defaultValue" | "onChange" | "size" | "type" | "children"
+> & {
+  /**
+   * Cell index, from 0. `PinInput.Shell` assigns it in order when omitted.
+   * Set it when the field order is not the cell order.
+   */
+  index?: number;
 };
 
 export type PinInputHintProps = HTMLAttributes<HTMLElement> & {
@@ -107,7 +123,6 @@ export type PinInputContextValue = {
   readOnly: boolean;
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
   inputId: string;
   labelId: string;
   hintId: string;

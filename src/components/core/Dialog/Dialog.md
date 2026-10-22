@@ -2,6 +2,8 @@
 
 Модальное окно на нативном `<dialog>` с порталом в `document.body`, GSAP enter/leave и compound-компоновкой. Controlled / uncontrolled: `open` / `defaultOpen` / `onOpenChange`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -44,8 +46,8 @@ Root **не рендерит DOM** — только контекст и `classNa
 
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
-| `variant` | `default` \| `gloss` | `default` | Поверхность панели |
-| `dismissOnBackdrop` | `boolean` | `true` | Закрытие по клику на overlay |
+| `variant` | `default` \| `outline` \| `secondary` | `default` | Поверхность панели. Имя скина — строка |
+| `closeOnInteractOutside` | `boolean` | `true` | Закрытие по клику на overlay |
 | `onInteractOutside` | `(event) => void` | — | Клик по overlay. `event.preventDefault()` оставляет диалог открытым. `return false` **не** отменяет закрытие |
 | `className` | `string` | — | На focusable panel wrapper |
 | `themeAnchor` | `HTMLElement` | auto | Якорь для светлой темы портала |
@@ -107,7 +109,7 @@ const [open, setOpen] = useState(false);
 
 Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы подавить собственную анимацию `Button`, затем `runOpenAfterSqueeze` открывает диалог после `motion.trigger.pressIn` (дефолт `pressSqueeze`; другой рецепт или factory — на карте `trigger`).
 
-Грязная форма — не выключайте `dismissOnBackdrop` целиком, а отмените конкретный клик:
+Грязная форма — не выключайте `closeOnInteractOutside` целиком, а отмените конкретный клик:
 
 ```tsx
 <Dialog.Panel
@@ -122,7 +124,6 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 | variant | Панель |
 |---------|--------|
 | `default` | `bg-surface border-token shadow-token-xlarge` + radius из `PANEL_SIZE_LAYOUT` |
-| `gloss` | `gloss-panel gloss-deep` + `gloss-content` |
 
 Размеры (`size`) — общий пресет `PANEL_SIZE_LAYOUT` (вместе с AlertDialog / Popover / Card): max-width, max-height, section padding, title/desc/body, radius.
 
@@ -208,7 +209,8 @@ function Nudge() {
 ```
 
 ```tsx
-import { Dialog, tweenCssColor } from "burne-ui";
+import { Dialog } from "burne-ui";
+import { tweenCssColor } from "burne-ui/internal";
 
 <Dialog
   open={open}
@@ -277,8 +279,6 @@ import { Dialog, tweenCssColor } from "burne-ui";
    - **panel:** `scale: 0.97` (`MODAL_PANEL_SCALE_FROM`) → `scale: 1`
 3. `focusPanelOnOpen` — первый focusable (иначе panel); ring если trigger был `:focus-visible`
 
-**Важно:** scale только на panel, **не** `autoAlpha` на panel при open — gloss `backdrop-filter` на детях не ломается.
-
 **Scroll lock:** синглтон `bodyScrollLock` на время `showPortal` (`open || mounted`). Первая блокировка ставит `position: fixed; top: -scrollY` (iOS), `overflow: hidden` и компенсирует ширину скроллбара; вложенные Dialog / Drawer / AlertDialog держат счётчик и не снимают lock, пока открыт хотя бы один. `contained` не блокирует. `Dialog.Body` — `overscroll-contain`, чтобы touch-скролл не цеплялся к фону.
 
 #### Кастомизация open/close
@@ -332,10 +332,6 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 </Dialog>
 ```
 
-### 5. Gloss panel
-
-`createGlossInteractiveRefCallback(glossPanelRef, variant === "gloss")` — gloss surface на внутренней обёртке. Slide/scale motion на внешнем `panelRef`; gloss ref для hover на панели (если интерактивна).
-
 ### Сводка: что настраивается где
 
 | Анимация | Утилита | Ключи `configureMotion` | Примечание |
@@ -382,14 +378,13 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 | `rounded-*` | Скругление по `size` (как Button / Card) |
 | `z-dialog` | Stacking dialog (`--z-dialog`) |
 | `overlay-backdrop` / `overlay-backdrop-scrim` | Подложка (light frosted / dark solid) |
-| `gloss-panel`, `gloss-deep` | Gloss variant |
 
 ## Стилизация и кастомизация
 
 ### Два уровня
 
 1. **`classNames` на `<Dialog>`** — слоты портала и разметки через `DialogClassNamesProvider` (доступны внутри `Dialog.Panel` через портал-контекст).
-2. **`className` на `Dialog.Panel`** — дополнительные классы на surface панели (мерж с `classNames.panel` / gloss-обёрткой).
+**`className` на `Dialog.Panel`** — дополнительные классы на surface панели.
 
 Подчасти (`Dialog.Title`, `Dialog.Body`, …) принимают **`className`** поверх слота из `classNames`.
 
@@ -400,7 +395,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 | `trigger` | `Dialog.Trigger` | Слот на кнопке / asChild |
 | `dialog` | Нативный `<dialog>` | Редко — глобальные правки dialog-элемента |
 | `overlay` | Backdrop | Blur, opacity, цвет затемнения |
-| `panel` | Surface панели | Max-width, border, shadow, gloss/default |
+| `panel` | Surface панели | Max-width, border, shadow/default |
 | `content` | `Dialog.Content` | Padding/gap внутри панели |
 | `header` | `Dialog.Header` | Раскладка title + close |
 | `headingBlock` | `Dialog.HeadingBlock` | Title + description stack |
@@ -410,7 +405,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
 | `footer` | `Dialog.Footer` | Кнопки, border-top |
 | `close` | `Dialog.Close` | Стили close-кнопки (прокидывается в CloseButton) |
 
-`Dialog.Panel` prop `variant`: `default` | `gloss`.
+`Dialog.Panel` prop `variant`: `default`.
 
 ### Compound API (основной способ)
 
@@ -428,21 +423,6 @@ Kill tweens при unmount через `killMotion(overlay, panel)` (снимае
     close: "opacity-80",
   }}
 >
-  <Dialog.Panel variant="gloss" className="ring-1 ring-white/10">
-    <Dialog.Header>
-      <Dialog.HeadingBlock>
-        <Dialog.Title>Настройки</Dialog.Title>
-        <Dialog.Description>Все слоты через classNames.</Dialog.Description>
-      </Dialog.HeadingBlock>
-      <Dialog.Close aria-label="Закрыть диалог" />
-    </Dialog.Header>
-    <Dialog.Body>
-      <p className="text-small text-muted">Контент модального окна.</p>
-    </Dialog.Body>
-    <Dialog.Footer>
-      <Button size="small" onClick={() => setOpen(false)}>Закрыть</Button>
-    </Dialog.Footer>
-  </Dialog.Panel>
 </Dialog>
 ```
 
@@ -491,4 +471,4 @@ Dialog/
 
 ## Storybook
 
-`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`, `onInteractOutside` + `preventDefault()`, slot motion gallery, `motionController`.
+`Core Components/Dialog` — default, `Dialog.Trigger`, `classNames`, форма в body, светлая/тёмная тема, `closeOnInteractOutside={false}`, `onInteractOutside` + `preventDefault`, slot motion gallery, `motionController`.

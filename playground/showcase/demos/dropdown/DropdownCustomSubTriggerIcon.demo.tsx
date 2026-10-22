@@ -17,14 +17,14 @@ export function DropdownCustomSubTriggerIconDemo() {
             >
               Invite users
             </Dropdown.SubTrigger>
-            <Dropdown.SubContent>
+            <Dropdown.SubPopover>
               <Dropdown.Item value="email" selection={false}>
                 <Dropdown.ItemLabel>Email</Dropdown.ItemLabel>
               </Dropdown.Item>
               <Dropdown.Item value="msg" selection={false}>
                 <Dropdown.ItemLabel>Message</Dropdown.ItemLabel>
               </Dropdown.Item>
-            </Dropdown.SubContent>
+            </Dropdown.SubPopover>
           </Dropdown.Sub>
         </Dropdown.Group>
       </Dropdown.Popover>

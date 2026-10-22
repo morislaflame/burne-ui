@@ -2,6 +2,8 @@
 
 Кнопка с состоянием pressed и анимированной fill-заливкой. Используется standalone и в `ToggleButtonGroup`. Варианты как у вторичных контролов; motion координирует fill с press squeeze.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -26,7 +28,7 @@ import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type Toggl
 ### В ToggleButtonGroup
 
 ```tsx
-<ToggleButtonGroup type="multiple" defaultValue={["bold"]}>
+<ToggleButtonGroup selectionMode="multiple" defaultValue={["bold"]}>
   <ToggleButton value="bold">Жирный</ToggleButton>
   <ToggleButton value="italic">Курсив</ToggleButton>
 </ToggleButtonGroup>
@@ -38,10 +40,10 @@ import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type Toggl
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `pressed` / `defaultPressed` | — | Controlled / uncontrolled |
+| `pressed` / `defaultPressed` | — | Controlled / uncontrolled. Исключение state-API: ARIA `aria-pressed`, не `value` |
 | `onPressedChange` | — | `(pressed: boolean) => void` |
 | `onFillStart` | — | Колбэк в начале fill-анимации |
-| `variant` | `default` | `default` \| `outline` \| `ghost` \| `gloss` |
+| `variant` | `default` | Подмножество `ActionVariant`: `default` \| `outline` \| `ghost`. `primary` и `secondary` не красятся |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — height/pad/icon + `rounded-{size}` |
 | `fillColor` | auto | CSS color заливки |
 | `value` | — | Для ToggleButtonGroup |
@@ -64,7 +66,6 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 | `default` | Surface + hover shadow lift |
 | `outline` | Border; hover `bg-transparent-hover` |
 | `ghost` | Transparent; hover `bg-transparent-hover` |
-| `gloss` | `gloss-btn` + gloss squeeze (без hover shadow) |
 
 ## Анимации
 
@@ -84,8 +85,8 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
-| `root` | `pressIn` | `pressSqueeze` / `pressSqueezeGloss` (`pressOut` по умолчанию `false`) |
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` |
+| `root` | `pressIn` | `pressSqueeze` (`pressOut` по умолчанию `false`) |
 | `fill` | `check` / `uncheck` | `selectionFill` |
 | `content` / `label` / `iconStart` / `iconEnd` / `text` | hover; `check` / `uncheck` с хоста | нет |
 
@@ -136,6 +137,8 @@ function Nudge() {
 
 `play()` ищет слот `root`. `playSlot("fill")` / `playSlot("iconStart")` — доменные слоты. `playAll` + `stagger`, `exclude: ["fill"]` на `check`, timeline `like:pop` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
 
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 Сырой GSAP в Slot motion: **MorphSVG** — path иконки морфится круг → сердце на `check` (обратно на `uncheck`). Kit fill остаётся.
 
 ### Координация fill с press
@@ -158,8 +161,8 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 
 ### Два уровня
 
-1. **`className`** — мерж в `root` слот кнопки.
-2. **`classNames`** — `root`, `fill`, `content`, `iconStart`, `iconEnd`, `label`, `text`.
+1. **`className`** — мерж в `root` слот кнопки. Только на `<button>`, не на `content`.
+2. **`classNames`** — `root`, `fill`, `content`, `iconStart`, `iconEnd`, `label`, `text`. Раскладка иконок и текста — `classNames.content` (или `className` на `ToggleButton.Content`).
 
 ### Слоты
 
@@ -197,7 +200,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 Стили на каждой кнопке; группа задаёт `size` / `variant` / `disabled` через контекст.
 
 ```tsx
-<ToggleButtonGroup type="single" variant="ghost" size="small">
+<ToggleButtonGroup selectionMode="single" variant="ghost" size="small">
   <ToggleButton value="a" classNames={{ label: "text-mid" }}>A</ToggleButton>
   <ToggleButton value="b">B</ToggleButton>
 </ToggleButtonGroup>
@@ -209,6 +212,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 - **`fillColor`:** semantic tint; `classNames.fill` для opacity/rounded.
 - **Segment glue:** `groupSegment` — rounding от ButtonGroup, не дублируйте на root.
 - **Порядок мержа:** variant classes → `classNames` → `className`.
+- **`className` только на корне.** `className="px-xlarge"` не дублируется на `content`. Внутренний `justify-between` / `gap-*` — через `classNames.content`.
 
 ## Доступность
 
@@ -245,4 +249,4 @@ ToggleButton/
 
 ## Storybook
 
-`Core Components/ToggleButton` — variants, sizes, gloss, group, icons, `classNames`, fill coordination, slot motion gallery.
+`Core Components/ToggleButton` — variants, sizes, group, icons, `classNames`, fill coordination, slot motion gallery.

@@ -95,7 +95,7 @@ export const SelectInteraction: Story = {
     </div>
   ),
   play: async ({ canvas, userEvent }) => {
-    const pickup = canvas.getByRole("radio", { name: "pickup" });
+    const pickup = canvas.getByRole("radio", { name: "Pickup" });
     await userEvent.click(pickup);
     await expect(pickup).toBeChecked();
   },
@@ -140,9 +140,7 @@ export const CustomIndicator: Story = {
       </Radio>
       <Radio name="custom-indicator" value="star" defaultChecked>
         <Radio.Control>
-          <Radio.Indicator>
-            <IoStar aria-hidden className="text-primary-foreground" />
-          </Radio.Indicator>
+          <Radio.Indicator icon={<IoStar aria-hidden className="text-primary-foreground" />} />
         </Radio.Control>
         <Radio.Content>
           <Radio.Label>Favorite</Radio.Label>

@@ -37,7 +37,7 @@ export function FormErrorSummaryDemo() {
           <Input required name="name" id="name" label="Name" />
         </Form.Field>
         <Form.Field name="email">
-          <Input required name="email" id="email" label="Email" autoComplete="email" />
+          <Input required name="email" id="email" label="Email" type="email" autoComplete="email" />
         </Form.Field>
       </Form.Section>
       <Form.Actions>

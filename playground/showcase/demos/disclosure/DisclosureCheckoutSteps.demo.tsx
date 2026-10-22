@@ -31,7 +31,7 @@ export function DisclosureCheckoutStepsDemo() {
         <Disclosure key={step.value} value={step.value}>
           <Disclosure.Trigger icon={step.icon}>{step.title}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">
+            <Text as="p" textStyle="small" className="text-muted">
               {step.body}
             </Text>
           </Disclosure.Content>

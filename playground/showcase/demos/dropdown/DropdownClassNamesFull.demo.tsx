@@ -4,10 +4,10 @@ import { Dropdown } from "@/components/core/Dropdown";
 export function DropdownClassNamesFullDemo() {
   return (
     <Dropdown
-      selectionIndicator
       defaultValue="ru"
       classNames={{
         popoverBody: "border border-primary/20",
+        subPopover: "shadow-token-lg",
         subPopoverBody: "rounded-large border border-primary/20 bg-tertiary",
         label: "text-primary",
         item: "rounded-lg",
@@ -31,12 +31,12 @@ export function DropdownClassNamesFullDemo() {
           </Dropdown.Item>
           <Dropdown.Sub>
             <Dropdown.SubTrigger>More</Dropdown.SubTrigger>
-            <Dropdown.SubContent>
+            <Dropdown.SubPopover>
               <Dropdown.Item value="de">
                 <Dropdown.ItemIndicator />
                 <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
               </Dropdown.Item>
-            </Dropdown.SubContent>
+            </Dropdown.SubPopover>
           </Dropdown.Sub>
         </Dropdown.Group>
       </Dropdown.Popover>

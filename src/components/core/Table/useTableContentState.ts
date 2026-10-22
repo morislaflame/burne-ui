@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
  
 import { useControllableState } from "@/components/core/utils/useControllableState";
  
-import { EMPTY_TABLE_SELECTION, selectionEquals, toggleSelectionKey } from "./tableAPI";
+import { EMPTY_TABLE_SELECTION, selectionEquals, tableDisabledKeySet, toggleSelectionKey } from "./tableAPI";
 import type {
   Selection,
   SelectionMode,
@@ -70,6 +70,9 @@ export function useTableContentState({
   sortDescriptor: sortDescriptorProp,
   defaultSortDescriptor,
   onSortChange,
+  disabledKeys,
+  stickyHeader = false,
+  columnResize = false,
 }: {
   selectionMode?: SelectionMode;
   selectedKeys?: Selection;
@@ -78,6 +81,9 @@ export function useTableContentState({
   sortDescriptor?: SortDescriptor;
   defaultSortDescriptor?: SortDescriptor;
   onSortChange?: (descriptor: SortDescriptor) => void;
+  disabledKeys?: ReadonlySet<string | number> | readonly (string | number)[];
+  stickyHeader?: boolean;
+  columnResize?: boolean;
 }): TableContentContextValue {
   const [store] = useState(() =>
     createRowSelectionStore(
@@ -141,7 +147,18 @@ export function useTableContentState({
     },
     [store],
   );
- 
+
+  const disabled = useMemo(() => tableDisabledKeySet(disabledKeys), [disabledKeys]);
+  const isRowDisabled = useCallback(
+    (key: string | number) => disabled.has(String(key)),
+    [disabled],
+  );
+
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+  const setColumnWidth = useCallback((id: string, width: number) => {
+    setColumnWidths((prev) => (prev[id] === width ? prev : { ...prev, [id]: width }));
+  }, []);
+
   return useMemo(
     () => ({
       selectionMode,
@@ -151,14 +168,24 @@ export function useTableContentState({
       setFocusedRowKey,
       claimFocusedRowKey,
       rowStore: store,
+      isRowDisabled,
+      stickyHeader,
+      columnResize,
+      columnWidths,
+      setColumnWidth,
     }),
     [
       claimFocusedRowKey,
+      isRowDisabled,
       onRowSelect,
       selectionMode,
       setFocusedRowKey,
       setSortDescriptor,
       sortDescriptor,
+      stickyHeader,
+      columnResize,
+      columnWidths,
+      setColumnWidth,
       store,
     ],
   );

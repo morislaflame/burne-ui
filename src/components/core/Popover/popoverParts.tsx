@@ -13,7 +13,7 @@ import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/c
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
  
 import { resolvePopoverDescribedBy, resolvePopoverLabelledBy, popoverTriggerA11y } from "./popoverA11y";
-import { partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
+import { mergePopoverRefs, partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
 import { resolvePopoverContentAlign, resolvePopoverMotionDefaults, usePopoverContentLifecycle } from "./popoverAnimations";
 import { PopoverResolvedSideProvider, PopoverContentChromeProvider, PopoverMotionProvider, useOptionalPopoverMotionScope, usePopoverClassNames, usePopoverContext, usePopoverContentChrome, usePopoverMotionScope, usePopoverResolvedSide } from "./popoverContext";
 import { POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
@@ -114,11 +114,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
           child,
           {
             ...rest,
-            className: cn(
-              slotClassNames.root,
-              slotClassNames.trigger,
-              className,
-            ),
+            className: cn(slotClassNames.trigger, className),
             onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
               handlePointerDown(e);
               part.pointerHandlers.onPointerDown(e as ReactPointerEvent<HTMLButtonElement>);
@@ -145,7 +141,6 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         type="button"
         ref={mergedRef}
         className={popoverTriggerClass({
-          rootSlot: slotClassNames.root,
           slotClass: slotClassNames.trigger,
           className,
         })}
@@ -237,7 +232,7 @@ export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
 PopoverHeader.displayName = "PopoverHeader";
  
 export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
-  function PopoverTitle({ className, children, id: idProp, motion, onPointerOver, onPointerOut, ...rest }, ref) {
+  function PopoverTitle({ className, children, id: idProp, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
     const { labelId, size } = usePopoverContext("Popover.Title");
     const slotClassNames = usePopoverClassNames();
     const { setRef, pointerHandlers } = useMotionPart<HTMLHeadingElement>({
@@ -248,21 +243,23 @@ export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
       pointerPhases: true,
       onPointerOver,
       onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
  
     return (
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="h2"
-        variant={popoverTitleVariant(size)}
+        textStyle={popoverTitleVariant(size)}
         id={idProp ?? labelId}
         className={popoverTitleClass({
           size,
           slotClass: slotClassNames.title,
           className,
         })}
-        {...pointerHandlers}
         {...rest}
+        {...pointerHandlers}
       >
         {children}
       </Text>
@@ -274,7 +271,7 @@ PopoverTitle.displayName = "PopoverTitle";
  
 export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProps>(
   function PopoverDescription(
-    { className, children, variant, motion, onPointerOver, onPointerOut, ...rest },
+    { className, children, textStyle, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest },
     ref,
   ) {
     const { hintId, size } = usePopoverContext("Popover.Description");
@@ -287,6 +284,8 @@ export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProp
       pointerPhases: true,
       onPointerOver,
       onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
  
     return (
@@ -294,10 +293,10 @@ export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProp
         ref={setRef}
         as="p"
         id={hintId}
-        variant={variant ?? popoverDescriptionVariant(size)}
+        textStyle={textStyle ?? popoverDescriptionVariant(size)}
         className={cn(slotClassNames.description, className)}
-        {...pointerHandlers}
         {...rest}
+        {...pointerHandlers}
       >
         {children}
       </Field.Hint>
@@ -374,10 +373,13 @@ function PopoverContentHost({
   className = "",
   children,
   showArrow = false,
-  offset = POPOVER_DEFAULT_OFFSET,
+  offset: offsetProp,
   gap: gapProp,
   matchAnchorWidth = false,
   align: alignProp,
+  side: sideProp,
+  collisionPadding: collisionPaddingProp,
+  avoidCollisions: avoidCollisionsProp,
   unstyled = false,
   contentRole = "dialog",
   portalContainer: portalContainerProp,
@@ -389,7 +391,11 @@ function PopoverContentHost({
     popoverId,
     size,
     variant,
-    side,
+    side: sideFromRoot,
+    align: alignFromRoot,
+    offset: offsetFromRoot,
+    collisionPadding: collisionPaddingFromRoot,
+    avoidCollisions: avoidCollisionsFromRoot,
     labelConnected,
     hintConnected,
     labelId,
@@ -400,13 +406,18 @@ function PopoverContentHost({
     portalContainer: portalContainerFromRoot,
   } = usePopoverContext("Popover.Content");
   const slotClassNames = usePopoverClassNames();
-  const align = resolvePopoverContentAlign({ alignProp, matchAnchorWidth });
+  const align = resolvePopoverContentAlign({ alignProp: alignProp ?? alignFromRoot, matchAnchorWidth });
+  const side = sideProp ?? sideFromRoot;
+  const offset = offsetProp ?? offsetFromRoot ?? POPOVER_DEFAULT_OFFSET;
+  const collisionPadding = collisionPaddingProp ?? collisionPaddingFromRoot;
+  const avoidCollisions = avoidCollisionsProp ?? avoidCollisionsFromRoot;
   const gapPropSet = gapProp !== undefined;
   const contentGap = gapProp ?? "base";
   const motionScope = usePopoverMotionScope();
   const { setRef: setContentPartRef } = useMotionPart<HTMLDivElement>({
     scope: motionScope,
     slot: "content",
+    studioSlot: "popover.panel",
   });
 
   const { customArrow, panelChildren } = useMemo(
@@ -423,9 +434,10 @@ function PopoverContentHost({
     side,
     offset,
     align,
+    collisionPadding,
+    avoidCollisions,
     matchAnchorWidth,
     showArrow,
-    forwardedRef: forwardedRef ?? null,
     contentRef,
     triggerRef,
     anchorRef,
@@ -439,9 +451,8 @@ function PopoverContentHost({
     (node: HTMLDivElement | null) => {
       skinRef.current = node;
       setPanelRef(node);
-      setContentPartRef(node);
     },
-    [setContentPartRef, setPanelRef],
+    [setPanelRef],
   );
  
   if (!portalMounted) return null;
@@ -484,8 +495,6 @@ function PopoverContentHost({
           className={popoverContentClass({
             resolvedSide,
             showArrow,
-            slotClass: slotClassNames.content,
-            className,
           })}
           {...rest}
           {...dataVariantProps({ size, variant })}
@@ -501,6 +510,7 @@ function PopoverContentHost({
           >
             {showArrow ? (customArrow ?? <PopoverArrow />) : null}
             <div
+              ref={mergePopoverRefs(setContentPartRef, forwardedRef)}
               className={popoverDefaultPanelClass({
                 variant,
                 size,
@@ -508,6 +518,8 @@ function PopoverContentHost({
                 contentGap,
                 gapPropSet,
                 slotClass: slotClassNames.panel,
+                contentSlot: slotClassNames.content,
+                className,
               })}
             >
               {panelChildren}

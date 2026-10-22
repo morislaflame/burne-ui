@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
  
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { createMotionScope } from "@/components/core/utils/slotMotion";
@@ -87,5 +87,30 @@ export function useExpandableTriggerGrid(): MessageBannerGridSlots {
  
 export function useOptionalExpandableTriggerGrid(): MessageBannerGridSlots | null {
   return useContext(ExpandableTriggerGridContext);
+}
+
+const ExpandableOwnedTriggerContext = createContext(false);
+
+/** The trigger simple mode renders itself. A user trigger outside this host is a nested duplicate. */
+export function ExpandableOwnedTrigger({ children }: { children: ReactNode }) {
+  return (
+    <ExpandableOwnedTriggerContext.Provider value={true}>
+      {children}
+    </ExpandableOwnedTriggerContext.Provider>
+  );
+}
+
+export function useExpandableSimpleModeGuard(part: "Expandable.Trigger" | "Accordion.Heading") {
+  const expandable = useContext(ExpandableContext);
+  const owned = useContext(ExpandableOwnedTriggerContext);
+  const compound = expandable?.compound ?? true;
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    if (compound || owned) return;
+    console.error(
+      `[burne-ui] ${part} mounted in simple mode. Put compound parts directly inside Expandable or Accordion.Item. A wrapper component hides them: render the whole item from the wrapper.`,
+    );
+  }, [compound, owned, part]);
 }
  

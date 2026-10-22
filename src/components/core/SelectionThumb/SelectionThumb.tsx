@@ -37,6 +37,7 @@ export type {
   SelectionThumbMotion,
   SelectionThumbPartMotion,
   SelectionThumbProps,
+  SelectionThumbSize,
   SelectionThumbVariant,
   KitSelectionThumbVariant,
 } from "./selectionThumbTypes";
@@ -167,8 +168,8 @@ function SelectionThumbShell({
         slotRoot: classNames?.root,
       })}
       {...selectionThumbDecorativeProps()}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size, variant })}
     >
       {children}
@@ -200,6 +201,7 @@ export const SelectionThumbIcon = forwardRef<HTMLSpanElement, SelectionThumbIcon
   const part = useMotionPart<HTMLSpanElement>({
     scope,
     slot: "icon",
+    studioSlot: "selectionThumbIcon.root",
     motion,
     pointerPhases: pointer,
     pressPhases: pointer,
@@ -225,8 +227,8 @@ export const SelectionThumbIcon = forwardRef<HTMLSpanElement, SelectionThumbIcon
         slotRoot: classNames?.root,
       })}
       style={style}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
     >
       <span className={selectionThumbIconInnerClass(size, classNames?.icon)}>
         {children}

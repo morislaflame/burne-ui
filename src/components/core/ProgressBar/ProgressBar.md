@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type ProgressBarTrackProps, type ProgressBarSize, type ProgressBarOrientation, type ProgressBarClassNames } from "burne-ui";
+import { ProgressBar, type ProgressBarProps, type ProgressBarTrackProps, type ProgressBarSize, type ProgressBarOrientation, type ProgressBarClassNames } from "burne-ui";
 ```
 
 ## API
@@ -101,6 +101,8 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("track", …)` / `playSlot("fill", …)`. Compound chrome — handle на Root (`playSlot("value")`); fill-хост — отдельный handle на `ProgressBar.Track`. Один handle ≠ два scope.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`progress:nudge`, `progress:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("track", event)` (карта `events` с корня мержится в Track). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на `ProgressBar.Track`. Simple API мержит карту корня в Track. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, ProgressBar, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -282,7 +284,7 @@ configureMotion({
 
 ## Контекст
 
-`useProgressBarFieldContext()` — `display` с `indeterminate` flag.
+Состояние показа остаётся внутри поля, включая флаг `indeterminate`. Отдельный хук наружу не отдаётся.
 
 ## Структура файлов
 

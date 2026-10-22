@@ -1,11 +1,12 @@
 import { RadioGroup } from "@/components/composite/RadioGroup";
 import { Radio } from "@/components/core/Radio";
+import { Label } from "@/components/core/Label";
 
 export function RadioGroupHorizontalSizesDemo() {
   return (
     <RadioGroup defaultValue="m" className="w-full max-w-md">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Size</RadioGroup.Label>
+        <Label>Size</Label>
         <RadioGroup.Hint>RadioGroup.List orientation=&quot;horizontal&quot;.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List orientation="horizontal">

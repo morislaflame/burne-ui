@@ -1,11 +1,13 @@
 import { forwardRef, useCallback, useRef, type KeyboardEvent } from "react";
  
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { collectTabButtons, focusTabAt } from "./tabsA11y";
 import { useTabsListEnter } from "./tabsAnimations";
 import {
   useOptionalTabsMotionScope,
+  TabsClassNamesProvider,
   useTabsClassNames,
   useTabsContext,
 } from "./tabsContext";
@@ -14,11 +16,27 @@ import type { TabsListProps } from "./tabsTypes";
 import { useSlidingTabIndicator } from "./useSlidingTabIndicator";
  
 export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
-  { className, children, onKeyDown, motion, ...rest },
+  { className, classNames, children, onKeyDown, motion, ...rest },
   ref,
 ) {
-  void ref;
-  const { value, setValue, orientation, variant, disabled, tabElementsRef, layoutEpoch } =
+  return (
+    <TabsClassNamesProvider classNames={classNames}>
+      <TabsListSurface
+        ref={ref}
+        className={className}
+        onKeyDown={onKeyDown}
+        motion={motion}
+        {...rest}
+      >
+        {children}
+      </TabsListSurface>
+    </TabsClassNamesProvider>
+  );
+});
+
+const TabsListSurface = forwardRef<HTMLDivElement, Omit<TabsListProps, "classNames">>(
+  function TabsListSurface({ className, children, onKeyDown, motion, ...rest }, ref) {
+  const { value, setValue, orientation, variant, disabled, activationMode, tabElementsRef, layoutEpoch } =
     useTabsContext();
   const slotClassNames = useTabsClassNames();
   const listRef = useRef<HTMLDivElement>(null);
@@ -39,8 +57,9 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     (node: HTMLDivElement | null) => {
       listRef.current = node;
       setListRef(node);
+      mergeForwardedRef(ref, node);
     },
-    [setListRef],
+    [ref, setListRef],
   );
  
   useTabsListEnter(scope);
@@ -104,10 +123,10 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
       if (nextIndex == null) return;
       e.preventDefault();
       const nextTab = focusTabAt(list, nextIndex);
-      const nextValue = nextTab?.dataset.tabValue;
-      if (nextValue) setValue(nextValue);
+      const nextValue = nextTab?.dataset.value;
+      if (nextValue && activationMode !== "manual") setValue(nextValue);
     },
-    [disabled, onKeyDown, orientation, setValue],
+    [activationMode, disabled, onKeyDown, orientation, setValue],
   );
  
   return (
@@ -138,7 +157,9 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     </div>
   );
 });
- 
+
+TabsListSurface.displayName = "TabsListSurface";
+
 TabsList.displayName = "TabsList";
  
 export { TabsTab } from "./tabsTabPart";

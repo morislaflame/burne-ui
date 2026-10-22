@@ -1,6 +1,7 @@
 import { Checkbox } from "@/components/core/Checkbox";
 import { Text } from "@/components/core/Text";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
+import { Label } from "@/components/core/Label";
 
 export function CheckboxGroupClassNamesFullDemo() {
   return (
@@ -19,7 +20,7 @@ export function CheckboxGroupClassNamesFullDemo() {
       }}
     >
       <CheckboxGroup.Legend>
-        <CheckboxGroup.Label>Consents</CheckboxGroup.Label>
+        <Label>Consents</Label>
         <CheckboxGroup.Hint>Slots via classNames.</CheckboxGroup.Hint>
       </CheckboxGroup.Legend>
       <CheckboxGroup.Group>
@@ -30,7 +31,7 @@ export function CheckboxGroupClassNamesFullDemo() {
         <CheckboxGroup.Error>Accept the terms to continue.</CheckboxGroup.Error>
       </CheckboxGroup.Group>
       <CheckboxGroup.Actions>
-        <Text as="span" variant="small" className="text-muted">
+        <Text as="span" textStyle="small" className="text-muted">
           Saved automatically
         </Text>
       </CheckboxGroup.Actions>

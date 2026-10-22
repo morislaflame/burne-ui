@@ -2,12 +2,12 @@
  * Slot motion for Calendar — look here first.
  *
  * DOM slots: `root` (shell), `navPrev` / `navNext` / `navPrevIcon` / `navNextIcon` (unique on
- * root scope), `header`, `headerTitle`, `grid`, `footer`, `footerToday`,
+ * root scope), `header`, `title`, `grid`, `footer`, `footerToday`,
  * `footerClear` (root scope), `cell` / `cellText` (nested unique scope per cell
  * — not shared-scope repeated).
  *
  * `rangeHalfFill` fades with `contentFade`. `cellFill` checks with `selectionFill`.
- * Panel hover is a second-level shadow (rest `--shadow-base`, grows on hover) with scale locked at 1. Nav and cells lift on their own.
+ * Panel hover is slot `root`: `hoverLiftSecondLevel` with `liftScale: 1` (scale stays 1, rest `--shadow-base` grows). Nav and cells lift on their own.
  */
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
@@ -18,11 +18,21 @@ import {
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
  
-import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useOptionalCalendarMotionScope } from "./calendarContext";
 import type { CalendarMotion, CalendarPartMotion, CalendarVariant } from "./calendarTypes";
 import { KIT_CALENDAR_VARIANTS } from "./calendarTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindSecondLevelRecipe } from "@/components/core/utils/slotMotion/recipes/bindSecondLevel";
+import { bindContentFadeRecipe } from "@/components/core/utils/slotMotion/recipes/bindContentFade";
+import { bindSelectionFillRecipe } from "@/components/core/utils/slotMotion/recipes/bindSelection";
+
+bindLiftRecipes();
+bindSecondLevelRecipe();
+bindContentFadeRecipe();
+bindSelectionFillRecipe();
  
 const NAV_OR_CELL = {
   hoverIn: "hoverLiftFirstLevel" as const,
@@ -32,8 +42,15 @@ const NAV_OR_CELL = {
 };
  
 export function resolveCalendarMotionDefaults(variant: CalendarVariant = "default"): CalendarMotion {
+  const kit = usesKitElevation(variant, KIT_CALENDAR_VARIANTS);
   return overlaySkinMotion(
     {
+      root: kit
+        ? {
+            hoverIn: "hoverLiftSecondLevel",
+            hoverOut: "hoverLiftSecondLevel",
+          }
+        : {},
       navPrev: { ...NAV_OR_CELL },
       navNext: { ...NAV_OR_CELL },
       rangeHalfFill: { enter: "contentFade", leave: "contentFade" },

@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { createRef } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { BurneLabelsProvider } from "@/theme/BurneLabelsProvider";
 
@@ -33,12 +33,14 @@ describe("Э2.3 a11y", () => {
     }
   });
 
-  it("Checkbox and Radio expose aria-required with the asterisk", () => {
+  it("Checkbox exposes aria-required; Radio uses the native required attribute", () => {
     render(<Checkbox label="Agree" required />);
     expect(screen.getByRole("checkbox")).toHaveAttribute("aria-required", "true");
 
     render(<Radio label="Card" value="card" required />);
-    expect(screen.getByRole("radio")).toHaveAttribute("aria-required", "true");
+    const radio = screen.getByRole("radio");
+    expect(radio).toBeRequired();
+    expect(radio).not.toHaveAttribute("aria-required");
   });
 
   it("Switch required is native and aria-required", () => {
@@ -65,7 +67,7 @@ describe("Э2.3 a11y", () => {
 
   it("CheckboxGroup single required stays on the group", () => {
     render(
-      <CheckboxGroup required selection="single">
+      <CheckboxGroup required selectionMode="single">
         <CheckboxGroup.Legend>Topics</CheckboxGroup.Legend>
         <CheckboxGroup.List>
           <Checkbox value="a" label="Alpha" />
@@ -88,10 +90,46 @@ describe("Э2.3 a11y", () => {
           <Radio value="cash" label="Cash" />
         </RadioGroup.List>
       </RadioGroup>);
-    expect(screen.getByRole("group")).toHaveAttribute("aria-required", "true");
+    expect(screen.getByRole("radiogroup", { name: "Pay" })).toHaveAttribute("aria-required", "true");
     const radios = screen.getAllByRole("radio");
     expect(radios[0]).toBeRequired();
     expect(radios[1]).not.toBeRequired();
+  });
+
+  it("RadioGroup readOnly is aria-readonly on the group, not the radio", async () => {
+    const onValueChange = vi.fn();
+    const { user } = render(
+      <RadioGroup readOnly defaultValue="card" onValueChange={onValueChange}>
+        <RadioGroup.Legend>Pay</RadioGroup.Legend>
+        <RadioGroup.List>
+          <Radio value="card" label="Card" />
+          <Radio value="cash" label="Cash" />
+        </RadioGroup.List>
+      </RadioGroup>,
+    );
+    const group = screen.getByRole("radiogroup", { name: "Pay" });
+    expect(group).toHaveAttribute("aria-readonly", "true");
+    for (const radio of screen.getAllByRole("radio")) {
+      expect(radio).not.toHaveAttribute("aria-readonly");
+      expect(radio).toHaveAttribute("data-readonly", "");
+    }
+    await user.click(screen.getByRole("radio", { name: "Cash" }));
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("radio", { name: "Card" })).toBeChecked();
+  });
+
+  it("Calendar hides padding day cells from the accessibility tree", () => {
+    render(<Calendar aria-label="Date" value={new Date(2026, 9, 21)} />);
+    const grid = screen.getByRole("grid", { name: /October 2026/ });
+    const hidden = grid.querySelectorAll('[role="gridcell"][aria-hidden="true"]');
+    expect(hidden.length).toBeGreaterThan(0);
+    for (const cell of hidden) {
+      expect(cell).toHaveAttribute("aria-hidden", "true");
+      expect(cell).not.toHaveAttribute("aria-label");
+    }
+    for (const cell of screen.getAllByRole("gridcell")) {
+      expect(cell.querySelector("[aria-label]")).toBeTruthy();
+    }
   });
 
   it("Button motionState loading sets aria-busy", () => {

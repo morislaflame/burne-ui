@@ -7,7 +7,8 @@
 import { lockBodyScroll, unlockBodyScroll } from "./bodyScrollLock";
 import { shouldHandleContainedEscape } from "./containedEscape";
 import { killMotion } from "./gsapMotion";
-import { focusPanelOnOpen, isFocusVisibleElement } from "./focusElement";
+import { focusOnOpen, focusPanelOnOpen, isFocusVisibleElement } from "./focusElement";
+import { overlayShouldClose, type OverlayDismissEvent } from "./overlayLayer";
 import {
   animateModalClose,
   animateModalOpen,
@@ -19,6 +20,7 @@ import {
   type GsapMotionVars,
 } from "./modalSurfaceMotion";
 import { motionModalFor } from "./motionConfig";
+import { prefersReducedMotion } from "./reducedMotion";
 import { useMotionConfig } from "./motionConfigContext";
 import { openNativeDialog } from "./portalContainer";
 import {
@@ -39,13 +41,17 @@ export type UseModalMotionOptions = {
   /**
    * When true, pointerdown on the overlay (target === currentTarget) closes.
    */
-  dismissOnBackdrop?: boolean;
+  closeOnInteractOutside?: boolean;
+  /** Escape closes. Default true. `onEscapeKeyDown` may `preventDefault()`. */
+  closeOnEscape?: boolean;
+  onEscapeKeyDown?: (event: OverlayDismissEvent) => void;
   /**
    * Overlay pointerdown (backdrop). Call `event.preventDefault()` to keep the
-   * modal open. A `false` return value is ignored. `dismissOnBackdrop={false}`
-   * still skips close even if the handler does not prevent default.
+   * modal open. `closeOnInteractOutside={false}` still skips close.
    */
-  onInteractOutside?: (event: MouseEvent<HTMLDivElement>) => void;
+  onInteractOutside?: (event: OverlayDismissEvent) => void;
+  /** Focus this node on open instead of the first tab stop in the panel. */
+  initialFocus?: RefObject<HTMLElement | null> | null;
   /**
    * Contained portals use non-modal `show()` — Escape does not fire `cancel`.
    * When true, listen for Escape and call `onOpenChange(false)`.
@@ -91,16 +97,20 @@ export type UseModalMotionResult = {
   panelRef: RefObject<HTMLDivElement | null>;
   skipCloseAnimRef: RefObject<boolean>;
   handleBackdropPointerDown: (e: MouseEvent<HTMLDivElement>) => void;
+  handleDialogCancel: (event: OverlayDismissEvent) => void;
 };
 
 export function useModalMotion({
   open,
   contained = false,
   onOpenChange,
-  dismissOnBackdrop = false,
+  closeOnInteractOutside = false,
+  closeOnEscape = true,
+  onEscapeKeyDown,
   onInteractOutside,
+  initialFocus = null,
   enableContainedEscape = false,
-  focusOnOpen = true,
+  focusOnOpen: shouldFocusOnOpen = true,
   getPanelOpen,
   getPanelExit,
   preparePanel,
@@ -153,11 +163,12 @@ export function useModalMotion({
     const onKeyDown = (e: KeyboardEvent) => {
       if (!shouldHandleContainedEscape(e, dialogRef.current)) return;
       e.preventDefault();
+      if (!overlayShouldClose(e, onEscapeKeyDown, closeOnEscape)) return;
       onOpenChange(false);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, contained, enableContainedEscape, onOpenChange]);
+  }, [open, contained, enableContainedEscape, closeOnEscape, onEscapeKeyDown, onOpenChange]);
  
   useLayoutEffect(() => {
     if (open || !mounted) return;
@@ -182,7 +193,7 @@ export function useModalMotion({
       return undefined;
     }
  
-    if (!overlay || !panel || isReducedModalMotion(config)) {
+    if (!overlay || !panel || isReducedModalMotion(config, prefersReducedMotion())) {
       finishClose();
       return undefined;
     }
@@ -238,11 +249,14 @@ export function useModalMotion({
     const enterKey = `${contained ? "c" : "m"}:${String(panelMotionKey ?? "")}`;
     if (enterPlayedKeyRef.current === enterKey) return;
  
-    if (isReducedModalMotion(config)) {
+    if (isReducedModalMotion(config, prefersReducedMotion())) {
       applyReducedModalMotion(overlay, panel, {
-        focusPanel: focusOnOpen,
+        focusPanel: shouldFocusOnOpen && !initialFocus?.current,
         focusVisible: openFromKeyboardRef.current,
       });
+      if (shouldFocusOnOpen && initialFocus?.current) {
+        focusOnOpen(initialFocus.current, { focusVisible: openFromKeyboardRef.current });
+      }
       enterPlayedKeyRef.current = enterKey;
       return;
     }
@@ -264,20 +278,44 @@ export function useModalMotion({
           : {}),
       });
     }
-    if (focusOnOpen) {
-      focusPanelOnOpen(panel, { focusVisible: openFromKeyboardRef.current });
+    if (shouldFocusOnOpen) {
+      const preferred = initialFocus?.current;
+      if (preferred) {
+        focusOnOpen(preferred, { focusVisible: openFromKeyboardRef.current });
+      } else {
+        focusPanelOnOpen(panel, { focusVisible: openFromKeyboardRef.current });
+      }
     }
-  }, [config, open, mounted, contained, focusOnOpen, panelMotionKey]);
+  }, [config, open, mounted, contained, shouldFocusOnOpen, initialFocus, panelMotionKey]);
  
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       if (e.target !== e.currentTarget) return;
-      onInteractOutside?.(e);
-      if (e.defaultPrevented) return;
-      if (!dismissOnBackdrop || !onOpenChange) return;
-      onOpenChange(false);
+      if (!overlayShouldClose(e, onInteractOutside, closeOnInteractOutside)) return;
+      onOpenChange?.(false);
     },
-    [dismissOnBackdrop, onInteractOutside, onOpenChange],
+    [closeOnInteractOutside, onInteractOutside, onOpenChange],
+  );
+
+  const handleDialogCancel = useCallback(
+    (event: OverlayDismissEvent) => {
+      // The host preventDefault stops the native dialog from closing before leave.
+      // Only preventDefault inside onEscapeKeyDown keeps the overlay open.
+      let userPrevented = false;
+      const userEvent: OverlayDismissEvent = {
+        preventDefault() {
+          userPrevented = true;
+        },
+        get defaultPrevented() {
+          return userPrevented;
+        },
+        target: event.target,
+      };
+      event.preventDefault();
+      if (!overlayShouldClose(userEvent, onEscapeKeyDown, closeOnEscape)) return;
+      onOpenChange?.(false);
+    },
+    [closeOnEscape, onEscapeKeyDown, onOpenChange],
   );
  
   return {
@@ -288,6 +326,7 @@ export function useModalMotion({
     panelRef,
     skipCloseAnimRef,
     handleBackdropPointerDown,
+    handleDialogCancel,
   };
 }
  

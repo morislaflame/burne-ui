@@ -2,6 +2,8 @@
 
 Календарь выбора дат: **single**, **range**, **multiple**. Views: days → months → years. Compound default content или кастомная разметка через `Header` / `Grid` / `Footer`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -14,7 +16,7 @@ import { Calendar, EN_LOCALE, createCalendarLocale, useCalendar, type CalendarPr
 
 ```tsx
 <Calendar
-  mode="single"
+  selectionMode="single"
   defaultValue={new Date()}
   onValueChange={setDate}
 />
@@ -24,7 +26,7 @@ import { Calendar, EN_LOCALE, createCalendarLocale, useCalendar, type CalendarPr
 
 ```tsx
 <Calendar
-  mode="range"
+  selectionMode="range"
   defaultValue={{ start: null, end: null }}
   onValueChange={setRange}
 />
@@ -33,7 +35,7 @@ import { Calendar, EN_LOCALE, createCalendarLocale, useCalendar, type CalendarPr
 ### Compound
 
 ```tsx
-<Calendar mode="range" variant="outline" size="base" locale="ru">
+<Calendar selectionMode="range" variant="outline" size="base" locale="ru">
   <Calendar.Header />
   <Calendar.Grid />
   <Calendar.Footer />
@@ -46,26 +48,29 @@ import { Calendar, EN_LOCALE, createCalendarLocale, useCalendar, type CalendarPr
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `secondary` \| `outline` \| `gloss` |
+| `selectionMode` | `single` | `single` \| `range` \| `multiple`. `range` — доменное значение календаря |
+| `variant` | `default` | `default` \| `secondary` \| `outline` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `defaultMonth` | today | Начальный месяц view |
-| `initialView` | `days` | `days` \| `months` \| `years` |
+| `month` / `onMonthChange` | — | Контролируемый видимый месяц. Без них — `defaultMonth` |
+| `view` / `defaultView` / `onViewChange` | `days` | `days` \| `months` \| `years` |
 | `locale` | `EN_LOCALE` (`en-GB`) | BCP 47 tag or `createCalendarLocale()` — weekdays, months, Today/Clear |
+| `previousIcon` / `nextIcon` | chevron | Замена шеврона. `null` прячет иконку. Motion-слоты остаются `navPrevIcon` / `navNextIcon` |
 | `minDate` / `maxDate` | — | Ограничения выбора |
 | `classNames` | — | Слоты |
 | `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Calendar.Day` |
 
 ### Mode-specific value
 
-| Mode | `value` / `onValueChange` |
-|------|---------------------------|
-| `single` | `Date \| null` |
-| `range` | `CalendarRangeValue` (`start`, `end`) |
-| `multiple` | `Date[]` |
+| `selectionMode` | Значение |
+|-----------------|----------|
+| `single` | `value` / `onValueChange`: `Date \| null` |
+| `range` | `value` / `onValueChange`: `CalendarRangeValue` (`start`, `end`) |
+| `multiple` | `values` / `defaultValues` / `onValuesChange`: `Date[]` |
 
 ### `CalendarClassNames`
 
-`root`, `header`, `navPrev`, `navNext`, `navIconWrap`, `navIcon`, `headerTitle`, `grid`, `weekdayGrid`, `weekdayCell`, `daysGrid`, `dayCellWrapper`, `dayEmpty`, `rangeHalfFill`, `dayCell`, `monthsGrid`, `monthCell`, `yearsGrid`, `yearCell`, `cell`, `cellFill`, `cellText`, `cellTodayDot`, `footer`, `footerToday`, `footerClear`.
+`root`, `header`, `navPrev`, `navNext`, `navIconWrap`, `navIcon`, `title`, `grid`, `weekdayGrid`, `weekdayCell`, `daysGrid`, `dayCellWrapper`, `dayEmpty`, `rangeHalfFill`, `day`, `monthsGrid`, `monthCell`, `yearsGrid`, `yearCell`, `cell`, `cellFill`, `cellText`, `cellTodayDot`, `footer`, `footerToday`, `footerClear`.
 
 ### Compound-подчасти
 
@@ -76,7 +81,7 @@ import { Calendar, EN_LOCALE, createCalendarLocale, useCalendar, type CalendarPr
 | `Calendar.Footer` | Today / Clear actions |
 | `Calendar.Title` | Drill-up month/year control |
 | `Calendar.NavPrev` / `NavNext` | Навигация месяца |
-| `Calendar.Day` | Ячейка дня; nested motion scope (`motionController`, `playSlot("cell")`) |
+| `Calendar.Day` | Ячейка дня. Пропы `today`, `current`, нативный `aria-label`. Nested motion scope (`motionController`, `playSlot("cell")`) |
 
 ### `useCalendar()`
 
@@ -84,14 +89,13 @@ Hook из context: `view`, `viewDate`, `selectedDates`, `rangeStart`/`rangeEnd`,
 
 ## variant и размеры
 
-Канонический visual style (`default` | `outline` | `secondary` | `gloss`). Доменных исключений нет.
+Канонический visual style. Доменных исключений нет.
 
 | variant | Поверхность root |
 |---------|------------------|
 | `default` | `rounded-large border-token bg-surface`. Тень в покое (`--shadow-base`) и больше при наведении |
 | `secondary` | `bg-secondary` |
 | `outline` | `bg-transparent border-token` |
-| `gloss` | `gloss-panel gloss-deep` + `glossContent` |
 
 | size | `min-w` | root padding | day cell |
 |------|---------|--------------|----------|
@@ -118,18 +122,21 @@ Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `we
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel`, `params.liftScale` = 1, `params.shadowSize` = `base`. `motion.root.hoverIn` подменяет hover панели |
 | `navPrev` / `navNext` | hover/press | `hoverLiftFirstLevel` (без тени) + `pressSqueeze` (`pressOut: false`) |
 | `navPrevIcon` / `navNextIcon` | hover/press / `enter` | нет |
-| `header` / `headerTitle` / `grid` / `footer` | `enter` / hover/press | нет |
+| `header` / `title` / `grid` / `footer` | `enter` / hover/press | нет |
 | `footerToday` / `footerClear` | `enter` / hover/press (opt-in) | empty; kit buttons в Footer |
 | `cell` | hover/press | то же, что nav (nested scope) |
 | `cellText` | hover/press / `enter` | нет; nested cell scope |
 
 `false` на hover — skip без kill. Compound: `motion` на `Calendar.NavPrev` / `Calendar.NavNext` / `Calendar.Header` / `Calendar.Footer`. `cellText` — nested cell scope. Иконки навигации — слоты `navPrevIcon` / `navNextIcon` (не `classNames.navIcon`).
 
-Слота `root` нет: `play()` skip. `playSlot("header")` / `playAll` — chrome (`header` / `navPrev` / `grid` / `footer` …), не nested ячейки. Каждая ячейка — **вложенный** scope: свой `motionController` на `Calendar.Day`, `playSlot("cell")` / `playSlot("cellText")`. Один handle ≠ два scope. Fill дня и range half-fill не слоты.
+`root` играет hover панели (`hoverLiftSecondLevel`, масштаб 1). `playSlot("header")` / `playAll` — chrome (`header` / `navPrev` / `grid` / `footer` …), не nested ячейки. Каждая ячейка — **вложенный** scope: свой `motionController` на `Calendar.Day`, `playSlot("cell")` / `playSlot("cellText")`. Один handle ≠ два scope. Fill дня и range half-fill не слоты.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`calendar:nudge`, `calendar:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Calendar.Footer`) видит Calendar; внутри `Calendar.Day` — scope ячейки.
+
+Тройка на корне и на интерактивной ячейке (`Calendar.Day`, месяц, год). `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Calendar, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -169,7 +176,6 @@ function Nudge() {
 | `CALENDAR_HEADER_TITLE_INTERACTIVE_CLASS` | Drill-up title hover |
 | `CALENDAR_CELL_FILL_CLASS` | Fill layer под текстом дня |
 | `CALENDAR_CELL_TODAY_DOT_CLASS` | Marker «сегодня» |
-| `gloss-panel gloss-deep` | Gloss variant shell |
 | `max-w-control-*` | Square day/month/year hit targets |
 
 ## Стилизация и кастомизация
@@ -190,14 +196,14 @@ Compound-подчасти (`Header`, `Grid`, `Footer`) не принимают �
 | `navPrev` / `navNext` | Nav buttons | Icon button size/color |
 | `navIconWrap` | Обёртка дефолтного шеврона | Размер hit-иконки |
 | `navIcon` | Дефолтный шеврон | Цвет иконки |
-| `headerTitle` | Title button | Month/year label typography |
+| `title` | Title button | Month/year label typography |
 | `grid` | Grid container | Vertical rhythm |
 | `weekdayGrid` / `weekdayCell` | Weekday row | Muted labels, uppercase |
 | `daysGrid` | 7-column grid | Gap between weeks |
 | `dayCellWrapper` | Cell + range bands | Position relative для half-fill |
 | `dayEmpty` | Пустая ячейка вне месяца | Отступ сетки |
 | `rangeHalfFill` | Range band | Custom range preview color |
-| `dayCell` | Day button | Radius, aspect ratio |
+| `day` | Day button | Radius, aspect ratio |
 | `monthsGrid` | Сетка месяцев | Раскладка month view |
 | `yearsGrid` | Сетка лет | Раскладка year view |
 | `monthCell` / `yearCell` | Picker cells | Month/year view buttons |
@@ -212,13 +218,13 @@ Compound-подчасти (`Header`, `Grid`, `Footer`) не принимают �
 
 ```tsx
 <Calendar
-  mode="single"
+  selectionMode="single"
   variant="outline"
   size="base"
   defaultValue={new Date()}
   classNames={{
     root: "border-primary/30 shadow-token-md",
-    dayCell: "rounded-full",
+    day: "rounded-full",
     cellFill: "rounded-full bg-primary",
   }}
 />
@@ -228,13 +234,13 @@ Compound-подчасти (`Header`, `Grid`, `Footer`) не принимают �
 
 ```tsx
 <Calendar
-  mode="range"
+  selectionMode="range"
   locale="ru"
   classNames={{
     root: "rounded-large border-primary/30 bg-primary/5 shadow-token-md",
-    headerTitle: "font-semibold text-primary",
+    title: "font-semibold text-primary",
     weekdayCell: "text-primary/70 uppercase tracking-wide",
-    dayCell: "rounded-full",
+    day: "rounded-full",
     cellFill: "rounded-full bg-primary",
     rangeHalfFill: "bg-primary/15",
     footerToday: "text-primary font-medium",
@@ -252,14 +258,13 @@ Controlled range для форм:
 ```tsx
 const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
 
-<Calendar mode="range" value={range} onValueChange={setRange} />
+<Calendar selectionMode="range" value={range} onValueChange={setRange} />
 ```
 
 ### Практические заметки
 
 - **Без `children`** рендерится `CalendarDefaultContent` (Header + Grid + Footer).
 - **`locale`:** дефолт `EN_LOCALE` (`en-GB`). Тег (`"ru"`) или объект из `createCalendarLocale`.
-- **`variant="gloss"`:** content в `glossContent`; стили panel на root.
 - **`minDate` / `maxDate`:** disabled cells не focusable, без press handlers.
 - **Range hover preview:** half-fill bands управляются context; не удаляйте `dayCellWrapper` positioning.
 - **Не override `cellFill` transform** — заливка идёт через `selectionFill` (`check` / `uncheck`). Полоса диапазона `rangeHalfFill` — `contentFade`.
@@ -278,6 +283,7 @@ const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null 
 - Nav buttons: `aria-label` (back/forward)
 - Day grid: `role="grid"` / `row` / `columnheader` / `gridcell` (APG Date Picker)
 - Cells: `aria-label` с полной датой; `aria-selected` на `gridcell`
+- Пустая ячейка вне месяца: `gridcell` с `aria-hidden`, без имени. Это отступ сетки, не день
 - Roving `tabIndex`: одна tab-остановка в сетке дней
 - Keyboard (days): ←/→ ±день, ↑/↓ ±неделя, Home/End — границы недели, PageUp/Down ±месяц (Shift — ±год), Enter/Space — выбор
 - Months / years: тот же grid-паттерн + стрелки по ячейкам
@@ -305,4 +311,8 @@ Calendar/
 
 ## Storybook
 
-`Core Components/Calendar` — single/range/multiple, sizes, variants, views, gloss, `classNames`, slot motion gallery, MotionController.
+`Core Components/Calendar` — single/range/multiple, sizes, variants, views, `classNames`, slot motion gallery, MotionController.
+
+## Даты
+
+`isDateUnavailable(date)` оставляет день в сетке и запрещает выбор. День получает `disabled`.

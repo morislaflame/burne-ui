@@ -17,7 +17,7 @@ export function DropdownPortalContainerDemo() {
       >
         <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
         {container ? (
-          <Dropdown portalContainer={container} selectionIndicator defaultValue="ru">
+          <Dropdown portalContainer={container} defaultValue="ru">
             <Dropdown.Trigger asChild>
               <Button variant="outline" type="button">
                 Open in host

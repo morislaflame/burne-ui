@@ -50,7 +50,7 @@ export function useModalSlotMotionController({
 }: {
   motionScope?: MotionScopeValue | null;
   applyInstant?: (slot: ModalHostSlot, el: HTMLElement, phase: "enter" | "leave") => void;
-  /** Scrim + panel slot names. Drawer uses `backdrop` (compound `Drawer.Backdrop`). */
+  /** Scrim + panel slot names. Drawer scrim slot is `overlay` (`Drawer.Overlay` is only the dismiss marker). */
   hostSlots?: readonly [scrim: string, panel: string];
 }): ModalSlotMotionController | undefined {
   const enterFrameRef = useRef(0);

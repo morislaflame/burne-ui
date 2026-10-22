@@ -1,9 +1,9 @@
 /**
  * Slot motion for PinInput — look here first.
  *
- * DOM slots: `group`, `field` (repeated cell), `label`, `hint`, `error`
+ * DOM slots: `shell` (row), `control` (repeated cell), `label`, `hint`, `error`
  *
- * Root owns the scope. Each cell is its own field surface.
+ * Root owns the scope. Each cell (`control`) lifts on its own. The row is `shell`.
  */
 import { useRef, type ForwardedRef, type PointerEventHandler } from "react";
 
@@ -15,10 +15,14 @@ import {
   type MotionPartPhases,
 } from "@/components/core/utils/slotMotion";
 import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useOptionalPinInputMotionScope, usePinInputContext } from "./pinInputContext";
 import type { PinInputMotion, PinInputPartMotion } from "./pinInputTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
 
 export function resolvePinInputMotionDefaults({
   variant,
@@ -30,9 +34,9 @@ export function resolvePinInputMotionDefaults({
   const active = !disabled;
   return overlaySkinMotion(
     {
-      field: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+      control: {
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
       },
     },
     variant,
@@ -48,14 +52,14 @@ export function resolvePinInputMotionParams({
   variant: InputVariant;
   disabled: boolean;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return {
-    shadowSize: "base" as const,
+    shadowSize: "none" as const,
     hasHoverShadow: !disabled && kitSurface,
   };
 }
 
-export function usePinInputGroupMotion({
+export function usePinInputShellMotion({
   motion,
   forwardedRef,
   onPointerOver,
@@ -71,10 +75,10 @@ export function usePinInputGroupMotion({
   onPointerUp?: PointerEventHandler<HTMLDivElement>;
 }) {
   const scope = useOptionalPinInputMotionScope();
-  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.group);
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.shell);
   const part = useMotionPart<HTMLDivElement>({
     scope,
-    slot: "group",
+    slot: "shell",
     motion,
     forwardedRef,
     pointerPhases: pointer,
@@ -83,25 +87,25 @@ export function usePinInputGroupMotion({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "group", part.targetRef);
+  useOptionalEnterOnMount(scope, "shell", part.targetRef);
   return part;
 }
 
-export function usePinInputFieldMotion() {
+export function usePinInputControlMotion() {
   const scope = useOptionalPinInputMotionScope();
   const { disabled, variant } = usePinInputContext();
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const fieldRef = useRef<HTMLInputElement | null>(null);
   const pointerInsideRef = useRef(false);
   const shadow = useSecondLevelShadow(fieldRef, !disabled && kitSurface, {
     interactive: false,
-    shadowSize: "base",
+    shadowSize: "none",
     pointerInsideRef,
     killMotionOnUnmount: false,
   });
   const part = useMotionPart<HTMLInputElement>({
     scope,
-    slot: "field",
+    slot: "control",
     pointerPhases: !disabled,
     onPointerOver: () => {
       pointerInsideRef.current = true;
@@ -110,7 +114,7 @@ export function usePinInputFieldMotion() {
       pointerInsideRef.current = false;
     },
   });
-  useOptionalEnterOnMount(scope, "field", part.targetRef);
+  useOptionalEnterOnMount(scope, "control", part.targetRef);
 
   const setRef = (node: HTMLInputElement | null) => {
     fieldRef.current = node;

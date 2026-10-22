@@ -41,7 +41,7 @@ export function DisclosureMotionChevronDemo() {
         />
       </Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Chevron factory reaches `icon` via ctx.getTarget. Height stays the kit recipe.
         </Text>
       </Disclosure.Content>

@@ -106,7 +106,7 @@ export const InContext: Story = {
   name: "In context",
   render: () => (
     <div className="flex max-w-md flex-col gap-large text-left">
-      <Text as="p" variant="small" className="text-muted">
+      <Text as="p" textStyle="small" className="text-muted">
         Press <Kbd>Esc</Kbd> to close. Save —{" "}
         <Kbd.Group>
           <Kbd>⌘</Kbd>

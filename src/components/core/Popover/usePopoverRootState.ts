@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef } from "react";
  
 import { focusElement } from "@/components/core/utils/focusElement";
+import { overlayShouldClose } from "@/components/core/utils/overlayLayer";
 import { useSkinVariant } from "@/skins/skinContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
  
@@ -13,11 +14,18 @@ export function usePopoverRootState({
   size = "base",
   variant: variantProp,
   side = "bottom",
+  align,
+  offset,
+  collisionPadding,
+  avoidCollisions,
   open: openProp,
   defaultOpen = false,
   onOpenChange,
   anchorRef,
-  shouldDismiss,
+  closeOnEscape = true,
+  closeOnInteractOutside = true,
+  onEscapeKeyDown,
+  onInteractOutside,
   restoreFocus = true,
   portalContainer,
 }: UsePopoverRootStateProps) {
@@ -42,11 +50,13 @@ export function usePopoverRootState({
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      if (!overlayShouldClose(event, onEscapeKeyDown, closeOnEscape)) return;
+      setOpen(false);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, setOpen]);
+  }, [closeOnEscape, onEscapeKeyDown, open, setOpen]);
  
   useEffect(() => {
     if (!open) return;
@@ -55,12 +65,19 @@ export function usePopoverRootState({
       const anchor = anchorRef?.current ?? triggerRef.current;
       if (anchor?.contains(target)) return;
       if (contentRef.current?.contains(target)) return;
-      if (shouldDismiss && !shouldDismiss(target)) return;
+      const dismissEvent = {
+        target: event.target,
+        preventDefault: () => event.preventDefault(),
+        get defaultPrevented() {
+          return event.defaultPrevented;
+        },
+      };
+      if (!overlayShouldClose(dismissEvent, onInteractOutside, closeOnInteractOutside)) return;
       setOpen(false);
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [anchorRef, open, setOpen, shouldDismiss]);
+  }, [anchorRef, closeOnInteractOutside, onInteractOutside, open, setOpen]);
  
   // Restore focus to trigger/anchor whenever the popover closes (Escape, outside
   // click, trigger toggle) — portaled content unmounts and would otherwise leave
@@ -83,6 +100,10 @@ export function usePopoverRootState({
       size,
       variant,
       side,
+      align,
+      offset,
+      collisionPadding,
+      avoidCollisions,
       labelConnected,
       hintConnected,
       triggerRef,
@@ -99,6 +120,10 @@ export function usePopoverRootState({
       open,
       popoverId,
       portalContainer,
+      align,
+      avoidCollisions,
+      collisionPadding,
+      offset,
       setOpen,
       side,
       size,

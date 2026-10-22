@@ -12,7 +12,7 @@ export function PopoverMotionInstantLeaveDemo() {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Enter keeps the kit recipe. Leave unmounts immediately.
           </Text>
         </Popover.Body>

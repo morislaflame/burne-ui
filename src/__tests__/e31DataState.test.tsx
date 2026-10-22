@@ -69,7 +69,7 @@ describe("Э3.1 data-state", () => {
   });
 
   it("Select combobox and chevron are closed", () => {
-    render(<Select label="City" options={[{ value: "a", label: "A" }]} />);
+    render(<Select label="City" items={[{ value: "a", label: "A" }]} />);
     expect(screen.getByRole("combobox")).toHaveAttribute("data-state", "closed");
     const chevron = screen.getAllByRole("button").find((node) => node.getAttribute("data-state") === "closed");
     expect(chevron).toBeTruthy();
@@ -185,7 +185,7 @@ describe("Э3.1 data-state", () => {
       <Table>
         <Table.Content>
           <Table.Header>
-            <Table.Column allowsSorting>Name</Table.Column>
+            <Table.Column sortable>Name</Table.Column>
           </Table.Header>
         </Table.Content>
       </Table>);
@@ -217,9 +217,11 @@ describe("Э3.1 data-state", () => {
     expect(screen.getByRole("link", { name: "Next" })).toHaveAttribute("data-size", "small");
     link.unmount();
 
-    const input = render(<Input label="Name" status="success" />);
-    expect(input.container.querySelector("[data-slot='input-shell']")).toHaveAttribute("data-status", "success");
-    expect(input.container.querySelector("[data-slot='input-shell']")).toHaveAttribute("data-variant", "default");
+    const input = render(<Input label="Name" invalid />);
+    const shell = input.container.querySelector("[data-slot='input-shell']");
+    expect(shell).not.toHaveAttribute("data-status");
+    expect(shell).toHaveAttribute("data-variant", "default");
+    expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByText("Name").closest("[data-size]")).toHaveAttribute("data-size", "base");
     input.unmount();
 

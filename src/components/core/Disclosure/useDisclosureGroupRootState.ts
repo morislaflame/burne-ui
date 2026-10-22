@@ -8,32 +8,60 @@ import type {
 } from "./disclosureTypes";
  
 export function useDisclosureGroupRootState({
-  accordion = true,
+  selectionMode = "single",
   separated = false,
   variant: variantProp,
   size = "base",
   value: valueProp,
   defaultValue,
   onValueChange,
+  values: valuesProp,
+  defaultValues = [],
+  onValuesChange,
   motion,
 }: UseDisclosureGroupRootStateProps) {
   const variant = useSkinVariant(variantProp);
-  const isControlled = valueProp !== undefined;
+  const singleControlled = valueProp !== undefined;
   const [internal, setInternal] = useState<string | null>(defaultValue ?? null);
-  const openValue = isControlled ? valueProp! : internal;
+  const openValue = singleControlled ? valueProp! : internal;
+
+  const manyControlled = valuesProp !== undefined;
+  const [internalValues, setInternalValues] = useState<string[]>(defaultValues);
+  const values = manyControlled ? valuesProp : internalValues;
  
   const setOpenValue = useCallback(
     (val: string | null) => {
-      const next = accordion && val === openValue ? null : val;
-      if (!isControlled) setInternal(next);
+      const next = val === openValue ? null : val;
+      if (!singleControlled) setInternal(next);
       onValueChange?.(next);
     },
-    [accordion, isControlled, onValueChange, openValue],
+    [onValueChange, openValue, singleControlled],
+  );
+
+  const setItemOpen = useCallback(
+    (id: string, open: boolean) => {
+      const next = open
+        ? values.includes(id) ? values : [...values, id]
+        : values.filter((item) => item !== id);
+      if (!manyControlled) setInternalValues(next);
+      onValuesChange?.(next);
+    },
+    [manyControlled, onValuesChange, values],
   );
  
   const contextValue: DisclosureGroupContextValue = useMemo(
-    () => ({ openValue, setOpenValue, variant, size, separated, accordion, motion }),
-    [accordion, motion, openValue, setOpenValue, variant, size, separated],
+    () => ({
+      selectionMode,
+      openValue,
+      values,
+      setOpenValue,
+      setItemOpen,
+      variant,
+      size,
+      separated,
+      motion,
+    }),
+    [motion, openValue, selectionMode, separated, setItemOpen, setOpenValue, size, values, variant],
   );
  
   return {
@@ -42,4 +70,3 @@ export function useDisclosureGroupRootState({
     variant,
   };
 }
- 

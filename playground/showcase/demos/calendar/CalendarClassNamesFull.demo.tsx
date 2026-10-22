@@ -3,17 +3,17 @@ import { Calendar } from "@/components/core/Calendar";
 export function CalendarClassNamesFullDemo() {
   return (
     <Calendar
-      mode="single"
+      selectionMode="single"
       classNames={{
         root: "rounded-large border-info/40 bg-info/5",
         header: "gap-small",
-        headerTitle: "font-semibold text-info",
+        title: "font-semibold text-info",
         navPrev: "text-info",
         navNext: "text-info",
         navIconWrap: "text-info",
         weekdayCell: "text-info/70",
         dayEmpty: "opacity-40",
-        dayCell: "rounded-full",
+        day: "rounded-full",
         cellFill: "rounded-full bg-info",
         cellTodayDot: "bg-info",
         footer: "border-info/30",

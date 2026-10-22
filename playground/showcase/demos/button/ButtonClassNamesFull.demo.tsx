@@ -8,6 +8,7 @@ export function ButtonClassNamesFullDemo() {
       variant="outline"
       status="info"
       icon={<IoSave aria-hidden />}
+      className="px-xlarge"
       classNames={{
         root: "rounded-large border-token-info",
         content: "gap-small",

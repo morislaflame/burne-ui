@@ -1,4 +1,5 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
 import { cn } from "@/utils/cn";
  
@@ -14,6 +15,13 @@ export const PAGINATION_CONTENT_CLASS =
  
 export const PAGINATION_ITEM_CLASS = "flex shrink-0 items-center";
  
+export const PAGINATION_SIZE_CLASS: Record<ComponentSize, string> = {
+  small: "min-h-control-small text-small",
+  base: "min-h-control-base text-base",
+  mid: "min-h-control-mid text-mid",
+  large: "min-h-control-large text-large",
+};
+
 export const PAGINATION_INTERACTIVE_BUTTON_CLASS =
   "inline-flex min-w-0 origin-center cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted disabled:hover:bg-transparent motion-reduce:animate-none";
  
@@ -88,14 +96,17 @@ export function paginationItemClass({
 }
  
 export function paginationInteractiveButtonClass({
+  size = "base",
   slotClass,
   className,
 }: {
+  size?: ComponentSize;
   slotClass?: string;
   className?: string;
 }): string {
   return cn(
     PAGINATION_INTERACTIVE_BUTTON_CLASS,
+    PAGINATION_SIZE_CLASS[size],
     hoverVariant(),
     slotClass,
     className,
@@ -103,14 +114,17 @@ export function paginationInteractiveButtonClass({
 }
  
 export function paginationPageActiveClass({
+  size = "base",
   slotClass,
   className,
 }: {
+  size?: ComponentSize;
   slotClass?: string;
   className?: string;
 }): string {
   return cn(
     PAGINATION_PAGE_ACTIVE_CLASS,
+    PAGINATION_SIZE_CLASS[size],
     slotClass,
     className,
   );

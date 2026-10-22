@@ -40,6 +40,7 @@ export function useVirtualWindow({
       if (scrollRef.current !== node) disconnect(scrollRef.current);
       scrollRef.current = node;
       if (!node || !enabled) return;
+      // react-doctor-disable-next-line react-doctor/effect-needs-cleanup -- ref callback disconnects the previous node itself
       node.addEventListener("scroll", readScroll, { passive: true });
       const observer = new ResizeObserver(readScroll);
       observerRef.current = observer;

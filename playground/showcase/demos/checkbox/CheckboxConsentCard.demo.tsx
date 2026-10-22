@@ -20,15 +20,13 @@ export function CheckboxConsentCardDemo() {
         className="w-full gap-x-large gap-y-xsmall"
       >
         <Checkbox.Control>
-          <Checkbox.Indicator>
-            <IoStar aria-hidden className="size-full text-primary-foreground" />
-          </Checkbox.Indicator>
+          <Checkbox.Indicator icon={<IoStar aria-hidden className="size-full text-primary-foreground" />} />
         </Checkbox.Control>
         <div id={`${inputId}-label`} className="min-w-0 flex flex-col gap-xsmall">
-          <Text as="p" variant="base" className="font-medium">
+          <Text as="p" textStyle="base" className="font-medium">
             Button · Primary
           </Text>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             The entire block is clickable.
           </Text>
         </div>

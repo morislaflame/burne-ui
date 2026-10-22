@@ -10,6 +10,7 @@ import type {
   PopoverSide,
   PopoverSize,
   PopoverVariant,
+  KitPopoverVariant,
 } from "./popoverTypes";
 import { KIT_POPOVER_VARIANTS } from "./popoverTypes";
 
@@ -51,13 +52,20 @@ export const POPOVER_PANEL_RELATIVE_CLASS = "relative overflow-visible";
 export const POPOVER_PANEL_BASE_CLASS =
   "relative z-[1] flex min-w-0 flex-col overflow-hidden text-foreground";
 
-export const POPOVER_PANEL_SURFACE_CLASS =
-  "border-token bg-surface shadow-token-large";
+export const POPOVER_PANEL_SURFACE: Record<KitPopoverVariant, string> = {
+  default: "border-token bg-surface shadow-token-large",
+  outline: "bg-transparent border-token-outline text-foreground shadow-token-large",
+  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
+};
 
 export const POPOVER_ARROW_BASE_CLASS =
   "pointer-events-none absolute z-0 size-2 rotate-45";
 
-export const POPOVER_ARROW_DEFAULT_CLASS = "border-token bg-surface";
+export const POPOVER_ARROW_FILL: Record<KitPopoverVariant, string> = {
+  default: "border-token bg-surface",
+  outline: "border-token-outline bg-transparent",
+  secondary: "border-token bg-secondary",
+};
 
 export const POPOVER_HEADER_CLASS =
   "flex shrink-0 flex-col text-start";
@@ -101,33 +109,25 @@ function popoverSizedPanelClasses({
 }
 
 export function popoverTriggerClass({
-  rootSlot,
   slotClass,
   className,
 }: {
-  rootSlot?: string;
   slotClass?: string;
   className?: string;
 }): string {
-  return cn(POPOVER_TRIGGER_CLASS, rootSlot, slotClass, className);
+  return cn(POPOVER_TRIGGER_CLASS, slotClass, className);
 }
 
 export function popoverContentClass({
   resolvedSide,
   showArrow,
-  slotClass,
-  className,
 }: {
   resolvedSide: PopoverSide;
   showArrow: boolean;
-  slotClass?: string;
-  className?: string;
 }): string {
   return cn(
     POPOVER_CONTENT_CLASS,
     showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
-    slotClass,
-    className,
   );
 }
 
@@ -138,6 +138,8 @@ export function popoverDefaultPanelClass({
   contentGap,
   gapPropSet,
   slotClass,
+  contentSlot,
+  className,
 }: {
   variant: PopoverVariant;
   size: PopoverSize;
@@ -145,13 +147,17 @@ export function popoverDefaultPanelClass({
   contentGap: PopoverContentGap;
   gapPropSet: boolean;
   slotClass?: string;
+  contentSlot?: string;
+  className?: string;
 }): string {
   const visual = resolveVariantVisual(variant, KIT_POPOVER_VARIANTS, "popover.panel");
   return cn(
     POPOVER_PANEL_BASE_CLASS,
-    visual.className !== undefined ? visual.className : POPOVER_PANEL_SURFACE_CLASS,
+    visual.className !== undefined ? visual.className : POPOVER_PANEL_SURFACE[visual.key],
     popoverSizedPanelClasses({ size, unstyled, contentGap, gapPropSet }),
     slotClass,
+    contentSlot,
+    className,
   );
 }
 
@@ -170,7 +176,7 @@ export function popoverArrowClass({
   const visual = resolveVariantVisual(variant, KIT_POPOVER_VARIANTS, "popover.arrow");
   return cn(
     POPOVER_ARROW_BASE_CLASS,
-    visual.className !== undefined ? visual.className : POPOVER_ARROW_DEFAULT_CLASS,
+    visual.className !== undefined ? visual.className : POPOVER_ARROW_FILL[visual.key],
     arrowSideClass,
     slotClass,
     className,

@@ -8,9 +8,8 @@ import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataCon
 import { bindOverlayReflow } from "@/components/core/utils/bindOverlayReflow";
 import { resolvePortalContainer, applyFloatingPortalPosition } from "@/components/core/utils/portalContainer";
 import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
-import { messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerDescriptionCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { hasPointerPhases, mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { bindTriggerEvents, mergeDescribedBy } from "./tooltipA11y";
@@ -18,12 +17,11 @@ import { hasTooltipCompoundChildren, isTooltipArrowElement, resolveTooltipGridSl
 import { resolveTooltipMotionDefaults, useTooltipPortalMotion } from "./tooltipAnimations";
 import { TooltipBodyContext, TooltipMotionProvider, TooltipResolvedSideContext, useOptionalTooltipMotionScope, useTooltipBodyContext, useTooltipClassNames, useTooltipContext, useTooltipMotionScope, useTooltipResolvedSide } from "./tooltipContext";
 import { computeTooltipPlacement } from "./tooltipPosition";
-import { TOOLTIP_COMPOUND_CONTENTS_CLASS, TOOLTIP_CONTENT_INNER_CLASS, TOOLTIP_CONTENT_VARIANT, TOOLTIP_DEFAULT_OFFSET, TOOLTIP_DESC_VARIANT, TOOLTIP_DESCRIPTION_MUTED_CLASS, TOOLTIP_ICON_SLOT_SIZE, TOOLTIP_STATUS_ACCENT_CLASS, TOOLTIP_STATUS_ICON_CLASS, TOOLTIP_TRIGGER_BASE_CLASS, tooltipArrowClass, tooltipContentClass, tooltipIndicatorClass, tooltipPanelClass, tooltipTitleClass } from "./tooltipStyles";
+import { TOOLTIP_COMPOUND_CONTENTS_CLASS, TOOLTIP_CONTENT_INNER_CLASS, TOOLTIP_CONTENT_VARIANT, TOOLTIP_DEFAULT_OFFSET, TOOLTIP_DESC_VARIANT, TOOLTIP_DESCRIPTION_MUTED_CLASS, TOOLTIP_STATUS_ACCENT_CLASS, TOOLTIP_STATUS_ICON_CLASS, TOOLTIP_TRIGGER_BASE_CLASS, tooltipArrowClass, tooltipContentClass, tooltipIndicatorClass, tooltipPanelClass, tooltipTitleClass } from "./tooltipStyles";
 import type {
   TooltipArrowProps,
   TooltipContentProps,
   TooltipDescriptionProps,
-  TooltipIconProps,
   TooltipIndicatorProps,
   TooltipMessageProps,
   TooltipPanelProps,
@@ -35,18 +33,16 @@ import { cn } from "@/utils/cn";
  
 function resolveTooltipIndicatorInner({
   status,
-  showIcon,
   icon,
   children,
 }: {
   status: SemanticStatus;
-  showIcon?: boolean;
-  icon?: ReactNode;
+  icon?: ReactNode | null;
   children?: ReactNode;
 }): ReactNode | null {
   if (children === null) return null;
   if (children !== undefined) return children;
-  if (showIcon === false) return null;
+  if (icon === null) return null;
   if (icon != null) return icon;
   if (status === "default") return null;
  
@@ -103,28 +99,31 @@ function renderTooltipSimpleBody(
   return children;
 }
  
-export function TooltipIndicator({
-  className,
-  children,
-  showIcon: showIconProp,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: TooltipIndicatorProps) {
+export const TooltipIndicator = forwardRef<HTMLSpanElement, TooltipIndicatorProps>(
+  function TooltipIndicator(
+    {
+      className,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      ...rest
+    },
+    ref,
+  ) {
   const slotClassNames = useTooltipClassNames();
-  const { status, size, icon, showIcon, gridSlots } = useTooltipBodyContext("Tooltip.Indicator");
+  const { status, size, icon, gridSlots } = useTooltipBodyContext("Tooltip.Indicator");
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalTooltipMotionScope(),
     slot: "indicator",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
   });
   const inner = resolveTooltipIndicatorInner({
     status,
-    showIcon: showIconProp ?? showIcon,
     icon,
     children,
   });
@@ -134,11 +133,12 @@ export function TooltipIndicator({
   return (
     <span
       ref={setRef}
-      className={cn(
-        tooltipIndicatorClass(status, slotClassNames.indicator, className),
-        TOOLTIP_ICON_SLOT_SIZE[size],
-        slotClassNames.icon,
-        messageBannerIndicatorCellClass(gridSlots),
+      className={tooltipIndicatorClass(
+        status,
+        size,
+        gridSlots,
+        slotClassNames.indicator,
+        className,
       )}
       {...rest}
       {...pointerHandlers}
@@ -146,17 +146,12 @@ export function TooltipIndicator({
       {inner}
     </span>
   );
-}
+},
+);
  
 TooltipIndicator.displayName = "TooltipIndicator";
  
-export function TooltipIcon(props: TooltipIconProps) {
-  return <TooltipIndicator {...props} />;
-}
- 
-TooltipIcon.displayName = "TooltipIcon";
- 
-export function TooltipMessage({ className, ...rest }: TooltipMessageProps) {
+export const TooltipMessage = forwardRef(function TooltipMessage({ className, ...rest }: TooltipMessageProps, ref: ForwardedRef<HTMLDivElement>) {
   const slotClassNames = useTooltipClassNames();
   return (
     <div
@@ -166,25 +161,31 @@ export function TooltipMessage({ className, ...rest }: TooltipMessageProps) {
         className,
       )}
       {...rest}
+      ref={ref}
     />
   );
-}
+});
  
 TooltipMessage.displayName = "TooltipMessage";
  
-export function TooltipTitle({
-  className,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: TooltipTitleProps) {
+export const TooltipTitle = forwardRef<HTMLDivElement, TooltipTitleProps>(
+  function TooltipTitle(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      ...rest
+    },
+    ref,
+  ) {
   const slotClassNames = useTooltipClassNames();
   const { size, status, gridSlots } = useTooltipBodyContext("Tooltip.Title");
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope: useOptionalTooltipMotionScope(),
     slot: "title",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -194,7 +195,7 @@ export function TooltipTitle({
     <Text
       as="div"
       ref={setRef}
-      variant={TOOLTIP_CONTENT_VARIANT[size]}
+      textStyle={TOOLTIP_CONTENT_VARIANT[size]}
       className={cn(
         tooltipTitleClass(status),
         messageBannerTitleCellClass(gridSlots),
@@ -205,23 +206,29 @@ export function TooltipTitle({
       {...pointerHandlers}
     />
   );
-}
+},
+);
  
 TooltipTitle.displayName = "TooltipTitle";
  
-export function TooltipDescription({
-  className,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: TooltipDescriptionProps) {
+export const TooltipDescription = forwardRef<HTMLDivElement, TooltipDescriptionProps>(
+  function TooltipDescription(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      ...rest
+    },
+    ref,
+  ) {
   const slotClassNames = useTooltipClassNames();
   const { size, gridSlots } = useTooltipBodyContext("Tooltip.Description");
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope: useOptionalTooltipMotionScope(),
     slot: "description",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -231,7 +238,7 @@ export function TooltipDescription({
     <Text
       as="div"
       ref={setRef}
-      variant={TOOLTIP_DESC_VARIANT[size]}
+      textStyle={TOOLTIP_DESC_VARIANT[size]}
       className={cn(
         TOOLTIP_DESCRIPTION_MUTED_CLASS,
         messageBannerDescriptionCellClass(gridSlots),
@@ -242,16 +249,16 @@ export function TooltipDescription({
       {...pointerHandlers}
     />
   );
-}
+},
+);
  
 TooltipDescription.displayName = "TooltipDescription";
  
-export function TooltipPanel({
+export const TooltipPanel = forwardRef(function TooltipPanel({
   variant: variantProp,
   status = "default",
   size = "base",
   icon,
-  showIcon,
   title,
   description,
   className,
@@ -262,7 +269,7 @@ export function TooltipPanel({
   onPointerDown,
   onPointerUp,
   ...rest
-}: TooltipPanelProps) {
+}: TooltipPanelProps, ref: ForwardedRef<HTMLDivElement>) {
   const variant = useSkinVariant(variantProp);
   const surfaceStyle = useSkinSurfaceStyle(variant);
   const slotClassNames = useTooltipClassNames();
@@ -270,6 +277,7 @@ export function TooltipPanel({
   const scope = useOptionalTooltipMotionScope();
   const panelPointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.panel);
   const panelPart = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope,
     slot: "panel",
     motion,
@@ -280,24 +288,30 @@ export function TooltipPanel({
     onPointerDown,
     onPointerUp,
   });
-  const setPanelRef = panelPart.setRef;
+  const contentPart = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "content",
+  });
+  const setPanelRef = (node: HTMLDivElement | null) => {
+    panelPart.setRef(node);
+    contentPart.setRef(node);
+  };
   const gridSlots = useMemo(
     () =>
       resolveTooltipGridSlots({
         status,
         icon,
-        showIcon,
         title,
         description,
         isCompound,
         children,
       }),
-    [children, description, icon, isCompound, showIcon, status, title],
+    [children, description, icon, isCompound, status, title],
   );
 
   const bodyCtx = useMemo(
-    () => ({ variant, status, size, icon, showIcon, gridSlots }),
-    [gridSlots, icon, showIcon, size, status, variant],
+    () => ({ variant, status, size, icon, gridSlots }),
+    [gridSlots, icon, size, status, variant],
   );
 
   const body = isCompound
@@ -309,6 +323,7 @@ export function TooltipPanel({
     size,
     gridSlots,
     slotClass: slotClassNames.panel,
+    contentSlot: slotClassNames.content,
     className,
   });
 
@@ -325,7 +340,7 @@ export function TooltipPanel({
       </div>
     </TooltipBodyContext.Provider>
   );
-}
+});
 
 TooltipPanel.displayName = "TooltipPanel";
  
@@ -385,11 +400,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
               onFocus,
               onBlur,
             }),
-            className: cn(
-              slotClassNames.root,
-              slotClassNames.trigger,
-              className,
-            ),
+            className: cn(slotClassNames.trigger, className),
             "aria-describedby": mergeDescribedBy(childDescribedBy, tooltipId, open),
           },
           mergedRef,
@@ -402,7 +413,6 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
         ref={mergedRef}
         className={cn(
           TOOLTIP_TRIGGER_BASE_CLASS,
-          slotClassNames.root,
           slotClassNames.trigger,
           className,
         )}
@@ -424,13 +434,17 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
  
 TooltipTrigger.displayName = "TooltipTrigger";
  
-export function TooltipArrow({
-  className,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: TooltipArrowProps) {
+export const TooltipArrow = forwardRef<HTMLSpanElement, TooltipArrowProps>(
+  function TooltipArrow(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      ...rest
+    },
+    ref,
+  ) {
   const slotClassNames = useTooltipClassNames();
   const resolvedSide = useTooltipResolvedSide();
   const { variant } = useTooltipContext("Tooltip.Arrow");
@@ -438,6 +452,7 @@ export function TooltipArrow({
     scope: useOptionalTooltipMotionScope(),
     slot: "arrow",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -457,7 +472,8 @@ export function TooltipArrow({
       {...pointerHandlers}
     />
   );
-}
+},
+);
  
 TooltipArrow.displayName = "TooltipArrow";
  
@@ -497,7 +513,11 @@ function TooltipContentHost({
       className,
       children,
       showArrow = false,
-      offset = TOOLTIP_DEFAULT_OFFSET,
+      offset: offsetProp,
+      side: sideProp,
+      align,
+      collisionPadding,
+      avoidCollisions,
       portalContainer: portalContainerProp,
       forwardedRef,
       ...rest
@@ -512,8 +532,11 @@ function TooltipContentHost({
       status,
       size,
       side,
+      align: alignFromRoot,
+      offset: offsetFromRoot,
+      collisionPadding: collisionPaddingFromRoot,
+      avoidCollisions: avoidCollisionsFromRoot,
       icon,
-      showIcon,
       triggerRef,
       portalContainer: portalContainerFromRoot,
     } = useTooltipContext("Tooltip.Content");
@@ -528,19 +551,10 @@ function TooltipContentHost({
     }
  
     const motionScope = useTooltipMotionScope();
-    const { setRef: setContentPartRef } = useMotionPart<HTMLDivElement>({
-      scope: motionScope,
-      slot: "content",
-    });
  
-    const setTipRef = useCallback(
-      (node: HTMLDivElement | null) => {
-        tipRef.current = node;
-        setContentPartRef(node);
-        if (forwardedRef != null) mergeForwardedRef(forwardedRef, node);
-      },
-      [forwardedRef, setContentPartRef],
-    );
+    const setTipRef = useCallback((node: HTMLDivElement | null) => {
+      tipRef.current = node;
+    }, []);
  
     const parts = Children.toArray(children);
     const customArrow = parts.find(
@@ -558,8 +572,13 @@ function TooltipContentHost({
       const placement = computeTooltipPlacement(
         trigger.getBoundingClientRect(),
         tip.getBoundingClientRect(),
-        side,
-        offset,
+        sideProp ?? side,
+        offsetProp ?? offsetFromRoot ?? TOOLTIP_DEFAULT_OFFSET,
+        {
+          align: align ?? alignFromRoot,
+          collisionPadding: collisionPadding ?? collisionPaddingFromRoot,
+          avoidCollisions: avoidCollisions ?? avoidCollisionsFromRoot,
+        },
       );
  
       setResolvedSide(placement.resolvedSide);
@@ -569,7 +588,7 @@ function TooltipContentHost({
         portalContainerProp ?? portalContainerFromRoot,
       );
       tip.style.transform = "";
-    }, [offset, portalContainerFromRoot, portalContainerProp, side, triggerRef]);
+    }, [align, alignFromRoot, avoidCollisions, avoidCollisionsFromRoot, collisionPadding, collisionPaddingFromRoot, offsetFromRoot, offsetProp, portalContainerFromRoot, portalContainerProp, side, sideProp, triggerRef]);
  
     useLayoutEffect(() => {
       if (!open || !portalMounted) return;
@@ -599,14 +618,12 @@ function TooltipContentHost({
       reposition,
       children,
       showArrow,
-      offset,
     ]);
  
     useTooltipPortalMotion({
       open,
       portalMounted,
       setPortalMounted,
-      tipRef,
       scope: motionScope,
     });
  
@@ -622,11 +639,12 @@ function TooltipContentHost({
  
     const bubble = (
       <TooltipPanel
+        ref={forwardedRef}
+        className={className}
         variant={variant}
         status={status}
         size={size}
         icon={icon}
-        showIcon={showIcon}
       >
         {bodyChildren.length === 1 ? bodyChildren[0] : bodyChildren}
       </TooltipPanel>
@@ -642,8 +660,6 @@ function TooltipContentHost({
           className={tooltipContentClass({
             resolvedSide,
             showArrow,
-            slotClass: slotClassNames.content,
-            className,
           })}
           {...rest}
           {...dataVariantProps({ size, variant, status })}

@@ -1,6 +1,10 @@
 # React Doctor: baseline bug-класса
 
-Снимок до этого прохода (06.10.2026): счёт **76** (47 ошибок / 189 предупреждений / 200 файлов, `--scope changed`). Полный срез категории Bugs: **49 ошибок**, все правило `react-doctor/no-ref-current-in-render`. Старое деление аудита (24 ключа в stories, 18 deps, 6 async setState) больше не совпадает со сканом — этих ошибок нет.
+Текущий снимок (19.10.2026, B6): `--scope changed` **85 / 100**, 0 ошибок, 57 предупреждений, 45 файлов. Share: https://react.doctor/share?p=burne-ui&s=85&w=57&f=45
+
+Playground не входит в `only-export-components` (`doctor.config.json`). Ошибка `no-ref-current-in-render` в ScrollArea снята (стабильный `paint` зовётся напрямую). `effect-needs-cleanup` у `useVirtualWindow` подавлен: ref-callback сам отключает предыдущий узел.
+
+Снимок до прохода 06.10.2026: счёт **76** (47 ошибок / 189 предупреждений / 200 файлов, `--scope changed`). Полный срез категории Bugs: **49 ошибок**, все правило `react-doctor/no-ref-current-in-render`. Старое деление аудита (24 ключа в stories, 18 deps, 6 async setState) больше не совпадает со сканом — этих ошибок нет.
 
 После прохода в `src/components` и `src/skins` **ноль** ошибок. Счёт `--scope changed`: **83** (0 / 180 / 161). Записанные ложные срабатывания подавлены построчно (`react-doctor-disable-next-line`). Новая ошибка в этих деревьях роняет `scripts/check-react-doctor-baseline.mjs`. Stories и playground вынесены из bug-правил в `doctor.config.json`, чтобы шум демо не двигал счёт.
 
@@ -26,7 +30,7 @@
 - `alertAnimations.ts`, `badgeAnimations.ts`, `buttonAnimations.ts`, `cardAnimations.ts`, `closeButtonAnimations.ts`, `colorSwatchAnimations.ts`, `kbdAnimations.ts`, `linkAnimations.ts`, `searchInputAnimations.ts`, `toggleButtonAnimations.ts`
 - `comboBoxAnimations.ts`, `inputAnimations.ts`, `selectAnimations.ts`, `textAreaAnimations.ts`, `timeFieldAnimations.ts`
 - `selectTriggerParts.tsx`, `overlayTriggerSqueeze.ts`, `useMotionPart.ts`, `createMotionScope.tsx`, `playMotionState.ts`, `useModalMotion.ts`, `useCollapsibleHeight.ts`, `pressRipple.tsx`
-- `calendarParts.tsx` (`onPress` / `onMouseEnter` / `onMouseLeave`), `useCalendarRootState.ts`
+- `calendarParts.tsx` (`onClick` / `onMouseEnter` / `onMouseLeave`), `useCalendarRootState.ts`
 - `useFormRootState.ts`, `useToggleButtonGroupRootState.ts`, `useDropdownRootState.ts` (`latestSelectedRef`), `useListBoxRootState.ts`
 - `useTableContentState.ts` (`onSelectionChange`, `selectionMode`)
 - `toastAnimations.tsx`, `useToastProviderState.ts`

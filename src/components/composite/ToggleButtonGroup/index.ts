@@ -2,15 +2,15 @@ import { ToggleButtonGroupRoot } from "./ToggleButtonGroup";
  
 export const ToggleButtonGroup = ToggleButtonGroupRoot;
  
-export {
-  ToggleButtonGroupRoot,
-  type ToggleButtonGroupProps,
-  type ToggleButtonGroupType,
-  type ToggleButtonGroupOrientation,
-  type ToggleButtonGroupContextValue,
-  type ToggleButtonGroupClassNames,
-  type ToggleButtonGroupMotion,
-  type ToggleButtonGroupPartMotion,
+export type {
+  ToggleButtonGroupProps,
+  ToggleButtonGroupType,
+  ToggleButtonGroupOrientation,
+  ToggleButtonGroupContextValue,
+  ToggleButtonGroupClassNames,
+  ToggleButtonGroupMotion,
+  ToggleButtonGroupPartMotion,
+  ToggleButtonGroupItem,
 } from "./ToggleButtonGroup";
  
 export {

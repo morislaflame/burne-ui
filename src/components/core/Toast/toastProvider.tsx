@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom";
+import { useEffect } from "react";
  
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
  
@@ -7,6 +8,9 @@ import { ToastViewport } from "./toastAnimations";
 import { ToastContext } from "./toastContext";
 import type { ToastLiveAnnouncement, ToastProviderProps } from "./toastTypes";
 import { useToastProviderState } from "./useToastProviderState";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+
+import { bindToastImperative } from "./toastImperative";
  
 function ToastLiveRegion({ announcement }: { announcement: ToastLiveAnnouncement }) {
   const polite = announcement.assertive ? "" : announcement.text;
@@ -49,6 +53,16 @@ export function ToastProviderRoot({
     defaultSize,
     classNames,
   });
+  const loadingStatus = useBurneLabel("loadingStatus");
+  const toastError = useBurneLabel("toastError");
+
+  useEffect(() => {
+    return bindToastImperative({
+      api: state.ctx,
+      loading: loadingStatus,
+      error: toastError,
+    });
+  }, [loadingStatus, state.ctx, toastError]);
  
   return (
     <ToastContext.Provider value={state.ctx}>

@@ -1,4 +1,15 @@
-import { Children, cloneElement, isValidElement, type ReactNode } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  type Ref,
+} from "react";
+
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+
+import type { SwitchControlProps } from "./switchTypes";
  
 export function compoundContentHasExternalLabel(children: ReactNode): boolean {
   let found = false;
@@ -32,9 +43,16 @@ export function injectSwitchControlProps(
     if (!isValidElement(child)) return child;
     const name = (child.type as { displayName?: string }).displayName;
     if (name === "SwitchControl") {
-      return cloneElement(child, {
-        ...controlProps,
-        ...(child.props as object),
+      const control = child as ReactElement<SwitchControlProps>;
+      const childProps = control.props;
+      const injected = controlProps.inputRef as Ref<HTMLInputElement> | undefined;
+      return cloneElement(control, {
+        ...(controlProps as Partial<SwitchControlProps>),
+        ...childProps,
+        inputRef:
+          injected != null || childProps.inputRef != null
+            ? mergeRefs(injected, childProps.inputRef)
+            : undefined,
       });
     }
     return child;

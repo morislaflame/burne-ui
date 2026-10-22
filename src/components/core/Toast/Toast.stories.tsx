@@ -35,7 +35,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Toast notifications. **Imperative API** via `useToast()`. Stack of up to 3 visible toasts; new ones on top (for `top-*`) or bottom (for `bottom-*`). Supports promise states, 5 statuses, 6 placements, custom timeout.",
+          "Toast notifications. **Imperative API** via `useToast()`. Stack of up to 3 visible toasts; new ones on top (for `top-*`) or bottom (for `bottom-*`). Supports promise states, 5 statuses, 6 placements, custom duration.",
       },
     },
   },
@@ -163,7 +163,8 @@ export const QuickMethods: Story = {
   },
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "success" }));
-    await expect(await screen.findByText("File saved")).toBeVisible();
+    const title = await screen.findByText("File saved");
+    await waitFor(() => expect(title).toBeVisible());
   },
 };
 
@@ -274,31 +275,31 @@ export const WithAction: Story = {
             Update
           </Button>
         ),
-        timeout: 8000,
+        duration: 8000,
       });
     return <Button onClick={show}>Show with action</Button>;
   },
 };
 
-// ─── Custom timeout ───────────────────────────────────────────────────────────
+// ─── Custom duration ───────────────────────────────────────────────────────────
 
 export const CustomTimeout: Story = {
-  name: "Custom timeout",
+  name: "Custom duration",
   render: function CustomTimeoutDemo() {
     const { toast } = useToast();
     return (
       <div className="flex flex-wrap gap-base">
-        <Button onClick={() => toast.success("Closes in 1 sec", { timeout: 1000 })}>
+        <Button onClick={() => toast.success("Closes in 1 sec", { duration: 1000 })}>
           1 sec
         </Button>
-        <Button onClick={() => toast.info("Closes in 8 sec", { timeout: 8000 })}>
+        <Button onClick={() => toast.info("Closes in 8 sec", { duration: 8000 })}>
           8 sec
         </Button>
         <Button
           variant="outline"
-          onClick={() => toast.warning("Will not auto-close", { timeout: 0 })}
+          onClick={() => toast.warning("Will not auto-close", { duration: 0 })}
         >
-          No timeout
+          No duration
         </Button>
       </div>
     );
@@ -348,7 +349,7 @@ export const DismissProgrammatically: Story = {
       <div className="flex gap-base">
         <Button
           onClick={() => {
-            const id = toast.show({ status: "info", title: "Persistent toast", timeout: 0 });
+            const id = toast.show({ status: "info", title: "Persistent toast", duration: 0 });
             setLastId(id);
           }}
         >

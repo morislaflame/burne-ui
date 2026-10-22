@@ -31,4 +31,3 @@ export type {
   HoverCardVariant,
 } from "./hoverCardTypes";
 
-export { HOVER_CARD_CLOSE_DELAY, HOVER_CARD_OPEN_DELAY } from "./hoverCardTypes";

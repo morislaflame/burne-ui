@@ -1,14 +1,48 @@
 import type { ReactNode } from "react";
 
-import type { InputStatus } from "@/components/core/Input";
-import type { SelectOption } from "./selectTypes";
- 
-export function selectOptionsByValue(options: SelectOption[]): Map<string, SelectOption> {
-  return new Map(options.map((o) => [o.value, o]));
+import type { SelectItem, SelectItemGroup, SelectItemSection } from "./selectTypes";
+
+export function isSelectItemGroup(
+  item: SelectItem | SelectItemGroup,
+): item is SelectItemGroup {
+  return Array.isArray((item as SelectItemGroup).items);
+}
+
+/** Splits a mixed `items` list into labeled groups and loose items. */
+export function selectOptionSections(
+  items: readonly (SelectItem | SelectItemGroup)[] | undefined,
+): SelectItemSection[] {
+  const sections: SelectItemSection[] = [];
+  let loose: SelectItem[] = [];
+  const flush = () => {
+    if (loose.length === 0) return;
+    sections.push({ items: loose });
+    loose = [];
+  };
+  for (const item of items ?? []) {
+    if (isSelectItemGroup(item)) {
+      flush();
+      sections.push({ label: item.label, items: [...item.items] });
+    } else {
+      loose.push(item);
+    }
+  }
+  flush();
+  return sections;
+}
+
+export function flattenSelectItems(
+  items: readonly (SelectItem | SelectItemGroup)[] | undefined,
+): SelectItem[] {
+  return selectOptionSections(items).flatMap((section) => section.items);
 }
  
-export function selectOptionValues(options: SelectOption[]): string[] {
-  return options.map((o) => o.value);
+export function selectOptionsByValue(items: SelectItem[]): Map<string, SelectItem> {
+  return new Map(items.map((o) => [o.value, o]));
+}
+ 
+export function selectOptionValues(items: SelectItem[]): string[] {
+  return items.map((o) => o.value);
 }
  
 export function selectBumpActiveValue({
@@ -19,7 +53,7 @@ export function selectBumpActiveValue({
 }: {
   optionValues: string[];
   activeValue: string | null;
-  optionsByValue: Map<string, SelectOption>;
+  optionsByValue: Map<string, SelectItem>;
   delta: number;
 }): string | null {
   if (optionValues.length === 0) return activeValue;
@@ -36,7 +70,7 @@ export function selectBumpActiveValue({
  
 export function selectFirstEnabledValue(
   optionValues: string[],
-  optionsByValue: Map<string, SelectOption>,
+  optionsByValue: Map<string, SelectItem>,
 ): string | null {
   for (const v of optionValues) {
     const opt = optionsByValue.get(v);
@@ -47,7 +81,7 @@ export function selectFirstEnabledValue(
  
 export function selectLastEnabledValue(
   optionValues: string[],
-  optionsByValue: Map<string, SelectOption>,
+  optionsByValue: Map<string, SelectItem>,
 ): string | null {
   for (let i = optionValues.length - 1; i >= 0; i -= 1) {
     const v = optionValues[i]!;
@@ -58,7 +92,7 @@ export function selectLastEnabledValue(
 }
  
 /** Haystack for typeahead — string label / value only. */
-export function selectOptionTypeaheadLabel(opt: SelectOption | undefined): string {
+export function selectOptionTypeaheadLabel(opt: SelectItem | undefined): string {
   if (!opt) return "";
   if (typeof opt.label === "string") return opt.label.trim();
   return opt.value;
@@ -66,19 +100,12 @@ export function selectOptionTypeaheadLabel(opt: SelectOption | undefined): strin
  
 export function selectTypeaheadLabels(
   optionValues: string[],
-  optionsByValue: Map<string, SelectOption>,
+  optionsByValue: Map<string, SelectItem>,
 ): string[] {
   return optionValues.map((v) => selectOptionTypeaheadLabel(optionsByValue.get(v)));
 }
  
-export function selectResolveHintStatus(
-  status: InputStatus | undefined,
-  fieldStatus: InputStatus,
-): InputStatus {
-  return status ?? fieldStatus;
-}
- 
-export const EMPTY_SELECT_OPTIONS: SelectOption[] = [];
+export const EMPTY_SELECT_OPTIONS: SelectItem[] = [];
 
 export const EMPTY_SELECT_VALUES: string[] = [];
 
@@ -94,7 +121,7 @@ export function normalizeSelectValues(value: unknown): string[] {
 export function selectSelectionLabels(
   optionValues: string[],
   selected: readonly string[],
-  optionsByValue: Map<string, SelectOption>,
+  optionsByValue: Map<string, SelectItem>,
 ): string[] {
   const picked = new Set(selected);
   const labels: string[] = [];
@@ -149,7 +176,7 @@ export function resolveSelectSingleValue({
   formBound: boolean;
   formValue: unknown;
   isControlled: boolean;
-  valueProp: string | undefined;
+  valueProp: string | null | undefined;
   internalValue: string;
 }): string {
   if (multiple) return "";

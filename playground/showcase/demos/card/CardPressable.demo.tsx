@@ -39,7 +39,7 @@ export function CardPressableDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Modal window content.
           </Text>
         </Dialog.Body>

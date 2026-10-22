@@ -2,8 +2,10 @@ import { useLayoutEffect, useMemo } from "react";
  
 import { clampNumber } from "@/components/core/utils/clampNumber";
  
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+
 import { defaultProgressBarFormatValue, progressBarValueToPercent } from "./progressBarAPI";
-import { PROGRESS_BAR_INDETERMINATE_STATUS_TEXT, progressBarLabelId, resolveProgressBarDescribedBy, resolveProgressBarTrackAria } from "./progressBarA11y";
+import { progressBarLabelId, resolveProgressBarDescribedBy, resolveProgressBarTrackAria } from "./progressBarA11y";
 import { useOptionalProgressBarFieldContext } from "./progressBarContext";
 import { progressBarFillColorStyle, progressBarTrackCrossStyle } from "./progressBarStyles";
 import type { UseProgressBarTrackStateProps } from "./progressBarTypes";
@@ -16,11 +18,13 @@ export function useProgressBarTrackState({
   size = "base",
   thickness,
   color,
+  status,
   formatValue = defaultProgressBarFormatValue,
   orientation: orientationProp,
   "aria-describedby": ariaDescribedByProp,
 }: UseProgressBarTrackStateProps) {
   const fieldCtx = useOptionalProgressBarFieldContext();
+  const loadingStatus = useBurneLabel("loadingStatus");
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
   const progressId = fieldCtx?.progressId;
   const labelId = progressId != null ? progressBarLabelId(progressId) : undefined;
@@ -38,9 +42,9 @@ export function useProgressBarTrackState({
  
   const isHorizontal = orientation === "horizontal";
   const statusText = useMemo(() => {
-    if (indeterminate) return PROGRESS_BAR_INDETERMINATE_STATUS_TEXT;
+    if (indeterminate) return loadingStatus;
     return formatValue(clampedValue);
-  }, [clampedValue, formatValue, indeterminate]);
+  }, [clampedValue, formatValue, indeterminate, loadingStatus]);
  
   const ariaDescribedBy = resolveProgressBarDescribedBy({
     ariaDescribedByProp,
@@ -83,6 +87,7 @@ export function useProgressBarTrackState({
     size,
     thickness,
     color,
+    status,
     indeterminate,
     isHorizontal,
     percent,

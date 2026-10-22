@@ -7,7 +7,7 @@ const events = createMotionEvents({ "slider:nudge": { y: -4, duration: 0.16, yoy
 function RootPulse() {
   const controller = useMotionController();
   return (
-    <Text as="span" variant="small" className="text-muted" onPointerEnter={() => controller.playSlot("root", "slider:nudge")}>
+    <Text as="span" textStyle="small" className="text-muted" onPointerEnter={() => controller.playSlot("root", "slider:nudge")}>
       Hover label
     </Text>
   );

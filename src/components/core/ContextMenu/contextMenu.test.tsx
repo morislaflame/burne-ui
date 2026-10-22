@@ -9,15 +9,15 @@ function Menu() {
   return (
     <ContextMenu>
       <ContextMenu.Trigger>Surface</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Item>Copy</ContextMenu.Item>
         <ContextMenu.Sub>
           <ContextMenu.SubTrigger>Share</ContextMenu.SubTrigger>
-          <ContextMenu.SubContent>
+          <ContextMenu.SubPopover>
             <ContextMenu.Item>Mail</ContextMenu.Item>
-          </ContextMenu.SubContent>
+          </ContextMenu.SubPopover>
         </ContextMenu.Sub>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }
@@ -44,9 +44,9 @@ describe("ContextMenu", () => {
     render(
       <ContextMenu open>
         <ContextMenu.Trigger>Surface</ContextMenu.Trigger>
-        <ContextMenu.Content>
+        <ContextMenu.Popover>
           <ContextMenu.Item>Copy</ContextMenu.Item>
-        </ContextMenu.Content>
+        </ContextMenu.Popover>
       </ContextMenu>,
     );
     expect(await screen.findByRole("menu")).toBeInTheDocument();

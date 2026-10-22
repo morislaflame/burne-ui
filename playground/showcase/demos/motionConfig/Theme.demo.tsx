@@ -17,7 +17,7 @@ function Island() {
         <Button size="small" variant="outline" onClick={() => void controller.play("hoverIn")}>
           Lift
         </Button>
-        <Text variant="small" className="text-muted" data-testid="motion-config-theme">
+        <Text textStyle="small" className="text-muted" data-testid="motion-config-theme">
           ThemeProvider: {config.interactiveDuration}ms
         </Text>
       </div>

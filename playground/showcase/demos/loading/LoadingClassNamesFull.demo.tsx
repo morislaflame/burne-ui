@@ -4,7 +4,7 @@ export function LoadingClassNamesFullDemo() {
   return (
     <div className="flex flex-wrap items-center gap-2xlarge">
       <Loading
-        type="spinner"
+        indicator="spinner"
         size="mid"
         classNames={{
           root: "rounded-large border border-primary/20 p-base",
@@ -12,7 +12,7 @@ export function LoadingClassNamesFullDemo() {
         }}
       />
       <Loading
-        type="dots"
+        indicator="dots"
         size="mid"
         classNames={{
           root: "rounded-large border border-primary/20 p-base",

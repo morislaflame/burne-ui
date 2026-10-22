@@ -2,8 +2,9 @@ import type { ButtonHTMLAttributes, KeyboardEvent, MutableRefObject, PointerEven
 import type { Prettify } from "@/utils/prettify";
  
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
-export type ColorSwatchSize = "small" | "base" | "mid" | "large";
+export type ColorSwatchSize = ComponentSize;
 export type ColorSwatchShape = "square" | "circle" | "rounded";
  
 export type ColorSwatchPartMotion = {

@@ -6,7 +6,7 @@ const VARIANTS = ["default", "secondary", "outline"] as const;
 export function SelectionIndicatorVariantMixDemo() {
   return (
     <div className="flex w-full max-w-xl flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Options (on / off)
       </Text>
       <div className="grid grid-cols-2 gap-large sm:grid-cols-4">
@@ -16,7 +16,7 @@ export function SelectionIndicatorVariantMixDemo() {
               <SelectionIndicator size="base" variant={variant} selected={false} check />
               <SelectionIndicator size="base" variant={variant} selected check />
             </div>
-            <Text as="span" variant="xsmall" className="text-muted">
+            <Text as="span" textStyle="xsmall" className="text-muted">
               {variant}
             </Text>
           </div>

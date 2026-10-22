@@ -1,12 +1,13 @@
-import { Children, createElement, isValidElement, type ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
  
-import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
+import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { formatLocaleNumber } from "@/components/core/utils/intlFormat";
 import type {
   FillSpan,
   SliderDisplayState,
   SliderOrientation,
   SliderSize,
+  SliderTrackProps,
 } from "./sliderTypes";
  
 export const SLIDER_THUMB_PX: Record<SliderSize, number> = {
@@ -16,6 +17,73 @@ export const SLIDER_THUMB_PX: Record<SliderSize, number> = {
   large: selectionIndicatorFallbackPx("large"),
 };
  
+export type SliderValueBinding = {
+  singleValue: number | undefined;
+  singleDefault: number;
+  onSingleChange: ((value: number) => void) | undefined;
+  rangeValue: [number, number] | undefined;
+  rangeDefault: [number, number];
+  onRangeChange: ((value: [number, number]) => void) | undefined;
+  onCommit: ((value: number | [number, number]) => void) | undefined;
+};
+
+/** Splits the single/range union so the track hook does not branch on `range`. */
+export function readSliderValueBinding(
+  props: SliderTrackProps,
+  range: boolean,
+  min: number,
+  max: number,
+): SliderValueBinding {
+  if (range) {
+    const rangeProps = props as Extract<SliderTrackProps, { range: true }>;
+    return {
+      singleValue: undefined,
+      singleDefault: min,
+      onSingleChange: undefined,
+      rangeValue: rangeProps.value,
+      rangeDefault: rangeProps.defaultValue ?? ([min, max] as [number, number]),
+      onRangeChange: rangeProps.onValueChange,
+      onCommit: rangeProps.onValueCommit as SliderValueBinding["onCommit"],
+    };
+  }
+  const singleProps = props as Extract<SliderTrackProps, { range?: false }>;
+  return {
+    singleValue: singleProps.value,
+    singleDefault: singleProps.defaultValue ?? min,
+    onSingleChange: singleProps.onValueChange,
+    rangeValue: undefined,
+    rangeDefault: [min, max],
+    onRangeChange: undefined,
+    onCommit: singleProps.onValueCommit as SliderValueBinding["onCommit"],
+  };
+}
+
+export function sliderLiveValue(
+  range: boolean,
+  rangeValue: [number, number],
+  singleValue: number,
+): number | [number, number] {
+  return range ? rangeValue : singleValue;
+}
+
+export function sliderValueIdentity(
+  range: boolean,
+  rangeValue: [number, number],
+  singleValue: number,
+): string {
+  return range ? `${rangeValue[0]}:${rangeValue[1]}` : String(singleValue);
+}
+
+export function sliderExplicitNames(
+  ariaLabel: unknown,
+  ariaLabelledBy: unknown,
+): { explicitLabel: string | undefined; labelledBy: string | undefined } {
+  return {
+    explicitLabel: typeof ariaLabel === "string" ? ariaLabel : undefined,
+    labelledBy: typeof ariaLabelledBy === "string" ? ariaLabelledBy : undefined,
+  };
+}
+
 export function clampSliderValue(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
 }
@@ -196,9 +264,173 @@ export function sliderStepDelta(
   if (key === "ArrowLeft" || key === "ArrowDown") return -step;
   return 0;
 }
+
+export function commitSliderSingle(
+  next: number,
+  current: number,
+  snap: (raw: number) => number,
+  set: (value: number) => void,
+  onChange: ((value: number) => void) | undefined,
+  remember: (value: number) => void,
+): void {
+  const snapped = snap(next);
+  remember(snapped);
+  if (snapped === current) return;
+  set(snapped);
+  onChange?.(snapped);
+}
+
+export function commitSliderRange(
+  next: [number, number],
+  current: [number, number],
+  snap: (raw: number) => number,
+  set: (value: [number, number]) => void,
+  onChange: ((value: [number, number]) => void) | undefined,
+  remember: (value: [number, number]) => void,
+): void {
+  let [a, b] = next.map(snap) as [number, number];
+  if (a > b) [a, b] = [b, a];
+  remember([a, b]);
+  const [lo, hi] = current;
+  if (a === lo && b === hi) return;
+  set([a, b]);
+  onChange?.([a, b]);
+}
+
+export function applySliderPointer(args: {
+  track: HTMLElement;
+  clientX: number;
+  clientY: number;
+  thumb: "start" | "end" | "single";
+  disabled: boolean;
+  readOnly: boolean;
+  range: boolean;
+  rangeValue: [number, number];
+  singleValue: number;
+  min: number;
+  max: number;
+  orientation: SliderOrientation;
+  fallbackThumbPx: number;
+  snap: (raw: number) => number;
+  emitRange: (next: [number, number]) => void;
+  emitSingle: (next: number) => void;
+  syncFill: (nextSingle?: number, nextRange?: [number, number]) => void;
+}): void {
+  const {
+    track, clientX, clientY, thumb, disabled, readOnly, range, rangeValue, singleValue,
+    min, max, orientation, fallbackThumbPx, snap, emitRange, emitSingle, syncFill,
+  } = args;
+  if (disabled || readOnly) return;
+  const rect = track.getBoundingClientRect();
+  const { thumbSpanPx: thumbPx } = readSliderTrackMetrics(rect, orientation);
+  const raw = sliderPointerToValue(
+    clientX,
+    clientY,
+    rect,
+    orientation,
+    min,
+    max,
+    thumbPx > 0 ? thumbPx : fallbackThumbPx,
+  );
+  if (range) {
+    const [lo, hi] = rangeValue;
+    if (thumb === "start") {
+      const nextLo = snap(Math.min(raw, hi));
+      emitRange([nextLo, hi]);
+      syncFill(singleValue, [nextLo, hi]);
+    } else if (thumb === "end") {
+      const nextHi = snap(Math.max(raw, lo));
+      emitRange([lo, nextHi]);
+      syncFill(singleValue, [lo, nextHi]);
+    }
+    return;
+  }
+  const next = snap(raw);
+  emitSingle(raw);
+  syncFill(next, rangeValue);
+}
+
+export function applySliderThumbKey(args: {
+  action: number | "home" | "end" | "mark-prev" | "mark-next";
+  thumb: "start" | "end" | "single";
+  range: boolean;
+  rangeValue: [number, number];
+  singleValue: number;
+  min: number;
+  max: number;
+  marks: number[] | undefined;
+  emitRange: (next: [number, number]) => void;
+  emitSingle: (next: number) => void;
+  commit: () => void;
+}): void {
+  const { action, thumb, range, rangeValue, singleValue, min, max, marks, emitRange, emitSingle, commit } = args;
+  const current = thumb === "start" ? rangeValue[0] : thumb === "end" ? rangeValue[1] : singleValue;
+  const emitEnd = (value: number, atStart: boolean) => {
+    if (range) emitRange(atStart ? [value, rangeValue[1]] : [rangeValue[0], value]);
+    else emitSingle(value);
+    commit();
+  };
+
+  if (action === "home") {
+    emitEnd(min, thumb === "start");
+    return;
+  }
+  if (action === "end") {
+    emitEnd(max, thumb === "start");
+    return;
+  }
+  if (action === "mark-next" || action === "mark-prev") {
+    if (!marks?.length) return;
+    emitEnd(sliderAdjacentMark(current, marks, action === "mark-next" ? 1 : -1), thumb === "start");
+    return;
+  }
+  if (typeof action === "number" && action !== 0) {
+    if (range) {
+      const [lo, hi] = rangeValue;
+      if (thumb === "start") emitRange([lo + action, hi]);
+      else emitRange([lo, hi + action]);
+    } else {
+      emitSingle(singleValue + action);
+    }
+    commit();
+  }
+}
  
 export function defaultSliderFormatValue(value: number): string {
   return formatLocaleNumber(value);
+}
+
+/** Label for `Slider.Value` before a track publishes live drag state. */
+export function sliderDisplayFromProps(props: {
+  range?: boolean;
+  value?: number | [number, number];
+  defaultValue?: number | [number, number];
+  min?: number;
+  max?: number;
+  formatValue?: (value: number) => string;
+}): SliderDisplayState {
+  const min = props.min ?? 0;
+  const max = props.max ?? 100;
+  const formatValue = props.formatValue ?? defaultSliderFormatValue;
+  const range = props.range === true;
+  const rangeValue: [number, number] = range
+    ? Array.isArray(props.value)
+      ? props.value
+      : Array.isArray(props.defaultValue)
+        ? props.defaultValue
+        : [min, max]
+    : [min, max];
+  const singleValue = range
+    ? min
+    : typeof props.value === "number"
+      ? props.value
+      : typeof props.defaultValue === "number"
+        ? props.defaultValue
+        : min;
+  const valueLabel = range
+    ? `${formatValue(rangeValue[0])} — ${formatValue(rangeValue[1])}`
+    : formatValue(singleValue);
+  return { valueLabel, min, max, range, singleValue, rangeValue };
 }
  
 export function readSliderTrackMetrics(
@@ -281,20 +513,9 @@ export function resolveSliderThumbIcon(children: ReactNode, fallback?: ReactNode
   if (nodes.length === 1 && isValidElement(nodes[0])) {
     const name = (nodes[0].type as { displayName?: string }).displayName;
     if (name === "SliderIcon") {
-      const {
-        children: iconChildren,
-        className,
-        ...rest
-      } = nodes[0].props as {
-        children?: ReactNode;
-        className?: string;
-      } & Record<string, unknown>;
-      const content = iconChildren ?? fallback;
-      if (content == null) return fallback;
-      if (className || Object.keys(rest).length > 0) {
-        return createElement("span", { className, ...rest }, content);
-      }
-      return content;
+      const iconChildren = (nodes[0].props as { children?: ReactNode }).children;
+      if (iconChildren == null && fallback == null) return null;
+      return nodes[0];
     }
   }
   return children;

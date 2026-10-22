@@ -103,18 +103,15 @@ export const ProgressBarLabel = forwardRef<HTMLElement, ProgressBarLabelProps>(
  
 ProgressBarLabel.displayName = "ProgressBarLabel";
  
-export function ProgressBarHeader({
-  children,
-  className,
-  motion,
-  ...rest
-}: ProgressBarHeaderProps) {
+export const ProgressBarHeader = forwardRef<HTMLDivElement, ProgressBarHeaderProps>(
+  function ProgressBarHeader({ children, className, motion, ...rest }, ref) {
   const { orientation } = useProgressBarFieldContext();
   const slotClassNames = useProgressBarClassNames();
   const part = useMotionPart<HTMLDivElement>({
     scope: useOptionalProgressBarMotionScope(),
     slot: "header",
     motion,
+    forwardedRef: ref,
     pointerPhases: false,
   });
  
@@ -131,16 +128,13 @@ export function ProgressBarHeader({
       {children}
     </div>
   );
-}
+},
+);
  
 ProgressBarHeader.displayName = "ProgressBar.Header";
  
-export function ProgressBarValue({
-  children,
-  className,
-  motion,
-  ...rest
-}: ProgressBarValueProps) {
+export const ProgressBarValue = forwardRef<HTMLSpanElement, ProgressBarValueProps>(
+  function ProgressBarValue({ children, className, motion, ...rest }, ref) {
   const { display } = useProgressBarFieldContext();
   const slotClassNames = useProgressBarClassNames();
   const text = children ?? display?.statusText;
@@ -148,6 +142,7 @@ export function ProgressBarValue({
     scope: useOptionalProgressBarMotionScope(),
     slot: "value",
     motion,
+    forwardedRef: ref,
     pointerPhases: false,
   });
  
@@ -156,7 +151,7 @@ export function ProgressBarValue({
   return (
     <Text
       as="span"
-      variant="base"
+      textStyle="base"
       ref={part.setRef}
       className={progressBarValueClass({
         slotClass: slotClassNames.value,
@@ -167,7 +162,8 @@ export function ProgressBarValue({
       {text}
     </Text>
   );
-}
+},
+);
  
 ProgressBarValue.displayName = "ProgressBar.Value";
  
@@ -363,6 +359,7 @@ const ProgressBarTrackHost = forwardRef<
     size: resolvedSize,
     thickness,
     color,
+    status,
     indeterminate: isIndeterminate,
     isHorizontal,
     aria,
@@ -423,6 +420,7 @@ const ProgressBarTrackHost = forwardRef<
           className={progressBarIndeterminateFillClass({
             isHorizontal,
             hasCustomColor: Boolean(color),
+            status,
             reduceMotion,
             slotClass: slotClassNames.indeterminateFill,
           })}
@@ -435,6 +433,7 @@ const ProgressBarTrackHost = forwardRef<
           className={progressBarFillClass({
             isHorizontal,
             hasCustomColor: Boolean(color),
+            status,
             slotClass: slotClassNames.fill,
           })}
           style={progressBarDeterminateFillStyle({

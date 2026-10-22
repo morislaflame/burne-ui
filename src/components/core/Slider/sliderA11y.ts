@@ -1,5 +1,5 @@
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { DEFAULT_BURNE_LABELS, type BurneLabels } from "@/theme/burneLabels";
+import { DEFAULT_BURNE_LABELS, formatBurneLabel, type BurneLabels } from "@/theme/burneLabels";
  
 export function sliderLabelId(sliderId: string): string {
   return `${sliderId}-label`;
@@ -8,6 +8,7 @@ export function sliderLabelId(sliderId: string): string {
 export function resolveSliderThumbA11y({
   kind,
   explicitLabel,
+  labelledBy,
   labelConnected,
   labelId,
   hintConnected,
@@ -18,13 +19,17 @@ export function resolveSliderThumbA11y({
 }: {
   kind: "single" | "start" | "end";
   explicitLabel?: string;
+  labelledBy?: string;
   labelConnected: boolean;
   labelId?: string;
   hintConnected: boolean;
   hintId: string;
   errorConnected: boolean;
   errorId: string;
-  labels?: Pick<BurneLabels, "sliderMinimum" | "sliderMaximum" | "sliderValue">;
+  labels?: Pick<
+    BurneLabels,
+    "sliderMinimum" | "sliderMaximum" | "sliderValue" | "sliderRangeStart" | "sliderRangeEnd"
+  >;
 }): {
   ariaLabel?: string;
   ariaLabelledBy?: string;
@@ -39,14 +44,14 @@ export function resolveSliderThumbA11y({
   if (explicitLabel) {
     if (kind === "start") {
       return {
-        ariaLabel: `${explicitLabel}, minimum`,
+        ariaLabel: formatBurneLabel(names.sliderRangeStart, { label: explicitLabel }),
         ariaLabelledBy: undefined,
         ariaDescribedBy,
       };
     }
     if (kind === "end") {
       return {
-        ariaLabel: `${explicitLabel}, maximum`,
+        ariaLabel: formatBurneLabel(names.sliderRangeEnd, { label: explicitLabel }),
         ariaLabelledBy: undefined,
         ariaDescribedBy,
       };
@@ -74,6 +79,14 @@ export function resolveSliderThumbA11y({
     };
   }
  
+  if (!explicitLabel && labelledBy) {
+    return {
+      ariaLabel: undefined,
+      ariaLabelledBy: labelledBy,
+      ariaDescribedBy,
+    };
+  }
+
   if (labelConnected && labelId) {
     return {
       ariaLabel: undefined,

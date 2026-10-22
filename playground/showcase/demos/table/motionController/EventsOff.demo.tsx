@@ -25,7 +25,7 @@ export function TableMotionEventsOffDemo() {
         <Table.ScrollContainer>
           <Table.Content aria-label="Live">
             <Table.Header>
-              <Table.Column isRowHeader>Live</Table.Column>
+              <Table.Column rowHeader>Live</Table.Column>
             </Table.Header>
             <Table.Body>
               <Table.Row id="a">
@@ -39,7 +39,7 @@ export function TableMotionEventsOffDemo() {
         <Table.ScrollContainer>
           <Table.Content aria-label="Off">
             <Table.Header>
-              <Table.Column isRowHeader>Off</Table.Column>
+              <Table.Column rowHeader>Off</Table.Column>
             </Table.Header>
             <Table.Body>
               <Table.Row id="b">

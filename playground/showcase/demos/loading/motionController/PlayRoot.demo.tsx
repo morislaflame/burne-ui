@@ -20,7 +20,7 @@ export function LoadingMotionControllerDemo() {
       </div>
       <Loading
         size="large"
-        label="Loading"
+        aria-label="Loading"
         motionController={controller}
         motion={{
           root: {

@@ -16,10 +16,10 @@ export function ProgressUploadCardDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-small rounded-large border-token bg-secondary p-large">
       <div className="flex items-center justify-between gap-large">
-        <Text as="p" variant="small" className="font-medium">
+        <Text as="p" textStyle="small" className="font-medium">
           assets.zip
         </Text>
-        <Text as="span" variant="xsmall" className="tabular-nums text-muted">
+        <Text as="span" textStyle="xsmall" className="tabular-nums text-muted">
           {value}%
         </Text>
       </div>

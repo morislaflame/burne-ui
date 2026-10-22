@@ -5,10 +5,10 @@ export function CloseButtonInfoBannerDemo() {
   return (
     <div className="flex w-full max-w-md items-start gap-large rounded-large border-l-4 border-info bg-info/10 p-large">
       <div className="min-w-0 flex-1">
-        <Text as="p" variant="base" className="font-medium text-info">
+        <Text as="p" textStyle="base" className="font-medium text-info">
           New version available
         </Text>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Update the CLI to pick up the theme topic.
         </Text>
       </div>

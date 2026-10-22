@@ -7,6 +7,8 @@ import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndi
 export const KIT_SELECTION_THUMB_VARIANTS = ["default"] as const;
 export type KitSelectionThumbVariant = (typeof KIT_SELECTION_THUMB_VARIANTS)[number];
 export type SelectionThumbVariant = KitSelectionThumbVariant | (string & {});
+/** Includes domain `xsmall`, outside `ComponentSize`. */
+export type SelectionThumbSize = SelectionIndicatorSize;
 
 export type SelectionThumbClassNames = {
   root?: string;

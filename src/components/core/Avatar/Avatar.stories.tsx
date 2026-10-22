@@ -117,7 +117,7 @@ export const AvatarGroupStory: Story = {
         size="base"
         label="Two"
         nickname="orbit_fox"
-        tooltipStatus="info"
+        tooltip={{ status: "info" }}
         src={PIN_IMAGE2}
         alt=""
         loading="lazy"
@@ -126,7 +126,7 @@ export const AvatarGroupStory: Story = {
         size="base"
         label="Three"
         nickname="vela_wave"
-        tooltipStatus="success"
+        tooltip={{ status: "success" }}
         src={PIN_IMAGE3}
         alt=""
         loading="lazy"
@@ -135,12 +135,12 @@ export const AvatarGroupStory: Story = {
         size="base"
         label="Four"
         nickname="rust_line"
-        tooltipVariant="outline"
+        tooltip={{ variant: "outline" }}
         src={PIN_IMAGE4}
         alt=""
         loading="lazy"
       />
-      <Avatar size="base" label="Plus five" nickname="+5" tooltipStatus="warning" />
+      <Avatar size="base" label="Plus five" nickname="+5" tooltip={{ status: "warning" }} />
     </Avatar.Group>
   ),
 };
@@ -152,8 +152,7 @@ export const WithNicknameTooltip: Story = {
       size="large"
       label="Amelia Clarke"
       nickname="starlight.muse"
-      tooltipVariant="default"
-      tooltipSize="base"
+      tooltip={{ variant: "default", size: "base" }}
       src={PIN_IMAGE1}
       alt=""
       loading="lazy"
@@ -168,8 +167,7 @@ export const HoverInteraction: Story = {
       size="large"
       label="Amelia Clarke"
       nickname="starlight.muse"
-      tooltipVariant="default"
-      tooltipSize="base"
+      tooltip={{ variant: "default", size: "base" }}
       src={PIN_IMAGE1}
       alt=""
       loading="lazy"

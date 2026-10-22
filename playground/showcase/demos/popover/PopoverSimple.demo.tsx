@@ -12,7 +12,7 @@ export function PopoverSimpleDemo() {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Trigger click panel.
           </Text>
         </Popover.Body>

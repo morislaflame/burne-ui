@@ -1,11 +1,17 @@
 #!/usr/bin/env node
 // P2-10: site component-docs en/ru must have the same heading count (## / ### / …).
+import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const docsRoot = path.resolve(root, "../burne-ui-site/content/component-docs");
+
+if (!existsSync(docsRoot)) {
+  console.log("check-component-docs-heading-parity: OK (site not present, skipped)");
+  process.exit(0);
+}
 
 const HEADING_RE = /^(#{1,6})\s+\S/;
 

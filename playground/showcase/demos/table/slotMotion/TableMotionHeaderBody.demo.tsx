@@ -20,7 +20,7 @@ export function TableMotionHeaderBodyDemo() {
     >
       <Table.Content aria-label="Header row and body">
         <Table.Header>
-          <Table.Column isRowHeader>Name</Table.Column>
+          <Table.Column rowHeader>Name</Table.Column>
           <Table.Column>Role</Table.Column>
         </Table.Header>
         <Table.Body>

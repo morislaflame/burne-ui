@@ -12,6 +12,7 @@ export function InputClassNamesFullDemo() {
         error: "font-medium",
       }}
       label="Email"
+      type="email"
       placeholder="you@example.com"
       hint="We do not share the address with third parties."
       error="Please enter correct email."

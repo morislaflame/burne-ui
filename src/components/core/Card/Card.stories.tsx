@@ -91,7 +91,7 @@ const meta = {
       description:
         "Hover-lift + shadow and squeeze on press; role=\"button\", activated with Enter/Space. Ripple — separately (`<Ripple />` as first child inside the card + content in `z-[1]`).",
     },
-    onPress: { action: "press" },
+    onClick: { action: "press" },
   },
 } satisfies Meta<typeof Card>;
 
@@ -126,7 +126,7 @@ export const Sizes: Story = {
             </Card.Description>
           </Card.Header>
           <Card.Body>
-            <Text variant="small">Body content</Text>
+            <Text textStyle="small">Body content</Text>
           </Card.Body>
         </Card>
       ))}
@@ -178,6 +178,20 @@ export const Secondary: Story = {
   ),
 };
 
+export const LinkCard: Story = {
+  name: "Link",
+  render: () => (
+    <Card asChild className="max-w-sm">
+      <a href="#inbox" onClick={(event) => event.preventDefault()}>
+        <Card.Title>Inbox</Card.Title>
+        <Card.Description>
+          asChild turns the card into the child link. Next.js: the child is next/link.
+        </Card.Description>
+      </a>
+    </Card>
+  ),
+};
+
 export const Pressable: Story = {
   name: "Pressable",
   render: function PressableDemo() {
@@ -187,19 +201,19 @@ export const Pressable: Story = {
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
           Presses (any card below): {n}
         </p>
-        <Card pressable onPress={() => setN((c) => c + 1)}>
+        <Card pressable onClick={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Card button</Card.Title>
               <Card.Description>
-                Hover — lift and shadow; click — squeeze and onPress; ripple is set with{" "}
+                Hover — lift and shadow; click — squeeze and onClick; ripple is set with{" "}
                 <code className="text-xs">&lt;Ripple /&gt;</code> outside.
               </Card.Description>
             </Card.Header>
           </div>
         </Card>
-        <Card variant="outline" pressable onPress={() => setN((c) => c + 1)}>
+        <Card variant="outline" pressable onClick={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.outline} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
@@ -208,7 +222,7 @@ export const Pressable: Story = {
             </Card.Header>
           </div>
         </Card>
-        <Card variant="secondary" pressable onPress={() => setN((c) => c + 1)}>
+        <Card variant="secondary" pressable onClick={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.secondary} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
@@ -231,7 +245,7 @@ export const PressInteraction: Story = {
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
           Presses: {n}
         </p>
-        <Card pressable onPress={() => setN((c) => c + 1)}>
+        <Card pressable onClick={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.default} direction="out" />
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
@@ -257,7 +271,7 @@ export const PressableWithNestedCard: Story = {
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
           Presses on outer card: {n}
         </p>
-        <Card pressable onPress={() => setN((c) => c + 1)}>
+        <Card pressable onClick={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
@@ -324,7 +338,7 @@ function QuickSubscribeCard() {
               <Input.Label>Email</Input.Label>
               <Input.Control
                 name="email"
-                inputType="text"
+                type="text"
                 placeholder="you@example.com"
                 autoComplete="email"
               />
@@ -374,7 +388,7 @@ export const ImageCoverOnTop: Story = {
         </Card.Description>
       </Card.Header>
       <Card.Footer className="flex items-center justify-between gap-base">
-        <Text as="span" variant="xsmall" className="text-muted">
+        <Text as="span" textStyle="xsmall" className="text-muted">
           Author: studio
         </Text>
         <Button variant="ghost" size="base" ripple>
@@ -509,14 +523,14 @@ export const MetricHighlight: Story = {
     <Card variant="secondary" className="max-w-xs">
       <Card.Body className="gap-large">
         <div>
-          <Text as="span" variant="xsmall" className="font-medium uppercase tracking-wide text-muted">
+          <Text as="span" textStyle="xsmall" className="font-medium uppercase tracking-wide text-muted">
             Conversion
           </Text>
           <div className="mt-xsmall flex items-baseline gap-xsmall">
-            <Text as="span" variant="header-2" className="tabular-nums">
+            <Text as="span" textStyle="header-2" className="tabular-nums">
               4,8
             </Text>
-            <Text as="span" variant="base" className="text-success">
+            <Text as="span" textStyle="base" className="text-success">
               +12%
             </Text>
           </div>
@@ -565,7 +579,7 @@ export const PressableWithCoverImage: Story = {
   render: function PressableCoverDemo() {
     const [n, setN] = useState(0);
     return (
-      <Card pressable className="max-w-md" onPress={() => setN((c) => c + 1)}>
+      <Card pressable className="max-w-md" onClick={() => setN((c) => c + 1)}>
         <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
         <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
           <div className="relative aspect-[2/1] w-full shrink-0">
@@ -768,7 +782,7 @@ export const CustomClassNames: Story = {
         <Card.Description>All slots configured via classNames.</Card.Description>
       </Card.Header>
       <Card.Body>
-        <Text variant="small">Card content with custom spacing and colors.</Text>
+        <Text textStyle="small">Card content with custom spacing and colors.</Text>
       </Card.Body>
       <Card.Footer>
         <Button size="small">Save</Button>

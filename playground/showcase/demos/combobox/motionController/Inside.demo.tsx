@@ -1,7 +1,7 @@
 import { ComboBox } from "@/components/core/ComboBox";
 import { createMotionEvents, useMotionController } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -21,12 +21,12 @@ function InputPulse() {
 export function ComboBoxMotionControllerInsideDemo() {
   return (
     <div className="w-full max-w-sm">
-      <ComboBox options={options} defaultValue="react" motion={{ events }}>
+      <ComboBox items={items} defaultValue="react" motion={{ events }}>
         <ComboBox.Label>Hover the input</ComboBox.Label>
-        <ComboBox.InputGroup>
+        <ComboBox.Shell>
           <InputPulse />
           <ComboBox.Trigger />
-        </ComboBox.InputGroup>
+        </ComboBox.Shell>
         <ComboBox.Popover />
       </ComboBox>
     </div>

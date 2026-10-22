@@ -2,6 +2,7 @@ import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
+import { Label } from "@/components/core/Label";
 
 const events = createMotionEvents({
   "checks:pulse": (ctx) =>
@@ -36,7 +37,7 @@ export function CheckboxGroupMotionControllerCancelDemo() {
       </div>
       <CheckboxGroup motionController={controller} motion={{ events }}>
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+          <Label>Plan</Label>
           <CheckboxGroup.Hint>Cancel the looping root tween.</CheckboxGroup.Hint>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>

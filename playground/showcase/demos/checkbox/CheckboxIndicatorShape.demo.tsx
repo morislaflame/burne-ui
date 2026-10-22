@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 export function CheckboxIndicatorShapeDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Indicator shape
       </Text>
       <div className="flex flex-wrap items-start gap-2xlarge">

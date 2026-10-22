@@ -53,14 +53,14 @@ const meta = {
     docs: {
       description: {
         component:
-          "Calendar with three selection modes: single date, range, multiple dates. Supports view switching: days → months → years. Slots can be customized via `classNames` on root (`root`, `header`, `grid`, `dayCell`, `cell`, `footer`, etc.).",
+          "Calendar with three selection modes: single date, range, multiple dates. Supports view switching: days → months → years. Slots can be customized via `classNames` on root (`root`, `header`, `grid`, `day`, `cell`, `footer`, etc.).",
       },
     },
   },
   argTypes: {
     variant: { control: "select", options: ["default", "secondary", "outline"] satisfies CalendarVariant[] },
     size:    { control: "select", options: ["small", "base", "mid", "large"] satisfies CalendarSize[] },
-    mode:    { control: "select", options: ["single", "range", "multiple"] },
+    selectionMode: { control: "select", options: ["single", "range", "multiple"] },
   },
 } satisfies Meta<typeof Calendar>;
 
@@ -82,7 +82,7 @@ export const Single: Story = {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="single" value={date} onValueChange={setDate} />
+        <Calendar selectionMode="single" value={date} onValueChange={setDate} />
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
@@ -114,7 +114,7 @@ export const Range: Story = {
     const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="range" value={range} onValueChange={setRange} />
+        <Calendar selectionMode="range" value={range} onValueChange={setRange} />
         <p className="text-small text-muted">
           From{" "}
           <span className="font-medium text-foreground">{formatDate(range.start)}</span>
@@ -132,7 +132,7 @@ export const Multiple: Story = {
     const [dates, setDates] = useState<Date[]>([]);
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="multiple" value={dates} onValueChange={setDates} />
+        <Calendar selectionMode="multiple" values={dates} onValuesChange={setDates} />
         <p className="text-small text-muted">
           Selected:{" "}
           <span className="font-medium text-foreground">
@@ -150,7 +150,7 @@ export const WithFooter: Story = {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="single" value={date} onValueChange={setDate}>
+        <Calendar selectionMode="single" value={date} onValueChange={setDate}>
           <Calendar.Header />
           <Calendar.Grid />
           <Calendar.Footer />
@@ -177,7 +177,7 @@ export const RangeWithFooter: Story = {
     const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="range" value={range} onValueChange={setRange}>
+        <Calendar selectionMode="range" value={range} onValueChange={setRange}>
           <Calendar.Header />
           <Calendar.Grid />
           <Calendar.Footer />
@@ -199,7 +199,7 @@ export const StartFromMonthView: Story = {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="single" value={date} onValueChange={setDate} initialView="months" />
+        <Calendar selectionMode="single" value={date} onValueChange={setDate} defaultView="months" />
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
@@ -214,7 +214,7 @@ export const StartFromYearView: Story = {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-large">
-        <Calendar mode="single" value={date} onValueChange={setDate} initialView="years" />
+        <Calendar selectionMode="single" value={date} onValueChange={setDate} defaultView="years" />
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
@@ -233,7 +233,7 @@ export const WithMinMax: Story = {
     return (
       <div className="flex flex-col items-center gap-large">
         <Calendar
-          mode="single"
+          selectionMode="single"
           value={date}
           onValueChange={setDate}
           minDate={minDate}
@@ -256,7 +256,7 @@ export const Variants: Story = {
         {variants.map((variant) => (
           <div key={variant} className="flex flex-col items-center gap-small">
             <span className="text-small text-muted">{variant}</span>
-            <Calendar key={variant} mode="single" variant={variant} />
+            <Calendar key={variant} selectionMode="single" variant={variant} />
           </div>
         ))}
       </div>
@@ -273,7 +273,7 @@ export const Sizes: Story = {
         {sizes.map((size) => (
           <div key={size} className="flex flex-col items-center gap-small">
             <span className="text-small text-muted">{size}</span>
-            <Calendar mode="single" size={size} />
+            <Calendar selectionMode="single" size={size} />
           </div>
         ))}
       </div>
@@ -287,7 +287,7 @@ export const Uncontrolled: Story = {
     const today = new Date();
     const defaultDate = new Date(today.getFullYear(), today.getMonth(), 15);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const props: any = { mode: "single", defaultValue: defaultDate };
+    const props: any = { selectionMode: "single", defaultValue: defaultDate };
     return <Calendar {...props} />;
   },
 };
@@ -303,7 +303,7 @@ export const CustomClassNames: Story = {
   },
   render: () => (
     <Calendar
-      mode="range"
+      selectionMode="range"
       classNames={{
         root: "rounded-large border-primary/30 bg-primary/5 shadow-token-mid",
         header: "gap-small",
@@ -311,11 +311,11 @@ export const CustomClassNames: Story = {
         navNext: "text-primary",
         navIconWrap: "text-primary",
         navIcon: "icon-small",
-        headerTitle: "font-semibold text-primary",
+        title: "font-semibold text-primary",
         grid: "mt-small",
         weekdayCell: "text-primary/70 uppercase tracking-wide",
         dayEmpty: "opacity-30",
-        dayCell: "rounded-full",
+        day: "rounded-full",
         cellFill: "rounded-full bg-primary",
         rangeHalfFill: "bg-primary/15",
         footer: "border-primary/20",
@@ -336,15 +336,15 @@ export const CustomNavIcons: Story = {
     docs: {
       description: {
         story:
-          "`navPrevIcon` / `navNextIcon` on root replace default chevrons. Pass `null` to hide. Slot `classNames.navIcon` styles the default icons.",
+          "`previousIcon` / `nextIcon` on root replace default chevrons. Pass `null` to hide. Slot `classNames.navIcon` styles the default icons.",
       },
     },
   },
   render: () => (
     <Calendar
-      mode="single"
-      navPrevIcon={<IoArrowBack aria-hidden className="icon-xsmall text-primary" />}
-      navNextIcon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
+      selectionMode="single"
+      previousIcon={<IoArrowBack aria-hidden className="icon-xsmall text-primary" />}
+      nextIcon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
     />
   ),
 };
@@ -363,7 +363,7 @@ export const RenderDay: Story = {
     const eventDays = new Set([3, 12, 18, 25]);
     return (
       <Calendar
-        mode="single"
+        selectionMode="single"
         renderDay={(date, { day, selected }) => (
           <span className="relative inline-flex flex-col items-center gap-[2px]">
             <span>{day}</span>
@@ -396,7 +396,7 @@ export const CustomHeaderNav: Story = {
   },
   render: function CustomHeaderNavStory() {
     return (
-      <Calendar mode="single">
+      <Calendar selectionMode="single">
         <Calendar.Header>
           <Calendar.NavNext />
           <Calendar.Title className="font-semibold text-primary" />
@@ -419,7 +419,7 @@ export const CustomTitleFormat: Story = {
   },
   render: function CustomTitleFormatStory() {
     return (
-      <Calendar mode="single">
+      <Calendar selectionMode="single">
         <Calendar.Header>
           <Calendar.NavPrev />
           <Calendar.Title>

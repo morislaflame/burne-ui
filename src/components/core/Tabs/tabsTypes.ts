@@ -49,15 +49,33 @@ export type TabsMotion = {
   panel?: TabsPartMotion;
 };
  
+export type TabsActivationMode = "automatic" | "manual";
+
+export type TabsItem = {
+  value: string;
+  label: ReactNode;
+  content: ReactNode;
+  disabled?: boolean;
+};
+
 export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
+  /** Data-driven tabs. Fills the list or panels that children do not already render. */
+  items?: readonly TabsItem[];
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null) => void;
   orientation?: TabsOrientation;
   size?: TabsSize;
   variant?: TabsVariant;
   disabled?: boolean;
+  /** `automatic` selects the tab on arrow keys. `manual` only moves focus. */
+  activationMode?: TabsActivationMode;
+  /**
+   * Keep inactive panels mounted (hidden). Default keeps them mounted so panel `leave` can play.
+   * `false` unmounts an inactive panel. A panel prop overrides this.
+   */
+  keepMounted?: boolean;
   classNames?: Prettify<TabsClassNames>;
   /**
    * Per-slot motion (`root`, `list`, `indicator`, `tab`, `tabText`, `panel`).
@@ -84,9 +102,13 @@ export type UseTabsRootStateProps = Pick<
   | "size"
   | "variant"
   | "disabled"
+  | "activationMode"
+  | "keepMounted"
 >;
  
 export type TabsListProps = HTMLAttributes<HTMLDivElement> & {
+  /** Overrides the root `classNames` map for this list and its tabs. */
+  classNames?: Prettify<TabsClassNames>;
   motion?: Prettify<TabsPartMotion>;
 };
  
@@ -105,6 +127,8 @@ export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"
 export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
   value: string;
   children?: ReactNode;
+  /** Keeps this panel mounted while another tab is selected. Overrides the root `keepMounted`. */
+  keepMounted?: boolean;
   motion?: Prettify<TabsPartMotion>;
   /**
    * Handle for this panel's nested scope. `play()` looks for `root` (skip) —
@@ -114,13 +138,15 @@ export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
 } & MotionStateHostProps;
  
 export type TabsContextValue = {
-  value: string;
+  value: string | null;
   setValue: (next: string) => void;
   orientation: TabsOrientation;
   size: TabsSize;
   variant: TabsVariant;
   baseId: string;
   disabled: boolean;
+  activationMode: TabsActivationMode;
+  keepMounted: boolean;
   tabElementsRef: RefObject<Map<string, HTMLButtonElement>>;
   layoutEpoch: number;
   notifyTabLayout: () => void;

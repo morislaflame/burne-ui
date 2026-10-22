@@ -7,6 +7,7 @@ import { Card } from "@/components/core/Card";
 
 import { SearchInput } from "./SearchInput";
 import { SearchInputSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/search-input/slotMotion/gallery";
+import { SearchInputMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/search-input/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -216,7 +217,7 @@ export const CustomClassNames: Story = {
       <SearchInput
         placeholder="Find"
         aria-label="Collapsed search"
-        classNames={{ expandTrigger: "text-primary" }}
+        classNames={{ root: "w-control-large", expandTrigger: "text-primary" }}
       />
     </div>
   ),
@@ -275,4 +276,9 @@ export const FilterList: Story = {
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
   render: () => <SearchInputSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery",
+  render: () => <SearchInputMotionControllerGalleryDemo />,
 };

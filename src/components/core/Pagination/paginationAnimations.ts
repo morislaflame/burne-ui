@@ -1,10 +1,11 @@
 /**
  * Kit-internal FLIP for the Pagination pages list (`usePaginationFlip`).
- * Public slots: `control` (Previous / Next / Page nested unique scopes),
- * `previousIcon` / `nextIcon` (nested in the same control scope), `summary`
- * (`change` on the root scope when `page` moves), `ellipsis` (root scope).
+ * Public slots: `previous`, `next`, `page` (repeated), `pageActive`,
+ * `previousIcon` / `nextIcon`, `summary` (`change` when `page` moves), `ellipsis`.
+ * All of them register on the root scope, on the same node as `classNames`.
+ * Press on a nav button plays that button and the icon inside it.
  * FLIP on `<ol>` stays kit-internal (`usePaginationFlip`).
- * Not slots: `content` / `item` / `page`.
+ * Not slots: `content` / `item` / `pageText`.
  */
 import {
   useCallback,
@@ -22,12 +23,17 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { isMotionFeatureEnabledFor, motionInteractiveFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { hasPointerPhases, useMotionPart, useOptionalEnterOnMount, useSlotPhaseOnChange } from "@/components/core/utils/slotMotion";
+import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
  
 import {
   useOptionalPagination,
   useOptionalPaginationMotionScope,
 } from "./paginationContext";
-import type { PaginationMotion, PaginationPartMotion, PaginationSummaryPartMotion } from "./paginationTypes";
+import type { PaginationButtonSlot, PaginationMotion, PaginationPartMotion, PaginationSummaryPartMotion } from "./paginationTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export type PaginationFlipIdentity = {
   /** Current page — primary trigger for FLIP when using `Pagination.Pages`. */
@@ -149,15 +155,55 @@ export function usePaginationContentRef(
   return { olRef, setRefs };
 }
  
-export function resolvePaginationControlMotionDefaults(): PaginationMotion {
+const PAGINATION_BUTTON_PRESS = {
+  pressIn: "pressSqueeze" as const,
+  pressOut: false as const,
+};
+
+export function resolvePaginationMotionDefaults(): PaginationMotion {
   return {
-    control: {
-      pressIn: "pressSqueeze",
-      pressOut: false,
-    },
+    previous: { ...PAGINATION_BUTTON_PRESS },
+    next: { ...PAGINATION_BUTTON_PRESS },
+    page: { ...PAGINATION_BUTTON_PRESS },
   };
 }
+
+/** Press one nav button and the chevron inside it. Other pages stay still. */
+export function playPaginationButtonPhase(
+  scope: MotionScopeValue | null,
+  slot: PaginationButtonSlot,
+  phase: "pressIn" | "pressOut",
+  el: HTMLElement,
+  partMotion?: PaginationPartMotion,
+) {
+  if (!scope) return;
+  const value = scope.resolve(slot, phase, partMotion);
+  if (value !== undefined) {
+    scope.play(slot, phase, { partMotion, el });
+  }
+  const iconSlot = slot === "previous" ? "previousIcon" : slot === "next" ? "nextIcon" : null;
+  if (!iconSlot) return;
+  for (const icon of scope.getTargets(iconSlot)) {
+    if (el.contains(icon)) scope.play(iconSlot, phase, { el: icon });
+  }
+}
  
+export function usePaginationPageActiveSlot(
+  motion: PaginationPartMotion | undefined,
+  forwardedRef: ForwardedRef<HTMLElement> | undefined,
+  enabled: boolean,
+) {
+  const scope = useOptionalPaginationMotionScope();
+  const pointer = enabled && hasPointerPhases(motion ?? scope?.getRootMotion()?.pageActive);
+  return useMotionPart<HTMLElement>({
+    scope,
+    slot: "pageActive",
+    motion: enabled ? motion : undefined,
+    forwardedRef: enabled ? forwardedRef : undefined,
+    pointerPhases: pointer,
+  });
+}
+
 export function usePaginationSummarySlot(
   motion?: PaginationSummaryPartMotion,
   forwardedRef?: ForwardedRef<HTMLDivElement>,

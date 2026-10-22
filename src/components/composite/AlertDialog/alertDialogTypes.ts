@@ -1,10 +1,11 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, MouseEvent, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
  
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 import type { ButtonSize } from "@/components/core/Button";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { OverlayDismissEvent, OverlayDismissProps } from "@/components/core/utils/overlayLayer";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type {
   PanelSize,
@@ -98,6 +99,11 @@ export type AlertDialogProps = {
    * @default true
    */
   closeOnEscape?: boolean;
+  /** Backdrop click closes. Default false (APG). */
+  closeOnInteractOutside?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<AlertDialogClassNames>;
@@ -144,6 +150,12 @@ export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & 
   children?: ReactNode;
   motion?: Prettify<AlertDialogPartMotion>;
 };
+
+export type AlertDialogOverlayProps = OverlayDismissProps;
+
+export type AlertDialogActionProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  children?: ReactNode;
+};
  
 export type AlertDialogContextValue = {
   /** Whether the alert dialog is currently open. */
@@ -157,6 +169,10 @@ export type AlertDialogContextValue = {
   onOpenChange: (open: boolean) => void;
   /** Escape dismisses when true (default). */
   closeOnEscape: boolean;
+  closeOnInteractOutside: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
   variant: AlertVariant;
   status: AlertStatus;
   size: AlertDialogSize;
@@ -215,11 +231,21 @@ export type UseAlertDialogRootStateProps = Pick<
   | "variant"
   | "size"
   | "closeOnEscape"
+  | "closeOnInteractOutside"
+  | "onEscapeKeyDown"
+  | "onInteractOutside"
+  | "initialFocus"
   | "portalContainer"
 >;
  
 export type UseAlertDialogModalMotionProps = {
   open: boolean;
+  onOpenChange?: (open: boolean) => void;
+  closeOnEscape?: boolean;
+  closeOnInteractOutside?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
   variant: AlertVariant;
   /** When true, open with `show()` + absolute positioning inside a custom portal host. */
   contained?: boolean;
@@ -237,8 +263,8 @@ export type AlertDialogPortalShellProps = {
   descriptionId: string;
   hasTitle: boolean;
   hasDescription: boolean;
-  closeOnEscape: boolean;
-  onOpenChange: (open: boolean) => void;
+  onDialogCancel: (event: OverlayDismissEvent) => void;
+  onBackdropMouseDown: (event: MouseEvent<HTMLDivElement>) => void;
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;

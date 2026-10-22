@@ -1,10 +1,10 @@
 import type { SelectionMode, SortDirection } from "./tableTypes";
  
 export function columnAriaSort(
-  allowsSorting: boolean,
+  sortable: boolean,
   sortDirection: SortDirection | undefined,
 ): "ascending" | "descending" | "none" | undefined {
-  if (!allowsSorting) return undefined;
+  if (!sortable) return undefined;
   if (sortDirection === "ascending") return "ascending";
   if (sortDirection === "descending") return "descending";
   return "none";
@@ -40,10 +40,10 @@ export function tableRowRole(isGrid: boolean): "row" | undefined {
  
 export function tableColumnHeaderRole(
   isGrid: boolean,
-  isRowHeader: boolean,
+  rowHeader: boolean,
 ): "columnheader" | "rowheader" | undefined {
   if (!isGrid) return undefined;
-  return isRowHeader ? "rowheader" : "columnheader";
+  return rowHeader ? "rowheader" : "columnheader";
 }
  
 export function tableCellRole(isGrid: boolean): "gridcell" | undefined {

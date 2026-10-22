@@ -38,6 +38,6 @@ export const Selection: Story = { render: () => <ContextMenuSelectionDemo /> };
 export const SlotMotionGallery: Story = { render: () => <ContextMenuSlotMotionGalleryDemo /> };
 export const MotionControllerGallery: Story = { render: () => <ContextMenuMotionControllerGalleryDemo /> };
 export const SubTriggerIcon: Story = { render: () => <ContextMenuSubIconDemo /> };
-export const ContentSide: Story = { render: () => <ContextMenuSideDemo /> };
+export const PopoverSide: Story = { render: () => <ContextMenuSideDemo /> };
 export const AsChild: Story = { render: () => <ContextMenuAsChildDemo /> };
 export const ClassNames: Story = { render: () => <ContextMenuClassNamesDemo /> };

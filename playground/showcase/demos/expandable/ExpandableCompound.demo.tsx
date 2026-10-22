@@ -16,7 +16,7 @@ export function ExpandableCompoundDemo() {
         </Expandable.Message>
       </Expandable.Trigger>
       <Expandable.Panel>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Full compound-option with an icon and description in the trigger.
         </Text>
       </Expandable.Panel>

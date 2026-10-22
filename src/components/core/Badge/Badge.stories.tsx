@@ -76,7 +76,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Compact status badge. **Simple** — `icon` + text in `children`; **inline icons** — `data-icon=\"inline-start\" | \"inline-end\"` on child.  For overlay — `Badge.Anchor`. Slots are configured via `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
+          "Compact status badge. **Simple** — `icon` + text in `children`; **inline icons** — `data-icon=\"start\" | \"end\"` on child.  For overlay — `Badge.Anchor`. Slots are configured via `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
       },
     },
   },
@@ -224,12 +224,12 @@ export const IconInlineChildren: Story = {
       <DualApiStoryPanel title="Compound — data-icon on child">
         <div className="flex flex-wrap gap-small">
           <Badge variant="secondary">
-            <IoCheckmarkCircleOutline data-icon="inline-start" />
+            <IoCheckmarkCircleOutline data-icon="start" />
             Verified
           </Badge>
           <Badge variant="outline">
             Bookmark
-            <IoBookmarkOutline data-icon="inline-end" />
+            <IoBookmarkOutline data-icon="end" />
           </Badge>
         </div>
       </DualApiStoryPanel>
@@ -261,7 +261,7 @@ export const VisibilityInteraction: Story = {
   name: "Interaction: visibility",
   render: () => (
     <Badge variant="secondary">
-      <IoCheckmarkCircleOutline data-icon="inline-start" />
+      <IoCheckmarkCircleOutline data-icon="start" />
       Verified
     </Badge>
   ),
@@ -441,7 +441,7 @@ export const Accessibility: Story = {
       </p>
       <div className="flex flex-wrap items-center gap-mid">
         <Badge status="success">
-          <IoCheckmarkCircleOutline data-icon="inline-start" />
+          <IoCheckmarkCircleOutline data-icon="start" />
           Published
         </Badge>
         <Badge

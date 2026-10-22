@@ -25,7 +25,7 @@ export function DisclosureMotionEventsKickDemo() {
       <Disclosure motionController={controller} motion={{ events }}>
         <Disclosure.Trigger>ctx.targets</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">Factory on titleLift reaches title via ctx.targets.</Text>
+          <Text as="p" textStyle="small" className="text-muted">Factory on titleLift reaches title via ctx.targets.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

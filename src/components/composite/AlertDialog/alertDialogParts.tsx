@@ -1,6 +1,7 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref, type ForwardedRef } from "react";
 import { createPortal } from "react-dom";
  
+import { Button } from "@/components/core/Button";
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
@@ -9,19 +10,22 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { useApplySkinPortal } from "@/skins/skinContext";
+import { useStudioSlotRef } from "@/studio/studioModeContext";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
-import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
+import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
 import { ALERT_DIALOG_MOTION_DEFAULTS, useAlertDialogModalMotion } from "./alertDialogAnimations";
 import { AlertDialogHeaderProvider, AlertDialogMotionProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useAlertDialogMotionScope, useOptionalAlertDialogHeaderContext, useOptionalAlertDialogMotionScope } from "./alertDialogContext";
 import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, ALERT_DIALOG_TRIGGER_BASE_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
 import type {
+  AlertDialogActionProps,
   AlertDialogBodyProps,
   AlertDialogCloseProps,
+  AlertDialogOverlayProps,
   AlertDialogContentProps,
   AlertDialogDescriptionProps,
   AlertDialogFooterProps,
@@ -235,7 +239,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="h2"
-        variant={sizePreset.titleVariant}
+        textStyle={sizePreset.titleVariant}
         id={id ?? titleId}
         className={cn(
           ALERT_DIALOG_TITLE_CLASS,
@@ -282,7 +286,7 @@ export const AlertDialogDescription = forwardRef<
     <Text
       ref={setRef as Ref<HTMLElement>}
       as="p"
-      variant={sizePreset.descVariant}
+      textStyle={sizePreset.descVariant}
       id={id ?? descriptionId}
       className={cn(
         sizePreset.descClassName,
@@ -298,15 +302,16 @@ export const AlertDialogDescription = forwardRef<
  
 AlertDialogDescription.displayName = "AlertDialogDescription";
  
-export function AlertDialogHeadingBlock({
+export const AlertDialogHeadingBlock = forwardRef(function AlertDialogHeadingBlock({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   ...rest
-}: AlertDialogHeadingBlockProps) {
+}: AlertDialogHeadingBlockProps, ref: ForwardedRef<HTMLDivElement>) {
   const slotClassNames = useAlertDialogClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope: useOptionalAlertDialogMotionScope(),
     slot: "headingBlock",
     motion,
@@ -327,7 +332,7 @@ export function AlertDialogHeadingBlock({
       {...pointerHandlers}
     />
   );
-}
+});
  
 AlertDialogHeadingBlock.displayName = "AlertDialogHeadingBlock";
  
@@ -358,7 +363,7 @@ export const AlertDialogBody = forwardRef<HTMLDivElement, AlertDialogBodyProps>(
         {...rest}
         {...pointerHandlers}
       >
-        <Text variant={sizePreset.bodyVariant} as="div">
+        <Text textStyle={sizePreset.bodyVariant} as="div">
           {children}
         </Text>
       </div>
@@ -401,6 +406,42 @@ export const AlertDialogFooter = forwardRef<HTMLDivElement, AlertDialogFooterPro
 );
  
 AlertDialogFooter.displayName = "AlertDialogFooter";
+
+export const AlertDialogOverlay = forwardRef(function AlertDialogOverlay(
+  _props: AlertDialogOverlayProps,
+  _ref,
+) {
+  return null;
+});
+
+AlertDialogOverlay.displayName = "AlertDialog.Overlay";
+
+export const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
+  function AlertDialogAction(props, ref) {
+    return <Button ref={ref} {...props} />;
+  },
+);
+
+AlertDialogAction.displayName = "AlertDialog.Action";
+
+export const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
+  function AlertDialogCancel({ onClick, ...rest }, ref) {
+    const { onOpenChange } = useAlertDialog();
+    return (
+      <Button
+        ref={ref}
+        variant="outline"
+        {...rest}
+        onClick={(event) => {
+          onClick?.(event);
+          if (!event.defaultPrevented) onOpenChange(false);
+        }}
+      />
+    );
+  },
+);
+
+AlertDialogCancel.displayName = "AlertDialog.Cancel";
  
 // ─── AlertDialog.Trigger ──────────────────────────────────────────────────────
  
@@ -408,7 +449,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
   function AlertDialogTrigger(
     {
       children,
-      asChild,
+      asChild = true,
       className,
       motion,
       onClick,
@@ -563,6 +604,10 @@ function AlertDialogPanelHost({
     variant,
     sizePreset,
     closeOnEscape,
+    closeOnInteractOutside,
+    onEscapeKeyDown,
+    onInteractOutside,
+    initialFocus,
     onOpenChange,
     portalContainer: portalContainerFromRoot,
   } = useAlertDialog();
@@ -573,7 +618,18 @@ function AlertDialogPanelHost({
   );
   const contained = isContainedPortal(portalHost);
  
-  const motion = useAlertDialogModalMotion({ open, variant, contained, motionScope });
+  const motion = useAlertDialogModalMotion({
+    open,
+    onOpenChange,
+    variant,
+    closeOnEscape,
+    closeOnInteractOutside,
+    onEscapeKeyDown,
+    onInteractOutside,
+    initialFocus,
+    contained,
+    motionScope,
+  });
  
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
@@ -593,8 +649,8 @@ function AlertDialogPanelHost({
       descriptionId={descriptionId}
       hasTitle={hasTitle}
       hasDescription={hasDescription}
-      closeOnEscape={closeOnEscape}
-      onOpenChange={onOpenChange}
+      onDialogCancel={motion.handleDialogCancel}
+      onBackdropMouseDown={motion.handleBackdropPointerDown}
       dialogRef={motion.dialogRef}
       overlayRef={motion.overlayRef}
       panelRef={motion.panelRef}
@@ -620,8 +676,8 @@ export function AlertDialogPortalShell({
   descriptionId,
   hasTitle,
   hasDescription,
-  closeOnEscape,
-  onOpenChange,
+  onDialogCancel,
+  onBackdropMouseDown,
   dialogRef,
   overlayRef,
   panelRef,
@@ -630,6 +686,7 @@ export function AlertDialogPortalShell({
   const slotClassNames = useAlertDialogClassNames();
   const { size, status } = useAlertDialog();
   const motionScope = useOptionalAlertDialogMotionScope();
+  const studioPanelRef = useStudioSlotRef<HTMLDivElement>("alertDialog.panel", motionScope);
   useApplySkinPortal(dialogRef);
 
   return (
@@ -641,7 +698,7 @@ export function AlertDialogPortalShell({
       onCancel={(e) => {
         if (!isOwnNativeDialogEvent(e)) return;
         e.preventDefault();
-        if (closeOnEscape) onOpenChange(false);
+        onDialogCancel(e);
       }}
       aria-labelledby={alertDialogLabelledBy(hasTitle, titleId)}
       aria-describedby={alertDialogDescribedBy(hasDescription, descriptionId)}
@@ -654,10 +711,11 @@ export function AlertDialogPortalShell({
         ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}
         className={alertDialogOverlayClass(lightUi, slotClassNames.overlay)}
         style={alertDialogOverlayEnterStyle()}
-        {...alertDialogOverlayA11yProps()}
+        aria-hidden
+        onMouseDown={onBackdropMouseDown}
       />
       <div
-        ref={mergeRefs(panelRef, (node) => motionScope?.registerTarget("panel", node))}
+        ref={mergeRefs(panelRef, studioPanelRef, (node) => motionScope?.registerTarget("panel", node))}
         tabIndex={-1}
         className={alertDialogPanelClass({
           variant,

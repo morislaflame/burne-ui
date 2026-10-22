@@ -21,6 +21,8 @@ export type {
   DatePickerHintProps,
   DatePickerLabelProps,
   DatePickerMode,
+  DatePickerSize,
+  DatePickerVariant,
   DatePickerMotion,
   DatePickerPartMotion,
   DatePickerPopoverProps,

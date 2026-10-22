@@ -9,9 +9,11 @@
 import { useLayoutEffect, useRef, type RefObject } from "react";
  
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { isMotionFeatureEnabledFor, motionSelectionFillFor } from "@/components/core/utils/motionConfig";
+import { killMotion } from "@/components/core/utils/gsapMotion";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { playSelectionFill, snapSelectionFill } from "@/components/core/utils/slotMotion/recipes/selectionFill";
+import { playSelectionMark, snapSelectionMark } from "@/components/core/utils/slotMotion/recipes/selectionMark";
  
 import {
   useOptionalSelectionIndicatorMotionScope,
@@ -21,6 +23,10 @@ import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import type { SelectionIndicatorMotion, SelectionIndicatorVariant } from "./selectionIndicatorTypes";
 import { KIT_SELECTION_INDICATOR_VARIANTS } from "./selectionIndicatorTypes";
+
+import { bindSelectionRecipes } from "@/components/core/utils/slotMotion/recipes/bindSelection";
+
+bindSelectionRecipes();
  
 export const SELECTION_INDICATOR_MOTION_DEFAULTS: SelectionIndicatorMotion = {
   fill: { check: "selectionFill", uncheck: "selectionFill" },
@@ -36,14 +42,6 @@ export function resolveSelectionIndicatorMotionDefaults(
     KIT_SELECTION_INDICATOR_VARIANTS,
     "selectionIndicator",
   );
-}
- 
-function applyFillInstant(fill: HTMLElement, on: boolean) {
-  gsap.set(fill, { scale: on ? 1 : 0, autoAlpha: on ? 1 : 0, force3D: false });
-}
- 
-function applyMarkInstant(icon: HTMLElement, on: boolean) {
-  gsap.set(icon, { autoAlpha: on ? 1 : 0, scale: 1, force3D: false });
 }
  
 export function useSelectionIndicatorAnimation(
@@ -69,11 +67,11 @@ export function useSelectionIndicatorAnimation(
       firstLayoutRef.current = false;
       if (fill) {
         killMotion(fill);
-        applyFillInstant(fill, active);
+        snapSelectionFill(fill, active);
       }
       if (icon) {
         killMotion(icon);
-        applyMarkInstant(icon, active);
+        snapSelectionMark(icon, active);
       }
       return;
     }
@@ -91,34 +89,23 @@ export function useSelectionIndicatorAnimation(
     if (reduceMotion) {
       if (fill) {
         killMotion(fill);
-        applyFillInstant(fill, active);
+        snapSelectionFill(fill, active);
       }
       if (icon) {
         killMotion(icon);
-        applyMarkInstant(icon, active);
+        snapSelectionMark(icon, active);
       }
       return;
     }
  
-    const fillVars = { ...motionSelectionFillFor(config), overwrite: "auto" as const };
-    const markVars = { ...motionSelectionFillFor(config), overwrite: "auto" as const };
- 
     if (fill) {
       killMotion(fill);
-      if (active) {
-        gsap.fromTo(fill, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ...fillVars });
-      } else {
-        gsap.to(fill, { scale: 0, autoAlpha: 0, ...fillVars });
-      }
+      playSelectionFill(fill, active, config);
     }
  
     if (icon) {
       killMotion(icon);
-      if (active) {
-        gsap.fromTo(icon, { scale: 0.88, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ...markVars });
-      } else {
-        gsap.to(icon, { scale: 0.92, autoAlpha: 0, ...markVars });
-      }
+      playSelectionMark(icon, active, config);
     }
   }, [active, config, fillRef, iconRef, reduceMotion, scope]);
 }

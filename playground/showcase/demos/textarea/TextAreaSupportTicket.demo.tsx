@@ -5,10 +5,10 @@ export function TextAreaSupportTicketDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-large rounded-large border border-warning/25 bg-warning/5 p-large">
       <div>
-        <Text as="p" variant="base" className="font-medium text-warning">
+        <Text as="p" textStyle="base" className="font-medium text-warning">
           Need help?
         </Text>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Describe the problem - we will respond within one business day.
         </Text>
       </div>

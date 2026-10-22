@@ -9,6 +9,8 @@ import decimalSource from "../demos/numberInput/Decimal.demo.tsx?raw";
 import { NumberInputInvalidDemo } from "../demos/numberInput/Invalid.demo";
 import invalidSource from "../demos/numberInput/Invalid.demo.tsx?raw";
 import { NumberInputMotionControllerGalleryDemo } from "../demos/numberInput/motionController/gallery";
+import { NumberInputFormatDemo } from "../demos/numberInput/Format.demo";
+import formatSource from "../demos/numberInput/Format.demo.tsx?raw";
 import { NumberInputQuantityDemo } from "../demos/numberInput/Quantity.demo";
 import quantitySource from "../demos/numberInput/Quantity.demo.tsx?raw";
 import { NumberInputSizesDemo } from "../demos/numberInput/Sizes.demo";
@@ -30,6 +32,9 @@ export function NumberInputShowcase() {
     >
       <ShowcaseSection title="Quantity" description="Starts at 1. Minus stops at 0. The next plus adds the step.">
         <ShowcaseDemoFromFile align="start" Demo={NumberInputQuantityDemo} source={quantitySource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Format" description="formatOptions goes to Intl.NumberFormat for the committed number.">
+        <ShowcaseDemoFromFile align="start" Demo={NumberInputFormatDemo} source={formatSource} />
       </ShowcaseSection>
       <ShowcaseSection title="Variants" description="default, outline, secondary — the same field shells as Input.">
         <ShowcaseDemoFromFile align="stretch" Demo={NumberInputVariantsDemo} source={variantsSource} />

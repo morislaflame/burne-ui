@@ -26,7 +26,7 @@ export function TableInvoiceToolbarDemo() {
   return (
     <div className="flex w-full max-w-xl flex-col gap-large">
       <div className="flex items-center justify-between gap-large">
-        <Text as="span" variant="small" className="text-muted">
+        <Text as="span" textStyle="small" className="text-muted">
           Selected: <span className="font-medium text-foreground">{count}</span>
         </Text>
         <Button size="small" variant="outline" type="button" disabled={count === 0}>
@@ -34,16 +34,16 @@ export function TableInvoiceToolbarDemo() {
         </Button>
       </div>
       <Surface variant="secondary" padding="small">
-        <Table>
+        <Table
+              selectionMode="multiple"
+              selectedKeys={selected}
+              onSelectionChange={setSelected}>
           <Table.ScrollContainer>
             <Table.Content
               aria-label="Accounts"
-              selectionMode="multiple"
-              selectedKeys={selected}
-              onSelectionChange={setSelected}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Number</Table.Column>
+                <Table.Column rowHeader>Number</Table.Column>
                 <Table.Column>Sum</Table.Column>
                 <Table.Column>Status</Table.Column>
               </Table.Header>

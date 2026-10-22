@@ -299,7 +299,12 @@ export const MotionStateSave: Story = {
 export const LabelLayout: Story = {
   name: "Label + shortcut layout",
   render: () => (
-    <Button variant="default" type="button" className="w-full max-w-xs justify-between gap-mid">
+    <Button
+      variant="default"
+      type="button"
+      className="w-full max-w-xs"
+      classNames={{ label: "justify-between gap-mid" }}
+    >
       <span>Command palette</span>
       <span className="inline-flex gap-xsmall">
         <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">⌘</span>
@@ -357,6 +362,7 @@ export const CustomClassNames: Story = {
       variant="outline"
       status="info"
       icon={<IoSave aria-hidden />}
+      className="px-xlarge"
       classNames={{
         root: "rounded-large border-token-info",
         content: "gap-small",

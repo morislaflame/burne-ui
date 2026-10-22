@@ -22,7 +22,7 @@ export function ColorPickerCompoundContentDemo() {
 
   return (
     <div className="flex flex-col items-center gap-large">
-      <Text as="p" variant="small" className="text-muted">
+      <Text as="p" textStyle="small" className="text-muted">
         Custom layout: presets → area → hue (hex removed).
       </Text>
       <ColorPicker value={color} onValueChange={setColor} defaultOpen>
@@ -36,7 +36,7 @@ export function ColorPickerCompoundContentDemo() {
           <HueOnlySlider />
         </ColorPicker.Content>
       </ColorPicker>
-      <Text as="p" variant="small" className="font-mono text-muted">
+      <Text as="p" textStyle="small" className="font-mono text-muted">
         {color}
       </Text>
     </div>

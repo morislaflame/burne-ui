@@ -36,7 +36,7 @@ export function DrawerMotionHeadingBlockDemo() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <Text as="p" variant="base">
+            <Text as="p" textStyle="base">
               Animate `motion.headingBlock` independently from `title`.
             </Text>
           </Drawer.Body>

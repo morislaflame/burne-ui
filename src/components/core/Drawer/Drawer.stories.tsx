@@ -35,7 +35,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Slide-out panel (portal to `document.body`). Supports four directions, three sizes, dragging (`Drawer.Handle`), scroll in `Drawer.Body`, and `isDismissable={false}` on `Drawer.Backdrop`.\n\n`Drawer.Trigger` — built-in trigger that opens the drawer after the press animation.",
+          "Slide-out panel (portal to `document.body`). Supports four directions, three sizes, dragging (`Drawer.Handle`), scroll in `Drawer.Body`, and `closeOnInteractOutside={false}` on `Drawer.Overlay`.\n\n`Drawer.Trigger` — built-in trigger that opens the drawer after the press animation.",
       },
     },
   },
@@ -424,10 +424,10 @@ export const WithHandle: Story = {
   },
 };
 
-// ─── isDismissable=false ──────────────────────────────────────────────────────
+// ─── closeOnInteractOutside=false ──────────────────────────────────────────────────────
 
 export const NonDismissable: Story = {
-  name: "isDismissable={false}",
+  name: "closeOnInteractOutside={false}",
   render: function NonDismissableDemo() {
     const [open, setOpen] = useState(false);
     return (
@@ -437,7 +437,7 @@ export const NonDismissable: Story = {
         </Button>
         <Drawer open={open} onOpenChange={setOpen}>
           <Drawer.Panel>
-            <Drawer.Backdrop isDismissable={false} />
+            <Drawer.Overlay closeOnInteractOutside={false} />
             <Drawer.Header>
               <Drawer.HeadingBlock>
                 <Drawer.Title>Confirm action</Drawer.Title>
@@ -675,7 +675,7 @@ export const CustomClassNames: Story = {
           onOpenChange={setOpen}
           classNames={{
             trigger: "font-medium",
-            backdrop: "backdrop-blur-2xl",
+            overlay: "backdrop-blur-2xl",
             panel: "border-primary/40 shadow-token-large",
             header: "border-b border-primary/20 pb-small",
             title: "text-primary font-semibold",

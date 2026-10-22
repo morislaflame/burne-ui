@@ -1,4 +1,5 @@
 import type { FieldHintProps } from "@/components/core/Field";
+import type { OverlayDismissProps } from "@/components/core/utils/overlayLayer";
 import type {
   FloatingAlign,
   TooltipSide,
@@ -10,13 +11,12 @@ import type { Prettify } from "@/utils/prettify";
  
 export type PopoverSide = TooltipSide;
 export type PopoverSize = PanelSize;
-export const KIT_POPOVER_VARIANTS = ["default"] as const;
+export const KIT_POPOVER_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitPopoverVariant = (typeof KIT_POPOVER_VARIANTS)[number];
 export type PopoverVariant = KitPopoverVariant | (string & {});
 export type PopoverContentGap = PanelSize;
  
 export type PopoverClassNames = {
-  root?: string;
   trigger?: string;
   content?: string;
   /** Inner wrapper between content portal and panel (`relative overflow-visible`). */
@@ -72,6 +72,10 @@ export type PopoverContextValue = {
   size: PopoverSize;
   variant: PopoverVariant;
   side: PopoverSide;
+  align?: FloatingAlign;
+  offset?: number;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
   labelConnected: boolean;
   hintConnected: boolean;
   triggerRef: RefObject<HTMLElement | null>;
@@ -86,11 +90,18 @@ export type PopoverProps = {
   size?: PopoverSize;
   variant?: PopoverVariant;
   side?: PopoverSide;
+  align?: FloatingAlign;
+  offset?: number;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   anchorRef?: RefObject<HTMLElement | null>;
-  shouldDismiss?: (target: Node) => boolean;
+  closeOnEscape?: boolean;
+  closeOnInteractOutside?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
   /**
    * Move focus back to the trigger when the panel closes.
    * HoverCard sets this to false so a pointer leave does not focus the trigger.
@@ -152,6 +163,9 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   gap?: PopoverContentGap;
   matchAnchorWidth?: boolean;
   align?: FloatingAlign;
+  side?: PopoverSide;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
   unstyled?: boolean;
   contentRole?: "dialog" | undefined;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
@@ -169,9 +183,10 @@ export type UsePopoverContentLifecycleProps = {
   side: PopoverSide;
   offset: number;
   align: FloatingAlign;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
   matchAnchorWidth: boolean;
   showArrow: boolean;
-  forwardedRef: React.ForwardedRef<HTMLDivElement>;
   contentRef: RefObject<HTMLDivElement | null>;
   triggerRef: RefObject<HTMLElement | null>;
   anchorRef?: RefObject<HTMLElement | null>;

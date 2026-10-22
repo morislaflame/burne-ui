@@ -48,7 +48,7 @@ export function DialogMotionBouncePanelDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Leave must hide the surface (`autoAlpha: 0`) so unmount is not a snap.
           </Text>
         </Dialog.Body>

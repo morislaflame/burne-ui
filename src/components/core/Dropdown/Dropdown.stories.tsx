@@ -61,7 +61,7 @@ export const SingleSelect: Story = {
   name: "Single selection",
   render() {
     return (
-      <Dropdown selectionIndicator defaultValue="ru">
+      <Dropdown defaultValue="ru">
         <Dropdown.Trigger asChild>
           <Button variant="outline">Interface language</Button>
         </Dropdown.Trigger>
@@ -113,7 +113,7 @@ export const MultiSelect: Story = {
   name: "Multi-select",
   render() {
     return (
-      <Dropdown multiple defaultValue={["a", "c"]}>
+      <Dropdown selectionMode="multiple" defaultValues={["a", "c"]}>
         <Dropdown.Trigger asChild>
           <Button variant="ghost">Table columns</Button>
         </Dropdown.Trigger>
@@ -159,7 +159,7 @@ export const GroupsWithDifferentIndicators: Story = {
           <Button variant="outline">Mixed menu</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover className="max-w-xs">
-          <Dropdown.Group selectionIndicator>
+          <Dropdown.Group>
             <Dropdown.Label>With indicator</Dropdown.Label>
             <Dropdown.Item value="a">
               <Dropdown.ItemIndicator />
@@ -171,7 +171,7 @@ export const GroupsWithDifferentIndicators: Story = {
             </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
-          <Dropdown.Group selectionIndicator={false}>
+          <Dropdown.Group>
             <Dropdown.Label>Without indicator (same single selection)</Dropdown.Label>
             <Dropdown.Item value="c">
               <Dropdown.ItemLabel>Option C</Dropdown.ItemLabel>
@@ -235,7 +235,7 @@ export const WithSubmenu: Story = {
             </Dropdown.Item>
             <Dropdown.Sub>
               <Dropdown.SubTrigger>Invite users</Dropdown.SubTrigger>
-              <Dropdown.SubContent>
+              <Dropdown.SubPopover>
                 <Dropdown.Item value="email" selection={false}>
                   <Dropdown.ItemLabel>Email</Dropdown.ItemLabel>
                 </Dropdown.Item>
@@ -246,7 +246,7 @@ export const WithSubmenu: Story = {
                 <Dropdown.Item value="more" selection={false}>
                   <Dropdown.ItemLabel>More…</Dropdown.ItemLabel>
                 </Dropdown.Item>
-              </Dropdown.SubContent>
+              </Dropdown.SubPopover>
             </Dropdown.Sub>
           </Dropdown.Group>
         </Dropdown.Popover>
@@ -279,14 +279,14 @@ export const CustomSubTriggerIcon: Story = {
               >
                 Invite users
               </Dropdown.SubTrigger>
-              <Dropdown.SubContent>
+              <Dropdown.SubPopover>
                 <Dropdown.Item value="email" selection={false}>
                   <Dropdown.ItemLabel>Email</Dropdown.ItemLabel>
                 </Dropdown.Item>
                 <Dropdown.Item value="msg" selection={false}>
                   <Dropdown.ItemLabel>Message</Dropdown.ItemLabel>
                 </Dropdown.Item>
-              </Dropdown.SubContent>
+              </Dropdown.SubPopover>
             </Dropdown.Sub>
           </Dropdown.Group>
         </Dropdown.Popover>
@@ -299,7 +299,7 @@ export const WithSelectionIndicator: Story = {
   name: "With selection indicator",
   render() {
     return (
-      <Dropdown selectionIndicator defaultValue="copy">
+      <Dropdown defaultValue="copy">
         <Dropdown.Trigger asChild>
           <Button variant="secondary">Action</Button>
         </Dropdown.Trigger>
@@ -330,7 +330,7 @@ export const CustomItemIndicator: Story = {
   name: "ItemIndicator (compound)",
   render() {
     return (
-      <Dropdown multiple defaultValue={["ru"]}>
+      <Dropdown selectionMode="multiple" defaultValues={["ru"]}>
         <Dropdown.Trigger asChild>
           <Button variant="outline">Languages</Button>
         </Dropdown.Trigger>
@@ -356,7 +356,7 @@ export const CustomItemParts: Story = {
   name: "Compound — slot layout",
   render() {
     return (
-      <Dropdown selectionIndicator={false} defaultValue="full-grid">
+      <Dropdown defaultValue="full-grid">
         <Dropdown.Trigger asChild>
           <Button variant="outline">Slot layout</Button>
         </Dropdown.Trigger>
@@ -402,10 +402,10 @@ export const CustomAvatarTrigger: Story = {
                 <Avatar.Fallback>JD</Avatar.Fallback>
               </Avatar>
               <div className="flex min-w-0 flex-col gap-px">
-                <Text as="p" variant="base" className="font-medium leading-tight">
+                <Text as="p" textStyle="base" className="font-medium leading-tight">
                   Jane Doe
                 </Text>
-                <Text as="p" variant="xsmall" className="text-muted leading-tight">
+                <Text as="p" textStyle="xsmall" className="text-muted leading-tight">
                   jane@example.com
                 </Text>
               </div>
@@ -449,7 +449,7 @@ export const OnLightTheme: Story = {
   decorators: [...lightDecorator],
   render() {
     return (
-      <Dropdown multiple defaultValue={["x"]}>
+      <Dropdown selectionMode="multiple" defaultValues={["x"]}>
         <Dropdown.Trigger asChild>
           <Button variant="outline">Multi-select</Button>
         </Dropdown.Trigger>
@@ -506,7 +506,7 @@ export const Accessibility: Story = {
           returns focus to trigger. Group with <code className="text-primary">Dropdown.Label</code>{" "}
           — <code className="text-primary">aria-labelledby</code>.
         </p>
-        <Dropdown selectionIndicator defaultValue="ru">
+        <Dropdown defaultValue="ru">
           <Dropdown.Trigger asChild>
             <Button variant="secondary">Language</Button>
           </Dropdown.Trigger>
@@ -556,7 +556,7 @@ export const PortalContainer: Story = {
         >
           <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
-            <Dropdown portalContainer={container} selectionIndicator defaultValue="ru">
+            <Dropdown portalContainer={container} defaultValue="ru">
               <Dropdown.Trigger asChild>
                 <Button variant="outline" type="button">
                   Open in host
@@ -607,7 +607,7 @@ export const AsChildMergedProps: Story = {
     return (
       <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
-        <Dropdown selectionIndicator defaultValue="ru">
+        <Dropdown defaultValue="ru">
           <Dropdown.Trigger
             asChild
             ref={triggerRef}
@@ -657,10 +657,10 @@ export const CustomClassNames: Story = {
   render: function DropdownClassNamesStory() {
     return (
       <Dropdown
-        selectionIndicator
         defaultValue="ru"
         classNames={{
           popoverBody: "border border-primary/20",
+          subPopover: "shadow-token-lg",
           subPopoverBody: "rounded-large border border-primary/20 bg-surface",
           label: "text-primary",
           item: "rounded-lg",
@@ -682,12 +682,12 @@ export const CustomClassNames: Story = {
             </Dropdown.Item>
             <Dropdown.Sub>
               <Dropdown.SubTrigger>More</Dropdown.SubTrigger>
-              <Dropdown.SubContent>
+              <Dropdown.SubPopover>
                 <Dropdown.Item value="de">
                   <Dropdown.ItemIndicator />
                   <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
                 </Dropdown.Item>
-              </Dropdown.SubContent>
+              </Dropdown.SubPopover>
             </Dropdown.Sub>
           </Dropdown.Group>
         </Dropdown.Popover>
@@ -708,7 +708,7 @@ export const PopoverSideTop: Story = {
     },
   },
   render: () => (
-    <Dropdown selectionIndicator defaultValue="ru">
+    <Dropdown defaultValue="ru">
       <Dropdown.Trigger asChild>
         <Button variant="outline">Opens upward</Button>
       </Dropdown.Trigger>

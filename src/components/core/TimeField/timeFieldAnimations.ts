@@ -22,7 +22,7 @@ import {
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
  
 import { useOptionalTimeFieldMotionScope, useTimeFieldMotionScope } from "./timeFieldContext";
 import type {
@@ -32,6 +32,10 @@ import type {
   UseTimeFieldShellAnimationsProps,
 } from "./timeFieldTypes";
 import { KIT_TIME_FIELD_VARIANTS } from "./timeFieldTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export function resolveTimeFieldMotionDefaults({
   variant,
@@ -44,8 +48,8 @@ export function resolveTimeFieldMotionDefaults({
   return overlaySkinMotion(
     {
       shell: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
         pressIn: active ? "pressSqueeze" : false,
         pressOut: false,
       },
@@ -66,8 +70,8 @@ export function resolveTimeFieldMotionParams({
   pointerInside: MutableRefObject<boolean>;
 }) {
   return {
-    shadowSize: "base" as const,
-    hasHoverShadow: !disabled && isKitVariant(variant, KIT_TIME_FIELD_VARIANTS),
+    shadowSize: "none" as const,
+    hasHoverShadow: !disabled && usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS),
     pointerInside,
   };
 }
@@ -84,11 +88,12 @@ export function useTimeFieldShellAnimations({
   const shellMotionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   shellMotionRef.current = motion;
-  const kitSurface = isKitVariant(variant, KIT_TIME_FIELD_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS);
 
   useOptionalEnterOnMount(scope, "shell", shellRef);
 
   const standardShellHover = useSecondLevelShadow(shellRef, !disabled && kitSurface, {
+    shadowSize: "none",
     interactive: false,
     pointerInsideRef,
   });

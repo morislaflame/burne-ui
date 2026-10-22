@@ -1,9 +1,7 @@
 import { cn } from "@/utils/cn";
  
-import {
-  OPTION_GROUP_ORIENTATION_LAYOUT,
-  type OptionGroupOrientation,
-} from "@/components/composite/utils/optionGroupLayout";
+import type { OptionGroupOrientation } from "@/components/composite/utils/optionGroupLayout";
+import { OPTION_GROUP_ORIENTATION_LAYOUT } from "@/components/composite/utils/optionGroupStyles";
  
 export type { OptionGroupOrientation as RadioGroupListOrientation };
  

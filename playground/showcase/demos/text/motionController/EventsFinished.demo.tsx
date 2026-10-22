@@ -28,7 +28,7 @@ export function TextMotionEventsFinishedDemo() {
       <Button size="small" variant="outline" disabled={busy} onClick={() => void bounce()}>
         Bounce
       </Button>
-      <Text variant="large" motionController={controller} motion={{ events }}>
+      <Text textStyle="large" motionController={controller} motion={{ events }}>
         Wait for complete
       </Text>
     </div>

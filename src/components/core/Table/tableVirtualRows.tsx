@@ -25,7 +25,7 @@ export function TableVirtualRows({
   itemSizeProp,
   bodyRef,
 }: {
-  items: unknown[];
+  items: readonly unknown[];
   renderItem: (item: unknown) => ReactNode;
   itemSizeProp?: number;
   bodyRef: RefObject<HTMLTableSectionElement | null>;

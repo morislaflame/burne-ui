@@ -27,12 +27,12 @@ export function TabsMotionControllerInsideDemo() {
     >
       <ListPulse />
       <Tabs.Panel value="one" className="pt-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Hover the list — useMotionController() on the root scope.
         </Text>
       </Tabs.Panel>
       <Tabs.Panel value="two" className="pt-large">
-        <Text as="p" variant="small">Second panel.</Text>
+        <Text as="p" textStyle="small">Second panel.</Text>
       </Tabs.Panel>
     </Tabs>
   );

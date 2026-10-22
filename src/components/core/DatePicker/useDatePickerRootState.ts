@@ -1,14 +1,15 @@
 import { useCallback, useId, useMemo, useRef } from "react";
 import type { ReactNode } from "react";
 
-import { EN_LOCALE, resolveCalendarLocale, type CalendarLocale, type CalendarRangeValue } from "@/components/core/Calendar";
+import { EN_LOCALE, resolveCalendarLocale, type CalendarLocale, type CalendarRangeValue, type CalendarView } from "@/components/core/Calendar";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import type { PopoverSide } from "@/components/core/Popover";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { datePickerDescribedBy, datePickerFieldIds } from "./datePickerA11y";
 import {
@@ -19,6 +20,7 @@ import {
 import type { DatePickerMode, DatePickerStoredValue } from "./datePickerTypes";
 
 const EMPTY_RANGE: CalendarRangeValue = { start: null, end: null };
+const EMPTY_DATES: Date[] = [];
 
 export type UseDatePickerRootStateProps = {
   children?: ReactNode;
@@ -30,9 +32,10 @@ export type UseDatePickerRootStateProps = {
   id?: string;
   name?: string;
   required?: boolean;
-  status?: InputStatus;
   size?: InputSize;
+  icon?: ReactNode | null;
   disabled?: boolean;
+  readOnly?: boolean;
   placeholder?: string;
   value?: DatePickerStoredValue;
   defaultValue?: DatePickerStoredValue;
@@ -44,7 +47,13 @@ export type UseDatePickerRootStateProps = {
   locale?: string | CalendarLocale;
   minDate?: Date;
   maxDate?: Date;
+  isDateUnavailable?: (date: Date) => boolean;
   defaultMonth?: Date;
+  month?: Date;
+  onMonthChange?: (month: Date) => void;
+  view?: CalendarView;
+  defaultView?: CalendarView;
+  onViewChange?: (view: CalendarView) => void;
   side?: PopoverSide;
 };
 
@@ -58,9 +67,10 @@ export function useDatePickerRootState({
   id,
   name,
   required = false,
-  status = "default",
   size = "base",
+  icon,
   disabled = false,
+  readOnly: readOnlyProp = false,
   placeholder,
   value: valueProp,
   defaultValue,
@@ -72,10 +82,17 @@ export function useDatePickerRootState({
   locale: localeProp = EN_LOCALE,
   minDate,
   maxDate,
+  isDateUnavailable,
   defaultMonth,
+  month,
+  onMonthChange,
+  view,
+  defaultView,
+  onViewChange,
   side = "bottom",
 }: UseDatePickerRootStateProps) {
   const form = useOptionalFormBindingContext();
+  const labels = useBurneLabels();
   const reactId = useId();
   const triggerId = id ?? `date-picker-${reactId}`;
   const ids = datePickerFieldIds(triggerId);
@@ -84,28 +101,37 @@ export function useDatePickerRootState({
   const resolvedError = error ?? formMessage;
   const formDisabled = form?.disabled === true;
   const resolvedDisabled = disabled || formDisabled;
+  const resolvedReadOnly = readOnlyProp || form?.readOnly === true;
 
   const [value, setStoredValue] = useControllableState<DatePickerStoredValue>({
     value: valueProp,
-    defaultValue: defaultValue ?? (mode === "range" ? EMPTY_RANGE : null),
+    defaultValue: defaultValue ?? (mode === "range" ? EMPTY_RANGE : mode === "multiple" ? EMPTY_DATES : null),
     onChange: onValueChange,
   });
 
-  const [open, setOpen] = useControllableState({
-    value: openProp,
-    defaultValue: defaultOpen,
+  const [open, setOpenState] = useControllableState({
+    value: resolvedReadOnly ? false : openProp,
+    defaultValue: resolvedReadOnly ? false : defaultOpen,
     onChange: onOpenChange,
   });
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (resolvedReadOnly) return;
+      setOpenState(next);
+    },
+    [resolvedReadOnly, setOpenState],
+  );
 
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const pointerInsideRef = useRef(false);
 
   const commit = useCallback(
     (next: DatePickerStoredValue) => {
+      if (resolvedReadOnly) return;
       setStoredValue(next);
       if (name) form?.setValue(name, serializeDatePickerValue(next, mode));
     },
-    [form, mode, name, setStoredValue],
+    [form, mode, name, resolvedReadOnly, setStoredValue],
   );
 
   const locale = useMemo(() => resolveCalendarLocale(localeProp), [localeProp]);
@@ -120,8 +146,6 @@ export function useDatePickerRootState({
     errorConnected: resolvedError != null || errorConnected,
     formInvalid: false,
   });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
-
   const contextValue = useMemo(
     () => ({
       mode,
@@ -130,16 +154,23 @@ export function useDatePickerRootState({
       open,
       setOpen,
       disabled: resolvedDisabled,
-      placeholder: datePickerPlaceholder(mode, placeholder),
+      readOnly: resolvedReadOnly,
+      placeholder: datePickerPlaceholder(mode, placeholder, labels),
       display: display.text,
       empty: display.empty,
       size,
+      icon,
       variant,
-      status: paintedStatus,
       locale,
       minDate,
       maxDate,
+      isDateUnavailable,
       defaultMonth,
+      month,
+      onMonthChange,
+      view,
+      defaultView,
+      onViewChange,
       side,
       triggerId,
       panelId: ids.panelId,
@@ -168,6 +199,11 @@ export function useDatePickerRootState({
     [
       commit,
       defaultMonth,
+      defaultView,
+      month,
+      onMonthChange,
+      onViewChange,
+      view,
       display.empty,
       display.text,
       errorConnected,
@@ -180,18 +216,21 @@ export function useDatePickerRootState({
       isInvalid,
       label,
       labelConnected,
+      labels,
       locale,
       maxDate,
+      isDateUnavailable,
       minDate,
       mode,
       name,
       open,
-      paintedStatus,
       placeholder,
       required,
       resolvedDisabled,
+      resolvedReadOnly,
       resolvedError,
       setOpen,
+      icon,
       side,
       size,
       triggerId,

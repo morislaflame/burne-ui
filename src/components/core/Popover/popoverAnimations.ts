@@ -1,11 +1,12 @@
 /**
  * Slot motion for Popover — look here first.
  *
- * DOM slots: `content` (portal surface), `header`, `title`, `description`, `body`, `arrow`,
+ * DOM slots: `content` is the visual panel (same node as `popover.panel` classes).
+ * The positioning wrapper is not a slot. Also `header`, `title`, `description`, `body`, `arrow`,
  * `trigger` (Root), plus pass-through `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` /
  * `subTrigger` / `separator` (Dropdown).
  * Host: `Popover.Content` (`usePopoverContentLifecycle`) plays `enter` / `leave`
- * on `content` and broadcasts nested slots. Root has no portal DOM — it passes the
+ * on the visual panel (`content`) and broadcasts nested slots. Root has no portal DOM — it passes the
  * `motion` map and trigger defaults. Overlay/content defaults wrap the portal host
  * (`POPOVER_MOTION_DEFAULTS` on the Content provider).
  *
@@ -16,6 +17,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { focusPanelOnOpen, isFocusVisibleElement } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { bindOverlayReflow } from "@/components/core/utils/bindOverlayReflow";
 import { applyFloatingPortalPosition, resolvePortalContainer } from "@/components/core/utils/portalContainer";
@@ -30,11 +32,14 @@ import {
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
  
-import { mergePopoverRefs } from "./popoverAPI";
 import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import type { PopoverMotion, PopoverSide, PopoverVariant, UsePopoverContentLifecycleProps } from "./popoverTypes";
 import { KIT_POPOVER_VARIANTS } from "./popoverTypes";
+
+import { bindPortalRecipes } from "@/components/core/utils/slotMotion/recipes/bindPortal";
+
+bindPortalRecipes();
  
 export const POPOVER_MOTION_HOST_SLOTS = ["content"] as const;
  
@@ -51,9 +56,10 @@ export function usePopoverContentLifecycle({
   side,
   offset,
   align,
+  collisionPadding,
+  avoidCollisions,
   matchAnchorWidth,
   showArrow,
-  forwardedRef,
   contentRef,
   triggerRef,
   anchorRef,
@@ -75,9 +81,8 @@ export function usePopoverContentLifecycle({
     (node: HTMLDivElement | null) => {
       panelRef.current = node;
       contentRef.current = node;
-      mergePopoverRefs(forwardedRef)(node);
     },
-    [contentRef, forwardedRef],
+    [contentRef],
   );
  
   const reposition = useCallback(() => {
@@ -97,13 +102,13 @@ export function usePopoverContentLifecycle({
       panel.getBoundingClientRect(),
       side,
       offset,
-      { align },
+      { align, collisionPadding, avoidCollisions },
     );
  
     setResolvedSide(placement.resolvedSide);
     applyFloatingPortalPosition(panel, placement, portalContainer);
     panel.style.transform = "";
-  }, [align, anchorRef, matchAnchorWidth, offset, portalContainer, side, triggerRef]);
+  }, [align, anchorRef, avoidCollisions, collisionPadding, matchAnchorWidth, offset, portalContainer, side, triggerRef]);
  
   useLayoutEffect(() => {
     if (!open || !portalMounted) return;
@@ -141,12 +146,12 @@ export function usePopoverContentLifecycle({
  
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;
-    const el = panelRef.current;
+    const el = motionScope.getTarget("content");
     if (!el) return undefined;
  
     const cancelEnterFrame = () => invalidateEnterFrame(enterFrameRef, enterGenRef);
  
-    if (isReducedModalMotion(config)) {
+    if (isReducedModalMotion(config, prefersReducedMotion())) {
       killMotion(el);
       if (open) {
         applyReducedPortalMotion(el);

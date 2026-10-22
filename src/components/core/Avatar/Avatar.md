@@ -1,6 +1,8 @@
 # Avatar
 
-Аватар пользователя с изображением, fallback-буквой, tooltip по `nickname`, `variant="gloss"` и группировкой через `Avatar.Group`. Есть Simple API (`src`, `label`) и compound API (`Avatar.Image`, `Avatar.Fallback`).
+Аватар пользователя с изображением, fallback-буквой, tooltip по `nickname` и группировкой через `Avatar.Group`. Есть Simple API (`src`, `label`) и compound API (`Avatar.Image`, `Avatar.Fallback`).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
@@ -56,7 +58,7 @@ import { Avatar, type AvatarProps, type AvatarClassNames, type AvatarSize, type 
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `gloss` |
+| `variant` | `default` | `default` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `label` | — | Источник fallback-инициалов (видимый); не form-лейбл |
 | `aria-label` | — | Accessible name; если нет — берётся trimmed `label` |
@@ -64,10 +66,8 @@ import { Avatar, type AvatarProps, type AvatarClassNames, type AvatarSize, type 
 | `alt` | `""` | Alt image; обычно пустой, так как root уже имеет accessible name |
 | `loading` | — | `img.loading` |
 | `nickname` | — | Tooltip content |
-| `tooltipSize` | `base` | Размер tooltip |
-| `tooltipVariant` | `default` | Вариант tooltip |
-| `tooltipSide` | `top` | Сторона tooltip |
-| `className` | — | Root shell (в gloss — внутренний круг) |
+| `tooltip` | `{ size: "base", variant: "default", status: "default", side: "top" }` | Тултип по `nickname`: `size`, `variant`, `status`, `side` |
+| `className` | — | Root shell |
 | `classNames` | — | Слоты компонента |
 | `motion` | — | Карта слотов `root` / `image` / `fallback`; на `Avatar.Group` — `groupItem`. Ключ `events` — app-команды для `MotionController` |
 | `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
@@ -83,7 +83,6 @@ import { Avatar, type AvatarProps, type AvatarClassNames, type AvatarSize, type 
 | Variant | Поверхность |
 |---------|-------------|
 | `default` | `rounded-full bg-surface border-token` |
-| `gloss` | `gloss-wrap` + `gloss-panel` + `gloss-shadow` |
 
 ### Sizes
 
@@ -150,6 +149,8 @@ function Ping() {
 
 Сложенный presence-timeline, `playSlot("root" | "image")` и `waitForComplete` — playground / Storybook **MotionController**.
 
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ### Отключение
 
 ```ts
@@ -170,14 +171,13 @@ configureMotion({ enableContentFade: false });
 | `AVATAR_ROOT_CLASS` | Круг, `overflow-hidden`, size per prop |
 | `AVATAR_FALLBACK_CLASS` | Initials / placeholder bg |
 | `AVATAR_IMAGE_CLASS` | `object-cover`, start `opacity-0` до fade |
-| gloss wrap layers | Outer ring/shadow в `variant="gloss"` |
 | `groupItem` negative margin | Stack overlap в `Avatar.Group` |
 
 ## Стилизация и кастомизация
 
 ### Два уровня
 
-1. **`className` на `Avatar`** — root shell. В `variant="gloss"` попадает на внутренний круг.
+**`className` на `Avatar`** — root shell.
 2. **`classNames` на root** — слоты root/image/fallback; `Avatar.Group` — `group`/`groupItem`.
 
 ### Слоты `AvatarClassNames`
@@ -194,7 +194,6 @@ configureMotion({ enableContentFade: false });
 
 ```tsx
 <Avatar
-  variant="gloss"
   size="mid"
   label="Андрей"
   src={avatarUrl}
@@ -239,7 +238,6 @@ configureMotion({ enableContentFade: false });
 
 - Декоративная картинка: `alt=""`; имя — через `aria-label` (или fallback из `label`).
 - `nickname` auto-wrap в `Tooltip` (portal motion из Tooltip.md).
-- Gloss: `classNames.root` на inner circle, `glossWrap` на outer shell.
 - **Не `overflow-visible` на root** — image выйдет за круг.
 - **Не `opacity` на `image` в CSS** — конфликт с fade GSAP.
 
@@ -279,4 +277,4 @@ Avatar/
 
 ## Storybook
 
-`Core Components/Avatar` — Simple/Compound, размеры, fallback, broken image, group lift, nickname tooltip, gloss, light theme, `classNames`, slot motion gallery.
+`Core Components/Avatar` — Simple/Compound, размеры, fallback, broken image, group lift, nickname tooltip, light theme, `classNames`, slot motion gallery.

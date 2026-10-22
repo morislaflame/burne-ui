@@ -56,7 +56,7 @@ export const Basic: Story = {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Arbitrary content inside the panel.
           </Text>
         </Popover.Body>
@@ -85,7 +85,7 @@ export const ReducedMotionOpenClose: Story = {
         </Popover.Trigger>
         <Popover.Content>
           <Popover.Body>
-            <Text as="p" variant="small">
+            <Text as="p" textStyle="small">
               Arbitrary content inside the panel.
             </Text>
           </Popover.Body>
@@ -148,7 +148,7 @@ export const Placements: Story = {
             <Popover.Content showArrow offset={10}>
               <Popover.Arrow />
               <Popover.Body>
-                <Text as="p" variant="small">{`Popover ${side}`}</Text>
+                <Text as="p" textStyle="small">{`Popover ${side}`}</Text>
               </Popover.Body>
             </Popover.Content>
           </Popover>
@@ -188,7 +188,7 @@ export const Sizes: Story = {
               </Popover.Description>
             </Popover.Header>
             <Popover.Body>
-              <Text as="p" variant="small" className="text-muted">
+              <Text as="p" textStyle="small" className="text-muted">
                 Body text follows the size preset; long lines wrap within max-w-component.
               </Text>
             </Popover.Body>
@@ -247,7 +247,7 @@ function TagColorPopoverDemo() {
             </div>
             <div className="flex items-center gap-base rounded-base border-token bg-secondary px-base py-small">
               <span className={cn("size-4 shrink-0 rounded-full", active.className)} aria-hidden />
-              <Text as="span" variant="small">
+              <Text as="span" textStyle="small">
                 {active.label}
               </Text>
             </div>
@@ -310,7 +310,7 @@ function ShareLinkPopoverDemo() {
               </Button>
             </div>
             {copied ? (
-              <Text as="p" variant="xsmall" className="text-success">
+              <Text as="p" textStyle="xsmall" className="text-success">
                 Copied
               </Text>
             ) : null}
@@ -340,7 +340,7 @@ export const Controlled: Story = {
           </Popover.Trigger>
           <Popover.Content>
             <Popover.Body>
-              <Text as="p" variant="small">
+              <Text as="p" textStyle="small">
                 External state: {open ? "open" : "closed"}
               </Text>
             </Popover.Body>
@@ -377,7 +377,7 @@ export const Accessibility: Story = {
             <Popover.Title>Field help</Popover.Title>
           </Popover.Header>
           <Popover.Body>
-            <Text as="p" variant="small" className="text-muted">
+            <Text as="p" textStyle="small" className="text-muted">
               Use ISO 8601 format for the date.
             </Text>
           </Popover.Body>
@@ -421,7 +421,7 @@ export const PortalContainer: Story = {
               </Popover.Trigger>
               <Popover.Content>
                 <Popover.Body>
-                  <Text as="p" variant="small">
+                  <Text as="p" textStyle="small">
                     Portaled into the dashed container.
                   </Text>
                 </Popover.Body>
@@ -478,7 +478,7 @@ export const AsChildMergedProps: Story = {
               </Popover.Description>
             </Popover.Header>
             <Popover.Body>
-              <Text as="p" variant="small">
+              <Text as="p" textStyle="small">
                 Inspect the trigger for id / data-analytics / ring.
               </Text>
             </Popover.Body>
@@ -500,15 +500,14 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root (trigger), trigger, content, panelRelative, panel, title, description, and body via classNames prop.",
+          "Slots trigger, content, panelRelative, panel, title, description, and body via classNames prop.",
       },
     },
   },
   render: () => (
     <Popover
       classNames={{
-        root: "rounded-large ring-2 ring-primary/40",
-        trigger: "rounded-large",
+        trigger: "rounded-large ring-2 ring-primary/40",
         content: "ring-1 ring-primary/20",
         panelRelative: "isolate",
         panel: "border-primary/25",
@@ -528,7 +527,7 @@ export const CustomClassNames: Story = {
           <Popover.Description>Changes apply immediately</Popover.Description>
         </Popover.Header>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Panel content with custom slots.
           </Text>
         </Popover.Body>

@@ -1,13 +1,13 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
 import {
   FIELD_SHELL_TRANSITION_CLASS,
   fieldShellFocusRingClass,
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
-import { KIT_INPUT_VARIANTS, type InputSize, type InputStatus, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const TAGS_INPUT_ROOT_CLASS = "w-full min-w-0";
@@ -43,13 +43,13 @@ export function tagsInputShellClass({
 }: {
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   motionClass?: string;
   slotClass?: string;
   className?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return cn(
     "flex w-full min-w-0 flex-wrap items-center gap-xsmall border-1",
     SHELL_MIN[size],
@@ -89,8 +89,8 @@ export function tagsInputTagClass(size: InputSize, variant: InputVariant, slotCl
   );
 }
 
-export function tagsInputTagTextClass(): string {
-  return "min-w-0 truncate";
+export function tagsInputTagTextClass(slotClass?: string): string {
+  return cn("min-w-0 truncate", slotClass);
 }
 
 export function tagsInputRemoveClass(slotClass?: string): string {

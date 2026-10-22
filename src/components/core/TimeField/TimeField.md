@@ -2,10 +2,12 @@
 
 Поле ввода времени с сегментами (часы / минуты / секунды). **Dual API:** simple props (`label`, `hint`, `error`) на root или compound `Label` / `Control` / `Hint` / `Error`. Shell motion как у `Input` / `Field`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFieldSize, type TimeFieldStatus, type TimeFieldVariant, type TimeFieldFormat, type TimeFieldClassNames, type TimeFieldMotion, type TimeFieldPartMotion } from "burne-ui";
+import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFieldSize, type TimeFieldVariant, type TimeFieldFormat, type TimeFieldClassNames, type TimeFieldMotion, type TimeFieldPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -43,8 +45,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `onValueChange` | — | `(value: string) => void` |
 | `format` | `HH:mm` | `HH:mm` \| `HH:mm:ss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` | `default` \| `outline` \| `secondary` \| `segmented` \| `gloss` |
-| `status` | `default` | `default` \| `danger` \| `success` \| `warning` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` \| `segmented` |
 | `disabled` | `false` | Блокирует control |
 | `compact` | `false` | `w-fit` вместо `w-full` |
 | `required` | `false` | `aria-required` на группе (`fieldset`) |
@@ -58,9 +59,9 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 
 ### `TimeFieldClassNames`
 
-`root`, `label`, `shell`, `shellInner`, `prefix`, `suffix`, `segments`, `segmentGroup`, `segment`, `segmentSeparator`, `keyboardInput`, `hint`, `error`.
+`root`, `label`, `shell`, `shellInner`, `control`, `prefix`, `suffix`, `segments`, `segmentGroup`, `segment`, `segmentSeparator`, `keyboardInput`, `hint`, `error`.
 
-## variant / status / размеры
+## variant / размеры
 
 | variant | Shell |
 |---------|-------|
@@ -68,14 +69,10 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `outline` | `bg-transparent border-token` |
 | `secondary` | `bg-secondary border-token` |
 | `segmented` | Ячейки сегментов с разделителями |
-| `gloss` | `gloss-control` + gloss shell motion |
 
-`segmented` — **доменное исключение** `variant`: несводимая структура (ячейки сегментов с разделителями), не канонический fill `default | outline | secondary | gloss`.
+`segmented` — **доменное исключение** `variant`: несводимая структура (ячейки сегментов с разделителями), не канонический fill `default | outline | secondary`.
 
-| status | Эффект |
-|--------|--------|
-| `default` | Standard surface |
-| `danger` / `success` / `info` / `warning` | нейтральный фон/border + постоянный статусный ring |
+`invalid` или `error` красят danger-кольцо. `data-status` на поле нет.
 
 | size | Shell height | Segment text |
 |------|--------------|--------------|
@@ -88,13 +85,13 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `TimeField.Control` (defaults + `play`). Chrome (`label` / `hint` / `error`) регистрируется на Root scope (соседи Control). Gloss hover/press остаются на `useGlossFieldShellMotion`. Фокус сегмента — CSS, без GSAP.
+Публичный slot motion. Root передаёт карту `motion`; хост — `TimeField.Control` (defaults + `play`). Chrome (`label` / `hint` / `error`) регистрируется на Root scope (соседи Control). Фокус сегмента — CSS, без GSAP.
 
 ### Slot motion
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | — |
 | `prefix` / `suffix` / `segments` | hover/press | нет |
 | `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
 
@@ -117,6 +114,8 @@ Compound: `motion` на `TimeField.Control` — part motion слота `shell`. 
 Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("prefix", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `TimeField.Control`. Один handle ≠ два scope.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`time:nudge`, `time:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в Control). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на `TimeField.Control`. Simple API мержит карту корня в Control. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, TimeField, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -157,7 +156,7 @@ function Nudge() {
 1. **`className` на `TimeField`** — root layout.
 2. **`classNames` на root** — label, shell, segments, hint, error.
 
-`TimeField.Control` принимает `className` на fieldset shell.
+`TimeField.Control`: `className` и `ref` попадают на ряд сегментов (тот же узел, что `classNames.control`). Оболочка `<fieldset>` стилизуется через `classNames.shell`.
 
 ### Слоты `TimeFieldClassNames`
 
@@ -167,8 +166,9 @@ function Nudge() {
 | `label` | Label | Typography |
 | `shell` | `<fieldset>` | Border tint, radius |
 | `shellInner` | Flex row внутри fieldset | Раскладка prefix/segments/suffix |
+| `control` | Ряд сегментов | `className` и `ref` у `TimeField.Control` |
 | `prefix` / `suffix` | Affix spans | Icon slots |
-| `segments` | Segments row | Gap, alignment |
+| `segments` | Внутри ряда сегментов | Motion слота `segments` |
 | `segmentGroup` | Обёртка сегмента + separator | Inline group |
 | `segment` | Spinbutton span | Cell padding |
 | `segmentSeparator` | Separator span | Muted separator **класс** (символ — проп `segmentSeparator`) |
@@ -181,7 +181,6 @@ function Nudge() {
 <TimeField
   variant="segmented"
   format="HH:mm:ss"
-  status="success"
   classNames={{
     shell: "border-success/30",
     segment: "rounded-small",
@@ -210,7 +209,6 @@ function Nudge() {
 - Keyboard: ArrowUp/Down, PageUp/Down, цифры, Tab между сегментами.
 - `compact` — inline time в toolbar/forms.
 - `segmented` — отдельные ячейки; `outline` — прозрачный shell.
-- **Не задавайте `transform` на shell** при gloss/default motion.
 - Hidden `keyboardInput` — для мобильной клавиатуры (`field-control-mobile-no-zoom`, ≥16px на touch).
 
 ## Интеграции
@@ -225,7 +223,7 @@ function Nudge() {
 
 - Shell (`<fieldset>`): `aria-labelledby` при Label / `aria-label` fallback — **без** `label htmlFor` на fieldset (не labelable)
 - Segments: `role="spinbutton"`, `aria-valuemin/max/now/text`
-- `aria-required` и `aria-invalid` на группе (`role="group"`), не на сегментах
+- `aria-required` и `aria-invalid` на группе (`role="group"`), не на сегментах; danger-кольцо от `invalid` / `error`
 - Separators: `aria-hidden`
 - Hidden input: `aria-hidden`, `tabIndex={-1}`
 - Error: `role="alert"` через `FieldError`
@@ -251,4 +249,4 @@ TimeField/
 
 ## Storybook
 
-`Core Components/TimeField` — dual API, segmented, outline, affixes, compact, seconds, validation, statuses, sizes, variants, disabled, `CustomClassNames`, slot motion gallery.
+`Core Components/TimeField` — dual API, segmented, outline, affixes, compact, seconds, validation, sizes, variants, disabled, `CustomClassNames`, slot motion gallery.

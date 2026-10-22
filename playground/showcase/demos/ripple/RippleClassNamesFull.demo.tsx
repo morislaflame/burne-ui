@@ -9,7 +9,7 @@ export function RippleClassNamesFullDemo() {
     >
       <Ripple color="info" className="rounded-[inherit]" />
       <div className="relative z-[1] flex items-center px-large py-2xlarge">
-        <Text variant="base">className paints the ripple layer</Text>
+        <Text textStyle="base">className paints the ripple layer</Text>
       </div>
     </div>
   );

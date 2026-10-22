@@ -23,7 +23,7 @@ export function SurfaceMotionEventsPingDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small">
+        <Text as="p" textStyle="small">
           `panel:ping` on motion.events — not a hover phase.
         </Text>
       </Surface>

@@ -4,7 +4,7 @@ import { Button } from "@/components/core/Button";
 import { Select } from "@/components/core/Select";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -22,8 +22,8 @@ export function SelectMotionEventsFinishedDemo() {
   async function bounce() {
     setBusy(true);
     try {
-      await controller.playSlot("triggerGroup", "select:out", { waitForComplete: true }).finished;
-      await controller.playSlot("triggerGroup", "select:rest", { waitForComplete: true }).finished;
+      await controller.playSlot("shell", "select:out", { waitForComplete: true }).finished;
+      await controller.playSlot("shell", "select:rest", { waitForComplete: true }).finished;
     } finally {
       setBusy(false);
     }
@@ -36,7 +36,7 @@ export function SelectMotionEventsFinishedDemo() {
       </Button>
       <Select
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{ events }}

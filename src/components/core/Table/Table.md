@@ -1,11 +1,14 @@
 # Table
 
-Таблица данных с compound API: scroll container, header/columns, body/rows, footer. Поддерживает **sort**, **selection**, row `tone`, variants включая `gloss`.
+Таблица данных с compound API: scroll container, header/columns, body/rows, footer.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
 ```tsx
-import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type TableClassNames, type TableContentProps, type SortDescriptor, type SelectionMode } from "burne-ui";
+import { Table, type TableProps, type TableVariant, type TableClassNames, type TableContentProps, type SortDescriptor, type SelectionMode } from "burne-ui";
+import { TABLE_ROW_TONE_SURFACE } from "burne-ui/internal";
 ```
 
 ## API
@@ -13,21 +16,22 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 ### Compound API
 
 ```tsx
-<Table variant="default" className="max-w-2xl">
+<Table
+  variant="default"
+  className="max-w-2xl"
+  selectionMode="multiple"
+  selectedKeys={selected}
+  onSelectionChange={setSelected}
+  sortDescriptor={sort}
+  onSortChange={setSort}
+>
   <Table.ScrollContainer>
-    <Table.Content
-      aria-label="Команда"
-      selectionMode="multiple"
-      selectedKeys={selected}
-      onSelectionChange={setSelected}
-      sortDescriptor={sort}
-      onSortChange={setSort}
-    >
+    <Table.Content aria-label="Команда">
       <Table.Header>
-        <Table.Column id="name" isRowHeader allowsSorting>
+        <Table.Column id="name" rowHeader sortable>
           Имя
         </Table.Column>
-        <Table.Column id="role" allowsSorting>
+        <Table.Column id="role" sortable>
           Роль
         </Table.Column>
       </Table.Header>
@@ -51,7 +55,14 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `secondary` \| `toned` \| `gloss` |
+| `variant` | `default` | `default` \| `secondary` \| `toned` |
+| `selectionMode` | `none` | `none` \| `single` \| `multiple`. `none` — доменное значение таблицы |
+| `selectedKeys` | — | Controlled: `Set` или `"all"` |
+| `defaultSelectedKeys` | `∅` | Uncontrolled начальный selection |
+| `onSelectionChange` | — | Колбэк |
+| `sortDescriptor` | — | Controlled: `{ column, direction }` |
+| `defaultSortDescriptor` | — | Uncontrolled начальная сортировка |
+| `onSortChange` | — | Колбэк сортировки |
 | `className` | — | Root wrapper |
 | `classNames` | — | Слоты |
 | `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Table.Row` |
@@ -60,13 +71,6 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `selectionMode` | `none` | `none` \| `single` \| `multiple` |
-| `selectedKeys` | — | Controlled: `Set` или `"all"` |
-| `defaultSelectedKeys` | `∅` | Uncontrolled начальный selection |
-| `onSelectionChange` | — | Колбэк |
-| `sortDescriptor` | — | Controlled: `{ column, direction }` |
-| `defaultSortDescriptor` | — | Uncontrolled начальная сортировка |
-| `onSortChange` | — | Колбэк сортировки |
 | `aria-label` | — | Имя таблицы |
 
 ### `TableClassNames`
@@ -78,7 +82,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | Часть | Назначение |
 |-------|------------|
 | `Table.ScrollContainer` | Horizontal scroll; `tabIndex` только по необходимости |
-| `Table.Content` | Элемент `<table>` + selection/sort context. **Доменное исключение имени `Content`:** здесь это не «тело панели» (`Popover.Content` / `Dialog.Content`) и не текстовая колонка (`Toast.Content` / `Alert.Content`), а именно table-host. |
+| `Table.Content` | Элемент `<table>`. Selection и sort живут на корне. **Доменное исключение имени `Content`:** здесь это не «тело панели» (`Popover.Content` / `Dialog.Content`) и не текстовая колонка (`Toast.Content` / `Alert.Content`), а именно table-host. |
 | `Table.Header` | `<thead>` |
 | `Table.HeaderRow` | `<tr>` в header (`className` / `ref`); если не передан — Header оборачивает колонки сам |
 | `Table.Column` | `<th>` + sort UI |
@@ -97,9 +101,8 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `default` | `rounded-large border-token bg-surface overflow-clip` |
 | `secondary` | Прозрачный root; header `bg-secondary` на columns |
 | `toned` | `border-separate border-spacing-y-xsmall`; row strips через `tone` |
-| `gloss` | `gloss-panel gloss-deep` + inner `glossContent` |
 
-`toned` — **доменное исключение** `variant`: несводимая структура (полосы строк через `tone`), не канонический fill `default | outline | secondary | gloss`.
+`toned` — **доменное исключение** `variant`: несводимая структура (полосы строк через `tone`), не канонический fill `default | outline | secondary`.
 
 ### Row `tone` (`TABLE_ROW_TONE_SURFACE`)
 
@@ -112,11 +115,9 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 В `toned` variant ячейки получают `first:rounded-s-mid last:rounded-e-mid`; hover — `brightness-[0.97]`.
 
-В `gloss` selectable rows: `hover:bg-primary-tint`, selected — `bg-primary-tint` + ring на cell.
-
 ## Границы
 
-Table рисует строки, которые ему передали. Сортировка и выбор — состояние на `Table.Content`. Сами данные режет родитель.
+Table рисует строки, которые ему передали. Сортировка и выбор — состояние на корне `Table`. Сами данные режет родитель.
 
 - Страницы — `Pagination` в `Table.Footer`. Родитель отдаёт в `Table.Body` срез текущей страницы. Диапазон (`Pagination.Summary`) слева, кнопки справа, одной строкой на ширину таблицы.
 - Ширина колонки — `className` на `Table.Column` и `Table.Cell`. Ручки resize нет: ширина это раскладка, не состояние таблицы.
@@ -131,7 +132,7 @@ Table рисует строки, которые ему передали. Сор�
 |-------|------|--------|
 | `root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`, `caption`; nested `row`; `column` / `cell` / `label` / `empty` (repeated slots, multi-instance) | `enter` (opt-in); row `check` / `uncheck` on selection | empty |
 
-`glossContent` не слот motion. `emptyCell` — CSS для `Table.Empty` (слот `empty`). Поворот sort chevron — слот `columnSortIcon`, фазы `enter` / `leave`, рецепт `chevronRotate`.
+`emptyCell` — CSS для `Table.Empty` (слот `empty`). Поворот sort chevron — слот `columnSortIcon`, фазы `enter` / `leave`, рецепт `chevronRotate`.
 
 `enter` — mount (`useOptionalEnterOnMount`, в том числе у изначально выбранной строки). Selection после mount — `check` / `uncheck` (`skipFirst`, не второй `enter`). `column` / `label` — repeated на scope таблицы; `cell` — repeated на nested row scope (`part.targetRef`).
 
@@ -140,6 +141,8 @@ Table рисует строки, которые ему передали. Сор�
 `play()` ищет слот `root` у Table. `playSlot("header")` / `playAll` — chrome (`scrollContainer` / `content` / `header` / `body` / `footer` …) и **repeated** `column` / `label` на том же scope. `Table.Row` создаёт **вложенный** scope: свой `motionController`, `playSlot("row")` (своего `root` нет); `cell` — repeated на scope строки. Один handle ≠ два scope.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`table:nudge`, `table:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside) видит Table; внутри `Table.Row` — scope строки.
+
+Тройка на корне и отдельно на `Table.Row`. Один набор не играет оба scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Table, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -159,7 +162,7 @@ function Nudge() {
         <Table.ScrollContainer>
           <Table.Content aria-label="Crew">
             <Table.Header>
-              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column rowHeader>Name</Table.Column>
             </Table.Header>
             <Table.Body>
               <Table.Row id="ada">
@@ -173,7 +176,6 @@ function Nudge() {
   );
 }
 ```
-
 
 `tableAnimations.tsx` — единственный GSAP-слой. Остальное — CSS hover/selection.
 
@@ -225,9 +227,7 @@ configureMotion({
 
 | Variant | Hover |
 |---------|-------|
-| `default` / `secondary` / `gloss` | `hoverVariant()` на row через styles |
 | `toned` | `hover:brightness-[0.97]` на cells (`motion-reduce:hover:brightness-100`) |
-| `gloss` selectable | `hover:bg-primary-tint` |
 
 Нет GSAP scale/lift на строках.
 
@@ -237,7 +237,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 
 - Per-row `isSelected` / roving focus — через external store + `useSyncExternalStore` (ре-рендер только строк, у которых изменился флаг), не через общий context value с `selectedKeys`
 - `Table.Row` / `Table.Cell` — `memo`
-- Row: `aria-selected` (в `role="grid"`), `bg-default-hover` или gloss tint
+- Row: `aria-selected` (в `role="grid"`), `bg-default-hover` tint
 - Cell (toned): `ring-2 ring-inset ring-primary` при selected
 - Checkbox column — через `selectionMode`, без fill animation
 
@@ -252,7 +252,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Chevron rotate | `useChevronRotation` | `interactiveDuration`, `interactiveEase` | `allowsSorting` на Column |
+| Chevron rotate | `useChevronRotation` | `interactiveDuration`, `interactiveEase` | `sortable` на Column |
 | Row hover tint | CSS `hoverVariant` / brightness | — | `variant`, `tone` |
 | Selection highlight | Store + CSS | — | `selectionMode`, `selectedKeys` |
 
@@ -278,7 +278,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 Подчасти: **`className` на `Table.Column` / `Table.Label` / `Table.Row` / `Table.Cell`** поверх слота.
 
 ```tsx
-<Table.Column isRowHeader>
+<Table.Column rowHeader>
   <Table.Label className="text-primary font-semibold">Name</Table.Label>
 </Table.Column>
 ```
@@ -293,8 +293,8 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 | `header` | `<thead>` | Sticky header helpers |
 | `headerRow` | Header `<tr>` (`Table.HeaderRow`) | Bottom border, bg strip |
 | `column` | `<th>` | Header typography, padding |
-| `columnInner` | Flex row label+chevron | Gap, alignment. Общий для кнопки сортировки и статичного span |
-| `columnButton` | Кнопка сортировки | Только `allowsSorting` |
+| `columnInner` | Flex row label+chevron | Внутренний `<span>` и у сортируемой, и у статичной колонки |
+| `columnButton` | Кнопка сортировки | Только `sortable`; `columnInner` внутри кнопки |
 | `columnLabel` | `Table.Label` | Font weight, color, truncate |
 | `columnSortIcon` | Chevron wrapper | Size/color sort icon |
 | `body` | `<tbody>` | Empty state container |
@@ -319,19 +319,17 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
     footer: "bg-info/5",
   }}
   className="max-w-2xl"
+  selectionMode="multiple"
+  selectedKeys={selected}
+  onSelectionChange={setSelected}
+  sortDescriptor={sort}
+  onSortChange={setSort}
 >
   <Table.ScrollContainer>
-    <Table.Content
-      aria-label="Команда"
-      selectionMode="multiple"
-      selectedKeys={selected}
-      onSelectionChange={setSelected}
-      sortDescriptor={sort}
-      onSortChange={setSort}
-    >
+    <Table.Content aria-label="Команда">
       <Table.Header>
-        <Table.Column id="name" isRowHeader allowsSorting>Имя</Table.Column>
-        <Table.Column id="role" allowsSorting>Роль</Table.Column>
+        <Table.Column id="name" rowHeader sortable>Имя</Table.Column>
+        <Table.Column id="role" sortable>Роль</Table.Column>
       </Table.Header>
       <Table.Body>
         {users.map((user) => (
@@ -372,12 +370,11 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 ### Практические заметки
 
 - **`Table.ScrollContainer`** — для horizontal overflow; не ставьте `tabIndex={0}` по умолчанию (перехватывает Tab). Нужен keyboard-scroll без интерактива внутри — передайте `tabIndex={0}` явно.
-- **Sort:** `allowsSorting` + `sortDescriptor` / `defaultSortDescriptor` / `onSortChange`; без `allowsSorting` chevron decorative.
-- **`isRowHeader`** на первой колонке — screen reader row headers.
+- **Sort:** `sortable` + `sortDescriptor` / `defaultSortDescriptor` / `onSortChange`; без `sortable` chevron decorative.
+- **`rowHeader`** на первой колонке — screen reader row headers.
 - **`renderEmptyState` на `Table.Body`** — кастом empty UI. Для motion слота `empty` верните `<Table.Empty>` (CSS — `classNames.emptyCell`).
 - **`virtualized` на `Table.Body`** — вместе с `items` и render-функцией. Скролл — ближайший предок с `overflow-y: auto` (`Table.ScrollContainer` + max-height). Строки одной высоты. Заголовок колонок остаётся сверху (`sticky`).
 - **Края при скролле:** `Table.ScrollContainer` не тянется elastic overscroll (`overscroll-none`), ячейки не отрываются от рамки на macOS и iOS.
-- **Gloss:** children table внутри `glossContent` автоматически; не дублируйте `gloss-panel` в `classNames.root`.
 - **Не задавайте `transform` на `columnSortIcon`** — конфликт с GSAP rotate.
 - **Порядок мержа:** variant styles → `classNames.slot` → `className` подчасти.
 
@@ -396,7 +393,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 - Sortable columns: `aria-sort` на `<th>` + `<button>` (Tab / Enter/Space; ←/→ между кнопками сортировки)
 - Selection: `role="grid"` (+ `aria-multiselectable` при multiple); rows — `role="row"` + `aria-selected`; roving `tabIndex` (одна tab-остановка) + ↑/↓ / Home/End; Enter/Space — выбор
 - Cells: `role="gridcell"` при selection
-- Row header column: `isRowHeader`
+- Row header column: `rowHeader`
 - Scroll container: без tab-stop по умолчанию (опционально `tabIndex={0}` для scroll-only)
 
 ## Структура файлов
@@ -419,4 +416,12 @@ Table/
 
 ## Storybook
 
-`Core Components/Table` — variants, sort, selection, tones, gloss, empty state, `classNames`, slot motion gallery.
+`Core Components/Table` — variants, sort, selection, tones, empty state, `classNames`, slot motion gallery.
+
+## Строки
+
+`disabledKeys` снимает выбор и роуминг строки (`data-disabled`). `stickyHeader` убирает `overflow-clip` с корня и ограничивает прокрутку высотой `--max-component-2xlarge` (36 × `--size`), чтобы шапка прилипала.
+
+## Колонки
+
+`columnResize` ставит на колонку с `id` ручку `role="separator"`. Перетаскивание и стрелки меняют `width` колонки. Это ширина раскладки, не motion-переменная.

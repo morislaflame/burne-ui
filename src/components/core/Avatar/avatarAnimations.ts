@@ -20,6 +20,10 @@ import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import type { AvatarMotion, AvatarVariant } from "./avatarTypes";
 import { KIT_AVATAR_VARIANTS } from "./avatarTypes";
+
+import { bindContentFadeRecipe } from "@/components/core/utils/slotMotion/recipes/bindContentFade";
+
+bindContentFadeRecipe();
  
 export const AVATAR_GROUP_HOVER_TRANSLATE_Y = -10;
 export const AVATAR_GROUP_HOVER_SCALE = 1.08;

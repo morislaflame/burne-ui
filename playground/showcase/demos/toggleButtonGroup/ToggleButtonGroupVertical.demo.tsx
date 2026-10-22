@@ -10,11 +10,11 @@ export function ToggleButtonGroupVerticalDemo() {
 
   return (
     <div className="flex w-full max-w-xs flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Vertical group
       </Text>
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         orientation="vertical"
         variant="ghost"
         aria-label="List view"

@@ -9,7 +9,7 @@ export function ToggleButtonGroupSingleDemo() {
 
   return (
     <ToggleButtonGroup
-      type="single"
+      selectionMode="single"
       aria-label="List view"
       value={viewMode}
       onValueChange={(v) => setViewMode(v as string)}

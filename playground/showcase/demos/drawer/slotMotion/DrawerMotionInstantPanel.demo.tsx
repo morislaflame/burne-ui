@@ -27,7 +27,7 @@ export function DrawerMotionInstantPanelDemo() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <Text as="p" variant="base">
+            <Text as="p" textStyle="base">
               `panel.enter/leave: false` skips the slide.
             </Text>
           </Drawer.Body>

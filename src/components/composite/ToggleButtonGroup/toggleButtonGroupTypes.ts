@@ -36,20 +36,32 @@ export type ToggleButtonGroupMotion = {
   root?: ToggleButtonGroupPartMotion;
 };
  
+export type ToggleButtonGroupItem = {
+  value: string;
+  label: ReactNode;
+  disabled?: boolean;
+};
+
 export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
-  /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
-  type?: ToggleButtonGroupType;
+  /** Data-driven buttons. Fills buttons that children do not already render. */
+  items?: readonly ToggleButtonGroupItem[];
+  /** `multiple` — independent toggles; `single` — one selected. Default `multiple`. */
+  selectionMode?: ToggleButtonGroupType;
   orientation?: ToggleButtonGroupOrientation;
   /** `true` — gap between buttons (like `ButtonGroup` `segmented`), no glue. */
   segmented?: boolean;
   disabled?: boolean;
   size?: ToggleButtonSize;
   variant?: ToggleButtonVariant;
-  /** Controlled value: `string` when `type="single"`, `string[]` when `type="multiple"`. */
-  value?: string | string[];
-  defaultValue?: string | string[];
-  onValueChange?: (value: string | string[]) => void;
+  /** Controlled item when `selectionMode="single"`. */
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null) => void;
+  /** Controlled items when `selectionMode="multiple"`. */
+  values?: string[];
+  defaultValues?: string[];
+  onValuesChange?: (values: string[]) => void;
   classNames?: Prettify<ToggleButtonGroupClassNames>;
   /**
    * Per-slot motion (`root`). Items keep ToggleButton motion — group does not wrap item hosts.
@@ -72,13 +84,16 @@ export type ToggleButtonGroupClassNamesProviderProps = {
 export type UseToggleButtonGroupRootStateProps = Pick<
   ToggleButtonGroupProps,
   | "children"
-  | "type"
+  | "selectionMode"
   | "disabled"
   | "size"
   | "variant"
   | "value"
   | "defaultValue"
   | "onValueChange"
+  | "values"
+  | "defaultValues"
+  | "onValuesChange"
   | "onKeyDown"
   | "orientation"
 >;

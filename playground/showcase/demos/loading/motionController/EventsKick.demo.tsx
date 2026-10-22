@@ -25,7 +25,7 @@ export function LoadingMotionEventsKickDemo() {
       <Button size="small" variant="outline" onClick={() => controller.play("load:kick")}>
         Kick
       </Button>
-      <Loading size="large" label="Loading" motionController={controller} motion={{ events }} />
+      <Loading size="large" aria-label="Loading" motionController={controller} motion={{ events }} />
     </div>
   );
 }

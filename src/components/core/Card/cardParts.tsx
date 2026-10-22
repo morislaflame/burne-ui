@@ -1,4 +1,4 @@
-import { forwardRef, type Ref } from "react";
+import { cloneElement, forwardRef, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
@@ -31,19 +31,18 @@ import type {
   CardTitleProps,
 } from "./cardTypes";
 
-export function CardHeader({
-  className = "",
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: CardHeaderProps) {
+export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
+  function CardHeader(
+    { className = "", motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope: useOptionalCardMotionScope(),
     slot: "header",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -56,21 +55,21 @@ export function CardHeader({
       {...pointerHandlers}
     />
   );
-}
+},
+);
 
-export function CardHeadingBlock({
-  className = "",
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: CardHeadingBlockProps) {
+export const CardHeadingBlock = forwardRef<HTMLDivElement, CardHeadingBlockProps>(
+  function CardHeadingBlock(
+    { className = "", motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope: useOptionalCardMotionScope(),
     slot: "headingBlock",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -85,21 +84,21 @@ export function CardHeadingBlock({
       {...pointerHandlers}
     />
   );
-}
+},
+);
 
-export function CardBody({
-  className = "",
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: CardBodyProps) {
+export const CardBody = forwardRef<HTMLDivElement, CardBodyProps>(
+  function CardBody(
+    { className = "", motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope: useOptionalCardMotionScope(),
     slot: "body",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -112,7 +111,8 @@ export function CardBody({
       {...pointerHandlers}
     />
   );
-}
+},
+);
 
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   function CardTitle(
@@ -133,7 +133,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
       <Text
         ref={setRef as Ref<HTMLElement>}
         as={cardTitleHeadingTag()}
-        variant={panelSizeLayout(size).titleVariant}
+        textStyle={panelSizeLayout(size).titleVariant}
         className={cn(
           CARD_TITLE_CLASS,
           panelSizeLayout(size).titleClassName,
@@ -164,7 +164,7 @@ export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionP
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="p"
-        variant={panelSizeLayout(size).descVariant}
+        textStyle={panelSizeLayout(size).descVariant}
         className={cn(
           CARD_DESCRIPTION_CLASS,
           slotClassNames.description,
@@ -175,19 +175,18 @@ export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionP
     );
   });
 
-export function CardFooter({
-  className = "",
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: CardFooterProps) {
+export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
+  function CardFooter(
+    { className = "", motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope: useOptionalCardMotionScope(),
     slot: "footer",
     motion,
+    forwardedRef: ref,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
@@ -200,11 +199,14 @@ export function CardFooter({
       {...pointerHandlers}
     />
   );
-}
+},
+);
 
 export function CardRootShell({
   pressable,
   renderAsButton,
+  href,
+  asChild = false,
   rootClassName,
   setRootRef,
   rest,
@@ -224,17 +226,45 @@ export function CardRootShell({
   const hasLayerContent = Boolean(
     resolveSkinLayer(variant, "card.root")?.declarative?.content);
 
-  const fallback =
-    pressable || renderAsButton ? (
-      <button
-        type="button"
-        className={cn(CARD_BUTTON_SHELL_CLASS, rootClassName)}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-      />
-    ) : (
-      <div className={rootClassName} />
-    );
+  const shellClass = cn(
+    pressable || renderAsButton || href != null || asChild
+      ? CARD_BUTTON_SHELL_CLASS
+      : undefined,
+    rootClassName,
+  );
+  const child = asChild && isValidElement(children)
+    ? (children as ReactElement<{ className?: string; children?: ReactNode }>)
+    : null;
+  const content = child ? child.props.children : children;
+  const fallback = child
+    ? cloneElement(child, {
+        className: cn(shellClass, child.props.className),
+      })
+    : href != null
+      ? (
+          /* eslint-disable jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label -- body is injected by SkinShell */
+          // react-doctor-disable-next-line react-doctor/anchor-has-content, react-doctor/control-has-associated-label -- body is injected by SkinShell
+          <a
+            href={href}
+            className={shellClass}
+            onClick={onClick}
+            onKeyDown={onKeyDown}
+          />
+        )
+      : pressable || renderAsButton
+        ? (
+            // react-doctor-disable-next-line react-doctor/control-has-associated-label -- body is injected by SkinShell
+            <button
+              type="button"
+              className={shellClass}
+              onClick={onClick}
+              onKeyDown={onKeyDown}
+            />
+          )
+        : (
+            <div className={rootClassName} />
+          );
+  /* eslint-enable jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label */
 
   return (
     <SkinShell
@@ -253,9 +283,9 @@ export function CardRootShell({
       onPointerUp={onPointerUp}
     >
       {pressable && !hasLayerContent ? (
-        <div className={pressableClass}>{children}</div>
+        <div className={pressableClass}>{content}</div>
       ) : (
-        children
+        content
       )}
     </SkinShell>
   );

@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, useRef, type InputHTMLAttributes, type MutableRefObject } from "react";
+import { forwardRef, useMemo, useRef, type ForwardedRef, type InputHTMLAttributes, type MutableRefObject } from "react";
 
 import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
@@ -46,7 +46,7 @@ type SearchInputRest = Omit<
   | "aria-label"
 >;
  
-export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
+export const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
   function SearchInput(
     {
       className = "",
@@ -59,6 +59,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       collapseOnBlur,
       disabled,
       readOnly,
+      name,
       placeholder,
       value,
       defaultValue,
@@ -71,7 +72,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       ripple,
       groupSegment,
       classNames,
+      inputRef,
       motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       ...rest
     },
     ref,
@@ -88,6 +94,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       collapseOnBlur,
       disabled,
       readOnly,
+      name,
       placeholder,
       value,
       defaultValue,
@@ -99,7 +106,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       ripple,
       groupSegment,
       classNames,
-      forwardedRef: ref,
+      inputRef,
     });
  
     const skinRevision = useSkinRegistryRevision();
@@ -118,7 +125,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           size: state.size,
           layout: state.layout,
           targetW: state.targetW,
-          expanded: state.expanded,
           blocked: state.blocked,
           variant: state.variant,
           groupSegment: state.groupSegment,
@@ -126,7 +132,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         }),
       [
         state.blocked,
-        state.expanded,
         state.groupSegment,
         state.variant,
         state.layout,
@@ -136,13 +141,22 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     );
  
     return (
-      <SearchInputMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+      <SearchInputMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
         <SearchInputSurface
           state={state}
           motion={motion}
           invalid={invalid}
           rest={rest}
           pointerInsideRef={pointerInsideRef}
+          forwardedRef={ref}
         />
       </SearchInputMotionProvider>
     );
@@ -157,12 +171,14 @@ function SearchInputSurface({
   invalid,
   rest,
   pointerInsideRef,
+  forwardedRef,
 }: {
   state: ReturnType<typeof useSearchInputRootState>;
   motion?: SearchInputMotion;
   invalid?: boolean;
   rest: SearchInputRest;
   pointerInsideRef: MutableRefObject<boolean>;
+  forwardedRef: ForwardedRef<HTMLDivElement>;
 }) {
   const animations = useSearchInputAnimations({
     size: state.size,
@@ -176,6 +192,7 @@ function SearchInputSurface({
     rootRef: state.rootRef,
     iconRef: state.iconRef,
     pointerInsideRef,
+    forwardedRef,
   });
  
   const rootClass = searchInputRootClass({
@@ -235,8 +252,8 @@ function SearchInputSurface({
         layout={state.layout}
         paddingStyle={state.inputPaddingStyle}
         className={state.classNames?.input}
-        invalid={invalid}
-        rest={rest}
+        invalid={state.formInvalid ? true : invalid}
+        rest={{ ...rest, name: state.name }}
       />
       {state.showClear ? (
         <SearchInputClear

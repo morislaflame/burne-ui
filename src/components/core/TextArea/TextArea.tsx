@@ -1,7 +1,9 @@
+import { forwardRef, type ForwardedRef } from "react";
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { splitFieldHostRest } from "@/components/core/utils/fieldFormDom";
 import { useSkinVariant } from "@/skins/skinContext";
  
 import { TextAreaClassNamesProvider, TextAreaFieldProvider, TextAreaMotionProvider } from "./textAreaContext";
@@ -20,7 +22,6 @@ export type {
   TextAreaProps,
   TextAreaSimpleProps,
   TextAreaSize,
-  TextAreaStatus,
   TextAreaVariant,
   TextAreaMotion,
   TextAreaPartMotion,
@@ -28,7 +29,7 @@ export type {
  
 export { TextAreaControl, TextAreaError, TextAreaHint, TextAreaLabel } from "./textAreaParts";
  
-export function TextAreaRoot({
+export const TextAreaRoot = forwardRef(function TextAreaRoot({
   children,
   label,
   hint,
@@ -38,7 +39,6 @@ export function TextAreaRoot({
   classNames,
   id: idProp,
   required = false,
-  status = "default",
   size = "base",
   variant,
   motion,
@@ -47,22 +47,20 @@ export function TextAreaRoot({
   motionPayload,
   playInitialState,
   ...rest
-}: TextAreaSimpleProps) {
+}: TextAreaSimpleProps, ref: ForwardedRef<HTMLTextAreaElement>) {
+  const { host: hostRest, control: controlRest } = splitFieldHostRest(rest);
+  const formCtx = useOptionalFormBindingContext();
+  const fieldName = typeof controlRest.name === "string" ? controlRest.name : undefined;
+  const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
   const resolvedVariant = useSkinVariant(variant);
-  const isInvalid = useResolvedFieldInvalid({
-    invalid,
-    errorConnected: error != null,
-  });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
   const state = useTextAreaRootState({
     children,
     label,
     hint,
-    error,
+    error: error ?? formError,
     invalid,
     id: idProp,
     required,
-    status,
     size,
   });
  
@@ -76,8 +74,8 @@ export function TextAreaRoot({
       textareaId={state.textareaId}
       labelId={state.fieldCtx.labelId}
       size={state.size}
-      status={state.status}
-      controlProps={{ ...rest, variant, motionController, motionState, motionPayload, playInitialState }}
+      controlProps={{ ...controlRest, variant, motionController, motionState, motionPayload, playInitialState }}
+      textareaRef={ref}
     />
   );
  
@@ -95,10 +93,10 @@ export function TextAreaRoot({
             <Field
               className={cn(classNames?.root, className)}
               size={state.size}
+              {...(state.isCompound ? rest : hostRest)}
               {...dataVariantProps({
                 size: state.size,
                 variant: resolvedVariant,
-                status: paintedStatus,
               })}
             >
               {body}
@@ -108,7 +106,7 @@ export function TextAreaRoot({
       </TextAreaClassNamesProvider>
     </TextAreaFieldProvider>
   );
-}
+});
  
 TextAreaRoot.displayName = "TextArea";
  

@@ -9,11 +9,11 @@
  * Also: track opacity (`useCheckboxControlTrackAnimation`) and label squeeze
  * (`useCheckboxTextMotion`).
  */
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useLayoutEffect, useRef } from "react";
  
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { tweenDisabledTrack } from "@/components/core/utils/slotMotion/recipes/disabledTrackFade";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
   splitMotionRootMap,
@@ -29,7 +29,7 @@ import { usePressableElementTextMotion } from "@/components/core/utils/usePressa
 import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
  
 import { useCheckboxFieldContext, useOptionalCheckboxMotionScope } from "./checkboxContext";
-import type { CheckboxCheckMotion, CheckboxMotion, UseCheckboxAnimationsProps } from "./checkboxTypes";
+import type { CheckboxPartMotion, CheckboxMotion, UseCheckboxAnimationsProps } from "./checkboxTypes";
  
 /** Root Checkbox `motion` keys → SelectionIndicator slots. */
 export const CHECKBOX_MOTION_SLOT_MAP = {
@@ -93,17 +93,7 @@ export function useCheckboxControlTrackAnimation() {
     }
  
     killMotion(track);
-    const from = Number.parseFloat(getComputedStyle(track).opacity);
-    const start = Number.isFinite(from) ? from : 1;
-    const tween = gsap.fromTo(
-      track,
-      { autoAlpha: start },
-      {
-        autoAlpha: ctx.isDisabled ? 0.48 : 1,
-        ...motionInteractiveFor(config),
-        overwrite: "auto",
-      },
-    );
+    const tween = tweenDisabledTrack(track, ctx.isDisabled, config);
     return () => {
       tween.kill();
     };
@@ -132,7 +122,7 @@ export type CheckboxChromeSlot = "label" | "hint" | "error";
  
 export function useCheckboxChromeSlot(
   slot: CheckboxChromeSlot,
-  motion?: CheckboxCheckMotion,
+  motion?: CheckboxPartMotion,
 ) {
   const ctx = useCheckboxFieldContext();
   const scope = useOptionalCheckboxMotionScope();
@@ -150,7 +140,7 @@ export function useCheckboxChromeSlot(
   return part;
 }
  
-export function useCheckboxLabelSlot(motion?: CheckboxCheckMotion) {
+export function useCheckboxLabelSlot(motion?: CheckboxPartMotion) {
   return useCheckboxChromeSlot("label", motion);
 }
  

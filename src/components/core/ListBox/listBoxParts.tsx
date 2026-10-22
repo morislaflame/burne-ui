@@ -1,12 +1,13 @@
-import { forwardRef, memo, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useId, useMemo, useRef, useState, type ForwardedRef } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
  
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { useSkinVariant } from "@/skins/skinContext";
+import { useStudioSlotRef } from "@/studio/studioModeContext";
 import { Text } from "@/components/core/Text";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { focusElement } from "@/components/core/utils/focusElement";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT, iconSlotSizeClass } from "@/components/core/utils/sizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
@@ -64,8 +65,9 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
+import { useLazyRef } from "@/components/core/utils/useLazyRef";
  
-export function ListBoxRootShell({
+export const ListBoxRootShell = forwardRef<HTMLDivElement, ListBoxRootShellProps>(function ListBoxRootShell({
   listId,
   variant: variantProp,
   className,
@@ -78,7 +80,7 @@ export function ListBoxRootShell({
   virtualized = false,
   virtualItemSize,
   ...rest
-}: ListBoxRootShellProps) {
+}, ref) {
   const variant = useSkinVariant(variantProp);
   const slotClassNames = useListBoxClassNames();
   const motionScope = useListBoxMotionScope();
@@ -106,7 +108,7 @@ export function ListBoxRootShell({
     [setScrollNode],
   );
   useListBoxActiveOptionHighlight({ listId, activeValue, rootRef });
-  const typeaheadRef = useRef(createTypeaheadBufferState());
+  const typeaheadRef = useLazyRef(createTypeaheadBufferState);
  
   const handleKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -183,6 +185,7 @@ export function ListBoxRootShell({
       selectItem,
       setActiveValue,
       standaloneKeyboard,
+      typeaheadRef,
     ],
   );
  
@@ -199,10 +202,15 @@ export function ListBoxRootShell({
  
   const tabIndex =
     tabIndexProp ?? (standaloneKeyboard && !disabled ? 0 : undefined);
- 
+  const studioRootRef = useStudioSlotRef<HTMLDivElement>("listBox.root", motionScope);
+  const mergedRootRef = useMemo(
+    () => mergeRefs(setRootRef, ref, studioRootRef),
+    [ref, setRootRef, studioRootRef],
+  );
+
   return (
     <div
-      ref={setRootRef}
+      ref={mergedRootRef}
       id={listId}
       role="listbox"
       aria-label={ariaLabel}
@@ -229,11 +237,11 @@ export function ListBoxRootShell({
       {frame}
     </div>
   );
-}
+});
  
 ListBoxRootShell.displayName = "ListBox";
  
-export function ListBoxSection({
+export const ListBoxSection = forwardRef(function ListBoxSection({
   className,
   children,
   motion,
@@ -241,12 +249,14 @@ export function ListBoxSection({
   onPointerOut,
   onPointerDown,
   onPointerUp,
+  
   ...rest
-}: ListBoxSectionProps) {
+}: ListBoxSectionProps, ref: ForwardedRef<HTMLDivElement>) {
   const slotClassNames = useListBoxClassNames();
   const [labelId, setLabelId] = useState<string | undefined>();
   const part = useListBoxSlotMotion<HTMLDivElement>("section", {
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -274,11 +284,11 @@ export function ListBoxSection({
       </div>
     </ListBoxSectionLabelProvider>
   );
-}
+});
  
 ListBoxSection.displayName = "ListBoxSection";
  
-export function ListBoxHeader({
+export const ListBoxHeader = forwardRef(function ListBoxHeader({
   className,
   textClassName,
   children,
@@ -288,14 +298,16 @@ export function ListBoxHeader({
   onPointerOut,
   onPointerDown,
   onPointerUp,
+  
   ...rest
-}: ListBoxHeaderProps) {
+}: ListBoxHeaderProps, ref: ForwardedRef<HTMLDivElement>) {
   const autoId = useId();
   const id = idProp ?? autoId;
   const slotClassNames = useListBoxClassNames();
   const registerLabel = useListBoxSectionLabelRegister();
   const part = useListBoxSlotMotion<HTMLDivElement>("header", {
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -320,7 +332,7 @@ export function ListBoxHeader({
     >
       <Text
         as="span"
-        variant="small"
+        textStyle="small"
         className={listBoxHeaderTextClass({
           slotClass: slotClassNames.headerText,
           className: textClassName,
@@ -330,22 +342,24 @@ export function ListBoxHeader({
       </Text>
     </div>
   );
-}
+});
  
 ListBoxHeader.displayName = "ListBoxHeader";
  
-export function ListBoxSeparator({
+export const ListBoxSeparator = forwardRef(function ListBoxSeparator({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   onPointerDown,
   onPointerUp,
+  
   ...rest
-}: ListBoxSeparatorProps) {
+}: ListBoxSeparatorProps, ref: ForwardedRef<HTMLDivElement>) {
   const slotClassNames = useListBoxClassNames();
   const part = useListBoxSlotMotion<HTMLDivElement>("separator", {
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -365,11 +379,11 @@ export function ListBoxSeparator({
       {...part.pointerHandlers}
     />
   );
-}
+});
  
 ListBoxSeparator.displayName = "ListBoxSeparator";
  
-export function ListBoxEmpty({
+export const ListBoxEmpty = forwardRef(function ListBoxEmpty({
   className,
   children,
   motion,
@@ -378,10 +392,11 @@ export function ListBoxEmpty({
   onPointerDown,
   onPointerUp,
   ...rest
-}: ListBoxEmptyProps) {
+}: ListBoxEmptyProps, ref: ForwardedRef<HTMLElement>) {
   const emptyLabel = useBurneLabel("listBoxEmpty");
   const slotClassNames = useListBoxClassNames();
   const part = useListBoxSlotMotion<HTMLElement>("empty", {
+    forwardedRef: ref,
     motion,
     onPointerOver,
     onPointerOut,
@@ -393,7 +408,7 @@ export function ListBoxEmpty({
     <Text
       ref={part.setRef}
       as="p"
-      variant="base"
+      textStyle="base"
       className={listBoxEmptyClass({
         slotClass: slotClassNames.empty,
         className,
@@ -404,7 +419,7 @@ export function ListBoxEmpty({
       {children ?? emptyLabel}
     </Text>
   );
-}
+});
  
 ListBoxEmpty.displayName = "ListBoxEmpty";
  
@@ -617,7 +632,6 @@ function ListBoxItemSurface({
           type="button"
           id={optionId}
           role="option"
-          data-value={value}
           aria-selected={isSelected}
           disabled={disabled}
           tabIndex={-1}
@@ -643,6 +657,7 @@ function ListBoxItemSurface({
           {...rest}
           {...pointerHandlers}
           data-state={isSelected ? "selected" : undefined}
+          data-value={value}
         >
           {itemBody}
         </button>
@@ -654,7 +669,7 @@ export const ListBoxItem = memo(ListBoxItemInner);
  
 ListBoxItem.displayName = "ListBoxItem";
  
-export function ListBoxLabel({
+export const ListBoxLabel = forwardRef(function ListBoxLabel({
   className,
   motion,
   onPointerOver,
@@ -662,10 +677,11 @@ export function ListBoxLabel({
   onPointerDown,
   onPointerUp,
   ...props
-}: ListBoxLabelProps) {
+}: ListBoxLabelProps, ref: ForwardedRef<HTMLSpanElement>) {
   const { size } = useListBox("ListBox.Label");
   const slotClassNames = useListBoxClassNames();
   const { setRef, pointerHandlers } = useListBoxSlotMotion<HTMLSpanElement>("label", {
+    forwardedRef: ref,
     motion,
     onPointerOver,
     onPointerOut,
@@ -682,11 +698,11 @@ export function ListBoxLabel({
       {...pointerHandlers}
     />
   );
-}
+});
  
 ListBoxLabel.displayName = "ListBoxLabel";
  
-export function ListBoxHint({
+export const ListBoxHint = forwardRef(function ListBoxHint({
   className,
   motion,
   onPointerOver,
@@ -694,9 +710,10 @@ export function ListBoxHint({
   onPointerDown,
   onPointerUp,
   ...props
-}: ListBoxHintProps) {
+}: ListBoxHintProps, ref: ForwardedRef<HTMLSpanElement>) {
   const slotClassNames = useListBoxClassNames();
   const { setRef, pointerHandlers } = useListBoxSlotMotion<HTMLSpanElement>("hint", {
+    forwardedRef: ref,
     motion,
     onPointerOver,
     onPointerOut,
@@ -712,11 +729,11 @@ export function ListBoxHint({
       {...pointerHandlers}
     />
   );
-}
+});
  
 ListBoxHint.displayName = "ListBoxHint";
  
-export function ListBoxIcon({
+export const ListBoxIcon = forwardRef(function ListBoxIcon({
   className,
   motion,
   onPointerOver,
@@ -724,10 +741,11 @@ export function ListBoxIcon({
   onPointerDown,
   onPointerUp,
   ...props
-}: ListBoxIconProps) {
+}: ListBoxIconProps, ref: ForwardedRef<HTMLSpanElement>) {
   const { size } = useListBox("ListBox.Icon");
   const slotClassNames = useListBoxClassNames();
   const { setRef, pointerHandlers } = useListBoxSlotMotion<HTMLSpanElement>("icon", {
+    forwardedRef: ref,
     motion,
     onPointerOver,
     onPointerOut,
@@ -747,19 +765,20 @@ export function ListBoxIcon({
       {...pointerHandlers}
     />
   );
-}
+});
  
 ListBoxIcon.displayName = "ListBoxIcon";
  
-export function ListBoxItemIndicator({
+export const ListBoxItemIndicator = forwardRef(function ListBoxItemIndicator({
   variant: variantProp,
   size: sizeProp,
   check,
+  icon,
   children,
   className,
   classNames: classNamesProp,
   ...rest
-}: ListBoxItemIndicatorProps) {
+}: ListBoxItemIndicatorProps, ref: ForwardedRef<HTMLSpanElement>) {
   const variant = useSkinVariant(variantProp);
   const ctx = useOptionListItemContext("ListBox.ItemIndicator");
   const { size: listSize } = useListBox("ListBox.ItemIndicator");
@@ -778,12 +797,14 @@ export function ListBoxItemIndicator({
         className,
       )}
       {...rest}
+      ref={ref}
     >
       <SelectionIndicator
         variant={variant}
         size={size}
         selected={ctx.selected}
         check={showCheck}
+        icon={icon}
         classNames={resolveListBoxItemIndicatorClassNames({
           slotClassNames,
           classNames: classNamesProp,
@@ -793,7 +814,7 @@ export function ListBoxItemIndicator({
       </SelectionIndicator>
     </OptionListItemIndicatorShell>
   );
-}
+});
  
 ListBoxItemIndicator.displayName = "ListBoxItemIndicator";
  

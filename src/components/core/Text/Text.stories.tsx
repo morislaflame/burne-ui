@@ -39,11 +39,11 @@ const meta = {
   },
   decorators: [...darkThemeDecorator],
   args: {
-    variant: "base" as const,
+    textStyle: "base" as const,
     children: "Burne UI design system sample text",
   },
   argTypes: {
-    variant: {
+    textStyle: {
       control: "select",
       options: [
         "accent-header",
@@ -73,16 +73,16 @@ export const AllVariants: Story = {
   name: "All variants",
   render: () => (
     <div className="flex flex-col gap-mid">
-      <Text variant="accent-header">accent-header</Text>
-      <Text variant="header-1">header-1</Text>
-      <Text variant="header-2">header-2</Text>
-      <Text variant="large">text-large</Text>
-      <Text variant="mid">text-mid</Text>
-      <Text variant="base">text-base</Text>
-      <Text variant="small" className="text-muted">
+      <Text textStyle="accent-header">accent-header</Text>
+      <Text textStyle="header-1">header-1</Text>
+      <Text textStyle="header-2">header-2</Text>
+      <Text textStyle="large">text-large</Text>
+      <Text textStyle="mid">text-mid</Text>
+      <Text textStyle="base">text-base</Text>
+      <Text textStyle="small" className="text-muted">
         text-small
       </Text>
-      <Text variant="xsmall" className="text-muted">
+      <Text textStyle="xsmall" className="text-muted">
         text-xsmall
       </Text>
     </div>
@@ -96,7 +96,7 @@ export const AsSpanWithWrap: Story = {
       className="w-[140px]"
     >
     <Text
-      variant="header-2"
+      textStyle="header-2"
       as="span"
       className="break-words break-all"
     >
@@ -114,16 +114,16 @@ export const OnSurface: Story = {
       style={{ backgroundColor: "var(--color-surface)" }}
     >
       <div className="flex flex-col gap-mid">
-        <Text variant="accent-header">accent-header</Text>
-        <Text variant="header-1">header-1</Text>
-        <Text variant="header-2">header-2</Text>
-        <Text variant="large">text-large</Text>
-        <Text variant="mid">text-mid</Text>
-        <Text variant="base">text-base</Text>
-        <Text variant="small" className="text-muted">
+        <Text textStyle="accent-header">accent-header</Text>
+        <Text textStyle="header-1">header-1</Text>
+        <Text textStyle="header-2">header-2</Text>
+        <Text textStyle="large">text-large</Text>
+        <Text textStyle="mid">text-mid</Text>
+        <Text textStyle="base">text-base</Text>
+        <Text textStyle="small" className="text-muted">
           text-small
         </Text>
-        <Text variant="xsmall" className="text-muted">
+        <Text textStyle="xsmall" className="text-muted">
           text-xsmall
         </Text>
       </div>
@@ -140,10 +140,10 @@ export const CustomClassNames: Story = {
   name: "Custom className",
   render: () => (
     <div className="flex max-w-sm flex-col items-start gap-small">
-      <Text variant="header-2" className="text-primary">
+      <Text textStyle="header-2" className="text-primary">
         Primary heading
       </Text>
-      <Text variant="base" className="text-muted">
+      <Text textStyle="base" className="text-muted">
         Text is one node. Color comes from className.
       </Text>
     </div>

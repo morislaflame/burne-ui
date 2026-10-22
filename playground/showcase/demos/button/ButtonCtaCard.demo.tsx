@@ -7,10 +7,10 @@ export function ButtonCtaCardDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-large rounded-large border-token bg-secondary p-large">
       <div className="flex flex-col gap-xsmall">
-        <Text as="p" variant="header-2">
+        <Text as="p" textStyle="header-2">
           Launch the project
         </Text>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Deploy in a minute - no credit card required.
         </Text>
       </div>

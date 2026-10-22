@@ -17,7 +17,15 @@ export type ColorChannel =
  
 export type ColorSliderSize = SliderSize;
 export type ColorSliderOrientation = SliderOrientation;
- 
+
+export type ColorSliderClassNames = {
+  root?: string;
+  label?: string;
+  value?: string;
+  track?: string;
+  thumb?: string;
+};
+
 export type ColorSliderPartMotion = {
   hoverIn?: MotionValue;
   hoverOut?: MotionValue;
@@ -64,6 +72,7 @@ export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   size?: ColorSliderSize;
   orientation?: ColorSliderOrientation;
   disabled?: boolean;
+  classNames?: Prettify<ColorSliderClassNames>;
   /**
    * Per-slot motion (`root`, `track`). Nested ColorSlider.Track does not inherit defaults.
    * Pass `motion.track` through to Track. Defaults are empty.

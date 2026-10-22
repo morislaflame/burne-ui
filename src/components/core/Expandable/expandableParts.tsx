@@ -8,7 +8,7 @@ import { useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
 import { expandableTriggerHasActionSlot, hasExpandableMessage, mergeExpandableRefs, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
-import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableMotionScope, useExpandableTriggerGrid, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "./expandableContext";
+import { ExpandableOwnedTrigger, ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableMotionScope, useExpandableSimpleModeGuard, useExpandableTriggerGrid, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "./expandableContext";
 import { EXPANDABLE_CHEVRON_SVG_CLASS, EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableDescriptionVariant, expandableIconClass, expandablePanelClass, expandableTitleClassName, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
 import type {
   ExpandableChevronProps,
@@ -89,6 +89,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       headerId,
       panelId,
     } = useExpandable();
+    useExpandableSimpleModeGuard("Expandable.Trigger");
     const slotClassNames = useExpandableClassNames();
  
     const triggerMotion = useExpandableTriggerMotion({
@@ -230,12 +231,8 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
  
 ExpandableTrigger.displayName = "ExpandableTrigger";
  
-export function ExpandableIcon({
-  className,
-  children,
-  motion,
-  ...props
-}: ExpandableIconProps) {
+export const ExpandableIcon = forwardRef<HTMLSpanElement, ExpandableIconProps>(
+  function ExpandableIcon({ className, children, motion, ...props }, ref) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
@@ -243,6 +240,7 @@ export function ExpandableIcon({
     scope: useOptionalExpandableMotionScope(),
     slot: "icon",
     motion,
+    forwardedRef: ref,
   });
  
   if (children == null) return null;
@@ -254,8 +252,7 @@ export function ExpandableIcon({
       className={cn(
         expandableIconClass({
           size,
-          className,
-          slotClass: slotClassNames.icon,
+          className, slotClass: slotClassNames.icon,
         }),
         gridSlots && messageBannerIndicatorCellClass(gridSlots),
       )}
@@ -264,11 +261,13 @@ export function ExpandableIcon({
       {children}
     </span>
   );
-}
+},
+);
  
 ExpandableIcon.displayName = "ExpandableIcon";
  
-export function ExpandableContent({ className, ...props }: ExpandableContentProps) {
+export const ExpandableContent = forwardRef<HTMLDivElement, ExpandableContentProps>(
+  function ExpandableContent({ className, ...props }, ref) {
   const slotClassNames = useExpandableClassNames();
  
   return (
@@ -279,13 +278,16 @@ export function ExpandableContent({ className, ...props }: ExpandableContentProp
         className,
       )}
       {...props}
+      ref={ref}
     />
   );
-}
+},
+);
  
 ExpandableContent.displayName = "ExpandableContent";
  
-export function ExpandableTitle({ className, motion, ...props }: ExpandableTitleProps) {
+export const ExpandableTitle = forwardRef<HTMLDivElement, ExpandableTitleProps>(
+  function ExpandableTitle({ className, motion, ...props }, ref) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
@@ -293,13 +295,14 @@ export function ExpandableTitle({ className, motion, ...props }: ExpandableTitle
     scope: useOptionalExpandableMotionScope(),
     slot: "title",
     motion,
+    forwardedRef: ref,
   });
  
   return (
     <Text
       as="div"
       ref={setRef}
-      variant={expandableTitleVariant(size)}
+      textStyle={expandableTitleVariant(size)}
       className={cn(
         EXPANDABLE_TITLE_CLASS,
         expandableTitleClassName(size),
@@ -310,15 +313,13 @@ export function ExpandableTitle({ className, motion, ...props }: ExpandableTitle
       {...props}
     />
   );
-}
+},
+);
  
 ExpandableTitle.displayName = "ExpandableTitle";
  
-export function ExpandableDescription({
-  className,
-  motion,
-  ...props
-}: ExpandableDescriptionProps) {
+export const ExpandableDescription = forwardRef<HTMLDivElement, ExpandableDescriptionProps>(
+  function ExpandableDescription({ className, motion, ...props }, ref) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
@@ -326,13 +327,14 @@ export function ExpandableDescription({
     scope: useOptionalExpandableMotionScope(),
     slot: "description",
     motion,
+    forwardedRef: ref,
   });
  
   return (
     <Text
       as="div"
       ref={setRef}
-      variant={expandableDescriptionVariant(size)}
+      textStyle={expandableDescriptionVariant(size)}
       className={cn(
         EXPANDABLE_DESCRIPTION_CLASS,
         gridSlots && messageBannerDescriptionCellClass(gridSlots),
@@ -342,11 +344,13 @@ export function ExpandableDescription({
       {...props}
     />
   );
-}
+},
+);
  
 ExpandableDescription.displayName = "ExpandableDescription";
  
-export function ExpandableChevron({ className, motion, ...props }: ExpandableChevronProps) {
+export const ExpandableChevron = forwardRef<HTMLSpanElement, ExpandableChevronProps>(
+  function ExpandableChevron({ className, motion, ...props }, ref) {
   const { open, hasPanel, size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useExpandableTriggerGrid();
@@ -361,6 +365,7 @@ export function ExpandableChevron({ className, motion, ...props }: ExpandableChe
     scope,
     slot: "chevron",
     motion,
+    forwardedRef: ref,
   });
   const setChevronRef = useCallback(
     (node: HTMLSpanElement | null) => {
@@ -387,7 +392,8 @@ export function ExpandableChevron({ className, motion, ...props }: ExpandableChe
       <ExpandableChevronSvg className={expandableChevronIconClass(size)} />
     </span>
   );
-}
+},
+);
  
 ExpandableChevron.displayName = "ExpandableChevron";
  
@@ -396,9 +402,9 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
     const { open, headerId, panelId, size, setHasPanel } = useExpandable();
     const slotClassNames = useExpandableClassNames();
     const panelMotion = useExpandablePanelMotion({ open, motion });
-    const { setRef: setBodyPartRef } = useMotionPart<HTMLElement>({
+    const { setRef: setPanelPartRef } = useMotionPart<HTMLElement>({
       scope: useOptionalExpandableMotionScope(),
-      slot: "body",
+      slot: "panel",
     });
  
     useLayoutEffect(() => {
@@ -408,11 +414,11 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
  
     const setSectionRef = useCallback(
       (node: HTMLDivElement | null) => {
-        setBodyPartRef(node);
+        setPanelPartRef(node);
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref, setBodyPartRef],
+      [ref, setPanelPartRef],
     );
  
     return (
@@ -433,7 +439,7 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             className={expandablePanelClass({
               size,
               className,
-              slotClass: cn(slotClassNames.panel, slotClassNames.body),
+              slotClass: slotClassNames.panel,
             })}
             {...props}
           >
@@ -455,13 +461,15 @@ export function ExpandableSimpleBody({
 }: ExpandableSimpleBodyProps) {
   return (
     <>
-      <ExpandableTrigger>
-        {icon != null ? <ExpandableIcon>{icon}</ExpandableIcon> : null}
-        {title != null ? <ExpandableTitle>{title}</ExpandableTitle> : null}
-        {description != null ? (
-          <ExpandableDescription>{description}</ExpandableDescription>
-        ) : null}
-      </ExpandableTrigger>
+      <ExpandableOwnedTrigger>
+        <ExpandableTrigger>
+          {icon != null ? <ExpandableIcon>{icon}</ExpandableIcon> : null}
+          {title != null ? <ExpandableTitle>{title}</ExpandableTitle> : null}
+          {description != null ? (
+            <ExpandableDescription>{description}</ExpandableDescription>
+          ) : null}
+        </ExpandableTrigger>
+      </ExpandableOwnedTrigger>
       {panelChildren != null ? (
         <ExpandablePanel>{panelChildren}</ExpandablePanel>
       ) : null}

@@ -1,6 +1,6 @@
-import type { ComboBoxOption } from "./comboBoxTypes";
+import type { ComboBoxItem } from "./comboBoxTypes";
  
-function optionSearchHaystack(opt: ComboBoxOption): string {
+function optionSearchHaystack(opt: ComboBoxItem): string {
   const parts: string[] = [opt.value];
   if (opt.filterText) parts.push(opt.filterText);
   if (typeof opt.label === "string") parts.push(opt.label);
@@ -8,26 +8,31 @@ function optionSearchHaystack(opt: ComboBoxOption): string {
   return parts.join(" ").toLowerCase();
 }
  
-function comboBoxOptionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
+export function comboBoxOptionMatchesFilter(opt: ComboBoxItem, query: string): boolean {
   const t = query.trim().toLowerCase();
   if (!t) return true;
   return optionSearchHaystack(opt).includes(t);
 }
  
-export function comboBoxFilteredValues(options: ComboBoxOption[], query: string): string[] {
+export function comboBoxFilteredValues(
+  items: ComboBoxItem[],
+  query: string,
+  filter?: (option: ComboBoxItem, query: string) => boolean,
+): string[] {
+  const match = filter ?? comboBoxOptionMatchesFilter;
   const result: string[] = [];
-  for (const opt of options) {
-    if (comboBoxOptionMatchesFilter(opt, query)) result.push(opt.value);
+  for (const opt of items) {
+    if (match(opt, query)) result.push(opt.value);
   }
   return result;
 }
  
-export function comboBoxOptionsByValue(options: ComboBoxOption[]): Map<string, ComboBoxOption> {
-  return new Map(options.map((o) => [o.value, o]));
+export function comboBoxOptionsByValue(items: ComboBoxItem[]): Map<string, ComboBoxItem> {
+  return new Map(items.map((o) => [o.value, o]));
 }
  
 export function comboBoxOptionDisplayString(
-  selectedOption: ComboBoxOption | undefined,
+  selectedOption: ComboBoxItem | undefined,
 ): string {
   if (!selectedOption) return "";
   if (typeof selectedOption.label === "string") return selectedOption.label;
@@ -43,7 +48,7 @@ export function comboBoxBumpActiveValue({
 }: {
   filteredValues: string[];
   activeValue: string | null;
-  optionsByValue: Map<string, ComboBoxOption>;
+  optionsByValue: Map<string, ComboBoxItem>;
   delta: number;
 }): string | null {
   if (filteredValues.length === 0) return activeValue;
@@ -60,7 +65,7 @@ export function comboBoxBumpActiveValue({
  
 export function comboBoxFirstEnabledValue(
   filteredValues: string[],
-  optionsByValue: Map<string, ComboBoxOption>,
+  optionsByValue: Map<string, ComboBoxItem>,
 ): string | null {
   for (const v of filteredValues) {
     const opt = optionsByValue.get(v);
@@ -71,7 +76,7 @@ export function comboBoxFirstEnabledValue(
  
 export function comboBoxLastEnabledValue(
   filteredValues: string[],
-  optionsByValue: Map<string, ComboBoxOption>,
+  optionsByValue: Map<string, ComboBoxItem>,
 ): string | null {
   for (let i = filteredValues.length - 1; i >= 0; i -= 1) {
     const v = filteredValues[i]!;
@@ -81,5 +86,5 @@ export function comboBoxLastEnabledValue(
   return null;
 }
  
-export const EMPTY_COMBOBOX_OPTIONS: ComboBoxOption[] = [];
+export const EMPTY_COMBOBOX_OPTIONS: ComboBoxItem[] = [];
  

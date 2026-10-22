@@ -2,10 +2,13 @@
 
 Модальное окно подтверждения на нативном `<dialog>`. Семантика и иконки как у `Alert`. **Клик по overlay не закрывает**. Escape закрывает по умолчанию (Cancel / наименее деструктивное действие по APG); блокировка — через `closeOnEscape={false}`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { AlertDialog, useAlertDialog, footerButtonSizeForAlertDialog, primaryButtonVariantForAlertTone, primaryButtonStatusForAlertTone, type AlertDialogProps, type AlertDialogSize, type AlertDialogTriggerProps, type AlertDialogHeaderProps, type AlertDialogTitleProps, type AlertDialogDescriptionProps, type AlertDialogBodyProps, type AlertDialogFooterProps, type AlertDialogCloseProps } from "burne-ui";
+import { AlertDialog, useAlertDialog, type AlertDialogProps, type AlertDialogSize, type AlertDialogTriggerProps, type AlertDialogHeaderProps, type AlertDialogTitleProps, type AlertDialogDescriptionProps, type AlertDialogBodyProps, type AlertDialogFooterProps, type AlertDialogCloseProps } from "burne-ui";
+import { footerButtonSizeForAlertDialog, primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone } from "burne-ui/internal";
 ```
 
 ## API
@@ -50,7 +53,7 @@ Simple API нет — всегда compound.
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `closeOnEscape` | `true` | Escape закрывает (Cancel). `false` — Escape заблокирован |
 | `status` | `default` | `default` \| `danger` \| `success` \| `info` \| `warning` |
-| `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `classNames` | — | Слоты кастомизации (см. ниже) |
 | `motion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`). Root без DOM — как `classNames`. `events` — app-команды |
@@ -114,7 +117,6 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 |-----------|---------------|
 | `default` | `alertSurfaceClass` + `shadow-token-lg` |
 | `outline` / `secondary` | Semantic surfaces |
-| `gloss` | `gloss-panel gloss-deep` |
 
 | size | max-width | title / body Text |
 |------|-----------|-------------------|
@@ -174,6 +176,8 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 
 Проп `motionController` на **`AlertDialog.Panel`**. `play()` skip — нет `root`; `playSlot("panel")`. playground / Storybook **MotionController**.
 
+На корне — scope триггера. На `AlertDialog.Panel` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { AlertDialog, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -212,7 +216,6 @@ Open squeeze — слот `trigger` на Root (дефолт `pressSqueeze`; др
 | Overlay fade | `overlay` → `modalOverlay*` | `modalDuration`, `enableModalMotion` | `motion` на Root / Panel |
 | Panel scale | `panel` → `modalPanel*` | `modalDuration`, `enableModalMotion` | `motion` на Root / Panel |
 | Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale` | `motion.trigger.pressIn` |
-| Gloss ref | gloss utils | gloss tokens | `variant="gloss"` |
 
 ## Токены и CSS
 
@@ -222,7 +225,6 @@ Open squeeze — слот `trigger` на Root (дефолт `pressSqueeze`; др
 |----------------|------------|
 | `ALERT_DIALOG_NATIVE_CLASS` | Fixed fullscreen `<dialog>`, `z-dialog` |
 | `alertDialogPanelClass` | Shell + max-width/height |
-| `alertDialogGlossPanelClass` | Gloss shell |
 | `alertDialogOverlayClass` | → `dialogOverlayClass` |
 | `ALERT_DIALOG_FOOTER_CLASS` | `flex justify-end gap-base` |
 | `messageBannerGridLayout` | Header grid (как Alert) |
@@ -288,14 +290,6 @@ Open squeeze — слот `trigger` на Root (дефолт `pressSqueeze`; др
 </AlertDialog>
 ```
 
-### Gloss + status
-
-```tsx
-<AlertDialog open={open} onOpenChange={setOpen} variant="gloss" status="info">
-  ...
-</AlertDialog>
-```
-
 `themeAnchor` на `Panel` — наследование light theme в portal.
 
 ### Практические заметки
@@ -353,7 +347,7 @@ AlertDialog/
 
 ## Storybook
 
-`Composite Components/AlertDialog` — confirm delete, all statuses, sizes, gloss, gloss light theme, `CustomClassNames`.
+`Composite Components/AlertDialog` — confirm delete, all statuses, sizes light theme, `CustomClassNames`.
 
 Playground: `playground/showcase/demos/alertDialog/`.
 

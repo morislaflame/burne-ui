@@ -10,12 +10,9 @@ import type { Prettify } from "@/utils/prettify";
  
 import type { FieldLabelProps } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
 export type TimeFieldSize = ComponentSize;
- 
-export type TimeFieldStatus = SemanticStatus;
  
 export const KIT_TIME_FIELD_VARIANTS = ["default", "outline", "secondary", "segmented"] as const;
 export type KitTimeFieldVariant = (typeof KIT_TIME_FIELD_VARIANTS)[number];
@@ -32,6 +29,8 @@ export type TimeFieldClassNames = {
   label?: string;
   shell?: string;
   shellInner?: string;
+  /** Segment row. `TimeField.Control` `className` and `ref` land here. */
+  control?: string;
   prefix?: string;
   suffix?: string;
   segments?: string;
@@ -72,7 +71,6 @@ export type TimeFieldFieldContextValue = {
   errorConnected: boolean;
   invalid?: boolean;
   required: boolean;
-  status: TimeFieldStatus;
   size: TimeFieldSize;
   variant: TimeFieldVariant;
   compact: boolean;
@@ -92,8 +90,9 @@ export type TimeFieldControlProps = Omit<
   onValueChange?: (value: string) => void;
   format?: TimeFieldFormat;
   disabled?: boolean;
+  readOnly?: boolean;
+  name?: string;
   size?: TimeFieldSize;
-  status?: TimeFieldStatus;
   variant?: TimeFieldVariant;
   compact?: boolean;
   prefix?: ReactNode;
@@ -119,7 +118,6 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
   invalid?: boolean;
   id?: string;
   required?: boolean;
-  status?: TimeFieldStatus;
   size?: TimeFieldSize;
   variant?: TimeFieldVariant;
   value?: string;
@@ -127,6 +125,8 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
   onValueChange?: (value: string) => void;
   format?: TimeFieldFormat;
   disabled?: boolean;
+  readOnly?: boolean;
+  name?: string;
   compact?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
@@ -180,11 +180,10 @@ export type TimeFieldSimpleBodyProps = {
   labelId: string;
   controlProps: Omit<
     TimeFieldControlProps,
-    "id" | "size" | "status" | "variant" | "compact" | "prefix" | "suffix"
+    "id" | "size" | "variant" | "compact" | "prefix" | "suffix"
   > & {
     id: string;
     size: TimeFieldSize;
-    status: TimeFieldStatus;
     variant: TimeFieldVariant;
     compact: boolean;
     prefix?: ReactNode;

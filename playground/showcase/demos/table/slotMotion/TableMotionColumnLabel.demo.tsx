@@ -20,7 +20,7 @@ export function TableMotionColumnLabelDemo() {
     >
       <Table.Content aria-label="Column labels">
         <Table.Header>
-          <Table.Column isRowHeader>
+          <Table.Column rowHeader>
             <Table.Label>Name</Table.Label>
           </Table.Column>
           <Table.Column>

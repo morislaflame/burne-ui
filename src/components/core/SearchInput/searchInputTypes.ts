@@ -1,4 +1,9 @@
-import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type {
+  MotionController,
+  MotionMapWithEvents,
+  MotionStateHostProps,
+  MotionValue,
+} from "@/components/core/utils/slotMotion";
 import type {
   ChangeEvent,
   FocusEvent,
@@ -6,6 +11,7 @@ import type {
   InputHTMLAttributes,
   KeyboardEvent,
   MutableRefObject,
+  Ref,
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
@@ -75,13 +81,21 @@ export type SearchInputProps = Omit<
   /** `aria-invalid` and `data-invalid` without a message. Native `aria-invalid` still wins when it is true. */
   invalid?: boolean;
   classNames?: Prettify<SearchInputClassNames>;
+  /** Native `<input>`. `ref` is the shell (`role="search"`), the same node as `className`. */
+  inputRef?: Ref<HTMLInputElement>;
   /**
    * Per-slot motion (`root`, `icon`, `clear`, `input`, `expandTrigger`).
    * Expand/collapse: `root` / `icon` `enter` / `leave` (`searchExpand` / `searchIconShift`).
    * `searchExpand` tweens shell `width` (kit layout exception), not `scaleX`.
+   * `events` and `states` sit beside slots, not inside `SearchInputMotion`.
    */
-  motion?: Prettify<SearchInputMotion>;
-};
+  motion?: Prettify<MotionMapWithEvents<SearchInputMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the input.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
  
 export type UseSearchInputRootStateProps = {
   size?: SearchInputSize;
@@ -93,6 +107,7 @@ export type UseSearchInputRootStateProps = {
   collapseOnBlur?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
+  name?: string;
   placeholder?: string;
   value?: InputHTMLAttributes<HTMLInputElement>["value"];
   defaultValue?: InputHTMLAttributes<HTMLInputElement>["defaultValue"];
@@ -105,7 +120,8 @@ export type UseSearchInputRootStateProps = {
   groupSegment?: ButtonGroupSegment;
   className?: string;
   classNames?: Prettify<SearchInputClassNames>;
-  forwardedRef: ForwardedRef<HTMLInputElement>;
+  /** Native `<input>`. The component `ref` is the shell, the same node as `className`. */
+  inputRef?: Ref<HTMLInputElement>;
 };
  
 export type UseSearchInputAnimationsProps = {
@@ -120,5 +136,6 @@ export type UseSearchInputAnimationsProps = {
   rootRef: RefObject<HTMLDivElement | null>;
   iconRef: RefObject<HTMLSpanElement | null>;
   pointerInsideRef: MutableRefObject<boolean>;
+  forwardedRef: ForwardedRef<HTMLDivElement>;
 };
  

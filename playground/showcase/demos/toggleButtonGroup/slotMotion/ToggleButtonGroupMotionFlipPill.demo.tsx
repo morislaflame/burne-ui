@@ -25,7 +25,7 @@ export function ToggleButtonGroupMotionFlipPillDemo() {
     const pill = pillRef.current;
     if (!wrap || !pill) return;
     const selected = wrap.querySelector(
-      `[data-toggle-button-value="${CSS.escape(value)}"]`,
+      `[data-value="${CSS.escape(value)}"]`,
     );
     if (!(selected instanceof HTMLElement)) return;
 
@@ -49,7 +49,7 @@ export function ToggleButtonGroupMotionFlipPillDemo() {
         className="pointer-events-none absolute left-0 top-0 z-0 rounded-large bg-primary/20"
       />
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         segmented
         variant="outline"
         aria-label="View with Flip pill"

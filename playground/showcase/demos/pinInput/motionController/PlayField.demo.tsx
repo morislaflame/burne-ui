@@ -8,13 +8,13 @@ export function PinInputMotionPlayFieldDemo() {
   return (
     <div className="flex flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("field", "hoverIn")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("control", "hoverIn")}>
           Lift
         </Button>
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("field", "hoverOut")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("control", "hoverOut")}>
           Rest
         </Button>
-        <Button size="small" variant="ghost" onClick={() => controller.set("field", { y: 0 })}>
+        <Button size="small" variant="ghost" onClick={() => controller.set("control", { y: 0 })}>
           Snap
         </Button>
       </div>
@@ -23,7 +23,7 @@ export function PinInputMotionPlayFieldDemo() {
         length={4}
         motionController={controller}
         motion={{
-          field: {
+          control: {
             hoverIn: { y: -6, duration: 0.28, replay: "rest" },
             hoverOut: { y: 0, duration: 0.2 },
           },

@@ -26,5 +26,7 @@ export type {
   NumberInputMotion,
   NumberInputPartMotion,
   NumberInputProps,
+  NumberInputSize,
+  NumberInputVariant,
   NumberInputStepperProps,
 } from "./numberInputTypes";

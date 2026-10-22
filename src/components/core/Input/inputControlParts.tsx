@@ -3,7 +3,7 @@ import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useMemo, us
 import { KitFolderOpen } from "@/components/core/utils/kitIcons";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
-import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
  
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Text } from "@/components/core/Text";
@@ -12,6 +12,7 @@ import { useFormControlProps } from "@/components/composite/Form/useFormControlP
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
  
 import {
   resolveInputMotionDefaults,
@@ -79,9 +80,8 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
   function InputControl(
     {
       variant: variantProp,
-      status: statusProp,
       size: sizeProp,
-      inputType = "text",
+      type = "text",
       placeholder,
       prefix,
       suffix,
@@ -113,7 +113,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
       onBlur: onBlur as ((event: unknown) => void) | undefined,
       disabled,
       readOnly,
-      type: inputType,
+      type,
     });
  
     const resolvedName = formBinding.name ?? name;
@@ -135,11 +135,11 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
       errorConnected: fieldCtx?.errorConnected ?? false,
       formInvalid: formBinding["aria-invalid"] === true,
     });
-    const status = visualStatusForInvalid(statusProp ?? fieldCtx?.status, isInvalid, "default");
+    const status = fieldPaintStatus(isInvalid);
     const size =
       sizeProp ??
       fieldCtx?.size ??
-      inputSizeFromButtonSize(groupCtx?.buttonSize ?? "base");
+      inputSizeFromButtonSize(groupCtx?.size ?? "base");
     const required = fieldCtx?.required ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;
     const errorConnected = fieldCtx?.errorConnected ?? false;
@@ -196,19 +196,16 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
  
-    const isFile = inputType === "file";
-    const isPassword = inputType === "password";
+    const isFile = type === "file";
+    const isPassword = type === "password";
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const passwordShown = isPassword && passwordVisible;
     const [pickedFiles, setPickedFiles] = useState<File[]>([]);
     const pickedFilesRef = useRef<File[]>([]);
     const commitPickedFiles = useCallback((next: File[]) => {
       pickedFilesRef.current = next;
       setPickedFiles(next);
     }, []);
- 
-    useEffect(() => {
-      if (!isPassword) setPasswordVisible(false);
-    }, [isPassword]);
  
     const fileEntries = usePickedFileEntries(pickedFiles);
  
@@ -262,7 +259,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
           variant={variant}
           status={status}
           size={size}
-          inputType={inputType}
+          type={type}
           blocked={blocked}
           groupSegment={groupSegment}
           className={className}
@@ -275,7 +272,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
           prefix={prefix}
           suffix={suffix}
           isPassword={isPassword}
-          passwordVisible={passwordVisible}
+          passwordVisible={passwordShown}
           onTogglePassword={() => setPasswordVisible((v) => !v)}
           disabled={disabled}
           isFile={isFile}
@@ -310,7 +307,7 @@ function InputTextControl({
   resolvedName,
   isPassword,
   passwordVisible,
-  inputTypeRest,
+  nativeType,
   resolvedDisabled,
   resolvedReadOnly,
   placeholder,
@@ -322,6 +319,7 @@ function InputTextControl({
   ariaDescribedBy,
   size,
   slotControlClass,
+  className,
   rest,
 }: {
   setInputRef: (node: HTMLInputElement | null) => void;
@@ -329,7 +327,7 @@ function InputTextControl({
   resolvedName: InputControlProps["name"];
   isPassword: boolean;
   passwordVisible: boolean;
-  inputTypeRest: "text" | "number" | "password" | "file";
+  nativeType: NonNullable<InputControlProps["type"]>;
   resolvedDisabled?: boolean;
   resolvedReadOnly?: boolean;
   placeholder?: string;
@@ -341,12 +339,13 @@ function InputTextControl({
   ariaDescribedBy?: string;
   size: NonNullable<InputControlProps["size"]>;
   slotControlClass?: string;
+  className?: string;
   rest: Omit<
     InputControlProps,
     | "variant"
     | "status"
     | "size"
-    | "inputType"
+    | "type"
     | "placeholder"
     | "prefix"
     | "suffix"
@@ -377,7 +376,7 @@ function InputTextControl({
       ref={setRef}
       id={id}
       name={resolvedName}
-      type={isPassword ? (passwordVisible ? "text" : "password") : inputTypeRest}
+      type={isPassword && passwordVisible ? "text" : nativeType}
       disabled={resolvedDisabled}
       readOnly={resolvedReadOnly}
       placeholder={placeholder}
@@ -389,6 +388,7 @@ function InputTextControl({
         INPUT_CONTROL_PAD[size],
         slotControlClass,
         FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
+        className,
       )}
       {...rest}
       {...pointerHandlers}
@@ -405,7 +405,7 @@ function InputControlSurface({
   variant,
   status,
   size,
-  inputType,
+  type,
   blocked,
   groupSegment,
   className,
@@ -441,9 +441,9 @@ function InputControlSurface({
   rest,
 }: {
   variant: NonNullable<InputControlProps["variant"]>;
-  status: NonNullable<InputControlProps["status"]>;
+  status: "default" | "danger";
   size: NonNullable<InputControlProps["size"]>;
-  inputType: NonNullable<InputControlProps["inputType"]>;
+  type: NonNullable<InputControlProps["type"]>;
   blocked: boolean;
   groupSegment: InputControlProps["groupSegment"];
   className: string;
@@ -481,7 +481,7 @@ function InputControlSurface({
     | "variant"
     | "status"
     | "size"
-    | "inputType"
+    | "type"
     | "placeholder"
     | "prefix"
     | "suffix"
@@ -536,10 +536,11 @@ function InputControlSurface({
       removePickedFile(file, row instanceof HTMLElement ? row : null);
     };
  
+  const selectFileLabel = useBurneLabel("selectFile");
   const surfaceStyle = useSkinSurfaceStyle(variant);
   const multipleFiles = pickedFilesLength > 1;
   const fileListEmpty = isFile && pickedFilesLength === 0;
-  const shellSurface = inputShellSurfaceClass({ variant, status });
+  const shellSurface = inputShellSurfaceClass({ variant });
   const shellFileEmptySurface = fileListEmpty
     ? inputFileEmptySurfaceClass(shellSurface)
     : null;
@@ -564,14 +565,13 @@ function InputControlSurface({
         shellSurface,
         shellFileEmptySurface,
         shellHoverMotionClass,
-        className,
         slotClass: slotClassNames.shell,
       })}
       style={mergeSkinSurfaceStyle(surfaceStyle)}
-      {...dataVariantProps({ size, variant, status })}
+      {...dataVariantProps({ size, variant })}
     >
       {showAffixes && prefix != null ? (
-        <AffixSlot side="prefix" status={status} controlSize={size}>
+        <AffixSlot side="prefix" controlSize={size}>
           {prefix}
         </AffixSlot>
       ) : null}
@@ -597,13 +597,13 @@ function InputControlSurface({
               />
               <Text
                 as="span"
-                variant="base"
+                textStyle="base"
                 className={cn(
                   INPUT_FILE_EMPTY_TEXT_CLASS,
                   slotClassNames.fileEmpty,
                 )}
               >
-                {placeholder ?? "Select file"}
+                {placeholder ?? selectFileLabel}
               </Text>
             </>
           ) : multipleFiles ? (
@@ -624,7 +624,7 @@ function InputControlSurface({
                 ) : (
                   <FileGlyph />
                 )}
-                <Text as="span" variant="base" className={INPUT_FILE_NAME_CLASS}>
+                <Text as="span" textStyle="base" className={INPUT_FILE_NAME_CLASS}>
                   {file.name}
                 </Text>
                 {!blocked ? (
@@ -648,7 +648,7 @@ function InputControlSurface({
               ) : (
                 <FileGlyph />
               )}
-              <Text as="span" variant="base" className={INPUT_FILE_NAME_CLASS}>
+              <Text as="span" textStyle="base" className={INPUT_FILE_NAME_CLASS}>
                 {fileEntries[0]!.file.name}
               </Text>
               {!blocked ? (
@@ -667,7 +667,11 @@ function InputControlSurface({
             readOnly={resolvedReadOnly}
             onChange={handleFileChange}
             onBlur={resolvedOnBlur}
-            className={INPUT_FILE_INPUT_CLASS}
+            className={cn(
+              INPUT_FILE_INPUT_CLASS,
+              slotClassNames.control,
+              className,
+            )}
             {...rest}
             aria-required={required || undefined}
             aria-invalid={ariaInvalid}
@@ -683,7 +687,7 @@ function InputControlSurface({
           resolvedName={resolvedName}
           isPassword={isPassword}
           passwordVisible={passwordVisible}
-          inputTypeRest={inputType}
+          nativeType={type}
           resolvedDisabled={resolvedDisabled}
           resolvedReadOnly={resolvedReadOnly}
           placeholder={placeholder}
@@ -695,17 +699,17 @@ function InputControlSurface({
           ariaDescribedBy={ariaDescribedBy}
           size={size}
           slotControlClass={slotClassNames.control}
+          className={className}
           rest={rest}
         />
       )}
       {showAffixes && suffix != null ? (
-        <AffixSlot side="suffix" status={status} controlSize={size}>
+        <AffixSlot side="suffix" controlSize={size}>
           {suffix}
         </AffixSlot>
       ) : null}
       {showAffixes && isPassword ? (
         <PasswordVisibilityAffix
-          status={status}
           controlSize={size}
           visible={passwordVisible}
           disabled={disabled}

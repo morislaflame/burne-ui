@@ -4,6 +4,8 @@ import {
   clampNumberInput,
   formatNumberInput,
   numberInputCanStep,
+  numberInputEditText,
+  parseNumberInputComplete,
   snapNumberInput,
   stepNumberInput,
 } from "./numberInputAPI";
@@ -34,5 +36,14 @@ describe("numberInputAPI", () => {
   it("formats finite numbers and hides empty", () => {
     expect(formatNumberInput(null)).toBe("");
     expect(formatNumberInput(12)).toBe("12");
+  });
+
+  it("parses a locale through formatToParts and edits without grouping", () => {
+    expect(formatNumberInput(1200, { useGrouping: true }, "en")).toBe("1,200");
+    expect(numberInputEditText(1200, "en")).toBe("1200");
+    expect(parseNumberInputComplete("1,200", "en")).toBe(1200);
+    expect(parseNumberInputComplete("1.20", "de-DE")).toBe(120);
+    expect(parseNumberInputComplete("1,2", "de-DE")).toBe(1.2);
+    expect(numberInputEditText(1.2, "de-DE")).toBe("1,2");
   });
 });

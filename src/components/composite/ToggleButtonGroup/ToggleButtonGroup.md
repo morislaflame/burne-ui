@@ -2,6 +2,8 @@
 
 Группа кнопок-переключателей на базе `ToggleButton`. Склеенная (`segmented={false}`) как `ButtonGroup` или с зазором. Режимы **multiple** и **single** (radio-like).
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -15,8 +17,8 @@ import { ToggleButton } from "burne-ui";
 
 ```tsx
 <ToggleButtonGroup
-  type="multiple"
-  defaultValue={["bold"]}
+  selectionMode="multiple"
+  defaultValues={["bold"]}
   aria-label="Форматирование"
   variant="default"
   size="base"
@@ -32,7 +34,7 @@ import { ToggleButton } from "burne-ui";
 
 ```tsx
 <ToggleButtonGroup
-  type="single"
+  selectionMode="single"
   value={align}
   onValueChange={setAlign}
   aria-label="Выравнивание"
@@ -49,15 +51,16 @@ Compound API **нет** — только root + дочерние `ToggleButton`.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `type` | `multiple` | `multiple` \| `single` |
+| `selectionMode` | `multiple` | `multiple` \| `single` |
 | `orientation` | `horizontal` | `horizontal` \| `vertical` |
 | `segmented` | `false` | `true` — зазор между кнопками |
 | `disabled` | `false` | Блокирует группу и все `ToggleButton` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` → context |
-| `variant` | `default` | `default` \| `outline` \| `ghost` \| `gloss` |
-| `value` | — | Controlled: `string[]` (multiple) или `string` (single) |
-| `defaultValue` | — | Uncontrolled initial |
-| `onValueChange` | — | `(value: string \| string[]) => void` |
+| `variant` | `default` | `default` \| `outline` \| `ghost` |
+| `value` / `defaultValue` | — | Одно значение при `single`, `string \| null`. Пустой выбор — `null` |
+| `onValueChange` | — | `(value: string \| null) => void`, только `single` |
+| `values` / `defaultValues` | — | Набор при `selectionMode="multiple"` |
+| `onValuesChange` | — | `(values: string[]) => void`, только `multiple` |
 | `className` | — | На root `<div role="toolbar">` |
 | `classNames` | — | Слоты: `root`, `separator` |
 
@@ -82,7 +85,6 @@ Joined-рамка как у `ButtonGroup`: на `classNames.root` — `rounded-*
 | `default` | Standard toggle surface |
 | `outline` | Border shell |
 | `ghost` | Прозрачный |
-| `gloss` | `gloss-panel`; separators **не** рендерятся |
 
 | `size` | Прокидывается в каждый `ToggleButton` |
 
@@ -102,6 +104,8 @@ Motion item ToggleButton остаётся на пункте.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`group:nudge`), не фазы. `createMotionEvents`. `play` ищет слот `root`. `waitForComplete` — playground / Storybook **MotionController**.
 
+Тройка на корне группы, не на вложенном `ToggleButton`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { Button, ToggleButton, ToggleButtonGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -116,7 +120,7 @@ function Nudge() {
       <Button size="small" variant="outline" onClick={() => controller.play("group:nudge")}>
         Nudge
       </Button>
-      <ToggleButtonGroup type="single" defaultValue="list" aria-label="View" motionController={controller} motion={{ events }}>
+      <ToggleButtonGroup selectionMode="single" defaultValue="list" aria-label="View" motionController={controller} motion={{ events }}>
         <ToggleButton value="list">List</ToggleButton>
         <ToggleButton value="grid">Grid</ToggleButton>
       </ToggleButtonGroup>
@@ -145,13 +149,9 @@ function Nudge() {
 
 ### 2. Press squeeze
 
-Slot motion на `root` (в `ButtonGroup` сегменте — inner content span): `pressSqueeze` / `pressSqueezeGloss`.
+Slot motion на `root` (в `ButtonGroup` сегменте — inner content span): `pressSqueeze`.
 
-### 3. Gloss
-
-`variant="gloss"` на группе → gloss-рецепты на кнопках (`hoverLiftGloss` / `pressSqueezeGloss`).
-
-Группа добавляет: сегментацию (`ButtonGroupSegmentProvider`), roving keyboard (стрелки / Home / End) в обоих `type`.
+Группа добавляет: сегментацию (`ButtonGroupSegmentProvider`), roving keyboard (стрелки / Home / End) в обоих `selectionMode`.
 
 #### Кастомизация
 
@@ -179,7 +179,7 @@ configureMotion({
 
 ## Токены и CSS
 
-Стили root/separator импортируются напрямую из `ButtonGroup/buttonGroupStyles` (`buttonGroupRootClass`, `buttonGroupSeparatorClass`) — отдельный styles-слой не нужен.
+Корень группы — `toggleButtonGroupRootClass` в `toggleButtonGroupStyles.ts` (оборачивает `buttonGroupRootClass`). Разделитель — `buttonGroupSeparatorClass`.
 
 Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Legend/Hint/Error API нет (осознанное исключение от option-group fieldset утилит).
 
@@ -197,8 +197,8 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 
 ```tsx
 <ToggleButtonGroup
-  type="multiple"
-  defaultValue={["list"]}
+  selectionMode="multiple"
+  defaultValues={["list"]}
   aria-label="Режим отображения"
   className="w-fit"
 >
@@ -210,7 +210,7 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 ### Segmented variants
 
 ```tsx
-<ToggleButtonGroup segmented type="single" variant="outline" aria-label="Тема">
+<ToggleButtonGroup segmented selectionMode="single" variant="outline" aria-label="Тема">
   <ToggleButton value="light">Светлая</ToggleButton>
   <ToggleButton value="dark">Тёмная</ToggleButton>
 </ToggleButtonGroup>
@@ -219,10 +219,10 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 ### Практические заметки
 
 - **`aria-label` обязателен** на toolbar (не валидируется кодом).
-- `type="single"`: кнопки `role="radio"`, `aria-checked`.
-- `type="multiple"`: `aria-pressed`.
+- `selectionMode="single"`: кнопки `role="radio"`, `aria-checked`.
+- `selectionMode="multiple"`: `aria-pressed`.
 - Стрелки / Home / End: только roving focus; Enter/Space на кнопке — select/toggle.
-- `data-toggle-button-value` на кнопках — для keyboard navigation.
+- `data-value` на кнопках — для keyboard navigation.
 - `segmented` — когда нужны независимые borders/shadows.
 - `disabled` на группе блокирует все toggle buttons.
 
@@ -264,3 +264,7 @@ ToggleButtonGroup/
 `Composite Components/ToggleButtonGroup` — connected H/V, segmented, single, single segmented, disabled, variants.
 
 Playground: `playground/showcase/demos/toggleButtonGroup/`.
+
+## Данные
+
+`items` ставит кнопки, если дети ещё не содержат `ToggleButton`. Совпадение пишет ошибку в dev.

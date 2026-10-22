@@ -10,15 +10,15 @@ export function LoadingCardOverlayDemo() {
       className="relative w-full max-w-xs overflow-hidden"
     >
       <div className="flex flex-col gap-xsmall opacity-40">
-        <Text as="p" variant="base" className="font-medium">
+        <Text as="p" textStyle="base" className="font-medium">
           Loading the dashboard
         </Text>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Metrics for the last 7 days
         </Text>
       </div>
       <div className="absolute inset-0 flex items-center justify-center bg-surface/60 backdrop-blur-[2px]">
-        <Loading size="mid" color="primary" label="Loading metrics" />
+        <Loading size="mid" color="primary" aria-label="Loading metrics" />
       </div>
     </Surface>
   );

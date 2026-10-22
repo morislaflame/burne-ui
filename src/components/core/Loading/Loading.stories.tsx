@@ -6,7 +6,7 @@ import { expect } from "storybook/test";
 import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
-import { Loading, type LoadingColor, type LoadingType } from "./Loading";
+import { Loading, type LoadingColor, type LoadingIndicator } from "./Loading";
 import { LoadingMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/loading/motionController/gallery";
 import { LoadingSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/loading/slotMotion/gallery";
 
@@ -21,16 +21,7 @@ const framedDecorator = [
   ),
 ] as const;
 
-const COLORS: LoadingColor[] = [
-  "primary",
-  "foreground",
-  "muted",
-  "secondary",
-  "danger",
-  "success",
-  "info",
-  "warning",
-];
+const COLORS: LoadingColor[] = ["primary", "foreground", "muted", "secondary"];
 
 const meta = {
   title: "Core Components/Loading",
@@ -41,18 +32,18 @@ const meta = {
     docs: {
       description: {
         component:
-          "Loading indicator: circular spinner (`type=\"spinner\"`) or three GSAP bouncing dots (`type=\"dots\"`). Dot speed — `configureMotion({ loadingDotsDuration })` (wave step = duration / 3). Sizes `small | base | mid | large`.",
+          "Loading indicator: circular spinner (`indicator=\"spinner\"`) or three GSAP bouncing dots (`indicator=\"dots\"`). Semantic paint is `status`. `color` is a token (`primary`, `foreground`, `muted`, `secondary`) or a CSS color. Dot speed — `configureMotion({ loadingDotsDuration })` (wave step = duration / 3).",
       },
     },
   },
   decorators: [...framedDecorator],
   args: {
-    type: "spinner",
+    indicator: "spinner",
     size: "base",
     color: "primary",
   },
   argTypes: {
-    type: { control: "select", options: ["spinner", "dots"] satisfies LoadingType[] },
+    indicator: { control: "select", options: ["spinner", "dots"] satisfies LoadingIndicator[] },
     size: { control: "select", options: COMPONENT_SIZES },
     color: { control: "select", options: COLORS },
   },
@@ -71,7 +62,7 @@ export const Default: Story = {
 export const Dots: Story = {
   name: "Bouncing dots",
   args: {
-    type: "dots",
+    indicator: "dots",
     size: "mid",
     color: "primary",
   },
@@ -83,8 +74,8 @@ export const DotsColors: Story = {
     <div className="flex flex-wrap items-end justify-center gap-2xlarge">
       {COLORS.map((color) => (
         <div key={color} className="flex flex-col items-center gap-small">
-          <Loading type="dots" color={color} size="mid" />
-          <Text as="span" variant="small" className="capitalize text-muted">
+          <Loading indicator="dots" color={color} size="mid" />
+          <Text as="span" textStyle="small" className="capitalize text-muted">
             {color}
           </Text>
         </div>
@@ -99,8 +90,8 @@ export const DotsSizes: Story = {
     <div className="flex flex-wrap items-end justify-center gap-2xlarge">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-small">
-          <Loading type="dots" size={size} />
-          <Text as="span" variant="small" className="capitalize text-muted">
+          <Loading indicator="dots" size={size} />
+          <Text as="span" textStyle="small" className="capitalize text-muted">
             {size}
           </Text>
         </div>
@@ -116,7 +107,7 @@ export const Sizes: Story = {
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-small">
           <Loading size={size} />
-          <Text as="span" variant="small" className="capitalize text-muted">
+          <Text as="span" textStyle="small" className="capitalize text-muted">
             {size}
           </Text>
         </div>
@@ -132,7 +123,7 @@ export const Colors: Story = {
       {COLORS.map((color) => (
         <div key={color} className="flex flex-col items-center gap-small">
           <Loading color={color} size="mid" />
-          <Text as="span" variant="small" className="capitalize text-muted">
+          <Text as="span" textStyle="small" className="capitalize text-muted">
             {color}
           </Text>
         </div>
@@ -146,7 +137,7 @@ export const WithLabel: Story = {
   render: () => (
     <div className="inline-flex items-center gap-base">
       <Loading size="small" />
-      <Text as="span" variant="base" className="text-muted">
+      <Text as="span" textStyle="base" className="text-muted">
         Loading data…
       </Text>
     </div>
@@ -157,7 +148,7 @@ export const Centered: Story = {
   name: "Centered in block",
   render: () => (
     <div className="flex h-40 w-72 items-center justify-center rounded-large border-token bg-surface">
-      <Loading size="large" color="primary" label="Loading content" />
+      <Loading size="large" color="primary" aria-label="Loading content" />
     </div>
   ),
 };
@@ -167,7 +158,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-2xlarge">
       <Loading
-        type="spinner"
+        indicator="spinner"
         size="mid"
         classNames={{
           root: "rounded-large border border-primary/20 p-base",
@@ -175,7 +166,7 @@ export const CustomClassNames: Story = {
         }}
       />
       <Loading
-        type="dots"
+        indicator="dots"
         size="mid"
         classNames={{
           root: "rounded-large border border-primary/20 p-base",

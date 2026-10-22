@@ -6,6 +6,17 @@ import { render } from "@/__tests__/helpers";
 import { NumberInput } from ".";
 
 describe("NumberInput", () => {
+  it("steps with the arrow keys and stops on the bound", () => {
+    render(<NumberInput label="Quantity" min={0} max={2} step={1} defaultValue={1} />);
+    const input = screen.getByRole("spinbutton", { name: "Quantity" });
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(input).toHaveValue("2");
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(input).toHaveValue("2");
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(input).toHaveValue("1");
+  });
+
   it("steps from empty to zero, then by the step", () => {
     render(<NumberInput label="Quantity" />);
     const input = screen.getByRole("spinbutton", { name: "Quantity" });
@@ -38,15 +49,25 @@ describe("NumberInput", () => {
     expect(input).toHaveValue("1.5");
   });
 
-  it("publishes invalid from error, not from status", () => {
-    const { rerender } = render(<NumberInput label="Quantity" error="Required" />);
+  it("publishes invalid from error", () => {
+    render(<NumberInput label="Quantity" error="Required" />);
     const input = screen.getByRole("spinbutton", { name: "Quantity" });
     expect(input).toHaveAttribute("aria-invalid", "true");
     expect(input).toHaveAttribute("data-invalid", "");
     expect(input.getAttribute("aria-describedby")).toBeTruthy();
+  });
 
-    rerender(<NumberInput label="Quantity" status="danger" />);
-    expect(screen.getByRole("spinbutton", { name: "Quantity" })).not.toHaveAttribute("aria-invalid");
+  it("shows the raw number on focus and announces the formatted value", () => {
+    render(
+      <NumberInput label="Amount" defaultValue={1200} formatOptions={{ useGrouping: true }} />,
+    );
+    const input = screen.getByRole("spinbutton", { name: "Amount" });
+    expect(input).toHaveValue("1,200");
+    expect(input).toHaveAttribute("aria-valuetext", "1,200");
+    fireEvent.focus(input);
+    expect(input).toHaveValue("1200");
+    fireEvent.blur(input);
+    expect(input).toHaveValue("1,200");
   });
 
   it("writes the number into the named input", () => {

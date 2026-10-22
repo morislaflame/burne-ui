@@ -11,11 +11,11 @@ export function SelectMotionTriggerWaveDemo() {
     <Select
       className="w-64"
       label="Trigger wave"
-      options={options}
+      items={options}
       defaultValue="svelte"
-      hint="Timeline: triggerGroup / value / trigger via ctx.targets"
+      hint="Timeline: shell / value / trigger via ctx.targets"
       motion={{
-        triggerGroup: {
+        shell: {
           hoverIn: (ctx) => {
             const tl = ctx.timeline();
             tl.to(ctx.el, { rotate: -1.2, y: -2, duration: 0.22 }, 0);

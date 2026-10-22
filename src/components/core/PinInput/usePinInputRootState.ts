@@ -1,11 +1,11 @@
 import { useCallback, useId, useMemo, type ReactNode } from "react";
 
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 
 import { pinInputDescribedBy, pinInputFieldIds } from "./pinInputA11y";
 import { pinInputDelete, pinInputInsert, pinInputLength, pinInputPaste } from "./pinInputAPI";
@@ -20,7 +20,6 @@ export type UsePinInputRootStateProps = {
   id?: string;
   name?: string;
   required?: boolean;
-  status?: InputStatus;
   size?: InputSize;
   disabled?: boolean;
   readOnly?: boolean;
@@ -28,6 +27,7 @@ export type UsePinInputRootStateProps = {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  onComplete?: (value: string) => void;
   variant?: InputVariant;
   length?: number;
   type?: PinInputType;
@@ -44,7 +44,6 @@ export function usePinInputRootState({
   id,
   name,
   required = false,
-  status = "default",
   size = "base",
   disabled = false,
   readOnly = false,
@@ -52,6 +51,7 @@ export function usePinInputRootState({
   value: valueProp,
   defaultValue = "",
   onValueChange,
+  onComplete,
   variant = "default",
   length: lengthProp,
   type = "number",
@@ -88,9 +88,10 @@ export function usePinInputRootState({
       if (blocked || readOnly) return index;
       const next = pinInputInsert(code, index, char, length);
       setValue(next);
+      if (next.length === length && code.length < length) onComplete?.(next);
       return Math.min(index + 1, length - 1);
     },
-    [blocked, code, length, readOnly, setValue],
+    [blocked, code, length, onComplete, readOnly, setValue],
   );
 
   const paste = useCallback(
@@ -98,9 +99,10 @@ export function usePinInputRootState({
       if (blocked || readOnly) return index;
       const next = pinInputPaste(code, index, text, type, length);
       setValue(next.value);
+      if (next.value.length === length && code.length < length) onComplete?.(next.value);
       return next.focus;
     },
-    [blocked, code, length, readOnly, setValue, type],
+    [blocked, code, length, onComplete, readOnly, setValue, type],
   );
 
   const remove = useCallback(
@@ -120,8 +122,6 @@ export function usePinInputRootState({
     invalid,
     errorConnected: error != null || errorConnected,
   });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
-
   const contextValue: PinInputContextValue = useMemo(
     () => ({
       value: code,
@@ -137,7 +137,6 @@ export function usePinInputRootState({
       readOnly,
       size,
       variant,
-      status: paintedStatus,
       inputId,
       labelId: ids.labelId,
       hintId: ids.hintId,
@@ -173,7 +172,6 @@ export function usePinInputRootState({
       labelConnected,
       mask,
       name,
-      paintedStatus,
       paste,
       placeholder,
       readOnly,

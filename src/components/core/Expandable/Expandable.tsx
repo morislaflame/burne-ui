@@ -2,8 +2,8 @@ import { forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "rea
 
 import { dataExpandedState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
-import { useFirstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
+import { usesKitElevation } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
 
@@ -29,6 +29,7 @@ export type {
   ExpandableClassNames,
   ExpandableMotion,
   ExpandableLifecycleMotion,
+  ExpandableRootMotion,
   ExpandableTriggerLiftMotion,
 } from "./expandableTypes";
 
@@ -38,7 +39,6 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
   function ExpandableRoot(
     {
       children,
-      compound: compoundProp,
       title,
       description,
       icon,
@@ -61,7 +61,6 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
   ) {
     const state = useExpandableRootState({
       children,
-      compound: compoundProp,
       defaultOpen,
       open: openProp,
       onOpenChange,
@@ -91,10 +90,15 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
     return (
       <ExpandableProvider value={state.contextValue}>
         <ExpandableClassNamesProvider classNames={classNames}>
-          <ExpandableMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
-        motionState={motionState}
-        motionPayload={motionPayload}
-        playInitialState={playInitialState}>
+          <ExpandableMotionProvider
+            motion={motion}
+            defaults={motionDefaults}
+            params={{ hasHoverShadow: true, liftScale: 1 }}
+            controller={motionController}
+            motionState={motionState}
+            motionPayload={motionPayload}
+            playInitialState={playInitialState}
+          >
           <ExpandableRootSurface
             forwardedRef={ref}
             className={expandableRootClass({
@@ -135,26 +139,28 @@ function ExpandableRootSurface({
     scope,
     slot: "root",
     forwardedRef,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
   });
   useOptionalEnterOnMount(scope, "root", part.targetRef);
   const { open, size, variant } = useExpandable();
-  const shadow = useFirstLevelHoverShadow(
+  const shadow = useSecondLevelShadow(
     part.targetRef,
-    isKitVariant(variant, KIT_EXPANDABLE_VARIANTS),
+    usesKitElevation(variant, KIT_EXPANDABLE_VARIANTS),
+    {
+      shadowSize: "none",
+      liftScale: 1,
+      interactive: false,
+      killMotionOnUnmount: false,
+    },
   );
   return (
     <div
       ref={part.setRef}
       className={cn(className, shadow.motionClass)}
       {...domRest}
-      onPointerOver={(event) => {
-        onPointerOver?.(event);
-        shadow.onPointerOver(event);
-      }}
-      onPointerOut={(event) => {
-        onPointerOut?.(event);
-        shadow.onPointerOut(event);
-      }}
+      {...part.pointerHandlers}
       style={style}
       {...dataVariantProps({ size, variant })}
       data-state={dataExpandedState(open)}

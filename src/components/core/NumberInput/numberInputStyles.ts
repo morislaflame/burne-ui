@@ -1,6 +1,6 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
 import { iconSlotClass, type IconSlotStep } from "@/components/core/utils/sizeLayout/iconSlot";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import {
@@ -8,8 +8,8 @@ import {
   fieldShellFocusRingClass,
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
-import { KIT_INPUT_VARIANTS, type InputSize, type InputStatus, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const NUMBER_INPUT_ROOT_CLASS = "w-fit max-w-full min-w-0";
@@ -42,7 +42,7 @@ const NUMBER_INPUT_ICON_STEP: Record<InputSize, IconSlotStep> = {
   large: "large",
 };
 
-export const NUMBER_INPUT_SHELL_DISABLED_CLASS = "cursor-not-allowed opacity-55 shadow-token-base";
+export const NUMBER_INPUT_SHELL_DISABLED_CLASS = "cursor-not-allowed opacity-55";
 
 export function numberInputIconClass(size: InputSize): string {
   return iconSlotClass(NUMBER_INPUT_ICON_STEP[size]);
@@ -65,13 +65,13 @@ export function numberInputShellClass({
 }: {
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   shellHoverMotionClass?: string;
   slotClass?: string;
   className?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return cn(
     "relative flex w-full min-w-0 items-stretch overflow-hidden rounded-base border-1",
     NUMBER_INPUT_SHELL_MIN[size],

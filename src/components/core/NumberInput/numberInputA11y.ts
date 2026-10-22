@@ -1,8 +1,5 @@
 import { fieldErrorId, fieldHintId, joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 
-export const NUMBER_INPUT_DECREASE_LABEL = "Decrease";
-export const NUMBER_INPUT_INCREASE_LABEL = "Increase";
-
 export function numberInputLabelId(inputId: string): string {
   return `${inputId}-label`;
 }

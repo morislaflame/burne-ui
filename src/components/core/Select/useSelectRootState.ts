@@ -8,6 +8,7 @@ import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBin
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useSkinVariant } from "@/skins/skinContext";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
 import { selectFieldIds } from "./selectA11y";
 import {
@@ -16,6 +17,7 @@ import {
   normalizeSelectValues,
   resolveSelectSingleValue,
   resolveSelectValues,
+  selectOptionSections,
   selectOptionValues,
 } from "./selectAPI";
 import type {
@@ -32,6 +34,7 @@ function useSelectMultipleValues({
   formBound,
   formValue,
   setFormValue,
+  readOnly,
 }: {
   multiple: boolean;
   valuesProp: string[] | undefined;
@@ -40,6 +43,7 @@ function useSelectMultipleValues({
   formBound: boolean;
   formValue: unknown;
   setFormValue: (next: unknown) => void;
+  readOnly: boolean;
 }) {
   const isValuesControlled = multiple && (valuesProp !== undefined || formBound);
   const [internalValues, setInternalValues] = useState<string[]>(() => defaultValues ?? EMPTY_SELECT_VALUES);
@@ -57,12 +61,12 @@ function useSelectMultipleValues({
   });
   const setValues = useCallback(
     (next: string[]) => {
-      if (!multiple) return;
+      if (!multiple || readOnly) return;
       if (!isValuesControlled) setInternalValues(next);
       onValuesChange?.(next);
       if (formBound) setFormValue(next);
     },
-    [formBound, isValuesControlled, multiple, onValuesChange, setFormValue],
+    [formBound, isValuesControlled, multiple, onValuesChange, readOnly, setFormValue],
   );
   return { values, setValues };
 }
@@ -76,10 +80,12 @@ export function useSelectRootState({
   id: idProp,
   name,
   required = false,
-  status = "default",
   size = "base",
-  options = EMPTY_SELECT_OPTIONS,
-  multiple = false,
+  items: optionsProp = EMPTY_SELECT_OPTIONS,
+  clearable = false,
+  portalContainer,
+  icon,
+  selectionMode = "single",
   value: valueProp,
   defaultValue,
   onValueChange,
@@ -91,18 +97,24 @@ export function useSelectRootState({
   onOpenChange,
   variant: variantProp,
   disabled: disabledProp = false,
-  placeholder = "Select a value",
+  readOnly: readOnlyProp = false,
+  placeholder: placeholderProp,
   menuMaxHeight = "min(24rem, 70dvh)",
   virtualized = false,
   virtualItemSize,
 }: UseSelectRootStateProps) {
+  const multiple = selectionMode === "multiple";
   const formBinding = useFormFieldBinding({
     name,
     value: multiple ? valuesProp : valueProp,
     disabled: disabledProp,
+    readOnly: readOnlyProp,
   });
   const formBound = formBinding.bound;
   const disabled = formBinding.disabled ?? disabledProp;
+  const readOnly = Boolean(formBinding.readOnly);
+  const selectValueLabel = useBurneLabel("selectValue");
+  const placeholder = placeholderProp ?? selectValueLabel;
   const autoId = useId();
   const buttonGroupCtx = useOptionalButtonGroupSegment();
   const variant: InputVariant = useSkinVariant(
@@ -137,12 +149,12 @@ export function useSelectRootState({
  
   const setValue = useCallback(
     (next: string) => {
-      if (multiple) return;
+      if (multiple || readOnly) return;
       if (!isControlled) setInternalValue(next);
-      onValueChange?.(next);
+      onValueChange?.(next === "" ? null : next);
       if (formBound) formBinding.setValue(next);
     },
-    [formBinding, formBound, isControlled, multiple, onValueChange],
+    [formBinding, formBound, isControlled, multiple, onValueChange, readOnly],
   );
 
   const { values, setValues } = useSelectMultipleValues({
@@ -153,19 +165,32 @@ export function useSelectRootState({
     formBound,
     formValue: formBinding.value,
     setFormValue: formBinding.setValue,
+    readOnly,
   });
  
-  const [open, setOpen] = useControllableState({
+  const [open, setOpenState] = useControllableState({
     value: openProp,
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (readOnly) return;
+      setOpenState(next);
+    },
+    [readOnly, setOpenState],
+  );
   const [activeValue, setActiveValue] = useState<string | null>(null);
  
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const valueRef = useRef<HTMLButtonElement | null>(null);
  
-  const optionValues = useMemo(() => selectOptionValues(options), [options]);
+  const optionSections = useMemo(() => selectOptionSections(optionsProp), [optionsProp]);
+  const items = useMemo(
+    () => optionSections.flatMap((section) => section.items),
+    [optionSections],
+  );
+  const optionValues = useMemo(() => selectOptionValues(items), [items]);
  
   useEffect(() => {
     if (!open || !activeValue) return;
@@ -185,11 +210,10 @@ export function useSelectRootState({
       invalid,
       formInvalid,
       required,
-      status,
       size,
       errorMessage: error,
     }),
-    [formInvalid, selectId, error, errorId, hasError, hasHint, hasLabel, hintId, invalid, required, labelId, size, status],
+    [formInvalid, selectId, error, errorId, hasError, hasHint, hasLabel, hintId, invalid, required, labelId, size],
   );
  
   const selectCtx: SelectContextValue = useMemo(
@@ -209,11 +233,16 @@ export function useSelectRootState({
       valueRef,
       variant,
       disabled,
+      readOnly,
       placeholder,
       menuMaxHeight,
       virtualized,
       virtualItemSize,
-      options,
+      items,
+      optionSections,
+      clearable,
+      portalContainer,
+      icon,
       optionValues,
       formValueRef: formBound
         ? (formBinding.ref as (node: HTMLButtonElement | null) => void)
@@ -224,6 +253,7 @@ export function useSelectRootState({
       activeValue,
       disabled,
       fieldCtx,
+      readOnly,
       formBound,
       formBinding,
       listId,
@@ -233,8 +263,12 @@ export function useSelectRootState({
       multiple,
       open,
       setOpen,
+      icon,
       optionValues,
-      options,
+      items,
+      optionSections,
+      clearable,
+      portalContainer,
       placeholder,
       setValue,
       setValues,
@@ -258,6 +292,7 @@ export function useSelectRootState({
     fieldCtx,
     selectCtx,
     fieldLabelCtx,
+    readOnly,
   };
 }
  

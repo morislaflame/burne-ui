@@ -1,4 +1,5 @@
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
+import { normalizeMotionConfig } from "@/components/core/utils/motionConfigValidation";
 import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
  
 import type { BurneLabels } from "./burneLabels";
@@ -25,7 +26,7 @@ export type ThemeTokenOverrides = {
   letterSpacing?: number;
   fontFamily?: string;
   fontFamilyMono?: string;
-  fontWeights?: ThemeFontWeights;
+  fontWeights?: Partial<ThemeFontWeights>;
   shadowOpacity?: number;
   shadowBlur?: number;
   shadowSpread?: number;
@@ -143,22 +144,43 @@ const MOTION_STATE_KEYS = [
   "enablePaginationFlip",
   "enableSelectionFill",
 ] as const satisfies ReadonlyArray<keyof ThemeTokenState>;
+
+/** Copy accepted motion keys onto a theme snapshot. Invalid values are skipped with a dev warning. */
+function motionConfigToThemeState(
+  state: ThemeTokenState,
+  motion: Partial<MotionConfig> | undefined,
+): ThemeTokenState {
+  if (!motion) return state;
+  const accepted = normalizeMotionConfig(motion);
+  const next: ThemeTokenState = { ...state };
+  for (const key of MOTION_STATE_KEYS) {
+    const value = accepted[key];
+    if (value !== undefined) {
+      (next as Record<string, unknown>)[key] = value;
+    }
+  }
+  if (accepted.pressSqueezeScale) next.pressSqueezeMid = accepted.pressSqueezeScale[1];
+  return next;
+}
  
 /** Merge shared `tokens` with `colors[mode]` into a full `ThemeTokenState`. */
 export function resolveThemeTokenState(
-  config: Pick<BurneThemeConfig, "tokens" | "colors">,
+  config: Pick<BurneThemeConfig, "tokens" | "colors" | "motion">,
   mode: ThemeMode,
 ): ThemeTokenState {
   const base = createDefaultThemeState(mode);
   const shared = config.tokens ?? {};
-  const modeOverrides = config.colors?.[mode];
  
-  const colors: ThemeColors = modeOverrides
-    ? { ...base.colors, ...modeOverrides }
-    : base.colors;
+  const darkColors: ThemeColors = config.colors?.dark
+    ? { ...base.modePalettes.dark, ...config.colors.dark }
+    : base.modePalettes.dark;
+  const lightColors: ThemeColors = config.colors?.light
+    ? { ...base.modePalettes.light, ...config.colors.light }
+    : base.modePalettes.light;
+  const colors = mode === "light" ? lightColors : darkColors;
  
   return {
-    ...base,
+    ...motionConfigToThemeState(base, config.motion),
     ...pickDefined({
       space: shared.space,
       size: shared.size,
@@ -183,94 +205,91 @@ export function resolveThemeTokenState(
       : base.fontWeights,
     colors,
     modePalettes: {
-      ...base.modePalettes,
-      [mode]: { ...colors },
+      dark: { ...darkColors },
+      light: { ...lightColors },
     },
   };
 }
  
-/** Build a `BurneThemeConfig` snapshot from live playground state. */
+const TOKEN_STATE_KEYS = [
+  "space",
+  "size",
+  "radius",
+  "borderWidth",
+  "focusRingWidth",
+  "focusRingOffset",
+  "textScale",
+  "letterSpacing",
+  "fontFamily",
+  "fontFamilyMono",
+  "shadowOpacity",
+  "shadowBlur",
+  "shadowSpread",
+  "shadowOffsetX",
+  "shadowOffsetY",
+  "toastScrimSize",
+  "toastScrimDensity",
+] as const satisfies ReadonlyArray<keyof ThemeTokenState & keyof ThemeTokenOverrides>;
+
+function diffColors(
+  colors: ThemeColors,
+  defaults: ThemeColors,
+): Partial<ThemeColors> | undefined {
+  const diff: Partial<ThemeColors> = {};
+  for (const key of Object.keys(colors) as (keyof ThemeColors)[]) {
+    if (colors[key] !== defaults[key]) diff[key] = colors[key];
+  }
+  return Object.keys(diff).length > 0 ? diff : undefined;
+}
+
+/**
+ * Build a `BurneThemeConfig` from live editor state.
+ * Only values that differ from the kit are written. `theme` stays, because an
+ * omitted mode follows the system preference. Toast stays on unless the app sets it.
+ */
 export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfig {
   const withPalettes = ensureModePalettes(state);
- 
-  const motion: Partial<MotionConfig> = {
-    interactiveDuration: withPalettes.interactiveDuration,
-    interactiveEase: withPalettes.interactiveEase,
-    hoverLiftEase: withPalettes.hoverLiftEase,
-    tooltipDuration: withPalettes.tooltipDuration,
-    modalDuration: withPalettes.modalDuration,
-    switchThumbDuration: withPalettes.switchThumbDuration,
-    switchThumbEase: withPalettes.switchThumbEase,
-    selectionFillDuration: withPalettes.selectionFillDuration,
-    selectionFillEase: withPalettes.selectionFillEase,
-    hoverLiftScale: withPalettes.hoverLiftScale,
-    badgeAnchorHoverLiftScale: withPalettes.badgeAnchorHoverLiftScale,
-    pressSqueezeScale: [1, withPalettes.pressSqueezeMid, 1],
-    pressSqueezeDurationFactor: withPalettes.pressSqueezeDurationFactor,
-    rippleDefaultDuration: withPalettes.rippleDefaultDuration,
-    rippleDefaultOpacityFrom: withPalettes.rippleDefaultOpacityFrom,
-    rippleExpandableDuration: withPalettes.rippleExpandableDuration,
-    rippleExpandableOpacityFrom: withPalettes.rippleExpandableOpacityFrom,
-    rippleEaseCss: withPalettes.rippleEaseCss,
-    expandDuration: withPalettes.expandDuration,
-    expandOpenEase: withPalettes.expandOpenEase,
-    surfaceTransitionDuration: withPalettes.surfaceTransitionDuration,
-    toastDismissDuration: withPalettes.toastDismissDuration,
-    toastDismissEase: withPalettes.toastDismissEase,
-    progressFillDuration: withPalettes.progressFillDuration,
-    progressFillEase: withPalettes.progressFillEase,
-    progressIndeterminateDuration: withPalettes.progressIndeterminateDuration,
-    progressIndeterminateEase: withPalettes.progressIndeterminateEase,
-    loadingDotsDuration: withPalettes.loadingDotsDuration,
-    loadingDotsEaseUp: withPalettes.loadingDotsEaseUp,
-    loadingDotsEaseDown: withPalettes.loadingDotsEaseDown,
-    enableAnimations: withPalettes.enableAnimations,
-    enableHoverLift: withPalettes.enableHoverLift,
-    enablePressSqueeze: withPalettes.enablePressSqueeze,
-    enableToggleButtonFill: withPalettes.enableToggleButtonFill,
-    enableRipple: withPalettes.enableRipple,
-    enableExpandable: withPalettes.enableExpandable,
-    enableToastStack: withPalettes.enableToastStack,
-    enableContentFade: withPalettes.enableContentFade,
-    enableProgressFill: withPalettes.enableProgressFill,
-    enableLoadingDots: withPalettes.enableLoadingDots,
-    enableModalMotion: withPalettes.enableModalMotion,
-    enableSwitchThumb: withPalettes.enableSwitchThumb,
-    enableTabsIndicator: withPalettes.enableTabsIndicator,
-    enablePaginationFlip: withPalettes.enablePaginationFlip,
-    enableSelectionFill: withPalettes.enableSelectionFill,
-  };
- 
-  const tokens: ThemeTokenOverrides = {
-    space: withPalettes.space,
-    size: withPalettes.size,
-    radius: withPalettes.radius,
-    borderWidth: withPalettes.borderWidth,
-    focusRingWidth: withPalettes.focusRingWidth,
-    focusRingOffset: withPalettes.focusRingOffset,
-    textScale: withPalettes.textScale,
-    fontFamily: withPalettes.fontFamily,
-    fontFamilyMono: withPalettes.fontFamilyMono,
-    letterSpacing: withPalettes.letterSpacing,
-    fontWeights: { ...withPalettes.fontWeights },
-    shadowOpacity: withPalettes.shadowOpacity,
-    shadowBlur: withPalettes.shadowBlur,
-    shadowSpread: withPalettes.shadowSpread,
-    shadowOffsetX: withPalettes.shadowOffsetX,
-    shadowOffsetY: withPalettes.shadowOffsetY,
-    toastScrimSize: withPalettes.toastScrimSize,
-    toastScrimDensity: withPalettes.toastScrimDensity,
-  };
- 
+  const defaults = createDefaultThemeState(withPalettes.theme);
+  const darkDefaults = createDefaultThemeState("dark");
+  const lightDefaults = createDefaultThemeState("light");
+
+  const tokens: ThemeTokenOverrides = {};
+  for (const key of TOKEN_STATE_KEYS) {
+    if (withPalettes[key] !== defaults[key]) {
+      Object.assign(tokens, { [key]: withPalettes[key] });
+    }
+  }
+  const fontWeights: Partial<ThemeFontWeights> = {};
+  for (const key of Object.keys(withPalettes.fontWeights) as (keyof ThemeFontWeights)[]) {
+    if (withPalettes.fontWeights[key] !== defaults.fontWeights[key]) {
+      fontWeights[key] = withPalettes.fontWeights[key];
+    }
+  }
+  if (Object.keys(fontWeights).length > 0) tokens.fontWeights = fontWeights;
+
+  const motion: Partial<MotionConfig> = {};
+  for (const key of MOTION_STATE_KEYS) {
+    if (withPalettes[key] !== defaults[key]) {
+      (motion as Record<string, unknown>)[key] = withPalettes[key];
+    }
+  }
+  if (withPalettes.pressSqueezeMid !== defaults.pressSqueezeMid) {
+    motion.pressSqueezeScale = [1, withPalettes.pressSqueezeMid, 1];
+  }
+
+  const darkColors = withPalettes.theme === "dark" ? withPalettes.colors : withPalettes.modePalettes.dark;
+  const lightColors = withPalettes.theme === "light" ? withPalettes.colors : withPalettes.modePalettes.light;
+  const colors: NonNullable<BurneThemeConfig["colors"]> = {};
+  const dark = diffColors(darkColors, darkDefaults.colors);
+  const light = diffColors(lightColors, lightDefaults.colors);
+  if (dark) colors.dark = dark;
+  if (light) colors.light = light;
+
   return {
     theme: withPalettes.theme,
-    tokens,
-    colors: {
-      dark: { ...withPalettes.modePalettes.dark },
-      light: { ...withPalettes.modePalettes.light },
-    },
-    motion,
-    toast: true,
+    ...(Object.keys(tokens).length > 0 ? { tokens } : {}),
+    ...(Object.keys(colors).length > 0 ? { colors } : {}),
+    ...(Object.keys(motion).length > 0 ? { motion } : {}),
   };
 }
  
@@ -384,11 +403,11 @@ export function exportDefaultBurneThemeConfigSource(options?: { exportName?: str
  
   return [
     "/**",
-    " * Burne UI theme config (starter snapshot).",
+    " * Burne UI theme config.",
     " *",
-    " * - Edit `tokens` / `motion` (shared), `colors.light` / `colors.dark`,",
-    " *   and optional `customTokens` for project-specific CSS variables.",
-    " * - Or replace this file with docs site → Copy config.",
+    " * Keys that match the kit are omitted. Add `tokens`, `motion`,",
+    " * `colors.light` / `colors.dark`, or `customTokens` for a difference.",
+    " * Or replace this file with docs site → Copy config.",
     " *",
     ' *   import { BurneUIProvider } from "burne-ui";',
     ` *   import ${exportName} from "./burne-theme";`,
@@ -459,72 +478,7 @@ export function applyBurneThemeConfig(
   if (typeof document === "undefined") return;
   const target = root ?? document.documentElement;
   const state = resolveThemeTokenState(config, resolvedTheme);
- 
-  if (config.motion) {
-    const m = config.motion;
-    if (m.interactiveDuration !== undefined) state.interactiveDuration = m.interactiveDuration;
-    if (m.interactiveEase !== undefined) state.interactiveEase = m.interactiveEase;
-    if (m.hoverLiftEase !== undefined) state.hoverLiftEase = m.hoverLiftEase;
-    if (m.tooltipDuration !== undefined) state.tooltipDuration = m.tooltipDuration;
-    if (m.modalDuration !== undefined) state.modalDuration = m.modalDuration;
-    if (m.switchThumbDuration !== undefined) state.switchThumbDuration = m.switchThumbDuration;
-    if (m.switchThumbEase !== undefined) state.switchThumbEase = m.switchThumbEase;
-    if (m.selectionFillDuration !== undefined) state.selectionFillDuration = m.selectionFillDuration;
-    if (m.selectionFillEase !== undefined) state.selectionFillEase = m.selectionFillEase;
-    if (m.hoverLiftScale !== undefined) state.hoverLiftScale = m.hoverLiftScale;
-    if (m.badgeAnchorHoverLiftScale !== undefined) {
-      state.badgeAnchorHoverLiftScale = m.badgeAnchorHoverLiftScale;
-    }
-    if (m.pressSqueezeScale !== undefined) state.pressSqueezeMid = m.pressSqueezeScale[1];
-    if (m.pressSqueezeDurationFactor !== undefined) {
-      state.pressSqueezeDurationFactor = m.pressSqueezeDurationFactor;
-    }
-    if (m.rippleDefaultDuration !== undefined) state.rippleDefaultDuration = m.rippleDefaultDuration;
-    if (m.rippleDefaultOpacityFrom !== undefined) {
-      state.rippleDefaultOpacityFrom = m.rippleDefaultOpacityFrom;
-    }
-    if (m.rippleExpandableDuration !== undefined) {
-      state.rippleExpandableDuration = m.rippleExpandableDuration;
-    }
-    if (m.rippleExpandableOpacityFrom !== undefined) {
-      state.rippleExpandableOpacityFrom = m.rippleExpandableOpacityFrom;
-    }
-    if (m.rippleEaseCss !== undefined) state.rippleEaseCss = m.rippleEaseCss;
-    if (m.expandDuration !== undefined) state.expandDuration = m.expandDuration;
-    if (m.expandOpenEase !== undefined) state.expandOpenEase = m.expandOpenEase;
-    if (m.surfaceTransitionDuration !== undefined) {
-      state.surfaceTransitionDuration = m.surfaceTransitionDuration;
-    }
-    if (m.toastDismissDuration !== undefined) state.toastDismissDuration = m.toastDismissDuration;
-    if (m.toastDismissEase !== undefined) state.toastDismissEase = m.toastDismissEase;
-    if (m.progressFillDuration !== undefined) state.progressFillDuration = m.progressFillDuration;
-    if (m.progressFillEase !== undefined) state.progressFillEase = m.progressFillEase;
-    if (m.progressIndeterminateDuration !== undefined) {
-      state.progressIndeterminateDuration = m.progressIndeterminateDuration;
-    }
-    if (m.progressIndeterminateEase !== undefined) {
-      state.progressIndeterminateEase = m.progressIndeterminateEase;
-    }
-    if (m.loadingDotsDuration !== undefined) state.loadingDotsDuration = m.loadingDotsDuration;
-    if (m.loadingDotsEaseUp !== undefined) state.loadingDotsEaseUp = m.loadingDotsEaseUp;
-    if (m.loadingDotsEaseDown !== undefined) state.loadingDotsEaseDown = m.loadingDotsEaseDown;
-    if (m.enableAnimations !== undefined) state.enableAnimations = m.enableAnimations;
-    if (m.enableHoverLift !== undefined) state.enableHoverLift = m.enableHoverLift;
-    if (m.enablePressSqueeze !== undefined) state.enablePressSqueeze = m.enablePressSqueeze;
-    if (m.enableToggleButtonFill !== undefined) state.enableToggleButtonFill = m.enableToggleButtonFill;
-    if (m.enableRipple !== undefined) state.enableRipple = m.enableRipple;
-    if (m.enableExpandable !== undefined) state.enableExpandable = m.enableExpandable;
-    if (m.enableToastStack !== undefined) state.enableToastStack = m.enableToastStack;
-    if (m.enableContentFade !== undefined) state.enableContentFade = m.enableContentFade;
-    if (m.enableProgressFill !== undefined) state.enableProgressFill = m.enableProgressFill;
-    if (m.enableLoadingDots !== undefined) state.enableLoadingDots = m.enableLoadingDots;
-    if (m.enableModalMotion !== undefined) state.enableModalMotion = m.enableModalMotion;
-    if (m.enableSwitchThumb !== undefined) state.enableSwitchThumb = m.enableSwitchThumb;
-    if (m.enableTabsIndicator !== undefined) state.enableTabsIndicator = m.enableTabsIndicator;
-    if (m.enablePaginationFlip !== undefined) state.enablePaginationFlip = m.enablePaginationFlip;
-    if (m.enableSelectionFill !== undefined) state.enableSelectionFill = m.enableSelectionFill;
-  }
- 
+
   applyThemeTokens(state, target);
   applyCustomThemeTokens(config.customTokens, target, resolvedTheme);
 }

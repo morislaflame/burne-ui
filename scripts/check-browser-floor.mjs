@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 // browserslist in package.json must match the floor table in README, SETUP, and the site browsers pages.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const kitRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = path.resolve(kitRoot, "..");
 
-const docs = [
-  path.join(kitRoot, "README.md"),
-  path.join(kitRoot, "docs/SETUP.md"),
+const kitDocs = [path.join(kitRoot, "README.md"), path.join(kitRoot, "docs/SETUP.md")];
+const siteDocs = [
   path.join(repoRoot, "burne-ui-site/content/docs/browsers/ru.md"),
   path.join(repoRoot, "burne-ui-site/content/docs/browsers/en.md"),
 ];
+const sitePresent = siteDocs.every((file) => existsSync(file));
 
 const expected = {
   chrome: "111",
@@ -49,7 +49,11 @@ function browserslistFor(versions) {
 
 const errors = [];
 
-for (const file of docs) {
+if (!sitePresent && siteDocs.some((file) => existsSync(file))) {
+  errors.push("burne-ui-site/content/docs/browsers: one of ru.md / en.md is missing");
+}
+
+for (const file of sitePresent ? [...kitDocs, ...siteDocs] : kitDocs) {
   const found = versionsFromTable(readFileSync(file, "utf8"));
   const label = path.relative(repoRoot, file);
   for (const key of Object.keys(expected)) {
@@ -73,4 +77,6 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("check-browser-floor: OK");
+console.log(
+  `check-browser-floor: OK${sitePresent ? "" : " (site not present, skipped)"}`,
+);

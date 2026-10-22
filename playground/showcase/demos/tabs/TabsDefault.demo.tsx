@@ -4,7 +4,7 @@ import { Tabs } from "@/components/core/Tabs";
 import { Text } from "@/components/core/Text";
 
 export function TabsDefaultDemo() {
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useState<string | null>("overview");
 
   return (
     <Tabs value={tab} onValueChange={setTab}>
@@ -16,12 +16,12 @@ export function TabsDefaultDemo() {
         </Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="overview" className="pt-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Active tab: {tab} (variant default)
         </Text>
       </Tabs.Panel>
       <Tabs.Panel value="details" className="pt-large">
-        <Text as="p" variant="small">
+        <Text as="p" textStyle="small">
           Second panel with other content.
         </Text>
       </Tabs.Panel>

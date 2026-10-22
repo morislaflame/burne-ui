@@ -15,7 +15,7 @@ export function BadgeServiceStatusListDemo() {
           key={row.name}
           className="flex items-center justify-between gap-large rounded-large border-token bg-secondary px-large py-small"
         >
-          <Text as="span" variant="small" className="font-medium">
+          <Text as="span" textStyle="small" className="font-medium">
             {row.name}
           </Text>
           <Badge status={row.status} size="small" className="tracking-wide">

@@ -8,7 +8,7 @@
  * Nested `iconStart` / `iconEnd` use `playBroadcast` with exclude so one node
  * does not play twice. Defaults: `resolveToggleButtonMotionDefaults`.
  */
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearMotionTransform, killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
  
 import {
@@ -27,7 +27,7 @@ import {
   type MotionValue,
 } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
  
 import { useToggleButtonMotionScope } from "./toggleButtonContext";
 import type {
@@ -40,6 +40,12 @@ import {
   applyToggleButtonFillInstant,
   useToggleButtonFillAnimation,
 } from "./useToggleButtonFillAnimation";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindSelectionFillRecipe } from "@/components/core/utils/slotMotion/recipes/bindSelection";
+
+bindLiftRecipes();
+bindSelectionFillRecipe();
  
 function isKitPressSqueeze(value: MotionValue | undefined): boolean {
   if (typeof value === "string") {
@@ -157,7 +163,7 @@ export function useToggleButtonAnimations({
   const shouldCoordinateFill = !disabled && !reduceMotion;
  
   const useContentRef = Boolean(groupSegment);
-  const hasHoverShadow = isKitVariant(variant, KIT_TOGGLE_BUTTON_VARIANTS) && !useContentRef;
+  const hasHoverShadow = usesKitElevation(variant, KIT_TOGGLE_BUTTON_VARIANTS) && !useContentRef;
   const enabled = !disabled;
   const btnRef = useRef<HTMLButtonElement>(null);
   const contentMotionRef = useRef<HTMLSpanElement>(null);
@@ -195,7 +201,7 @@ export function useToggleButtonAnimations({
       killMotion(el);
       el.style.removeProperty("--el-shadow");
       el.style.removeProperty("box-shadow");
-      gsap.set(el, { clearProps: "scale,transform" });
+      clearMotionTransform(el);
     }
     if (content) {
       killMotion(content);

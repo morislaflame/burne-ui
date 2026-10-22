@@ -23,7 +23,3 @@ export function alertDialogTriggerA11y(open: boolean) {
   } as const;
 }
  
-export function alertDialogOverlayA11yProps() {
-  return { "aria-hidden": true as const };
-}
- 

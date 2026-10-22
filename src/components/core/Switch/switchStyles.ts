@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
-import { sliderThicknessToCss } from "@/components/core/Slider";
+import { sliderThicknessToCss } from "@/components/core/Slider/sliderStyles";
 import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 
 import { SWITCH_LAYOUT, type SwitchSize } from "./switchGeometry";
@@ -72,7 +72,7 @@ export const SWITCH_THUMB_BASE_CLASS =
 export const SWITCH_ICON_BASE_CLASS = "absolute inset-0 flex items-center justify-center";
 
 export function switchLabelSide(labelPosition: SwitchLabelPosition): "left" | "right" {
-  return labelPosition === "left" ? "left" : "right";
+  return labelPosition === "start" ? "left" : "right";
 }
 
 export function switchControlCellClass(labelPosition: SwitchLabelPosition): string {

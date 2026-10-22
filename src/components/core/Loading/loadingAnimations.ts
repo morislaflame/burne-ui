@@ -15,6 +15,10 @@ import { applyLoadingDotInstant } from "@/components/core/utils/slotMotion/recip
 
 import type { LoadingMotion } from "./loadingTypes";
 
+import { bindLoadingRecipe } from "@/components/core/utils/slotMotion/recipes/bindLoading";
+
+bindLoadingRecipe();
+
 export function useLoadingDotsAnimation(scope: MotionScopeValue | null) {
   const config = useMotionConfig();
   const reduceMotion = usePrefersReducedMotion();

@@ -132,7 +132,7 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
         {...rest}
         {...pointerHandlers}
       >
-        <Text as="span" variant={fb.variant} inheritColor className={fb.className}>
+        <Text as="span" textStyle={fb.variant} inheritColor className={fb.className}>
           {text}
         </Text>
       </span>

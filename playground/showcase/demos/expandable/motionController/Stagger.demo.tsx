@@ -5,7 +5,7 @@ import { Expandable } from "@/components/core/Expandable";
 import { Text } from "@/components/core/Text";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const WAVE_EXCLUDE = ["panelShell", "triggerLift", "chevron", "panelInner", "body"] as const;
+const WAVE_EXCLUDE = ["panelShell", "triggerLift", "chevron", "panelInner", "panel"] as const;
 
 const events = createMotionEvents({
   "faq:wave": { y: -6, duration: 0.22, replay: "rest", ease: "power2.out" },
@@ -41,7 +41,7 @@ export function ExpandableMotionControllerStaggerDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           exclude panelShell / chevron so height and rotate stay kit-owned.
         </Text>
       </Expandable>

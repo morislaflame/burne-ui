@@ -44,14 +44,4 @@ export {
   STATUS_FOREGROUND_LABELS,
 } from "./themeEditorChrome";
 
-import { createDefaultThemeState, type ThemeMode, type ThemeTokenState } from "../src/theme/themeDefaults";
-
-/** Playground/docs editor state — kit tokens + active named preset ids. */
-export type ThemeEditorState = ThemeTokenState & {
-  colorPreset: string | null;
-  themePreset: string | null;
-};
-
-export function createDefaultEditorState(theme: ThemeMode = "dark"): ThemeEditorState {
-  return { ...createDefaultThemeState(theme), colorPreset: null, themePreset: null };
-}
+export { createDefaultEditorState, type ThemeEditorState } from "../src/studio/themeEditorState";

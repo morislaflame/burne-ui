@@ -1,4 +1,5 @@
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
  
 const CRUMB_INTERACTIVE_INNER_CLASS = cn(
@@ -25,8 +26,15 @@ export function breadcrumbsListClass(className?: string): string {
   );
 }
  
-export function breadcrumbsRootClass(className?: string): string {
-  return cn(className);
+const BREADCRUMBS_SIZE_CLASS: Record<ComponentSize, string> = {
+  small: "text-small",
+  base: "text-base",
+  mid: "text-mid",
+  large: "text-large",
+};
+
+export function breadcrumbsRootClass(size: ComponentSize = "base", className?: string): string {
+  return cn(BREADCRUMBS_SIZE_CLASS[size], className);
 }
  
 export function breadcrumbListItemClass(className?: string): string {

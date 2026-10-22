@@ -6,7 +6,7 @@ import {
 } from "@/components/core/utils/sizeLayout";
 
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
-import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes";
+import type { DialogSize, DialogSizePreset, DialogVariant, KitDialogVariant } from "./dialogTypes";
 import { KIT_DIALOG_VARIANTS } from "./dialogTypes";
 
 import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
@@ -70,8 +70,11 @@ export const DIALOG_PANEL_BASE_CLASS =
 export const DIALOG_PANEL_LAYOUT_CLASS =
   "flex min-h-0 flex-col overflow-hidden text-start text-foreground";
 
-export const DIALOG_PANEL_SURFACE_CLASS =
-  "border-token bg-surface shadow-token-large";
+export const DIALOG_PANEL_SURFACE: Record<KitDialogVariant, string> = {
+  default: "border-token bg-surface shadow-token-large",
+  outline: "bg-transparent border-token-outline text-foreground shadow-token-large",
+  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
+};
 
 /** Fills the panel when `SkinShell` wraps children in a declarative content node. */
 export const DIALOG_PANEL_LAYER_CONTENT_CLASS = "flex min-h-0 flex-1 flex-col";
@@ -122,7 +125,7 @@ export function dialogPanelClass({
     DIALOG_PANEL_LAYOUT_CLASS,
     sizePreset.panelMax,
     sizePreset.rounded,
-    visual.className !== undefined ? visual.className : DIALOG_PANEL_SURFACE_CLASS,
+    visual.className !== undefined ? visual.className : DIALOG_PANEL_SURFACE[visual.key],
     sizePreset.maxHeight,
     slotClass,
     className,

@@ -27,7 +27,7 @@ export function DisclosureMotionControllerInsideDemo() {
           Hover the icon
         </Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">useMotionController inside Trigger sees Disclosure.</Text>
+          <Text as="p" textStyle="small" className="text-muted">useMotionController inside Trigger sees Disclosure.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

@@ -5,7 +5,7 @@ export function PinInputCompoundDemo() {
     <PinInput length={6} separator="–" hint="Check the message">
       <PinInput.Label>Verification code</PinInput.Label>
       <PinInput.Hint />
-      <PinInput.Group />
+      <PinInput.Shell />
     </PinInput>
   );
 }

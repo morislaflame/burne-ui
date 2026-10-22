@@ -45,7 +45,7 @@ export function DrawerMotionBounceSlideDemo() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <Text as="p" variant="base">
+            <Text as="p" textStyle="base">
               Leave slides the full panel width so unmount is not a snap.
             </Text>
           </Drawer.Body>

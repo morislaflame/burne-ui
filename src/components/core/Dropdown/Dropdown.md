@@ -2,10 +2,12 @@
 
 Меню действий и выбора значений. Построен поверх `Popover` (portal, squeeze на open). Compound API: trigger, popover, groups, items, submenus, selection indicators.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownItemProps, type DropdownItemVariant } from "burne-ui";
+import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownItemProps, type DropdownItemStatus } from "burne-ui";
 ```
 
 ## API
@@ -28,11 +30,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 ### Selection (single / multiple)
 
 ```tsx
-<Dropdown
-  selectionIndicator
-  defaultValue="ru"
-  onValueChange={setLang}
->
+<Dropdown defaultValue="ru" onValueChange={setLang}>
   <Dropdown.Trigger asChild>
     <Button variant="outline">Язык</Button>
   </Dropdown.Trigger>
@@ -60,9 +58,9 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 <Dropdown.Popover>
   <Dropdown.Sub>
     <Dropdown.SubTrigger>Ещё</Dropdown.SubTrigger>
-    <Dropdown.SubContent>
+    <Dropdown.SubPopover>
       <Dropdown.Item>Экспорт</Dropdown.Item>
-    </Dropdown.SubContent>
+    </Dropdown.SubPopover>
   </Dropdown.Sub>
 </Dropdown.Popover>
 ```
@@ -73,15 +71,16 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 |------|--------------|----------|
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled |
 | `onOpenChange` | — | Колбэк open state |
-| `multiple` | `false` | Multi-select |
-| `value` / `defaultValue` | — | `string` или `string[]` |
-| `onValueChange` | — | Колбэк выбора |
-| `selectionIndicator` | `false` | Legacy group preference (auto-inject снят). Indicator — только явный `<Dropdown.ItemIndicator />` |
-| `closeOnSelect` | `!multiple` | Закрывать после выбора |
-| `popoverVariant` | `default` | `default` \| `gloss` для panel |
+| `selectionMode` | `single` | `single` \| `multiple` |
+| `value` / `defaultValue` | — | Одно значение, `string \| null`. Пустой выбор — `null` |
+| `onValueChange` | — | `(value: string \| null) => void`, только `single` |
+| `values` / `defaultValues` | — | Набор при `selectionMode="multiple"` |
+| `onValuesChange` | — | `(values: string[]) => void`, только `multiple` |
+| `closeOnSelect` | `selectionMode !== "multiple"` | Закрывать после выбора |
+| `variant` | `default` | Поверхность меню: `default` \| `outline` \| `secondary`. `Dropdown.Popover` `variant` побеждает |
 | `classNames` | — | Слоты |
-| `motion` | — | Главное меню: `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` (в Popover). Submenu: `subContent`. Trigger: `trigger` на Root (`pressSqueeze`). `events` — app-команды |
-| `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `Dropdown.Popover`; submenu — на `Dropdown.SubContent` |
+| `motion` | — | Главное меню: `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` (в Popover). Submenu: `subPopover`. Trigger: `trigger` на Root (`pressSqueeze`). `events` — app-команды |
+| `motionController` | — | Handle Root-scope (`trigger`). Портальные слоты — handle на `Dropdown.Popover`; submenu — на `Dropdown.SubPopover` |
 
 ### `DropdownClassNames`
 
@@ -98,7 +97,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `Dropdown.Separator` | Разделитель (`Separator`) |
 | `Dropdown.Item` | Пункт меню / selection row |
 | `Dropdown.ItemLabel` / `Hint` / `Icon` | Слоты строки |
-| `Dropdown.ItemIndicator` | `SelectionIndicator` compound |
+| `Dropdown.ItemIndicator` | `SelectionIndicator` compound. Иконка — проп `icon`. Размер индикатора включает доменный `xsmall` вне `ComponentSize` |
 | `Dropdown.Sub` | Вложенное подменю |
 | `Dropdown.SubTrigger` / `SubContent` | Hover/flyout submenu |
 
@@ -123,7 +122,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `info` | `text-info` + semantic hover |
 | `success` | `text-success` + semantic hover |
 
-`popoverVariant` на root (`default` \| `gloss`) передаётся в `Popover` и в submenu portal.
+`variant` на root передаётся в `Popover` и в submenu portal. `Dropdown.Popover` `variant` побеждает.
 
 Строка item — grid из `optionListItemGridClass` (indicator | icon | label/hint), как у `ListBox` / `Select`.
 
@@ -136,7 +135,7 @@ Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popov
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `content` / `title` / `description` / `body` / `item` / `itemLabel` / `itemHint` / `itemIcon` / `label` / `subTrigger` / `separator` | `enter` / `leave` | прокидка в Popover; `content` → `portalSurface*` |
-| `subContent` | `enter` / `leave` | `portalSurfaceEnter` / `Leave` (submenu host) |
+| `subPopover` | `enter` / `leave` | `portalSurfaceEnter` / `Leave` (submenu host) |
 | `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope |
 
 **DOM (open menu):**
@@ -151,12 +150,14 @@ Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popov
           <ItemIndicator /> <ItemLabel />
       <Dropdown.Sub>
         <SubTrigger>                     ← hover open, CSS hoverVariant
-        <SubContent portal z-dropdown-sub> ← slot `subContent`
+        <SubContent portal z-dropdown-sub> ← slot `subPopover`
 ```
 
 Нет hover-lift на root wrapper. Item/sub row — CSS `hoverVariant`, не GSAP shadow.
 
-Проп `motionController` на **`Dropdown.Popover`** для меню (`content` / `item`). `play()` skip — нет `root`; `playSlot("content")` / `playSlot("item")`. Handle на Root — только `trigger`. Submenu — handle на `Dropdown.SubContent` (`playSlot("subContent")`). `events` на Popover (или Root — мерж). playground / Storybook **MotionController**.
+Проп `motionController` на **`Dropdown.Popover`** для меню (`content` / `item`). `play()` skip — нет `root`; `playSlot("content")` / `playSlot("item")`. Handle на Root — только `trigger`. Submenu — handle на `Dropdown.SubPopover` (`playSlot("subPopover")`). `events` на Popover (или Root — мерж). playground / Storybook **MotionController**.
+
+На корне — scope триггера. На `Dropdown.Popover` и `Dropdown.SubPopover` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Dropdown, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -221,7 +222,7 @@ configureMotion({
 - `offset` — отступ от триггера в px
 - `unstyled` — surface задаётся `popoverBody`
 - `contentRole={undefined}` — dialog semantics отключены; `role="menu"` на `Popover.Body`
-- `shouldDismiss` — игнорирует клики внутри `subPanelRootsRef`
+- `onInteractOutside` — игнорирует клики внутри `subPanelRootsRef`
 
 Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). Карта с Root / `Dropdown.Popover`. Repeated `item` / `itemLabel` / `itemHint` / `itemIcon` и chrome `label` / `subTrigger` / `separator` регистрируются в scope Popover (`ctx.getTargets("item")` / `"itemIcon"` из factory `body`). Open squeeze — слот `trigger` на Root (`pressSqueeze`; другой рецепт через `motion.trigger.pressIn`).
 
@@ -275,23 +276,21 @@ animateInteractivePressSqueeze(el);
 
 ### 4. Submenu flyout portal
 
-`useDropdownSubContentPortal` (`SubContent`):
+`useDropdownSubPopoverPortal` (`SubContent`):
 
 **Open:** `pointerenter` / `click` / `Enter|Space` на `SubTrigger` → `setOpen(true)`.
 
 **Position:** fixed `left/top`, gap 6px справа от trigger; flip влево если не влезает; clamp по viewport height. Reflow — `bindOverlayReflow` (`scroll` passive capture, `resize`, `visualViewport`).
 
-**Motion:** слот `subContent` (`portalSurfaceEnter` / `Leave`) на `Dropdown.SubContent`. Nested provider с `DROPDOWN_SUB_MOTION_DEFAULTS`.
+**Motion:** слот `subPopover` (`portalSurfaceEnter` / `Leave`) на `Dropdown.SubPopover`. Nested provider с `DROPDOWN_SUB_MOTION_DEFAULTS`.
 
 ```tsx
-<Dropdown.SubContent motion={{ enter: false, leave: false }}>…</Dropdown.SubContent>
+<Dropdown.SubPopover motion={{ enter: false, leave: false }}>…</Dropdown.SubPopover>
 ```
 
 **Dismiss coordination:** `subPanelRootsRef` регистрирует submenu roots — main popover не закрывается при клике внутри submenu.
 
 **Close delay:** `scheduleClose` на `pointerleave` sub row (hover bridge).
-
-Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surface shadow-mid`.
 
 ### 5. Keyboard navigation
 
@@ -321,7 +320,7 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 | Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `motion.trigger.pressIn` |
 | Main panel portal | `content` → Popover `portalSurface*` | `tooltipDuration`, `interactiveEase` | `motion` на Root / Popover |
 | Item squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | `disabled` |
-| Submenu portal | `subContent` → `portalSurface*` | `tooltipDuration` | `motion` на SubContent |
+| Submenu portal | `subPopover` → `portalSurface*` | `tooltipDuration` | `motion` на SubContent |
 | Item hover tint | `hoverVariant()` CSS | — | `variant` на Item |
 
 ## Токены и CSS
@@ -333,7 +332,6 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 | `hoverVariant()` | Semantic hover background на item/sub |
 | `optionListItemGridClass` | Grid: indicator, icon, label, hint |
 | `shadow-token-md` | Submenu default surface |
-| `gloss-panel gloss-deep` | Gloss popover/submenu |
 | `z-dropdown` / `z-dropdown-sub` | Main menu / submenu stacking (`--z-dropdown`) |
 
 ## Стилизация и кастомизация
@@ -370,16 +368,15 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 | `subTrigger` | Sub trigger row | Hover row стили |
 | `subTriggerLabelWrap` | Label flex area | Truncate длинных label |
 | `subTriggerIcon` | `IoChevronForward` | Muted chevron |
-| `subPopover` | Submenu portal panel | Flyout surface |
-| `subPopoverBody` | Тело подменю | Padding внутри подменю |
+| `subPopover` | Submenu portal panel | Оболочка подменю, отдельно от тела |
+| `subPopoverBody` | Тело подменю | Padding и прокрутка внутри оболочки |
 
 ### Simple-подобный selection menu
 
 ```tsx
 <Dropdown
-  selectionIndicator
   defaultValue="ru"
-  popoverVariant="default"
+  variant="default"
   classNames={{
     popoverBody: "border border-primary/20 bg-surface",
     label: "text-primary font-medium",
@@ -416,16 +413,16 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
     <Dropdown.Separator />
     <Dropdown.Sub>
       <Dropdown.SubTrigger>Экспорт</Dropdown.SubTrigger>
-      <Dropdown.SubContent>
+      <Dropdown.SubPopover>
         <Dropdown.Item>CSV</Dropdown.Item>
         <Dropdown.Item>PDF</Dropdown.Item>
-      </Dropdown.SubContent>
+      </Dropdown.SubPopover>
     </Dropdown.Sub>
   </Dropdown.Popover>
 </Dropdown>
 ```
 
-`indicator` на Item или явный `<Dropdown.ItemIndicator />`. `Dropdown.Group selectionIndicator` — legacy preference, на рендер слота не влияет.
+Индикатор пункта — проп `indicator` на `Dropdown.Item` или явный `<Dropdown.ItemIndicator />`.
 
 ### Практические заметки
 
@@ -434,7 +431,7 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 - **Action items:** без `value` или `selection={false}` — закрывают меню без toggle selection.
 - **Link items:** `href` → `<a>`, role `menuitem`, close on navigate.
 - **Не задавайте `transform` на `popover` content** — конфликт с portal GSAP scale.
-- **Gloss:** `popoverVariant="gloss"` на root влияет и на main panel (через Popover), и на submenu surface.
+- **Скин:** `variant` на root (имя скина) влияет и на main panel (через Popover), и на submenu surface.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
 
 ## Интеграции
@@ -465,7 +462,7 @@ Dropdown/
 ├── index.ts
 ├── dropdownTypes.ts             # DropdownMotion / PopoverMotion pick / Lifecycle
 ├── dropdownStyles.ts
-├── dropdownAnimations.ts        # resolveDropdownPopoverMotion + subContent host
+├── dropdownAnimations.ts        # resolveDropdownPopoverMotion + subPopover host
 ├── dropdownParts.tsx            # Popover embedder
 ├── dropdownSubParts.tsx         # SubContent nested provider + useMotionPart
 ├── useDropdownRootState.ts
@@ -478,4 +475,8 @@ Dropdown/
 
 ## Storybook
 
-`Core Components/Dropdown` — actions, selection, multiple, submenus, gloss, `classNames`.
+`Core Components/Dropdown` — actions, selection, multiple, submenus, `classNames`.
+
+## Данные
+
+`label` рисует триггер. `items` рисует `Dropdown.Popover`, если дети его ещё не содержат. Совпадение пишет ошибку в dev.

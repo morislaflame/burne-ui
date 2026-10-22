@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo } from "react";
  
  
+import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
+
 import { resolveListBoxAriaLabel } from "./listBoxA11y";
 import { resolveListBoxMotionDefaults } from "./listBoxAnimations";
 import {
@@ -9,7 +11,7 @@ import {
   ListBoxMotionProvider,
   ListBoxProvider,
 } from "./listBoxContext";
-import { ListBoxRootShell } from "./listBoxParts";
+import { ListBoxItem, ListBoxRootShell } from "./listBoxParts";
 import type { ListBoxProps } from "./listBoxTypes";
 import { useListBoxRootState } from "./useListBoxRootState";
  
@@ -29,6 +31,7 @@ export type {
   ListBoxClassNames,
   ListBoxMotion,
   ListBoxPartMotion,
+  ListBoxItemData,
 } from "./listBoxTypes";
  
 export {
@@ -46,16 +49,20 @@ export {
  
 export { useListBox, useListBoxActiveValue } from "./listBoxContext";
  
-export function ListBoxRoot({
+export const ListBoxRoot = forwardRef<HTMLDivElement, ListBoxProps>(function ListBoxRoot({
   classNames,
   children,
+  items,
   className,
   size,
   variant,
-  multiple,
+  selectionMode,
   value,
   defaultValue,
   onValueChange,
+  values,
+  defaultValues,
+  onValuesChange,
   disabled,
   activeValue,
   onActiveValueChange,
@@ -70,14 +77,17 @@ export function ListBoxRoot({
   virtualized,
   virtualItemSize,
   ...rest
-}: ListBoxProps) {
+}: ListBoxProps, ref) {
   const { listId, contextValue, activeValue: resolvedActiveValue } =
     useListBoxRootState({
       size,
-      multiple,
+      selectionMode,
       value,
       defaultValue,
       onValueChange,
+      values,
+      defaultValues,
+      onValuesChange,
       disabled,
       activeValue,
       onActiveValueChange,
@@ -108,7 +118,20 @@ export function ListBoxRoot({
             virtualized={virtualized}
             virtualItemSize={virtualItemSize}
             {...rest}
+            ref={ref}
           >
+            {items && !itemsPartTaken("ListBox", children, "ListBoxItem")
+              ? items.map((item) => (
+              <ListBoxItem
+                key={item.value}
+                value={item.value}
+                label={item.label}
+                hint={item.hint}
+                icon={item.icon}
+                disabled={item.disabled}
+              />
+            ))
+              : null}
             {children}
           </ListBoxRootShell>
           </ListBoxMotionProvider>
@@ -116,7 +139,7 @@ export function ListBoxRoot({
       </ListBoxActiveValueProvider>
     </ListBoxProvider>
   );
-}
+});
  
 ListBoxRoot.displayName = "ListBox";
  

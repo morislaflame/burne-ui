@@ -11,15 +11,15 @@ export function ContextMenuActionsDemo() {
     <ContextMenu>
       <ContextMenu.Trigger className={surface}>
         <span className="flex min-w-0 flex-col items-start gap-xsmall">
-          <Text as="span" variant="small" className="font-w-mid">
+          <Text as="span" textStyle="small" className="font-w-mid">
             Design notes
           </Text>
-          <Text as="span" variant="xsmall" className="text-muted">
+          <Text as="span" textStyle="xsmall" className="text-muted">
             Right-click the file
           </Text>
         </span>
       </ContextMenu.Trigger>
-      <ContextMenu.Content className="min-w-52">
+      <ContextMenu.Popover className="min-w-52">
         <ContextMenu.Item>
           <ContextMenu.ItemLabel>Rename</ContextMenu.ItemLabel>
           <ContextMenu.ItemHint>Change the title</ContextMenu.ItemHint>
@@ -49,7 +49,7 @@ export function ContextMenuActionsDemo() {
             <IoTrashOutline aria-hidden />
           </ContextMenu.ItemIcon>
         </ContextMenu.Item>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

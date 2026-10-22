@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Select } from "@/components/core/Select";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -13,9 +13,9 @@ export function SelectMultipleDemo() {
 
   return (
     <Select
-      multiple
+      selectionMode="multiple"
       label="Frameworks"
-      options={options}
+      items={items}
       values={values}
       onValuesChange={setValues}
       hint={values.length > 0 ? `Selected: ${values.join(", ")}` : "None selected"}

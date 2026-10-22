@@ -9,6 +9,10 @@ import {
   type MotionPartPhases,
   type MotionScopeValue,
 } from "./slotMotion";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 /** Defaults for overlay `trigger` — live on Root so Trigger (outside Panel) sees them. */
 export const OVERLAY_TRIGGER_MOTION_DEFAULTS = {

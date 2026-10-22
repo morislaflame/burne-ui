@@ -1,5 +1,6 @@
 import { useCallback, useId, useMemo } from "react";
  
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
 import { useOptionGroupRequiredAnchor } from "@/components/composite/utils/useOptionGroupRequiredAnchor";
 import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptionGroupSingleValue";
@@ -13,21 +14,43 @@ export function useRadioGroupRootState({
   defaultValue,
   onValueChange,
   disabled = false,
+  readOnly = false,
   name: nameProp,
   hintId: hintIdProp,
   errorId: errorIdProp,
 }: UseRadioGroupRootStateProps) {
   const autoId = useId();
+  const legendId = useId();
   const groupName = radioGroupName(nameProp, autoId);
+  const formBinding = useFormFieldBinding({
+    name: nameProp,
+    value: valueProp,
+    disabled,
+    readOnly,
+  });
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const formBound = formBinding.bound;
+  const formValue =
+    formBound && formBinding.value != null && formBinding.value !== ""
+      ? String(formBinding.value)
+      : null;
   const hintId = useFieldSetHintId(hintIdProp);
   const errorId = useFieldSetErrorId(errorIdProp);
  
-  const { selectedValue, selectValue } = useOptionGroupSingleValue({
-    value: valueProp,
+  const { selectedValue, selectValue: selectRaw } = useOptionGroupSingleValue({
+    value: formBound ? formValue : valueProp,
     defaultValue,
     onValueChange,
     allowClear: !required,
   });
+  const selectValue = useCallback(
+    (next: string | undefined) => {
+      if (resolvedReadOnly) return;
+      selectRaw(next);
+      if (formBound) formBinding.setValue(next ?? "");
+    },
+    [formBinding, formBound, resolvedReadOnly, selectRaw],
+  );
  
   const { claimRequiredAnchor: claimAnchor } = useOptionGroupRequiredAnchor([
     required,
@@ -42,8 +65,10 @@ export function useRadioGroupRootState({
   const contextValue = useMemo<RadioGroupContextValue>(
     () => ({
       name: groupName,
-      disabled,
+      disabled: Boolean(formBinding.disabled),
+      readOnly: resolvedReadOnly,
       required,
+      legendId,
       hintId,
       errorId,
       selectedValue,
@@ -52,10 +77,12 @@ export function useRadioGroupRootState({
     }),
     [
       claimRequiredAnchor,
-      disabled,
       errorId,
+      formBinding,
+      resolvedReadOnly,
       groupName,
       hintId,
+      legendId,
       required,
       selectValue,
       selectedValue,

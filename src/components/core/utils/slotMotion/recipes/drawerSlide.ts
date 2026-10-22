@@ -31,6 +31,11 @@ function reduced(ctx: MotionContext): boolean {
   return ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableModalMotion");
 }
  
+/** Zero slide offsets before the recipe measures the closed pose. */
+export function prepareDrawerPanel(panel: HTMLElement): void {
+  gsap.set(panel, { xPercent: 0, yPercent: 0, x: 0, y: 0 });
+}
+
 export function applyDrawerPanelInstant(
   el: HTMLElement,
   placement: DrawerSlidePlacement,

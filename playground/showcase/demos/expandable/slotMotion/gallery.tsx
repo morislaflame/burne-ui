@@ -25,7 +25,7 @@ export const expandableSlotMotionGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "bounce-height", title: "Bounce height", Demo: ExpandableMotionBounceHeightDemo, source: expandableMotionBounceHeightSource },
   { id: "clip-wipe", title: "Clip wipe", Demo: ExpandableMotionClipWipeDemo, source: expandableMotionClipWipeSource },
   { id: "panel-inner", title: "Panel inner", Demo: ExpandableMotionPanelInnerDemo, source: expandableMotionPanelInnerSource },
-  { id: "body", title: "Body", Demo: ExpandableMotionBodyDemo, source: expandableMotionBodySource },
+  { id: "panel", title: "Panel", Demo: ExpandableMotionBodyDemo, source: expandableMotionBodySource },
   { id: "title-color", title: "Title color", Demo: ExpandableMotionTitleColorDemo, source: expandableMotionTitleColorSource },
 ];
 

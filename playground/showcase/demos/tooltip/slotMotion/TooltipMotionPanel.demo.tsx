@@ -4,7 +4,7 @@ import { Tooltip } from "@/components/core/Tooltip";
 export function TooltipMotionPanelDemo() {
   return (
     <Tooltip
-      delayShowMs={0}
+      openDelay={0}
       motion={{
         panel: {
           enter: (ctx) =>

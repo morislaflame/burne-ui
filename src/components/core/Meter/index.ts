@@ -36,5 +36,5 @@ export {
   useOptionalMeterFieldContext,
 } from "./Meter";
  
-export type { MeterDisplayState, MeterFieldContextValue } from "./meterTypes";
+export type { MeterDisplayState } from "./meterTypes";
  

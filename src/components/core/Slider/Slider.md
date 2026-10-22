@@ -5,7 +5,8 @@
 ## Импорт
 
 ```tsx
-import { Slider, sliderThicknessToCss, type SliderProps, type SliderSingleProps, type SliderRangeProps, type SliderOrientation, type SliderSize, type SliderClassNames, type SliderMotion, type SliderPartMotion } from "burne-ui";
+import { Slider, type SliderProps, type SliderSingleProps, type SliderRangeProps, type SliderOrientation, type SliderSize, type SliderClassNames, type SliderMotion, type SliderPartMotion } from "burne-ui";
+import { sliderThicknessToCss } from "burne-ui/internal";
 ```
 
 ## API
@@ -72,6 +73,8 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | `marks` | — | Snap points |
 | `range` | `false` | Два thumb |
 | `value` / `defaultValue` | — | `number` или `[number, number]` |
+| `onValueChange` | — | Во время перетаскивания и с клавиатуры |
+| `onValueCommit` | — | Когда жест или нажатие клавиши закончились |
 | `formatValue` | — | Формат текста в `Slider.Value` |
 | `variant` | `default` | Kit thumb shell или имя скина |
 | `icon` | — | Иконка в thumb |
@@ -105,6 +108,8 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 Слота `root` нет: `play()` ищет `"root"` и skip. `playSlot("track", …)` / `playSlot("thumb", …)` / `playSlot("label", …)`. Один handle на Root = chrome + track (не два scope, в отличие от ProgressBar). Standalone `Slider.Track` без Root — handle на Track.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`slider:nudge`, `slider:pulse`), не фазы. `createMotionEvents`. События играть через `playSlot("track", event)`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на `Slider.Track`. Simple API мержит карту корня в Track. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Slider, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -212,7 +217,7 @@ configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
 </Slider>
 ```
 
-`thumbClassName` на root/track props — доп. классы на thumb button (вне `classNames.thumb` merge chain на track).
+Оболочка бегунка — `classNames.thumbShell`. Кнопка бегунка — `classNames.thumb`.
 
 ### Практические заметки
 

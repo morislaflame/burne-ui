@@ -12,7 +12,7 @@ export function TableColumnLabelDemo() {
         <Table.Content aria-label="Team with styled column labels">
           <Table.Header>
             <Table.HeaderRow className="bg-primary/10">
-              <Table.Column isRowHeader>
+              <Table.Column rowHeader>
                 <Table.Label className="text-foreground font-semibold">Name</Table.Label>
               </Table.Column>
               <Table.Column>

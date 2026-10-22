@@ -5,7 +5,7 @@ import { Dropdown } from "@/components/core/Dropdown";
 
 export function DropdownSingleSelectDemo() {
   return (
-    <Dropdown selectionIndicator defaultValue="ru">
+    <Dropdown defaultValue="ru">
       <Dropdown.Trigger asChild>
         <Button variant="outline">Language</Button>
       </Dropdown.Trigger>

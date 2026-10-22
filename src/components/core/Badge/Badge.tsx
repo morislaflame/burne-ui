@@ -3,7 +3,7 @@ import { forwardRef, useMemo, type HTMLAttributes, type ReactNode } from "react"
 import type { BadgeMotion, BadgeProps } from "./badgeTypes";
 import { KIT_BADGE_VARIANTS } from "./badgeTypes";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { usesKitElevation } from "@/skins/resolveVariantVisual";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { resolveBadgeMotionDefaults, useBadgeAnimations } from "./badgeAnimations";
 import { BadgeClassNamesProvider, BadgeMotionProvider, useBadgeLiftContext } from "./badgeContext";
@@ -16,7 +16,6 @@ export type {
   BadgeStatus,
   BadgeSize,
   BadgePlacement,
-  BadgeInlineIconPosition,
   BadgeClassNames,
   BadgeMotion,
   BadgePartMotion,
@@ -73,7 +72,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     iconSlotClass: classNames?.icon,
   });
  
-  const kitSurface = isKitVariant(variant, KIT_BADGE_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_BADGE_VARIANTS);
   const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && kitSurface);
   const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(

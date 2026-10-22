@@ -26,7 +26,7 @@ export function PopoverPortalContainerDemo() {
             </Popover.Trigger>
             <Popover.Content>
               <Popover.Body>
-                <Text as="p" variant="small">
+                <Text as="p" textStyle="small">
                   Portaled into the dashed container.
                 </Text>
               </Popover.Body>

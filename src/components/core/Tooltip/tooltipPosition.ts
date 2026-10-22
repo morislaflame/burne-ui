@@ -12,6 +12,8 @@ export type TooltipPlacement = {
  
 export type TooltipPlacementOptions = {
   align?: FloatingAlign;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
 };
  
 function centerClamp(value: number, size: number, max: number, pad: number) {
@@ -142,9 +144,10 @@ export function computeTooltipPlacement(
   options?: TooltipPlacementOptions,
 ): TooltipPlacement {
   const gap = offset;
-  const pad = VIEWPORT_PAD;
+  const pad = options?.collisionPadding ?? VIEWPORT_PAD;
   const align = options?.align ?? "center";
-  const order = FLIP_ORDER[preferredSide];
+  const avoid = options?.avoidCollisions !== false;
+  const order = avoid ? FLIP_ORDER[preferredSide] : [preferredSide];
  
   for (const side of order) {
     if (!FIT_CHECKS[side](triggerRect, floatingRect.width, floatingRect.height, gap, pad)) {

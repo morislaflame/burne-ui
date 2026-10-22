@@ -16,7 +16,7 @@ describe("Э2.2 Select / ComboBox ARIA on the focusable node", () => {
     render(
       <Select
         label="City"
-        options={OPTIONS}
+        items={OPTIONS}
         required
         error="Pick a city"
         hint="Pick a city"
@@ -34,7 +34,7 @@ describe("Э2.2 Select / ComboBox ARIA on the focusable node", () => {
   });
 
   it("Select disabled stays native on the button", () => {
-    render(<Select label="City" options={OPTIONS} disabled />);
+    render(<Select label="City" items={OPTIONS} disabled />);
     const button = selectValueButton();
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("role", "combobox");
@@ -42,7 +42,7 @@ describe("Э2.2 Select / ComboBox ARIA on the focusable node", () => {
   });
 
   it("ComboBox is a single combobox on the input", () => {
-    render(<ComboBox label="City" options={OPTIONS} required error="Bad" hint="Hint" />);
+    render(<ComboBox label="City" items={OPTIONS} required error="Bad" hint="Hint" />);
 
     const input = screen.getByRole("combobox");
     expect(input.tagName).toBe("INPUT");
@@ -58,7 +58,7 @@ describe("Э2.2 Select / ComboBox ARIA on the focusable node", () => {
   });
 
   it("ComboBox activedescendant stays on the combobox input", () => {
-    render(<ComboBox label="City" options={OPTIONS} required error="Bad" open />);
+    render(<ComboBox label="City" items={OPTIONS} required error="Bad" open />);
     const input = screen.getByRole("combobox");
     expect(input.tagName).toBe("INPUT");
     expect(input).toHaveAttribute("aria-expanded", "true");

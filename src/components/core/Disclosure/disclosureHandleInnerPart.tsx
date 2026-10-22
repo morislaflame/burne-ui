@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 import { cn } from "@/utils/cn";
  
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
@@ -5,11 +7,8 @@ import { DISCLOSURE_HANDLE_BASE_CLASS, DISCLOSURE_HANDLE_DISABLED_CLASS, DISCLOS
 import type { DisclosureHandleProps } from "./disclosureTypes";
 import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
  
-export function DisclosureHandleInner({
-  className,
-  onPointerDown,
-  ...rest
-}: DisclosureHandleProps) {
+export const DisclosureHandleInner = forwardRef<HTMLDivElement, DisclosureHandleProps>(
+  function DisclosureHandleInner({ className, onPointerDown, ...rest }, ref) {
   const slotClassNames = useDisclosureClassNames();
   const {
     variant,
@@ -49,11 +48,13 @@ export function DisclosureHandleInner({
         dragPD(e);
       }}
       {...rest}
+      ref={ref}
     >
       <span className={DISCLOSURE_HANDLE_GRIP_CLASS} />
     </div>
   );
-}
+},
+);
  
 DisclosureHandleInner.displayName = "DisclosureHandle";
  

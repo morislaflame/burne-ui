@@ -13,6 +13,7 @@ export function TableClassNamesFullDemo() {
         root: "rounded-large border border-info/25 shadow-token-base",
         headerRow: "bg-info/10",
         column: "text-info font-semibold",
+        columnInner: "gap-small",
         columnButton: "text-info",
         row: "hover:bg-info/5",
         cell: "text-foreground/90",
@@ -26,7 +27,7 @@ export function TableClassNamesFullDemo() {
           <Table.Caption>Team</Table.Caption>
           <Table.Header>
             <Table.HeaderRow className="bg-info/15">
-              <Table.Column isRowHeader allowsSorting>Name</Table.Column>
+              <Table.Column rowHeader sortable>Name</Table.Column>
               <Table.Column>Role</Table.Column>
             </Table.HeaderRow>
           </Table.Header>

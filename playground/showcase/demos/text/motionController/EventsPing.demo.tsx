@@ -14,7 +14,7 @@ export function TextMotionEventsPingDemo() {
       <Button size="small" variant="outline" onClick={() => controller.play("text:nudge")}>
         Nudge
       </Button>
-      <Text variant="large" motionController={controller} motion={{ events }}>
+      <Text textStyle="large" motionController={controller} motion={{ events }}>
         Nudge the copy
       </Text>
     </div>

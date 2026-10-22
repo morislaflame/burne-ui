@@ -1,7 +1,7 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, ReactNode, Ref } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import type {
   MotionController,
   MotionMapWithEvents,
@@ -9,13 +9,17 @@ import type {
   MotionValue,
 } from "@/components/core/utils/slotMotion";
 
+export type TagsInputSize = InputSize;
+export type TagsInputVariant = InputVariant;
+
 export type TagsInputClassNames = {
   root?: string;
   label?: string;
   shell?: string;
   tag?: string;
+  tagText?: string;
   remove?: string;
-  input?: string;
+  control?: string;
   hint?: string;
   error?: string;
 };
@@ -29,12 +33,12 @@ export type TagsInputPartMotion = {
   leave?: MotionValue;
 };
 
-/** DOM slots: `shell`, `tag` (one per chip), `remove`, `input`, `label`, `hint`, `error`. */
+/** DOM slots: `shell`, `tag` (one per chip), `remove`, `control`, `label`, `hint`, `error`. */
 export type TagsInputMotion = {
   shell?: TagsInputPartMotion;
   tag?: TagsInputPartMotion;
   remove?: TagsInputPartMotion;
-  input?: TagsInputPartMotion;
+  control?: TagsInputPartMotion;
   label?: TagsInputPartMotion;
   hint?: TagsInputPartMotion;
   error?: TagsInputPartMotion;
@@ -53,10 +57,13 @@ export type TagsInputProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"
     required?: boolean;
     disabled?: boolean;
     readOnly?: boolean;
-    status?: InputStatus;
     size?: InputSize;
     variant?: InputVariant;
     placeholder?: string;
+    /** Text currently typed, before it becomes a chip. */
+    inputValue?: string;
+    defaultInputValue?: string;
+    onInputValueChange?: (value: string) => void;
     /** Chip values, in order. Duplicates and blank text are ignored. */
     values?: string[];
     defaultValues?: string[];
@@ -73,7 +80,18 @@ export type TagsInputLabelProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<TagsInputPartMotion>;
 };
 
-export type TagsInputControlProps = HTMLAttributes<HTMLDivElement> & {
+export type TagsInputTagProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<TagsInputPartMotion>;
+};
+
+export type TagsInputRemoveProps = HTMLAttributes<HTMLButtonElement> & {
+  value: string;
+  motion?: Prettify<TagsInputPartMotion>;
+};
+
+export type TagsInputShellProps = HTMLAttributes<HTMLDivElement> & {
+  /** Native text field. `ref` on `TagsInput.Shell` is the shell. */
+  inputRef?: Ref<HTMLInputElement>;
   motion?: Prettify<TagsInputPartMotion>;
 };
 
@@ -97,8 +115,9 @@ export type TagsInputContextValue = {
   atMax: boolean;
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
   placeholder?: string;
+  inputValue: string;
+  setInputValue: (value: string) => void;
   inputId: string;
   labelId: string;
   hintId: string;

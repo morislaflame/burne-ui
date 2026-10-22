@@ -9,12 +9,12 @@ export function TabsSecondaryDemo() {
         <Tabs.Tab value="y">Secondary Y</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="x" className="pt-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           variant secondary
         </Text>
       </Tabs.Panel>
       <Tabs.Panel value="y" className="pt-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           surface-secondary container
         </Text>
       </Tabs.Panel>

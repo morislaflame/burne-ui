@@ -82,19 +82,23 @@ export const ScrollAreaViewport = forwardRef<HTMLDivElement, ScrollAreaViewportP
 
 ScrollAreaViewport.displayName = SCROLL_AREA_VIEWPORT_DISPLAY_NAME;
 
-export function ScrollAreaScrollbar({
-  children,
-  className,
-  orientation = "vertical",
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-  onWheel,
-  onKeyDown,
-  ...rest
-}: ScrollAreaScrollbarProps) {
+export const ScrollAreaScrollbar = forwardRef<HTMLDivElement, ScrollAreaScrollbarProps>(
+  function ScrollAreaScrollbar(
+    {
+      children,
+      className,
+      orientation = "vertical",
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      onWheel,
+      onKeyDown,
+      ...rest
+    },
+    ref,
+  ) {
   const { viewportId, viewportRef, axesRef, overflow, aria, barActive, registerBar } = useScrollAreaContext();
   const classNames = useScrollAreaClassNames();
   const overflowing = orientation === "vertical" ? overflow.vertical : overflow.horizontal;
@@ -109,6 +113,7 @@ export function ScrollAreaScrollbar({
   const part = useScrollAreaSlotMotion<HTMLDivElement>({
     slot: "scrollbar",
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerUp,
@@ -180,26 +185,32 @@ export function ScrollAreaScrollbar({
       </div>
     </ScrollAreaAxisContext.Provider>
   );
-}
+},
+);
 
 ScrollAreaScrollbar.displayName = SCROLL_AREA_SCROLLBAR_DISPLAY_NAME;
 
-export function ScrollAreaThumb({
-  className,
-  style,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-  ...rest
-}: ScrollAreaThumbProps) {
+export const ScrollAreaThumb = forwardRef<HTMLDivElement, ScrollAreaThumbProps>(
+  function ScrollAreaThumb(
+    {
+      className,
+      style,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
   const axis = useScrollAreaAxis();
   const { viewportRef, axesRef, setDragging } = useScrollAreaContext();
   const classNames = useScrollAreaClassNames();
   const part = useScrollAreaSlotMotion<HTMLDivElement>({
     slot: "thumb",
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerUp,
@@ -230,24 +241,30 @@ export function ScrollAreaThumb({
       style={{ ...style, ...geometry }}
     />
   );
-}
+},
+);
 
 ScrollAreaThumb.displayName = SCROLL_AREA_THUMB_DISPLAY_NAME;
 
-export function ScrollAreaCorner({
-  className,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-  ...rest
-}: ScrollAreaCornerProps) {
+export const ScrollAreaCorner = forwardRef<HTMLDivElement, ScrollAreaCornerProps>(
+  function ScrollAreaCorner(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
   const { overflow } = useScrollAreaContext();
   const classNames = useScrollAreaClassNames();
   const part = useScrollAreaSlotMotion<HTMLDivElement>({
     slot: "corner",
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -265,7 +282,8 @@ export function ScrollAreaCorner({
       className={scrollAreaCornerClass({ slotClass: classNames.corner, className })}
     />
   );
-}
+},
+);
 
 ScrollAreaCorner.displayName = SCROLL_AREA_CORNER_DISPLAY_NAME;
 

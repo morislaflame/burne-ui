@@ -28,7 +28,9 @@ export function PaginationMotionControllerExcludeDemo() {
         onPageChange={setPage}
         motionController={controller}
         motion={{
-          control: { pressIn: false, pressOut: false },
+          previous: { pressIn: false, pressOut: false },
+          next: { pressIn: false, pressOut: false },
+          page: { pressIn: false, pressOut: false },
           summary: {
             hoverIn: { y: -4, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },

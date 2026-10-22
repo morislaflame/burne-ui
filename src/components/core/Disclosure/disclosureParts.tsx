@@ -18,6 +18,7 @@ import { hasPointerPhases, useMotionPart } from "@/components/core/utils/slotMot
  
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
 import { resolveDisclosureTriggerBody } from "./disclosureAPI";
+import { useStudioSlotRef } from "@/studio/studioModeContext";
 import { useDisclosureClassNames, useDisclosureContext, useDisclosureMotionScope, useOptionalDisclosureMotionScope } from "./disclosureContext";
 import {
   DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
@@ -39,16 +40,20 @@ import type {
  
 import { cn } from "@/utils/cn";
  
-export function DisclosureIcon({
-  className,
-  children,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  onPointerDown,
-  onPointerUp,
-  ...props
-}: DisclosureIconProps) {
+export const DisclosureIcon = forwardRef<HTMLSpanElement, DisclosureIconProps>(
+  function DisclosureIcon(
+    {
+      className,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...props
+    },
+    ref,
+  ) {
   const { size } = useDisclosureContext();
   const slotClassNames = useDisclosureClassNames();
   const scope = useOptionalDisclosureMotionScope();
@@ -57,6 +62,7 @@ export function DisclosureIcon({
     scope,
     slot: "icon",
     motion,
+    forwardedRef: ref,
     pointerPhases: pointer,
     pressPhases: pointer,
     onPointerOver,
@@ -82,11 +88,13 @@ export function DisclosureIcon({
       {children}
     </span>
   );
-}
+},
+);
  
 DisclosureIcon.displayName = "DisclosureIcon";
  
-export function DisclosureChevron({ className, children, motion, ...props }: DisclosureChevronProps) {
+export const DisclosureChevron = forwardRef<HTMLSpanElement, DisclosureChevronProps>(
+  function DisclosureChevron({ className, children, motion, ...props }, ref) {
   const { open, size, chevronRef } = useDisclosureContext();
   const slotClassNames = useDisclosureClassNames();
   const triggerShell = disclosureTriggerShell(size);
@@ -100,6 +108,7 @@ export function DisclosureChevron({ className, children, motion, ...props }: Dis
     scope,
     slot: "chevron",
     motion,
+    forwardedRef: ref,
   });
   const setChevronRef = useCallback(
     (node: HTMLSpanElement | null) => {
@@ -126,7 +135,8 @@ export function DisclosureChevron({ className, children, motion, ...props }: Dis
       {children ?? <KitChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
     </span>
   );
-}
+},
+);
  
 DisclosureChevron.displayName = "DisclosureChevron";
  
@@ -181,6 +191,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     });
  
     const titleScope = useDisclosureMotionScope();
+    const studioTriggerRef = useStudioSlotRef<HTMLElement>("disclosure.trigger", titleScope);
     const titlePointer = hasPointerPhases(titleScope.getRootMotion()?.title);
     const titlePart = useMotionPart<HTMLElement>({
       scope: titleScope,
@@ -229,7 +240,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       return cloneElement(child, {
         ...rest,
         id: triggerId,
-        ref: triggerMotion.mergeRefs(ref, triggerMotion.setRefs, child.props.ref),
+        ref: triggerMotion.mergeRefs(ref, triggerMotion.setRefs, child.props.ref, studioTriggerRef),
         className: cn(child.props.className, className),
         disabled: disabled || child.props.disabled,
         "aria-expanded": open,
@@ -248,7 +259,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
  
     return (
       <button
-        ref={triggerMotion.setRefs}
+        ref={triggerMotion.mergeRefs(triggerMotion.setRefs, studioTriggerRef)}
         id={triggerId}
         type="button"
         aria-expanded={open}
@@ -281,7 +292,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           <Text
             as="span"
             ref={titlePart.setRef}
-            variant={triggerShell.text}
+            textStyle={triggerShell.text}
             className={cn(
               DISCLOSURE_TRIGGER_TITLE_CLASS,
               triggerShell.titleClassName,

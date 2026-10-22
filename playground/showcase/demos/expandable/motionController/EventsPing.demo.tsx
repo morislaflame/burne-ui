@@ -21,7 +21,7 @@ export function ExpandableMotionEventsPingDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Namespaced event on motion.events — not an open/close phase.
         </Text>
       </Expandable>

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
  
 export function normalizeDropdownValues(
-  value: string | string[] | undefined,
+  value: string | string[] | null | undefined,
 ): string[] {
   if (value == null) return [];
   return Array.isArray(value) ? [...value] : [value];

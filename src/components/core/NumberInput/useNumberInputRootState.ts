@@ -1,11 +1,11 @@
 import { useCallback, useId, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 
 import { numberInputDescribedBy, numberInputFieldIds } from "./numberInputA11y";
 import {
@@ -13,6 +13,8 @@ import {
   formatNumberInput,
   isNumberInputDraft,
   numberInputCanStep,
+  numberInputEditText,
+  numberInputLocale,
   numberInputStep,
   parseFormNumber,
   parseNumberInputComplete,
@@ -29,7 +31,6 @@ export type UseNumberInputRootStateProps = {
   id?: string;
   name?: string;
   required?: boolean;
-  status?: InputStatus;
   size?: InputSize;
   disabled?: boolean;
   readOnly?: boolean;
@@ -41,6 +42,8 @@ export type UseNumberInputRootStateProps = {
   min?: number;
   max?: number;
   step?: number;
+  formatOptions?: Intl.NumberFormatOptions;
+  locale?: string;
 };
 
 export function useNumberInputRootState({
@@ -52,7 +55,6 @@ export function useNumberInputRootState({
   id,
   name,
   required = false,
-  status = "default",
   size = "base",
   disabled = false,
   readOnly = false,
@@ -64,7 +66,10 @@ export function useNumberInputRootState({
   min,
   max,
   step: stepProp,
+  formatOptions,
+  locale: localeProp,
 }: UseNumberInputRootStateProps) {
+  const locale = numberInputLocale(localeProp);
   const form = useOptionalFormBindingContext();
   const reactId = useId();
   const inputId = id ?? `number-input-${reactId}`;
@@ -107,7 +112,7 @@ export function useNumberInputRootState({
   const resolvedReadOnly = readOnly || form?.readOnly === true;
   const blocked = resolvedDisabled || form?.isSubmitting === true;
 
-  const parsedDraft = draft != null ? parseNumberInputComplete(draft) : undefined;
+  const parsedDraft = draft != null ? parseNumberInputComplete(draft, locale) : undefined;
   const steppingFrom = parsedDraft === undefined ? value : parsedDraft;
   const canDecrement =
     !blocked && !resolvedReadOnly && numberInputCanStep(steppingFrom, -1, min, max);
@@ -117,20 +122,25 @@ export function useNumberInputRootState({
   const commitInput = useCallback(
     (raw: string) => {
       if (blocked || resolvedReadOnly) return;
-      if (!isNumberInputDraft(raw)) return;
+      if (!isNumberInputDraft(raw, locale)) return;
       setDraft(raw);
-      const parsed = parseNumberInputComplete(raw);
+      const parsed = parseNumberInputComplete(raw, locale);
       if (parsed === undefined) return;
       setValue(parsed == null ? null : clampNumberInput(parsed, min, max));
     },
-    [blocked, max, min, resolvedReadOnly, setValue],
+    [blocked, locale, max, min, resolvedReadOnly, setValue],
   );
+
+  const beginEdit = useCallback(() => {
+    if (blocked || resolvedReadOnly || draft != null) return;
+    setDraft(value == null ? "" : numberInputEditText(value, locale));
+  }, [blocked, draft, locale, resolvedReadOnly, value]);
 
   const commitBlur = useCallback(() => {
     const raw = draft;
     setDraft(null);
     if (!blocked && !resolvedReadOnly && raw != null) {
-      const parsed = parseNumberInputComplete(raw);
+      const parsed = parseNumberInputComplete(raw, locale);
       const next =
         parsed == null || parsed === undefined ? null : snapNumberInput(parsed, step, min, max);
       if (next !== value) setValue(next);
@@ -139,17 +149,17 @@ export function useNumberInputRootState({
       form.setTouched(name, true);
       if (form.validateMode === "onBlur") form.validateField(name);
     }
-  }, [blocked, bound, draft, form, max, min, name, resolvedReadOnly, setValue, step, value]);
+  }, [blocked, bound, draft, form, locale, max, min, name, resolvedReadOnly, setValue, step, value]);
 
   const nudge = useCallback(
     (direction: 1 | -1) => {
       if (blocked || resolvedReadOnly) return;
       if (!numberInputCanStep(steppingFrom, direction, min, max)) return;
       const next = stepNumberInput(steppingFrom, direction, step, min, max);
-      setDraft(null);
+      setDraft(numberInputEditText(next, locale));
       setValue(next);
     },
-    [blocked, max, min, resolvedReadOnly, setValue, step, steppingFrom],
+    [blocked, locale, max, min, resolvedReadOnly, setValue, step, steppingFrom],
   );
 
   const labelConnected = isCompound ? hasCompoundChild(children, "NumberInputLabel") : label != null;
@@ -162,13 +172,15 @@ export function useNumberInputRootState({
     errorConnected: resolvedError != null || errorConnected,
     formInvalid: false,
   });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
-  const text = draft ?? formatNumberInput(value);
+  const text = draft ?? formatNumberInput(value, formatOptions, locale);
+  const valueText = value == null ? undefined : formatNumberInput(value, formatOptions, locale);
 
   const contextValue = useMemo(
     () => ({
       value,
       text,
+      valueText,
+      beginEdit,
       nudge,
       commitInput,
       commitBlur,
@@ -179,7 +191,6 @@ export function useNumberInputRootState({
       placeholder,
       size,
       variant,
-      status: paintedStatus,
       min,
       max,
       step,
@@ -207,6 +218,7 @@ export function useNumberInputRootState({
       pointerInsideRef,
     }),
     [
+      beginEdit,
       blocked,
       canDecrement,
       canIncrement,
@@ -226,7 +238,6 @@ export function useNumberInputRootState({
       min,
       name,
       nudge,
-      paintedStatus,
       placeholder,
       required,
       resolvedError,
@@ -236,6 +247,7 @@ export function useNumberInputRootState({
       step,
       text,
       value,
+      valueText,
       variant,
     ],
   );

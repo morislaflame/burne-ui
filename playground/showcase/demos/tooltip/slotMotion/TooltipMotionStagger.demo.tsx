@@ -6,7 +6,7 @@ import { Tooltip } from "@/components/core/Tooltip";
 export function TooltipMotionStaggerDemo() {
   return (
     <Tooltip
-      delayShowMs={0}
+      openDelay={0}
       status="info"
       side="top"
       classNames={{

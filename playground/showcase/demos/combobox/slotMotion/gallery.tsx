@@ -9,12 +9,15 @@ import { ComboBoxMotionInputTintDemo } from "./ComboBoxMotionInputTint.demo";
 import comboBoxMotionInputTintSource from "./ComboBoxMotionInputTint.demo.tsx?raw";
 import { ComboBoxMotionHintEnterDemo } from "./ComboBoxMotionHintEnter.demo";
 import comboBoxMotionHintEnterSource from "./ComboBoxMotionHintEnter.demo.tsx?raw";
+import { ComboBoxMotionMenuEnterDemo } from "./ComboBoxMotionMenuEnter.demo";
+import comboBoxMotionMenuEnterSource from "./ComboBoxMotionMenuEnter.demo.tsx?raw";
 
 export const comboBoxSlotMotionGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "instant-hover", title: "Instant hover", Demo: ComboBoxMotionInstantHoverDemo, source: comboBoxMotionInstantHoverSource },
   { id: "input-wave", title: "Input wave", Demo: ComboBoxMotionInputWaveDemo, source: comboBoxMotionInputWaveSource },
   { id: "input-tint", title: "Input tint", Demo: ComboBoxMotionInputTintDemo, source: comboBoxMotionInputTintSource },
   { id: "hint-enter", title: "Hint enter", Demo: ComboBoxMotionHintEnterDemo, source: comboBoxMotionHintEnterSource },
+  { id: "menu-enter", title: "Menu enter", Demo: ComboBoxMotionMenuEnterDemo, source: comboBoxMotionMenuEnterSource },
 ];
 
 export function ComboBoxSlotMotionGalleryDemo() {

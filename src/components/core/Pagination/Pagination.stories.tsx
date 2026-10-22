@@ -398,7 +398,7 @@ export const MotionControllerGallery: Story = {
     docs: {
       description: {
         story:
-          "`useMotionControllerHandle()` — playSlot on Pagination chrome (no root), nested Previous/Page control scope, pagination events. FLIP stays kit-internal.",
+          "`useMotionControllerHandle()` — playSlot на слотах корня (`previous`, `page`, `summary`). FLIP stays kit-internal.",
       },
     },
   },

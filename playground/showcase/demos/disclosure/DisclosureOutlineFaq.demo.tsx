@@ -16,7 +16,7 @@ export function DisclosureOutlineFaqDemo() {
         <Disclosure key={value} value={value}>
           <Disclosure.Trigger icon={icon}>{title}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">
+            <Text as="p" textStyle="small" className="text-muted">
               Answer to the question «{title}» — compound Disclosure.Group with accordion-behavior.
             </Text>
           </Disclosure.Content>

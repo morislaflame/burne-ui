@@ -106,13 +106,15 @@ export const MeterLabel = forwardRef<HTMLElement, MeterLabelProps>(
  
 MeterLabel.displayName = "MeterLabel";
  
-export function MeterHeader({ children, className, motion, ...rest }: MeterHeaderProps) {
+export const MeterHeader = forwardRef<HTMLDivElement, MeterHeaderProps>(
+  function MeterHeader({ children, className, motion, ...rest }, ref) {
   const { orientation } = useMeterFieldContext();
   const slotClassNames = useMeterClassNames();
   const part = useMotionPart<HTMLDivElement>({
     scope: useOptionalMeterMotionScope(),
     slot: "header",
     motion,
+    forwardedRef: ref,
     pointerPhases: false,
   });
  
@@ -129,11 +131,13 @@ export function MeterHeader({ children, className, motion, ...rest }: MeterHeade
       {children}
     </div>
   );
-}
+},
+);
  
 MeterHeader.displayName = "Meter.Header";
  
-export function MeterValue({ children, className, motion, ...rest }: MeterValueProps) {
+export const MeterValue = forwardRef<HTMLSpanElement, MeterValueProps>(
+  function MeterValue({ children, className, motion, ...rest }, ref) {
   const { display } = useMeterFieldContext();
   const slotClassNames = useMeterClassNames();
   const text = children ?? display?.statusText;
@@ -141,6 +145,7 @@ export function MeterValue({ children, className, motion, ...rest }: MeterValueP
     scope: useOptionalMeterMotionScope(),
     slot: "value",
     motion,
+    forwardedRef: ref,
     pointerPhases: false,
   });
  
@@ -149,7 +154,7 @@ export function MeterValue({ children, className, motion, ...rest }: MeterValueP
   return (
     <Text
       as="span"
-      variant="base"
+      textStyle="base"
       ref={part.setRef}
       className={meterValueClass({
         slotClass: slotClassNames.value,
@@ -160,7 +165,8 @@ export function MeterValue({ children, className, motion, ...rest }: MeterValueP
       {text}
     </Text>
   );
-}
+},
+);
  
 MeterValue.displayName = "Meter.Value";
  
@@ -348,6 +354,7 @@ const MeterTrackHost = forwardRef<
     size: resolvedSize,
     thickness,
     color,
+    status,
     isHorizontal,
     aria,
     trackCrossStyle,
@@ -401,6 +408,7 @@ const MeterTrackHost = forwardRef<
         className={meterFillClass({
           isHorizontal,
           hasCustomColor: Boolean(color),
+          status,
           slotClass: slotClassNames.fill,
         })}
         style={meterDeterminateFillStyle({

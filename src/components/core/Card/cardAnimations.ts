@@ -19,11 +19,17 @@ import {
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import { hasKitMember, isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { overlaySkinMotion, usesKitElevation, usesKitElevationMember } from "@/skins/resolveVariantVisual";
 
 import { useCardMotionScope } from "./cardContext";
 import type { CardMotion, CardVariant, UseCardAnimationsProps } from "./cardTypes";
 import { KIT_CARD_VARIANTS } from "./cardTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindSecondLevelRecipe } from "@/components/core/utils/slotMotion/recipes/bindSecondLevel";
+
+bindLiftRecipes();
+bindSecondLevelRecipe();
 
 const CARD_VARIANT_HAS_HOVER_SHADOW = new Set<(typeof KIT_CARD_VARIANTS)[number]>([
   "default",
@@ -39,14 +45,17 @@ export function resolveCardMotionDefaults({
   pressable: boolean;
 }): CardMotion {
   if (!pressable) return overlaySkinMotion({}, variant, KIT_CARD_VARIANTS, "card");
+  const kit = usesKitElevation(variant, KIT_CARD_VARIANTS);
   return overlaySkinMotion(
     {
-      root: {
-        hoverIn: "hoverLiftSecondLevel",
-        hoverOut: "hoverLiftSecondLevel",
-        pressIn: "pressSqueeze",
-        pressOut: false,
-      },
+      root: kit
+        ? {
+            hoverIn: "hoverLiftSecondLevel",
+            hoverOut: "hoverLiftSecondLevel",
+            pressIn: "pressSqueeze",
+            pressOut: false,
+          }
+        : { pressIn: false, pressOut: false },
     },
     variant,
     KIT_CARD_VARIANTS,
@@ -58,7 +67,6 @@ export function useCardAnimations({
   variant,
   shadow = "base",
   motion,
-  onPress,
   onClick: onClickProp,
   onKeyDown: onKeyDownProp,
   onPointerDown: onPointerDownProp,
@@ -76,7 +84,7 @@ export function useCardAnimations({
 
   const hasHoverShadow =
     pressable &&
-    hasKitMember(variant, KIT_CARD_VARIANTS, CARD_VARIANT_HAS_HOVER_SHADOW);
+    usesKitElevationMember(variant, KIT_CARD_VARIANTS, CARD_VARIANT_HAS_HOVER_SHADOW);
 
   // SkinShell registers the `root` slot via useMotionPart; keep a local ref for play/shadow.
   const setRootRef = useCallback(
@@ -139,10 +147,8 @@ export function useCardAnimations({
   const handleClick = useCallback(
     (e: MouseEvent<HTMLElement>) => {
       onClickProp?.(e);
-      if (!pressable || e.defaultPrevented) return;
-      onPress?.(e);
     },
-    [onClickProp, onPress, pressable]);
+    [onClickProp]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLElement>) => {
@@ -162,7 +168,7 @@ export function useCardAnimations({
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp]);
 
   const pressableLiftMotionClass = pressable
-    ? isKitVariant(variant, KIT_CARD_VARIANTS)
+    ? usesKitElevation(variant, KIT_CARD_VARIANTS)
       ? secondLevelLift.motionClass
       : ""
     : "";

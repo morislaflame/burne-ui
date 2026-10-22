@@ -16,6 +16,7 @@ export const Accordion = Object.assign(AccordionRoot, {
  
 export type {
   AccordionProps,
+  AccordionSize,
   AccordionItemProps,
   AccordionHeadingProps,
   AccordionTriggerProps,
@@ -31,5 +32,6 @@ export type {
   AccordionMotion,
   AccordionLifecycleMotion,
   AccordionTriggerLiftMotion,
+  AccordionItemData,
 } from "./Accordion";
  

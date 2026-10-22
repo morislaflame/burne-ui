@@ -225,14 +225,15 @@ describe("runMotionPhase", () => {
     expect(typeof (recipe.mock.calls[0]?.[0] as MotionContext).isCurrent).toBe("function");
   });
 
-  it("resolves kit recipe names on the play path", () => {
+  it("resolves kit recipe names on the play path", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
-    runMotionPhase({
+    const run = runMotionPhase({
       el: fakeEl(),
       phase: "uncheck",
       value: "switchThumb",
       targets: {},
     });
+    await run.finished;
     expect(hasMotionRecipe("switchThumb")).toBe(true);
     expect(error).not.toHaveBeenCalled();
   });

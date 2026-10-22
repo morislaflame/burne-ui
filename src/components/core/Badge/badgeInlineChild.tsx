@@ -14,7 +14,7 @@ export function BadgeInlineChild({ node, size, iconSlotClass }: BadgeInlineChild
     const trimmed = node.trim();
     if (!trimmed) return null;
     return (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
+      <Text as="span" textStyle={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
         {node}
       </Text>
     );
@@ -22,7 +22,7 @@ export function BadgeInlineChild({ node, size, iconSlotClass }: BadgeInlineChild
  
   if (typeof node === "number") {
     return (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
+      <Text as="span" textStyle={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
         {node}
       </Text>
     );

@@ -11,11 +11,11 @@ export function SelectMotionInstantHoverDemo() {
     <Select
       className="w-64"
       label="Instant hover"
-      options={options}
+      items={options}
       defaultValue="react"
-      hint="triggerGroup.hoverIn / hoverOut: false"
+      hint="shell.hoverIn / hoverOut: false"
       motion={{
-        triggerGroup: { hoverIn: false, hoverOut: false },
+        shell: { hoverIn: false, hoverOut: false },
       }}
     />
   );

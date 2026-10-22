@@ -28,18 +28,18 @@ export function TableCustomSortIconDemo() {
   );
 
   return (
-    <Table>
+    <Table
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}>
       <Table.ScrollContainer>
         <Table.Content
           aria-label="Team (custom sort icon)"
           className="min-w-[480px]"
-          sortDescriptor={sortDescriptor}
-          onSortChange={setSortDescriptor}
         >
           <Table.Header>
             <Table.Column
-              allowsSorting
-              isRowHeader
+              sortable
+              rowHeader
               id="name"
               sortIcon={({ sortDirection }) =>
                 sortDirection ? (
@@ -58,10 +58,10 @@ export function TableCustomSortIconDemo() {
             >
               Name
             </Table.Column>
-            <Table.Column allowsSorting id="role" sortIcon={null}>
+            <Table.Column sortable id="role" sortIcon={null}>
               Role
             </Table.Column>
-            <Table.Column allowsSorting id="status">
+            <Table.Column sortable id="status">
               Status
             </Table.Column>
           </Table.Header>

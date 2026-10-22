@@ -24,12 +24,12 @@ export function extractToggleItemValues(children: ReactElement[]): string[] {
   }, []);
 }
  
-export function normalizeMultipleDefault(value: string | string[] | undefined): string[] {
+export function normalizeMultipleDefault(value: string | string[] | null | undefined): string[] {
   if (value == null) return [];
   return Array.isArray(value) ? value : [value];
 }
  
-export function normalizeSingleDefault(value: string | string[] | undefined): string | undefined {
+export function normalizeSingleDefault(value: string | string[] | null | undefined): string | undefined {
   if (value == null) return undefined;
   return Array.isArray(value) ? value[0] : value;
 }

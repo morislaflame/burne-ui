@@ -91,7 +91,7 @@ export const Basic: Story = {
       <Table.ScrollContainer>
         <Table.Content aria-label="Team" className="min-w-[600px]">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
             <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
@@ -124,7 +124,7 @@ export const Virtualized: Story = {
         <Table.ScrollContainer className="overflow-y-auto" style={{ maxHeight: "min(16rem, 50dvh)" }}>
           <Table.Content aria-label="Rows">
             <Table.Header>
-              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column rowHeader>Name</Table.Column>
             </Table.Header>
             <Table.Body virtualized items={rows}>
               {(row: { id: string; name: string }) => (
@@ -147,7 +147,7 @@ export const SecondaryVariant: Story = {
       <Table.ScrollContainer>
         <Table.Content aria-label="Team (secondary)" className="min-w-[600px]">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
             <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
@@ -186,25 +186,25 @@ export const Sorting: Story = {
       [sortDescriptor]);
 
     return (
-      <Table>
+      <Table
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}>
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Team (sorting)"
             className="min-w-[600px]"
-            sortDescriptor={sortDescriptor}
-            onSortChange={setSortDescriptor}
           >
             <Table.Header>
-              <Table.Column allowsSorting isRowHeader id="name">
+              <Table.Column sortable rowHeader id="name">
                 Name
               </Table.Column>
-              <Table.Column allowsSorting id="role">
+              <Table.Column sortable id="role">
                 Role
               </Table.Column>
-              <Table.Column allowsSorting id="status">
+              <Table.Column sortable id="status">
                 Status
               </Table.Column>
-              <Table.Column allowsSorting id="email">
+              <Table.Column sortable id="email">
                 Email
               </Table.Column>
             </Table.Header>
@@ -257,18 +257,18 @@ export const CustomSortIcon: Story = {
       [sortDescriptor]);
 
     return (
-      <Table>
+      <Table
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}>
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Team (custom sort icon)"
             className="min-w-[600px]"
-            sortDescriptor={sortDescriptor}
-            onSortChange={setSortDescriptor}
           >
             <Table.Header>
               <Table.Column
-                allowsSorting
-                isRowHeader
+                sortable
+                rowHeader
                 id="name"
                 sortIcon={({ sortDirection }) =>
                   sortDirection ? (
@@ -287,13 +287,13 @@ export const CustomSortIcon: Story = {
               >
                 Name
               </Table.Column>
-              <Table.Column allowsSorting id="role" sortIcon={null}>
+              <Table.Column sortable id="role" sortIcon={null}>
                 Role
               </Table.Column>
-              <Table.Column allowsSorting id="status">
+              <Table.Column sortable id="status">
                 Status
               </Table.Column>
-              <Table.Column allowsSorting id="email">
+              <Table.Column sortable id="email">
                 Email
               </Table.Column>
             </Table.Header>
@@ -340,25 +340,25 @@ export const UncontrolledSorting: Story = {
       [sortDescriptor]);
 
     return (
-      <Table>
+      <Table
+            defaultSortDescriptor={{ column: "name", direction: "ascending" }}
+            onSortChange={setSortDescriptor}>
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Team (uncontrolled sorting)"
             className="min-w-[600px]"
-            defaultSortDescriptor={{ column: "name", direction: "ascending" }}
-            onSortChange={setSortDescriptor}
           >
             <Table.Header>
-              <Table.Column allowsSorting isRowHeader id="name">
+              <Table.Column sortable rowHeader id="name">
                 Name
               </Table.Column>
-              <Table.Column allowsSorting id="role">
+              <Table.Column sortable id="role">
                 Role
               </Table.Column>
-              <Table.Column allowsSorting id="status">
+              <Table.Column sortable id="status">
                 Status
               </Table.Column>
-              <Table.Column allowsSorting id="email">
+              <Table.Column sortable id="email">
                 Email
               </Table.Column>
             </Table.Header>
@@ -393,17 +393,17 @@ export const ClickToSelect: Story = {
 
     return (
       <div className="flex flex-col gap-base">
-        <Table>
+        <Table
+              selectionMode="multiple"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}>
           <Table.ScrollContainer>
             <Table.Content
               aria-label="Team (click selection)"
               className="min-w-[600px]"
-              selectionMode="multiple"
-              selectedKeys={selectedKeys}
-              onSelectionChange={setSelectedKeys}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column rowHeader>Name</Table.Column>
                 <Table.Column>Role</Table.Column>
                 <Table.Column>Status</Table.Column>
                 <Table.Column>Email</Table.Column>
@@ -459,17 +459,17 @@ export const UncontrolledSelection: Story = {
 
     return (
       <div className="flex flex-col gap-base">
-        <Table>
+        <Table
+              selectionMode="multiple"
+              defaultSelectedKeys={new Set([2, 4])}
+              onSelectionChange={setSelectedKeys}>
           <Table.ScrollContainer>
             <Table.Content
               aria-label="Team (uncontrolled selection)"
               className="min-w-[600px]"
-              selectionMode="multiple"
-              defaultSelectedKeys={new Set([2, 4])}
-              onSelectionChange={setSelectedKeys}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column rowHeader>Name</Table.Column>
                 <Table.Column>Role</Table.Column>
                 <Table.Column>Status</Table.Column>
                 <Table.Column>Email</Table.Column>
@@ -531,7 +531,7 @@ export const CheckboxSelection: Story = {
                     </Checkbox.Control>
                   </Checkbox>
                 </Table.Column>
-                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column rowHeader>Name</Table.Column>
                 <Table.Column>Role</Table.Column>
                 <Table.Column>Status</Table.Column>
                 <Table.Column>Email</Table.Column>
@@ -590,22 +590,22 @@ export const CustomCells: Story = {
       [sortDescriptor]);
 
     return (
-      <Table>
+      <Table
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}>
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Team (custom cells)"
             className="min-w-[720px]"
-            sortDescriptor={sortDescriptor}
-            onSortChange={setSortDescriptor}
           >
             <Table.Header>
-              <Table.Column allowsSorting isRowHeader id="name">
+              <Table.Column sortable rowHeader id="name">
                 Name
               </Table.Column>
-              <Table.Column allowsSorting id="role">
+              <Table.Column sortable id="role">
                 Role
               </Table.Column>
-              <Table.Column allowsSorting id="status">
+              <Table.Column sortable id="status">
                 Status
               </Table.Column>
               <Table.Column>Email</Table.Column>
@@ -667,7 +667,7 @@ export const WithPagination: Story = {
         <Table.ScrollContainer>
           <Table.Content aria-label="Team with pagination" className="min-w-[600px]">
             <Table.Header>
-              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column rowHeader>Name</Table.Column>
               <Table.Column>Role</Table.Column>
               <Table.Column>Status</Table.Column>
               <Table.Column>Email</Table.Column>
@@ -730,7 +730,7 @@ export const EmptyState: Story = {
       <Table.ScrollContainer>
         <Table.Content aria-label="Empty table" className="min-w-[600px] h-full">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
             <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
@@ -764,7 +764,7 @@ export const StickyHeader: Story = {
         <Table.ScrollContainer className="h-64 overflow-y-auto">
           <Table.Content aria-label="Team (scroll)" className="min-w-[600px]">
             <Table.Header className="sticky top-0 z-10">
-              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column rowHeader>Name</Table.Column>
               <Table.Column>Role</Table.Column>
               <Table.Column>Status</Table.Column>
               <Table.Column>Email</Table.Column>
@@ -793,7 +793,7 @@ export const TonedRows: Story = {
       <Table.ScrollContainer>
         <Table.Content aria-label="Team (toned rows)" className="min-w-[600px]">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
             <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
@@ -835,7 +835,7 @@ export const TonedRowsAllTones: Story = {
       <Table.ScrollContainer>
         <Table.Content aria-label="All row tones" className="min-w-[480px]">
           <Table.Header>
-            <Table.Column isRowHeader>Tone</Table.Column>
+            <Table.Column rowHeader>Tone</Table.Column>
             <Table.Column>Description</Table.Column>
           </Table.Header>
           <Table.Body>
@@ -861,17 +861,17 @@ export const TonedRowsWithSelection: Story = {
 
     return (
       <div className="flex flex-col gap-base">
-        <Table variant="toned">
+        <Table variant="toned"
+              selectionMode="multiple"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}>
           <Table.ScrollContainer>
             <Table.Content
               aria-label="Toned rows with selection"
               className="min-w-[600px]"
-              selectionMode="multiple"
-              selectedKeys={selectedKeys}
-              onSelectionChange={setSelectedKeys}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column rowHeader>Name</Table.Column>
                 <Table.Column>Role</Table.Column>
                 <Table.Column>Status</Table.Column>
               </Table.Header>
@@ -915,6 +915,7 @@ export const CustomClassNames: Story = {
         root: "rounded-large border border-info/25 shadow-token-base",
         headerRow: "bg-info/10",
         column: "text-info font-semibold",
+        columnInner: "gap-small",
         columnButton: "text-info",
         row: "hover:bg-info/5",
         cell: "text-foreground/90",
@@ -927,7 +928,7 @@ export const CustomClassNames: Story = {
         <Table.Content>
           <Table.Caption>Team</Table.Caption>
           <Table.Header>
-            <Table.Column isRowHeader allowsSorting>Name</Table.Column>
+            <Table.Column rowHeader sortable>Name</Table.Column>
             <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body>
@@ -964,7 +965,7 @@ export const HeaderRow: Story = {
         <Table.Content aria-label="Team with custom header row">
           <Table.Header>
             <Table.HeaderRow className="bg-primary/10">
-              <Table.Column isRowHeader className="text-left">
+              <Table.Column rowHeader className="text-left">
                 <Table.Label className="text-foreground font-semibold text-mid">Name</Table.Label>
               </Table.Column>
               <Table.Column className="text-left">

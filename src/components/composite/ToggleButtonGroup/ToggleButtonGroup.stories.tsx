@@ -45,7 +45,7 @@ type Story = StoryObj<typeof ToggleButtonGroup>;
 export const ConnectedHorizontal: Story = {
   name: "Attached (horizontal)",
   render: () => (
-    <ToggleButtonGroup aria-label="Format filter" defaultValue={["bold"]}>
+    <ToggleButtonGroup aria-label="Format filter" defaultValues={["bold"]}>
       <ToggleButton value="bold" icon={<IoTextOutline aria-hidden />}>
         Bold
       </ToggleButton>
@@ -58,7 +58,7 @@ export const ConnectedHorizontal: Story = {
 export const ConnectedVertical: Story = {
   name: "Attached (vertical)",
   render: () => (
-    <ToggleButtonGroup orientation="vertical" aria-label="List view" defaultValue={["list"]}>
+    <ToggleButtonGroup orientation="vertical" aria-label="List view" defaultValues={["list"]}>
       <ToggleButton value="list" icon={<IoListOutline aria-hidden />}>
         List
       </ToggleButton>
@@ -72,7 +72,7 @@ export const ConnectedVertical: Story = {
 export const Segmented: Story = {
   name: "Segmented",
   render: () => (
-    <ToggleButtonGroup segmented aria-label="Tags" defaultValue={["design"]}>
+    <ToggleButtonGroup segmented aria-label="Tags" defaultValues={["design"]}>
       <ToggleButton value="design">Design</ToggleButton>
       <ToggleButton value="dev">Dev</ToggleButton>
       <ToggleButton value="qa">QA</ToggleButton>
@@ -87,7 +87,7 @@ export const SingleSelection: Story = {
     return (
       <div className="flex flex-col items-center gap-large">
         <ToggleButtonGroup
-          type="single"
+          selectionMode="single"
           value={value}
           onValueChange={(v) => setValue(v as string)}
           aria-label="Display mode"
@@ -99,7 +99,7 @@ export const SingleSelection: Story = {
             Grid
           </ToggleButton>
         </ToggleButtonGroup>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           value=&quot;{value}&quot;
         </Text>
       </div>
@@ -114,7 +114,7 @@ export const SingleSelection: Story = {
 export const SingleSegmented: Story = {
   name: "Single + segmented",
   render: () => (
-    <ToggleButtonGroup type="single" segmented defaultValue="like" aria-label="Reactions">
+    <ToggleButtonGroup selectionMode="single" segmented defaultValue="like" aria-label="Reactions">
       <ToggleButton value="like" icon={<IoHeartOutline aria-hidden />}>
         Like
       </ToggleButton>
@@ -128,7 +128,7 @@ export const SingleSegmented: Story = {
 export const Disabled: Story = {
   name: "Disabled",
   render: () => (
-    <ToggleButtonGroup disabled defaultValue={["a"]} aria-label="Disabled group">
+    <ToggleButtonGroup disabled defaultValues={["a"]} aria-label="Disabled group">
       <ToggleButton value="a">A</ToggleButton>
       <ToggleButton value="b">B</ToggleButton>
       <ToggleButton value="c">C</ToggleButton>
@@ -141,7 +141,7 @@ export const Variants: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-xlarge">
       {(["default", "outline", "ghost"] as const).map((variant) => (
-        <ToggleButtonGroup key={variant} variant={variant} defaultValue={["one"]} aria-label={variant}>
+        <ToggleButtonGroup key={variant} variant={variant} defaultValues={["one"]} aria-label={variant}>
           <ToggleButton value="one">{variant} 1</ToggleButton>
           <ToggleButton value="two">{variant} 2</ToggleButton>
         </ToggleButtonGroup>
@@ -154,7 +154,7 @@ export const CustomClassNames: Story = {
   name: "Full classNames customization",
   render: () => (
     <ToggleButtonGroup
-      type="single"
+      selectionMode="single"
       defaultValue="a"
       aria-label="Custom slots"
       classNames={{

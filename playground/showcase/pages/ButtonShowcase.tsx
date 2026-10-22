@@ -97,7 +97,7 @@ export function ButtonShowcase() {
           <p>
             Prop <code>ripple</code> mounts built-in <code>&lt;Ripple /&gt;</code> with a tone underneath{" "}
             <code>variant</code>/<code>status</code>. For a custom layer —{" "}
-            <code>buttonRippleTone(variant, status)</code> from the package.
+            <code>buttonRippleTone(variant, status)</code> from <code>burne-ui/internal</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Customization">
@@ -105,7 +105,7 @@ export function ButtonShowcase() {
             Additional styles — <code>className</code>. <code>variant=&quot;default&quot;</code> — glass
             surface (tokens <code>--color-surface</code>, <code>--color-border</code>). In{" "}
             <code>ButtonGroup</code> segments are rounded through group context. Ripple and hover/press —{" "}
-            <code>configureMotion()</code> and <code>buttonRippleTone(variant, status)</code> from the package.
+            <code>configureMotion()</code> and <code>buttonRippleTone(variant, status)</code> from <code>burne-ui/internal</code>.
           </p>
         </ShowcaseDoc.Block>
       </ShowcaseDoc>

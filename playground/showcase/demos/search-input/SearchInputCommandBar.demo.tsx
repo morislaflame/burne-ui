@@ -8,7 +8,7 @@ export function SearchInputCommandBarDemo() {
 
   return (
     <div className="flex w-full max-w-xl flex-col gap-small rounded-large border-token bg-secondary p-large shadow-sm">
-      <Text as="p" variant="xsmall" className="uppercase tracking-wide text-muted">
+      <Text as="p" textStyle="xsmall" className="uppercase tracking-wide text-muted">
         Command palette
       </Text>
       <SearchInput

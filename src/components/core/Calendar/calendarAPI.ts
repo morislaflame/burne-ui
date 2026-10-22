@@ -116,6 +116,7 @@ export function buildDayCellModels({
   locale,
   minDate,
   maxDate,
+  isDateUnavailable,
   today,
 }: {
   viewDate: Date;
@@ -127,6 +128,7 @@ export function buildDayCellModels({
   locale: CalendarLocale;
   minDate?: Date;
   maxDate?: Date;
+  isDateUnavailable?: (date: Date) => boolean;
   today: Date;
 }): CalendarDayCellModel[] {
   const year = viewDate.getFullYear();
@@ -181,20 +183,20 @@ export function buildDayCellModels({
     const showLeftBg = !sameStartEnd && (inRange || isRangeEnd);
     const showRightBg = !sameStartEnd && (inRange || isRangeStart);
  
-    const isDisabled = (!!minDate && date < minDate) || (!!maxDate && date > maxDate);
+    const disabled = isCalendarDateDisabled(date, minDate, maxDate, isDateUnavailable);
     const circleActive = isSel || isRangeStart || isRangeEnd;
  
     return {
       key: dayKey,
       day,
       date,
-      isToday,
-      isSelected: isSel,
-      isRangeStart,
-      isRangeEnd,
+      today: isToday,
+      selected: isSel,
+      rangeStart: isRangeStart,
+      rangeEnd: isRangeEnd,
       showLeftBg,
       showRightBg,
-      isDisabled,
+      disabled,
       circleActive,
       ariaLabel: calendarDayAriaLabel(day, month, year, locale),
     };
@@ -270,12 +272,28 @@ export function addCalendarYears(date: Date, delta: number): Date {
   );
 }
  
+/** True when any day from `start` through `end` is unavailable. */
+export function calendarRangeHitsUnavailable(
+  start: Date,
+  end: Date,
+  isDateUnavailable?: (date: Date) => boolean,
+): boolean {
+  if (!isDateUnavailable) return false;
+  const from = start.getTime() <= end.getTime() ? startOfDay(start) : startOfDay(end);
+  const to = start.getTime() <= end.getTime() ? startOfDay(end) : startOfDay(start);
+  for (let cursor = from; cursor.getTime() <= to.getTime(); cursor = addCalendarDays(cursor, 1)) {
+    if (isDateUnavailable(cursor)) return true;
+  }
+  return false;
+}
+
 export function isCalendarDateDisabled(
   date: Date,
   minDate?: Date,
   maxDate?: Date,
+  isDateUnavailable?: (date: Date) => boolean,
 ): boolean {
-  return (!!minDate && date < minDate) || (!!maxDate && date > maxDate);
+  return (!!minDate && date < minDate) || (!!maxDate && date > maxDate) || !!isDateUnavailable?.(date);
 }
  
 export function clampCalendarDate(
@@ -323,6 +341,7 @@ export function moveCalendarFocusDate(
   shiftKey: boolean,
   minDate?: Date,
   maxDate?: Date,
+  isDateUnavailable?: (date: Date) => boolean,
 ): Date | null {
   let next: Date | null = null;
  
@@ -365,7 +384,7 @@ export function moveCalendarFocusDate(
  
   next = clampCalendarDate(next, minDate, maxDate);
  
-  if (isCalendarDateDisabled(next, minDate, maxDate)) {
+  if (isCalendarDateDisabled(next, minDate, maxDate, isDateUnavailable)) {
     const direction =
       key === "ArrowLeft" || key === "ArrowUp" || key === "Home" || key === "PageUp"
         ? -1
@@ -374,7 +393,7 @@ export function moveCalendarFocusDate(
     for (let i = 0; i < 366; i++) {
       cursor = addCalendarDays(cursor, direction);
       cursor = clampCalendarDate(cursor, minDate, maxDate);
-      if (!isCalendarDateDisabled(cursor, minDate, maxDate)) return cursor;
+      if (!isCalendarDateDisabled(cursor, minDate, maxDate, isDateUnavailable)) return cursor;
       if (
         (direction < 0 && minDate && isSameDay(cursor, minDate)) ||
         (direction > 0 && maxDate && isSameDay(cursor, maxDate))

@@ -13,7 +13,7 @@ export function TableActivityFeedDemo() {
       <Table.ScrollContainer>
         <Table.Content aria-label="Activity">
           <Table.Header>
-            <Table.Column isRowHeader>Event</Table.Column>
+            <Table.Column rowHeader>Event</Table.Column>
             <Table.Column>Environment</Table.Column>
             <Table.Column>Time</Table.Column>
           </Table.Header>

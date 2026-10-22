@@ -15,6 +15,7 @@ export function usePaginationRootState({
   totalPages,
   onPageChange,
   siblingCount = 1,
+  size = "base",
   "aria-label": ariaLabel,
 }: UsePaginationRootStateProps & { "aria-label"?: string }) {
   const paginationLabel = useBurneLabel("pagination");
@@ -41,8 +42,9 @@ export function usePaginationRootState({
       totalPages,
       onPageChange: setPage,
       siblingCount,
+      size,
     }),
-    [page, setPage, siblingCount, totalPages],
+    [page, setPage, siblingCount, size, totalPages],
   );
  
   return {

@@ -7,59 +7,18 @@ import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 import dts from "vite-plugin-dts";
 
+import { componentLibEntries } from "./scripts/componentEntries.mjs";
+import {
+  isServerSafeDistFile,
+  needsUseClient,
+  prependUseClient,
+} from "./scripts/rscBoundaries.mjs";
+
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(rootDir, "src");
 
 /** Build-only CSS entry name — stub JS is deleted after emit; keep `dist/ui.css`. */
 const STYLES_ENTRY = "styles.entry";
-
-const SERVER_SAFE_FACADES = new Set([
-  path.join(srcDir, "index.ts"),
-  path.join(srcDir, "internal.ts"),
-  path.join(srcDir, "utils/cn.ts"),
-  path.join(srcDir, "utils/prettify.ts"),
-  path.join(srcDir, "theme/themeScript.ts"),
-  path.join(srcDir, `${STYLES_ENTRY}.ts`),
-]);
-
-function normalizeId(id: string): string {
-  return path.normalize(id.split("?")[0] ?? id);
-}
-
-function isServerSafeFacade(id: string | null | undefined): boolean {
-  if (!id) return true;
-  const normalized = normalizeId(id);
-  if (SERVER_SAFE_FACADES.has(normalized)) return true;
-  const tokensDir = path.join(srcDir, "tokens") + path.sep;
-  return normalized.startsWith(tokensDir);
-}
-
-function sourceImportsClientRuntime(id: string | null | undefined): boolean {
-  if (!id) return false;
-  const file = normalizeId(id);
-  if (!file.startsWith(srcDir) || !/\.(tsx|ts|jsx|js)$/.test(file)) return false;
-  try {
-    const code = fs.readFileSync(file, "utf8");
-    return /from\s+["'](react|react-dom|react\/jsx-runtime|react\/jsx-dev-runtime|gsap|gsap\/[^"']+|react-icons(?:\/[^"']+)?)["']/.test(
-      code,
-    );
-  } catch {
-    return false;
-  }
-}
-
-function useClientBanner(chunk: {
-  name: string;
-  fileName: string;
-  facadeModuleId?: string | null;
-}): string {
-  if (chunk.name === STYLES_ENTRY || chunk.fileName.startsWith(`${STYLES_ENTRY}.`)) {
-    return "";
-  }
-  if (isServerSafeFacade(chunk.facadeModuleId)) return "";
-  if (!sourceImportsClientRuntime(chunk.facadeModuleId)) return "";
-  return '"use client";';
-}
 
 function dropStylesEntryArtifacts(): Plugin {
   return {
@@ -67,14 +26,28 @@ function dropStylesEntryArtifacts(): Plugin {
     apply: "build",
     closeBundle() {
       const dist = path.resolve(rootDir, "dist");
-      for (const file of [
-        `${STYLES_ENTRY}.js`,
-        `${STYLES_ENTRY}.cjs`,
-        `${STYLES_ENTRY}.d.ts`,
-      ]) {
+      for (const file of [`${STYLES_ENTRY}.js`, `${STYLES_ENTRY}.d.ts`]) {
         const target = path.join(dist, file);
         if (fs.existsSync(target)) fs.unlinkSync(target);
       }
+    },
+  };
+}
+
+/**
+ * Per-file `"use client"` from emitted JS so Next App Router sees facades
+ * (`Object.assign` on a client import) and automatic JSX runtime.
+ * Barrels, `cn`, tokens, and `ThemeScript` stay server-safe.
+ */
+function rscUseClientPlugin(): Plugin {
+  return {
+    name: "burne-ui-use-client",
+    apply: "build",
+    renderChunk(code, chunk) {
+      if (isServerSafeDistFile(chunk.fileName)) return null;
+      if (!needsUseClient(code)) return null;
+      const next = prependUseClient(code);
+      return next === code ? null : next;
     },
   };
 }
@@ -105,7 +78,7 @@ function stripCssImportsFromJs(): Plugin {
             walk(full);
             continue;
           }
-          if (!entry.name.endsWith(".js") && !entry.name.endsWith(".cjs")) continue;
+          if (!entry.name.endsWith(".js")) continue;
           const code = fs.readFileSync(full, "utf8");
           if (!code.includes("empty css") && !code.includes(".css")) continue;
           const next = strip(code).replace(/\n{3,}/g, "\n\n");
@@ -130,9 +103,10 @@ export default defineConfig({
       tsconfigPath: "./tsconfig.build.json",
       insertTypesEntry: true,
       rollupTypes: false,
-      exclude: [`src/${STYLES_ENTRY}.ts`],
+      exclude: [`src/${STYLES_ENTRY}.ts`, "src/__tests__/**", "src/**/*.test.ts", "src/**/*.test.tsx"],
     }),
     stripCssImportsFromJs(),
+    rscUseClientPlugin(),
     dropStylesEntryArtifacts(),
   ],
   build: {
@@ -147,13 +121,15 @@ export default defineConfig({
       entry: {
         index: path.resolve(srcDir, "index.ts"),
         internal: path.resolve(srcDir, "internal.ts"),
+        skin: path.resolve(srcDir, "skin.ts"),
+        studio: path.resolve(srcDir, "studio.ts"),
+        authoring: path.resolve(srcDir, "authoring.ts"),
         /** Emits `ui.css`; stub JS removed in `dropStylesEntryArtifacts`. */
         [STYLES_ENTRY]: path.resolve(srcDir, `${STYLES_ENTRY}.ts`),
+        ...componentLibEntries(rootDir),
       },
-      name: "BurneUI",
-      formats: ["es", "cjs"],
-      fileName: (format, entryName) =>
-        `${entryName}.${format === "es" ? "js" : "cjs"}`,
+      formats: ["es"],
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     cssCodeSplit: false,
     rollupOptions: {
@@ -173,11 +149,6 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: srcDir,
         assetFileNames: "ui.css",
-        /**
-         * Per-file `"use client"` for Next.js. Barrels, `cn`, tokens, and
-         * `ThemeScript` stay server-safe so `import { cn }` is not a client boundary.
-         */
-        banner: useClientBanner,
       },
     },
   },

@@ -12,7 +12,7 @@ const USERS = [
 export function AvatarPresenceRowDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Online status
       </Text>
       <ul className="flex flex-col gap-small">
@@ -28,7 +28,7 @@ export function AvatarPresenceRowDemo() {
                 aria-label={user.online ? "Online" : "Offline"}
               />
             </Badge.Anchor>
-            <Text as="span" variant="small">
+            <Text as="span" textStyle="small">
               {user.label}
             </Text>
           </li>

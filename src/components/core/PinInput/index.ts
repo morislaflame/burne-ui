@@ -1,9 +1,16 @@
 import { PinInputRoot } from "./PinInput";
-import { PinInputError, PinInputGroup, PinInputHint, PinInputLabel } from "./pinInputParts";
+import {
+  PinInputError,
+  PinInputControl,
+  PinInputShell,
+  PinInputHint,
+  PinInputLabel,
+} from "./pinInputParts";
 
 export const PinInput = Object.assign(PinInputRoot, {
   Label: PinInputLabel,
-  Group: PinInputGroup,
+  Shell: PinInputShell,
+  Control: PinInputControl,
   Hint: PinInputHint,
   Error: PinInputError,
 });
@@ -11,11 +18,14 @@ export const PinInput = Object.assign(PinInputRoot, {
 export type {
   PinInputClassNames,
   PinInputErrorProps,
-  PinInputGroupProps,
+  PinInputControlProps,
+  PinInputShellProps,
   PinInputHintProps,
   PinInputLabelProps,
   PinInputMotion,
   PinInputPartMotion,
   PinInputProps,
+  PinInputSize,
+  PinInputVariant,
   PinInputType,
 } from "./pinInputTypes";

@@ -15,7 +15,7 @@ export function DropdownAsChildMergedPropsDemo() {
   return (
     <div className="flex flex-col items-center gap-large">
       <p className="text-sm text-muted">{refLabel}</p>
-      <Dropdown selectionIndicator defaultValue="ru">
+      <Dropdown defaultValue="ru">
         <Dropdown.Trigger
           asChild
           ref={triggerRef}

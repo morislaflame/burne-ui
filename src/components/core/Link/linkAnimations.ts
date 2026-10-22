@@ -17,6 +17,10 @@ import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components
  
 import { useLinkMotionScope } from "./linkContext";
 import type { LinkMotion, UseLinkAnimationsProps } from "./linkTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export function resolveLinkMotionDefaults(): LinkMotion {
   return {

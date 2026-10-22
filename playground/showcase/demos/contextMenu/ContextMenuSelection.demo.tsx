@@ -19,7 +19,7 @@ export function ContextMenuSelectionDemo() {
   return (
     <ContextMenu value={status} onValueChange={(next) => setStatus(String(next))}>
       <ContextMenu.Trigger className={surface}>{current.label}</ContextMenu.Trigger>
-      <ContextMenu.Content className="min-w-52">
+      <ContextMenu.Popover className="min-w-52">
         <ContextMenu.Group>
           <ContextMenu.Label>Status</ContextMenu.Label>
           {STATUSES.map((item) => (
@@ -32,7 +32,7 @@ export function ContextMenuSelectionDemo() {
             </ContextMenu.Item>
           ))}
         </ContextMenu.Group>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

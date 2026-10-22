@@ -18,7 +18,7 @@ import disclosureMotionGroupChevronSource from "./DisclosureMotionGroupChevron.d
 
 export const disclosureSlotMotionGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "instant-panel", title: "Instant panel", Demo: DisclosureMotionInstantPanelDemo, source: disclosureMotionInstantPanelSource },
-  { id: "body", title: "Body", Demo: DisclosureMotionBodyDemo, source: disclosureMotionBodySource },
+  { id: "content", title: "Content", Demo: DisclosureMotionBodyDemo, source: disclosureMotionBodySource },
   { id: "title", title: "Title", Demo: DisclosureMotionTitleDemo, source: disclosureMotionTitleSource },
   { id: "title-lift-tilt", title: "Title lift tilt", Demo: DisclosureMotionTitleLiftTiltDemo, source: disclosureMotionTitleLiftTiltSource },
   { id: "title-lift-quiet", title: "Title lift quiet", Demo: DisclosureMotionTitleLiftQuietDemo, source: disclosureMotionTitleLiftQuietSource },

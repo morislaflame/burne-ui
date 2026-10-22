@@ -31,7 +31,7 @@ describe("Э3.2 className slots", () => {
       <Table classNames={{ columnInner: "shared-inner", columnButton: "only-button" }}>
         <Table.Content>
           <Table.Header>
-            <Table.Column allowsSorting>Name</Table.Column>
+            <Table.Column sortable>Name</Table.Column>
             <Table.Column>Role</Table.Column>
           </Table.Header>
         </Table.Content>
@@ -40,8 +40,8 @@ describe("Э3.2 className slots", () => {
     const name = screen.getByRole("columnheader", { name: "Name" });
     const role = screen.getByRole("columnheader", { name: "Role" });
     expect(name.querySelector("button")?.className).toContain("sort-btn");
-    expect(name.querySelector("button")?.className).toContain("shared-inner");
     expect(name.querySelector("button")?.className).toContain("only-button");
+    expect(name.querySelector("button span")?.className).toContain("shared-inner");
     expect(role.querySelector(".sort-btn")).toBeNull();
     expect(role.querySelector(".only-button")).toBeNull();
     expect(role.querySelector(".shared-inner")).toBeTruthy();

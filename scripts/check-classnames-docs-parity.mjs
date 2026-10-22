@@ -5,80 +5,15 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  extractSlotKeys,
+  loadClassNamesTypes,
+  siteSlug,
+} from "./classNamesInventory.mjs";
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const srcRoot = path.join(root, "src/components");
 const siteRoot = path.resolve(root, "../burne-ui-site/content/component-docs");
-
-/** Shared shape. Public names are the aliases (RadioGroup / CheckboxGroup). */
-const SKIP_TYPES = new Set(["OptionGroupClassNames"]);
-
-const SITE_SLUG_OVERRIDES = {
-  ComboBox: "combobox",
-  ListBox: "listbox",
-  TextArea: "textarea",
-  ColorSwatch: "color-picker",
-  FieldSet: "field",
-  SkeletonCircle: "skeleton",
-  SkeletonText: "skeleton",
-  SkeletonBlock: "skeleton",
-  SkeletonRegion: "skeleton",
-};
-
-function stripComments(source) {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/(^|[^:])\/\/.*$/gm, "$1");
-}
-
-function extractObjectBody(source, name) {
-  const text = stripComments(source);
-  const re = new RegExp(`\\bexport\\s+type\\s+${name}\\s*=\\s*\\{`, "m");
-  const match = re.exec(text);
-  if (!match) return null;
-  const start = match.index + match[0].length - 1;
-  let depth = 0;
-  for (let i = start; i < text.length; i += 1) {
-    const ch = text[i];
-    if (ch === "{") depth += 1;
-    else if (ch === "}") {
-      depth -= 1;
-      if (depth === 0) return text.slice(start + 1, i);
-    }
-  }
-  return null;
-}
-
-function extractSlotKeys(body) {
-  const keys = [];
-  for (const match of body.matchAll(/^\s*([A-Za-z_]\w*)\??\s*:/gm)) {
-    keys.push(match[1]);
-  }
-  return keys;
-}
-
-async function walk(dir, acc = []) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (entry.name === "node_modules") continue;
-      await walk(full, acc);
-    } else if (/\.(ts|tsx)$/.test(entry.name)) {
-      acc.push(full);
-    }
-  }
-  return acc;
-}
-
-function componentName(typeName) {
-  return typeName.replace(/ClassNames$/, "");
-}
-
-function siteSlug(typeName) {
-  const name = componentName(typeName);
-  if (SITE_SLUG_OVERRIDES[name]) return SITE_SLUG_OVERRIDES[name];
-  return name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-}
 
 function headingRe(typeName) {
   return new RegExp(`^### .*?\`${typeName}\`(?: slots)?\\s*$`, "m");
@@ -165,39 +100,7 @@ function diff(expected, actual) {
   };
 }
 
-const files = await walk(srcRoot);
-const sources = new Map();
-for (const file of files) {
-  sources.set(file, await readFile(file, "utf8"));
-}
-
-/** @type {Map<string, string[]>} */
-const types = new Map();
-/** @type {Map<string, string>} */
-const aliases = new Map();
-
-for (const source of sources.values()) {
-  const text = stripComments(source);
-  for (const match of text.matchAll(/\bexport\s+type\s+(\w+ClassNames)\s*=/g)) {
-    const name = match[1];
-    if (name.startsWith("Resolved") || SKIP_TYPES.has(name)) continue;
-    if (types.has(name) || aliases.has(name)) continue;
-    const body = extractObjectBody(source, name);
-    if (body != null) {
-      types.set(name, extractSlotKeys(body));
-      continue;
-    }
-    const alias = text
-      .slice(match.index)
-      .match(new RegExp(`^export\\s+type\\s+${name}\\s*=\\s*([A-Z]\\w*)\\s*;`, "m"));
-    if (alias) aliases.set(name, alias[1]);
-  }
-}
-
-for (const [name, target] of aliases) {
-  const keys = types.get(target);
-  if (keys) types.set(name, keys);
-}
+const { types } = loadClassNamesTypes(srcRoot);
 
 /** @type {{ file: string, md: string }[]} */
 const kitDocs = [];

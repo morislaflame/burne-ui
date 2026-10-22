@@ -28,6 +28,14 @@ describe("PinInput", () => {
     expect(digits().map((cell) => (cell as HTMLInputElement).value)).toEqual(["1", "2", "3", ""]);
   });
 
+  it("fills every cell when the pasted code is complete", () => {
+    const onValueChange = vi.fn();
+    render(<PinInput label="Code" length={4} onValueChange={onValueChange} />);
+    fireEvent.paste(digits()[0]!, { clipboardData: { getData: () => "1234" } });
+    expect(digits().map((cell) => (cell as HTMLInputElement).value)).toEqual(["1", "2", "3", "4"]);
+    expect(onValueChange).toHaveBeenLastCalledWith("1234");
+  });
+
   it("pastes a code and deletes the focused cell", () => {
     render(<PinInput label="Code" length={4} />);
     const first = digits()[0]!;
@@ -45,10 +53,26 @@ describe("PinInput", () => {
     }
   });
 
-  it("marks the field invalid from error, not from status", () => {
-    const { rerender } = render(<PinInput label="Code" status="danger" />);
-    expect(digits()[0]).not.toHaveAttribute("aria-invalid");
-    rerender(<PinInput label="Code" error="Wrong code" />);
+  it("puts className on one cell", () => {
+    render(
+      <PinInput length={4} label="Code" separator="–">
+        <PinInput.Shell>
+          <PinInput.Control className="border-primary" />
+          <PinInput.Control />
+          <PinInput.Control />
+          <PinInput.Control />
+        </PinInput.Shell>
+      </PinInput>,
+    );
+    const cells = digits();
+    expect(cells).toHaveLength(4);
+    expect(cells[0]?.className).toContain("border-primary");
+    expect(cells[1]?.className).not.toContain("border-primary");
+    expect(screen.getByText("–")).toBeInTheDocument();
+  });
+
+  it("marks the field invalid from error", () => {
+    render(<PinInput label="Code" error="Wrong code" />);
     expect(digits()[0]).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByText("Wrong code")).toBeInTheDocument();
   });

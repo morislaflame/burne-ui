@@ -1,4 +1,4 @@
-import { cloneElement, createElement, isValidElement, type CSSProperties, type HTMLAttributes, type PointerEventHandler, type ReactElement, type ReactNode, type Ref } from "react";
+import { cloneElement, createElement, forwardRef, isValidElement, type CSSProperties, type HTMLAttributes, type PointerEventHandler, type ReactElement, type ReactNode } from "react";
 
 import {
   useMotionPart,
@@ -23,7 +23,6 @@ export type SkinShellProps = {
   /** Merged onto the declarative `content` node. */
   contentClassName?: string;
   children?: ReactNode;
-  ref?: Ref<HTMLElement>;
   pointerPhases?: boolean;
   pressPhases?: boolean;
   /**
@@ -80,7 +79,7 @@ function layerNodes(
  * names a skin with `layers` / `layersDeclarative` for `part`, renders that layer.
  * `variant="default"` renders the plain shell.
  */
-export function SkinShell({
+export const SkinShell = forwardRef<HTMLElement, SkinShellProps>(function SkinShell({
   part,
   variant,
   scope,
@@ -89,7 +88,6 @@ export function SkinShell({
   className,
   contentClassName,
   children,
-  ref,
   pointerPhases = false,
   pressPhases = false,
   enterOnMount = true,
@@ -99,7 +97,7 @@ export function SkinShell({
   onPointerDown,
   onPointerUp,
   ...rest
-}: SkinShellProps) {
+}, ref) {
   useSkinRegistryRevision();
   const name = localSlot(part, slot);
   const partMotion = useMotionPart<HTMLElement>({
@@ -182,4 +180,4 @@ export function SkinShell({
       {after}
     </div>
   );
-}
+});

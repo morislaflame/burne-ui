@@ -7,10 +7,13 @@ import type { ListBoxContextValue, UseListBoxRootStateProps } from "./listBoxTyp
  
 export function useListBoxRootState({
   size = "base",
-  multiple = false,
+  selectionMode = "single",
   value: valueProp,
   defaultValue,
   onValueChange,
+  values: valuesProp,
+  defaultValues,
+  onValuesChange,
   disabled = false,
   activeValue: activeValueProp,
   onActiveValueChange,
@@ -19,12 +22,15 @@ export function useListBoxRootState({
   const autoId = useId();
   const listId = listIdProp ?? `listbox-${autoId}`;
  
-  const isControlledValue = valueProp !== undefined;
+  const multiple = selectionMode === "multiple";
+  const controlledSource = multiple ? valuesProp : valueProp;
+  const defaultSource = multiple ? defaultValues : defaultValue;
+  const isControlledValue = controlledSource !== undefined;
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
-    normalizeListBoxValues(defaultValue),
+    normalizeListBoxValues(defaultSource),
   );
   const selectedArr = isControlledValue
-    ? normalizeListBoxValues(valueProp)
+    ? normalizeListBoxValues(controlledSource)
     : internalSelected;
   const selected = useMemo(() => new Set(selectedArr), [selectedArr]);
   const latestSelectedRef = useRef(selectedArr);
@@ -46,9 +52,10 @@ export function useListBoxRootState({
   const setSelectedArr = useCallback(
     (next: string[]) => {
       if (!isControlledValue) setInternalSelected(next);
-      onValueChange?.(multiple ? next : (next[0] ?? ""));
+      if (multiple) onValuesChange?.(next);
+      else onValueChange?.(next[0] ?? null);
     },
-    [isControlledValue, multiple, onValueChange],
+    [isControlledValue, multiple, onValueChange, onValuesChange],
   );
  
   const selectItem = useCallback(

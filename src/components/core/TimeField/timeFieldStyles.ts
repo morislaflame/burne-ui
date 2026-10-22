@@ -3,16 +3,16 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
  
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import {
   resolveFieldShellSurfaceClass,
   type FieldShellFilledVariant,
+  type FieldShellStatus,
 } from "@/components/core/utils/fieldShellVariant";
  
 import {
   KIT_TIME_FIELD_VARIANTS,
   type TimeFieldSize,
-  type TimeFieldStatus,
   type TimeFieldVariant,
 } from "./timeFieldTypes";
  
@@ -70,24 +70,22 @@ const AFFIX_PADDING: Record<TimeFieldSize, string> = {
   large: affixSlotClass("large"),
 };
  
-export function timeFieldAffixSurfaceClass(_status: TimeFieldStatus = "default"): string {
+export function timeFieldAffixSurfaceClass(): string {
   return TIME_FIELD_AFFIX_SURFACE_CLASS;
 }
  
 export function timeFieldAffixSlotClass({
   side,
-  status,
   size,
   slotClass,
 }: {
   side: "prefix" | "suffix";
-  status: TimeFieldStatus;
   size: TimeFieldSize;
   slotClass?: string;
 }) {
   return cn(
     AFFIX_PADDING[size],
-    timeFieldAffixSurfaceClass(status),
+    timeFieldAffixSurfaceClass(),
     side === "prefix"
       ? TIME_FIELD_AFFIX_PREFIX_EDGE_CLASS
       : TIME_FIELD_AFFIX_SUFFIX_EDGE_CLASS,
@@ -99,7 +97,6 @@ export function timeFieldShellSurfaceClass({
   variant,
 }: {
   variant: TimeFieldVariant;
-  status?: TimeFieldStatus;
 }): string {
   return resolveFieldShellSurfaceClass({
     variant: variant === "segmented" ? "default" : variant,
@@ -117,7 +114,7 @@ export function timeFieldShellClass({
   className,
 }: {
   variant: TimeFieldVariant;
-  status: TimeFieldStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   size: TimeFieldSize;
   compact: boolean;
@@ -127,7 +124,7 @@ export function timeFieldShellClass({
   className?: string;
 }) {
   const visual = resolveVariantVisual(variant, KIT_TIME_FIELD_VARIANTS, "timeField.shell");
-  const kitSurface = isKitVariant(variant, KIT_TIME_FIELD_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS);
 
   return cn(
     "relative m-0 min-w-0 overflow-hidden rounded-base p-0",
@@ -139,7 +136,7 @@ export function timeFieldShellClass({
     fieldShellFocusRingClass(status),
     kitSurface && fieldShellHoverClass(!disabled, status, timeFieldShellHoverVariant(variant)),
     shellHoverMotionClass,
-    disabled ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
+    disabled ? "cursor-not-allowed opacity-55" : "",
     slotClass,
     className,
   );
@@ -154,7 +151,7 @@ export function timeFieldShellInnerClass({
 }): string {
   return cn(
     TIME_FIELD_SHELL_INNER_CLASS,
-    isKitVariant(variant, KIT_TIME_FIELD_VARIANTS) && "min-h-full",
+    usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS) && "min-h-full",
     slotClass,
   );
 }
@@ -167,6 +164,10 @@ export function timeFieldSegmentGroupClass({
   return cn(TIME_FIELD_SEGMENT_GROUP_CLASS, slotClass);
 }
  
+export function timeFieldSegmentsMotionClass(slotClass?: string): string {
+  return cn("flex min-w-0 flex-1 items-center", slotClass);
+}
+
 export function timeFieldSegmentsClass({
   variant,
   size,

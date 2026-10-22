@@ -3,7 +3,12 @@ import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { cn } from "@/utils/cn";
  
-import type { CheckboxSize } from "./checkboxTypes";
+import type { OptionControlLabelSide } from "@/components/core/utils/optionControlGridLayout";
+import type { CheckboxLabelPosition, CheckboxSize } from "./checkboxTypes";
+
+function checkboxLabelSide(labelPosition: CheckboxLabelPosition = "end"): OptionControlLabelSide {
+  return labelPosition === "start" ? "left" : "right";
+}
  
 export const CHECKBOX_SIZE_LAYOUT = OPTION_CONTROL_SIZE_LAYOUT;
  
@@ -56,28 +61,32 @@ export const CHECKBOX_COMPOUND_FIELDSET_CLASS = "m-0 min-w-0 border-0 p-0";
  
 export const CHECKBOX_CONTENT_PASS_THROUGH_CLASS = "contents";
  
-export function checkboxControlCellClass(): string {
-  return optionControlCellClass();
+export function checkboxControlCellClass(labelPosition: CheckboxLabelPosition = "end"): string {
+  return optionControlCellClass(checkboxLabelSide(labelPosition));
 }
- 
+
 export function checkboxGridClass(
   secondaryLines: number,
   gridGap: string,
+  labelPosition: CheckboxLabelPosition = "end",
   className?: string,
 ): string {
   return cn(
     CHECKBOX_ROOT_BASE_CLASS,
-    optionControlGridClass(secondaryLines, gridGap),
+    optionControlGridClass(secondaryLines, gridGap, checkboxLabelSide(labelPosition)),
     className,
   );
 }
- 
-export function checkboxLabelCellClass(): string {
-  return optionLabelCellClass();
+
+export function checkboxLabelCellClass(labelPosition: CheckboxLabelPosition = "end"): string {
+  return optionLabelCellClass(checkboxLabelSide(labelPosition));
 }
- 
-export function checkboxSecondaryCellClass(row: 2 | 3): string {
-  return optionSecondaryCellClass(row);
+
+export function checkboxSecondaryCellClass(
+  row: 2 | 3,
+  labelPosition: CheckboxLabelPosition = "end",
+): string {
+  return optionSecondaryCellClass(row, checkboxLabelSide(labelPosition));
 }
  
 export function checkboxErrorRow(hasHint: boolean): 2 | 3 {

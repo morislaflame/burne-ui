@@ -80,10 +80,18 @@ export const AlertIndicator = forwardRef<HTMLSpanElement, AlertIndicatorProps>(
  
 AlertIndicator.displayName = "AlertIndicator";
  
-export function AlertContent({ className = "", ...rest }: AlertContentProps) {
-  const slotClassNames = useAlertClassNames();
-  return <div className={cn(ALERT_COMPOUND_CONTENTS_CLASS, slotClassNames.content, className)} {...rest} />;
-}
+export const AlertContent = forwardRef<HTMLDivElement, AlertContentProps>(
+  function AlertContent({ className = "", ...rest }, ref) {
+    const slotClassNames = useAlertClassNames();
+    return (
+      <div
+        className={cn(ALERT_COMPOUND_CONTENTS_CLASS, slotClassNames.content, className)}
+        {...rest}
+        ref={ref}
+      />
+    );
+  },
+);
  
 AlertContent.displayName = "AlertContent";
  
@@ -125,7 +133,7 @@ export const AlertTitle = forwardRef<HTMLDivElement, AlertTitleProps>(function A
       as="div"
       ref={setRef}
       id={idProp ?? ctx?.titleId}
-      variant={sizePreset.titleVariant}
+      textStyle={sizePreset.titleVariant}
       className={cn(
         alertTitleClass(status),
         ctx?.gridSlots && messageBannerTitleCellClass(ctx.gridSlots),
@@ -162,7 +170,7 @@ export const AlertDescription = forwardRef<HTMLDivElement, AlertDescriptionProps
         as="div"
         ref={setRef}
         id={idProp ?? ctx?.descriptionId}
-        variant={sizePreset.descVariant}
+        textStyle={sizePreset.descVariant}
         className={cn(
           ALERT_DESCRIPTION_CLASS,
           ctx?.gridSlots && messageBannerDescriptionCellClass(ctx.gridSlots),

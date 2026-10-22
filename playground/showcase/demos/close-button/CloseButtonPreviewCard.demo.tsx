@@ -16,7 +16,7 @@ export function CloseButtonPreviewCardDemo() {
         className="absolute right-small top-small shadow-token-mid"
       />
       <Surface variant="default" padding="base" className="rounded-none rounded-b-large">
-        <Text as="p" variant="base">
+        <Text as="p" textStyle="base">
           Preview Card
         </Text>
       </Surface>

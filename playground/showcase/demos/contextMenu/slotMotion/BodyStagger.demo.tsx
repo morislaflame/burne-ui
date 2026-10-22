@@ -46,7 +46,7 @@ export function ContextMenuMotionBodyStaggerDemo() {
       }}
     >
       <ContextMenu.Trigger className={surface}>Stagger</ContextMenu.Trigger>
-      <ContextMenu.Content className="min-w-52">
+      <ContextMenu.Popover className="min-w-52">
         <ContextMenu.Item>
           <ContextMenu.ItemLabel>Rename</ContextMenu.ItemLabel>
           <ContextMenu.ItemHint>Change the title</ContextMenu.ItemHint>
@@ -75,7 +75,7 @@ export function ContextMenuMotionBodyStaggerDemo() {
             <IoTrashOutline aria-hidden />
           </ContextMenu.ItemIcon>
         </ContextMenu.Item>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

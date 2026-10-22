@@ -2,14 +2,11 @@ import { Children, forwardRef, type KeyboardEvent, type MouseEvent, type ReactNo
 
 import { Field } from "@/components/core/Field";
 import { dataFlag } from "@/components/core/utils/dataContract";
-import { ariaInvalidValue, dataInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, dataInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { KitAdd, KitRemove } from "@/components/core/utils/kitIcons";
 import { cn } from "@/utils/cn";
 
-import {
-  NUMBER_INPUT_DECREASE_LABEL,
-  NUMBER_INPUT_INCREASE_LABEL,
-} from "./numberInputA11y";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { isNumberInputShellElement } from "./numberInputAPI";
 import {
   useNumberInputChromeSlot,
@@ -44,7 +41,7 @@ function NumberInputShell({ children }: { children?: ReactNode }) {
       className={numberInputShellClass({
         size: field.size,
         variant: field.variant,
-        status: field.status,
+        status: fieldPaintStatus(field.isInvalid),
         disabled: field.disabled,
         shellHoverMotionClass: shell.shellHoverMotionClass,
         slotClass: slotClassNames.shell,
@@ -120,6 +117,7 @@ export const NumberInputControl = forwardRef<HTMLInputElement, NumberInputContro
       className,
       motion,
       placeholder,
+      onFocus,
       onBlur,
       onKeyDown,
       onPointerOver,
@@ -177,6 +175,7 @@ export const NumberInputControl = forwardRef<HTMLInputElement, NumberInputContro
         aria-required={field.required || undefined}
         aria-invalid={ariaInvalidValue(field.isInvalid)}
         aria-valuenow={field.value ?? undefined}
+        aria-valuetext={field.valueText}
         aria-valuemin={field.min}
         aria-valuemax={field.max}
         aria-describedby={field.describedBy}
@@ -185,6 +184,10 @@ export const NumberInputControl = forwardRef<HTMLInputElement, NumberInputContro
         data-readonly={dataFlag(field.readOnly)}
         data-required={dataFlag(field.required)}
         onChange={(event) => field.commitInput(event.target.value)}
+        onFocus={(event) => {
+          onFocus?.(event);
+          if (!event.defaultPrevented) field.beginEdit();
+        }}
         onBlur={(event) => {
           onBlur?.(event);
           field.commitBlur();
@@ -213,6 +216,7 @@ export const NumberInputDecrement = forwardRef<HTMLButtonElement, NumberInputSte
     ref,
   ) {
     const field = useNumberInputContext();
+    const decreaseLabel = useBurneLabel("decrease");
     const slotClassNames = useNumberInputClassNames();
     const blocked = !field.canDecrement;
     const part = useNumberInputDecrementMotion({
@@ -250,7 +254,7 @@ export const NumberInputDecrement = forwardRef<HTMLButtonElement, NumberInputSte
         {...part.pointerHandlers}
         type="button"
         tabIndex={-1}
-        aria-label={NUMBER_INPUT_DECREASE_LABEL}
+        aria-label={decreaseLabel}
         disabled={blocked}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
@@ -281,6 +285,7 @@ export const NumberInputIncrement = forwardRef<HTMLButtonElement, NumberInputSte
     ref,
   ) {
     const field = useNumberInputContext();
+    const increaseLabel = useBurneLabel("increase");
     const slotClassNames = useNumberInputClassNames();
     const blocked = !field.canIncrement;
     const part = useNumberInputIncrementMotion({
@@ -318,7 +323,7 @@ export const NumberInputIncrement = forwardRef<HTMLButtonElement, NumberInputSte
         {...part.pointerHandlers}
         type="button"
         tabIndex={-1}
-        aria-label={NUMBER_INPUT_INCREASE_LABEL}
+        aria-label={increaseLabel}
         disabled={blocked}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
@@ -363,7 +368,6 @@ export const NumberInputHint = forwardRef<HTMLElement, NumberInputHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? field.hintId}
-        status={field.status}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}

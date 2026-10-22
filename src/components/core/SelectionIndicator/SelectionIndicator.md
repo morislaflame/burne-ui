@@ -2,10 +2,13 @@
 
 Визуальный индикатор выбора: круглая оболочка (shell), fill-слой и mark (галочка, точка или кастомная иконка). Низкоуровневый примитив для Checkbox, Radio, ListBox и других контролов. Не интерактивен сам по себе (`aria-hidden`).
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorShellClass, selectionIndicatorFallbackPx, type SelectionIndicatorProps, type SelectionIndicatorSize, type SelectionIndicatorVariant, type SelectionIndicatorClassNames, type SelectionIndicatorMotion } from "burne-ui";
+import { SelectionIndicator, type SelectionIndicatorProps, type SelectionIndicatorSize, type SelectionIndicatorVariant, type SelectionIndicatorClassNames, type SelectionIndicatorMotion } from "burne-ui";
+import { selectionIndicatorFallbackPx, selectionIndicatorShellClass, useSelectionIndicatorAnimation } from "burne-ui/internal";
 ```
 
 ## API
@@ -19,8 +22,6 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
   variant="outline"
   check
 />
-
-<SelectionIndicator selected={isOn} dot variant="gloss" />
 
 <SelectionIndicator selected={active} icon={<IoStar aria-hidden />} />
 ```
@@ -36,7 +37,7 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
 </SelectionIndicator>
 ```
 
-Если в `children` есть `SelectionIndicator.Fill` или `.Mark` — включается compound-режим разметки.
+Если в `children` есть `SelectionIndicator.Fill` или `.Mark` — включается compound-режим разметки. Иконка отмеченного состояния — проп `icon`. Содержимое `Mark` остаётся mark. Другие `children` иконкой не становятся.
 
 ### Props
 
@@ -44,10 +45,10 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
 |------|--------------|----------|
 | `selected` | — | **Обязательный.** Активное состояние → анимация fill/mark |
 | `size` | `base` | `xsmall` \| `small` \| `base` \| `mid` \| `large` |
-| `variant` | `base` | `base` \| `secondary` \| `outline` \| `gloss` |
+| `variant` | `base` | `base` \| `secondary` \| `outline` |
 | `check` | `false` | Дефолтная галочка `IoCheckmarkSharp` |
 | `dot` | `false` | Radio-dot (круг внутри) |
-| `icon` | — | Кастомный mark (приоритет над check/dot) |
+| `icon` | — | Кастомный mark (приоритет над check/dot). Прямые `children`, кроме `Fill` и `Mark`, иконкой не становятся |
 | `className` | — | Мержится в **root** |
 | `classNames` | — | `root`, `fill`, `mark` |
 | `motion` | — | `root` / `fill` / `mark` (`check` / `uncheck`). `events` — app-команды `MotionController` |
@@ -77,7 +78,6 @@ type SelectionIndicatorClassNames = {
 | `base` | `border-primary bg-surface` | `bg-indicator` | `text-indicator-foreground` |
 | `secondary` | `border-token bg-secondary` | `bg-secondary` | `text-secondary-foreground` |
 | `outline` | `border-primary bg-surface` | **нет fill** | dot/check цвет foreground |
-| `gloss` | `gloss-indicator` | `gloss-indicator-fill` | `text-foreground` |
 
 `outline` — только обводка; fill не рендерится (`selectionIndicatorShowsFill`).
 
@@ -98,7 +98,7 @@ CSS-переменные: `--selection-indicator-xsmall` … `--selection-indica
 
 ## Анимации
 
-`selectionIndicatorAnimations.ts` — lifecycle `check` / `uncheck` через slot motion. Первый кадр instant (`firstLayoutRef`), чтобы не было FOUC.
+`selectionIndicatorAnimations.ts` — lifecycle `check` / `uncheck` через slot motion. Первый кадр instant (`firstLayoutRef`), чтобы не было FOUC. Галерея Slot motion — playground, сайт и Storybook.
 
 **Где в коде:** defaults + host — `selectionIndicatorAnimations.ts` (`SELECTION_INDICATOR_MOTION_DEFAULTS`, `useSelectionIndicatorAnimation`, `SelectionIndicatorMotionSync`); scope — `selectionIndicatorContext.tsx`; Fill/Mark — `selectionIndicatorParts.tsx`.
 
@@ -120,6 +120,8 @@ CSS-переменные: `--selection-indicator-xsmall` … `--selection-indica
 Есть слот `root`: `play()` / `playSlot("fill")` / `playAll`. Фазы слотов — `check` / `uncheck`, не hover.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`indicator:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на этом scope. Checkbox и Radio её сюда форвардят в simple API. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, SelectionIndicator, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -208,7 +210,7 @@ configureMotion({
 
 | Слот | Элемент | Назначение |
 |------|---------|------------|
-| `root` | Внешний круг | Border, gloss, размер |
+| `root` | Внешний круг | Border, размер |
 | `fill` | Absolute inset fill | Цвет заливки checked |
 | `mark` | Check/dot/icon | Размер иконки, цвет mark |
 
@@ -243,15 +245,6 @@ configureMotion({
 Маппинг: `indicator` → root, `indicatorFill` → fill, `indicatorMark` → mark.
 
 ### Compound кастом mark
-
-```tsx
-<SelectionIndicator selected dot variant="gloss" size="large">
-  <SelectionIndicator.Fill className="bg-primary-tint" />
-  <SelectionIndicator.Mark className="text-primary">
-    <span className="size-2 rounded-full bg-current" />
-  </SelectionIndicator.Mark>
-</SelectionIndicator>
-```
 
 ### Практические заметки
 
@@ -303,4 +296,4 @@ SelectionIndicator/
 
 ## Storybook
 
-Отдельной story нет — см. Checkbox, Radio, ListBox stories с indicator variants.
+`Core Components/SelectionIndicator` — playground, `classNames`, Slot motion gallery, MotionController gallery.

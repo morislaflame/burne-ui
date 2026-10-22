@@ -1,6 +1,7 @@
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Checkbox } from "@/components/core/Checkbox";
 import { createMotionEvents, useMotionController } from "@/components/core/utils/slotMotion";
+import { Label } from "@/components/core/Label";
 
 const events = createMotionEvents({
   "checks:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1, ease: "power2.out" },
@@ -20,7 +21,7 @@ export function CheckboxGroupMotionControllerInsideDemo() {
     <div className="w-full max-w-sm">
       <CheckboxGroup motion={{ events }}>
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+          <Label>Plan</Label>
           <HintPulse />
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>

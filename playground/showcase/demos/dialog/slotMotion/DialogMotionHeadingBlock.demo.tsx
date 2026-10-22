@@ -36,7 +36,7 @@ export function DialogMotionHeadingBlockDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Animate `motion.headingBlock` independently from `title`.
           </Text>
         </Dialog.Body>

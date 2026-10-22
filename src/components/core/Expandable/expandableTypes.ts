@@ -10,7 +10,7 @@ import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
 export type ExpandableSize = ComponentSize;
-export const KIT_EXPANDABLE_VARIANTS = ["default"] as const;
+export const KIT_EXPANDABLE_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitExpandableVariant = (typeof KIT_EXPANDABLE_VARIANTS)[number];
 export type ExpandableVariant = KitExpandableVariant | (string & {});
  
@@ -28,7 +28,6 @@ export type ExpandableClassNames = {
   panelShell?: string;
   contentWrap?: string;
   panel?: string;
-  body?: string;
 };
  
 export type ExpandableLifecycleMotion = {
@@ -43,22 +42,27 @@ export type ExpandableTriggerLiftMotion = {
   pressOut?: MotionValue;
 };
  
+export type ExpandableRootMotion = ExpandableLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
 export type ExpandableMotion = {
-  /** Shell. A skin `mount` (gloss shine) lands here. */
-  root?: ExpandableLifecycleMotion;
+  /** Shell. Hover is `hoverLiftFirstLevel` (`liftScale: 1`). A skin `mount` lands here. */
+  root?: ExpandableRootMotion;
   triggerLift?: ExpandableTriggerLiftMotion;
   chevron?: ExpandableLifecycleMotion;
   panelShell?: ExpandableLifecycleMotion;
   title?: ExpandableLifecycleMotion;
   icon?: ExpandableLifecycleMotion;
   description?: ExpandableLifecycleMotion;
-  body?: ExpandableLifecycleMotion;
+  /** Panel `<section>` (`Expandable.Panel`). */
+  panel?: ExpandableLifecycleMotion;
 };
  
 export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
   variant?: ExpandableVariant;
-  compound?: boolean;
   title?: ReactNode;
   description?: ReactNode;
   icon?: ReactNode;
@@ -70,7 +74,7 @@ export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   classNames?: Prettify<ExpandableClassNames>;
   /**
    * Per-slot motion: `triggerLift` (press), `chevron` (enter/leave rotate), `panelShell` (height),
-   * plus `title` / `icon` / `description` / `body` (broadcast on open; `body` is the Panel `<section>`).
+   * plus `title` / `icon` / `description` / `panel` (broadcast on open; `panel` is the Panel `<section>`).
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
   motion?: Prettify<MotionMapWithEvents<ExpandableMotion>>;
@@ -86,6 +90,8 @@ export type ExpandableContextValue = {
   open: boolean;
   disabled: boolean;
   hasPanel: boolean;
+  /** Root saw compound slots in `children`. A wrapper that creates the slots itself stays `false`. */
+  compound: boolean;
   size: ExpandableSize;
   variant: ExpandableVariant;
   toggle: () => void;
@@ -135,7 +141,6 @@ export type ExpandableSimpleBodyProps = {
 export type UseExpandableRootStateProps = Pick<
   ExpandableProps,
   | "children"
-  | "compound"
   | "defaultOpen"
   | "open"
   | "onOpenChange"

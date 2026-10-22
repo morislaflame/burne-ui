@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTextProps, type SkeletonBlockProps, type SkeletonRegionProps, type SkeletonVariant, type SkeletonRadius, type SkeletonClassNames, type SkeletonCircleClassNames, type SkeletonTextClassNames, type SkeletonBlockClassNames, type SkeletonRegionClassNames } from "burne-ui";
+import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTextProps, type SkeletonBlockProps, type SkeletonRegionProps, type SkeletonAnimation, type SkeletonRadius, type SkeletonClassNames, type SkeletonCircleClassNames, type SkeletonTextClassNames, type SkeletonBlockClassNames, type SkeletonRegionClassNames } from "burne-ui";
 ```
 
 ## API
@@ -153,6 +153,8 @@ Nested Provider на compound-частях.
 Каждая public-часть монтирует **свой** nested scope. `play()` ищет слот `root` — работает на Root / Circle / Text / Block. `Skeleton.Region` — только `region`: `playSlot("region", …)`, не `play()`. Один handle ≠ кости внутри Region.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`skel:nudge`, `skel:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на `Skeleton.Circle`, `Skeleton.Text`, `Skeleton.Block`, `Skeleton.Region`. У каждой части свой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Skeleton, createMotionEvents, useMotionControllerHandle } from "burne-ui";

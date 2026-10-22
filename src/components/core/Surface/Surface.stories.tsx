@@ -80,10 +80,10 @@ export const Variants: Story = {
     <div className="flex flex-wrap items-start justify-center gap-xlarge">
       {VARIANTS.map((variant) => (
         <Surface key={variant} variant={variant} padding="mid" className="w-48">
-          <Text as="p" variant="base" className="font-medium capitalize">
+          <Text as="p" textStyle="base" className="font-medium capitalize">
             {variant}
           </Text>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             variant=&quot;{variant}&quot;
           </Text>
         </Surface>
@@ -98,7 +98,7 @@ export const WithShadow: Story = {
     <div className="flex flex-wrap items-start justify-center gap-xlarge">
       {(["none", "base", "mid", "large"] as const).map((shadow) => (
         <Surface key={shadow} shadow={shadow} padding="mid" className="w-44">
-          <Text as="p" variant="base" className="font-medium">
+          <Text as="p" textStyle="base" className="font-medium">
             shadow=&quot;{shadow}&quot;
           </Text>
         </Surface>
@@ -160,15 +160,15 @@ export const NestedSections: Story = {
   name: "Nested sections",
   render: () => (
     <Surface padding="mid" shadow="base" className="flex w-full max-w-sm flex-col gap-mid">
-      <Text as="p" variant="base" className="font-medium">
+      <Text as="p" textStyle="base" className="font-medium">
         Outer panel (default)
       </Text>
       <Surface variant="secondary" padding="base" radius="base">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Inner secondary block
         </Text>
         <Surface variant="tertiary" padding="small" radius="base" className="mt-small">
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Inner tertiary block
           </Text>
         </Surface>

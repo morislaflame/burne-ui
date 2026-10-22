@@ -9,9 +9,9 @@
  * Also: track opacity (`useRadioControlTrackAnimation`) and label squeeze
  * (`useRadioTextMotion`).
  */
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { tweenDisabledTrack } from "@/components/core/utils/slotMotion/recipes/disabledTrackFade";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
   splitMotionRootMap,
@@ -28,7 +28,7 @@ import { useLayoutEffect, useRef } from "react";
 import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
  
 import { useOptionalRadioMotionScope, useRadioFieldContext } from "./radioContext";
-import type { RadioCheckMotion, RadioMotion, UseRadioAnimationsProps } from "./radioTypes";
+import type { RadioPartMotion, RadioMotion, UseRadioAnimationsProps } from "./radioTypes";
  
 /** Root Radio `motion` keys → SelectionIndicator slots. */
 export const RADIO_MOTION_SLOT_MAP = {
@@ -92,17 +92,7 @@ export function useRadioControlTrackAnimation() {
     }
  
     killMotion(track);
-    const from = Number.parseFloat(getComputedStyle(track).opacity);
-    const start = Number.isFinite(from) ? from : 1;
-    const tween = gsap.fromTo(
-      track,
-      { autoAlpha: start },
-      {
-        autoAlpha: ctx.isDisabled ? 0.48 : 1,
-        ...motionInteractiveFor(config),
-        overwrite: "auto",
-      },
-    );
+    const tween = tweenDisabledTrack(track, ctx.isDisabled, config);
     return () => {
       tween.kill();
     };
@@ -129,7 +119,7 @@ export function useRadioTextMotion({
  
 export type RadioChromeSlot = "label" | "hint" | "error";
  
-export function useRadioChromeSlot(slot: RadioChromeSlot, motion?: RadioCheckMotion) {
+export function useRadioChromeSlot(slot: RadioChromeSlot, motion?: RadioPartMotion) {
   const ctx = useRadioFieldContext();
   const scope = useOptionalRadioMotionScope();
   const part = useMotionPart<HTMLElement>({
@@ -146,7 +136,7 @@ export function useRadioChromeSlot(slot: RadioChromeSlot, motion?: RadioCheckMot
   return part;
 }
  
-export function useRadioLabelSlot(motion?: RadioCheckMotion) {
+export function useRadioLabelSlot(motion?: RadioPartMotion) {
   return useRadioChromeSlot("label", motion);
 }
  

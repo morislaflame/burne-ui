@@ -1,6 +1,7 @@
 import { useMemo, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
  
+import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import { useContainerPointerHoverHandlers } from "@/components/core/utils/useContainerPointerHoverHandlers";
  
 export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement>({
@@ -15,7 +16,7 @@ export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement
   targetRef: RefObject<HTMLElement | null>;
   onHoverIn?: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
   onHoverOut?: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
-  skipHover?: () => boolean;
+  skipHover?: (config: Readonly<MotionConfig>) => boolean;
   pointerInsideRef?: RefObject<boolean>;
 }): {
   onPointerOver: (e: ReactPointerEvent<Element>) => void;

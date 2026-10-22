@@ -1,20 +1,33 @@
 import { TagsInputRoot } from "./TagsInput";
-import { TagsInputControl, TagsInputError, TagsInputHint, TagsInputLabel } from "./tagsInputParts";
+import {
+  TagsInputShell,
+  TagsInputError,
+  TagsInputHint,
+  TagsInputLabel,
+  TagsInputRemove,
+  TagsInputTag,
+} from "./tagsInputParts";
 
 export const TagsInput = Object.assign(TagsInputRoot, {
   Label: TagsInputLabel,
-  Control: TagsInputControl,
+  Shell: TagsInputShell,
+  Tag: TagsInputTag,
+  Remove: TagsInputRemove,
   Hint: TagsInputHint,
   Error: TagsInputError,
 });
 
 export type {
   TagsInputClassNames,
-  TagsInputControlProps,
+  TagsInputShellProps,
   TagsInputErrorProps,
   TagsInputHintProps,
   TagsInputLabelProps,
   TagsInputMotion,
   TagsInputPartMotion,
   TagsInputProps,
+  TagsInputSize,
+  TagsInputVariant,
+  TagsInputRemoveProps,
+  TagsInputTagProps,
 } from "./tagsInputTypes";

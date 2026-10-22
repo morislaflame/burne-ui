@@ -24,7 +24,7 @@ export function SearchInputFilterResultsDemo() {
         className="w-full"
       />
       <div className="flex flex-wrap items-center gap-small">
-        <Text as="span" variant="small" className="text-muted">
+        <Text as="span" textStyle="small" className="text-muted">
           Found:
         </Text>
         <Badge variant="primary">{results.length}</Badge>

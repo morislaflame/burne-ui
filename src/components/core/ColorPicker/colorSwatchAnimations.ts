@@ -20,6 +20,10 @@ import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
  
 import { useColorSwatchMotionScope } from "./colorSwatchContext";
 import type { ColorSwatchMotion, UseColorSwatchAnimationsProps } from "./colorSwatchTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export function resolveColorSwatchMotionDefaults({
   disabled,

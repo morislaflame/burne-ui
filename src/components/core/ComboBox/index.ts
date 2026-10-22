@@ -1,8 +1,8 @@
-import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxRoot, ComboBoxTrigger } from "./ComboBox";
+import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxShell, ComboBoxPopover, ComboBoxRoot, ComboBoxTrigger } from "./ComboBox";
  
 export const ComboBox = Object.assign(ComboBoxRoot, {
   Label: ComboBoxLabel,
-  InputGroup: ComboBoxInputGroup,
+  Shell: ComboBoxShell,
   Input: ComboBoxInput,
   Trigger: ComboBoxTrigger,
   Popover: ComboBoxPopover,
@@ -10,15 +10,17 @@ export const ComboBox = Object.assign(ComboBoxRoot, {
   Error: ComboBoxError,
 });
  
-export type { ComboBoxOption } from "./comboBoxTypes";
+export type { ComboBoxItem } from "./comboBoxTypes";
  
 export type {
   ComboBoxProps,
+  ComboBoxSize,
+  ComboBoxVariant,
   ComboBoxSimpleProps,
   ComboBoxHintProps,
   ComboBoxLabelProps,
   ComboBoxErrorProps,
-  ComboBoxInputGroupProps,
+  ComboBoxShellProps,
   ComboBoxInputProps,
   ComboBoxTriggerProps,
   ComboBoxPopoverProps,

@@ -10,8 +10,8 @@ export function InputSimpleBody({
   inputId,
   labelId,
   size,
-  status,
   controlProps,
+  inputRef,
 }: InputSimpleBodyProps) {
   const slotClassNames = useInputClassNames();
  
@@ -22,7 +22,7 @@ export function InputSimpleBody({
           {label}
         </InputLabel>
       ) : null}
-      <InputControl id={inputId} size={size} status={status} {...controlProps} />
+      <InputControl ref={inputRef} id={inputId} size={size} {...controlProps} />
       {hint != null ? <InputHint>{hint}</InputHint> : null}
       {error != null ? <InputError>{error}</InputError> : null}
     </>

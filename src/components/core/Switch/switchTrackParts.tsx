@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useRef, type RefObject } from "react";
+import { forwardRef, useCallback, useMemo, useRef, type ForwardedRef, type RefObject } from "react";
  
 import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { semanticStatusBgClass } from "@/components/core/utils/semanticStatusSurface";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
  
 import { resolveSwitchMotionDefaults, useSwitchTrackAnimations } from "./switchAnimations";
@@ -33,7 +34,7 @@ import type {
 
 import { cn } from "@/utils/cn";
 
-export function SwitchTrack({
+export const SwitchTrack = forwardRef<HTMLSpanElement, SwitchTrackProps>(function SwitchTrack({
   motion,
   motionController,
   motionState,
@@ -43,7 +44,7 @@ export function SwitchTrack({
   thickness,
   variant: variantProp,
   ...rest
-}: SwitchTrackProps) {
+}, ref) {
   const variant = useSkinVariant(variantProp);
   const parentScope = useOptionalSwitchMotionScope();
   const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
@@ -76,10 +77,11 @@ export function SwitchTrack({
         variant={variant}
         travelPxRef={travelPxRef}
         {...rest}
+        forwardedRef={ref}
       />
     </SwitchMotionProvider>
   );
-}
+});
  
 SwitchTrack.displayName = "SwitchTrack";
  
@@ -89,6 +91,7 @@ function SwitchTrackHost({
   checked = false,
   disabled,
   color,
+  status,
   variant: variantProp,
   squeezeToken = 0,
   iconOff,
@@ -97,12 +100,16 @@ function SwitchTrackHost({
   classNames: trackClassNames,
   children,
   travelPxRef,
+  forwardedRef,
   onPointerOver,
   onPointerOut,
   onPointerDown,
   onPointerUp,
   ...rest
-}: Omit<SwitchTrackProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { travelPxRef: RefObject<number> }) {
+}: Omit<SwitchTrackProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
+  travelPxRef: RefObject<number>;
+  forwardedRef?: ForwardedRef<HTMLSpanElement>;
+}) {
   const variant = useSkinVariant(variantProp);
   const rootClassNames = useSwitchClassNames();
   const slotClassNames = useMemo(
@@ -137,6 +144,7 @@ function SwitchTrackHost({
   const trackPart = useMotionPart<HTMLSpanElement>({
     scope,
     slot: "track",
+    forwardedRef,
     pointerPhases: trackPointer,
     pressPhases: trackPointer,
     onPointerOver,
@@ -152,6 +160,7 @@ function SwitchTrackHost({
       disabled,
       size,
       color,
+      status,
       variant,
       trackFillRef,
       thumbRef,
@@ -159,7 +168,7 @@ function SwitchTrackHost({
       iconOffRef,
       iconOnRef,
     }),
-    [checked, color, disabled, size, variant],
+    [checked, color, disabled, size, status, variant],
   );
  
   const defaultBody = (
@@ -194,11 +203,12 @@ function SwitchTrackHost({
   );
 }
  
-export function SwitchFill({ className, style, motion, ...rest }: SwitchFillProps) {
+export const SwitchFill = forwardRef(function SwitchFill({ className, style, motion, ...rest }: SwitchFillProps, ref: ForwardedRef<HTMLSpanElement>) {
   const ctx = useSwitchTrackContext();
   const slotClassNames = useSwitchClassNames();
   const trackFillStyle = switchFillColorStyle(ctx.color);
   const { setRef } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
     scope: useSwitchMotionScope(),
     slot: "fill",
     motion,
@@ -210,7 +220,8 @@ export function SwitchFill({ className, style, motion, ...rest }: SwitchFillProp
       aria-hidden
       className={cn(
         SWITCH_FILL_BASE_CLASS,
-        !ctx.color && switchFillSurfaceClass(ctx.variant),
+        semanticStatusBgClass(ctx.status, Boolean(ctx.color)) ??
+          (!ctx.color && switchFillSurfaceClass(ctx.variant)),
         slotClassNames.fill,
         className,
       )}
@@ -218,14 +229,15 @@ export function SwitchFill({ className, style, motion, ...rest }: SwitchFillProp
       {...rest}
     />
   );
-}
+});
  
 SwitchFill.displayName = "SwitchFill";
  
-export function SwitchThumb({ className, children, motion, ...rest }: SwitchThumbProps) {
+export const SwitchThumb = forwardRef(function SwitchThumb({ className, children, motion, ...rest }: SwitchThumbProps, ref: ForwardedRef<HTMLSpanElement>) {
   const ctx = useSwitchTrackContext();
   const slotClassNames = useSwitchClassNames();
   const { setRef } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
     scope: useSwitchMotionScope(),
     slot: "thumb",
     motion,
@@ -251,16 +263,17 @@ export function SwitchThumb({ className, children, motion, ...rest }: SwitchThum
       </SelectionThumb>
     </span>
   );
-}
+});
  
 SwitchThumb.displayName = "SwitchThumb";
  
-export function SwitchIcon({ when, children, className, motion, ...rest }: SwitchIconProps) {
+export const SwitchIcon = forwardRef(function SwitchIcon({ when, children, className, motion, ...rest }: SwitchIconProps, ref: ForwardedRef<HTMLSpanElement>) {
   const ctx = useSwitchTrackContext();
   const slotClassNames = useSwitchClassNames();
   const iconRef = when === "off" ? ctx.iconOffRef : ctx.iconOnRef;
   const visible = when === "off" ? !ctx.checked : ctx.checked;
   const { setRef } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
     scope: useSwitchMotionScope(),
     slot: when === "off" ? "iconOff" : "iconOn",
     motion,
@@ -282,7 +295,7 @@ export function SwitchIcon({ when, children, className, motion, ...rest }: Switc
       {children}
     </SelectionThumb.Icon>
   );
-}
+});
  
 SwitchIcon.displayName = "SwitchIcon";
  

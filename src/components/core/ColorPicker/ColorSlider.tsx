@@ -15,7 +15,9 @@ import {
   useColorSliderTrackMotion,
 } from "./colorSliderAnimations";
 import {
+  ColorSliderClassNamesProvider,
   ColorSliderMotionProvider,
+  useColorSliderClassNames,
   useOptionalColorSliderMotionScope,
 } from "./colorSliderContext";
  
@@ -33,6 +35,7 @@ export type {
   ColorSliderProps,
   ColorSliderSize,
   ColorSliderTrackProps,
+  ColorSliderClassNames,
   ColorSliderMotion,
   ColorSliderPartMotion,
 } from "./colorSliderTypes";
@@ -104,6 +107,7 @@ const ColorSliderTrackSurface = forwardRef<
   _ref,
 ) {
     const { min, max, step } = CHANNEL_RANGE[channel];
+    const slotClassNames = useColorSliderClassNames();
     const [value, setValueInternal] = useControllableState({
       value: valueProp,
       defaultValue: defaultValue ?? CHANNEL_DEFAULT[channel],
@@ -268,10 +272,16 @@ const ColorSliderTrackSurface = forwardRef<
       <div
         ref={setRefs}
         role="presentation"
-        className={colorSliderTrackClass({ size, orientation, disabled, className })}
+        className={colorSliderTrackClass({
+          size,
+          orientation,
+          disabled,
+          slotClass: slotClassNames.track,
+          className,
+        })}
         style={colorSliderBackgroundStyle(channel, color, orientation)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
         {...dataVariantProps({ size })}
       >
         <SliderThumbButton
@@ -280,10 +290,11 @@ const ColorSliderTrackSurface = forwardRef<
           orientation={orientation}
           disabled={disabled}
           active={active}
-          ariaLabel={CHANNEL_A11Y_LABEL[channel]}
+          aria-label={CHANNEL_A11Y_LABEL[channel]}
           ariaValueNow={value}
           ariaValueMin={min}
           ariaValueMax={max}
+          className={slotClassNames.thumb}
           onPointerDown={handleThumbDown}
           onKeyDown={handleKeyDown}
         />
@@ -303,6 +314,7 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
       size = "base",
       orientation = "horizontal",
       className = "",
+      classNames,
       children,
       motion,
       motionController,
@@ -324,6 +336,7 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
         motionPayload={motionPayload}
         playInitialState={playInitialState}
       >
+        <ColorSliderClassNamesProvider classNames={classNames}>
         <ColorSliderRootSurface
           forwardedRef={ref}
           channel={channel}
@@ -340,6 +353,7 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
         >
           {children}
         </ColorSliderRootSurface>
+        </ColorSliderClassNamesProvider>
       </ColorSliderMotionProvider>
     );
   },
@@ -376,6 +390,7 @@ function ColorSliderRootSurface({
     | "size"
     | "orientation"
     | "className"
+    | "classNames"
     | "children"
     | "motion"
     | "motionController"
@@ -389,19 +404,20 @@ function ColorSliderRootSurface({
   trackPlayInitialState: ColorSliderProps["playInitialState"];
 }) {
   const part = useColorSliderRootMotion({ forwardedRef });
- 
+  const slotClassNames = useColorSliderClassNames();
+
   if (!children) {
     return (
       <div
         ref={part.setRef}
-        className={cn(COLOR_SLIDER_ROOT_CLASS, className)}
+        className={cn(COLOR_SLIDER_ROOT_CLASS, slotClassNames.root, className)}
         {...part.pointerHandlers}
         {...dataVariantProps({ size })}
       >
         {label ? (
           <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
-            <Text as="span" variant="small" className={COLOR_SLIDER_LABEL_TEXT_CLASS}>{label}</Text>
-            <Text as="span" variant="small" className={COLOR_SLIDER_VALUE_TEXT_CLASS}>
+            <Text as="span" textStyle="small" className={cn(COLOR_SLIDER_LABEL_TEXT_CLASS, slotClassNames.label)}>{label}</Text>
+            <Text as="span" textStyle="small" className={cn(COLOR_SLIDER_VALUE_TEXT_CLASS, slotClassNames.value)}>
               {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
             </Text>
           </div>
@@ -423,7 +439,7 @@ function ColorSliderRootSurface({
   return (
     <div
       ref={part.setRef}
-      className={cn(COLOR_SLIDER_ROOT_CLASS, className)}
+      className={cn(COLOR_SLIDER_ROOT_CLASS, slotClassNames.root, className)}
       {...part.pointerHandlers}
       {...dataVariantProps({ size })}
     >

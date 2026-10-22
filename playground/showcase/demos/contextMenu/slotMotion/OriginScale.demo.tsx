@@ -38,10 +38,10 @@ export function ContextMenuMotionOriginScaleDemo() {
       }}
     >
       <ContextMenu.Trigger className={surface}>From the pointer</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Item>Open</ContextMenu.Item>
         <ContextMenu.Item>Rename</ContextMenu.Item>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

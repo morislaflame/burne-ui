@@ -2,6 +2,8 @@
 
 Отображение клавиш клавиатуры (`<kbd>`). Поддерживает `variant`, размеры, `Kbd.Group` с разделителем и hover-lift второго уровня (как у `Badge`).
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -38,7 +40,7 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `primary` \| `outline` \| `secondary` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary`, плюс доменное `primary` (не `ActionVariant`) |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `hoverLift` | `true` | Hover shadow/lift (2nd level). Shorthand for `motion.root.hoverIn/Out: false` |
 | `motion` | — | Карта слотов `root` / `text` / `group` + `events` |
@@ -69,9 +71,8 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 | `primary` | `bg-primary border-transparent text-primary-foreground` |
 | `outline` | `bg-transparent border-token-outline` |
 | `secondary` | `bg-secondary border-token text-secondary-foreground` |
-| `gloss` | `gloss-panel gloss-deep border-0` |
 
-Компонент **2-го уровня** при `hoverLift={true}` (как `Badge`, `Alert`): тень в покое + усиление при hover.
+Компонент **2-го уровня** (как `Badge`, `Alert`): тень в покое всегда, усиление при hover только когда `hoverLift={true}`.
 
 ## Размеры
 
@@ -96,7 +97,7 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss`; `false` при `hoverLift={false}` |
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel`; `false` при `hoverLift={false}` |
 | `text` | `hoverIn` / `hoverOut` | нет |
 | `group` | `enter` / hover (opt-in) | empty |
 
@@ -107,6 +108,8 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 `play()` ищет слот `root`. `playSlot("text")` / `playAll`. Standalone Group — `playSlot("group")` (своего `root` нет). Сырой GSAP не выдумывать — Slot motion покрывает tilt / text pop.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`kbd:nudge`, `kbd:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в `Kbd.Text` видит scope Kbd, не внутренний `Text`.
+
+Тройка на `Kbd` и отдельно на `Kbd.Group`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Kbd, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -156,7 +159,6 @@ configureMotion({ enableHoverLift: false });
 |---------------|------------|
 | `KBD_ROOT_BASE_CLASS` | `rounded-small font-mono isolate` |
 | `shadow-token-base` + `-hover` | Через `--el-shadow` (rest всегда; hover при lift) |
-| `gloss-panel gloss-deep` | Gloss keycap surface |
 | `KBD_GROUP_SEPARATOR_CLASS` | `text-muted text-xsmall` |
 | `motion-reduce:transition-none` | На root |
 
@@ -224,7 +226,6 @@ configureMotion({ enableHoverLift: false });
 
 - **`hoverLift={false}`** — для kbd внутри кнопок/статичных подсказок (не конкурирует с hover кнопки).
 - **Не задавайте `transform` на root при `hoverLift`** — конфликт с GSAP lift.
-- **Gloss:** не переопределяйте `gloss-deep` без нужды — depth от CSS.
 - **Separator `null`:** плотные shortcut chips без `+`.
 - **Порядок мержа:** `KBD_ROOT_BASE_CLASS` → variant surface → size → motionClass → `classNames.root` → `className`.
 
@@ -261,4 +262,4 @@ Kbd/
 
 ## Storybook
 
-`Core Components/Kbd` — variants, sizes, group, gloss, `hoverLift={false}`, `classNames`, slot motion gallery.
+`Core Components/Kbd` — variants, sizes, group, `hoverLift={false}`, `classNames`, slot motion gallery.

@@ -24,6 +24,10 @@ import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import type { DialogMotion, DialogVariant, UseDialogModalMotionProps } from "./dialogTypes";
 import { KIT_DIALOG_VARIANTS } from "./dialogTypes";
+
+import { bindModalRecipes } from "@/components/core/utils/slotMotion/recipes/bindModal";
+
+bindModalRecipes();
  
 export const DIALOG_MOTION_HOST_SLOTS = ["overlay", "panel"] as const;
  
@@ -45,8 +49,11 @@ function applyDialogHostInstant(slot: ModalHostSlot, el: HTMLElement, phase: "en
 export function useDialogModalMotion({
   open,
   onOpenChange,
-  dismissOnBackdrop = true,
+  closeOnInteractOutside = true,
+  closeOnEscape = true,
+  onEscapeKeyDown,
   onInteractOutside,
+  initialFocus,
   contained = false,
   motionScope,
 }: UseDialogModalMotionProps & { motionScope?: MotionScopeValue | null }) {
@@ -57,8 +64,11 @@ export function useDialogModalMotion({
     open,
     contained,
     onOpenChange,
-    dismissOnBackdrop,
+    closeOnInteractOutside,
+    closeOnEscape,
+    onEscapeKeyDown,
     onInteractOutside,
+    initialFocus,
     enableContainedEscape: true,
     slotMotion,
   });
@@ -70,6 +80,7 @@ export function useDialogModalMotion({
     overlayRef: motion.overlayRef,
     panelRef: motion.panelRef,
     handleBackdropPointerDown: motion.handleBackdropPointerDown,
+    handleDialogCancel: motion.handleDialogCancel,
   };
 }
  

@@ -11,7 +11,7 @@ export function ColorPickerBrandPaletteDemo() {
 
   return (
     <Surface variant="secondary" padding="large" className="flex w-full max-w-sm flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Brand palette
       </Text>
       <div className="flex items-center gap-large">
@@ -20,7 +20,7 @@ export function ColorPickerBrandPaletteDemo() {
           <ColorPicker.Content presets={BRAND_PRESETS} />
         </ColorPicker>
         <ColorSwatch color={color} size="large" />
-        <Text as="span" variant="small" className="font-mono text-muted">
+        <Text as="span" textStyle="small" className="font-mono text-muted">
           {color}
         </Text>
       </div>

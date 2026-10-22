@@ -2,7 +2,8 @@ import { Children, cloneElement, Fragment, isValidElement, type ReactElement, ty
 import { Button, type ButtonProps } from "@/components/core/Button";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
  
-import type { DrawerBackdropProps, DrawerPanelSegment } from "./drawerTypes";
+import type { OverlayDismissProps } from "@/components/core/utils/overlayLayer";
+import type { DrawerOverlayProps, DrawerPanelSegment } from "./drawerTypes";
  
 export {
   getDrawerSlideCloseTo,
@@ -40,10 +41,10 @@ export function injectFooterButtonSize(
 }
  
 export function partitionDrawerChildren(children: ReactNode): {
-  backdropIsDismissable: boolean;
+  overlayDismiss: OverlayDismissProps;
   panelSegments: DrawerPanelSegment[];
 } {
-  let backdropIsDismissable = true;
+  let overlayDismiss: OverlayDismissProps = {};
   const panelSegments: DrawerPanelSegment[] = [];
   let contentChunk: ReactNode[] = [];
  
@@ -61,9 +62,8 @@ export function partitionDrawerChildren(children: ReactNode): {
     }
  
     const name = readDrawerPartDisplayName(child.type);
-    if (name === "DrawerBackdrop") {
-      const props = child.props as DrawerBackdropProps;
-      if (props.isDismissable === false) backdropIsDismissable = false;
+    if (name === "Drawer.Overlay") {
+      overlayDismiss = child.props as DrawerOverlayProps;
       return;
     }
  
@@ -78,6 +78,6 @@ export function partitionDrawerChildren(children: ReactNode): {
  
   flushContent();
  
-  return { backdropIsDismissable, panelSegments };
+  return { overlayDismiss, panelSegments };
 }
  

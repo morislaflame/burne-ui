@@ -1,5 +1,5 @@
 import { AlertDialogClassNamesProvider, AlertDialogMotionProvider, AlertDialogProvider } from "./alertDialogContext";
-import { AlertDialogBody, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogPanel, AlertDialogTitle, AlertDialogTrigger } from "./alertDialogParts";
+import { AlertDialogAction, AlertDialogBody, AlertDialogCancel, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogOverlay, AlertDialogPanel, AlertDialogTitle, AlertDialogTrigger } from "./alertDialogParts";
 import type { AlertDialogProps } from "./alertDialogTypes";
 import { useAlertDialogRootState } from "./useAlertDialogRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
@@ -33,6 +33,10 @@ export function AlertDialogRoot({
   variant,
   size = "base",
   closeOnEscape = true,
+  closeOnInteractOutside = false,
+  onEscapeKeyDown,
+  onInteractOutside,
+  initialFocus,
   classNames,
   motion,
   motionController,
@@ -49,6 +53,10 @@ export function AlertDialogRoot({
     variant,
     size,
     closeOnEscape,
+    closeOnInteractOutside,
+    onEscapeKeyDown,
+    onInteractOutside,
+    initialFocus,
     portalContainer,
   });
  
@@ -79,6 +87,9 @@ export {
   AlertDialogClose,
   AlertDialogBody,
   AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogOverlay,
   AlertDialogPanel,
   AlertDialogTrigger,
 };

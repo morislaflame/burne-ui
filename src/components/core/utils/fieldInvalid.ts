@@ -51,11 +51,7 @@ export function useResolvedFieldInvalid({
   });
 }
 
-/** Invalid state paints danger. `status` alone does not imply invalid. */
-export function visualStatusForInvalid<T extends string>(
-  status: T | undefined,
-  isInvalid: boolean,
-  fallback: T): T {
-  if (isInvalid) return "danger" as T;
-  return status ?? fallback;
+/** Shell ring for a field. Invalid paints danger. */
+export function fieldPaintStatus(isInvalid: boolean): "default" | "danger" {
+  return isInvalid ? "danger" : "default";
 }

@@ -59,7 +59,7 @@ function TabsDemo({
       </Tabs.List>
       {TAB_ITEMS.map(({ value, label }) => (
         <Tabs.Panel key={value} value={value}>
-          <Text as="p" variant="base" className="text-muted">
+          <Text as="p" textStyle="base" className="text-muted">
             Tab content «{label}».
           </Text>
         </Tabs.Panel>
@@ -123,7 +123,7 @@ export const Variants: Story = {
     <div className="flex w-full max-w-3xl flex-col gap-2xlarge">
       {VARIANTS.map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
-          <Text as="span" variant="small" className="font-medium capitalize text-muted">
+          <Text as="span" textStyle="small" className="font-medium capitalize text-muted">
             {variant}
           </Text>
           <TabsDemo variant={variant} />
@@ -139,7 +139,7 @@ export const Sizes: Story = {
     <div className="flex w-full max-w-3xl flex-col gap-2xlarge">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col gap-small">
-          <Text as="span" variant="small" className="font-medium capitalize text-muted">
+          <Text as="span" textStyle="small" className="font-medium capitalize text-muted">
             {size}
           </Text>
           <TabsDemo size={size} />
@@ -152,7 +152,7 @@ export const Sizes: Story = {
 export const Controlled: Story = {
   name: "Controlled mode",
   render: function ControlledTabs() {
-    const [value, setValue] = useState("documents");
+    const [value, setValue] = useState<string | null>("documents");
     return (
       <div className="flex w-full max-w-xl flex-col gap-large">
         <Tabs value={value} onValueChange={setValue}>
@@ -165,13 +165,13 @@ export const Controlled: Story = {
           </Tabs.List>
           {TAB_ITEMS.map(({ value: tabValue, label }) => (
             <Tabs.Panel key={tabValue} value={tabValue}>
-              <Text as="p" variant="base">
+              <Text as="p" textStyle="base">
                 Active: {label}
               </Text>
             </Tabs.Panel>
           ))}
         </Tabs>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           value=&quot;{value}&quot;
         </Text>
       </div>
@@ -191,7 +191,7 @@ export const Disabled: Story = {
         ))}
       </Tabs.List>
       <Tabs.Panel value="account">
-        <Text as="p" variant="base" className="text-muted">
+        <Text as="p" textStyle="base" className="text-muted">
           Group is disabled.
         </Text>
       </Tabs.Panel>
@@ -220,7 +220,10 @@ export const CustomClassNames: Story = {
         panel: "rounded-small bg-info/5 p-large",
       }}
     >
-      <Tabs.List aria-label="Account">
+      <Tabs.List
+        aria-label="Account"
+        classNames={{ list: "bg-primary/10" }}
+      >
         {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
           <Tabs.Tab key={value} value={value}>
             <Icon aria-hidden className="icon-base shrink-0" />
@@ -230,7 +233,7 @@ export const CustomClassNames: Story = {
       </Tabs.List>
       {TAB_ITEMS.map(({ value, label }) => (
         <Tabs.Panel key={value} value={value}>
-          <Text as="p" variant="base" className="text-muted">
+          <Text as="p" textStyle="base" className="text-muted">
             Tab content «{label}».
           </Text>
         </Tabs.Panel>

@@ -2,7 +2,6 @@ import { forwardRef } from "react";
  
 import { Field } from "@/components/core/Field";
  
-import { comboBoxResolveHintStatus } from "./comboBoxA11y";
 import { useComboBoxChromeSlot } from "./comboBoxAnimations";
 import { useComboBoxClassNames, useComboBoxFieldContext } from "./comboBoxContext";
 import type { ComboBoxErrorProps, ComboBoxHintProps, ComboBoxLabelProps } from "./comboBoxTypes";
@@ -54,7 +53,6 @@ export const ComboBoxHint = forwardRef<HTMLElement, ComboBoxHintProps>(
   function ComboBoxHint(
     {
       children,
-      status,
       className,
       id: idProp,
       motion,
@@ -68,7 +66,6 @@ export const ComboBoxHint = forwardRef<HTMLElement, ComboBoxHintProps>(
   ) {
     const field = useComboBoxFieldContext();
     const slotClassNames = useComboBoxClassNames();
-    const hintStatus = comboBoxResolveHintStatus(status, field.status);
     const part = useComboBoxChromeSlot("hint", {
       motion,
       forwardedRef: ref,
@@ -82,7 +79,6 @@ export const ComboBoxHint = forwardRef<HTMLElement, ComboBoxHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? field.hintId}
-        status={hintStatus}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}

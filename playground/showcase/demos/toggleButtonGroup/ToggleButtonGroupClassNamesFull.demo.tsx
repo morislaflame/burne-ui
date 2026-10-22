@@ -4,7 +4,7 @@ import { ToggleButtonGroup } from "@/components/composite/ToggleButtonGroup";
 export function ToggleButtonGroupClassNamesFullDemo() {
   return (
     <ToggleButtonGroup
-      type="single"
+      selectionMode="single"
       defaultValue="a"
       aria-label="Custom slots"
       classNames={{

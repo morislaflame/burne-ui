@@ -18,7 +18,7 @@ export function TableMotionEventsPingDemo() {
         <Table.ScrollContainer>
           <Table.Content aria-label="Crew">
             <Table.Header>
-              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column rowHeader>Name</Table.Column>
               <Table.Column>Role</Table.Column>
             </Table.Header>
             <Table.Body>

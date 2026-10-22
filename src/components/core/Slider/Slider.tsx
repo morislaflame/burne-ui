@@ -1,8 +1,10 @@
+import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
-import { useMemo } from "react";
 
 import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { FieldHiddenValues, readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
  
 import { resolveSliderMotionDefaults } from "./sliderAnimations";
@@ -52,11 +54,12 @@ export {
   SliderError,
 } from "./sliderParts";
  
-export function SliderRoot({
+export const SliderRoot = forwardRef(function SliderRoot({
   children,
   className,
   classNames,
   id,
+  name,
   orientation,
   label,
   showValue,
@@ -68,6 +71,7 @@ export function SliderRoot({
   value,
   defaultValue,
   onValueChange,
+  onValueCommit,
   min,
   max,
   step,
@@ -77,19 +81,23 @@ export function SliderRoot({
   formatValue,
   icon,
   disabled,
-  ariaLabel,
+  readOnly,
+  autoFocus,
+  tabIndex,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   variant,
-  thumbClassName,
   motion,
   motionController,
   motionState,
   motionPayload,
   playInitialState,
   ...divRest
-}: SliderProps) {
+}: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
   const state = useSliderRootState({
     children,
     id,
+    name,
     orientation,
     label,
     showValue,
@@ -101,6 +109,7 @@ export function SliderRoot({
     value,
     defaultValue,
     onValueChange,
+    onValueCommit,
     min,
     max,
     step,
@@ -110,9 +119,10 @@ export function SliderRoot({
     formatValue,
     icon,
     disabled,
-    ariaLabel,
+    readOnly,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
     variant,
-    thumbClassName,
   });
  
   const body = state.isCompound ? (
@@ -130,6 +140,8 @@ export function SliderRoot({
     />
   );
  
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   const resolvedVariant = useSkinVariant(variant);
   const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(() => {
@@ -157,17 +169,29 @@ export function SliderRoot({
                 className,
               })}
               {...divRest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({ size: size ?? "base", variant: resolvedVariant })}
               data-orientation={state.fieldCtx.orientation}
+              data-readonly={readOnlyData(state.readOnly)}
             >
               {body}
+              <FieldHiddenValues
+                name={state.name}
+                value={
+                  state.fieldCtx.display == null
+                    ? ""
+                    : state.fieldCtx.display.range
+                      ? state.fieldCtx.display.rangeValue
+                      : state.fieldCtx.display.singleValue
+                }
+              />
             </Field>
           </FieldLabelContext.Provider>
         </SliderMotionProvider>
       </SliderClassNamesProvider>
     </SliderFieldProvider>
   );
-}
+});
  
 SliderRoot.displayName = "Slider";
  

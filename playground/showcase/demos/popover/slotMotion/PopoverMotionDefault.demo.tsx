@@ -12,7 +12,7 @@ export function PopoverMotionDefaultDemo() {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Scale in, fade out — kit portalSurface recipes.
           </Text>
         </Popover.Body>

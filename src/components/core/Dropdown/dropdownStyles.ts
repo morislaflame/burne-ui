@@ -1,6 +1,6 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
-import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { OPTION_CONTROL_SIZE_LAYOUT, type ComponentSize } from "@/components/core/utils/sizeLayout";
 import { BUTTON_GROUP_RADIUS_BRIDGE_CLASS } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { PopoverVariant } from "@/components/core/Popover";
 import { KIT_POPOVER_VARIANTS } from "@/components/core/Popover/popoverTypes";
@@ -61,10 +61,13 @@ export const DROPDOWN_SUB_CONTENT_BASE_CLASS =
   "fixed z-dropdown-sub outline-none";
  
 export const DROPDOWN_SUB_CONTENT_LAYOUT_CLASS =
-  "flex max-h-[min(22rem,65dvh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid p-base text-start";
+  "flex min-h-0 flex-col rounded-mid text-start";
+
+export const DROPDOWN_SUB_CONTENT_BODY_CLASS =
+  "flex max-h-[min(22rem,65dvh)] min-h-0 flex-col gap-xsmall overflow-y-auto overflow-x-hidden p-base text-start";
 
 export const DROPDOWN_SUB_CONTENT_SURFACE_CLASS =
-  "border-token bg-surface shadow-token-mid";
+  "border-token bg-surface shadow-token-large";
 
 export const DROPDOWN_ITEM_BASE_CLASS =
   "w-full min-w-0 origin-center rounded-mid px-base py-small text-start no-underline outline-none text-base";
@@ -80,6 +83,13 @@ const DROPDOWN_ITEM_STATUS_CLASS: Record<DropdownItemStatus, string> = {
   success: cn("text-success", hoverVariant("success")),
 };
  
+const DROPDOWN_ITEM_TEXT_CLASS: Record<ComponentSize, string> = {
+  small: "text-small",
+  base: "text-base",
+  mid: "text-mid",
+  large: "text-large",
+};
+
 export function dropdownItemRowClass({
   status,
   disabled,
@@ -88,6 +98,7 @@ export function dropdownItemRowClass({
   hasIcon,
   className,
   slotClass,
+  size = "base",
 }: {
   status: DropdownItemStatus;
   disabled: boolean;
@@ -96,12 +107,15 @@ export function dropdownItemRowClass({
   hasIcon: boolean;
   className?: string;
   slotClass?: string;
+  size?: ComponentSize;
 }): string {
+  const layout = OPTION_CONTROL_SIZE_LAYOUT[size];
   return cn(
     DROPDOWN_ITEM_BASE_CLASS,
+    DROPDOWN_ITEM_TEXT_CLASS[size],
     optionListItemGridClass(
       hasHint,
-      OPTION_CONTROL_SIZE_LAYOUT.base.listItemGapX,
+      layout.listItemGapX,
       showIndicatorSlot,
       hasIcon,
     ),

@@ -34,6 +34,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       disabled,
       type,
       "aria-label": ariaLabel,
+      icon,
       motion,
       motionController,
       motionState,
@@ -102,6 +103,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
             onPointerOver={onPointerOver}
             onPointerOut={onPointerOut}
             onKeyDown={onKeyDown}
+            icon={icon}
             rest={rest}
           />
         </CloseButtonMotionProvider>
@@ -124,6 +126,7 @@ function CloseButtonSurface({
   onPointerOver,
   onPointerOut,
   onKeyDown,
+  icon,
   rest,
 }: {
   state: ReturnType<typeof useCloseButtonRootState>;
@@ -137,6 +140,7 @@ function CloseButtonSurface({
   onPointerOver?: CloseButtonProps["onPointerOver"];
   onPointerOut?: CloseButtonProps["onPointerOut"];
   onKeyDown?: CloseButtonProps["onKeyDown"];
+  icon?: CloseButtonProps["icon"];
   rest: Omit<
     CloseButtonProps,
     | "variant"
@@ -147,6 +151,7 @@ function CloseButtonSurface({
     | "disabled"
     | "type"
     | "aria-label"
+    | "icon"
     | "motion"
     | "motionController"
     | "onPointerDown"
@@ -198,7 +203,7 @@ function CloseButtonSurface({
           disabled={state.disabled}
         />
       ) : null}
-      <CloseButtonIcon size={state.size} />
+      <CloseButtonIcon size={state.size} icon={icon} />
     </button>
   );
 }

@@ -76,8 +76,9 @@ export function AccordionShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="State">
           <p>
-            <code>defaultOpenIndex</code> on the root - the index of the open item when mounted. One open item
-            at a time (accordion-behavior).
+            <code>defaultValue</code> on the root — the id of the open item when mounted. Items without
+            <code>value</code> use their sibling index (<code>&quot;0&quot;</code>, <code>&quot;1&quot;</code>, …).
+            One open item at a time (accordion-behavior).
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>

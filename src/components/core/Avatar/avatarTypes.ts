@@ -8,8 +8,9 @@ import type {
 } from "@/components/core/Tooltip";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
-export type AvatarSize = "small" | "base" | "mid" | "large";
+export type AvatarSize = ComponentSize;
  
 export const KIT_AVATAR_VARIANTS = ["default"] as const;
 export type KitAvatarVariant = (typeof KIT_AVATAR_VARIANTS)[number];
@@ -56,10 +57,13 @@ export type AvatarProps = HTMLAttributes<HTMLDivElement> & {
   alt?: string;
   loading?: ImgHTMLAttributes<HTMLImageElement>["loading"];
   nickname?: string;
-  tooltipSize?: TooltipSize;
-  tooltipVariant?: TooltipVariant;
-  tooltipStatus?: SemanticStatus;
-  tooltipSide?: TooltipSide;
+  /** Tooltip around the nickname. Defaults: size `base`, variant `default`, status `default`, side `top`. */
+  tooltip?: {
+    size?: TooltipSize;
+    variant?: TooltipVariant;
+    status?: SemanticStatus;
+    side?: TooltipSide;
+  };
   classNames?: Prettify<AvatarClassNames>;
   /**
    * Per-slot motion (`root`, `image`, `fallback`). Image fade: `enter` / `leave`.
@@ -80,10 +84,7 @@ export type UseAvatarRootStateProps = Pick<
   | "size"
   | "label"
   | "nickname"
-  | "tooltipSize"
-  | "tooltipVariant"
-  | "tooltipStatus"
-  | "tooltipSide"
+  | "tooltip"
   | "children"
   | "role"
 > & {

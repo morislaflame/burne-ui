@@ -2,6 +2,7 @@ import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
+import { Label } from "@/components/core/Label";
 
 export function CheckboxGroupMotionControllerStaggerDemo() {
   const controller = useMotionControllerHandle();
@@ -38,7 +39,7 @@ export function CheckboxGroupMotionControllerStaggerDemo() {
         }}
       >
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+          <Label>Plan</Label>
           <CheckboxGroup.Hint>Chrome stagger, not Checkbox items.</CheckboxGroup.Hint>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>

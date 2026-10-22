@@ -1,11 +1,11 @@
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT, iconSlotClass } from "@/components/core/utils/sizeLayout";
 import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import { KIT_INPUT_VARIANTS } from "@/components/core/Input/inputTypes";
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
  
 export const SELECT_VALUE_CONTROL: Record<InputSize, string> = {
@@ -15,16 +15,31 @@ export const SELECT_VALUE_CONTROL: Record<InputSize, string> = {
   large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
  
-export const SELECT_CHEVRON_ICON: Record<InputSize, string> = {
-  small: CONTROL_SIZE_LAYOUT.small.chevronIcon,
-  base: CONTROL_SIZE_LAYOUT.base.chevronIcon,
-  mid: CONTROL_SIZE_LAYOUT.mid.chevronIcon,
-  large: CONTROL_SIZE_LAYOUT.large.chevronIcon,
+export const SELECT_CHEVRON_ICON_SLOT: Record<InputSize, string> = {
+  small: iconSlotClass("small"),
+  base: iconSlotClass("base"),
+  mid: iconSlotClass("mid"),
+  large: iconSlotClass("large"),
 };
  
 export const SELECT_TRIGGER_GROUP_BASE_CLASS =
   "relative z-0 flex min-w-0 items-stretch border-1 text-start overflow-hidden motion-reduce:transition-none";
  
+export const SELECT_CLEAR_CLASS =
+  "inline-flex shrink-0 items-center self-center text-muted icon-slot icon-slot-base focus-ring";
+
+/** Matches the value's inline start padding so the glyph sits the same distance from the end edge. */
+const SELECT_CLEAR_END_PAD: Record<InputSize, string> = {
+  small: "pe-base",
+  base: "pe-mid",
+  mid: "pe-large",
+  large: "pe-xlarge",
+};
+
+export function selectClearClass(size: InputSize): string {
+  return cn(SELECT_CLEAR_CLASS, SELECT_CLEAR_END_PAD[size]);
+}
+
 export const SELECT_VALUE_BASE_CLASS =
   "min-w-0 flex-1 truncate bg-transparent text-start text-foreground outline-none";
  
@@ -43,7 +58,7 @@ export const SELECT_POPOVER_BODY_CLASS = "gap-0 p-base";
 export const SELECT_LISTBOX_CLASS = "overflow-y-auto overflow-x-hidden";
  
 export const SELECT_TRIGGER_GROUP_DISABLED_CLASS =
-  "cursor-not-allowed opacity-55 shadow-token-base";
+  "cursor-not-allowed opacity-55";
  
 export const SELECT_TRIGGER_GROUP_ENABLED_CLASS = "cursor-pointer";
  
@@ -51,9 +66,8 @@ export function selectShellSurface({
   variant,
 }: {
   variant: InputVariant;
-  status?: InputStatus;
 }): string {
-  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "select.triggerGroup");
+  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "select.shell");
   if (visual.className !== undefined) return visual.className;
   return resolveFieldShellSurfaceClass({ variant });
 }
@@ -78,20 +92,20 @@ export function selectTriggerGroupClass({
   slotClass,
 }: {
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   groupSegment?: ButtonGroupSegment;
   shellHoverMotionClass: string;
   className?: string;
   slotClass?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
  
   return cn(
     SELECT_TRIGGER_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
     selectGroupShellClass(groupSegment),
-    selectShellSurface({ variant, status }),
+    selectShellSurface({ variant }),
     FIELD_SHELL_TRANSITION_CLASS,
     fieldShellFocusRingClass(status),
     kitSurface && fieldShellHoverClass(!disabled, status, variant),
@@ -139,5 +153,13 @@ export function selectTriggerClass({
     slotClass,
     className,
   );
+}
+
+export function selectTriggerIconWrapClass(size: InputSize, slotClass?: string): string {
+  return cn(SELECT_CHEVRON_ICON_SLOT[size], slotClass);
+}
+
+export function selectTriggerIconClass(slotClass?: string): string {
+  return cn(slotClass);
 }
  

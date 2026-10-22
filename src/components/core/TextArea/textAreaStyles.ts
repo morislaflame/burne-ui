@@ -2,10 +2,10 @@ import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHover
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
  
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
  
-import { KIT_TEXT_AREA_VARIANTS, type TextAreaSize, type TextAreaStatus, type TextAreaVariant } from "./textAreaTypes";
+import { KIT_TEXT_AREA_VARIANTS, type TextAreaSize, type TextAreaVariant } from "./textAreaTypes";
  
 import { cn } from "@/utils/cn";
  
@@ -45,7 +45,6 @@ export function textareaShellSurfaceClass({
   variant,
 }: {
   variant: TextAreaVariant;
-  status?: TextAreaStatus;
 }): string {
   return resolveFieldShellSurfaceClass({ variant });
 }
@@ -61,7 +60,7 @@ export function textareaShellClass({
   className,
 }: {
   variant: TextAreaVariant;
-  status: TextAreaStatus;
+  status: FieldShellStatus;
   blocked: boolean;
   size: TextAreaSize;
   shellSurface: string;
@@ -70,7 +69,7 @@ export function textareaShellClass({
   className?: string;
 }) {
   const visual = resolveVariantVisual(variant, KIT_TEXT_AREA_VARIANTS, "textArea.shell");
-  const kitSurface = isKitVariant(variant, KIT_TEXT_AREA_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_TEXT_AREA_VARIANTS);
 
   return cn(
     "relative w-full overflow-hidden rounded-base",
@@ -83,7 +82,7 @@ export function textareaShellClass({
     fieldShellFocusRingClass(status),
     kitSurface && fieldShellHoverClass(!blocked, status, variant),
     shellHoverMotionClass,
-    blocked ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
+    blocked ? "cursor-not-allowed opacity-55" : "",
     slotClass,
     className,
   );
@@ -93,10 +92,12 @@ export function textareaControlClassNames({
   size,
   resizable,
   slotClass,
+  className,
 }: {
   size: TextAreaSize;
   resizable: boolean;
   slotClass?: string;
+  className?: string;
 }) {
   return cn(
     TEXTAREA_CONTROL_BASE_CLASS,
@@ -104,6 +105,7 @@ export function textareaControlClassNames({
     textareaControlClass(size),
     slotClass,
     FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
+    className,
   );
 }
  

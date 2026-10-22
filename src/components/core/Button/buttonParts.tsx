@@ -127,14 +127,11 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
  
 ButtonLabel.displayName = "ButtonLabel";
  
-export function ButtonIcon({
-  className = "",
-  children,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: ButtonIconProps) {
+export const ButtonIcon = forwardRef<HTMLSpanElement, ButtonIconProps>(
+  function ButtonIcon(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const ctx = useOptionalButtonContext();
   const slotClassNames = useButtonClassNames();
   const size = ctx?.size ?? "base";
@@ -142,6 +139,7 @@ export function ButtonIcon({
     scope: useOptionalButtonMotionScope(),
     slot: "icon",
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
   });
@@ -157,18 +155,16 @@ export function ButtonIcon({
       {children}
     </span>
   );
-}
+},
+);
  
 ButtonIcon.displayName = "ButtonIcon";
  
-export function ButtonText({
-  className = "",
-  children,
-  motion,
-  onPointerOver,
-  onPointerOut,
-  ...rest
-}: ButtonTextProps) {
+export const ButtonText = forwardRef<HTMLSpanElement, ButtonTextProps>(
+  function ButtonText(
+    { className = "", children, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
   const ctx = useOptionalButtonContext();
   const slotClassNames = useButtonClassNames();
   const size = ctx?.size ?? "base";
@@ -176,6 +172,7 @@ export function ButtonText({
     scope: useOptionalButtonMotionScope(),
     slot: "text",
     motion,
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
   });
@@ -183,7 +180,7 @@ export function ButtonText({
   return (
     <Text
       ref={setRef}
-      variant={BUTTON_SIZE_TEXT_VARIANT[size]}
+      textStyle={BUTTON_SIZE_TEXT_VARIANT[size]}
       as="span"
       inheritColor
       className={buttonTextClass(slotClassNames.text, className)}
@@ -193,7 +190,8 @@ export function ButtonText({
       {children}
     </Text>
   );
-}
+},
+);
  
 ButtonText.displayName = "ButtonText";
  

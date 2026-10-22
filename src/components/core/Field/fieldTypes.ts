@@ -92,7 +92,7 @@ export type FieldHintProps = HTMLAttributes<HTMLElement> & {
   children?: ReactNode;
   status?: FieldHintStatus;
   as?: "p" | "span";
-  variant?: TextVariant;
+  textStyle?: TextVariant;
   motion?: Prettify<FieldPartMotion>;
 };
  
@@ -151,7 +151,7 @@ export type UseFieldSetRootStateResult = {
   loose: ReactNode[];
   groups: ReactNode[];
   actions: ReactNode | null;
-  hasHint: boolean;
-  hasError: boolean;
+  hintConnected: boolean;
+  errorConnected: boolean;
 };
  

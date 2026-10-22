@@ -8,7 +8,7 @@ export function SwitchAccentColorDemo() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Accent color
       </Text>
       <Switch

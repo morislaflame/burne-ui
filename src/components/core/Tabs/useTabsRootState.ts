@@ -13,12 +13,14 @@ export function useTabsRootState({
   size = "base",
   variant: variantProp,
   disabled = false,
+  activationMode = "automatic",
+  keepMounted = true,
 }: UseTabsRootStateProps) {
   const variant = useSkinVariant(variantProp);
   const baseId = useId();
   const [value, setInternalValue] = useControllableState({
     value: valueProp,
-    defaultValue: defaultValue ?? "",
+    defaultValue: defaultValue ?? null,
   });
   const tabElementsRef = useRef<Map<string, HTMLButtonElement>>(new Map());
   const [layoutEpoch, setLayoutEpoch] = useState(0);
@@ -44,6 +46,8 @@ export function useTabsRootState({
       variant,
       baseId,
       disabled,
+      activationMode,
+      keepMounted,
       tabElementsRef,
       layoutEpoch,
       notifyTabLayout,
@@ -56,6 +60,8 @@ export function useTabsRootState({
       variant,
       baseId,
       disabled,
+      activationMode,
+      keepMounted,
       tabElementsRef,
       layoutEpoch,
       notifyTabLayout,

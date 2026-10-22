@@ -1,10 +1,12 @@
 import { forwardRef, useCallback } from "react";
 
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { useStudioSlotRef } from "@/studio/studioModeContext";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useDisclosureContentMotion } from "./disclosureAnimations";
 import { useDisclosureClassNames, useDisclosureContext, useOptionalDisclosureMotionScope } from "./disclosureContext";
-import { DISCLOSURE_CONTENT_SHELL_CLASS, disclosureContentPanelClass, disclosureContentWrapClass } from "./disclosureStyles";
+import { DISCLOSURE_CONTENT_SHELL_CLASS, disclosureContentClass, disclosureContentWrapClass } from "./disclosureStyles";
 import type { DisclosureContentProps } from "./disclosureTypes";
 
 import { cn } from "@/utils/cn";
@@ -25,31 +27,31 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
     const { setShellRef: bindShellRef, setInnerRef } = useDisclosureContentMotion({
       open,
-      motion,
       skipContentAnimRef,
       shellRef,
       innerRef,
     });
-    const { setRef: setBodyPartRef } = useMotionPart<HTMLElement>({
-      scope: useOptionalDisclosureMotionScope(),
-      slot: "body",
+    const contentScope = useOptionalDisclosureMotionScope();
+    const studioWrapRef = useStudioSlotRef<HTMLDivElement>("disclosure.contentWrap", contentScope);
+    const { setRef: setContentPartRef } = useMotionPart<HTMLElement>({
+      scope: contentScope,
+      slot: "content",
+      motion,
     });
 
-    const setShellRef = useCallback(
+    const setSectionRef = useCallback(
       (node: HTMLDivElement | null) => {
-        bindShellRef(node);
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
+        setContentPartRef(node);
+        mergeForwardedRef(ref, node);
       },
-      [bindShellRef, ref],
+      [ref, setContentPartRef],
     );
 
     const contentWrapCls = disclosureContentWrapClass(variant);
-    const panelClass = cn(slotClassNames.contentPanel, slotClassNames.body);
 
     return (
       <div
-        ref={setShellRef}
+        ref={bindShellRef}
         aria-hidden={!open}
         className={cn(
           DISCLOSURE_CONTENT_SHELL_CLASS,
@@ -57,21 +59,21 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
         )}
       >
         <div
-          ref={setInnerRef}
+          ref={mergeRefs(setInnerRef, studioWrapRef)}
           className={cn(
             contentWrapCls,
             slotClassNames.contentWrap,
           )}
         >
           <section
-            ref={setBodyPartRef}
+            ref={setSectionRef}
             id={panelId}
             aria-labelledby={triggerId}
-            className={disclosureContentPanelClass({
+            className={disclosureContentClass({
               variant,
               size,
               className,
-              slotClass: panelClass,
+              slotClass: slotClassNames.content,
             })}
             {...rest}
           >

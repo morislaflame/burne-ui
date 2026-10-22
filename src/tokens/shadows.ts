@@ -31,18 +31,8 @@ export const SHADOW_KNOB_CSS_DEFAULTS = {
  
 /** Opacity bases per theme × level × interaction — SSOT with `tokens/styles.css`. */
 export const SHADOW_OPACITY_BASE = primitives.shadowOpacity;
- 
-/**
- * Geometry per level × interaction: `[offsetX, offsetY, blur, spread]`.
- * Rest arrays also exposed as single-layer lists for legacy `SHADOW_LAYER_GEOM[level][0]` readers.
- */
-export const SHADOW_LAYER_GEOM = {
-  small: [primitives.shadowGeom.small.rest] as const,
-  base: [primitives.shadowGeom.base.rest] as const,
-  mid: [primitives.shadowGeom.mid.rest] as const,
-  large: [primitives.shadowGeom.large.rest] as const,
-} as const;
- 
+
+/** Geometry per level × interaction: `[offsetX, offsetY, blur, spread]`. */
 export const SHADOW_INTERACTION_GEOM = primitives.shadowGeom;
  
 /** CSS `var(--shadow-small|base|mid|large)` for inline styles and documentation. */

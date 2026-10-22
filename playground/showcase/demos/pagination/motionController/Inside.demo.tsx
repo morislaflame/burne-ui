@@ -24,7 +24,12 @@ export function PaginationMotionControllerInsideDemo() {
       page={page}
       totalPages={20}
       onPageChange={setPage}
-      motion={{ control: { pressIn: false, pressOut: false }, events }}
+      motion={{
+        previous: { pressIn: false, pressOut: false },
+        next: { pressIn: false, pressOut: false },
+        page: { pressIn: false, pressOut: false },
+        events,
+      }}
     >
       <SummaryPulse />
       <Pagination.Content>

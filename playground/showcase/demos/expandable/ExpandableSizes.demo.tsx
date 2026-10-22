@@ -10,7 +10,7 @@ export function ExpandableSizesDemo() {
     <div className="flex w-full max-w-lg flex-col gap-small">
       {SIZES.map((size) => (
         <Expandable key={size} size={size} title={`Size ${size}`} icon={EXPANDABLE_INFO_ICON}>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Expandable size={size}
           </Text>
         </Expandable>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { ColorSlider, ColorSwatch, hsvaToHex, type HSVA } from "@/components/core/ColorPicker";
+import { ColorSlider, ColorSwatch, type HSVA } from "@/components/core/ColorPicker";
+import { hsvaToHex } from "@/components/core/ColorPicker/colorUtils";
 import { Text } from "@/components/core/Text";
 
 export function ColorSlidersDemo() {
@@ -14,6 +15,13 @@ export function ColorSlidersDemo() {
         label="Hue (Hue)"
         value={hsva.h}
         onValueChange={(h) => setHsva({ ...hsva, h })}
+        classNames={{
+          root: "gap-small",
+          label: "text-primary",
+          value: "font-mono",
+          track: "rounded-full",
+          thumb: "ring-2 ring-primary/40",
+        }}
       />
       <ColorSlider
         channel="saturation"
@@ -24,7 +32,7 @@ export function ColorSlidersDemo() {
       />
       <div className="flex items-center gap-small">
         <ColorSwatch color={hsvaToHex(hsva)} size="large" />
-        <Text as="span" variant="small" className="font-mono text-muted">
+        <Text as="span" textStyle="small" className="font-mono text-muted">
           {hsvaToHex(hsva)}
         </Text>
       </div>

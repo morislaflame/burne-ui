@@ -61,7 +61,7 @@ export function resolveListBoxItemIndicatorClassNames({
 }
  
 export function normalizeListBoxValues(
-  value: string | string[] | undefined,
+  value: string | string[] | null | undefined,
 ): string[] {
   if (value == null) return [];
   return Array.isArray(value) ? [...value] : [value];

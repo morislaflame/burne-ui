@@ -16,7 +16,7 @@ import staggerSource from "./Stagger.demo.tsx?raw";
 
 export const expandableMotionControllerGallery: readonly ShowcaseDemoGalleryItem[] = [
   { id: "play-title", title: "playSlot title", Demo: ExpandableMotionControllerDemo, source: playTitleSource },
-  { id: "play-body", title: "playSlot body", Demo: ExpandableMotionControllerPlayBodyDemo, source: playBodySource },
+  { id: "play-panel", title: "playSlot panel", Demo: ExpandableMotionControllerPlayBodyDemo, source: playBodySource },
   { id: "stagger", title: "playAll stagger", Demo: ExpandableMotionControllerStaggerDemo, source: staggerSource },
   { id: "events-ping", title: "events yoyo", Demo: ExpandableMotionEventsPingDemo, source: eventsPingSource },
   { id: "events-timeline", title: "timeline", Demo: ExpandableMotionEventsTimelineDemo, source: eventsTimelineSource },

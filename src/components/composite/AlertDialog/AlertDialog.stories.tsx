@@ -4,7 +4,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
-import { AlertDialog, primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone, type AlertDialogSize } from "./index";
+import { primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone } from "./alertDialogAPI";
+import { AlertDialog, type AlertDialogSize } from "./index";
 import { useAlertDialog } from "./useAlertDialog";
 import type { AlertStatus } from "@/components/core/Alert";
 import { AlertDialogSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/alertDialog/slotMotion/gallery";

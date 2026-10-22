@@ -66,8 +66,8 @@ describe("resolveVariantVisual", () => {
     registerSkin({
       name: "cybercore",
       motion: {
-        "button.root": { hoverIn: "cyberGlowIn", hoverOut: "cyberGlowOut" },
-        "card.root": { hoverIn: "cyberGlowIn" },
+        "button.root": { hoverIn: "cybercore:glow-in", hoverOut: "cybercore:glow-out" },
+        "card.root": { hoverIn: "cybercore:glow-in" },
       },
     });
     const button = overlaySkinMotion(
@@ -75,8 +75,8 @@ describe("resolveVariantVisual", () => {
       "cybercore",
       KIT_BUTTON_VARIANTS,
       "button");
-    expect(button.root?.hoverIn).toBe("cyberGlowIn");
-    expect(button.root?.hoverOut).toBe("cyberGlowOut");
+    expect(button.root?.hoverIn).toBe("cybercore:glow-in");
+    expect(button.root?.hoverOut).toBe("cybercore:glow-out");
     expect(
       overlaySkinMotion(
         { root: { hoverIn: "hoverLiftFirstLevel" } },
@@ -84,6 +84,19 @@ describe("resolveVariantVisual", () => {
         KIT_BUTTON_VARIANTS,
         "button").root?.hoverIn).toBe("hoverLiftFirstLevel");
     expect(resolveCardMotionDefaults({ variant: "cybercore", pressable: true }).root?.hoverIn).toBe(
-      "cyberGlowIn");
+      "cybercore:glow-in");
+  });
+
+  it("extends the kit class and replaces it with an object", () => {
+    registerSkin({
+      name: "paper",
+      targets: {
+        "button.root": { extend: "paper-edge" },
+        "card.root": { replace: "paper-card" },
+      },
+    });
+    expect(variantSlotClass("paper", KIT_BUTTON_VARIANTS, "button.root", () => "kit-btn")).toBe(
+      "kit-btn paper-edge");
+    expect(variantSlotClass("paper", KIT_CARD_VARIANTS, "card.root", () => "kit-card")).toBe("paper-card");
   });
 });

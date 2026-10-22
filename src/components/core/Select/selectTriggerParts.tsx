@@ -2,12 +2,13 @@ import type {
   FocusEvent,
   KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
+  ReactNode,
   RefObject,
 } from "react";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
-import { KitChevronDown } from "@/components/core/utils/kitIcons";
+import { KitChevronDown, KitClose } from "@/components/core/utils/kitIcons";
 import { dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
-import { ariaInvalidValue, useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
  
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
@@ -20,6 +21,7 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
+import { useLazyRef } from "@/components/core/utils/useLazyRef";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
  
@@ -40,17 +42,15 @@ import {
   useSelectClassNames,
   useSelectContext,
 } from "./selectContext";
-import { SELECT_CHEVRON_ICON, selectTriggerClass, selectTriggerGroupClass, selectValueClass } from "./selectStyles";
+import { selectClearClass, selectTriggerClass, selectTriggerGroupClass, selectTriggerIconClass, selectTriggerIconWrapClass, selectValueClass } from "./selectStyles";
 import type {
-  SelectTriggerGroupProps,
+  SelectShellProps,
   SelectTriggerProps,
   SelectValueProps,
 } from "./selectTypes";
- 
-import { cn } from "@/utils/cn";
- 
-export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupProps>(
-  function SelectTriggerGroup(
+
+export const SelectShell = forwardRef<HTMLDivElement, SelectShellProps>(
+  function SelectShell(
     {
       className,
       children,
@@ -92,7 +92,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
     );
     const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
-      motion ? { triggerGroup: motion } : undefined,
+      motion ? { shell: motion } : undefined,
     );
     const siblings = mergeMotionRootSiblings({
       events: parentScope?.getEvents(),
@@ -110,7 +110,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
         motionPayload={motionPayload}
         playInitialState={playInitialState}
       >
-        <SelectTriggerGroupSurface
+        <SelectShellSurface
           forwardedRef={ref}
           className={className}
           groupSegment={groupSegment}
@@ -121,15 +121,15 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
           rest={rest}
         >
           {children}
-        </SelectTriggerGroupSurface>
+        </SelectShellSurface>
       </SelectMotionProvider>
     );
   },
 );
  
-SelectTriggerGroup.displayName = "SelectTriggerGroup";
+SelectShell.displayName = "Select.Shell";
  
-function SelectTriggerGroupSurface({
+function SelectShellSurface({
   forwardedRef,
   className,
   children,
@@ -143,13 +143,13 @@ function SelectTriggerGroupSurface({
   forwardedRef: React.ForwardedRef<HTMLDivElement>;
   className?: string;
   children?: React.ReactNode;
-  groupSegment: SelectTriggerGroupProps["groupSegment"];
+  groupSegment: SelectShellProps["groupSegment"];
   pointerInsideRef: React.MutableRefObject<boolean>;
-  shellPartMotion?: SelectTriggerGroupProps["motion"];
-  onPointerEnter?: SelectTriggerGroupProps["onPointerEnter"];
-  onPointerLeave?: SelectTriggerGroupProps["onPointerLeave"];
+  shellPartMotion?: SelectShellProps["motion"];
+  onPointerEnter?: SelectShellProps["onPointerEnter"];
+  onPointerLeave?: SelectShellProps["onPointerLeave"];
   rest: Omit<
-    SelectTriggerGroupProps,
+    SelectShellProps,
     | "className"
     | "children"
     | "groupSegment"
@@ -166,7 +166,6 @@ function SelectTriggerGroupSurface({
     setOpen,
     disabled,
     variant,
-    status,
     size,
     invalid,
     errorConnected,
@@ -178,7 +177,7 @@ function SelectTriggerGroupSurface({
     setActiveValue,
   } = ctx;
   const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
-  const visualStatus = visualStatusForInvalid(status, isInvalid, "default");
+  const visualStatus = fieldPaintStatus(isInvalid);
 
   const {
     bindShellRef,
@@ -234,18 +233,46 @@ function SelectTriggerGroupSurface({
         groupSegment,
         shellHoverMotionClass,
         className,
-        slotClass: slotClassNames.triggerGroup,
+        slotClass: slotClassNames.shell,
       })}
       {...rest}
-      {...dataVariantProps({ size, variant, status: visualStatus })}
+      {...dataVariantProps({ size, variant })}
       data-group-segment={dataGroupSegment(groupSegment != null)}
     >
       {children}
+      <SelectClear />
     </div>
   );
 }
  
-function commitSelectOption(
+function SelectClear() {
+  const { clearable, multiple, value, values, setValue, setValues, disabled, readOnly, size, valueRef } =
+    useSelectContext();
+  const labels = useBurneLabels();
+  const filled = multiple ? values.length > 0 : value !== "";
+  if (!clearable || !filled || disabled || readOnly) return null;
+  return (
+    <button
+      type="button"
+      aria-label={labels.clearField}
+      className={selectClearClass(size)}
+      onPointerDown={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+      onClick={(event) => {
+        event.stopPropagation();
+        if (multiple) setValues([]);
+        else setValue("");
+        focusElement(valueRef.current);
+      }}
+    >
+      <KitClose aria-hidden />
+    </button>
+  );
+}
+
+function commitSelectItem(
   next: string,
   {
     multiple,
@@ -273,7 +300,7 @@ function commitSelectOption(
 }
 
 export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
-  function SelectValue({ className, onKeyDown, onBlur, children, placeholder: placeholderProp, motion, ...rest }, ref) {
+  function SelectValue({ className, onKeyDown, onBlur, children, placeholder: placeholderProp, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
     const slotClassNames = useSelectClassNames();
     const ctx = useSelectContext();
     const {
@@ -289,9 +316,10 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       setActiveValue,
       valueRef,
       anchorRef,
-      options,
+      items,
       optionValues,
       disabled,
+      readOnly,
       placeholder: contextPlaceholder,
       size,
       required,
@@ -310,7 +338,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
  
     const placeholder = placeholderProp ?? contextPlaceholder;
     const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
-    const typeaheadRef = useRef(createTypeaheadBufferState());
+    const typeaheadRef = useLazyRef(createTypeaheadBufferState);
     const partMotionRef = useRef(motion);
     // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     partMotionRef.current = motion;
@@ -328,11 +356,15 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       forwardedRef: mergeRefs(ref, valueRef, formValueRef),
       pointerPhases: true,
       pressPhases: true,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
  
     const optionsByValue = useMemo(
-      () => selectOptionsByValue(options),
-      [options],
+      () => selectOptionsByValue(items),
+      [items],
     );
  
     const selectedOption = useMemo(
@@ -372,7 +404,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       (next: string) => {
         const opt = optionsByValue.get(next);
         if (!opt || opt.disabled) return;
-        commitSelectOption(next, { multiple, values, setValues, setValue, setOpen, valueRef });
+        commitSelectItem(next, { multiple, values, setValues, setValue, setOpen, valueRef });
       },
       [multiple, optionsByValue, setOpen, setValue, setValues, valueRef, values],
     );
@@ -457,6 +489,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         setActiveValue,
         setOpen,
         squeezeThenOpen,
+        typeaheadRef,
       ],
     );
  
@@ -476,6 +509,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         id={selectId}
         type="button"
         disabled={disabled}
+        aria-readonly={readOnly || undefined}
         className={selectValueClass({
           size,
           muted: shown.muted,
@@ -498,6 +532,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         aria-describedby={ariaDescribedBy}
         data-state={dataOpenState(open)}
         data-invalid={isInvalid ? "" : undefined}
+        data-readonly={readOnly ? "" : undefined}
         data-required={required ? "" : undefined}
       >
         {display}
@@ -508,15 +543,21 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
  
 SelectValue.displayName = "SelectValue";
  
-function SelectTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" }) {
+function SelectTriggerIcon({
+  size,
+  children,
+}: {
+  size: "small" | "base" | "mid" | "large";
+  children?: ReactNode | null;
+}) {
   const slotClassNames = useSelectClassNames();
   const { open } = useSelectContext();
   const scope = useOptionalSelectMotionScope();
   const iconRef = useRef<HTMLSpanElement | null>(null);
-  const bindChevronRef = useChevronRotation(open, iconRef, undefined, undefined, scope, "triggerIcon");
+  const bindChevronRef = useChevronRotation(open, iconRef, undefined, undefined, scope, "triggerIconWrap");
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
     scope,
-    slot: "triggerIcon",
+    slot: "triggerIconWrap",
     pointerPhases: true,
   });
   const setIconRef = useCallback(
@@ -528,30 +569,38 @@ function SelectTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" 
     [bindChevronRef, setRef],
   );
 
+  if (children === null) return null;
+
   return (
-    <span ref={setIconRef} className={slotClassNames.triggerIconWrap} {...pointerHandlers}>
-      <KitChevronDown
-        className={cn(
-          SELECT_CHEVRON_ICON[size],
-          slotClassNames.triggerIcon,
-        )}
-        aria-hidden
-      />
+    <span
+      ref={setIconRef}
+      className={selectTriggerIconWrapClass(size, slotClassNames.triggerIconWrap)}
+      {...pointerHandlers}
+    >
+      {children ?? (
+        <KitChevronDown
+          className={selectTriggerIconClass(slotClassNames.triggerIcon)}
+          aria-hidden
+        />
+      )}
     </span>
   );
 }
  
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  function SelectTrigger({ className, onPointerDown, children, motion, ...rest }, ref) {
+  function SelectTrigger({ className, onPointerOver, onPointerOut, onPointerDown, onPointerUp, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useSelectClassNames();
-    const { open, setOpen, disabled, size, valueRef } = useSelectContext();
+    const { open, setOpen, disabled, size, valueRef, icon } = useSelectContext();
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalSelectMotionScope(),
       slot: "trigger",
       motion,
       pointerPhases: true,
       pressPhases: true,
+      onPointerOver,
+      onPointerOut,
+      onPointerUp,
       onPointerDown: (e) => {
         onPointerDown?.(e);
         e.stopPropagation();
@@ -591,7 +640,7 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         {...pointerHandlers}
         data-state={dataOpenState(open)}
       >
-        {children ?? <SelectTriggerIcon size={size} />}
+        <SelectTriggerIcon size={size}>{children !== undefined ? children : icon}</SelectTriggerIcon>
       </button>
     );
   },

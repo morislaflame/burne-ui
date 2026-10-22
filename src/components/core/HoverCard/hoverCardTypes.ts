@@ -11,6 +11,7 @@ import type {
   MotionStateHostProps,
   MotionValue,
 } from "@/components/core/utils/slotMotion";
+import type { OverlayDismissProps } from "@/components/core/utils/overlayLayer";
 import type { HTMLAttributes, PointerEventHandler, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
@@ -22,7 +23,6 @@ export const HOVER_CARD_OPEN_DELAY = 400;
 export const HOVER_CARD_CLOSE_DELAY = 300;
 
 export type HoverCardClassNames = {
-  root?: string;
   trigger?: string;
   content?: string;
   /** Inner wrapper between the portal surface and the panel. */
@@ -81,6 +81,7 @@ export type HoverCardProps = {
   size?: HoverCardSize;
   variant?: HoverCardVariant;
   side?: HoverCardSide;
+  align?: FloatingAlign;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -88,7 +89,13 @@ export type HoverCardProps = {
   openDelay?: number;
   /** Delay before the card closes, so the pointer can cross the gap. Default `300`. */
   closeDelay?: number;
-  shouldDismiss?: (target: Node) => boolean;
+  closeOnInteractOutside?: boolean;
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  closeOnEscape?: boolean;
+  offset?: number;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<HoverCardClassNames>;
   /**

@@ -8,17 +8,18 @@ import { resolvePortalContainer } from "@/components/core/utils/portalContainer"
 import { useApplySkinPortal } from "@/skins/skinContext";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
-import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownMenuSlotMotion, useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
+import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownMenuSlotMotion, useDropdownSubPopoverPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
 import { DropdownMotionProvider, useDropdown, useDropdownClassNames, useDropdownMotionScope, useDropdownSub, useOptionalDropdownMotionScope, DropdownSubProvider } from "./dropdownContext";
 import {
   DROPDOWN_SUB_CLASS,
+  DROPDOWN_SUB_CONTENT_BODY_CLASS,
   DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
   DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS,
   dropdownSubContentClass,
   dropdownSubTriggerRowClass,
 } from "./dropdownStyles";
 import type {
-  DropdownSubContentProps,
+  DropdownSubPopoverProps,
   DropdownSubProps,
   DropdownSubTriggerProps,
 } from "./dropdownTypes";
@@ -26,26 +27,38 @@ import { useDropdownSubState } from "./useDropdownSubState";
  
 import { cn } from "@/utils/cn";
  
+function DropdownSubSession({
+  children,
+}: {
+  children: (value: ReturnType<typeof useDropdownSubState>["contextValue"]) => ReactElement;
+}) {
+  const { contextValue } = useDropdownSubState();
+  return children(contextValue);
+}
+
 export const DropdownSub = forwardRef<HTMLDivElement, DropdownSubProps>(
   function DropdownSub({ className, children, ...rest }, ref) {
     const { open: menuOpen } = useDropdown();
     const slotClassNames = useDropdownClassNames();
-    const { contextValue } = useDropdownSubState(menuOpen);
- 
+
     return (
-      <DropdownSubProvider value={contextValue}>
-        <div
-          ref={ref}
-          className={cn(
-            DROPDOWN_SUB_CLASS,
-            slotClassNames.sub,
-            className,
-          )}
-          {...rest}
-        >
-          {children}
-        </div>
-      </DropdownSubProvider>
+      <DropdownSubSession key={menuOpen ? "open" : "closed"}>
+        {(contextValue) => (
+          <DropdownSubProvider value={contextValue}>
+            <div
+              ref={ref}
+              className={cn(
+                DROPDOWN_SUB_CLASS,
+                slotClassNames.sub,
+                className,
+              )}
+              {...rest}
+            >
+              {children}
+            </div>
+          </DropdownSubProvider>
+        )}
+      </DropdownSubSession>
     );
   },
 );
@@ -220,14 +233,14 @@ export const DropdownSubTrigger = forwardRef<
  
 DropdownSubTrigger.displayName = "Dropdown.SubTrigger";
  
-export const DropdownSubContent = forwardRef<
+export const DropdownSubPopover = forwardRef<
   HTMLDivElement,
-  DropdownSubContentProps
->(function DropdownSubContent({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
+  DropdownSubPopoverProps
+>(function DropdownSubPopover({ motion, motionController, motionState, motionPayload, playInitialState, ...props }, forwardedRef) {
   const parentScope = useOptionalDropdownMotionScope();
   const mergedSlots = mergeMotionSlotMaps(
     parentScope?.getRootMotion(),
-    motion ? { subContent: motion } : undefined,
+    motion ? { subPopover: motion } : undefined,
   );
   const siblings = mergeMotionRootSiblings({ events: parentScope?.getEvents(), states: parentScope?.getStates() });
   const merged = { ...mergedSlots, ...siblings };
@@ -240,14 +253,14 @@ export const DropdownSubContent = forwardRef<
         motionPayload={motionPayload}
         playInitialState={playInitialState}
     >
-      <DropdownSubContentHost {...props} forwardedRef={forwardedRef} />
+      <DropdownSubPopoverHost {...props} forwardedRef={forwardedRef} />
     </DropdownMotionProvider>
   );
 });
  
-DropdownSubContent.displayName = "Dropdown.SubContent";
+DropdownSubPopover.displayName = "Dropdown.SubPopover";
  
-function DropdownSubContentHost({
+function DropdownSubPopoverHost({
   children,
   className,
   style,
@@ -256,7 +269,7 @@ function DropdownSubContentHost({
   portalContainer: portalContainerProp,
   forwardedRef,
   ...rest
-}: Omit<DropdownSubContentProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
+}: Omit<DropdownSubPopoverProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   forwardedRef?: ForwardedRef<HTMLDivElement>;
 }) {
   const { open: subOpen, triggerRef, scheduleClose, cancelClose, setOpen } =
@@ -271,10 +284,10 @@ function DropdownSubContentHost({
   const motionScope = useDropdownMotionScope();
   const { setRef: setSubContentPartRef } = useMotionPart<HTMLDivElement>({
     scope: motionScope,
-    slot: "subContent",
+    slot: "subPopover",
   });
  
-  const portal = useDropdownSubContentPortal({
+  const portal = useDropdownSubPopoverPortal({
     subOpen,
     triggerRef,
     menuTriggerRef,
@@ -329,10 +342,7 @@ function DropdownSubContentHost({
         subOpen,
         portalMounted: portal.portalMounted,
         className,
-        slotClass: cn(
-          slotClassNames.subPopover,
-          slotClassNames.subPopoverBody,
-        ),
+        slotClass: slotClassNames.subPopover,
       })}
       style={{
         position: portal.contained ? "absolute" : "fixed",
@@ -345,7 +355,9 @@ function DropdownSubContentHost({
       onPointerEnter={handleEnter}
       onPointerLeave={handleLeave}
     >
-      {children}
+      <div className={cn(DROPDOWN_SUB_CONTENT_BODY_CLASS, slotClassNames.subPopoverBody)}>
+        {children}
+      </div>
     </div>
   );
  

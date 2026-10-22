@@ -2,7 +2,6 @@ import { forwardRef } from "react";
  
 import { Field } from "@/components/core/Field";
  
-import { selectResolveHintStatus } from "./selectAPI";
 import { useSelectChromeSlot } from "./selectAnimations";
 import { useSelectClassNames, useSelectFieldContext } from "./selectContext";
 import type { SelectErrorProps, SelectHintProps, SelectLabelProps } from "./selectTypes";
@@ -54,7 +53,6 @@ export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
   function SelectHint(
     {
       children,
-      status,
       className,
       id: idProp,
       motion,
@@ -68,7 +66,6 @@ export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
   ) {
     const field = useSelectFieldContext();
     const slotClassNames = useSelectClassNames();
-    const hintStatus = selectResolveHintStatus(status, field.status);
     const part = useSelectChromeSlot("hint", {
       motion,
       forwardedRef: ref,
@@ -82,7 +79,6 @@ export const SelectHint = forwardRef<HTMLElement, SelectHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? field.hintId}
-        status={hintStatus}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}

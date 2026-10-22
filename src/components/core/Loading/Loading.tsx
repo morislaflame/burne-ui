@@ -25,15 +25,16 @@ export type {
   LoadingPartMotion,
   LoadingProps,
   LoadingSize,
-  LoadingType,
+  LoadingIndicator,
 } from "./loadingTypes";
  
 export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
-    type = "spinner",
+    indicator = "spinner",
     size = "base",
-    color = "primary",
-    label: labelProp,
+    color,
+    status,
+    "aria-label": ariaLabel,
     className = "",
     classNames,
     motion,
@@ -50,9 +51,9 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
   ref,
 ) {
   const fallbackLabel = useBurneLabel("loading");
-  const label = labelProp ?? fallbackLabel;
+  const label = ariaLabel ?? fallbackLabel;
   const motionDefaults = useMemo(() => resolveLoadingMotionDefaults(), []);
-  const dotLayout = type === "dots" ? LOADING_DOTS_LAYOUT[size] : undefined;
+  const dotLayout = indicator === "dots" ? LOADING_DOTS_LAYOUT[size] : undefined;
   const motionParams = useMemo(
     () =>
       dotLayout
@@ -67,9 +68,10 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
       <LoadingSurface
-        type={type}
+        indicator={indicator}
         size={size}
         color={color}
+        status={status}
         label={label}
         className={className}
         classNames={classNames}
@@ -86,9 +88,10 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
 });
  
 function LoadingSurface({
-  type,
+  indicator,
   size,
   color,
+  status,
   label,
   className,
   classNames,
@@ -100,9 +103,10 @@ function LoadingSurface({
   onPointerUp,
   rest,
 }: {
-  type: NonNullable<LoadingProps["type"]>;
+  indicator: NonNullable<LoadingProps["indicator"]>;
   size: NonNullable<LoadingProps["size"]>;
-  color: NonNullable<LoadingProps["color"]>;
+  color: LoadingProps["color"];
+  status: LoadingProps["status"];
   label: string;
   className: string;
   classNames: LoadingProps["classNames"];
@@ -114,10 +118,10 @@ function LoadingSurface({
   onPointerUp: LoadingProps["onPointerUp"];
   rest: Omit<
     LoadingProps,
-    | "type"
+    | "indicator"
     | "size"
     | "color"
-    | "label"
+    | "status"
     | "className"
     | "classNames"
     | "motion"
@@ -149,19 +153,20 @@ function LoadingSurface({
       ref={part.setRef}
       {...loadingStatusProps(label)}
       className={cn(LOADING_ROOT_CLASS, classNames?.root, className)}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size })}
     >
-      {type === "dots" ? (
+      {indicator === "dots" ? (
         <LoadingDots
           size={size}
           color={color}
+          status={status}
           className={classNames?.dots}
           dotClassName={classNames?.dot}
         />
       ) : (
-        <LoadingSpinner size={size} color={color} className={classNames?.spinner} />
+        <LoadingSpinner size={size} color={color} status={status} className={classNames?.spinner} />
       )}
     </span>
   );

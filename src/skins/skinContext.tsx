@@ -4,21 +4,36 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
   useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
   type RefObject,
 } from "react";
 
-import type { SkinDefinition, SkinSlot } from "./skinTypes";
-import { adoptSkins, getSkin, getSkinRevision, subscribeSkins } from "./skinRegistry";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
+import { useBurneThemeOptional } from "@/theme/themeContext";
+
+import {
+  bindSkinLookup,
+  lookupSkin,
+  SkinCatalogContext,
+  useInstallSkinLookup,
+  type SkinCatalog,
+} from "./skinLookup";
+import type { SkinDefinition, SkinSlot, SkinTargetSpec } from "./skinTypes";
+import { getSkin, getSkinRevision, subscribeSkins } from "./skinRegistry";
 import {
   applySkinVars,
   baselineFor,
-  captureBaseline,
+  captureKitTokens,
   releaseSkinVars,
   resolveSkinTokens,
+  sameTokenMap,
   skinSurfaceStyle,
+  skinThemeAnchor,
+  skinThemeMode,
+  skinTokenStyle,
   type SkinTokenMap,
 } from "./resolveSkinTokens";
 
@@ -31,7 +46,7 @@ export type SkinScope = {
   /** Tokens this scope writes on its own node. */
   local: SkinTokenMap;
   baseline: SkinTokenMap;
-  targets: Partial<Record<SkinSlot, string>>;
+  targets: Partial<Record<SkinSlot, SkinTargetSpec>>;
 };
 
 const SkinContext = createContext<SkinScope | null>(null);
@@ -64,11 +79,15 @@ function subscribeThemeMode(onChange: () => void) {
   return () => observer.disconnect();
 }
 
-function resolveNamed(skin: string | SkinDefinition | null | undefined): SkinDefinition | null | undefined {
+function resolveNamed(
+  skin: string | SkinDefinition | null | undefined,
+  skins: readonly SkinDefinition[] | undefined,
+): SkinDefinition | null | undefined {
   if (skin === undefined) return undefined;
   if (skin === null) return null;
   if (typeof skin === "string") {
-    const found = getSkin(skin);
+    const fromScope = skins?.find((item) => item.name === skin);
+    const found = fromScope ?? getSkin(skin);
     if (!found && process.env.NODE_ENV !== "production") {
       console.error(`[burne-ui] unknown skin "${skin}"`);
     }
@@ -77,49 +96,46 @@ function resolveNamed(skin: string | SkinDefinition | null | undefined): SkinDef
   return skin;
 }
 
-function skinsToAdopt(
-  skin: SkinProviderProps["skin"],
-  skins: SkinDefinition[] | undefined,
-): SkinDefinition[] {
-  const list = skins ? [...skins] : [];
-  if (skin && typeof skin === "object") list.push(skin);
-  return list;
-}
-
-export function SkinProvider({ skin, skins, root = null, children }: SkinProviderProps) {
-  adoptSkins(skinsToAdopt(skin, skins));
+export function SkinProvider({ skin, skins: skinsProp, root = null, children }: SkinProviderProps) {
+  const parentCatalog = useContext(SkinCatalogContext);
   const parent = useContext(SkinContext);
   const hostRef = useRef<HTMLDivElement>(null);
-  const baselineRef = useRef<SkinTokenMap>({});
-  const mode = useSyncExternalStore(subscribeThemeMode, themeMode, () => "dark" as const);
+  const theme = useBurneThemeOptional();
+  const domMode = useSyncExternalStore(subscribeThemeMode, themeMode, () => "dark" as const);
+  const [islandMode, setIslandMode] = useState<"light" | "dark" | null>(null);
+  const [ownBaseline, setOwnBaseline] = useState<SkinTokenMap>({});
   useSyncExternalStore(subscribeSkins, getSkinRevision, getSkinRevision);
 
-  const resolved = resolveNamed(skin);
+  const mode = islandMode ?? theme?.resolvedTheme ?? domMode;
+  const resolved = resolveNamed(skin, skinsProp);
+  const catalog = useMemo<SkinCatalog>(() => {
+    const map = new Map(parentCatalog?.skins);
+    for (const item of skinsProp ?? []) map.set(item.name, item);
+    if (resolved) map.set(resolved.name, resolved);
+    return { skins: map, registryFallback: true };
+  }, [parentCatalog, skinsProp, resolved]);
+  const motionConfig = resolved?.motion?.config;
+  bindSkinLookup(catalog);
   const own = useMemo(
     () => (resolved ? resolveSkinTokens(resolved, mode) : {}),
     [resolved, mode]);
-
-  if (parent) {
-    for (const [key, value] of Object.entries(parent.baseline)) {
-      if (baselineRef.current[key] === undefined) baselineRef.current[key] = value;
-    }
-  }
-  if (resolved) {
-    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- baseline is read by useMemo in the same render; an effect is too late
-    baselineRef.current = captureBaseline(Object.keys(own), baselineRef.current);
-  }
+  const baseline = useMemo(
+    () => ({ ...(parent?.baseline ?? {}), ...ownBaseline }),
+    [parent, ownBaseline],
+  );
 
   const scope = useMemo<SkinScope | null>(() => {
     if (skin === undefined) return parent;
     if (!resolved) {
       const keys = Object.keys(parent?.effective ?? {});
-      const effective = baselineFor(keys, baselineRef.current);
+      const source = parent?.baseline ?? baseline;
+      const effective = baselineFor(keys, source);
       return {
         name: null,
         active: false,
         effective,
         local: effective,
-        baseline: baselineRef.current,
+        baseline: source,
         targets: {},
       };
     }
@@ -128,34 +144,60 @@ export function SkinProvider({ skin, skins, root = null, children }: SkinProvide
       active: true,
       effective: { ...(parent?.effective ?? {}), ...own },
       local: own,
-      baseline: baselineRef.current,
+      baseline,
       targets: resolved.targets ?? {},
     };
-  }, [skin, resolved, own, parent]);
+  }, [skin, resolved, own, parent, baseline]);
 
   useLayoutEffect(() => {
-    if (skin === undefined || !scope) return;
-    const el = root ?? hostRef.current;
-    if (!el) return;
-    applySkinVars(el, scope.local, scope.name);
-    return () => releaseSkinVars(el);
+    const start = hostRef.current?.parentElement ?? root;
+    const next = skinThemeMode(start, theme?.root ?? null, theme?.resolvedTheme ?? domMode);
+    const fallback = theme?.resolvedTheme ?? domMode;
+    setIslandMode(next === fallback ? null : next);
+  }, [theme?.root, theme?.resolvedTheme, domMode, root]);
+
+  useLayoutEffect(() => {
+    if (!resolved) return;
+    const keys = Object.keys(own);
+    if (keys.length === 0) return;
+    const anchor = skinThemeAnchor(hostRef.current?.parentElement ?? root, theme?.root ?? null);
+    if (!anchor) return;
+    const fresh = captureKitTokens(anchor, keys);
+    setOwnBaseline((prev) => (sameTokenMap(prev, { ...prev, ...fresh }) ? prev : { ...prev, ...fresh }));
+  }, [resolved, own, mode, theme?.root, root]);
+
+  useLayoutEffect(() => {
+    if (!root || skin === undefined || !scope) return;
+    applySkinVars(root, scope.local, scope.name);
+    return () => releaseSkinVars(root);
   }, [skin, root, scope]);
 
-  if (skin === undefined || root) {
-    if (!scope || scope === parent) return children;
-    return <SkinContext.Provider value={scope}>{children}</SkinContext.Provider>;
+  let body: ReactNode = children;
+  if (!(skin === undefined || root) || (scope && scope !== parent)) {
+    body = skin === undefined || root ? (
+      <SkinContext.Provider value={scope}>{children}</SkinContext.Provider>
+    ) : (
+      <SkinContext.Provider value={scope}>
+        <div
+          ref={hostRef}
+          data-skin={scope?.name ?? "none"}
+          style={{ display: "contents", ...skinTokenStyle(scope?.local ?? {}) }}
+        >
+          {children}
+        </div>
+      </SkinContext.Provider>
+    );
   }
 
-  return (
-    <SkinContext.Provider value={scope}>
-      <div ref={hostRef} style={{ display: "contents" }} data-skin={scope?.name ?? "none"}>
-        {children}
-      </div>
-    </SkinContext.Provider>
-  );
+  if (motionConfig) {
+    body = <MotionConfigProvider motion={motionConfig}>{body}</MotionConfigProvider>;
+  }
+
+  return <SkinCatalogContext.Provider value={catalog}>{body}</SkinCatalogContext.Provider>;
 }
 
 export function useSkin(): SkinScope | null {
+  useInstallSkinLookup();
   return useContext(SkinContext);
 }
 
@@ -166,6 +208,7 @@ export function useSkin(): SkinScope | null {
  */
 /** Re-renders when `registerSkin` / `unregisterSkin` changes the registry. */
 export function useSkinRegistryRevision(): number {
+  useInstallSkinLookup();
   return useSyncExternalStore(subscribeSkins, getSkinRevision, getSkinRevision);
 }
 
@@ -188,6 +231,7 @@ export function mergeSkinSurfaceStyle(
 
 /** Palette reset for `variant="default"`. Geometry tokens stay inherited. */
 export function useSkinSurfaceStyle(variant?: string): CSSProperties {
+  useInstallSkinLookup();
   const scope = useSkin();
   return useMemo(() => {
     if (!scope?.active) return {};
@@ -196,9 +240,19 @@ export function useSkinSurfaceStyle(variant?: string): CSSProperties {
 }
 
 export function useSkinTargets(variant?: string): Partial<Record<SkinSlot, string>> {
+  useInstallSkinLookup();
   const scope = useSkin();
-  if (!scope?.active || variant === "default") return {};
-  return scope.targets;
+  const name = variant ?? (scope?.active ? scope.name ?? undefined : undefined);
+  if (!name || name === "default") return {};
+  const skin = lookupSkin(name);
+  if (!skin?.targets) return {};
+  const out: Partial<Record<SkinSlot, string>> = {};
+  for (const [slot, spec] of Object.entries(skin.targets)) {
+    if (typeof spec === "string") out[slot as SkinSlot] = spec;
+    else if ("replace" in spec) out[slot as SkinSlot] = spec.replace;
+    else out[slot as SkinSlot] = spec.extend;
+  }
+  return out;
 }
 
 /** Copy the active scope onto a portal node (Dialog, Tooltip, Toast). */

@@ -25,7 +25,7 @@ export function BreadcrumbsProductHeaderDemo() {
           <Breadcrumbs.Item current>Parka Arctic</Breadcrumbs.Item>
         </Breadcrumbs.List>
       </Breadcrumbs>
-      <Text as="h3" variant="base" className="font-semibold">
+      <Text as="h3" textStyle="base" className="font-semibold">
         Parka Arctic
       </Text>
     </div>

@@ -6,7 +6,8 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type ReactNode } from "react";
  
-import { resolveFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { useFieldInvalid } from "@/components/core/Field/fieldContext";
 import { checkboxErrorId, checkboxHintId, checkboxInputId, checkboxLabelId } from "./checkboxA11y";
 import { compoundUsesInlineMotion } from "./checkboxAPI";
@@ -16,8 +17,8 @@ import type { CheckboxFieldContextValue, UseCheckboxRootStateProps } from "./che
 export function useCheckboxRootState(
   {
     size = "base",
+    labelPosition = "end",
     variant: variantProp,
-    status = "default",
     icon,
     disabled,
     checked,
@@ -34,6 +35,7 @@ export function useCheckboxRootState(
     readOnly,
     onBlur,
     onFocus,
+    inputRef,
     "aria-label": ariaLabelProp,
     label,
     hint,
@@ -48,6 +50,8 @@ export function useCheckboxRootState(
   const optionValueStr = value !== undefined && value !== null ? String(value) : undefined;
   const inSingleGroup =
     group?.selection === "single" && group != null && optionValueStr != null;
+  const inMultipleGroup =
+    group?.selection === "multiple" && group != null && optionValueStr != null;
  
   const formBinding = useFormControlProps({
     name,
@@ -67,7 +71,11 @@ export function useCheckboxRootState(
   const labelId = checkboxLabelId(inputId);
  
   const isExplicitlyControlled = checked !== undefined;
-  const groupChecked = inSingleGroup ? group.selectedValue === optionValueStr : undefined;
+  const groupChecked = inSingleGroup
+    ? group.selectedValue === optionValueStr
+    : inMultipleGroup
+      ? group.selectedValues.includes(optionValueStr)
+      : undefined;
   const formChecked = formBound ? Boolean(formBinding.checked) : undefined;
   const resolvedChecked = isExplicitlyControlled
     ? checked
@@ -80,7 +88,9 @@ export function useCheckboxRootState(
   const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
     value: resolvedChecked,
     defaultValue: Boolean(
-      inSingleGroup || isExplicitlyControlled || formBound ? undefined : defaultChecked,
+      inSingleGroup || inMultipleGroup || isExplicitlyControlled || formBound
+        ? undefined
+        : defaultChecked,
     ),
   });
  
@@ -106,8 +116,7 @@ export function useCheckboxRootState(
     formInvalid: formBound && formBinding["aria-invalid"] === true,
     inheritedInvalid,
   });
-  const visualStatus = visualStatusForInvalid(status, isInvalid, "default");
-  const isDanger = visualStatus === "danger";
+  const isDanger = isInvalid;
   const secondaryLines = isCompound
     ? (hasCompoundHint ? 1 : 0) + (hasCompoundError ? 1 : 0)
     : (hasHint ? 1 : 0) + (hasError ? 1 : 0);
@@ -116,17 +125,36 @@ export function useCheckboxRootState(
  
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      if (formBinding.readOnly || readOnly || group?.readOnly) {
+        e.preventDefault();
+        return;
+      }
       const next = e.target.checked;
-      if (!isControlled && !inSingleGroup && !formBound) setMergedChecked(next);
+      if (!isControlled && !inSingleGroup && !inMultipleGroup && !formBound) setMergedChecked(next);
       onChange?.(e);
       if (e.defaultPrevented) return;
       if (inSingleGroup) {
         group.selectSingleValue(optionValueStr, next);
         return;
       }
+      if (inMultipleGroup) {
+        group.toggleMultipleValue(optionValueStr, next);
+        return;
+      }
       if (formBound) formBinding.onChange(e);
     },
-    [formBound, formBinding, group, inSingleGroup, isControlled, onChange, optionValueStr, setMergedChecked],
+    [
+      formBound,
+      formBinding,
+      group,
+      readOnly,
+      inMultipleGroup,
+      inSingleGroup,
+      isControlled,
+      onChange,
+      optionValueStr,
+      setMergedChecked,
+    ],
   );
  
   const handleBlur = useCallback(
@@ -146,6 +174,7 @@ export function useCheckboxRootState(
       errorId,
       labelId,
       size,
+      labelPosition,
       variant,
       mergedChecked,
       indeterminate,
@@ -160,13 +189,14 @@ export function useCheckboxRootState(
       accessibleName: ariaLabelProp,
       useInlineCompoundMotion,
       textMotionRef: textColRef,
-      status: visualStatus,
+      isDanger,
       icon,
       onChange: handleChange,
       inputProps: {
         name: formBinding.name ?? name,
         value,
-        defaultChecked: !isControlled && !formBound ? defaultChecked : undefined,
+        defaultChecked:
+          !isControlled && !formBound && !inSingleGroup && !inMultipleGroup ? defaultChecked : undefined,
         required: inputRequired,
         form,
         autoFocus,
@@ -174,7 +204,7 @@ export function useCheckboxRootState(
         readOnly: formBinding.readOnly ?? readOnly,
         onBlur: handleBlur,
         onFocus,
-        inputRef: formBound ? formBinding.ref : undefined,
+        inputRef: mergeRefs(formBound ? formBinding.ref : undefined, inputRef),
         ariaInvalid: isInvalid || undefined,
       },
     }),
@@ -185,6 +215,7 @@ export function useCheckboxRootState(
       form,
       formBinding,
       formBound,
+      inputRef,
       autoFocus,
       errorId,
       handleBlur,
@@ -195,8 +226,10 @@ export function useCheckboxRootState(
       hasCompoundLabel,
       hasError,
       hasHint,
+      isDanger,
       isInvalid,
-      visualStatus,
+      inMultipleGroup,
+      inSingleGroup,
       inputId,
       isCompound,
       isControlled,
@@ -208,6 +241,7 @@ export function useCheckboxRootState(
       onFocus,
       inputRequired,
       readOnly,
+      labelPosition,
       size,
       tabIndex,
       useInlineCompoundMotion,
@@ -242,7 +276,6 @@ export function useCheckboxRootState(
     error,
     hintId,
     errorId,
-    status: visualStatus,
     isDanger,
   };
 }

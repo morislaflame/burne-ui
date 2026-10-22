@@ -76,6 +76,24 @@ describe("playDeclarativeMotion", () => {
     });
   });
 
+  it("tweens declarative rotation, scaleX, and opacity", () => {
+    const fromToSpy = vi.spyOn(gsap, "fromTo");
+
+    playDeclarativeMotion(
+      fakeEl(),
+      { rotation: 18, scaleX: 1.1, opacity: 0.6, duration: 0.2, yoyo: true, repeat: 1, replay: "rest" },
+      { phase: "hoverIn", reduced: false, config: MOTION_CONFIG_DEFAULTS },
+    );
+
+    expect(fromToSpy.mock.calls[0]?.[1]).toMatchObject({ rotation: 0, scaleX: 1, opacity: 1 });
+    expect(fromToSpy.mock.calls[0]?.[2]).toMatchObject({
+      rotation: 18,
+      scaleX: 1.1,
+      opacity: 0.6,
+      force3D: false,
+    });
+  });
+
   it("uses gsap.to from the current pose for hover vars", () => {
     const toSpy = vi.spyOn(gsap, "to");
     const fromToSpy = vi.spyOn(gsap, "fromTo");
@@ -137,6 +155,19 @@ describe("MotionContext tween helpers", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it("warns when a factory passes a layout key to ctx.to", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    runMotionPhase({
+      el: fakeEl(),
+      phase: "hoverIn",
+      value: (ctx) => ctx.to({ width: 40 } as MotionVars),
+      targets: {},
+    });
+    expect(warn).toHaveBeenCalled();
+    expect(String(warn.mock.calls[0]?.[0])).toContain("width");
+    warn.mockRestore();
   });
 
   it("exposes fromRest / to / timeline on the factory context", () => {
@@ -349,7 +380,7 @@ describe("MotionContext tween helpers", () => {
     expect(vars.yoyo).toBe(true);
     expectTypeOf<MotionVars>().toHaveProperty("yoyo");
     expectTypeOf<MotionVars>().toHaveProperty("replay");
-    expectTypeOf<MotionVars>().not.toHaveProperty("rotation");
+    expectTypeOf<MotionVars>().toHaveProperty("rotation");
   });
 });
 

@@ -5,7 +5,8 @@ import { expect, screen } from "storybook/test";
 
 import { Text } from "@/components/core/Text";
 
-import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToColorString, hsvaToHex, type HSVA } from ".";
+import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, type HSVA } from ".";
+import { hsvaToColorString, hsvaToHex } from "./colorUtils";
 import { ColorSwatchSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/colorPicker/colorSwatchSlotMotion/gallery";
 import { ColorPickerSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/colorPicker/slotMotion/gallery";
 import { ColorPickerMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/colorPicker/motionController/gallery";
@@ -51,17 +52,18 @@ export const Basic: Story = {
     const [color, setColor] = useState("#3b82f6");
     return (
       <div className="flex flex-col items-center gap-large">
-        <ColorPicker value={color} onValueChange={setColor}>
+        <ColorPicker name="brand" label="Brand" value={color} onValueChange={setColor}>
+          <ColorPicker.Label>Brand</ColorPicker.Label>
           <ColorPicker.Trigger />
           <ColorPicker.Content />
         </ColorPicker>
-        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+        <Text as="p" textStyle="small" className="text-muted font-mono">{color}</Text>
       </div>
     );
   },
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: /Selected color/ }));
-    await expect(screen.getByRole("textbox", { name: "Hex code of the color" })).toBeVisible();
+    await expect(await screen.findByRole("textbox", { name: "Hex code of the color" })).toBeVisible();
   },
 };
 
@@ -93,7 +95,7 @@ export const CompoundContent: Story = {
     const [color, setColor] = useState("#22c55e");
     return (
       <div className="flex flex-col items-center gap-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Custom layout: presets on top, area, then hue — hex removed.
         </Text>
         <ColorPicker value={color} onValueChange={setColor} defaultOpen>
@@ -107,7 +109,7 @@ export const CompoundContent: Story = {
             <CompoundHueSlider />
           </ColorPicker.Content>
         </ColorPicker>
-        <Text as="p" variant="small" className="font-mono text-muted">
+        <Text as="p" textStyle="small" className="font-mono text-muted">
           {color}
         </Text>
       </div>
@@ -161,7 +163,7 @@ export const WithAlpha: Story = {
           <ColorPicker.Trigger />
           <ColorPicker.Content showAlpha />
         </ColorPicker>
-        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+        <Text as="p" textStyle="small" className="text-muted font-mono">{color}</Text>
       </div>
     );
   },
@@ -182,7 +184,7 @@ export const WithPresets: Story = {
           <ColorPicker.Trigger swatchSize="large" />
           <ColorPicker.Content presets={presets} />
         </ColorPicker>
-        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+        <Text as="p" textStyle="small" className="text-muted font-mono">{color}</Text>
       </div>
     );
   },
@@ -202,7 +204,7 @@ export const FullFeatured: Story = {
           <ColorPicker.Trigger swatchSize="large" />
           <ColorPicker.Content showAlpha presets={presets} />
         </ColorPicker>
-        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+        <Text as="p" textStyle="small" className="text-muted font-mono">{color}</Text>
       </div>
     );
   },
@@ -235,7 +237,7 @@ export const Sizes: Story = {
       <div className="flex flex-wrap items-end justify-center gap-2xlarge py-2xlarge">
         {(["small", "base", "mid", "large"] as const).map((size) => (
           <div key={size} className="flex flex-col items-center gap-small">
-            <Text as="span" variant="small" className="capitalize text-muted">
+            <Text as="span" textStyle="small" className="capitalize text-muted">
               {size}
             </Text>
             <ColorPicker
@@ -278,6 +280,12 @@ export const SliderChannels: Story = {
           label="Hue (H)"
           value={hsva.h}
           onValueChange={(h) => setHsva({ ...hsva, h })}
+          classNames={{
+            label: "text-primary",
+            value: "font-mono",
+            track: "rounded-full",
+            thumb: "ring-2 ring-primary/40",
+          }}
         />
         <ColorSlider
           channel="saturation"
@@ -305,7 +313,7 @@ export const SliderChannels: Story = {
             className="h-8 w-8 rounded-small border-token"
             style={{ backgroundColor: hsvaToColorString(hsva) }}
           />
-          <Text as="span" variant="small" className="font-mono text-muted">
+          <Text as="span" textStyle="small" className="font-mono text-muted">
             {hsvaToHex(hsva)}
           </Text>
         </div>
@@ -323,7 +331,7 @@ export const SliderSizes: Story = {
       <div className="flex w-72 flex-col gap-large">
         {sizes.map((size) => (
           <div key={size} className="flex items-center gap-large">
-            <Text as="span" variant="small" className="w-12 text-right text-muted">{size}</Text>
+            <Text as="span" textStyle="small" className="w-12 text-right text-muted">{size}</Text>
             <div className="flex-1">
               <ColorSlider.Track channel="hue" color={hsva} defaultValue={hsva.h} size={size} />
             </div>
@@ -347,7 +355,7 @@ export const Swatches: Story = {
         {/* Sizes */}
         {(["small", "base", "mid", "large"] as const).map((size) => (
           <div key={size} className="flex items-center gap-large">
-            <Text as="span" variant="small" className="w-16 text-right text-muted">{size}</Text>
+            <Text as="span" textStyle="small" className="w-16 text-right text-muted">{size}</Text>
             <div className="flex gap-small">
               {colors.map((c) => (
                 <ColorSwatch key={c} color={c} size={size} shape="rounded" onClick={() => setSelected(c)} selected={selected === c} />
@@ -360,7 +368,7 @@ export const Swatches: Story = {
         <div className="flex flex-wrap gap-large">
           {(["square", "rounded", "circle"] as const).map((shape) => (
             <div key={shape} className="flex flex-col items-center gap-xsmall">
-              <Text as="span" variant="small" className="text-muted">{shape}</Text>
+              <Text as="span" textStyle="small" className="text-muted">{shape}</Text>
               <div className="flex gap-small">
                 {colors.slice(0, 4).map((c) => (
                   <ColorSwatch key={c} color={c} size="mid" shape={shape} onClick={() => setSelected(c)} selected={selected === c} />
@@ -410,6 +418,7 @@ export const CustomClassNames: Story = {
           defaultOpen
           classNames={{
             contentPanel: "border border-primary/30 bg-primary/5",
+            panel: "ring-1 ring-primary/20",
             area: "rounded-base ring-1 ring-primary/20",
             slidersStack: "gap-large",
             hexInput: "border-primary/30 bg-primary/10",

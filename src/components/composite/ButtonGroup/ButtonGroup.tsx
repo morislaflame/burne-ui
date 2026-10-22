@@ -37,7 +37,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
       classNames,
       orientation = "horizontal",
       segmented = false,
-      buttonSize = "base",
+      size = "base",
       variant: variantProp,
       motion,
       motionController,
@@ -57,7 +57,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
       children: _children,
       orientation,
       segmented,
-      buttonSize,
+      size,
       variant,
     });
     const motionDefaults = useMemo(() => resolveButtonGroupMotionDefaults(), []);
@@ -100,7 +100,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
                   <Fragment key={child.key ?? `bg-seg-${i}`}>
                     <ButtonGroupSegmentProvider
                       segment={segment}
-                      buttonSize={buttonSize}
+                      size={size}
                       variant={variant}
                     >
                       {child}
@@ -169,8 +169,8 @@ function ButtonGroupRootSurface({
         variant,
         className,
       })}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ variant })}
     >
       {children}

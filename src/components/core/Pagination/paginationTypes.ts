@@ -7,6 +7,7 @@ import type {
 } from "react";
 import type { KitIconProps } from "@/components/core/utils/kitIcons";
 import type { Prettify } from "@/utils/prettify";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
 export type PaginationClassNames = {
@@ -55,18 +56,28 @@ export type PaginationSummaryPartMotion = PaginationPartMotion & {
 };
  
 export type PaginationMotion = {
-  control?: PaginationPartMotion;
+  /** `Pagination.Previous` button. */
+  previous?: PaginationPartMotion;
+  /** `Pagination.Next` button. */
+  next?: PaginationPartMotion;
+  /** Inactive `Pagination.Page` button. Repeated. */
+  page?: PaginationPartMotion;
+  /** Active `Pagination.Page` (`aria-current="page"`). */
+  pageActive?: PaginationPartMotion;
   previousIcon?: PaginationPartMotion;
   nextIcon?: PaginationPartMotion;
   summary?: PaginationSummaryPartMotion;
   ellipsis?: PaginationPartMotion;
 };
  
+export type PaginationSize = ComponentSize;
+
 export type PaginationContextValue = {
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
   siblingCount: number;
+  size: PaginationSize;
 };
  
 export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
@@ -76,18 +87,18 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   totalPages?: number;
   onPageChange?: (page: number) => void;
   siblingCount?: number;
+  /** Page control scale. Default `base`. */
+  size?: PaginationSize;
   classNames?: Prettify<PaginationClassNames>;
   /**
-   * Per-slot motion (`control`, `previousIcon`, `nextIcon`, `summary`, `ellipsis`).
-   * `Pagination.Content` / `Item` / `Page` are not separate slots (`control` covers buttons).
+   * Per-slot motion (`previous`, `next`, `page`, `pageActive`, `previousIcon`, `nextIcon`, `summary`, `ellipsis`).
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
-   * There is no `root` slot — `play()` skips; use `playSlot("summary")` / `playAll`.
+   * There is no `root` slot — `play()` skips; use `playSlot("previous")` / `playSlot("page")` / `playAll`.
    */
   motion?: Prettify<MotionMapWithEvents<PaginationMotion>>;
   /**
    * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
-   * One handle → this pagination chrome scope (`summary` / `ellipsis`).
-   * Nested Previous / Next / Page are separate scopes — pass a handle there.
+   * One handle → this pagination scope (nav buttons, icons, summary, ellipsis).
    * FLIP on `<ol>` is kit-internal. Not placed on the DOM.
    */
   motionController?: MotionController;
@@ -112,13 +123,9 @@ export type PaginationContentProps = OlHTMLAttributes<HTMLOListElement>;
 export type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
  
 export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  /** Wins over `motion.previous` / `motion.next` on the root. */
   motion?: Prettify<PaginationPartMotion>;
-  /**
-   * Handle for this control's nested scope. `play()` looks for `root` (skip) —
-   * use `playSlot("control")`. Icons live here.
-   */
-  motionController?: MotionController;
-} & MotionStateHostProps;
+};
  
 export type PaginationPageProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -126,14 +133,12 @@ export type PaginationPageProps = Omit<
 > & {
   page: number;
   active?: boolean;
+  /** Renders an `<a>` instead of a button. */
+  href?: string;
   children?: ReactNode;
+  /** Inactive page wins over `motion.page`. Active page wins over `motion.pageActive`. */
   motion?: Prettify<PaginationPartMotion>;
-  /**
-   * Handle for this page button's nested scope. `play()` looks for `root` (skip) —
-   * use `playSlot("control")`. Active page is a `<span>` (no control scope).
-   */
-  motionController?: MotionController;
-} & MotionStateHostProps;
+};
  
 export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<PaginationPartMotion>;
@@ -141,11 +146,15 @@ export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement> & {
  
 export type PaginationPagesProps = Record<string, never>;
  
+export type PaginationButtonSlot = "previous" | "next" | "page";
+
 export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
+  /** Motion slot. The HTML `slot` attribute stays on the button type and is not this. */
+  motionSlot: PaginationButtonSlot;
   motion?: Prettify<PaginationPartMotion>;
-  motionController?: MotionController;
-} & MotionStateHostProps;
+  href?: string;
+};
  
 export type PaginationIconProps = KitIconProps & {
   motion?: Prettify<PaginationPartMotion>;

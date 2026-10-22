@@ -30,7 +30,7 @@ export type {
   SwitchProps,
   SwitchSimpleProps,
   SwitchMotion,
-  SwitchCheckMotion,
+  SwitchPartMotion,
   SwitchVariant,
   KitSwitchVariant,
 } from "./switchTypes";
@@ -46,7 +46,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
       hint,
       error,
       invalid,
-      labelPosition = "right",
+      labelPosition = "end",
       size = "base",
       disabled: disabledRoot,
       className,

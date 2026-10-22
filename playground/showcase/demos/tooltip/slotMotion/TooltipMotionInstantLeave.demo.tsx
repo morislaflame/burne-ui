@@ -3,7 +3,7 @@ import { Tooltip } from "@/components/core/Tooltip";
 
 export function TooltipMotionInstantLeaveDemo() {
   return (
-    <Tooltip delayShowMs={0} motion={{ content: { leave: false } }}>
+    <Tooltip openDelay={0} motion={{ content: { leave: false } }}>
       <Tooltip.Trigger>
         <Button variant="outline" type="button">
           Instant hide

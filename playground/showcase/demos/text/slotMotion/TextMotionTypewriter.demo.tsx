@@ -47,7 +47,7 @@ export function TextMotionTypewriterDemo() {
     <div className="flex justify-center py-large">
       <Text
         ref={textRef}
-        variant="header-2"
+        textStyle="header-2"
         as="p"
         aria-label={SECOND}
         className="min-h-[1.4em]"

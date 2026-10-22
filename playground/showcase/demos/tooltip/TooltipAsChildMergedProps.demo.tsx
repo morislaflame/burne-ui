@@ -15,7 +15,7 @@ export function TooltipAsChildMergedPropsDemo() {
   return (
     <div className="flex flex-col items-center gap-large">
       <p className="text-sm text-muted">{refLabel}</p>
-      <Tooltip delayShowMs={0}>
+      <Tooltip openDelay={0}>
         <Tooltip.Trigger
           ref={triggerRef}
           id="playground-tooltip-trigger"

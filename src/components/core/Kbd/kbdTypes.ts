@@ -6,12 +6,13 @@ import type {
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
 export const KIT_KBD_VARIANTS = ["default", "primary", "outline", "secondary"] as const;
 export type KitKbdVariant = (typeof KIT_KBD_VARIANTS)[number];
 export type KbdVariant = KitKbdVariant | (string & {});
  
-export type KbdSize = "small" | "base" | "mid" | "large";
+export type KbdSize = ComponentSize;
  
 export type KbdClassNames = {
   root?: string;
@@ -90,7 +91,6 @@ export type UseKbdRootStateProps = {
  
 export type UseKbdAnimationsProps = {
   variant: KbdVariant;
-  hoverLift?: boolean;
   motion?: KbdMotion;
   forwardedRef: ForwardedRef<HTMLElement>;
   onPointerOver?: (e: ReactPointerEvent<HTMLElement>) => void;

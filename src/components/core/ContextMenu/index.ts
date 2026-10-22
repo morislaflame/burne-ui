@@ -2,7 +2,7 @@ import { Dropdown } from "@/components/core/Dropdown";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 import {
-  ContextMenuContent,
+  ContextMenuPopover,
   ContextMenuItem,
   ContextMenuRoot,
   ContextMenuTrigger,
@@ -15,7 +15,7 @@ const ContextMenuItemIndicator = Object.assign(Dropdown.ItemIndicator, {
 
 export const ContextMenu = Object.assign(ContextMenuRoot, {
   Trigger: ContextMenuTrigger,
-  Content: ContextMenuContent,
+  Popover: ContextMenuPopover,
   Group: Dropdown.Group,
   Label: Dropdown.Label,
   Separator: Dropdown.Separator,
@@ -26,15 +26,17 @@ export const ContextMenu = Object.assign(ContextMenuRoot, {
   ItemIndicator: ContextMenuItemIndicator,
   Sub: Dropdown.Sub,
   SubTrigger: Dropdown.SubTrigger,
-  SubContent: Dropdown.SubContent,
+  SubPopover: Dropdown.SubPopover,
 });
 
 export type {
   ContextMenuProps,
   ContextMenuClassNames,
   ContextMenuTriggerProps,
-  ContextMenuContentProps,
+  ContextMenuPopoverProps,
 } from "./contextMenuTypes";
+
+export type { DropdownMotion as ContextMenuMotion } from "@/components/core/Dropdown";
 
 export type {
   DropdownGroupProps as ContextMenuGroupProps,
@@ -47,5 +49,5 @@ export type {
   DropdownItemIndicatorProps as ContextMenuItemIndicatorProps,
   DropdownSubProps as ContextMenuSubProps,
   DropdownSubTriggerProps as ContextMenuSubTriggerProps,
-  DropdownSubContentProps as ContextMenuSubContentProps,
+  DropdownSubPopoverProps as ContextMenuSubPopoverProps,
 } from "@/components/core/Dropdown";

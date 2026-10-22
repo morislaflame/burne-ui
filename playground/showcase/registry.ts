@@ -52,6 +52,14 @@ import { SkeletonShowcase } from "./pages/SkeletonShowcase";
 import { SliderShowcase } from "./pages/SliderShowcase";
 import { ScrollAreaShowcase } from "./pages/ScrollAreaShowcase";
 import { SurfaceShowcase } from "./pages/SurfaceShowcase";
+import { StackShowcase } from "./pages/StackShowcase";
+import { GridShowcase } from "./pages/GridShowcase";
+import { ContainerShowcase } from "./pages/ContainerShowcase";
+import { AppShellShowcase } from "./pages/AppShellShowcase";
+import { AspectRatioShowcase } from "./pages/AspectRatioShowcase";
+import { HeaderShowcase } from "./pages/HeaderShowcase";
+import { ResizableShowcase } from "./pages/ResizableShowcase";
+import { SidebarShowcase } from "./pages/SidebarShowcase";
 import { SwitchShowcase } from "./pages/SwitchShowcase";
 import { TableShowcase } from "./pages/TableShowcase";
 import { TabsShowcase } from "./pages/TabsShowcase";
@@ -166,6 +174,20 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
       { id: "scroll-area", label: "ScrollArea", Page: ScrollAreaShowcase },
       { id: "avatar", label: "Avatar", Page: AvatarShowcase },
       { id: "skeleton", label: "Skeleton", Page: SkeletonShowcase },
+    ],
+  },
+  {
+    id: "layout",
+    label: "Layout",
+    pages: [
+      { id: "stack", label: "Stack", Page: StackShowcase },
+      { id: "grid", label: "Grid", Page: GridShowcase },
+      { id: "container", label: "Container", Page: ContainerShowcase },
+      { id: "header", label: "Header", Page: HeaderShowcase },
+      { id: "sidebar", label: "Sidebar", Page: SidebarShowcase },
+      { id: "app-shell", label: "AppShell", Page: AppShellShowcase },
+      { id: "aspect-ratio", label: "AspectRatio", Page: AspectRatioShowcase },
+      { id: "resizable", label: "Resizable", Page: ResizableShowcase },
     ],
   },
   {

@@ -14,7 +14,7 @@ export function SurfaceMotionRootWaveDemo() {
         },
       }}
     >
-      <Text variant="base">Surface wave</Text>
+      <Text textStyle="base">Surface wave</Text>
     </Surface>
   );
 }

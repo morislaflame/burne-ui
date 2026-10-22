@@ -6,6 +6,7 @@ import type {
   LabelHTMLAttributes,
   PointerEvent,
   ReactNode,
+  Ref,
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
@@ -13,14 +14,15 @@ import type { Prettify } from "@/utils/prettify";
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
-import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
- 
 export const KIT_CHECKBOX_VARIANTS = ["default", "secondary", "outline"] as const;
 export type KitCheckboxVariant = (typeof KIT_CHECKBOX_VARIANTS)[number];
 export type CheckboxVariant = KitCheckboxVariant | (string & {});
  
-export type CheckboxSize = "small" | "base" | "mid" | "large";
+export type CheckboxSize = ComponentSize;
+export type CheckboxLabelPosition = IconPosition;
  
 export type CheckboxClassNames = {
   root?: string;
@@ -40,7 +42,7 @@ export type CheckboxClassNames = {
   input?: string;
 };
  
-export type CheckboxCheckMotion = {
+export type CheckboxPartMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
   enter?: MotionValue;
@@ -49,12 +51,12 @@ export type CheckboxCheckMotion = {
  
 /** Root map. Indicator keys → SelectionIndicator; chrome (`label` / `hint` / `error`) is Checkbox's own scope. */
 export type CheckboxMotion = {
-  indicator?: CheckboxCheckMotion;
-  indicatorFill?: CheckboxCheckMotion;
-  indicatorMark?: CheckboxCheckMotion;
-  label?: CheckboxCheckMotion;
-  hint?: CheckboxCheckMotion;
-  error?: CheckboxCheckMotion;
+  indicator?: CheckboxPartMotion;
+  indicatorFill?: CheckboxPartMotion;
+  indicatorMark?: CheckboxPartMotion;
+  label?: CheckboxPartMotion;
+  hint?: CheckboxPartMotion;
+  error?: CheckboxPartMotion;
 };
  
 export type CheckboxProps = Omit<
@@ -71,11 +73,14 @@ export type CheckboxProps = Omit<
     /** Mixed selection. Sets `input.indeterminate` and `data-state="indeterminate"`. */
     indeterminate?: boolean;
     size?: CheckboxSize;
+    /** Label side. Default `end` (control, then label). */
+    labelPosition?: CheckboxLabelPosition;
     variant?: CheckboxVariant;
-    status?: SemanticStatus;
     icon?: ReactNode;
     className?: string;
     classNames?: Prettify<CheckboxClassNames>;
+    /** Native `<input>`. Root `ref` stays on the `<label>` or compound `<fieldset>`. Merged with the Form field ref. */
+    inputRef?: Ref<HTMLInputElement>;
     /**
      * Per-slot motion. Indicator keys map onto SelectionIndicator; chrome (`label` / `hint` / `error`)
      * is Checkbox's own scope. `events` — namespaced app commands for `MotionController.play`.
@@ -106,6 +111,8 @@ export type CheckboxIndicatorClassNames = SelectionIndicatorClassNames &
  
 export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  /** Checked-state icon. Wins over the root `icon`. */
+  icon?: ReactNode;
   size?: CheckboxSize;
   classNames?: Prettify<CheckboxIndicatorClassNames>;
   motion?: Prettify<MotionMapWithEvents<SelectionIndicatorMotion>>;
@@ -122,15 +129,15 @@ export type CheckboxContentProps = HTMLAttributes<HTMLDivElement> & {
 };
  
 export type CheckboxLabelProps = Omit<LabelProps, "htmlFor"> & {
-  motion?: Prettify<CheckboxCheckMotion>;
+  motion?: Prettify<CheckboxPartMotion>;
 };
  
-export type CheckboxHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
-  motion?: Prettify<CheckboxCheckMotion>;
+export type CheckboxHintProps = Omit<FieldHintProps, "id" | "as" | "motion" | "status"> & {
+  motion?: Prettify<CheckboxPartMotion>;
 };
  
 export type CheckboxErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
-  motion?: Prettify<CheckboxCheckMotion>;
+  motion?: Prettify<CheckboxPartMotion>;
 };
  
 export type CheckboxFieldContextValue = {
@@ -139,6 +146,7 @@ export type CheckboxFieldContextValue = {
   errorId: string;
   labelId: string;
   size: CheckboxSize;
+  labelPosition: CheckboxLabelPosition;
   variant: CheckboxVariant;
   mergedChecked: boolean;
   indeterminate: boolean;
@@ -153,7 +161,7 @@ export type CheckboxFieldContextValue = {
   errorConnected: boolean;
   labelConnected: boolean;
   accessibleName?: string;
-  status: SemanticStatus;
+  isDanger: boolean;
   icon?: ReactNode;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   inputProps: {
@@ -167,7 +175,7 @@ export type CheckboxFieldContextValue = {
     readOnly?: boolean;
     onBlur?: InputHTMLAttributes<HTMLInputElement>["onBlur"];
     onFocus?: InputHTMLAttributes<HTMLInputElement>["onFocus"];
-    inputRef?: (node: HTMLInputElement | null) => void;
+    inputRef?: Ref<HTMLInputElement>;
     ariaInvalid?: boolean | "false" | "true" | "grammar" | "spelling";
   };
 };

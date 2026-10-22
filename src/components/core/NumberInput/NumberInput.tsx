@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label/labelContext";
 import { dataFlag } from "@/components/core/utils/dataContract";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { dataInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 import { cn } from "@/utils/cn";
 
@@ -22,7 +24,7 @@ import { NUMBER_INPUT_ROOT_CLASS } from "./numberInputStyles";
 import type { NumberInputProps } from "./numberInputTypes";
 import { useNumberInputRootState } from "./useNumberInputRootState";
 
-export function NumberInputRoot({
+export const NumberInputRoot = forwardRef(function NumberInputRoot({
   children,
   className,
   classNames,
@@ -33,7 +35,6 @@ export function NumberInputRoot({
   id,
   name,
   required,
-  status,
   size = "base",
   disabled,
   readOnly,
@@ -45,13 +46,19 @@ export function NumberInputRoot({
   min,
   max,
   step,
+  formatOptions,
+  locale,
   motion,
   motionController,
   motionState,
   motionPayload,
   playInitialState,
+  autoFocus,
+  tabIndex,
   ...rest
-}: NumberInputProps) {
+}: NumberInputProps, ref: ForwardedRef<HTMLDivElement>) {
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   const resolvedVariant = useSkinVariant(variant);
   const state = useNumberInputRootState({
     children,
@@ -62,7 +69,6 @@ export function NumberInputRoot({
     id,
     name,
     required,
-    status,
     size,
     disabled,
     readOnly,
@@ -74,6 +80,8 @@ export function NumberInputRoot({
     min,
     max,
     step,
+    formatOptions,
+    locale,
   });
 
   const motionDefaults = useMemo(
@@ -111,10 +119,10 @@ export function NumberInputRoot({
               size={size}
               className={cn(NUMBER_INPUT_ROOT_CLASS, classNames?.root, className)}
               {...rest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size,
                 variant: resolvedVariant,
-                status: state.contextValue.status,
               })}
               data-invalid={dataInvalidValue(state.contextValue.isInvalid)}
               data-disabled={dataFlag(state.contextValue.disabled)}
@@ -132,6 +140,6 @@ export function NumberInputRoot({
       </NumberInputClassNamesProvider>
     </NumberInputProvider>
   );
-}
+});
 
 NumberInputRoot.displayName = "NumberInput";

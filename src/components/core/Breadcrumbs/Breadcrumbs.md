@@ -65,7 +65,7 @@ type BreadcrumbItem = {
 |-------|------------|
 | `Breadcrumbs.List` | `<ol>` с auto-walk `Breadcrumbs.Item` |
 | `Breadcrumbs.Item` | Marker для compound (рендерится через walk); nested motion scope (`motionController`, `playSlot("itemLink")`) |
-| `Breadcrumbs.Separator` | Кастомный chevron (в simple/compound pieces — `IoChevronForward`) |
+| `Breadcrumbs.Separator` | Кастомный chevron. `ref` — на `<span>`-обёртке (в simple/compound pieces кит сам рисует `IoChevronForward`) |
 
 `Breadcrumbs.Item` в compound — declarative marker (`return null`), данные собираются через `displayName` walk.
 
@@ -110,6 +110,8 @@ type BreadcrumbItem = {
 Слота `root` нет: `play()` skip. `playSlot("list")` / `playAll` — chrome (`list` / repeated `separator`), не nested crumbs. Каждый интерактивный crumb — **вложенный** scope: свой `motionController` на `Breadcrumbs.Item`, `playSlot("itemLink")`. Один handle ≠ два scope.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`breadcrumbs:nudge`, `breadcrumbs:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Breadcrumbs.List`) видит Breadcrumbs; внутри Item — scope crumb.
+
+Тройка на корне, на объекте `items[]` и на `Breadcrumbs.Item`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Breadcrumbs, createMotionEvents, useMotionControllerHandle } from "burne-ui";

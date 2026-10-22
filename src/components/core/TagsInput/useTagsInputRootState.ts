@@ -1,11 +1,11 @@
 import { useCallback, useId, useMemo, type ReactNode } from "react";
 
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 
 import { tagsInputDescribedBy, tagsInputFieldIds } from "./tagsInputA11y";
 import { tagsFromFormValue, tagsInputAppend, tagsInputRemove, tagsInputRemoveLast } from "./tagsInputAPI";
@@ -20,11 +20,13 @@ export type UseTagsInputRootStateProps = {
   id?: string;
   name?: string;
   required?: boolean;
-  status?: InputStatus;
   size?: InputSize;
   disabled?: boolean;
   readOnly?: boolean;
   placeholder?: string;
+  inputValue?: string;
+  defaultInputValue?: string;
+  onInputValueChange?: (value: string) => void;
   values?: string[];
   defaultValues?: string[];
   onValuesChange?: (values: string[]) => void;
@@ -41,11 +43,13 @@ export function useTagsInputRootState({
   id,
   name,
   required = false,
-  status = "default",
   size = "base",
   disabled = false,
   readOnly = false,
   placeholder,
+  inputValue: inputValueProp,
+  defaultInputValue,
+  onInputValueChange,
   values: valuesProp,
   defaultValues = [],
   onValuesChange,
@@ -98,6 +102,11 @@ export function useTagsInputRootState({
     setValues(tagsInputRemoveLast(values));
   }, [blocked, setValues, values]);
 
+  const [inputValue, setInputValue] = useControllableState({
+    value: inputValueProp,
+    defaultValue: defaultInputValue ?? "",
+    onChange: onInputValueChange,
+  });
   const labelConnected = isCompound ? hasCompoundChild(children, "TagsInputLabel") : label != null;
   const hintConnected = isCompound ? hasCompoundChild(children, "TagsInputHint") : hint != null;
   const errorConnected = isCompound ? hasCompoundChild(children, "TagsInputError") : error != null;
@@ -105,8 +114,6 @@ export function useTagsInputRootState({
     invalid,
     errorConnected: error != null || errorConnected,
   });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
-
   const contextValue: TagsInputContextValue = useMemo(
     () => ({
       values,
@@ -118,8 +125,9 @@ export function useTagsInputRootState({
       atMax: max != null && values.length >= max,
       size,
       variant,
-      status: paintedStatus,
       placeholder,
+      inputValue,
+      setInputValue,
       inputId,
       labelId: ids.labelId,
       hintId: ids.hintId,
@@ -149,17 +157,18 @@ export function useTagsInputRootState({
       ids.hintId,
       ids.labelId,
       inputId,
+      inputValue,
       isInvalid,
       label,
       labelConnected,
       max,
       name,
-      paintedStatus,
       placeholder,
       readOnly,
       remove,
       removeLast,
       required,
+      setInputValue,
       size,
       values,
       variant,

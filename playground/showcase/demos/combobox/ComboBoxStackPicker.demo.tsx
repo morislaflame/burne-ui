@@ -52,20 +52,20 @@ function ActionListItems() {
 }
 
 export function ComboBoxStackPickerDemo() {
-  const [value, setValue] = useState("duplicate");
+  const [value, setValue] = useState<string | null>("duplicate");
 
   return (
     <ComboBox
-      options={COMBO_OPTIONS}
+      items={COMBO_OPTIONS}
       value={value}
       onValueChange={setValue}
       className="w-full max-w-sm"
     >
       <ComboBox.Label>Fast action</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select or search…" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover>
         <ActionListItems />
       </ComboBox.Popover>

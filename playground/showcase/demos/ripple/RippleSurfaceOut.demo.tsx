@@ -6,10 +6,10 @@ export function RippleSurfaceOutDemo() {
   return (
     <Surface variant="tertiary" padding="large" className="relative w-full max-w-xs">
       <Ripple color="primarySolid" direction="out" duration={520} />
-      <Text as="p" variant="base" className="relative z-[1] font-medium">
+      <Text as="p" textStyle="base" className="relative z-[1] font-medium">
         Ripple direction=&quot;out&quot;
       </Text>
-      <Text as="p" variant="small" className="relative z-[1] text-muted">
+      <Text as="p" textStyle="small" className="relative z-[1] text-muted">
         Slow wave on Surface-panels.
       </Text>
     </Surface>

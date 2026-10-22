@@ -54,7 +54,7 @@ import { Table } from "burne-ui/Table";
 
 `CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin`). Kit motion recipes регистрируются лениво из `runMotionPhase` при первом play (нет top-level `registerKitMotionRecipes()`). `sideEffects` — только CSS.
 
-Опубликованный ESM — `preserveModules` (дерево файлов, не один `index.js`). `import { cn } from "burne-ui"` не тянет компоненты и GSAP. `"use client"` стоит на модулях с React/GSAP, не на barrel / `cn` / токенах / `ThemeScript`.
+Опубликованный пакет — **только ESM** (`"type": "module"`, без `.cjs`). `engines.node` — `>=22`. `require("burne-ui")` работает в Node 22 через `require(esm)`; иначе — динамический `import()`. Сборка — `preserveModules` (дерево файлов, не один `index.js`). `import { cn } from "burne-ui"` не тянет компоненты и GSAP. `"use client"` стоит на модулях с React/GSAP, не на barrel / `cn` / токенах / `ThemeScript`.
 
 ### Браузеры
 
@@ -113,7 +113,10 @@ import "burne-ui/styles.css";
 @source "../lib/**/*.{tsx,ts}";
 
 @import "burne-ui/styles.css";
+@import "burne-ui/tailwind.css";
 ```
+
+`styles.css` — токены, база и классы, которые кит уже собрал. `tailwind.css` — `@theme inline` и все `@utility` кита, без preflight. Tailwind приложения из этого файла собирает свои классы, в том числе `md:shadow-token-mid` и `divide-x-token`.
 
 ### Зачем не сканировать весь `node_modules/burne-ui/dist`
 
@@ -153,7 +156,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-`ThemeScript` — блокирующий инлайн-скрипт: читает `localStorage` и ставит `data-theme` **до первой отрисовки**. Без него SSR-HTML всегда тёмный, и у пользователя со светлой темой будет вспышка. Компонент без хуков: SSR всё равно отдаёт `<script>` в HTML (даже через client-entry пакета).
+`ThemeScript` — блокирующий инлайн-скрипт: читает `localStorage` и ставит `data-theme` **до первой отрисовки**. Без него SSR-HTML всегда тёмный, и у пользователя со светлой темой будет вспышка. Модуль без `"use client"`: его можно импортировать из серверного `layout.tsx`.
 
 `suppressHydrationWarning` на `<html>` нужен, потому что скрипт меняет `data-theme` до гидрации React.
 
@@ -175,18 +178,72 @@ getThemeScript({ storageKey: "burne-ui-theme", defaultTheme: "dark" });
 
 ### `"use client"` в пакете
 
-Собранные entry (`burne-ui`, `burne-ui/internal`) начинаются с `"use client";`. Импорт компонентов из Server Component (например `app/page.tsx`) создаёт client boundary автоматически — локальная обёртка не обязательна:
+Barrel `burne-ui` / `burne-ui/internal`, `cn`, токены и `ThemeScript` **не** начинаются с `"use client"`. Директива стоит на модулях с React / GSAP и на compound-фасадах (`Object.assign` на клиентский импорт), например `Button/index.js`, `Dialog.js`. `burne-ui/authoring` — клиентский вход: `createMotionScope` (тип `MotionScope` для `.d.ts` пакета), `useMotionPart`, `mergeRefs`, `mergeAsChildProps`, `useControllableState`, `focusOnOpen` / `focusPanelOnOpen` / `focusKeyboard`, хелперы `data-*` и `useSkinSlot`. Типы того же входа: `MotionController`, `MotionMapWithEvents`, `MotionPartPhases`, `MotionStateHostProps`, `MotionScopeValue`, `Prettify`. `MotionRun` и `MotionBroadcastOptions` отдаёт корень `burne-ui`. Снимок рантайм-имён — `docs/authoring-api.snapshot.txt`. Слоты скина стороннего пакета — `SkinSlotRegistry` и `registerSkinSlots` в `burne-ui/skin`. Страница сайта — `/docs/motion-authoring`. `burne-ui/studio` в 2.x экспериментальный до поставки студии: снимок `docs/studio-api.snapshot.txt` фиксирует имена, форма `validateDesign` и литералы контролов схемы остаются свободными. `defineSkin` / `defineSkinRecipe` импортируются из `burne-ui/skin`.
+
+**Simple API** с сериализуемыми пропами можно рендерить из Server Component. Тот же импорт с подпути (`burne-ui/Button`):
 
 ```tsx
-// app/page.tsx — можно без "use client"
-import { Button } from "burne-ui";
+// app/page.tsx — без "use client"
+import { Alert, Button, Text } from "burne-ui";
 
 export default function Page() {
-  return <Button variant="primary">Нажми меня</Button>;
+  return (
+    <>
+      <Alert title="Готово" description="Только сериализуемые пропы." />
+      <Button variant="primary">Нажми меня</Button>
+      <Text>Заголовок с сервера</Text>
+    </>
+  );
 }
 ```
 
-`"use client"` в **вашем** файле нужен только если там же есть хуки / браузерные API (`useState`, `configureMotion` в `useLayoutEffect`, и т.п.) — как в client-провайдере ниже.
+**Compound** (`Card.Title`, `Dialog.Panel`) и пропы-функции (`onClick`, фабрики в `motion`, `motionController`, render-prop) — только в файле с `"use client"`. React не даёт читать свойство клиентского модуля с сервера:
+
+```text
+Cannot access Card.Title on the server. You cannot dot into a client module from a server component.
+```
+
+Своя компоновка частей на серверной странице — маленькая client-обёртка, серверный контент через `children`:
+
+```tsx
+// components/pricing-card.tsx
+"use client";
+
+import { Card } from "burne-ui";
+
+export function PricingCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>{title}</Card.Title>
+      </Card.Header>
+      {children}
+    </Card>
+  );
+}
+```
+
+```tsx
+// app/page.tsx — без "use client"
+import { Text } from "burne-ui";
+import { PricingCard } from "@/components/pricing-card";
+
+export default function Page() {
+  return (
+    <PricingCard title="Pro">
+      <Text>Этот абзац пришёл с сервера.</Text>
+    </PricingCard>
+  );
+}
+```
+
+`"use client"` в **вашем** файле нужен ещё если там же есть хуки / браузерные API (`useState`, `configureMotion` в `useLayoutEffect`) — как в client-провайдере ниже. Плоские имена вроде `CardTitle` кит не экспортирует.
 
 ---
 
@@ -334,10 +391,10 @@ export default burneTheme;
 
 ### Devtools темы
 
-Установите редактор как dev dependency:
+Редактор ставится как dev dependency. Для burne-ui 2.0 это `burne-ui-devtools@0.2`. Версии 0.2 в npm ещё нет: опубликованная `0.1.5` собрана под burne-ui 1.x (peer `^1.6.2`) и рядом с 2.0 не устанавливается.
 
 ```bash
-npm install -D burne-ui-devtools
+npm install -D burne-ui-devtools@0.2
 ```
 
 Компонент должен находиться внутри `BurneUIProvider`: он использует runtime preview Provider,
@@ -489,7 +546,7 @@ export function ThemeToggle() {
 }
 ```
 
-Чтобы **сохранить fluid** (адаптацию отступов/размеров к ширине экрана), не пишите fixed rem вручную — задайте knobs в theme config (`tokens.space` / `size` / `radius` / `shadowOpacity` / `shadowBlur` / `shadowSpread` / `shadowOffsetX` / `shadowOffsetY`). `applyThemeTokens` сам пишет scaled `clamp` и shadow-knobs (`--shadow-opacity|blur|spread|offset-*`).
+Ручки `tokens.space` / `size` / `radius` пишут фиксированный `rem`, как лист кита. `applyThemeTokens` и `exportThemeCss` ставят одно и то же значение. Fluid — отдельный opt-in: `--space: var(--space-fluid)`, `--size: var(--size-fluid)`, `--radius: var(--radius-fluid)`. Shadow-knobs (`--shadow-opacity|blur|spread|offset-*`) по-прежнему множители.
 
 `applyThemeTokens` / theme config пишут **инлайн только токены, отличающиеся от дефолтов кита**. Остальные переменные остаются из `styles.css` — точечный CSS-оверрайд (`--color-primary` в файле выше) по-прежнему работает для всего, что не задано в конфиге.
 
@@ -650,6 +707,25 @@ API: `toast.show`, `toast.success`, `toast.danger`, `toast.warning`, `toast.info
 
 ---
 
+## 10. Пакет компонентов
+
+`create-burne-app --template component-package` собирает библиотеку поверх кита: peer `burne-ui@^2.0.0`, сборка `tsc`, Storybook, контракт слотов.
+
+```bash
+npm create burne-app@latest my-notes -- --template component-package
+```
+
+В шаблоне `Callout`: simple `label` и compound `Callout.Title`, `classNames` (`root`, `title`), `motion` и `motionController` через `burne-ui/authoring`. `npm test` проверяет то же, что китовый контракт слотов: слот и часть на одном узле, `ref` на этом узле, `motionController.getTarget` находит слот, пользовательский `className` на `root` стоит после `classNames.root`.
+
+Стили пакета Tailwind видит строкой `@source`. CLI подставляет имя пакета:
+
+```css
+@source "../node_modules/<name>/src/**/*.{tsx,ts}";
+```
+
+Слот скина: `declare module "burne-ui/skin"` (`SkinSlotRegistry`) и `registerSkinSlots(["callout.root", "callout.title"])`. Проверка файла скина: `burne-ui skin validate --slot callout.root --slot callout.title`.
+
+---
 
 ## 11. Утилита `cn`
 
@@ -664,6 +740,10 @@ import { cn } from "burne-ui";
 ---
 
 ## 12. Частые проблемы
+
+### `You cannot dot into a client module`
+
+Next.js пишет `Cannot access Card.Title on the server` (или другое `X.Y`), если compound-часть читают из Server Component. Simple API с сериализуемыми пропами остаётся на сервере. Своя раскладка частей — client-обёртка, контент с сервера через `children`. Разбор и пример `PricingCard` — в [§4](#use-client-в-пакете).
 
 ### Стили «сломаны», компонент без оформления
 
@@ -714,6 +794,7 @@ import { cn } from "burne-ui";
 - [ ] Tailwind v4: `@source` на код приложения
 - [ ] Актуальный `burne-ui` (gloss blur CSS + Button async first-paint hide); для тяжёлых demo можно `ssr: false`
 - [ ] (SSR / Next.js) `ThemeScript` в root layout + `suppressHydrationWarning` на `<html>`
+- [ ] (SSR / Next.js) Simple API на сервере; compound и обработчики — в client-файле (см. [`"use client"`](#use-client-в-пакете))
 - [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
 - [ ] (Опционально) motion: `config.motion` в `burne-theme.ts` / проп `motion` на `BurneUIProvider`, либо app default `configureMotion(...)` в client-провайдере через `useLayoutEffect`
 - [ ] (Если нужны toast) `Toast.Provider` в корне

@@ -1,5 +1,7 @@
+import { forwardRef, useRef, type ForwardedRef } from "react";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
  
@@ -18,7 +20,6 @@ export type {
   TimeFieldLabelProps,
   TimeFieldProps,
   TimeFieldSize,
-  TimeFieldStatus,
   TimeFieldVariant,
   TimeFieldMotion,
   TimeFieldPartMotion,
@@ -26,7 +27,7 @@ export type {
  
 export { TimeFieldControl, TimeFieldError, TimeFieldHint, TimeFieldLabel } from "./timeFieldParts";
  
-export function TimeFieldRoot({
+export const TimeFieldRoot = forwardRef(function TimeFieldRoot({
   children,
   label,
   hint,
@@ -36,7 +37,6 @@ export function TimeFieldRoot({
   classNames,
   id: idProp,
   required = false,
-  status = "default",
   size = "base",
   variant,
   value,
@@ -44,6 +44,10 @@ export function TimeFieldRoot({
   onValueChange,
   format,
   disabled,
+  readOnly,
+  name,
+  autoFocus,
+  tabIndex,
   compact = false,
   prefix,
   suffix,
@@ -54,7 +58,9 @@ export function TimeFieldRoot({
   motionPayload,
   playInitialState,
   ...rest
-}: TimeFieldProps) {
+}: TimeFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   const state = useTimeFieldRootState({
     children,
     label,
@@ -63,17 +69,10 @@ export function TimeFieldRoot({
     invalid,
     id: idProp,
     required,
-    status,
     size,
     variant,
     compact,
   });
-  const isInvalid = useResolvedFieldInvalid({
-    invalid,
-    errorConnected: error != null,
-  });
-  const paintedStatus = visualStatusForInvalid(state.status, isInvalid, "default");
- 
   const body = state.isCompound ? (
     children
   ) : (
@@ -89,8 +88,9 @@ export function TimeFieldRoot({
         onValueChange,
         format,
         disabled,
+        readOnly,
+        name,
         size: state.size,
-        status: state.status,
         variant: state.variant,
         compact: state.compact,
         prefix,
@@ -123,10 +123,10 @@ export function TimeFieldRoot({
               className,
             })}
             {...rest}
+            ref={mergeRefs(ref, focusRef)}
             {...dataVariantProps({
               size: state.size,
               variant: state.variant,
-              status: paintedStatus,
             })}
           >
             {body}
@@ -136,7 +136,7 @@ export function TimeFieldRoot({
       </TimeFieldClassNamesProvider>
     </TimeFieldFieldProvider>
   );
-}
+});
  
 TimeFieldRoot.displayName = "TimeField";
  

@@ -4,6 +4,7 @@ import type {
   TdHTMLAttributes,
   ThHTMLAttributes,
 } from "react";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
@@ -18,6 +19,8 @@ export type SortDescriptor = { column: string; direction: SortDirection };
 export const KIT_TABLE_VARIANTS = ["default", "secondary", "toned"] as const;
 export type KitTableVariant = (typeof KIT_TABLE_VARIANTS)[number];
 export type TableVariant = KitTableVariant | (string & {});
+
+export type TableSize = ComponentSize;
  
 export type SelectionMode = "none" | "single" | "multiple";
  
@@ -72,6 +75,24 @@ export type TableMotion = {
  
 export type TableProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TableVariant;
+  /** Cell scale. Default `base` keeps the current padding and `text-small`. */
+  size?: TableSize;
+  selectionMode?: SelectionMode;
+  selectedKeys?: Selection;
+  defaultSelectedKeys?: Selection;
+  onSelectionChange?: (keys: Selection) => void;
+  sortDescriptor?: SortDescriptor;
+  defaultSortDescriptor?: SortDescriptor;
+  onSortChange?: (descriptor: SortDescriptor) => void;
+  /** Rows that cannot be selected or focused. Keys match `Table.Row` `id`. */
+  disabledKeys?: ReadonlySet<string | number> | readonly (string | number)[];
+  /**
+   * Keeps the header stuck to the scrollport. Drops `overflow-clip` on the root
+   * and bounds the scroll container so sticky can engage.
+   */
+  stickyHeader?: boolean;
+  /** Drag a column edge to set its width. The column needs `id`. */
+  columnResize?: boolean;
   classNames?: Prettify<TableClassNames>;
   /**
    * Per-slot motion (`root`, `scrollContainer`, `content`, `header`, `headerRow`, `body`, `footer`, `row`, `column`, `columnSortIcon`, `cell`, `label`, `caption`, `empty`).
@@ -95,21 +116,12 @@ export type TableScrollContainerProps = HTMLAttributes<HTMLDivElement> & {
  
 export type TableContentProps = HTMLAttributes<HTMLTableElement> & {
   "aria-label"?: string;
-  selectionMode?: SelectionMode;
-  selectedKeys?: Selection;
-  defaultSelectedKeys?: Selection;
-  onSelectionChange?: (keys: Selection) => void;
-  sortDescriptor?: SortDescriptor;
-  defaultSortDescriptor?: SortDescriptor;
-  onSortChange?: (descriptor: SortDescriptor) => void;
   motion?: Prettify<TablePartMotion>;
 };
  
-export type TableHeaderProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "children"> & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  columns?: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  children?: ReactNode | ((column: any) => ReactNode);
+export type TableHeaderProps<TColumn = unknown> = Omit<HTMLAttributes<HTMLTableSectionElement>, "children"> & {
+  columns?: readonly TColumn[];
+  children?: ReactNode | ((column: TColumn) => ReactNode);
   motion?: Prettify<TablePartMotion>;
 };
  
@@ -135,8 +147,8 @@ export type TableCaptionProps = HTMLAttributes<HTMLTableCaptionElement> & {
  
 export type TableColumnProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "children"> & {
   id?: string;
-  allowsSorting?: boolean;
-  isRowHeader?: boolean;
+  sortable?: boolean;
+  rowHeader?: boolean;
   /**
    * Replaces the default sort chevron. Pass `null` to hide.
    * Render prop receives the current `sortDirection`.
@@ -155,11 +167,9 @@ export type TableVirtualMove = {
   jump: (index: number) => void;
 };
 
-export type TableBodyProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "children"> & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items?: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  children?: ReactNode | ((item: any) => ReactNode);
+export type TableBodyProps<TItem = unknown> = Omit<HTMLAttributes<HTMLTableSectionElement>, "children"> & {
+  items?: readonly TItem[];
+  children?: ReactNode | ((item: TItem) => ReactNode);
   renderEmptyState?: () => ReactNode;
   /**
    * Mount only the visible `items` rows. The scrollport is the nearest
@@ -204,6 +214,11 @@ export type TableContentContextValue = {
   claimFocusedRowKey: (key: string | number) => void;
   /** External store for per-row selection / roving focus (avoids N-row context churn). */
   rowStore: TableRowSelectionStore;
+  isRowDisabled: (key: string | number) => boolean;
+  stickyHeader: boolean;
+  columnResize: boolean;
+  columnWidths: Readonly<Record<string, number>>;
+  setColumnWidth: (id: string, width: number) => void;
 };
  
 export type TableRowSelectionStore = {

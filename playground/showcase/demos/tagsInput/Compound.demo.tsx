@@ -4,7 +4,7 @@ export function TagsInputCompoundDemo() {
   return (
     <TagsInput className="max-w-xs" defaultValues={["design"]}>
       <TagsInput.Label>Topics</TagsInput.Label>
-      <TagsInput.Control />
+      <TagsInput.Shell />
       <TagsInput.Hint>Label, control, and hint in this order.</TagsInput.Hint>
     </TagsInput>
   );

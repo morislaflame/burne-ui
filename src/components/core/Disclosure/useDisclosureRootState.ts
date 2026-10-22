@@ -25,8 +25,12 @@ export function useDisclosureRootState({
 }: UseDisclosureRootStateProps) {
   const groupCtx = useDisclosureGroupContext();
  
-  const isGrouped = groupCtx !== null && value !== undefined && groupCtx.accordion;
-  const groupOpen = isGrouped ? groupCtx!.openValue === value : undefined;
+  const isGrouped = groupCtx !== null && value !== undefined;
+  const groupOpen = !isGrouped
+    ? undefined
+    : groupCtx.selectionMode === "multiple"
+      ? groupCtx.values.includes(value)
+      : groupCtx.openValue === value;
  
   const [internal, setInternal] = useState(defaultOpen);
  
@@ -35,7 +39,11 @@ export function useDisclosureRootState({
   const setOpen = useCallback(
     (next: boolean) => {
       if (isGrouped) {
-        groupCtx!.setOpenValue(next ? (value ?? null) : null);
+        if (groupCtx.selectionMode === "multiple" && value != null) {
+          groupCtx.setItemOpen(value, next);
+        } else {
+          groupCtx.setOpenValue(next ? (value ?? null) : null);
+        }
       } else {
         if (openProp === undefined) setInternal(next);
         onOpenChange?.(next);

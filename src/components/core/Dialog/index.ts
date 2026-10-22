@@ -1,7 +1,8 @@
-import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogRoot, DialogTitle, DialogTrigger } from "./Dialog";
+import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogOverlay, DialogPanel, DialogRoot, DialogTitle, DialogTrigger } from "./Dialog";
  
 export const Dialog = Object.assign(DialogRoot, {
   Trigger: DialogTrigger,
+  Overlay: DialogOverlay,
   Panel: DialogPanel,
   Content: DialogContent,
   Header: DialogHeader,
@@ -15,6 +16,7 @@ export const Dialog = Object.assign(DialogRoot, {
  
 export type {
   DialogProps,
+  DialogOverlayProps,
   DialogPanelProps,
   DialogTriggerProps,
   DialogVariant,
@@ -32,6 +34,4 @@ export type {
   DialogLifecycleMotion,
   DialogPartMotion,
 } from "./dialogTypes";
- 
-export { DialogContent };
  

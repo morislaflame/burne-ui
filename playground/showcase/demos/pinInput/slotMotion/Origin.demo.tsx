@@ -8,7 +8,7 @@ export function PinInputMotionOriginDemo() {
       label="Code"
       length={4}
       motion={{
-        field: {
+        control: {
           hoverIn: (ctx) =>
             gsap.fromTo(
               ctx.el,

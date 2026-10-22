@@ -10,6 +10,8 @@
  * Defaults: `resolveSearchInputMotionDefaults`.
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, type MutableRefObject } from "react";
+
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
  
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
@@ -20,7 +22,7 @@ import {
 } from "@/components/core/utils/slotMotion";
 import { applySearchExpandInstant } from "@/components/core/utils/searchInputExpandMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import { readSearchExpandedRadiusPx } from "./searchInputStyles";
 import type {
   SearchInputMotion,
@@ -31,6 +33,12 @@ import type {
 } from "./searchInputTypes";
 import { KIT_SEARCH_INPUT_VARIANTS } from "./searchInputTypes";
 import { useSearchInputMotionScope } from "./searchInputContext";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindSearchRecipes } from "@/components/core/utils/slotMotion/recipes/bindSearch";
+
+bindLiftRecipes();
+bindSearchRecipes();
 
 export function resolveSearchInputMotionDefaults({
   variant,
@@ -48,8 +56,8 @@ export function resolveSearchInputMotionDefaults({
   return overlaySkinMotion(
     {
       root: {
-        hoverIn: hover ? "hoverLiftSecondLevel" : false,
-        hoverOut: hover ? "hoverLiftSecondLevel" : false,
+        hoverIn: hover ? "hoverLiftFirstLevel" : false,
+        hoverOut: hover ? "hoverLiftFirstLevel" : false,
         pressIn: press ? "pressSqueeze" : false,
         pressOut: false,
         enter: "searchExpand",
@@ -71,7 +79,6 @@ export function resolveSearchInputMotionParams({
   size,
   layout,
   targetW,
-  expanded,
   blocked,
   groupSegment,
   pointerInside,
@@ -80,12 +87,11 @@ export function resolveSearchInputMotionParams({
   size: SearchInputSize;
   layout: SearchSizeLayout;
   targetW: number;
-  expanded: boolean;
   blocked: boolean;
   groupSegment?: unknown;
   pointerInside: MutableRefObject<boolean>;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_SEARCH_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_SEARCH_INPUT_VARIANTS);
   return {
     targetW,
     collapsedDim: readControlHeightPx(size),
@@ -93,7 +99,7 @@ export function resolveSearchInputMotionParams({
     padX: layout.padX,
     iconBox: layout.iconBox,
     iconLeftCollapsedCss: `calc(50% - ${layout.iconBox / 2}px)`,
-    shadowSize: expanded ? ("base" as const) : ("none" as const),
+    shadowSize: "none" as const,
     hasHoverShadow: !blocked && kitSurface && groupSegment == null,
     pointerInside,
   };
@@ -111,6 +117,7 @@ export function useSearchInputAnimations({
   rootRef,
   iconRef,
   pointerInsideRef,
+  forwardedRef,
 }: UseSearchInputAnimationsProps) {
   const scope = useSearchInputMotionScope();
   const rootMotionRef = useRef(motion?.root);
@@ -124,15 +131,14 @@ export function useSearchInputAnimations({
   const collapsedDim = readControlHeightPx(size);
   const iconLeftCollapsedCss = `calc(50% - ${layout.iconBox / 2}px)`;
  
-  const kitSurface = isKitVariant(variant, KIT_SEARCH_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_SEARCH_INPUT_VARIANTS);
   const shellActive = !blocked && groupSegment == null;
 
   const standardShellHover = useSecondLevelShadow(
     rootRef,
     shellActive && kitSurface,
     {
-      shadowSize: expanded ? "base" : "none",
-      idleSyncKey: expanded,
+      shadowSize: "none",
       interactive: false,
       pointerInsideRef,
     },
@@ -142,8 +148,9 @@ export function useSearchInputAnimations({
     (node: HTMLDivElement | null) => {
       rootRef.current = node;
       scope.registerTarget("root", node);
+      mergeForwardedRef(forwardedRef, node);
     },
-    [rootRef, scope],
+    [forwardedRef, rootRef, scope],
   );
  
   const bindIconRef = useCallback(

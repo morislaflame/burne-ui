@@ -10,7 +10,7 @@ export function DisclosureSizesDemo() {
         <Disclosure key={size} size={size}>
           <Disclosure.Trigger>Size {size}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">
+            <Text as="p" textStyle="small" className="text-muted">
               Disclosure size={size}
             </Text>
           </Disclosure.Content>

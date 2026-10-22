@@ -11,11 +11,11 @@ export function ComboBoxMotionInstantHoverDemo() {
     <ComboBox
       className="w-64"
       label="Instant hover"
-      options={options}
+      items={options}
       defaultValue="react"
-      hint="inputGroup.hoverIn / hoverOut: false"
+      hint="shell.hoverIn / hoverOut: false"
       motion={{
-        inputGroup: { hoverIn: false, hoverOut: false },
+        shell: { hoverIn: false, hoverOut: false },
       }}
     />
   );

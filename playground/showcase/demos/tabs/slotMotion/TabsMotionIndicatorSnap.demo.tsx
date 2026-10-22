@@ -9,10 +9,10 @@ export function TabsMotionIndicatorSnapDemo() {
         <Tabs.Tab value="two">Two</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="one">
-        <Text variant="base">indicator.change is off — the bar jumps</Text>
+        <Text textStyle="base">indicator.change is off — the bar jumps</Text>
       </Tabs.Panel>
       <Tabs.Panel value="two">
-        <Text variant="base">Second</Text>
+        <Text textStyle="base">Second</Text>
       </Tabs.Panel>
     </Tabs>
   );

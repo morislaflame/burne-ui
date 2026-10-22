@@ -1,6 +1,6 @@
 import { TooltipClassNamesProvider, TooltipContext, TooltipMotionProvider } from "./tooltipContext";
 import type { TooltipProps } from "./tooltipTypes";
-import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipTitle, TooltipTrigger } from "./tooltipParts";
+import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipTitle, TooltipTrigger } from "./tooltipParts";
 import { useTooltipRootState } from "./useTooltipRootState";
  
 export function TooltipRoot({
@@ -9,10 +9,16 @@ export function TooltipRoot({
   size = "base",
   variant,
   status = "default",
-  delayShowMs = 240,
+  openDelay,
+  closeDelay,
   side = "top",
+  align,
+  offset,
+  collisionPadding,
+  avoidCollisions,
+  closeOnEscape,
+  onEscapeKeyDown,
   icon,
-  showIcon,
   open,
   defaultOpen,
   onOpenChange,
@@ -26,10 +32,16 @@ export function TooltipRoot({
     size,
     variant,
     status,
-    delayShowMs,
+    openDelay,
+    closeDelay,
     side,
+    align,
+    offset,
+    collisionPadding,
+    avoidCollisions,
+    closeOnEscape,
+    onEscapeKeyDown,
     icon,
-    showIcon,
     open,
     defaultOpen,
     onOpenChange,
@@ -56,7 +68,6 @@ export {
   TooltipArrow,
   TooltipContent,
   TooltipDescription,
-  TooltipIcon,
   TooltipIndicator,
   TooltipMessage,
   TooltipPanel,

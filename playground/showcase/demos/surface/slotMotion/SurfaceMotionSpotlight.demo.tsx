@@ -83,8 +83,8 @@ export function SurfaceMotionSpotlightDemo() {
         style={{ backgroundImage: SPOTLIGHT }}
       />
       <div className="relative flex flex-col gap-xsmall">
-        <Text variant="base">Spotlight</Text>
-        <Text variant="small" className="text-muted">
+        <Text textStyle="base">Spotlight</Text>
+        <Text textStyle="small" className="text-muted">
           Move the pointer — glow follows via CSS vars, not a background tween.
         </Text>
       </div>

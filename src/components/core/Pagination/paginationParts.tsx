@@ -1,8 +1,8 @@
 import { KitChevronBack, KitChevronForward, type KitIconProps } from "@/components/core/utils/kitIcons";
-import { forwardRef, useCallback, useMemo, type ForwardedRef, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
+import { createElement, forwardRef, useCallback, useMemo, type ForwardedRef, type ForwardRefExoticComponent, type KeyboardEvent, type MouseEvent, type Ref, type RefAttributes } from "react";
  
 import { Text } from "@/components/core/Text";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import { dataActiveState } from "@/components/core/utils/dataContract";
@@ -10,9 +10,8 @@ import { cn } from "@/utils/cn";
  
 import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, resolvePaginationPageAriaLabel } from "./paginationA11y";
 import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
-import { resolvePaginationControlMotionDefaults, usePaginationContentRef, usePaginationEllipsisSlot, usePaginationSummarySlot } from "./paginationAnimations";
+import { playPaginationButtonPhase, usePaginationContentRef, usePaginationEllipsisSlot, usePaginationPageActiveSlot, usePaginationSummarySlot } from "./paginationAnimations";
 import {
-  PaginationMotionProvider,
   useOptionalPagination,
   useOptionalPaginationMotionScope,
   usePagination,
@@ -27,7 +26,6 @@ import type {
   PaginationItemProps,
   PaginationNavButtonProps,
   PaginationPageProps,
-  PaginationPartMotion,
   PaginationProps,
   PaginationSummaryProps,
 } from "./paginationTypes";
@@ -72,129 +70,82 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       children,
       className,
       disabled,
+      motionSlot,
+      href,
       onPointerDown,
       onPointerUp,
       onKeyDown,
       motion,
-      motionController,
-      motionState,
-      motionPayload,
-      playInitialState,
       ...rest
     },
     ref,
   ) {
-    const parentScope = useOptionalPaginationMotionScope();
-    const motionDefaults = useMemo(() => resolvePaginationControlMotionDefaults(), []);
-    const mergedMotion = mergeMotionSlotMaps(
-      parentScope?.getRootMotion(),
-      motion ? { control: motion } : undefined,
+    const scope = useOptionalPaginationMotionScope();
+    const size = useOptionalPagination()?.size ?? "base";
+    const playPress = useCallback(
+      (phase: "pressIn" | "pressOut", el: HTMLElement) => {
+        playPaginationButtonPhase(scope, motionSlot, phase, el, motion);
+      },
+      [motion, motionSlot, scope],
     );
- 
+    const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+      scope,
+      slot: motionSlot,
+      motion,
+      pressPhases: false,
+      pointerPhases: !disabled,
+      forwardedRef: ref,
+      onPointerDown: (event) => {
+        onPointerDown?.(event);
+        if (disabled || event.defaultPrevented) return;
+        playPress("pressIn", event.currentTarget);
+      },
+      onPointerUp: (event) => {
+        onPointerUp?.(event);
+        if (disabled || event.defaultPrevented) return;
+        playPress("pressOut", event.currentTarget);
+      },
+    });
+
+    const pressKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+      onKeyDown?.(event as KeyboardEvent<HTMLButtonElement>);
+      if (disabled || event.defaultPrevented || !isInteractivePressKey(event)) return;
+      playPress("pressIn", event.currentTarget);
+    };
+
+    if (href) {
+      return createElement(
+        "a",
+        {
+          ref: setRef,
+          href,
+          className: paginationInteractiveButtonClass({ className, size }),
+          ...rest,
+          ...pointerHandlers,
+          onKeyDown: pressKeyDown,
+        } as never,
+        children,
+      );
+    }
+
     return (
-      <PaginationMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
-        motionState={motionState}
-        motionPayload={motionPayload}
-        playInitialState={playInitialState}>
-        <PaginationInteractiveSurface
-          forwardedRef={ref}
-          className={className}
-          disabled={disabled}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          onKeyDown={onKeyDown}
-          itemPartMotion={motion}
-          rest={rest}
-        >
-          {children}
-        </PaginationInteractiveSurface>
-      </PaginationMotionProvider>
+      <button
+        ref={setRef}
+        type="button"
+        disabled={disabled}
+        className={paginationInteractiveButtonClass({
+          className,
+          size,
+        })}
+        {...rest}
+        {...pointerHandlers}
+        onKeyDown={pressKeyDown}
+      >
+        {children}
+      </button>
     );
   },
 );
- 
-function PaginationInteractiveSurface({
-  children,
-  className,
-  disabled,
-  onPointerDown,
-  onPointerUp,
-  onKeyDown,
-  itemPartMotion,
-  forwardedRef,
-  rest,
-}: {
-  children: PaginationInteractiveProps["children"];
-  className?: string;
-  disabled?: boolean;
-  onPointerDown?: PaginationInteractiveProps["onPointerDown"];
-  onPointerUp?: PaginationInteractiveProps["onPointerUp"];
-  onKeyDown?: PaginationInteractiveProps["onKeyDown"];
-  itemPartMotion?: PaginationPartMotion;
-  forwardedRef: ForwardedRef<HTMLButtonElement>;
-  rest: Omit<
-    PaginationInteractiveProps,
-    | "children"
-    | "className"
-    | "disabled"
-    | "onPointerDown"
-    | "onPointerUp"
-    | "onKeyDown"
-    | "motion"
-    | "motionController"
-  >;
-}) {
-  const scope = useOptionalPaginationMotionScope();
-  const playControl = useCallback(
-    (phase: "pressIn" | "pressOut", el: HTMLElement) => {
-      if (!scope) return;
-      const value = scope.resolve("control", phase, itemPartMotion);
-      if (value !== undefined) {
-        scope.play("control", phase, { partMotion: itemPartMotion, el });
-      }
-      void scope.playBroadcast(phase, { exclude: ["control"] });
-    },
-    [itemPartMotion, scope],
-  );
-  const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
-    scope,
-    slot: "control",
-    motion: itemPartMotion,
-    pressPhases: false,
-    pointerPhases: !disabled,
-    forwardedRef,
-    onPointerDown: (e) => {
-      onPointerDown?.(e);
-      if (disabled || e.defaultPrevented) return;
-      playControl("pressIn", e.currentTarget);
-    },
-    onPointerUp: (e) => {
-      onPointerUp?.(e);
-      if (disabled || e.defaultPrevented) return;
-      playControl("pressOut", e.currentTarget);
-    },
-  });
- 
-  return (
-    <button
-      ref={setRef}
-      type="button"
-      disabled={disabled}
-      className={paginationInteractiveButtonClass({
-        className,
-      })}
-      {...rest}
-      {...pointerHandlers}
-      onKeyDown={(e) => {
-        onKeyDown?.(e);
-        if (disabled || e.defaultPrevented || !isInteractivePressKey(e)) return;
-        playControl("pressIn", e.currentTarget);
-      }}
-    >
-      {children}
-    </button>
-  );
-}
  
 PaginationInteractive.displayName = "PaginationInteractive";
  
@@ -214,7 +165,7 @@ export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryPro
       >
         <Text
           as="span"
-          variant="small"
+          textStyle="small"
           className={paginationSummaryTextClass({
             slotClass: slotClassNames.summaryText,
           })}
@@ -302,6 +253,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
     return (
       <PaginationInteractive
         ref={ref}
+        motionSlot="previous"
         disabled={resolvedDisabled}
         className={cn(slotClassNames.previous, className)}
         {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
@@ -312,7 +264,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
           <>
             <PaginationPreviousIcon />
             <Text
-              variant="small"
+              textStyle="small"
               inheritColor
               as="span"
               className={paginationNavTextClass({
@@ -365,6 +317,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
     return (
       <PaginationInteractive
         ref={ref}
+        motionSlot="next"
         disabled={resolvedDisabled}
         className={cn(slotClassNames.next, className)}
         {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
@@ -374,7 +327,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
         {children ?? (
           <>
             <Text
-              variant="small"
+              textStyle="small"
               inheritColor
               as="span"
               className={paginationNavTextClass({
@@ -457,14 +410,11 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     {
       page: pageNumber,
       active: activeProp,
+      href,
       children,
       onClick,
       className,
       motion,
-      motionController,
-      motionState,
-      motionPayload,
-      playInitialState,
       "aria-label": ariaLabel,
       ...rest
     },
@@ -475,6 +425,11 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     const slotClassNames = usePaginationClassNames();
     const active =
       activeProp ?? (ctx?.page != null ? ctx.page === pageNumber : false);
+    const pageActivePart = usePaginationPageActiveSlot(
+      motion,
+      ref as ForwardedRef<HTMLElement>,
+      active,
+    );
  
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {
@@ -490,17 +445,19 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     if (active) {
       return (
         <Text
-          ref={ref as Ref<HTMLElement>}
+          ref={pageActivePart.setRef}
           as="span"
-          variant="small"
+          textStyle={ctx?.size ?? "base"}
           aria-current="page"
           className={paginationPageActiveClass({
+            size: ctx?.size ?? "base",
             slotClass: slotClassNames.pageActive,
             className,
           })}
           onClick={onClick as ((event: MouseEvent<HTMLElement>) => void) | undefined}
           {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
           {...rest}
+          {...pageActivePart.pointerHandlers}
           data-state={dataActiveState(active)}
         >
           {label}
@@ -518,19 +475,17 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     return (
       <PaginationInteractive
         ref={ref}
+        href={href}
         {...(pageAriaLabel != null ? { "aria-label": pageAriaLabel } : {})}
         onClick={handleClick}
         className={cn(slotClassNames.page, className)}
+        motionSlot="page"
         motion={motion}
-        motionController={motionController}
-                motionState={motionState}
-                motionPayload={motionPayload}
-                playInitialState={playInitialState}
         {...rest}
         data-state={dataActiveState(active)}
       >
         <Text
-          variant="small"
+          textStyle="small"
           inheritColor
           as="span"
           className={paginationPageTextClass({
@@ -574,7 +529,7 @@ export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsis
       <Text
         ref={part.setRef}
         as="span"
-        variant="small"
+        textStyle="small"
         aria-hidden={PAGINATION_ELLIPSIS_ARIA_HIDDEN}
         className={paginationEllipsisClass({
           slotClass: slotClassNames.ellipsis,
@@ -591,7 +546,7 @@ export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsis
  
 PaginationEllipsis.displayName = "Pagination.Ellipsis";
  
-export function PaginationPages() {
+export const PaginationPages = forwardRef(function PaginationPages(_props, _ref) {
   const { page, totalPages, siblingCount } = usePagination();
  
   if (page == null || totalPages == null) {
@@ -628,7 +583,7 @@ export function PaginationPages() {
       })}
     </>
   );
-}
+});
  
 PaginationPages.displayName = "Pagination.Pages";
  

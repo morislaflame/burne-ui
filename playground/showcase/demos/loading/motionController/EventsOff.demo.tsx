@@ -22,11 +22,11 @@ export function LoadingMotionEventsOffDemo() {
         </Button>
       </div>
       <div className="flex flex-wrap items-center gap-large">
-        <Loading size="large" label="Live loading" motionController={liveController} motion={{ events: live }} />
+        <Loading size="large" aria-label="Live loading" motionController={liveController} motion={{ events: live }} />
         <Loading
           size="large"
           color="muted"
-          label="Off loading"
+          aria-label="Off loading"
           motionController={offController}
           motion={{ events: off }}
         />

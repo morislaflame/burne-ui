@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label/labelContext";
 import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { dataInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 import { cn } from "@/utils/cn";
 
@@ -21,7 +23,7 @@ import { TAGS_INPUT_ROOT_CLASS } from "./tagsInputStyles";
 import type { TagsInputProps } from "./tagsInputTypes";
 import { useTagsInputRootState } from "./useTagsInputRootState";
 
-export function TagsInputRoot({
+export const TagsInputRoot = forwardRef(function TagsInputRoot({
   children,
   className,
   classNames,
@@ -32,11 +34,13 @@ export function TagsInputRoot({
   id,
   name,
   required,
-  status,
   size = "base",
   disabled,
   readOnly,
   placeholder,
+  inputValue,
+  defaultInputValue,
+  onInputValueChange,
   values,
   defaultValues,
   onValuesChange,
@@ -47,8 +51,12 @@ export function TagsInputRoot({
   motionState,
   motionPayload,
   playInitialState,
+  autoFocus,
+  tabIndex,
   ...rest
-}: TagsInputProps) {
+}: TagsInputProps, ref: ForwardedRef<HTMLDivElement>) {
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   const resolvedVariant = useSkinVariant(variant);
   const state = useTagsInputRootState({
     children,
@@ -59,11 +67,13 @@ export function TagsInputRoot({
     id,
     name,
     required,
-    status,
     size,
     disabled,
     readOnly,
     placeholder,
+    inputValue,
+    defaultInputValue,
+    onInputValueChange,
     values,
     defaultValues,
     onValuesChange,
@@ -105,10 +115,10 @@ export function TagsInputRoot({
               size={size}
               className={cn(TAGS_INPUT_ROOT_CLASS, classNames?.root, className)}
               {...rest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size,
                 variant: resolvedVariant,
-                status: state.contextValue.status,
               })}
               data-invalid={dataInvalidValue(state.contextValue.isInvalid)}
               data-disabled={dataFlag(state.contextValue.disabled)}
@@ -122,6 +132,6 @@ export function TagsInputRoot({
       </TagsInputClassNamesProvider>
     </TagsInputProvider>
   );
-}
+});
 
 TagsInputRoot.displayName = "TagsInput";

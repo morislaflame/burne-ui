@@ -59,12 +59,19 @@ const PASS_THROUGH_MOTION_SLOTS = {
   Popover: new Set(["item", "itemLabel", "itemHint", "itemIcon", "label", "subTrigger", "separator"]),
   /** Card chrome is Popover's portal scope. HoverCard registers `trigger` itself. */
   HoverCard: new Set(["content", "header", "title", "description", "body", "arrow"]),
+  /** Field map key forwarded to the inner Popover `content` slot. */
+  Select: new Set(["popover"]),
+  ComboBox: new Set(["popover"]),
+  /** `popover` → Popover content; `calendar` → Calendar `root`. */
+  DatePicker: new Set(["popover", "calendar"]),
 };
 
 const SLOT_REGISTER_RES = [
   /registerTarget\(\s*["']([A-Za-z]\w*)["']/g,
   /\bslot:\s*["']([A-Za-z]\w*)["']/g,
   /\bslot=["']([A-Za-z]\w*)["']/g,
+  /\bmotionSlot:\s*["']([A-Za-z]\w*)["']/g,
+  /\bmotionSlot=["']([A-Za-z]\w*)["']/g,
   /use[A-Za-z]+SlotMotion(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
   /use[A-Za-z]+PartMotion(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,
   /use[A-Za-z]+ChromeSlot(?:<[^>]*>)?\(\s*["']([A-Za-z]\w*)["']/g,

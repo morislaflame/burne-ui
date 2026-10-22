@@ -16,7 +16,7 @@ export function TimeFieldShiftWindowDemo() {
         onValueChange={setValue}
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
         suffix={
-          <Text as="span" variant="small" className="font-medium text-muted">
+          <Text as="span" textStyle="small" className="font-medium text-muted">
             MSK
           </Text>
         }

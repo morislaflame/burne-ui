@@ -2,6 +2,8 @@
 
 Компоновка полей формы: обёртка одного поля (`Field`) и группировка (`Field.Set`) с legend, hint, error. **Собственных GSAP-анимаций нет** — layout и a11y-связки; motion живёт в дочерних контролах (`Input`, `Checkbox`, …).
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -17,7 +19,6 @@ import { Field, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHint
 ### `FieldSetClassNames`
 
 `root`, `stack`, `legend`, `legendHeader`, `group`, `actions`.
-
 
 ### `Field` — одно поле
 
@@ -45,6 +46,7 @@ Compound через `Object.assign`:
 
 | Prop | Описание |
 |------|----------|
+| `invalid` | `data-invalid` на корне и у дочерних контролов, без текста ошибки. `Field.Error` делает то же и показывает сообщение |
 | `className` | На root `div` |
 | `classNames.root` | Слот root |
 | `classNames.hint` | Слот hint |
@@ -124,6 +126,8 @@ Field.Set (fieldset)
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`field:nudge`, `field:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
 
+Тройка на `Field` и отдельно на `Field.Set`. Один набор не играет оба scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { Button, Field, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -166,9 +170,9 @@ function Nudge() {
 
 ### Shell hover у дочерних контролов (2-й уровень)
 
-`Input`, `TextArea`, `Select`, `ComboBox`, `TimeField` — публичный slot motion на shell (`hoverLiftSecondLevel` / `pressSqueeze`); rest-тень — `useSecondLevelShadow`. Gloss hover/press — `useGlossFieldShellMotion`. CSS-классы оболочки по-прежнему из `useFieldShellHoverLift.ts`.
+`Input`, `TextArea`, `Select`, `ComboBox`, `TimeField` — публичный slot motion на shell (`hoverLiftFirstLevel` / `pressSqueeze`); в покое тени нет, на hover — `--shadow-lift`. CSS-классы оболочки по-прежнему из `useFieldShellHoverLift.ts`.
 
-Для Select / ComboBox / TimeField (как у Input / TextArea): Root передаёт карту `motion`; хост — `Select.TriggerGroup` / `ComboBox.InputGroup` / `TimeField.Control` (defaults + `play`). Non-gloss: `useSecondLevelShadow` + `hoverLiftSecondLevel` + `pressSqueeze`. Gloss hover/press — `useGlossFieldShellMotion`.
+Для Select / ComboBox / TimeField (как у Input / TextArea): Root передаёт карту `motion`; хост — `Select.Shell` / `ComboBox.Shell` / `TimeField.Control` (defaults + `play`).
 
 **Hover-фон:** `fieldShellHoverClass` — CSS `hoverVariantBg` по status, не GSAP.
 

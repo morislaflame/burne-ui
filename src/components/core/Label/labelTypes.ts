@@ -1,4 +1,4 @@
-import type { LabelHTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 import type { TextVariant } from "@/components/core/Text";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
@@ -27,8 +27,8 @@ export type LabelMotion = {
 export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
   children?: ReactNode;
   required?: boolean;
-  /** Text size for the label copy. Default `base`. */
-  variant?: TextVariant;
+  /** Typography role for the label copy. Default `base`. */
+  textStyle?: TextVariant;
   classNames?: Prettify<LabelClassNames>;
   /**
    * Per-slot motion (`root`, `text`, `required`). Defaults are empty — custom factories are opt-in.
@@ -61,6 +61,13 @@ export type UseLabelRootStateProps = Pick<
 export type LabelContentProps = {
   children?: ReactNode;
   required: boolean;
-  variant?: TextVariant;
+  textStyle?: TextVariant;
 };
+
+export type LabelTextProps = HTMLAttributes<HTMLSpanElement> & {
+  /** Typography role. Default `base`. Root `textStyle` applies only to the automatic text, not to this part. */
+  textStyle?: TextVariant;
+};
+
+export type LabelRequiredProps = HTMLAttributes<HTMLSpanElement>;
  

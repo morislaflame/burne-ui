@@ -1,6 +1,8 @@
 # SearchInput
 
-Компактное поле поиска с **раскрытием** из круглой кнопки в расширенную строку. Atomic-компонент — для форм с label/hint используйте `Input`. Поддержка `gloss`, `ripple`, `ButtonGroup`.
+Компактное поле поиска с **раскрытием** из круглой кнопки в расширенную строку. Atomic-компонент — для форм с label/hint используйте `Input`.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
@@ -42,7 +44,7 @@ import {
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` / из ButtonGroup | `default` \| `outline` \| `secondary` \| `gloss` |
+| `variant` | `default` / из ButtonGroup | `default` \| `outline` \| `secondary` |
 | `expanded` / `defaultExpanded` | `false` | Controlled / uncontrolled expand |
 | `onExpandedChange` | — | Колбэк раскрытия |
 | `expandedWidth` | по size | Ширина в px (240–360) |
@@ -51,21 +53,24 @@ import {
 | `ripple` | `false` | `<Ripple color="neutral" />` |
 | `groupSegment` | — | Сегмент ButtonGroup |
 | `disabled` / `readOnly` | — | Блокировка |
-| `className` | — | Алиас `classNames.root` (доп. класс на shell) |
+| `className` | — | Алиас `classNames.root` на shell. `ref` компонента — тот же узел |
+| `inputRef` | — | Нативный `<input>`. `ref` компонента остаётся на shell |
 | `classNames` | — | Слоты `root` / `icon` / `input` / `clear` / `expandTrigger` |
-| `motion` | — | Карта слотов; expand — `root` / `icon` `enter` / `leave` |
+| `motion` | — | Карта слотов. `events` и `states` — соседи слотов, не фазы |
+| `motionController` | — | Handle на Provider (`play` / `playSlot` / `playAll` / `set` / `cancel`), не на `<input>` |
+| `motionState` | — | Режим: играет `motion.states[name]`. Тот же name снова — тишина |
+| `motionPayload` / `playInitialState` | — | Снимок для фабрики режима / проиграть режим на mount |
 | `aria-label` | — | **Рекомендуется** — collapsed trigger + input |
 
 ## variant
 
-Канонический visual style шелла (`FieldShellVariant`). Без явного пропа внутри `ButtonGroup` наследуется gloss / outline / secondary группы.
+Канонический visual style шелла (`FieldShellVariant`).
 
 | variant | Поверхность |
 |---------|-------------|
 | `default` | `bg-surface` + `border-token` |
 | `outline` | `bg-transparent` + `border-token` |
 | `secondary` | `bg-secondary` + `border-token` |
-| `gloss` | `gloss-control` |
 
 `status` нет. Доменных исключений нет.
 
@@ -80,19 +85,19 @@ import {
 
 ## Анимации
 
-Публичный slot motion. Expand/collapse — layout exception: `searchExpand` твинит `width` и `borderRadius` шелла (не `scaleX`: `rounded-full` иначе становится овалом и тянет иконку). Right-aligned toolbar растёт через layout (`flex-end` / `ml-auto`). Иконка — snap `left` + `x` (`searchIconShift`). Gloss hover/press остаются на `useGlossFieldShellMotion`.
+Публичный slot motion. Expand/collapse — layout exception: `searchExpand` твинит `width` и `borderRadius` шелла (не `scaleX`: `rounded-full` иначе становится овалом и тянет иконку). Right-aligned toolbar растёт через layout (`flex-end` / `ml-auto`). Иконка — snap `left` + `x` (`searchIconShift`).
 
 ### Slot motion
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` / `enter` / `leave` | non-gloss: `hoverLiftSecondLevel`, collapsed `pressSqueeze` (`pressOut: false`); `enter`/`leave` → `searchExpand`. Gloss hover/press — `false` (field-shell) |
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` / `enter` / `leave` | — |
 | `icon` | `enter` / `leave` | `searchIconShift` |
 | `clear` / `input` / `expandTrigger` | hover/press | нет |
 
 `false` на `root`/`icon` `enter`/`leave` — хост `applySearchExpandInstant`. Не анимируйте `width` / `left` в публичных MotionVars — kit твинит ширину шелла только внутри `searchExpand`.
 
-**Где в коде:** типы — `searchInputTypes.ts`; scope — `searchInputContext.tsx`; defaults + host — `searchInputAnimations.ts`; слоты — `searchInputParts.tsx`; Provider — `SearchInput.tsx`. Утилита expand — `core/utils/searchInputExpandMotion.ts`.
+**Где в коде:** типы — `searchInputTypes.ts`; scope — `searchInputContext.tsx`; defaults + host — `searchInputAnimations.ts`; слоты — `searchInputParts.tsx`; Provider — `SearchInput.tsx` (`controller`, `motionState`). Утилита expand — `core/utils/searchInputExpandMotion.ts`.
 
 ```tsx
 <SearchInput
@@ -102,6 +107,28 @@ import {
     icon: { enter: false, leave: false },
   }}
 />
+```
+
+Проп `motionController` и ключ `events` на `motion` — команды поля (`search:nudge`), не фазы. `play()` ищет слот `root`. `motionState` играет `motion.states[name]`. Галерея — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, SearchInput, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "search:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("search:nudge")}>
+        Nudge
+      </Button>
+      <SearchInput aria-label="Search" defaultExpanded motionController={controller} motion={{ events }} />
+    </>
+  );
+}
 ```
 
 ### Отключение
@@ -130,12 +157,12 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 
 | Способ | Что меняет |
 |--------|------------|
-| `className` / `classNames.root` | Margin, max-width wrapper, external layout, border/ring |
+| `className` / `classNames.root` | Margin, collapsed pill width (`w-control-*`), border/ring |
 | `classNames.icon` | Цвет/размер иконки поиска |
 | `classNames.input` | Текст, placeholder внутри поля |
 | `classNames.clear` | Цвет кнопки очистки |
 | `size` | Высота, icon box, collapsed width, default expanded width |
-| `variant` | `default` / `outline` / `secondary` / `gloss` surface |
+| `variant` | — |
 | `expandedWidth` | Целевая ширина expand (px) |
 | `ripple` | Press ripple overlay |
 
@@ -144,7 +171,6 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 ```tsx
 <SearchInput
   size="mid"
-  variant="gloss"
   ripple
   expandedWidth={400}
   className="mx-auto"
@@ -161,13 +187,6 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 
 ### В ButtonGroup
 
-```tsx
-<ButtonGroup variant="gloss">
-  <SearchInput groupSegment="start" />
-  <Button groupSegment="end">Фильтр</Button>
-</ButtonGroup>
-```
-
 При segment: group rounding/surface; shell hover отключён.
 
 ### Clear button
@@ -179,7 +198,7 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 - **Для форм с label** — используйте `Input` + prefix icon, не SearchInput.
 - **Controlled expand:** `expanded` + `onExpandedChange` для header toolbar integration.
 - **Не override `transform` / `width` / `border-radius` на shell / icon** при expand — конфликт с `searchExpand` / `searchIconShift`.
-- **Ширина expanded** — `expandedWidth`, не `className="w-*"` (collapsed всегда квадрат `w-control-*` + `min-h-control-*`).
+- **Ширина свёрнутой пилюли** — `classNames.root` / `className` (например `w-control-large`). Ширина expanded — `expandedWidth`, не `className="w-*"` (GSAP твинит width).
 - **`aria-label` обязателен** в collapsed mode (дефолт «Open search»).
 
 ## Доступность
@@ -198,7 +217,7 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 
 | Контекст | Поведение |
 |----------|-----------|
-| `ButtonGroup` | `groupSegment`, gloss variant |
+| `ButtonGroup` | `groupSegment` variant |
 | Card toolbar | `defaultExpanded`, custom `expandedWidth` |
 
 ## Структура файлов
@@ -222,4 +241,4 @@ SearchInput/
 
 ## Storybook
 
-`Core Components/SearchInput` — collapsed/expanded, controlled, gloss, ripple, ButtonGroup, light theme, a11y, classNames, slot motion gallery.
+`Core Components/SearchInput` — collapsed/expanded, controlled, ripple, ButtonGroup, light theme, a11y, classNames, slot motion gallery, MotionController gallery.

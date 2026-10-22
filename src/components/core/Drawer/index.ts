@@ -1,9 +1,9 @@
-import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerRoot, DrawerTitle, DrawerTrigger } from "./Drawer";
+import { DrawerOverlayInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerRoot, DrawerTitle, DrawerTrigger } from "./Drawer";
  
 export const Drawer = Object.assign(DrawerRoot, {
   Trigger: DrawerTrigger,
   Panel: DrawerPanel,
-  Backdrop: DrawerBackdropInner,
+  Overlay: DrawerOverlayInner,
   Handle: DrawerHandleInner,
   Content: DrawerContent,
   Header: DrawerHeader,
@@ -24,7 +24,7 @@ export type {
   DrawerSize,
   DrawerVariant,
   DrawerClassNames,
-  DrawerBackdropProps,
+  DrawerOverlayProps,
   DrawerHandleProps,
   DrawerHeaderProps,
   DrawerHeadingBlockProps,

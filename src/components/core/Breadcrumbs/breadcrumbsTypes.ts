@@ -1,4 +1,5 @@
-import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactElement, ReactNode } from "react";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
@@ -57,6 +58,10 @@ export type BreadcrumbItem = {
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
   current?: boolean;
   className?: string;
+  /** Single child replaces the crumb link (`next/link`, `<a>`). */
+  asChild?: boolean;
+  /** Child element when `asChild` is set. Collected from `Breadcrumbs.Item`. */
+  link?: ReactElement;
   motion?: Prettify<BreadcrumbsPartMotion>;
   motionController?: MotionController;
 } & MotionStateHostProps;
@@ -70,8 +75,12 @@ export type DisplayPiece =
  
 export type BreadcrumbSegmentPiece = Extract<DisplayPiece, { kind: "segment" }>;
  
+export type BreadcrumbsSize = ComponentSize;
+
 export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   collapse?: boolean;
+  /** Crumb scale. Default `base`. */
+  size?: BreadcrumbsSize;
   classNames?: Prettify<BreadcrumbsClassNames>;
   /** Simple API: chain items. Ignored in compound mode (`Breadcrumbs.List`). */
   items?: BreadcrumbItem[];
@@ -103,6 +112,8 @@ export type BreadcrumbsItemProps = {
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
   current?: boolean;
   className?: string;
+  /** Single child replaces the crumb link (`next/link`, `<a>`). */
+  asChild?: boolean;
   children?: ReactNode;
   motion?: Prettify<BreadcrumbsPartMotion>;
   /**
@@ -120,6 +131,7 @@ export type InteractiveCrumbProps = {
   innerClassName?: string;
   textClassName?: string;
   "aria-current"?: "page" | undefined;
+  link?: ReactElement;
   motion?: Prettify<BreadcrumbsPartMotion>;
   motionController?: MotionController;
 } & MotionStateHostProps;

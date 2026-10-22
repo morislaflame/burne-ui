@@ -1,7 +1,7 @@
 /**
  * Slot motion for TagsInput — look here first.
  *
- * DOM slots: `shell` (host), `tag` (repeated chip), `remove`, `input`, `label`, `hint`, `error`
+ * DOM slots: `shell` (host), `tag` (repeated chip), `remove`, `control`, `label`, `hint`, `error`
  *
  * Root owns the scope. The shell is the field surface: rest shadow, lift on hover.
  */
@@ -15,10 +15,14 @@ import {
   type MotionPartPhases,
 } from "@/components/core/utils/slotMotion";
 import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useOptionalTagsInputMotionScope, useTagsInputContext } from "./tagsInputContext";
 import type { TagsInputMotion, TagsInputPartMotion } from "./tagsInputTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
 
 export function resolveTagsInputMotionDefaults({
   variant,
@@ -31,8 +35,8 @@ export function resolveTagsInputMotionDefaults({
   return overlaySkinMotion(
     {
       shell: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
       },
     },
     variant,
@@ -48,9 +52,9 @@ export function resolveTagsInputMotionParams({
   variant: InputVariant;
   disabled: boolean;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return {
-    shadowSize: "base" as const,
+    shadowSize: "none" as const,
     hasHoverShadow: !disabled && kitSurface,
   };
 }
@@ -72,12 +76,12 @@ export function useTagsInputShellMotion({
 }) {
   const scope = useOptionalTagsInputMotionScope();
   const { disabled, variant } = useTagsInputContext();
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const shellRef = useRef<HTMLDivElement | null>(null);
   const pointerInsideRef = useRef(false);
   const shadow = useSecondLevelShadow(shellRef, !disabled && kitSurface, {
     interactive: false,
-    shadowSize: "base",
+    shadowSize: "none",
     pointerInsideRef,
     killMotionOnUnmount: false,
   });
@@ -114,8 +118,22 @@ export function useTagsInputShellMotion({
 }
 
 export function useTagsInputSlotMotion<T extends HTMLElement>(
-  slot: "tag" | "remove" | "input",
-  motion?: TagsInputPartMotion,
+  slot: "tag" | "remove" | "control",
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  }: {
+    motion?: TagsInputPartMotion;
+    forwardedRef?: ForwardedRef<T>;
+    onPointerOver?: PointerEventHandler<T>;
+    onPointerOut?: PointerEventHandler<T>;
+    onPointerDown?: PointerEventHandler<T>;
+    onPointerUp?: PointerEventHandler<T>;
+  } = {},
 ) {
   const scope = useOptionalTagsInputMotionScope();
   const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
@@ -123,7 +141,12 @@ export function useTagsInputSlotMotion<T extends HTMLElement>(
     scope,
     slot,
     motion,
+    forwardedRef,
     pointerPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
   useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;

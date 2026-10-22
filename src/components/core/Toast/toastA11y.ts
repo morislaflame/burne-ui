@@ -1,10 +1,9 @@
 import { DEFAULT_BURNE_LABELS, formatBurneLabel, type BurneLabels } from "@/theme/burneLabels";
  
 import type { ToastLiveRole, ToastPlacement, ToastStatus } from "./toastTypes";
- 
-/** Visually hidden, always-mounted live region for toast announcements. */
-export const TOAST_LIVE_REGION_CLASS =
-  "sr-only absolute m-0 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0";
+import { TOAST_LIVE_REGION_CLASS } from "./toastStyles";
+
+export { TOAST_LIVE_REGION_CLASS };
  
 export function resolveToastLiveRole(status: ToastStatus): ToastLiveRole {
   return status === "danger" || status === "warning" ? "alert" : "status";

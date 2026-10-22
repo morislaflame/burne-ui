@@ -8,10 +8,10 @@ export function RipplePromoBannerDemo() {
       <Ripple color="rgba(255,255,255,0.35)" />
       <div className="relative z-[1] flex flex-col gap-small sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <Text as="p" variant="header-2" className="text-white">
+          <Text as="p" textStyle="header-2" className="text-white">
             Summer promotion
           </Text>
-          <Text as="p" variant="small" className="text-white/80">
+          <Text as="p" textStyle="small" className="text-white/80">
             −30% on kit components through the end of the month.
           </Text>
         </div>

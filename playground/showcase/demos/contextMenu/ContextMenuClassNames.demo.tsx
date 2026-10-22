@@ -22,7 +22,7 @@ export function ContextMenuClassNamesDemo() {
         <IoGlobeOutline aria-hidden className="icon-small" />
         Language
       </ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Group>
           <ContextMenu.Label>Select language</ContextMenu.Label>
           <ContextMenu.Item value="en" selection>
@@ -43,15 +43,15 @@ export function ContextMenuClassNamesDemo() {
           </ContextMenu.Item>
           <ContextMenu.Sub>
             <ContextMenu.SubTrigger>More</ContextMenu.SubTrigger>
-            <ContextMenu.SubContent>
+            <ContextMenu.SubPopover>
               <ContextMenu.Item value="de" selection>
                 <ContextMenu.ItemIndicator />
                 <ContextMenu.ItemLabel>Deutsch</ContextMenu.ItemLabel>
               </ContextMenu.Item>
-            </ContextMenu.SubContent>
+            </ContextMenu.SubPopover>
           </ContextMenu.Sub>
         </ContextMenu.Group>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

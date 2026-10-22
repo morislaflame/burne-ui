@@ -83,8 +83,17 @@ export const TABLE_VIRTUAL_INDEX_ATTR = "data-virtual-index";
 export function tableSelectableRows(table: HTMLElement): HTMLElement[] {
   return Array.from(
     table.querySelectorAll<HTMLElement>(`tbody tr[${TABLE_ROW_KEY_ATTR}]`),
-  );
+  ).filter((row) => !row.hasAttribute("data-disabled"));
 }
+
+export function tableDisabledKeySet(
+  keys: ReadonlySet<string | number> | readonly (string | number)[] | undefined,
+): ReadonlySet<string> {
+  if (!keys) return EMPTY_DISABLED_KEYS;
+  return new Set(Array.from(keys, (key) => String(key)));
+}
+
+const EMPTY_DISABLED_KEYS: ReadonlySet<string> = new Set();
  
 export function tableSortButtons(from: HTMLElement): HTMLButtonElement[] {
   const root = from.closest("table") ?? from.closest("[role='grid']");

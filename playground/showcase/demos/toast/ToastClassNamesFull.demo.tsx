@@ -47,7 +47,7 @@ export function ToastClassNamesFullDemo() {
               }}
             />
           ),
-          timeout: 0,
+          duration: 0,
           classNames: {
             root: "rounded-large",
             indicator: "text-primary",

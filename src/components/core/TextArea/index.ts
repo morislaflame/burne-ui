@@ -11,7 +11,6 @@ export type {
   TextAreaClassNames,
   TextAreaControlProps,
   TextAreaSize,
-  TextAreaStatus,
   TextAreaVariant,
   TextAreaProps,
   TextAreaHintProps,

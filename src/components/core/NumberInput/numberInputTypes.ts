@@ -1,13 +1,16 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, InputHTMLAttributes, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import type {
   MotionController,
   MotionMapWithEvents,
   MotionStateHostProps,
   MotionValue,
 } from "@/components/core/utils/slotMotion";
+
+export type NumberInputSize = InputSize;
+export type NumberInputVariant = InputVariant;
 
 export type NumberInputClassNames = {
   root?: string;
@@ -53,7 +56,6 @@ export type NumberInputProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValu
     required?: boolean;
     disabled?: boolean;
     readOnly?: boolean;
-    status?: InputStatus;
     size?: InputSize;
     variant?: InputVariant;
     placeholder?: string;
@@ -64,6 +66,10 @@ export type NumberInputProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValu
     max?: number;
     /** Added or subtracted by the steppers and by ArrowUp / ArrowDown. Default `1`. */
     step?: number;
+    /** Passed to `Intl.NumberFormat` for the committed display. Focus shows the raw number. */
+    formatOptions?: Intl.NumberFormatOptions;
+    /** `Intl` locale. Default `en`, so the server and the browser format the same string. */
+    locale?: string;
     classNames?: Prettify<NumberInputClassNames>;
     motion?: Prettify<MotionMapWithEvents<NumberInputMotion>>;
     motionController?: MotionController;
@@ -98,6 +104,8 @@ export type NumberInputErrorProps = HTMLAttributes<HTMLElement> & {
 export type NumberInputContextValue = {
   value: number | null;
   text: string;
+  valueText?: string;
+  beginEdit: () => void;
   nudge: (direction: 1 | -1) => void;
   commitInput: (raw: string) => void;
   commitBlur: () => void;
@@ -108,7 +116,6 @@ export type NumberInputContextValue = {
   placeholder?: string;
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
   min?: number;
   max?: number;
   step: number;

@@ -6,7 +6,7 @@ import { Text } from "@/components/core/Text";
 export function SelectionIndicatorThumbGalleryDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         SelectionThumb
       </Text>
       <div className="flex flex-wrap items-center gap-2xlarge">

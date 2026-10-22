@@ -1,8 +1,8 @@
 import type { ButtonSize } from "@/components/core/Button";
 import type { InputSize } from "./inputTypes";
  
-export function inputSizeFromButtonSize(buttonSize: ButtonSize): InputSize {
-  return buttonSize;
+export function inputSizeFromButtonSize(size: ButtonSize): InputSize {
+  return size;
 }
  
 export function assignInputFiles(input: HTMLInputElement, files: File[]) {

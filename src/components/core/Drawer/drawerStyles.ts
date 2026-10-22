@@ -12,6 +12,7 @@ import type {
   DrawerSize,
   DrawerSizePreset,
   DrawerVariant,
+  KitDrawerVariant,
 } from "./drawerTypes";
 import { KIT_DRAWER_VARIANTS } from "./drawerTypes";
  
@@ -133,8 +134,11 @@ export const DRAWER_OVERLAY_DARK_CLASS = "overlay-backdrop-scrim";
 export const DRAWER_PANEL_BASE_CLASS =
   "absolute z-10 flex flex-col outline-none overflow-hidden text-foreground";
  
-export const DRAWER_PANEL_SURFACE_CLASS =
-  "border-token bg-surface text-foreground shadow-token-large";
+export const DRAWER_PANEL_SURFACE: Record<KitDrawerVariant, string> = {
+  default: "border-token bg-surface text-foreground shadow-token-large",
+  outline: "bg-transparent border-token-outline text-foreground shadow-token-large",
+  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
+};
 
 /** Fills the panel when `SkinShell` wraps children in a declarative content node. */
 export const DRAWER_PANEL_LAYER_CONTENT_CLASS = "flex min-h-0 flex-1 flex-col";
@@ -164,7 +168,7 @@ export const DRAWER_HANDLE_GRIP_HORIZONTAL_CLASS = "h-1 w-10";
 export const DRAWER_HANDLE_GRIP_VERTICAL_CLASS = "h-10 w-1";
  
 export const DRAWER_HANDLE_GRIP_BASE_CLASS =
-  "rounded-full bg-tertiary outline-none focus-ring";
+  "rounded-full border-0 bg-tertiary p-0 outline-none focus-ring cursor-inherit";
  
 function drawerExtentClass(
   placement: DrawerPlacement,
@@ -224,7 +228,7 @@ export function drawerPanelClass({
   const visual = resolveVariantVisual(variant, KIT_DRAWER_VARIANTS, "drawer.panel");
   return cn(
     DRAWER_PANEL_BASE_CLASS,
-    visual.className !== undefined ? visual.className : DRAWER_PANEL_SURFACE_CLASS,
+    visual.className !== undefined ? visual.className : DRAWER_PANEL_SURFACE[visual.key],
     PANEL_PLACEMENT_CLASS[placement],
     drawerExtentClass(placement, extent),
     drawerEdgeRoundedClass(placement, size, extent),

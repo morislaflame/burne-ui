@@ -37,9 +37,9 @@ export const CustomClassNames: Story = {
   name: "Custom className",
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-mid">
-      <Text variant="small">Above</Text>
+      <Text textStyle="small">Above</Text>
       <Separator className="border-t-danger" />
-      <Text variant="small">Below</Text>
+      <Text textStyle="small">Below</Text>
     </div>
   ),
 };

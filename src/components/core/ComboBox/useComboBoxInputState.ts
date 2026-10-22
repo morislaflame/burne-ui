@@ -34,12 +34,17 @@ export function useComboBoxInputState(
     setActiveValue,
     inputRef,
     anchorRef,
-    options,
+    items,
     filteredValues,
+    allowsCustomValue,
+    loading,
+    filter,
+    blurGeneration,
+    cancelBlurCommit,
     disabled,
+    readOnly,
     placeholder,
     size,
-    status,
     required,
     hintConnected,
     errorConnected,
@@ -57,15 +62,17 @@ export function useComboBoxInputState(
     disabled,
   });
   const queuedFilterCharRef = useRef<string | null>(null);
-  const optionsByValue = useMemo(() => comboBoxOptionsByValue(options), [options]);
+  const optionsByValue = useMemo(() => comboBoxOptionsByValue(items), [items]);
   const selectedOption = useMemo(
     () => optionsByValue.get(value),
     [optionsByValue, value],
   );
-  const selectedDisplayString = useMemo(
-    () => comboBoxOptionDisplayString(selectedOption),
-    [selectedOption],
-  );
+  const selectedDisplayString = useMemo(() => {
+    const fromOption = comboBoxOptionDisplayString(selectedOption);
+    if (fromOption) return fromOption;
+    if (allowsCustomValue && value) return value;
+    return "";
+  }, [allowsCustomValue, selectedOption, value]);
   const activeOptionId = comboBoxActiveOptionId(listId, open, activeValue);
   const ariaDescribedBy = joinFieldDescribedBy(
     hintConnected ? hintId : undefined,
@@ -78,9 +85,13 @@ export function useComboBoxInputState(
     const nextQ = append ?? "";
     setFilterQuery(nextQ);
  
-    const fi = comboBoxFilteredValues(options, nextQ);
-    const selectedIdx = fi.indexOf(value);
-    setActiveValue(selectedIdx >= 0 ? value : fi[0] ?? null);
+    if (loading) {
+      setActiveValue(null);
+    } else {
+      const fi = comboBoxFilteredValues(items, nextQ, filter);
+      const selectedIdx = fi.indexOf(value);
+      setActiveValue(selectedIdx >= 0 ? value : fi[0] ?? null);
+    }
  
     requestAnimationFrame(() => {
       const el = inputRef.current;
@@ -89,7 +100,7 @@ export function useComboBoxInputState(
       const len = nextQ.length;
       el.setSelectionRange(len, len);
     });
-  }, [inputRef, options, setActiveValue, setFilterQuery, value]);
+  }, [filter, inputRef, items, loading, setActiveValue, setFilterQuery, value]);
  
   const openAfterSqueeze = useCallback(() => {
     openingSqueeze({ setOpen, onOpened: finishOpen });
@@ -112,12 +123,13 @@ export function useComboBoxInputState(
     (next: string) => {
       const opt = optionsByValue.get(next);
       if (!opt || opt.disabled) return;
+      cancelBlurCommit();
       setValue(next);
       setOpen(false);
       setFilterQuery("");
       focusElement(inputRef.current);
     },
-    [inputRef, optionsByValue, setFilterQuery, setOpen, setValue],
+    [cancelBlurCommit, inputRef, optionsByValue, setFilterQuery, setOpen, setValue],
   );
  
   const handleChange = useCallback(
@@ -172,7 +184,19 @@ export function useComboBoxInputState(
       }
       if (event.key === "Enter") {
         event.preventDefault();
-        if (activeValue) selectValue(activeValue);
+        if (loading) return;
+        if (activeValue && filteredValues.includes(activeValue)) {
+          selectValue(activeValue);
+          return;
+        }
+        const custom = filterQuery.trim();
+        if (allowsCustomValue && custom) {
+          cancelBlurCommit();
+          setValue(custom);
+          setOpen(false);
+          setFilterQuery("");
+          focusElement(inputRef.current);
+        }
         return;
       }
       if (event.key === "Home") {
@@ -189,15 +213,23 @@ export function useComboBoxInputState(
     },
     [
       activeValue,
+      allowsCustomValue,
       bumpActive,
       disabled,
       filteredValues,
+      cancelBlurCommit,
+      filterQuery,
+      inputRef,
+      loading,
       onKeyDown,
       open,
       openAfterSqueeze,
       optionsByValue,
       selectValue,
       setActiveValue,
+      setFilterQuery,
+      setOpen,
+      setValue,
     ],
   );
  
@@ -205,13 +237,42 @@ export function useComboBoxInputState(
     if (open) return;
     setFilterQuery("");
   }, [open, setFilterQuery]);
+
+  useEffect(() => {
+    if (loading) setActiveValue(null);
+  }, [loading, setActiveValue]);
  
   const handleBlur = useCallback(
     (event: FocusEvent<HTMLInputElement>) => {
       onBlur?.(event);
       formOnBlur?.();
+      if (event.defaultPrevented || disabled || readOnly || !allowsCustomValue) return;
+      const custom = event.currentTarget.value.trim();
+      if (!custom) return;
+      const related = event.relatedTarget;
+      if (related instanceof Element && document.getElementById(listId)?.contains(related)) return;
+      const generation = blurGeneration.current;
+      queueMicrotask(() => {
+        if (blurGeneration.current !== generation) return;
+        cancelBlurCommit();
+        setValue(custom);
+        setOpen(false);
+        setFilterQuery("");
+      });
     },
-    [formOnBlur, onBlur],
+    [
+      allowsCustomValue,
+      blurGeneration,
+      cancelBlurCommit,
+      disabled,
+      formOnBlur,
+      listId,
+      onBlur,
+      readOnly,
+      setFilterQuery,
+      setOpen,
+      setValue,
+    ],
   );
  
   const setRefs = useCallback(
@@ -227,9 +288,9 @@ export function useComboBoxInputState(
     comboBoxId,
     open,
     disabled,
+    readOnly,
     placeholder,
     size,
-    status,
     required,
     listId,
     errorConnected,

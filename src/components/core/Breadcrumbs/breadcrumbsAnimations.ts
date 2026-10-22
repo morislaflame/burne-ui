@@ -20,6 +20,10 @@ import {
  
 import { useOptionalBreadcrumbsMotionScope } from "./breadcrumbsContext";
 import type { BreadcrumbsMotion, BreadcrumbsPartMotion } from "./breadcrumbsTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export function resolveBreadcrumbsItemMotionDefaults(): BreadcrumbsMotion {
   return {

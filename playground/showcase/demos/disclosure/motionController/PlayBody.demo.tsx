@@ -9,13 +9,13 @@ export function DisclosureMotionControllerPlayBodyDemo() {
   return (
     <div className="flex flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("body", "enter")}>
-          Pulse body
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "enter")}>
+          Pulse content
         </Button>
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("body", "leave")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "leave")}>
           Reset
         </Button>
-        <Button size="small" variant="ghost" onClick={() => controller.set("body", { y: 0, opacity: 1 })}>
+        <Button size="small" variant="ghost" onClick={() => controller.set("content", { y: 0, opacity: 1 })}>
           Snap
         </Button>
       </div>
@@ -23,16 +23,16 @@ export function DisclosureMotionControllerPlayBodyDemo() {
         className="max-w-lg"
         motionController={controller}
         motion={{
-          body: {
+          content: {
             enter: { y: -6, duration: 0.28, replay: "rest" },
             leave: { y: 0, duration: 0.2 },
           },
         }}
       >
-        <Disclosure.Trigger>Body slot</Disclosure.Trigger>
+        <Disclosure.Trigger>Content slot</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">
-            playSlot on `body`. Open the panel to see it.
+          <Text as="p" textStyle="small" className="text-muted">
+            playSlot on `content`. Open the panel to see it.
           </Text>
         </Disclosure.Content>
       </Disclosure>

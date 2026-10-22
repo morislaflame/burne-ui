@@ -19,7 +19,7 @@ export function TooltipMotionControllerExcludeDemo() {
           Reset
         </Button>
       </div>
-      <Tooltip open delayShowMs={0}>
+      <Tooltip open openDelay={0}>
         <Tooltip.Trigger>
           <Button size="small" variant="outline" type="button">
             Trigger

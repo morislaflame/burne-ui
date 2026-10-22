@@ -193,26 +193,6 @@ export const Validation: Story = {
   ),
 };
 
-export const Success: Story = {
-  render: () => (
-    <Input status="success">
-      <Input.Label>Email</Input.Label>
-      <Input.Control defaultValue="ok@example.com" />
-      <Input.Hint>Address confirmed.</Input.Hint>
-    </Input>
-  ),
-};
-
-export const Warning: Story = {
-  render: () => (
-    <Input status="warning">
-      <Input.Label>Slug</Input.Label>
-      <Input.Control defaultValue="draft-v2" />
-      <Input.Hint>This identifier is already taken in another project.</Input.Hint>
-    </Input>
-  ),
-};
-
 export const Required: Story = {
   render: () => (
     <Input required>
@@ -226,7 +206,7 @@ export const Password: Story = {
   render: () => (
     <Input>
       <Input.Label>Password</Input.Label>
-      <Input.Control inputType="password" placeholder="••••••••" autoComplete="current-password" />
+      <Input.Control type="password" placeholder="••••••••" autoComplete="current-password" />
       <Input.Hint>At least 8 characters.</Input.Hint>
     </Input>
   ),
@@ -236,7 +216,7 @@ export const File: Story = {
   render: () => (
     <Input>
       <Input.Label>Avatar</Input.Label>
-      <Input.Control inputType="file" accept="image/*" />
+      <Input.Control type="file" accept="image/*" />
     </Input>
   ),
 };
@@ -283,8 +263,7 @@ export const Accessibility: Story = {
         <code className="text-primary">FieldLabelContext</code>. Hint and error — via{" "}
         <code className="text-primary">aria-describedby</code> (both ids when set).{" "}
         <code className="text-primary">error</code> or <code className="text-primary">invalid</code> set{" "}
-        <code className="text-primary">aria-invalid</code> and <code className="text-primary">data-invalid</code>.{" "}
-        <code className="text-primary">status=&quot;danger&quot;</code> is color only. The error is{" "}
+        <code className="text-primary">aria-invalid</code>, <code className="text-primary">data-invalid</code>, and the danger ring. The error is{" "}
         <code className="text-primary">Input.Error</code>, not a tinted hint.
       </p>
       <ValidatedEmailCompoundDemo />

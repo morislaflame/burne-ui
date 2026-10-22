@@ -3,7 +3,7 @@ import { IoGlobeOutline } from "react-icons/io5";
 
 import { Select } from "@/components/core/Select";
 
-const options = [
+const items = [
   {
     value: "ru",
     label: "Russian",
@@ -19,21 +19,21 @@ const options = [
 ];
 
 export function SelectClassNamesFullDemo() {
-  const [value, setValue] = useState("ru");
+  const [value, setValue] = useState<string | null>("ru");
 
   return (
     <Select
       label="Language"
       hint="Customization via classNames"
-      options={options}
+      items={items}
       value={value}
       onValueChange={setValue}
       variant="outline"
       classNames={{
-        triggerGroup: "border-info/40 bg-info/5 shadow-token-base",
+        shell: "border-info/40 bg-info/5 shadow-token-base",
         value: "text-info",
         trigger: "text-info hover:text-info",
-        triggerIconWrap: "text-info",
+        triggerIconWrap: "icon-slot-large text-info",
         popoverBody: "bg-info/5",
         listBox: "p-xsmall",
         listBoxItem: "rounded-lg",

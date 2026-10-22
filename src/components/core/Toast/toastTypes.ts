@@ -14,7 +14,7 @@ export type ToastSize = MessageBannerSize;
  
 export type ToastStatus = SemanticStatus;
  
-export const KIT_TOAST_VARIANTS = ["default"] as const;
+export const KIT_TOAST_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitToastVariant = (typeof KIT_TOAST_VARIANTS)[number];
 export type ToastVariant = KitToastVariant | (string & {});
  
@@ -83,7 +83,9 @@ export type AddToastOpts = {
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
-  timeout?: number;
+  duration?: number;
+  /** Called when this toast is removed from the stack. */
+  onClose?: () => void;
   placement?: ToastPlacement;
   id?: string;
   loading?: boolean;
@@ -101,7 +103,9 @@ export type PromiseToastOpts<T> = {
   success: ReactNode | ((value: T) => ReactNode);
   error?: ReactNode | ((err: unknown) => ReactNode);
   placement?: ToastPlacement;
-  timeout?: number;
+  duration?: number;
+  /** Called when this toast is removed from the stack. */
+  onClose?: () => void;
   classNames?: Prettify<ToastClassNames>;
   motion?: Prettify<MotionMapWithEvents<ToastMotion>>;
   motionController?: MotionController;
@@ -115,7 +119,8 @@ export type ToastEntry = {
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
-  timeout: number;
+  duration: number;
+  onClose?: () => void;
   placement: ToastPlacement;
   createdAt: number;
   loading: boolean;
@@ -138,6 +143,7 @@ export type ToastContextValue = {
     patch: Partial<Omit<ToastEntry, "id" | "createdAt">>,
   ) => void;
   dismiss: (id: string) => void;
+  dismissAll: () => void;
 };
  
 export type ToastItemContextValue = {

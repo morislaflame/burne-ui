@@ -26,7 +26,7 @@ export function DrawerFilterSheetDemo() {
         </Drawer.Header>
         <Drawer.Body className="flex flex-col gap-large">
           <Checkbox checked={draft} onChange={(e) => setDraft(e.target.checked)} label="Drafts only" />
-          <Text as="p" variant="xsmall" className="text-muted">
+          <Text as="p" textStyle="xsmall" className="text-muted">
             Drawer on the right with the filter form.
           </Text>
         </Drawer.Body>

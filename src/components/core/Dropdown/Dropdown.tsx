@@ -1,7 +1,8 @@
  
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
  
-import { DropdownClassNamesProvider, DropdownIndicatorPreferenceProvider, DropdownMotionProvider, DropdownProvider } from "./dropdownContext";
+import { DropdownClassNamesProvider, DropdownMotionProvider, DropdownProvider } from "./dropdownContext";
 import {
   DropdownGroup,
   DropdownItem,
@@ -13,7 +14,7 @@ import {
   DropdownPopover,
   DropdownSeparator,
   DropdownSub,
-  DropdownSubContent,
+  DropdownSubPopover,
   DropdownSubTrigger,
   DropdownTrigger,
 } from "./dropdownParts";
@@ -40,27 +41,33 @@ export type {
   DropdownItemStatus,
   DropdownSubProps,
   DropdownSubTriggerProps,
-  DropdownSubContentProps,
+  DropdownSubPopoverProps,
   DropdownMotion,
   DropdownLifecycleMotion,
   DropdownPartMotion,
   DropdownPopoverMotion,
+  DropdownItemData,
 } from "./dropdownTypes";
  
 export function DropdownRoot({
   children,
+  label,
+  items,
   className,
   classNames,
   open,
   defaultOpen,
   onOpenChange,
-  multiple,
+  selectionMode,
   value,
   defaultValue,
   onValueChange,
-  selectionIndicator = false,
+  values,
+  defaultValues,
+  onValuesChange,
   closeOnSelect,
-  popoverVariant,
+  size,
+  variant: popoverVariant,
   portalContainer,
   motion,
   motionController,
@@ -73,12 +80,16 @@ export function DropdownRoot({
     open,
     defaultOpen,
     onOpenChange,
-    multiple,
+    selectionMode,
     value,
     defaultValue,
     onValueChange,
+    values,
+    defaultValues,
+    onValuesChange,
     closeOnSelect,
-    popoverVariant,
+    size,
+    variant: popoverVariant,
     portalContainer,
   });
   const inJoinedButtonGroup = useInJoinedButtonGroup();
@@ -86,11 +97,14 @@ export function DropdownRoot({
   return (
     <DropdownProvider value={contextValue}>
       <DropdownClassNamesProvider classNames={classNames}>
-        <DropdownIndicatorPreferenceProvider value={selectionIndicator}>
-          <DropdownMotionProvider motion={motion} defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS} controller={motionController}
-        motionState={motionState}
-        motionPayload={motionPayload}
-        playInitialState={playInitialState}>
+        <DropdownMotionProvider
+          motion={motion}
+          defaults={OVERLAY_TRIGGER_MOTION_DEFAULTS}
+          controller={motionController}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
           <div
             className={dropdownRootClass({
               inJoinedButtonGroup,
@@ -98,10 +112,20 @@ export function DropdownRoot({
             })}
             {...rest}
           >
+            {label != null ? <DropdownTrigger>{label}</DropdownTrigger> : null}
             {children}
+            {items && !itemsPartTaken("Dropdown", children, "Dropdown.Popover") ? (
+              <DropdownPopover>
+                {items.map((item) => (
+                  <DropdownItem key={item.value} value={item.value} disabled={item.disabled}>
+                    <DropdownItemLabel>{item.label}</DropdownItemLabel>
+                    {item.hint != null ? <DropdownItemHint>{item.hint}</DropdownItemHint> : null}
+                  </DropdownItem>
+                ))}
+              </DropdownPopover>
+            ) : null}
           </div>
-          </DropdownMotionProvider>
-        </DropdownIndicatorPreferenceProvider>
+        </DropdownMotionProvider>
       </DropdownClassNamesProvider>
     </DropdownProvider>
   );
@@ -122,6 +146,6 @@ export {
   DropdownItemIndicator,
   DropdownSub,
   DropdownSubTrigger,
-  DropdownSubContent,
+  DropdownSubPopover,
 };
  

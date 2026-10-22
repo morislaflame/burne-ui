@@ -1,0 +1,36 @@
+{
+  "name": "__SKIN_NAME__",
+  "meta": {
+    "title": "__SKIN_TITLE__",
+    "description": "Tier 3: tokens, classes, layers, and a namespaced hover recipe."
+  },
+  "baseVariant": "default",
+  "elevation": "skin",
+  "tokens": {
+    "--color-surface": "#ffffff",
+    "--color-background": "#ffffff",
+    "--color-foreground": "#111111"
+  },
+  "targets": {
+    "button.root": "__SKIN_NAME__-surface",
+    "card.root": "__SKIN_NAME__-surface"
+  },
+  "layersDeclarative": {
+    "card.root": {
+      "wrapper": { "className": "__SKIN_NAME__-wrap" },
+      "before": [{ "className": "__SKIN_NAME__-edge" }],
+      "content": { "className": "__SKIN_NAME__-content" }
+    }
+  },
+  "motion": {
+    "button.root": {
+      "hoverIn": "__SKIN_NAME__:hover",
+      "hoverOut": "__SKIN_NAME__:hover"
+    },
+    "card.root": {
+      "hoverIn": "__SKIN_NAME__:hover",
+      "hoverOut": "__SKIN_NAME__:hover"
+    }
+  },
+  "styleUrl": "burne-ui-skin-__SKIN_NAME__/styles.css"
+}

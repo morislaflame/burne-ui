@@ -2,6 +2,7 @@ import { forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "rea
 
 import { useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
+import { usesKitElevation } from "@/skins/resolveVariantVisual";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
 
 import { resolveCalendarMotionDefaults } from "./calendarAnimations";
@@ -9,6 +10,7 @@ import { CalendarClassNamesProvider, CalendarMotionProvider, CalendarProvider, u
 import { CalendarDefaultContent } from "./calendarParts";
 import { calendarRootClass } from "./calendarStyles";
 import type { CalendarProps, UseCalendarRootStateProps } from "./calendarTypes";
+import { KIT_CALENDAR_VARIANTS } from "./calendarTypes";
 import { useCalendarRootState } from "./useCalendarRootState";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
@@ -40,20 +42,28 @@ export { useCalendar } from "./calendarContext";
 export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
   function CalendarRoot(rawProps, ref) {
     const {
-      mode: _mode,
+      selectionMode: _selectionMode,
       variant: _variant,
       size: _size,
       defaultMonth: _defaultMonth,
-      initialView: _initialView,
+      month: _month,
+      onMonthChange: _onMonthChange,
+      view: _view,
+      defaultView: _defaultView,
+      onViewChange: _onViewChange,
       locale: _locale,
       minDate: _minDate,
       maxDate: _maxDate,
-      navPrevIcon: _navPrevIcon,
-      navNextIcon: _navNextIcon,
+      isDateUnavailable: _isDateUnavailable,
+      previousIcon: _previousIcon,
+      nextIcon: _nextIcon,
       renderDay: _renderDay,
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,
+      values: _values,
+      defaultValues: _defaultValues,
+      onValuesChange: _onValuesChange,
       classNames,
       children,
       className = "",
@@ -79,10 +89,15 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
     return (
       <CalendarProvider value={contextValue}>
         <CalendarClassNamesProvider classNames={classNames}>
-          <CalendarMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
-        motionState={motionState}
-        motionPayload={motionPayload}
-        playInitialState={playInitialState}>
+          <CalendarMotionProvider
+            motion={motion}
+            defaults={motionDefaults}
+            params={{ shadowSize: "base", liftScale: 1 }}
+            controller={motionController}
+            motionState={motionState}
+            motionPayload={motionPayload}
+            playInitialState={playInitialState}
+          >
           <CalendarRootSurface
             forwardedRef={ref}
             className={calendarRootClass(
@@ -126,11 +141,15 @@ function CalendarRootSurface({
     scope,
     slot: "root",
     forwardedRef,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
   });
   useOptionalEnterOnMount(scope, "root", part.targetRef);
-  const shadow = useSecondLevelShadow(part.targetRef, true, {
+  const shadow = useSecondLevelShadow(part.targetRef, usesKitElevation(variant, KIT_CALENDAR_VARIANTS), {
     shadowSize: "base",
     liftScale: 1,
+    interactive: false,
     killMotionOnUnmount: false,
   });
   return (
@@ -138,14 +157,7 @@ function CalendarRootSurface({
       ref={part.setRef}
       className={cn(className, shadow.motionClass)}
       {...domRest}
-      onPointerOver={(event) => {
-        onPointerOver?.(event);
-        shadow.onPointerOver(event);
-      }}
-      onPointerOut={(event) => {
-        onPointerOut?.(event);
-        shadow.onPointerOut(event);
-      }}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size, variant })}
     >
       {children}

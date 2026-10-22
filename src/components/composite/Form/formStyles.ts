@@ -147,6 +147,6 @@ export function formAnnounceClass(className?: string, classNames?: Prettify<Form
 }
  
 export function formFieldClass(className?: string, classNames?: Prettify<FormClassNames>): string {
-  return cn(className, classNames?.field);
+  return cn(classNames?.field, className);
 }
  

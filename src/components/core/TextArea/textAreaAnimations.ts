@@ -19,7 +19,7 @@ import {
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
  
 import { useOptionalTextAreaMotionScope, useTextAreaMotionScope } from "./textAreaContext";
 import type {
@@ -29,6 +29,10 @@ import type {
   UseTextAreaShellAnimationsProps,
 } from "./textAreaTypes";
 import { KIT_TEXT_AREA_VARIANTS } from "./textAreaTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 export function resolveTextAreaMotionDefaults({
   variant,
@@ -41,8 +45,8 @@ export function resolveTextAreaMotionDefaults({
   return overlaySkinMotion(
     {
       shell: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
         pressIn: active ? "pressSqueeze" : false,
         pressOut: false,
       },
@@ -63,8 +67,8 @@ export function resolveTextAreaMotionParams({
   pointerInside: MutableRefObject<boolean>;
 }) {
   return {
-    shadowSize: "base" as const,
-    hasHoverShadow: !blocked && isKitVariant(variant, KIT_TEXT_AREA_VARIANTS),
+    shadowSize: "none" as const,
+    hasHoverShadow: !blocked && usesKitElevation(variant, KIT_TEXT_AREA_VARIANTS),
     pointerInside,
   };
 }
@@ -82,11 +86,12 @@ export function useTextAreaShellAnimations({
   const shellMotionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   shellMotionRef.current = motion;
-  const kitSurface = isKitVariant(variant, KIT_TEXT_AREA_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_TEXT_AREA_VARIANTS);
 
   useOptionalEnterOnMount(scope, "shell", shellRef);
 
   const standardShellHover = useSecondLevelShadow(shellRef, !blocked && kitSurface, {
+    shadowSize: "none",
     interactive: false,
     pointerInsideRef,
   });

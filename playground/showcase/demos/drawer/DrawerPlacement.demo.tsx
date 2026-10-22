@@ -40,7 +40,7 @@ export function DrawerPlacementDemo() {
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <Text as="p" variant="small" className="text-muted">
+              <Text as="p" textStyle="small" className="text-muted">
                 Content drawer with placement &quot;{placement}&quot;.
               </Text>
             </Drawer.Body>

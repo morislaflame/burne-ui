@@ -97,9 +97,9 @@ export function ToastModificationsDemo() {
           onClick={() =>
             toast.show({
               title: "Constant toast",
-              description: "timeout: 0 — without auto-closing.",
+              description: "duration: 0 — without auto-closing.",
               status: "info",
-              timeout: 0,
+              duration: 0,
             })
           }
         >

@@ -40,12 +40,12 @@ export function TabsMotionControllerStaggerDemo() {
           <Tabs.Tab value="two">Two</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="one" className="pt-large">
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Stagger is root + list, not nested tabs.
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="two" className="pt-large">
-          <Text as="p" variant="small">Second panel.</Text>
+          <Text as="p" textStyle="small">Second panel.</Text>
         </Tabs.Panel>
       </Tabs>
     </div>

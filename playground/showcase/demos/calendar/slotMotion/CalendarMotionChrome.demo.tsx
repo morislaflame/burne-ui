@@ -9,7 +9,7 @@ export function CalendarMotionChromeDemo() {
           enter: (ctx) =>
             ctx.fromTo({ y: -8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28 }),
         },
-        headerTitle: {
+        title: {
           hoverIn: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.2 }),
           hoverOut: (ctx) =>
             tweenCssColor(ctx.el, "var(--color-foreground)", {

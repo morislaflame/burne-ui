@@ -15,15 +15,15 @@ export type SelectionIndicatorClassNames = {
   mark?: string;
 };
  
-export type SelectionIndicatorCheckMotion = {
+export type SelectionIndicatorPartMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
 };
  
 export type SelectionIndicatorMotion = {
-  root?: SelectionIndicatorCheckMotion;
-  fill?: SelectionIndicatorCheckMotion;
-  mark?: SelectionIndicatorCheckMotion;
+  root?: SelectionIndicatorPartMotion;
+  fill?: SelectionIndicatorPartMotion;
+  mark?: SelectionIndicatorPartMotion;
 };
  
 export type SelectionIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
@@ -51,12 +51,12 @@ export type SelectionIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
 } & MotionStateHostProps;
  
 export type SelectionIndicatorFillProps = HTMLAttributes<HTMLSpanElement> & {
-  motion?: Prettify<SelectionIndicatorCheckMotion>;
+  motion?: Prettify<SelectionIndicatorPartMotion>;
 };
  
 export type SelectionIndicatorMarkProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
-  motion?: Prettify<SelectionIndicatorCheckMotion>;
+  motion?: Prettify<SelectionIndicatorPartMotion>;
 };
  
 export type ResolvedSelectionIndicatorClassNames = {

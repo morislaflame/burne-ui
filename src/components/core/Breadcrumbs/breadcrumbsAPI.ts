@@ -28,14 +28,20 @@ function collectItemsDeep(children: ReactNode, out: BreadcrumbItemData[]) {
     if (!isValidElement(child)) return;
     if (elementDisplayName(child) === BREADCRUMBS_ITEM_DISPLAY_NAME) {
       const props = child.props as BreadcrumbsItemProps;
+      const link = props.asChild && isValidElement(props.children) ? props.children : undefined;
+      const linkProps = link?.props as { children?: ReactNode; href?: string } | undefined;
       out.push({
-        label: props.children,
-        href: props.href,
+        label: linkProps ? linkProps.children : props.children,
+        href: props.href ?? linkProps?.href,
         onClick: props.onClick,
         current: props.current,
         className: props.className,
+        link,
         motion: props.motion,
         motionController: props.motionController,
+        motionState: props.motionState,
+        motionPayload: props.motionPayload,
+        playInitialState: props.playInitialState,
       });
       return;
     }

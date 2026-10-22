@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
  
-import { createToastId, TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
+import { createToastId, TOAST_DEFAULT_DURATION_MS } from "./toastAPI";
 import { resolveToastLiveRole, toastAnnouncementText } from "./toastA11y";
 import type {
   AddToastOpts,
@@ -61,7 +61,8 @@ export function useToastProviderState({
         title: opts.title,
         description: opts.description,
         action: opts.action,
-        timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
+        duration: opts.duration ?? TOAST_DEFAULT_DURATION_MS,
+        onClose: opts.onClose,
         placement: opts.placement ?? defaultPlacement,
         createdAt: ++orderRef.current,
         loading: opts.loading ?? false,
@@ -100,8 +101,15 @@ export function useToastProviderState({
   const dismiss = useCallback((id: string) => {
     setDismissingIds((prev) => new Set([...prev, id]));
   }, []);
+
+  const dismissAll = useCallback(() => {
+    const ids = toastsRef.current.map((toast) => toast.id);
+    if (ids.length === 0) return;
+    setDismissingIds((prev) => new Set([...prev, ...ids]));
+  }, []);
  
   const removeFinal = useCallback((id: string) => {
+    toastsRef.current.find((t) => t.id === id)?.onClose?.();
     setToasts((prev) => prev.filter((t) => t.id !== id));
     setDismissingIds((prev) => {
       const n = new Set(prev);
@@ -116,8 +124,8 @@ export function useToastProviderState({
   );
  
   const ctx: ToastContextValue = useMemo(
-    () => ({ add, update, dismiss }),
-    [add, dismiss, update],
+    () => ({ add, update, dismiss, dismissAll }),
+    [add, dismiss, dismissAll, update],
   );
  
   const sortedByPlacement = useCallback(

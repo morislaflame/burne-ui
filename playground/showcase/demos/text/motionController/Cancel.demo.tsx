@@ -33,7 +33,7 @@ export function TextMotionControllerCancelDemo() {
           Cancel
         </Button>
       </div>
-      <Text variant="large" motionController={controller} motion={{ events }}>
+      <Text textStyle="large" motionController={controller} motion={{ events }}>
         Looping line
       </Text>
     </div>

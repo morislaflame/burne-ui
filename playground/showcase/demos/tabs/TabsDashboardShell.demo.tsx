@@ -7,7 +7,7 @@ export function TabsDashboardShellDemo() {
   return (
     <Surface padding="large" className="flex w-full max-w-lg flex-col gap-large">
       <div className="flex items-center justify-between gap-large">
-        <Text as="p" variant="base" className="font-medium">
+        <Text as="p" textStyle="base" className="font-medium">
           Analytics
         </Text>
         <Badge variant="outline" size="small">
@@ -22,18 +22,18 @@ export function TabsDashboardShellDemo() {
         </Tabs.List>
         <Tabs.Panel value="traffic" className="pt-large">
           <div className="flex h-24 items-center justify-center rounded-base border border-dashed border-token text-muted">
-            <Text as="span" variant="xsmall">
+            <Text as="span" textStyle="xsmall">
               Visiting schedule
             </Text>
           </div>
         </Tabs.Panel>
         <Tabs.Panel value="conversion" className="pt-large">
-          <Text as="p" variant="xsmall" className="text-muted">
+          <Text as="p" textStyle="xsmall" className="text-muted">
             Funnel and goals.
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="retention" className="pt-large">
-          <Text as="p" variant="xsmall" className="text-muted">
+          <Text as="p" textStyle="xsmall" className="text-muted">
             Cohorts in 30 days.
           </Text>
         </Tabs.Panel>

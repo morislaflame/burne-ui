@@ -30,7 +30,9 @@ export function PaginationMotionEventsOffDemo() {
         onPageChange={setPage}
         motionController={liveController}
         motion={{
-          control: { pressIn: false, pressOut: false },
+          previous: { pressIn: false, pressOut: false },
+          next: { pressIn: false, pressOut: false },
+          page: { pressIn: false, pressOut: false },
           events: live,
         }}
       >
@@ -51,7 +53,9 @@ export function PaginationMotionEventsOffDemo() {
         onPageChange={setPage}
         motionController={offController}
         motion={{
-          control: { pressIn: false, pressOut: false },
+          previous: { pressIn: false, pressOut: false },
+          next: { pressIn: false, pressOut: false },
+          page: { pressIn: false, pressOut: false },
           events: off,
         }}
       >

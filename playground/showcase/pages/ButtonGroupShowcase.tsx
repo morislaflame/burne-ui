@@ -36,7 +36,7 @@ export function ButtonGroupShowcase() {
         <ShowcaseDemoFromFile Demo={ButtonGroupButtonsOnlyDemo} source={buttonGroupButtonsOnlySource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Dimensions" description="buttonSize: small, base, mid, large — height of all segments.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large — height of all segments.">
         <ShowcaseDemoFromFile Demo={ButtonGroupSizesDemo} source={buttonGroupSizesSource} />
       </ShowcaseSection>
 <ShowcaseSection title="classNames" description="Slots root, separator, text, textLabel via classNames.">
@@ -69,7 +69,7 @@ export function ButtonGroupShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="aria-label, buttonSize, orientation, variant, segmented on the root ButtonGroup. Child Button and ButtonGroup.Text; groupSegment for buttons is specified by the group context."
+            description="aria-label, size, orientation, variant, segmented on the root ButtonGroup. Child Button and ButtonGroup.Text; groupSegment for buttons is specified by the group context."
           />
           <ShowcaseDoc.ApiRow
             api="compound"

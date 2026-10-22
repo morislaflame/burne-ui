@@ -9,7 +9,7 @@ export function ToggleButtonGroupSizesDemo() {
   return (
     <div className="flex flex-col gap-large">
       {SIZES.map((size) => (
-        <ToggleButtonGroup key={size} type="single" size={size} defaultValue="list" aria-label={`Size ${size}`}>
+        <ToggleButtonGroup key={size} selectionMode="single" size={size} defaultValue="list" aria-label={`Size ${size}`}>
           <ToggleButton value="list" icon={<IoListOutline aria-hidden />}>
             List
           </ToggleButton>

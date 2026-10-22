@@ -23,18 +23,20 @@ describe("MotionVars / MotionTransformVars / MotionRecipeParams", () => {
     expectTypeOf<MotionVars>().toHaveProperty("autoAlpha");
     expectTypeOf<MotionVars>().toHaveProperty("yoyo");
     expectTypeOf<MotionVars>().toHaveProperty("replay");
+    expectTypeOf<MotionVars>().toHaveProperty("rotation");
+    expectTypeOf<MotionVars>().toHaveProperty("scaleX");
+    expectTypeOf<MotionVars>().toHaveProperty("scaleY");
+    expectTypeOf<MotionVars>().toHaveProperty("opacity");
     expectTypeOf<MotionVars>().not.toHaveProperty("width");
     expectTypeOf<MotionVars>().not.toHaveProperty("height");
-    expectTypeOf<MotionVars>().not.toHaveProperty("rotation");
-    expectTypeOf<MotionVars>().not.toHaveProperty("scaleX");
-    expectTypeOf<MotionVars>().not.toHaveProperty("opacity");
+    expectTypeOf<MotionVars>().not.toHaveProperty("rotate");
+
+    const rotateVars: MotionVars = { rotation: 180, scaleX: 0.4, opacity: 0 };
+    expect(rotateVars.rotation).toBe(180);
 
     // @ts-expect-error layout is not a public MotionVars key
     const layoutVars: MotionVars = { width: 120 };
-    // @ts-expect-error rotation is kit-only (factory or MotionTransformVars)
-    const rotateVars: MotionVars = { rotation: 180 };
     expect(layoutVars).toBeDefined();
-    expect(rotateVars).toBeDefined();
   });
 
   it("accepts compositor extras on MotionTransformVars and rejects layout", () => {

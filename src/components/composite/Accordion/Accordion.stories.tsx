@@ -59,7 +59,7 @@ function AccordionItemDemo({
   item: (typeof items)[number];
 }) {
   return (
-    <>
+    <Accordion.Item>
       <Accordion.Heading>
         <Accordion.Trigger>
           <Accordion.Message>
@@ -76,7 +76,7 @@ function AccordionItemDemo({
       <Accordion.Panel>
         <Accordion.Body>{item.content}</Accordion.Body>
       </Accordion.Panel>
-    </>
+    </Accordion.Item>
   );
 }
 
@@ -102,11 +102,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Accordion className="max-w-2xl" defaultOpenIndex={0}>
+    <Accordion className="max-w-2xl" defaultValue="0">
       {items.map((item) => (
-        <Accordion.Item key={item.title}>
-          <AccordionItemDemo item={item} />
-        </Accordion.Item>
+        <AccordionItemDemo key={item.title} item={item} />
       ))}
     </Accordion>
   ),
@@ -115,11 +113,9 @@ export const Default: Story = {
 export const ExpandInteraction: Story = {
   name: "Interaction: expand",
   render: () => (
-    <Accordion className="max-w-2xl" defaultOpenIndex={0}>
+    <Accordion className="max-w-2xl" defaultValue="0">
       {items.map((item) => (
-        <Accordion.Item key={item.title}>
-          <AccordionItemDemo item={item} />
-        </Accordion.Item>
+        <AccordionItemDemo key={item.title} item={item} />
       ))}
     </Accordion>
   ),
@@ -129,7 +125,7 @@ export const ExpandInteraction: Story = {
     await expect(first).toHaveAttribute("aria-expanded", "true");
     await userEvent.click(second);
     await expect(second).toHaveAttribute("aria-expanded", "true");
-    await expect(canvas.getByText(/Return available/)).toBeVisible();
+    await expect(canvas.getByText(/Returns are available/)).toBeVisible();
   },
 };
 
@@ -145,7 +141,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <Accordion
       className="max-w-2xl"
-      defaultOpenIndex={0}
+      defaultValue="0"
       classNames={{
         root: "gap-px",
         item: "border-primary/30",
@@ -157,9 +153,7 @@ export const CustomClassNames: Story = {
       }}
     >
       {items.map((item) => (
-        <Accordion.Item key={item.title}>
-          <AccordionItemDemo item={item} />
-        </Accordion.Item>
+        <AccordionItemDemo key={item.title} item={item} />
       ))}
     </Accordion>
   ),
@@ -168,7 +162,7 @@ export const CustomClassNames: Story = {
 export const PressRipple: Story = {
   name: "Ripple on press in trigger",
   render: () => (
-    <Accordion className="max-w-md" defaultOpenIndex={0}>
+    <Accordion className="max-w-md" defaultValue="0">
       {items.map((item) => (
         <Accordion.Item key={item.title}>
           <Accordion.Heading>

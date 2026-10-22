@@ -7,7 +7,7 @@ export function SliderVolumeCardDemo() {
   const [value, setValue] = useState(50);
 
   return (
-    <Slider className="w-full max-w-sm">
+    <Slider className="w-full max-w-sm" classNames={{ thumbShell: "rounded-large" }}>
       <Slider.Header>
         <Slider.Label>Volume</Slider.Label>
         <Slider.Value />
@@ -18,7 +18,6 @@ export function SliderVolumeCardDemo() {
         min={0}
         max={100}
         step={1}
-        thumbClassName="rounded-large"
       >
         <Slider.Rail className="rounded-large">
           <Slider.Fill className="rounded-large" />
@@ -29,7 +28,7 @@ export function SliderVolumeCardDemo() {
           </Slider.Icon>
         </Slider.Thumb>
       </Slider.Track>
-      <Slider.Hint>Compound Track + thumbClassName=&quot;rounded-large&quot;.</Slider.Hint>
+      <Slider.Hint>Compound Track + classNames.thumbShell=&quot;rounded-large&quot;.</Slider.Hint>
     </Slider>
   );
 }

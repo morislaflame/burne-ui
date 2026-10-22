@@ -4,6 +4,20 @@
 
 Указатель может перейти с якоря на панель: `closeDelay` (300 мс) покрывает зазор. Вход на панель отменяет закрытие. `Escape` закрывает. Фокус на якорь возвращается, только если он был внутри карточки (`Popover` `restoreFocus={false}`, иначе уход курсора фокусировал бы якорь).
 
+## Импорт
+
+```tsx
+import {
+  HoverCard,
+  type HoverCardProps,
+  type HoverCardClassNames,
+  type HoverCardMotion,
+  type HoverCardSide,
+  type HoverCardSize,
+} from "burne-ui";
+import { HOVER_CARD_CLOSE_DELAY, HOVER_CARD_OPEN_DELAY } from "burne-ui/internal";
+```
+
 ## Simple
 
 ```tsx
@@ -44,11 +58,11 @@
 | `showArrow` | `true` | Стрелка simple API |
 | `side` | `bottom` | Сторона панели |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` | Уходит в Popover |
+| `variant` | `default` | `default` \| `outline` \| `secondary`, как у Popover. Имя скина — строка |
 | `open` / `defaultOpen` / `onOpenChange` | закрыто | Открытие |
 | `openDelay` | `400` | Пауза перед открытием |
 | `closeDelay` | `300` | Пауза перед закрытием |
-| `shouldDismiss` | — | Veto outside `pointerdown` |
+| `onInteractOutside` | — | Veto outside `pointerdown` |
 | `portalContainer` | `document.body` | Портал |
 | `classNames` | — | Слоты панели Popover |
 | `motion` | — | `trigger` на scope HoverCard. Остальные слоты — портал `HoverCard.Content` |
@@ -56,7 +70,7 @@
 
 ### `HoverCardClassNames`
 
-`root`, `trigger`, `content`, `panelRelative`, `panel`, `arrow`, `header`, `title`, `description`, `body`.
+`trigger`, `content`, `panelRelative`, `panel`, `arrow`, `header`, `title`, `description`, `body`.
 
 ### Слоты motion
 
@@ -71,6 +85,8 @@
 | `arrow` | Стрелка | hover и enter |
 
 `events` и `states` — соседи слотов, не ключи `HoverCardMotion`.
+
+На корне — scope якоря. На `HoverCard.Content` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ## Поведение
 

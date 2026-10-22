@@ -78,7 +78,7 @@ export const Horizontal: Story = {
 export const Segmented: Story = {
   render() {
     return (
-      <ButtonGroup segmented aria-label="Actions" buttonSize="base">
+      <ButtonGroup segmented aria-label="Actions" size="base">
         <Button variant="outline">Cancel</Button>
         <Button variant="outline">Draft</Button>
         <Button variant="primary">Save</Button>
@@ -91,7 +91,7 @@ export const ClickInteraction: Story = {
   name: "Interaction: click",
   render() {
     return (
-      <ButtonGroup segmented aria-label="Actions" buttonSize="base">
+      <ButtonGroup segmented aria-label="Actions" size="base">
         <Button variant="outline">Cancel</Button>
         <Button variant="outline">Draft</Button>
         <Button variant="primary">Save</Button>
@@ -107,7 +107,7 @@ export const ClickInteraction: Story = {
 export const Vertical: Story = {
   render() {
     return (
-      <ButtonGroup orientation="vertical" buttonSize="base" aria-label="Vertical group">
+      <ButtonGroup orientation="vertical" size="base" aria-label="Vertical group">
         <ButtonGroup.Text>Sorting</ButtonGroup.Text>
         <Button variant="outline">By date</Button>
         <Button variant="outline">By name</Button>
@@ -141,7 +141,7 @@ export const ToolbarWithSearchInputRow: Story = {
     return (
       <div className="flex min-w-[min(100%,40rem)] max-w-[min(100%,48rem)] flex-wrap items-center justify-center gap-small">
         <SearchInput defaultExpanded expandedWidth={280} placeholder="Search everywhere…" aria-label="Search sections" />
-        <ButtonGroup aria-label="View" buttonSize="base">
+        <ButtonGroup aria-label="View" size="base">
           <ButtonGroup.Text>Table</ButtonGroup.Text>
           <Button variant="outline">Cards</Button>
           <Button variant="outline">List</Button>
@@ -157,7 +157,7 @@ export const MultipleGroupsInRow: Story = {
   render() {
     return (
       <div className="flex flex-wrap items-center justify-center gap-xlarge">
-        <ButtonGroup aria-label="Format" buttonSize="small">
+        <ButtonGroup aria-label="Format" size="small">
           <ButtonGroup.Text>Format</ButtonGroup.Text>
           <Button size="small" variant="outline">
             JSON
@@ -169,7 +169,7 @@ export const MultipleGroupsInRow: Story = {
             Export
           </Button>
         </ButtonGroup>
-        <ButtonGroup aria-label="View" buttonSize="small">
+        <ButtonGroup aria-label="View" size="small">
           <ButtonGroup.Text>View</ButtonGroup.Text>
           <Button size="small" variant="outline">
             A
@@ -178,7 +178,7 @@ export const MultipleGroupsInRow: Story = {
             B
           </Button>
         </ButtonGroup>
-        <ButtonGroup aria-label="Status" buttonSize="small">
+        <ButtonGroup aria-label="Status" size="small">
           <Button size="small" variant="primary" status="danger" icon={<IoTrashOutline />}>
             Reset
           </Button>
@@ -193,7 +193,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <ButtonGroup
       aria-label="Custom slots"
-      buttonSize="base"
+      size="base"
       classNames={{
         root: "rounded-large border-primary/25 p-xsmall",
         separator: "border-primary/40",

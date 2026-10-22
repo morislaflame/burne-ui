@@ -1,5 +1,6 @@
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { applyToastRootInstant } from "@/components/core/utils/slotMotion/recipes/toastSurface";
 import { applyToastStackInstant } from "@/components/core/utils/slotMotion/recipes/toastStackShift";
 import { applyToastScrimInstant } from "@/components/core/utils/slotMotion/recipes/toastScrimFade";
@@ -36,6 +37,7 @@ import {
 import { ToastRoot } from "./Toast";
 import { resolveToastMotionDefaults, TOAST_VIEWPORT_MOTION_DEFAULTS } from "./toastMotionDefaults";
 import {
+  TOAST_SHADOW_SIZE,
   toastScrimClass,
   toastStackClass,
   toastStackItemClass,
@@ -53,8 +55,10 @@ import { KIT_TOAST_VARIANTS } from "./toastTypes";
  * `action`, `close`, `stackItem` (peek), `scrim` (viewport). `message` / `content`
  * are `display: contents`. Viewport height is `--toast-stack-height`, not a tween.
  *
- * Host: `ToastItemWrapper` plays `enter` / `leave` on `root` and broadcasts
- * nested slots (`scheduleNestedEnterBroadcast`). Nested parts do not own mount enter.
+ * Host: `ToastItemWrapper` plays `enter` / `leave` on the enter wrapper (`root`).
+ * Hover lift plays on the card (`ToastRoot`), not this wrapper and not `stackItem`:
+ * those nodes already own enter scale and peek scale.
+ * Nested parts do not own mount enter (`scheduleNestedEnterBroadcast`).
  * Defaults wrap the item host (`TOAST_MOTION_DEFAULTS`).
  * `Toast.Provider` / `add().motion` pass the map (like Dialog root).
  */
@@ -91,6 +95,7 @@ function ToastItemMotionHost({
   const { setRef: setStackPartRef } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "stackItem",
+    // Peek scale lives here. Card hover is on ToastRoot, not this shell.
     pointerPhases: false,
   });
   const setStackRef = useCallback(
@@ -147,7 +152,7 @@ function ToastItemMotionHost({
     const el = animRef.current;
     if (!el) return;
     const value = scope.resolve("root", "enter");
-    if (value === false || isReducedModalMotion(config)) {
+    if (value === false || isReducedModalMotion(config, prefersReducedMotion())) {
       if (value === false) applyToastRootInstant(el, true, slideDir);
       else applyReducedPortalMotion(el);
       return;
@@ -162,7 +167,7 @@ function ToastItemMotionHost({
     if (!isDismissing) return;
     const el = animRef.current;
     if (!el) return;
-    if (isReducedModalMotion(config)) {
+    if (isReducedModalMotion(config, prefersReducedMotion())) {
       onRemoveFinal(entry.id);
       return undefined;
     }
@@ -187,9 +192,9 @@ function ToastItemMotionHost({
   }, [config, entry.id, isDismissing, onRemoveFinal, scope, slideDir]);
  
   useEffect(() => {
-    if (entry.timeout === 0 || isDismissing || entry.loading) return;
+    if (entry.duration === 0 || isDismissing || entry.loading) return;
  
-    let remaining = entry.timeout;
+    let remaining = entry.duration;
     let startedAt: number | null = Date.now();
     let timerId: number | undefined;
     let paused = false;
@@ -250,7 +255,7 @@ function ToastItemMotionHost({
       node?.removeEventListener("focusin", onFocusIn);
       node?.removeEventListener("focusout", onFocusOut);
     };
-  }, [entry.id, entry.timeout, isDismissing, entry.loading, onDismiss]);
+  }, [entry.id, entry.duration, isDismissing, entry.loading, onDismiss]);
  
   const dismiss = useCallback(() => onDismiss(entry.id), [entry.id, onDismiss]);
  
@@ -319,7 +324,7 @@ export function ToastItemWrapper({
     <ToastMotionProvider
       motion={mergedMotion}
       defaults={motionDefaults}
-      params={{ isTop, slideDir }}
+      params={{ isTop, slideDir, shadowSize: TOAST_SHADOW_SIZE }}
       controller={entry.motionController}
       motionState={entry.motionState}
       motionPayload={entry.motionPayload}

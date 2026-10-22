@@ -5,7 +5,8 @@ Converge-ripple — волна от точки нажатия, расходящ�
 ## Импорт
 
 ```tsx
-import { Ripple, RIPPLE_COLOR, type RippleProps, type RippleColor, type RippleDirection } from "burne-ui";
+import { Ripple, type RippleProps, type RippleColor, type RippleDirection } from "burne-ui";
+import { RIPPLE_COLOR } from "burne-ui/internal";
 ```
 
 ## API

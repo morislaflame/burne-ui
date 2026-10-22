@@ -6,7 +6,7 @@ import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotio
 import { CONTROL_SIZE_LAYOUT, iconSlotSizeClass } from "@/components/core/utils/sizeLayout";
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import type { TextVariant } from "@/components/core/Text";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
  
 import type { ToggleButtonSize, ToggleButtonVariant, KitToggleButtonVariant } from "./toggleButtonTypes";
 import { KIT_TOGGLE_BUTTON_VARIANTS } from "./toggleButtonTypes";
@@ -132,7 +132,7 @@ export function toggleButtonRootClass({
   className?: string;
 }) {
   const visual = resolveVariantVisual(variant, KIT_TOGGLE_BUTTON_VARIANTS, "toggleButton.root");
-  const kitSurface = isKitVariant(variant, KIT_TOGGLE_BUTTON_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_TOGGLE_BUTTON_VARIANTS);
   const roundingClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)
     : CONTROL_SIZE_LAYOUT[size].rounded;

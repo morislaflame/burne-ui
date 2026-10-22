@@ -36,5 +36,6 @@ export type {
   ListBoxClassNames,
   ListBoxMotion,
   ListBoxPartMotion,
+  ListBoxItemData,
 } from "./ListBox";
  

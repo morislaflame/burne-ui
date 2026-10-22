@@ -55,7 +55,7 @@ export function MotionGroupUnmountDemo() {
           <Button size="small" variant="ghost" onClick={ping}>
             Play alert
           </Button>
-          <Text variant="small" className="text-muted">
+          <Text textStyle="small" className="text-muted">
             {note}
           </Text>
         </div>

@@ -7,6 +7,10 @@ import localeSource from "../demos/datePicker/Locale.demo.tsx?raw";
 import { DatePickerInvalidDemo } from "../demos/datePicker/Invalid.demo";
 import invalidSource from "../demos/datePicker/Invalid.demo.tsx?raw";
 import { DatePickerMotionControllerGalleryDemo } from "../demos/datePicker/motionController/gallery";
+import { DatePickerMultipleDemo } from "../demos/datePicker/Multiple.demo";
+import multipleSource from "../demos/datePicker/Multiple.demo.tsx?raw";
+import { DatePickerReadOnlyDemo } from "../demos/datePicker/ReadOnly.demo";
+import readOnlySource from "../demos/datePicker/ReadOnly.demo.tsx?raw";
 import { DatePickerRangeDemo } from "../demos/datePicker/Range.demo";
 import rangeSource from "../demos/datePicker/Range.demo.tsx?raw";
 import { DatePickerSingleDemo } from "../demos/datePicker/Single.demo";
@@ -39,6 +43,12 @@ export function DatePickerShowcase() {
       </ShowcaseSection>
       <ShowcaseSection title="Range" description="First click sets the start. The field closes after the end is set.">
         <ShowcaseDemoFromFile align="start" Demo={DatePickerRangeDemo} source={rangeSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Several days" description="selectionMode multiple stores Date[] in values. The popover stays open.">
+        <ShowcaseDemoFromFile align="start" Demo={DatePickerMultipleDemo} source={multipleSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Read only" description="readOnly shows the date and does not open the calendar.">
+        <ShowcaseDemoFromFile align="start" Demo={DatePickerReadOnlyDemo} source={readOnlySource} />
       </ShowcaseSection>
       <ShowcaseSection title="Locale" description="en-GB reads 15 Oct 2026. ru reads 15 окт. 2026 г. The calendar inside uses the same tag.">
         <ShowcaseDemoFromFile align="start" Demo={DatePickerLocaleDemo} source={localeSource} />

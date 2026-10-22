@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { RadioGroup } from "@/components/composite/RadioGroup";
 import { Radio } from "@/components/core/Radio";
+import { Label } from "@/components/core/Label";
 
 export function RadioGroupContactMethodDemo() {
   const [value, setValue] = useState("email");
@@ -9,7 +10,7 @@ export function RadioGroupContactMethodDemo() {
   return (
     <RadioGroup value={value} onValueChange={(v) => v != null && setValue(v)}>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Communication method</RadioGroup.Label>
+        <Label>Communication method</Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="email" label="Email" />

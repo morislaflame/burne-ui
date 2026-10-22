@@ -9,12 +9,12 @@ export function ContextMenuSubIconDemo() {
   return (
     <ContextMenu>
       <ContextMenu.Trigger className={surface}>Right-click</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Sub>
           <ContextMenu.SubTrigger icon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}>
             Invite
           </ContextMenu.SubTrigger>
-          <ContextMenu.SubContent>
+          <ContextMenu.SubPopover>
             <ContextMenu.Item>
               <ContextMenu.ItemLabel>Email</ContextMenu.ItemLabel>
               <ContextMenu.ItemIcon>
@@ -27,9 +27,9 @@ export function ContextMenuSubIconDemo() {
                 <IoChatbubbleOutline aria-hidden />
               </ContextMenu.ItemIcon>
             </ContextMenu.Item>
-          </ContextMenu.SubContent>
+          </ContextMenu.SubPopover>
         </ContextMenu.Sub>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

@@ -2,6 +2,8 @@
 
 Чекбокс с `SelectionIndicator`, simple API (`label` / `hint` / `error` на root) и compound (`Control` / `Content` / `Label`). Интеграция с `CheckboxGroup` и `Form`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -45,17 +47,18 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `secondary` \| `outline` \| `gloss` |
+| `variant` | `default` | `default` \| `secondary` \| `outline` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `labelPosition` | `end` | `start` \| `end`. `start` ставит подпись слева от контрола |
 | `checked` / `defaultChecked` | — | Controlled / uncontrolled |
 | `indeterminate` | `false` | Смешанный выбор: `input.indeterminate`, `aria-checked="mixed"`, `data-state="indeterminate"`, черта вместо галочки |
 | `onChange` | — | Native change event |
 | `disabled` | `false` | + opacity track animation |
-| `danger` | `false` | Красный label text. Не ставит `aria-invalid` |
-| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
+| `invalid` | — | `true` — красный label, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `icon` | — | Кастомная иконка отмеченного состояния (канон `icon`, как у `SelectionIndicator`; не путать с Switch `iconOn`/`iconOff`) |
 | `label` / `hint` / `error` | — | Simple API |
 | `name` / `value` | — | Form / CheckboxGroup |
+| `inputRef` | — | Нативный `<input>`. `ref` корня — `<label>` или compound `<fieldset>`. Сливается с ref поля Form |
 | `classNames` | — | см. стилизацию |
 | `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`). `events` — app-команды |
 | `motionController` | — | Simple API: форвардится на SelectionIndicator. Compound: Root chrome (`label` / `hint` / `error`); Indicator — второй handle |
@@ -74,6 +77,8 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `Checkbox.Label` | Текст + required `*` |
 | `Checkbox.Hint` / `Error` | Вторичные строки grid |
 
+`Checkbox.Indicator` принимает `icon` (он побеждает `icon` корня). Прямой ребёнок, кроме `.Fill` и `.Mark`, иконкой не становится.
+
 ## variant
 
 | variant | Indicator style |
@@ -81,7 +86,6 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `default` | Filled primary tint |
 | `secondary` | Secondary surface |
 | `outline` | Border ring |
-| `gloss` | Gloss indicator shell |
 
 Маппинг: `checkboxVariantToIndicator()` → `SelectionIndicator` variant.
 
@@ -135,6 +139,8 @@ Simple API — `motionController` форвардится в SelectionIndicator: 
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`check:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("root", event)` (карта `events` с корня мержится в Indicator). playground / Storybook **MotionController**.
 
+Пропы есть на корне, на `Checkbox.Control` и на `Checkbox.Indicator`. У каждой части свой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { Button, Checkbox, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -157,7 +163,8 @@ function Nudge() {
 
 ```tsx
 import gsap from "gsap";
-import { Checkbox, tweenCssColor } from "burne-ui";
+import { Checkbox } from "burne-ui";
+import { tweenCssColor } from "burne-ui/internal";
 
 <Checkbox
   label="Custom fill"
@@ -309,8 +316,8 @@ ListBox в этом срезе публичный `motion` не получает
 ### Практические заметки
 
 - **Simple vs compound root:** simple — `<label>`; compound — `<fieldset>` (a11y group).
-- **danger:** красит `labelText` и не ставит `aria-invalid`. Ошибка валидации — `error` или `invalid`: danger-визуал, `aria-invalid` и `data-invalid=""` на корне. `status="danger"` тоже только цвет.
-- **CheckboxGroup:** `value` + single selection mode; стили на каждом `Checkbox` отдельно.
+- Ошибка валидации — `error` или `invalid`: красный `labelText`, `aria-invalid` и `data-invalid=""` на корне.
+- **CheckboxGroup:** `values` в `multiple`, `value` в `single`. Пункт с `value` следует группе. Стили на каждом `Checkbox` отдельно.
 - **Не ломайте grid:** `root` задаёт `checkboxGridClass` — осторожно с `display` override.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
 
@@ -325,7 +332,7 @@ ListBox в этом срезе публичный `motion` не получает
 
 - Native `<input type="checkbox">` — focus, Space toggle
 - `aria-describedby` hint/error; `aria-labelledby` / `aria-label`
-- `aria-invalid` и `data-invalid=""` при `invalid` / `error` (и ошибке Form), не при `status` / `danger`
+- `aria-invalid` и `data-invalid=""` при `invalid` / `error` (и ошибке Form). Красный label — от того же признака
 - `aria-required` на input, когда рисуется `*` (`required`)
 - Compound fieldset: `aria-labelledby` от `Checkbox.Label`
 - Forced colors (Windows HCM): selected fill/mark через `Highlight` в `styles.css` (`data-checked` + `data-selection-fill` / `data-selection-mark`)
@@ -349,4 +356,4 @@ Checkbox/
 
 ## Storybook
 
-`Core Components/Checkbox` — simple/compound, variants, sizes, gloss, CheckboxGroup, `classNames`, status, slot motion gallery.
+`Core Components/Checkbox` — simple/compound, variants, sizes, CheckboxGroup, `classNames`, invalid, slot motion gallery.

@@ -43,7 +43,7 @@ export function SurfaceMotionControllerCancelDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small">
+        <Text as="p" textStyle="small">
           cancel() stops the looping run, then set() snaps rest pose.
         </Text>
       </Surface>

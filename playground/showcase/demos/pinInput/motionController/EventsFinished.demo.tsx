@@ -16,8 +16,8 @@ export function PinInputMotionEventsFinishedDemo() {
   async function bounce() {
     setBusy(true);
     try {
-      await controller.playSlot("group", "pin:up", { waitForComplete: true }).finished;
-      await controller.playSlot("group", "pin:down", { waitForComplete: true }).finished;
+      await controller.playSlot("shell", "pin:up", { waitForComplete: true }).finished;
+      await controller.playSlot("shell", "pin:down", { waitForComplete: true }).finished;
     } finally {
       setBusy(false);
     }

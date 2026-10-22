@@ -4,9 +4,11 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
+import { useLazyRef } from "@/components/core/utils/useLazyRef";
 import { focusKeyboard, focusOnOpen } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { bindOverlayReflow } from "@/components/core/utils/bindOverlayReflow";
 import { isContainedPortal } from "@/components/core/utils/portalContainer";
@@ -38,9 +40,13 @@ import type {
   DropdownPartMotion,
   DropdownPopoverMotion,
   UseDropdownPopoverMenuProps,
-  UseDropdownSubContentPortalProps,
+  UseDropdownSubPopoverPortalProps,
   UseDropdownSubmenuKeyboardProps,
 } from "./dropdownTypes";
+
+import { bindPortalRecipes } from "@/components/core/utils/slotMotion/recipes/bindPortal";
+
+bindPortalRecipes();
  
 /**
  * Slot motion for Dropdown — look here first.
@@ -50,12 +56,12 @@ import type {
  * are forwarded to Popover (`resolveDropdownPopoverMotion`). Host play lives
  * in `popoverAnimations.ts`. Trigger press is a Dropdown Root slot (`pressSqueeze`).
  *
- * Submenu is a portal host: `subContent` (`useDropdownSubContentPortal` +
- * `DROPDOWN_SUB_MOTION_DEFAULTS` on `Dropdown.SubContent`). Nested `subTrigger`
+ * Submenu is a portal host: `subPopover` (`useDropdownSubPopoverPortal` +
+ * `DROPDOWN_SUB_MOTION_DEFAULTS` on `Dropdown.SubPopover`). Nested `subTrigger`
  * falls back to the Dropdown scope (Popover context does not reach the portal).
  */
 export const DROPDOWN_SUB_MOTION_DEFAULTS: DropdownMotion = {
-  subContent: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
+  subPopover: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
 };
  
 export function resolveDropdownPopoverMotion({
@@ -148,8 +154,8 @@ export function useDropdownPopoverMenu({
   contentRef,
   triggerRef,
 }: UseDropdownPopoverMenuProps) {
-  const typeaheadRef = useRef(createTypeaheadBufferState());
- 
+  const typeaheadRef = useLazyRef(createTypeaheadBufferState);
+
   useLayoutEffect(() => {
     if (!open) return;
     const panel = contentRef.current;
@@ -203,7 +209,7 @@ export function useDropdownPopoverMenu({
  
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [contentRef, open, setOpen]);
+  }, [contentRef, open, setOpen, typeaheadRef]);
 }
  
 /** Keyboard nav inside an open submenu panel (APG menu). */
@@ -214,8 +220,8 @@ export function useDropdownSubmenuKeyboard({
   triggerRef,
   setOpen,
 }: UseDropdownSubmenuKeyboardProps) {
-  const typeaheadRef = useRef(createTypeaheadBufferState());
- 
+  const typeaheadRef = useLazyRef(createTypeaheadBufferState);
+
   useLayoutEffect(() => {
     if (!subOpen || !portalMounted) return;
     const panel = panelRef.current;
@@ -273,10 +279,10 @@ export function useDropdownSubmenuKeyboard({
  
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [panelRef, portalMounted, setOpen, subOpen, triggerRef]);
+  }, [panelRef, portalMounted, setOpen, subOpen, triggerRef, typeaheadRef]);
 }
  
-export function useDropdownSubContentPortal({
+export function useDropdownSubPopoverPortal({
   subOpen,
   triggerRef,
   menuTriggerRef,
@@ -284,7 +290,7 @@ export function useDropdownSubContentPortal({
   popoverVariant,
   portalContainer,
   motionScope,
-}: UseDropdownSubContentPortalProps) {
+}: UseDropdownSubPopoverPortalProps) {
   const config = useMotionConfig();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
@@ -352,7 +358,7 @@ export function useDropdownSubContentPortal({
     const el = panelRef.current;
     if (!el) return undefined;
  
-    if (isReducedModalMotion(config)) {
+    if (isReducedModalMotion(config, prefersReducedMotion())) {
       killMotion(el);
       if (subOpen) {
         applyReducedPortalMotion(el);
@@ -368,13 +374,13 @@ export function useDropdownSubContentPortal({
     }
  
     if (subOpen) {
-      motionScope.play("subContent", "enter", { el });
+      motionScope.play("subPopover", "enter", { el });
       return () => {
         killStoredMotion(el);
       };
     }
  
-    const leaveRun = motionScope.play("subContent", "leave", {
+    const leaveRun = motionScope.play("subPopover", "leave", {
       el,
       waitForComplete: true,
     });

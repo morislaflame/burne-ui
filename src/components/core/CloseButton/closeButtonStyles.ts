@@ -1,10 +1,11 @@
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
+import { iconSlotClass } from "@/components/core/utils/sizeLayout";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
  
 import { INTERACTIVE_VARIANT_ROOT } from "@/components/core/Button/buttonStyles";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
  
 import { KIT_CLOSE_BUTTON_VARIANTS, type CloseButtonSize, type CloseButtonVariant, type KitCloseButtonVariant } from "./closeButtonTypes";
  
@@ -48,23 +49,23 @@ const CLOSE_BUTTON_VARIANT: Record<KitCloseButtonVariant, VariantVisual> = {
  
 const CLOSE_BUTTON_SIZE: Record<
   CloseButtonSize,
-  { root: string; icon: string }
+  { root: string; iconSlot: string }
 > = {
   small: {
     root: "min-h-control-xsmall w-control-xsmall min-w-control-xsmall",
-    icon: "icon-small",
+    iconSlot: iconSlotClass("small"),
   },
   base: {
     root: "min-h-control-small w-control-small min-w-control-small",
-    icon: "icon-base",
+    iconSlot: iconSlotClass("base"),
   },
   mid: {
     root: "min-h-control-base w-control-base min-w-control-base",
-    icon: "icon-mid",
+    iconSlot: iconSlotClass("mid"),
   },
   large: {
     root: "min-h-control-mid w-control-mid min-w-control-mid",
-    icon: "icon-large",
+    iconSlot: iconSlotClass("large"),
   },
 };
  
@@ -73,8 +74,9 @@ export const CLOSE_BUTTON_ROOT_BASE_CLASS =
  
 export const CLOSE_BUTTON_DISABLED_CLASS = "cursor-not-allowed opacity-50";
  
-export const CLOSE_BUTTON_ICON_BASE_CLASS =
-  "relative z-[1] shrink-0 text-current";
+export const CLOSE_BUTTON_ICON_SLOT_BASE_CLASS = "relative z-[1] shrink-0";
+
+export const CLOSE_BUTTON_ICON_BASE_CLASS = "text-current";
  
 export const CLOSE_BUTTON_RIPPLE_CLIP_CLASS = "rounded-full";
  
@@ -104,28 +106,32 @@ export function closeButtonRootClass({
       visual.className,
       sizeClasses.root,
       disabled && CLOSE_BUTTON_DISABLED_CLASS,
-      className,
       slotRoot,
+      className,
     );
   }
  
   return cn(
     CLOSE_BUTTON_ROOT_BASE_CLASS,
-    isKitVariant(variant, KIT_CLOSE_BUTTON_VARIANTS) && SHADOW_LIFT_MOTION_CLASS,
+    usesKitElevation(variant, KIT_CLOSE_BUTTON_VARIANTS) && SHADOW_LIFT_MOTION_CLASS,
     !disabled && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[visual.key]),
     INTERACTIVE_VARIANT_ROOT[visual.key],
     sizeClasses.root,
     disabled && CLOSE_BUTTON_DISABLED_CLASS,
-    className,
     slotRoot,
+    className,
   );
 }
  
-export function closeButtonIconClass(size: CloseButtonSize, slotIcon?: string): string {
+export function closeButtonIconSlotClass(size: CloseButtonSize, slotIcon?: string): string {
   return cn(
-    CLOSE_BUTTON_ICON_BASE_CLASS,
-    CLOSE_BUTTON_SIZE[size].icon,
+    CLOSE_BUTTON_ICON_SLOT_BASE_CLASS,
+    CLOSE_BUTTON_SIZE[size].iconSlot,
     slotIcon,
   );
+}
+
+export function closeButtonIconClass(): string {
+  return CLOSE_BUTTON_ICON_BASE_CLASS;
 }
  

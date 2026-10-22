@@ -38,12 +38,17 @@ export default mergeConfig(
           functions: [50, 80],
           lines: [50, 80],
         },
-        // No global fail-threshold: 53 components sit ~40% today.
+        // Global floor measured 19.10.2026 (R5): 74.75 / 61.12 / 79.4 / 78.69.
+        // ~2–3pp under that so one new file does not flake CI. Do not lower it.
         // Pointed floors for the motion engine and Э2 a11y modules (E0.2).
         // perFile is off: several slotMotion recipes are 0% and would fail the
         // group floor. Thresholds are aggregated per glob — an uncovered file
         // (inputA11y.ts is 0% today) is hidden until the group average drops.
         thresholds: {
+          statements: 72,
+          branches: 58,
+          functions: 76,
+          lines: 76,
           // Measured ~71/63/74/72. Headroom ~3pp — one new uncovered recipe
           // can fail CI; bump the floor after covering a recipe, do not lower it.
           "src/components/core/utils/slotMotion/**": {

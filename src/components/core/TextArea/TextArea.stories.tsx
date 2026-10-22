@@ -32,7 +32,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Multiline field. **Simple** — `label`, `hint`, `error` on root; **Compound** — `<TextArea.Label>` / `<TextArea.Control>` / … Variants and statuses like `Input`. Minimum height matches `Input`; taller by dragging the bottom-right handle.",
+          "Multiline field. **Simple** — `label`, `hint`, `error` on root; **Compound** — `<TextArea.Label>` / `<TextArea.Control>` / … Variants like `Input`. Error is `invalid` / `error`. Minimum height matches `Input`; taller by dragging the bottom-right handle.",
       },
     },
   },
@@ -100,14 +100,10 @@ export const Variants: Story = {
   ),
 };
 
-export const Statuses: Story = {
-  name: "Statuses",
+export const Invalid: Story = {
+  name: "Invalid",
   render: () => (
-    <div className="flex w-full flex-col gap-xlarge">
-      <TextArea label="Danger" error="Text is too short." defaultValue="OK" />
-      <TextArea status="success" label="Success" hint="Text saved." defaultValue="Done" />
-      <TextArea status="warning" label="Warning" hint="Review the wording." defaultValue="Draft" />
-    </div>
+    <TextArea label="Danger" error="Text is too short." defaultValue="OK" />
   ),
 };
 

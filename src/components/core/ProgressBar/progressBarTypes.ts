@@ -6,7 +6,10 @@ import type { Prettify } from "@/utils/prettify";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
-export type ProgressBarSize = "small" | "base" | "mid" | "large";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+
+export type ProgressBarSize = ComponentSize;
  
 export type ProgressBarOrientation = "horizontal" | "vertical";
  
@@ -73,6 +76,9 @@ export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "childr
   max?: number;
   size?: ProgressBarSize;
   thickness?: number | string;
+  /** Kit fill. A custom `color` wins. */
+  status?: SemanticStatus;
+  /** Custom fill. Wins over `status`. */
   color?: string;
   formatValue?: (value: number) => string;
   orientation?: ProgressBarOrientation;
@@ -157,6 +163,7 @@ export type UseProgressBarTrackStateProps = Pick<
   | "size"
   | "thickness"
   | "color"
+  | "status"
   | "formatValue"
   | "orientation"
 > & {

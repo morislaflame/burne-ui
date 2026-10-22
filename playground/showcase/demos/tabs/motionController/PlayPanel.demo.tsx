@@ -38,12 +38,12 @@ export function TabsMotionControllerPlayPanelDemo() {
             hoverOut: { y: 0, duration: 0.16 },
           }}
         >
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Nested Panel scope — own handle, playSlot("panel").
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="two" className="pt-large">
-          <Text as="p" variant="small">Second panel.</Text>
+          <Text as="p" textStyle="small">Second panel.</Text>
         </Tabs.Panel>
       </Tabs>
     </div>

@@ -137,6 +137,12 @@ export function initElementShadow(element: HTMLElement | null, shadow: string): 
   ensureShadowFadeHost(element);
   snapShadowFade(element, "rest");
 }
+
+/** Scale cache reset when hover lift turns off. A style write leaves GSAP's scale. */
+export function resetInteractiveLiftScale(element: HTMLElement | null): void {
+  if (!element) return;
+  gsap.set(element, { scale: 1, force3D: false, overwrite: "auto" });
+}
  
 function isTouchOrNarrowViewport(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -144,9 +150,12 @@ function isTouchOrNarrowViewport(): boolean {
 }
  
 /** Hover lift and shadow change: off for reduced-motion, touch and viewport ≤ tablet. */
-export function shouldSkipInteractiveHoverLift(config?: Readonly<MotionConfig>): boolean {
+export function shouldSkipInteractiveHoverLift(
+  config?: Readonly<MotionConfig>,
+  reduced?: boolean,
+): boolean {
   return (
-    prefersReducedMotion() ||
+    (reduced ?? prefersReducedMotion()) ||
     isTouchOrNarrowViewport() ||
     !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableHoverLift")
   );
@@ -208,22 +217,23 @@ export function animateInteractiveHoverLift(
   liftScale?: number,
   shadow?: HoverShadowConfig,
   config?: Readonly<MotionConfig>,
-): void {
+  reduced?: boolean,
+): gsap.core.Tween | undefined {
   const shadowVar = shadow
     ? lifted
       ? shadow.hover
       : (shadow.idle ?? shadowNone())
     : null;
  
-  if (shouldSkipInteractiveHoverLift(config)) {
+  if (shouldSkipInteractiveHoverLift(config, reduced)) {
     if (!lifted) {
       if (shadowVar) {
         element.style.setProperty("--el-shadow", shadowVar);
         clearInlineBoxShadow(element);
       }
-      gsap.set(element, { scale: 1, overwrite: "auto", ...INTERACTIVE_TRANSFORM_VARS });
+      return gsap.set(element, { scale: 1, overwrite: "auto", ...INTERACTIVE_TRANSFORM_VARS });
     }
-    return;
+    return undefined;
   }
 
   const resolvedScale = lifted
@@ -246,7 +256,7 @@ export function animateInteractiveHoverLift(
     });
   }
 
-  gsap.to(element, {
+  return gsap.to(element, {
     scale: resolvedScale,
     duration,
     ease: cfg.hoverLiftEase,

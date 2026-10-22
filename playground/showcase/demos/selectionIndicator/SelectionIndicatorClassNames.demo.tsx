@@ -8,7 +8,7 @@ export function SelectionIndicatorClassNamesDemo() {
 
   return (
     <div className="flex w-full max-w-lg flex-col gap-large">
-      <Text as="p" variant="small" className="font-w-strong">
+      <Text as="p" textStyle="small" className="font-w-strong">
         classNames: root / fill / mark
       </Text>
       <div className="flex flex-wrap items-end gap-2xlarge">

@@ -1,12 +1,13 @@
  
 import { DialogClassNamesProvider, DialogMotionProvider, DialogProvider } from "./dialogContext";
-import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogTitle, DialogTrigger } from "./dialogParts";
+import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogOverlay, DialogPanel, DialogTitle, DialogTrigger } from "./dialogParts";
 import type { DialogProps } from "./dialogTypes";
 import { useDialogRootState } from "./useDialogRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
  
 export type {
   DialogProps,
+  DialogOverlayProps,
   DialogPanelProps,
   DialogTriggerProps,
   DialogVariant,
@@ -73,6 +74,7 @@ export {
   DialogClose,
   DialogBody,
   DialogFooter,
+  DialogOverlay,
   DialogPanel,
   DialogTrigger,
 };

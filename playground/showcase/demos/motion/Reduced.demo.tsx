@@ -6,7 +6,7 @@ function Flag() {
   const config = useMotionConfig();
   return (
     <div className="flex flex-col gap-small">
-      <Text variant="small" className="text-muted" data-testid="motion-level1-reduced">
+      <Text textStyle="small" className="text-muted" data-testid="motion-level1-reduced">
         {config.enableAnimations ? "animations on" : "animations off"}
       </Text>
       <Button>Still</Button>

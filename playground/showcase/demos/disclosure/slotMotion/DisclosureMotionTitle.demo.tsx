@@ -18,7 +18,7 @@ export function DisclosureMotionTitleDemo() {
     >
       <Disclosure.Trigger>Title slot</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           `motion.title` is the text inside titleLift — enter/leave on open, not the hover lift.
         </Text>
       </Disclosure.Content>

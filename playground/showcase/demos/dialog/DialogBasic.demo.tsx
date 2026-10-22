@@ -23,7 +23,7 @@ export function DialogBasicDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Modal window content. Close by Escape or button.
           </Text>
         </Dialog.Body>

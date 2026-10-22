@@ -15,7 +15,7 @@ export function CardSizesDemo() {
             </Card.Description>
           </Card.Header>
           <Card.Body>
-            <Text variant="small">Body content</Text>
+            <Text textStyle="small">Body content</Text>
           </Card.Body>
         </Card>
       ))}

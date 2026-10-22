@@ -1,5 +1,5 @@
 import { useMotionPart } from "@/components/core/utils/slotMotion";
-import { forwardRef } from "react";
+import { forwardRef, type ForwardedRef } from "react";
 
 import { useSkinVariant } from "@/skins/skinContext";
  
@@ -110,13 +110,26 @@ export const SliderLabel = forwardRef<HTMLElement, SliderLabelProps>(
  
 SliderLabel.displayName = "SliderLabel";
  
-export function SliderHeader({ children, className, ...rest }: SliderHeaderProps) {
+export const SliderHeader = forwardRef(function SliderHeader({
+  children,
+  className,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...rest
+}: SliderHeaderProps, ref: ForwardedRef<HTMLDivElement>) {
   const { orientation } = useSliderFieldContext();
   const slotClassNames = useSliderClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope: useOptionalSliderMotionScope(),
     slot: "header",
     pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -130,19 +143,27 @@ export function SliderHeader({ children, className, ...rest }: SliderHeaderProps
       {children}
     </SliderScaleFieldHeader>
   );
-}
+});
  
 SliderHeader.displayName = "Slider.Header";
  
-export function SliderValue({ children, className, ...rest }: SliderValueProps) {
+export const SliderValue = forwardRef<HTMLElement, SliderValueProps>(function SliderValue(
+  { children, className, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest },
+  ref,
+) {
   const { display } = useSliderFieldContext();
   const slotClassNames = useSliderClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLElement>({
     scope: useOptionalSliderMotionScope(),
     slot: "value",
     pointerPhases: true,
+    forwardedRef: ref,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
- 
+
   return (
     <SliderScaleFieldValue
       ref={setRef}
@@ -154,7 +175,7 @@ export function SliderValue({ children, className, ...rest }: SliderValueProps) 
       {children}
     </SliderScaleFieldValue>
   );
-}
+});
  
 SliderValue.displayName = "Slider.Value";
  

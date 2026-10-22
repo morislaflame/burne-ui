@@ -55,7 +55,7 @@ export function ExpandableMotionEventsTimelineDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           playSlot on title — factory still reaches sibling slots via ctx.targets.
         </Text>
       </Expandable>

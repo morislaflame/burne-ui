@@ -117,7 +117,7 @@ export const Collapsed: Story = {
   ),
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: /hidden sections/ }));
-    await expect(screen.getByRole("menu")).toBeVisible();
+    await expect(await screen.findByRole("menu")).toBeVisible();
   },
 };
 

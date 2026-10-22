@@ -7,8 +7,9 @@ import type {
   SelectionIndicatorClassNames,
 } from "@/components/core/SelectionIndicator";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
-export type ListBoxSize = "small" | "base" | "mid" | "large";
+export type ListBoxSize = ComponentSize;
  
 export const KIT_LIST_BOX_VARIANTS = ["default"] as const;
 export type KitListBoxVariant = (typeof KIT_LIST_BOX_VARIANTS)[number];
@@ -84,12 +85,19 @@ export type ListBoxProps = Omit<
   "children" | "onChange"
 > & {
   children?: ReactNode;
+  /** Data-driven rows. Fills rows that children do not already render. */
+  items?: readonly ListBoxItemData[];
   size?: ListBoxSize;
   variant?: ListBoxVariant;
-  multiple?: boolean;
-  value?: string | string[];
-  defaultValue?: string | string[];
-  onValueChange?: (value: string | string[]) => void;
+  selectionMode?: "single" | "multiple";
+  /** Controlled item when `selectionMode="single"`. */
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null) => void;
+  /** Controlled items when `selectionMode="multiple"`. */
+  values?: string[];
+  defaultValues?: string[];
+  onValuesChange?: (values: string[]) => void;
   disabled?: boolean;
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
@@ -144,6 +152,14 @@ export type ListBoxEmptyProps = HTMLAttributes<HTMLElement> & {
   motion?: Prettify<ListBoxPartMotion>;
 };
  
+export type ListBoxItemData = {
+  value: string;
+  label: ReactNode;
+  hint?: ReactNode;
+  icon?: ReactNode;
+  disabled?: boolean;
+};
+
 export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   disabled?: boolean;
@@ -187,6 +203,8 @@ export type ListBoxItemIndicatorProps = Omit<
   variant?: SelectionIndicatorVariant;
   size?: SelectionIndicatorSize;
   check?: boolean;
+  /** Mark icon. Replaces the default check. */
+  icon?: ReactNode;
   children?: ReactNode;
   classNames?: Prettify<ListBoxItemIndicatorClassNames>;
 };

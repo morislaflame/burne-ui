@@ -21,13 +21,12 @@ export function applySwitchThumbInstant(el: HTMLElement, checked: boolean, trave
  
 export function applySwitchFillInstant(el: HTMLElement, checked: boolean): void {
   killMotion(el);
-  el.style.opacity = checked ? "1" : "0";
+  gsap.set(el, { autoAlpha: checked ? 1 : 0, force3D: false });
 }
- 
+
 export function applySwitchIconInstant(el: HTMLElement, visible: boolean): void {
   killMotion(el);
-  el.style.opacity = visible ? "1" : "0";
-  el.style.transform = "scale(1)";
+  gsap.set(el, { autoAlpha: visible ? 1 : 0, scale: 1, force3D: false });
 }
  
 export function switchThumbRecipe(ctx: MotionContext): MotionAnimation | undefined {

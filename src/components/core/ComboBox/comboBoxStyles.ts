@@ -1,14 +1,16 @@
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT, iconSlotClass } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import { KIT_INPUT_VARIANTS } from "@/components/core/Input/inputTypes";
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
  
+export const COMBOBOX_LOADING_CLASS = "px-mid py-small text-muted";
+
 export const COMBOBOX_INPUT_CONTROL: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.controlPad,
   base: CONTROL_SIZE_LAYOUT.base.controlPad,
@@ -16,11 +18,11 @@ export const COMBOBOX_INPUT_CONTROL: Record<InputSize, string> = {
   large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
  
-export const COMBOBOX_CHEVRON_ICON: Record<InputSize, string> = {
-  small: CONTROL_SIZE_LAYOUT.small.chevronIcon,
-  base: CONTROL_SIZE_LAYOUT.base.chevronIcon,
-  mid: CONTROL_SIZE_LAYOUT.mid.chevronIcon,
-  large: CONTROL_SIZE_LAYOUT.large.chevronIcon,
+export const COMBOBOX_CHEVRON_ICON_SLOT: Record<InputSize, string> = {
+  small: iconSlotClass("small"),
+  base: iconSlotClass("base"),
+  mid: iconSlotClass("mid"),
+  large: iconSlotClass("large"),
 };
  
 export const COMBOBOX_INPUT_GROUP_BASE_CLASS =
@@ -43,7 +45,7 @@ export const COMBOBOX_POPOVER_BODY_CLASS = "gap-0 p-base";
 export const COMBOBOX_LISTBOX_CLASS = "overflow-y-auto overflow-x-hidden";
  
 export const COMBOBOX_INPUT_GROUP_DISABLED_CLASS =
-  "cursor-not-allowed opacity-55 shadow-token-base";
+  "cursor-not-allowed opacity-55";
  
 export const COMBOBOX_INPUT_GROUP_ENABLED_CLASS = "cursor-pointer";
  
@@ -51,9 +53,8 @@ export function comboBoxShellSurface({
   variant,
 }: {
   variant: InputVariant;
-  status?: InputStatus;
 }): string {
-  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "comboBox.inputGroup");
+  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "comboBox.shell");
   if (visual.className !== undefined) return visual.className;
   return resolveFieldShellSurfaceClass({ variant });
 }
@@ -79,20 +80,20 @@ export function comboBoxInputGroupClass({
 }: {
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   groupSegment?: ButtonGroupSegment;
   shellHoverMotionClass: string;
   className?: string;
   slotClass?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
  
   return cn(
     COMBOBOX_INPUT_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
     comboBoxGroupShellClass(groupSegment),
-    comboBoxShellSurface({ variant, status }),
+    comboBoxShellSurface({ variant }),
     FIELD_SHELL_TRANSITION_CLASS,
     fieldShellFocusRingClass(status),
     kitSurface && fieldShellHoverClass(!disabled, status, variant),
@@ -141,5 +142,13 @@ export function comboBoxTriggerClass({
     slotClass,
     className,
   );
+}
+
+export function comboBoxTriggerIconWrapClass(size: InputSize, slotClass?: string): string {
+  return cn(COMBOBOX_CHEVRON_ICON_SLOT[size], slotClass);
+}
+
+export function comboBoxTriggerIconClass(slotClass?: string): string {
+  return cn(slotClass);
 }
  

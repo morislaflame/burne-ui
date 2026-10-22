@@ -36,7 +36,7 @@ export function DialogInteractOutsideDemo() {
               checked={dirty}
               onChange={(e) => setDirty(e.target.checked)}
             />
-            <Text as="p" variant="small" className="mt-mid text-muted">
+            <Text as="p" textStyle="small" className="mt-mid text-muted">
               Returning false from the handler does nothing — only preventDefault().
             </Text>
           </Dialog.Body>

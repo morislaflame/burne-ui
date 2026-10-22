@@ -27,7 +27,7 @@ function ShowcaseDocBlock({
 }) {
   return (
     <div className={cn("flex flex-col gap-xsmall", className)}>
-      <Text as="h3" variant="small" className="font-semibold text-foreground">
+      <Text as="h3" textStyle="small" className="font-semibold text-foreground">
         {title}
       </Text>
       <div className="text-sm text-muted [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs [&_code]:text-primary">
@@ -61,12 +61,12 @@ function ShowcaseDocApiRow({
     <div className="flex flex-col gap-xsmall sm:flex-row sm:items-start sm:gap-small">
       <Text
         as="span"
-        variant="xsmall"
+        textStyle="xsmall"
         className="inline-flex w-fit shrink-0 rounded-small bg-surface-secondary px-small py-0.5 font-medium text-foreground"
       >
         {label}
       </Text>
-      <Text as="p" variant="small" className="text-muted">
+      <Text as="p" textStyle="small" className="text-muted">
         {description}
       </Text>
     </div>

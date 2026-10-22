@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, type MouseEvent, type RefObject } from "react";
  
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { focusElement } from "@/components/core/utils/focusElement";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useSkinVariant } from "@/skins/skinContext";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
@@ -22,12 +23,22 @@ export function useTimeFieldControlState({
   onValueChange,
   format = "HH:mm",
   disabled = false,
+  readOnly = false,
+  name,
   size: sizeProp,
-  status: statusProp,
   variant: variantProp,
   compact: compactProp,
   id,
 }: TimeFieldControlProps) {
+  const formBinding = useFormFieldBinding({
+    name: typeof name === "string" ? name : undefined,
+    value: valueProp,
+    disabled,
+    readOnly,
+  });
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const resolvedDisabled = Boolean(formBinding.disabled);
+  const boundText = formBinding.bound ? String(formBinding.value ?? "") : undefined;
   const timeLabel = useBurneLabel("time");
   const ctx = useOptionalTimeFieldContext();
   const size = sizeProp ?? ctx?.size ?? "base";
@@ -35,7 +46,7 @@ export function useTimeFieldControlState({
     invalid: ctx?.invalid,
     errorConnected: ctx?.errorConnected ?? false,
   });
-  const status = visualStatusForInvalid(statusProp ?? ctx?.status, isInvalid, "default");
+  const status = fieldPaintStatus(isInvalid);
   const variant = useSkinVariant(variantProp ?? ctx?.variant);
   const compact = compactProp ?? ctx?.compact ?? false;
   const fieldId = ctx?.fieldId;
@@ -44,9 +55,18 @@ export function useTimeFieldControlState({
   const required = ctx?.required ?? false;
  
   const [hms, setHms] = useControllableState({
-    value: valueProp !== undefined ? parseTime(valueProp) : undefined,
+    value:
+      valueProp !== undefined
+        ? parseTime(valueProp)
+        : boundText !== undefined
+          ? parseTime(boundText || defaultValue)
+          : undefined,
     defaultValue: () => parseTime(defaultValue),
-    onChange: (next) => onValueChange?.(formatTime(next, format)),
+    onChange: (next) => {
+      const text = formatTime(next, format);
+      onValueChange?.(text);
+      if (formBinding.bound) formBinding.setValue(text);
+    },
   });
  
   const pendingRef = useRef<{ seg: TimeFieldSegId; digit: number } | null>(null);
@@ -134,7 +154,7 @@ export function useTimeFieldControlState({
  
   const handleSegKeyDown = useCallback(
     (e: KeyboardEvent<HTMLSpanElement | HTMLInputElement>, seg: TimeFieldSegId) => {
-      if (disabled) return;
+      if (resolvedDisabled || resolvedReadOnly) return;
       const max = TIME_FIELD_SEG_MAX[seg];
       const digit = parseInt(e.key, 10);
  
@@ -163,7 +183,7 @@ export function useTimeFieldControlState({
         commitPending();
       }
     },
-    [applyDigit, commitPending, disabled, hms, navigate, setHms],
+    [applyDigit, commitPending, hms, navigate, resolvedDisabled, resolvedReadOnly, setHms],
   );
  
   const handleFieldBlur = useCallback(
@@ -208,10 +228,10 @@ export function useTimeFieldControlState({
  
   const handleKeyboardInputKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (disabled || !focusedSeg) return;
+      if (resolvedDisabled || resolvedReadOnly || !focusedSeg) return;
       handleSegKeyDown(e, focusedSeg);
     },
-    [disabled, focusedSeg, handleSegKeyDown],
+    [focusedSeg, handleSegKeyDown, resolvedDisabled, resolvedReadOnly],
   );
  
   const handleSegClick = useCallback(
@@ -224,13 +244,13 @@ export function useTimeFieldControlState({
  
   const handleShellClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
-      if (disabled) return;
+      if (resolvedDisabled || resolvedReadOnly) return;
       const firstSeg = segments[0];
       if (!firstSeg) return;
       if (e.target instanceof Element && e.target.closest('[role="spinbutton"]')) return;
       focusSeg(firstSeg);
     },
-    [disabled, focusSeg, segments],
+    [focusSeg, resolvedDisabled, resolvedReadOnly, segments],
   );
  
   const isPending = (seg: TimeFieldSegId) =>
@@ -241,7 +261,7 @@ export function useTimeFieldControlState({
     return String(hms[seg]).padStart(2, "0");
   };
  
-  const shellSurface = timeFieldShellSurfaceClass({ variant, status });
+  const shellSurface = timeFieldShellSurfaceClass({ variant });
  
   const shellAria = timeFieldShellAria({
     labelConnected,
@@ -259,7 +279,10 @@ export function useTimeFieldControlState({
     status,
     variant,
     compact,
-    disabled,
+    disabled: resolvedDisabled,
+    readOnly: resolvedReadOnly,
+    name: formBinding.name ?? (typeof name === "string" ? name : undefined),
+    text: formatTime(hms, format),
     format,
     fieldId,
     controlId: id ?? fieldId,

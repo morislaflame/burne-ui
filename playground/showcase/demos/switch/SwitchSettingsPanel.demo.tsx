@@ -11,16 +11,16 @@ export function SwitchSettingsPanelDemo() {
 
   return (
     <Surface variant="secondary" padding="large" className="w-full max-w-md flex flex-col gap-large">
-      <Text as="p" variant="base" className="mb-large font-medium text-muted">
+      <Text as="p" textStyle="base" className="mb-large font-medium text-muted">
         Notifications
       </Text>
       <ul className="flex flex-col divide-y divide-border">
         <li className="flex items-center justify-between gap-large py-large first:pt-0 last:pb-0">
           <div className="flex min-w-0 flex-col gap-xsmall">
-            <Text as="span" variant="small" className="font-medium">
+            <Text as="span" textStyle="small" className="font-medium">
               Push
             </Text>
-            <Text as="span" variant="xsmall" className="text-muted">
+            <Text as="span" textStyle="xsmall" className="text-muted">
               Instant notifications on device
             </Text>
           </div>
@@ -32,10 +32,10 @@ export function SwitchSettingsPanelDemo() {
         </li>
         <li className="flex items-center justify-between gap-large py-large first:pt-0 last:pb-0">
           <div className="flex min-w-0 flex-col gap-xsmall">
-            <Text as="span" variant="small" className="font-medium">
+            <Text as="span" textStyle="small" className="font-medium">
               Email
             </Text>
-            <Text as="span" variant="xsmall" className="text-muted">
+            <Text as="span" textStyle="xsmall" className="text-muted">
               Digest once a week
             </Text>
           </div>
@@ -48,10 +48,10 @@ export function SwitchSettingsPanelDemo() {
         </li>
         <li className="flex items-center justify-between gap-large py-large first:pt-0 last:pb-0">
           <div className="flex min-w-0 flex-col gap-xsmall">
-            <Text as="span" variant="small" className="font-medium">
+            <Text as="span" textStyle="small" className="font-medium">
               Summary
             </Text>
-            <Text as="span" variant="xsmall" className="text-muted">
+            <Text as="span" textStyle="xsmall" className="text-muted">
               Brief activity report
             </Text>
           </div>

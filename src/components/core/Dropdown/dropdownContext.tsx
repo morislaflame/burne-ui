@@ -11,7 +11,6 @@ import type {
  
 const DropdownContext = createContext<DropdownContextValue | null>(null);
 const DropdownClassNamesContext = createContext<DropdownClassNames>({});
-const DropdownIndicatorPreferenceContext = createContext(false);
 const DropdownGroupLabelRegisterContext = createContext<
   ((id: string | undefined) => void) | null
 >(null);
@@ -43,20 +42,6 @@ export function DropdownClassNamesProvider({
     <DropdownClassNamesContext.Provider value={merged}>
       {children}
     </DropdownClassNamesContext.Provider>
-  );
-}
- 
-export function DropdownIndicatorPreferenceProvider({
-  value,
-  children,
-}: {
-  value: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <DropdownIndicatorPreferenceContext.Provider value={value}>
-      {children}
-    </DropdownIndicatorPreferenceContext.Provider>
   );
 }
  
@@ -96,10 +81,6 @@ export function useDropdown(): DropdownContextValue {
  
 export function useDropdownClassNames(): DropdownClassNames {
   return useContext(DropdownClassNamesContext);
-}
- 
-export function useDropdownIndicatorPreference() {
-  return useContext(DropdownIndicatorPreferenceContext);
 }
  
 export function useDropdownGroupLabelRegister() {

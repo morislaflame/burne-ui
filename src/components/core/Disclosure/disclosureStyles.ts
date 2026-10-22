@@ -167,7 +167,7 @@ export function disclosureContentWrapClass(variant: DisclosureVariant): string |
   return undefined;
 }
 
-export function disclosureContentPanelClass({
+export function disclosureContentClass({
   variant,
   size,
   className,
@@ -178,7 +178,7 @@ export function disclosureContentPanelClass({
   className?: string;
   slotClass?: string;
 }): string {
-  const visual = resolveVariantVisual(variant, KIT_DISCLOSURE_VARIANTS, "disclosure.contentPanel");
+  const visual = resolveVariantVisual(variant, KIT_DISCLOSURE_VARIANTS, "disclosure.content");
   if (visual.className !== undefined) {
     return cn(
       collapsibleSizeLayout(size).contentPadding,

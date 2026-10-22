@@ -3,8 +3,10 @@
  *
  * DOM slots: `trigger` (host), `icon`, `label`, `hint`, `error`
  *
+ * Pass-through: `popover` → inner Popover `content`; `calendar` → nested Calendar `root`.
+ * Neither is registered on this field scope.
  * Root owns the scope (defaults + `play`). The trigger button is the field shell.
- * Chevron rotation plays `icon` enter / leave. Popover and Calendar keep their own motion.
+ * Chevron rotation plays `icon` enter / leave.
  */
 import { useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler } from "react";
 
@@ -17,10 +19,18 @@ import {
   type MotionPartPhases,
 } from "@/components/core/utils/slotMotion";
 import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useDatePickerContext, useOptionalDatePickerMotionScope } from "./datePickerContext";
 import type { DatePickerMotion, DatePickerPartMotion } from "./datePickerTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindChevronRecipe } from "@/components/core/utils/slotMotion/recipes/bindChevron";
+import { bindPortalRecipes } from "@/components/core/utils/slotMotion/recipes/bindPortal";
+
+bindLiftRecipes();
+bindChevronRecipe();
+bindPortalRecipes();
 
 function datePickerChevronEnabled() {
   return true;
@@ -37,17 +47,29 @@ export function resolveDatePickerMotionDefaults({
   return overlaySkinMotion(
     {
       trigger: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
         pressIn: active ? "pressSqueeze" : false,
         pressOut: false,
       },
       icon: { enter: "chevronRotate", leave: "chevronRotate" },
+      popover: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
     },
     variant,
     KIT_INPUT_VARIANTS,
     "datePicker",
   );
+}
+
+/** Root `motion.popover` and `DatePicker.Popover` `motion`, with the portal-surface default underneath. */
+export function resolveDatePickerPopoverPanelMotion(
+  variant: InputVariant,
+  disabled: boolean,
+  rootPopover: DatePickerPartMotion | undefined,
+  partMotion: DatePickerPartMotion | undefined,
+): DatePickerPartMotion {
+  const skinned = resolveDatePickerMotionDefaults({ variant, disabled }).popover;
+  return { ...skinned, ...rootPopover, ...partMotion };
 }
 
 export function resolveDatePickerMotionParams({
@@ -59,9 +81,9 @@ export function resolveDatePickerMotionParams({
   disabled: boolean;
   pointerInside: MutableRefObject<boolean>;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return {
-    shadowSize: "base" as const,
+    shadowSize: "none" as const,
     hasHoverShadow: !disabled && kitSurface,
     pointerInside,
   };
@@ -84,10 +106,10 @@ export function useDatePickerTriggerMotion({
 }) {
   const scope = useOptionalDatePickerMotionScope();
   const { triggerRef, pointerInsideRef, disabled, variant } = useDatePickerContext();
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const shadow = useSecondLevelShadow(triggerRef, !disabled && kitSurface, {
     interactive: false,
-    shadowSize: "base",
+    shadowSize: "none",
   });
   const part = useMotionPart<HTMLButtonElement>({
     scope,

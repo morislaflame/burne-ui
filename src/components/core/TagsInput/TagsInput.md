@@ -27,21 +27,44 @@ import { TagsInput, type TagsInputProps, type TagsInputClassNames, type TagsInpu
 ```tsx
 <TagsInput values={topics} onValuesChange={setTopics}>
   <TagsInput.Label>Topics</TagsInput.Label>
-  <TagsInput.Control />
+  <TagsInput.Shell />
   <TagsInput.Hint>Enter or a comma</TagsInput.Hint>
 </TagsInput>
 ```
 
+### Root props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `label` / `hint` / `error` | — | Simple API |
+| `invalid` | — | `aria-invalid` и `data-invalid`. `error` делает то же и показывает сообщение |
+| `values` / `defaultValues` / `onValuesChange` | — | Список строк. Повтор и пустая строка не попадают в набор |
+| `inputValue` / `defaultInputValue` | — | Черновик поля до Enter |
+| `onInputValueChange` | — | `(value: string) => void` |
+| `max` | — | Дальше чипы не добавляются |
+| `name` | — | Скрытый input на каждый чип |
+| `placeholder` | — | Поле ввода |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` |
+| `disabled` / `readOnly` / `required` | — | Как у поля |
+| `classNames` | — | Слоты ниже |
+| `motion` | — | `shell` / `tag` / `remove` / `control` / `label` / `hint` / `error`. `events` — app-команды |
+| `motionController` | — | Handle scope корня. Слота `root` нет: `play()` skip, `playSlot("shell")` |
+
 ### `TagsInputClassNames`
 
-`root`, `label`, `shell`, `tag`, `remove`, `input`, `hint`, `error`.
+`root`, `label`, `shell`, `tag`, `tagText`, `remove`, `control`, `hint`, `error`.
+
+`className` и `ref` у `TagsInput.Shell` попадают на оболочку (тот же узел, что `classNames.shell`). Нативный `<input>` — `inputRef` и `classNames.control`.
 
 ### Compound-подчасти
 
 | Часть | Роль |
 |-------|------|
 | `TagsInput.Label` | Подпись |
-| `TagsInput.Control` | Оболочка, чипы и поле |
+| `TagsInput.Shell` | Оболочка, чипы и поле |
+| `TagsInput.Tag` | Чип |
+| `TagsInput.Remove` | Кнопка снятия чипа (`value`) |
 | `TagsInput.Hint` | Подсказка |
 | `TagsInput.Error` | Сообщение ошибки |
 
@@ -55,8 +78,55 @@ import { TagsInput, type TagsInputProps, type TagsInputClassNames, type TagsInpu
 
 ### Slot motion
 
-Хост — `shell`: тень в покое и подъём при наведении, как у Input. `tag`, `remove`, `input`, `label`, `hint`, `error` на том же scope. Повторные `tag` и `remove` — `ctx.getTargets("tag")`.
+Хост — `shell`: тень в покое и подъём при наведении, как у Input. `tag`, `remove`, `control`, `label`, `hint`, `error` на том же scope. Повторные `tag` и `remove` — `ctx.getTargets("tag")`.
 
-## Файлы
+## MotionController
 
-`TagsInput.tsx` держит scope. Рецепты слотов — `tagsInputAnimations.ts`.
+Слота `root` нет: `play()` skip. Simple API — `playSlot("shell")`. Чипы и кнопки снятия повторяются: `getTargets("tag")` / `getTargets("remove")`.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`tags:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, TagsInput, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "tags:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "tags:nudge")}>
+        Nudge
+      </Button>
+      <TagsInput label="Topics" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+## Доступность
+
+- Подпись поля — `aria-labelledby` от видимого label.
+- Кнопка чипа — accessible name `Remove {value}`.
+- `aria-invalid` и `data-invalid` только от `invalid` / `error`.
+
+## Структура файлов
+
+```
+TagsInput/
+├── TagsInput.tsx              # Provider, scope
+├── index.ts
+├── tagsInputTypes.ts          # TagsInputMotion, classNames
+├── tagsInputStyles.ts
+├── tagsInputContext.tsx
+├── tagsInputAnimations.ts     # слоты, host shell
+├── tagsInputParts.tsx
+├── tagsInputAPI.ts
+├── tagsInputA11y.ts
+├── useTagsInputRootState.ts
+└── TagsInput.stories.tsx
+```

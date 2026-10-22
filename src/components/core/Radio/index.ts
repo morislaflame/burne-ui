@@ -27,6 +27,6 @@ export type {
   RadioVariant,
   RadioClassNames,
   RadioMotion,
-  RadioCheckMotion,
+  RadioPartMotion,
 } from "./radioTypes";
  

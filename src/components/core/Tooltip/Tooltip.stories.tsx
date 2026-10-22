@@ -68,8 +68,7 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
   status?: "danger" | "success" | "info" | "warning";
   title: string;
   description?: string;
-  icon?: ReactNode;
-  showIcon?: boolean;
+  icon?: ReactNode | null;
 }> = [
   {
     variant: "default",
@@ -115,8 +114,8 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
   {
     status: "danger",
     title: "Semantic without icon",
-    description: "showIcon={false} disables the default icon.",
-    showIcon: false,
+    description: "icon={null} hides the status icon.",
+    icon: null,
   },
   {
     status: "success",
@@ -136,7 +135,6 @@ function TooltipVariantsDemo() {
           title={item.title}
           description={item.description}
           icon={item.icon}
-          showIcon={item.showIcon}
         />
       ))}
     </div>
@@ -236,7 +234,7 @@ export const DefaultWithOptionalIcon: Story = {
 export const SemanticIconHidden: Story = {
   name: "Semantic without icon",
   render: () => (
-    <Tooltip status="danger" showIcon={false}>
+    <Tooltip status="danger" icon={null}>
       <Tooltip.Trigger>
         <Button size="large" variant="outline" type="button">
           Hover
@@ -251,7 +249,7 @@ export const WithArrow: Story = {
   name: "With arrow",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-large">
-      <Tooltip delayShowMs={0} side="top">
+      <Tooltip openDelay={0} side="top">
         <Tooltip.Trigger>
           <Button variant="secondary" type="button">
             With arrow
@@ -262,7 +260,7 @@ export const WithArrow: Story = {
           Tooltip with arrow on top
         </Tooltip.Content>
       </Tooltip>
-      <Tooltip delayShowMs={0} side="bottom">
+      <Tooltip openDelay={0} side="bottom">
         <Tooltip.Trigger>
           <Button variant="outline" type="button">
             Bottom
@@ -288,7 +286,7 @@ export const WithArrow: Story = {
 export const CustomOffset: Story = {
   name: "Custom offset",
   render: () => (
-    <Tooltip delayShowMs={0} side="top">
+    <Tooltip openDelay={0} side="top">
       <Tooltip.Trigger>
         <Button variant="primary" type="button">
           offset=12
@@ -308,7 +306,7 @@ export const Placements: Story = {
     <div className="grid grid-cols-2 gap-2xlarge py-2xlarge">
       {(["top", "right", "bottom", "left"] as const).map((side) => (
         <div key={side} className="flex items-center justify-center">
-          <Tooltip delayShowMs={0} side={side}>
+          <Tooltip openDelay={0} side={side}>
             <Tooltip.Trigger>
               <Button variant="outline" type="button" className="capitalize">
                 {side}
@@ -328,7 +326,7 @@ export const Placements: Story = {
 export const KeyboardFocus: Story = {
   name: "Focus (keyboard)",
   render: () => (
-    <Tooltip delayShowMs={0}>
+    <Tooltip openDelay={0}>
       <Tooltip.Trigger>
         <Button variant="outline" type="button">
           Tab here
@@ -350,7 +348,7 @@ export const Accessibility: Story = {
         closes. A single <code className="text-primary">Trigger</code> child receives handlers without
         an extra tab stop.
       </p>
-      <Tooltip delayShowMs={0}>
+      <Tooltip openDelay={0}>
         <Tooltip.Trigger>
           <Button variant="outline" type="button">
             Button with tooltip
@@ -358,7 +356,7 @@ export const Accessibility: Story = {
         </Tooltip.Trigger>
         <Tooltip.Content>Additional description for AT</Tooltip.Content>
       </Tooltip>
-      <Tooltip delayShowMs={0} status="info">
+      <Tooltip openDelay={0} status="info">
         <Tooltip.Trigger>
           <Button variant="ghost" type="button" aria-label="Field help">
             ?
@@ -376,20 +374,20 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root (trigger), trigger, content, panelRelative, arrow, panel, surfacePanel, surfaceContent, message, icon, indicator, title, and description via classNames prop on root.",
+          "Slots trigger, content, panelRelative, arrow, panel, message, indicator, title, and description via classNames prop.",
       },
     },
   },
   render: () => (
     <Tooltip
-      delayShowMs={0}
+      openDelay={0}
       status="info"
       classNames={{
-        root: "rounded-large ring-2 ring-primary/35",
-        trigger: "rounded-large",
+        trigger: "rounded-large ring-2 ring-primary/35",
         content: "ring-1 ring-primary/25",
         panelRelative: "isolate",
         panel: "border-primary/30",
+        indicator: "icon-slot-large text-info",
         title: "text-primary font-semibold",
         description: "text-muted/80",
       }}
@@ -401,7 +399,7 @@ export const CustomClassNames: Story = {
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
-        <Tooltip.Icon />
+        <Tooltip.Indicator />
         <Tooltip.Title>Title</Tooltip.Title>
         <Tooltip.Description>Description with custom classes</Tooltip.Description>
       </Tooltip.Content>
@@ -436,7 +434,7 @@ export const PortalContainer: Story = {
         >
           <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
-            <Tooltip delayShowMs={0} portalContainer={container}>
+            <Tooltip openDelay={0} portalContainer={container}>
               <Tooltip.Trigger>
                 <Button variant="outline" type="button">
                   Hover in host
@@ -478,7 +476,7 @@ export const AsChildMergedProps: Story = {
     return (
       <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
-        <Tooltip delayShowMs={0}>
+        <Tooltip openDelay={0}>
           <Tooltip.Trigger
             ref={triggerRef}
             id="story-tooltip-trigger"
@@ -510,18 +508,18 @@ export const AsChildMergedProps: Story = {
 export const CompoundCustomIcon: Story = {
   name: "Compound — custom icon",
   render: () => (
-    <Tooltip delayShowMs={0} variant="default">
+    <Tooltip openDelay={0} variant="default">
       <Tooltip.Trigger>
         <Button variant="outline" type="button">
           Custom icon
         </Button>
       </Tooltip.Trigger>
       <Tooltip.Content>
-        <Tooltip.Icon>
+        <Tooltip.Indicator>
           <IoHelpCircleOutline aria-hidden className="text-primary" />
-        </Tooltip.Icon>
+        </Tooltip.Indicator>
         <Tooltip.Title>Hint</Tooltip.Title>
-        <Tooltip.Description>Icon is set via Tooltip.Icon in compound API</Tooltip.Description>
+        <Tooltip.Description>Icon is set via Tooltip.Indicator in compound API</Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>
   ),

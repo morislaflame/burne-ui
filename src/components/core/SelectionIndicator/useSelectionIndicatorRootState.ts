@@ -28,7 +28,7 @@ export function useSelectionIndicatorRootState({
   const fillRef = useRef<HTMLSpanElement>(null);
   const markRef = useRef<HTMLSpanElement>(null);
  
-  const { fillSlot, markSlot, legacyIcon, usesCompound } = useMemo(() => {
+  const { fillSlot, markSlot, usesCompound } = useMemo(() => {
     const parts = partitionSelectionIndicatorChildren(children);
     return {
       ...parts,
@@ -36,7 +36,7 @@ export function useSelectionIndicatorRootState({
     };
   }, [children]);
   const hasMarkSlot = markSlot != null;
-  const resolvedIcon = iconProp ?? (hasMarkSlot ? markSlot.props.children : legacyIcon);
+  const resolvedIcon = iconProp ?? (hasMarkSlot ? markSlot.props.children : undefined);
   const hasCustomIcon = resolvedIcon != null;
  
   const showDash = indeterminate && !hasCustomIcon;

@@ -17,11 +17,11 @@ export function labelRootClass({
   return cn(LABEL_ROOT_WRAP_CLASS, slotClass, className);
 }
  
-export function labelTextClass(slotClass?: string): string {
-  return cn(LABEL_TEXT_CLASS, slotClass);
+export function labelTextClass(slotClass?: string, className?: string): string {
+  return cn(LABEL_TEXT_CLASS, slotClass, className);
 }
- 
-export function labelRequiredClass(slotClass?: string): string {
-  return cn(LABEL_REQUIRED_CLASS, slotClass);
+
+export function labelRequiredClass(slotClass?: string, className?: string): string {
+  return cn(LABEL_REQUIRED_CLASS, slotClass, className);
 }
  

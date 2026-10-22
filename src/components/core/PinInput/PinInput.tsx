@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label/labelContext";
 import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { dataInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 import { cn } from "@/utils/cn";
 
@@ -21,7 +23,7 @@ import { PIN_INPUT_ROOT_CLASS } from "./pinInputStyles";
 import type { PinInputProps } from "./pinInputTypes";
 import { usePinInputRootState } from "./usePinInputRootState";
 
-export function PinInputRoot({
+export const PinInputRoot = forwardRef(function PinInputRoot({
   children,
   className,
   classNames,
@@ -32,7 +34,6 @@ export function PinInputRoot({
   id,
   name,
   required,
-  status,
   size = "base",
   disabled,
   readOnly,
@@ -40,9 +41,10 @@ export function PinInputRoot({
   value,
   defaultValue,
   onValueChange,
+  onComplete,
   variant,
   length,
-  type,
+  charset,
   mask,
   separator,
   motion,
@@ -50,8 +52,12 @@ export function PinInputRoot({
   motionState,
   motionPayload,
   playInitialState,
+  autoFocus,
+  tabIndex,
   ...rest
-}: PinInputProps) {
+}: PinInputProps, ref: ForwardedRef<HTMLDivElement>) {
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   const resolvedVariant = useSkinVariant(variant);
   const state = usePinInputRootState({
     children,
@@ -62,7 +68,6 @@ export function PinInputRoot({
     id,
     name,
     required,
-    status,
     size,
     disabled,
     readOnly,
@@ -70,9 +75,10 @@ export function PinInputRoot({
     value,
     defaultValue,
     onValueChange,
+    onComplete,
     variant: resolvedVariant,
     length,
-    type,
+    type: charset,
     mask,
     separator,
   });
@@ -111,10 +117,10 @@ export function PinInputRoot({
               size={size}
               className={cn(PIN_INPUT_ROOT_CLASS, classNames?.root, className)}
               {...rest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size,
                 variant: resolvedVariant,
-                status: state.contextValue.status,
               })}
               data-invalid={dataInvalidValue(state.contextValue.isInvalid)}
               data-disabled={dataFlag(state.contextValue.disabled)}
@@ -132,6 +138,6 @@ export function PinInputRoot({
       </PinInputClassNamesProvider>
     </PinInputProvider>
   );
-}
+});
 
 PinInputRoot.displayName = "PinInput";

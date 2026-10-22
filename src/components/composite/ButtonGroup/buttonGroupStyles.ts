@@ -3,7 +3,7 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 import { KIT_BUTTON_VARIANTS } from "@/components/core/Button/buttonTypes";
 import type { TextVariant } from "@/components/core/Text";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import type { SkinSlot } from "@/skins/skinTypes";
 import { cn } from "@/utils/cn";
  
@@ -139,21 +139,21 @@ export function buttonGroupSeparatorClass(
 export function buttonGroupTextClass({
   groupSegment,
   groupVariant,
-  buttonSize,
+  size,
   className,
 }: {
   groupSegment: ButtonGroupSegment | undefined;
   groupVariant: ButtonVariant | undefined;
-  buttonSize: ButtonSize;
+  size: ButtonSize;
   className?: string;
 }): string {
   return cn(
     buttonGroupTextSurfaceClasses(groupSegment),
     groupVariant != null &&
-      !isKitVariant(groupVariant, KIT_BUTTON_VARIANTS) &&
+      !usesKitElevation(groupVariant, KIT_BUTTON_VARIANTS) &&
       "bg-transparent text-foreground",
     "inline-flex items-center",
-    buttonGroupTextFrameClass(buttonSize),
+    buttonGroupTextFrameClass(size),
     className,
   );
 }

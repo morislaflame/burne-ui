@@ -77,7 +77,7 @@ export function TextMotionSplitWordsDemo() {
     <div className="flex justify-center py-large">
       <Text
         ref={textRef}
-        variant="header-2"
+        textStyle="header-2"
         className="overflow-visible py-mid"
         onPointerEnter={foldIn}
         onPointerLeave={foldOut}

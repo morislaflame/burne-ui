@@ -17,17 +17,17 @@ export function TableRowSelectionDemo() {
 
   return (
     <div className="flex flex-col gap-large">
-      <Table>
+      <Table
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={setSelectedKeys}>
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Team with choice"
             className="min-w-[480px]"
-            selectionMode="multiple"
-            selectedKeys={selectedKeys}
-            onSelectionChange={setSelectedKeys}
           >
             <Table.Header>
-              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column rowHeader>Name</Table.Column>
               <Table.Column>Role</Table.Column>
               <Table.Column>Status</Table.Column>
             </Table.Header>
@@ -45,7 +45,7 @@ export function TableRowSelectionDemo() {
           </Table.Content>
         </Table.ScrollContainer>
       </Table>
-      <Text as="p" variant="small" className="text-muted">
+      <Text as="p" textStyle="small" className="text-muted">
         Selected id: <span className="font-medium text-foreground">{selectedLabel}</span>
       </Text>
     </div>

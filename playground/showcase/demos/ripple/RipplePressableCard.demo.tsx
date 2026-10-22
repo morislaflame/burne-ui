@@ -11,7 +11,7 @@ export function RipplePressableCardDemo() {
 
   return (
     <>
-      <Card pressable onPress={() => setDialogOpen(true)} className="max-w-xs">
+      <Card pressable onClick={() => setDialogOpen(true)} className="max-w-xs">
         <Ripple color="neutral" />
         <div className="relative z-[1]">
           <Card.Body className="px-0 pb-0 pt-0">

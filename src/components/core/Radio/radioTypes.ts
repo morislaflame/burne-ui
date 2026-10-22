@@ -7,6 +7,7 @@ import type {
   MouseEvent,
   PointerEvent,
   ReactNode,
+  Ref,
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
@@ -14,13 +15,16 @@ import type { Prettify } from "@/utils/prettify";
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
  
 export const KIT_RADIO_VARIANTS = ["default", "secondary", "outline"] as const;
 export type KitRadioVariant = (typeof KIT_RADIO_VARIANTS)[number];
 export type RadioVariant = KitRadioVariant | (string & {});
  
-export type RadioSize = "small" | "base" | "mid" | "large";
+export type RadioSize = ComponentSize;
+export type RadioLabelPosition = IconPosition;
  
 export type RadioClassNames = {
   root?: string;
@@ -40,7 +44,7 @@ export type RadioClassNames = {
   input?: string;
 };
  
-export type RadioCheckMotion = {
+export type RadioPartMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
   enter?: MotionValue;
@@ -49,12 +53,12 @@ export type RadioCheckMotion = {
  
 /** Root map. Indicator keys → SelectionIndicator; chrome (`label` / `hint` / `error`) is Radio's own scope. */
 export type RadioMotion = {
-  indicator?: RadioCheckMotion;
-  indicatorFill?: RadioCheckMotion;
-  indicatorMark?: RadioCheckMotion;
-  label?: RadioCheckMotion;
-  hint?: RadioCheckMotion;
-  error?: RadioCheckMotion;
+  indicator?: RadioPartMotion;
+  indicatorFill?: RadioPartMotion;
+  indicatorMark?: RadioPartMotion;
+  label?: RadioPartMotion;
+  hint?: RadioPartMotion;
+  error?: RadioPartMotion;
 };
  
 export type RadioProps = Omit<
@@ -66,13 +70,16 @@ export type RadioProps = Omit<
     label?: ReactNode;
     hint?: ReactNode;
     error?: ReactNode;
-    /** Danger label, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. `danger` stays visual only. */
+    /** Danger label, `aria-invalid`, and `data-invalid`. `error` does the same and shows the message. */
     invalid?: boolean;
     size?: RadioSize;
+    /** Label side. Default `end` (control, then label). */
+    labelPosition?: RadioLabelPosition;
     variant?: RadioVariant;
-    danger?: boolean;
     className?: string;
     classNames?: Prettify<RadioClassNames>;
+    /** Native `<input type="radio">`. Root `ref` stays on the `<label>`. */
+    inputRef?: Ref<HTMLInputElement>;
     /**
      * Per-slot motion. Indicator keys map onto SelectionIndicator; chrome (`label` / `hint` / `error`)
      * is Radio's own scope. `events` — namespaced app commands for `MotionController.play`.
@@ -103,6 +110,8 @@ export type RadioIndicatorClassNames = SelectionIndicatorClassNames &
  
 export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  /** Mark icon. Replaces the dot. */
+  icon?: ReactNode;
   size?: RadioSize;
   classNames?: Prettify<RadioIndicatorClassNames>;
   motion?: Prettify<MotionMapWithEvents<SelectionIndicatorMotion>>;
@@ -119,15 +128,15 @@ export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {
 };
  
 export type RadioLabelProps = Omit<LabelProps, "htmlFor"> & {
-  motion?: Prettify<RadioCheckMotion>;
+  motion?: Prettify<RadioPartMotion>;
 };
  
-export type RadioHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
-  motion?: Prettify<RadioCheckMotion>;
+export type RadioHintProps = Omit<FieldHintProps, "id" | "as" | "motion" | "status"> & {
+  motion?: Prettify<RadioPartMotion>;
 };
  
 export type RadioErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
-  motion?: Prettify<RadioCheckMotion>;
+  motion?: Prettify<RadioPartMotion>;
 };
  
 export type RadioFieldContextValue = {
@@ -135,6 +144,7 @@ export type RadioFieldContextValue = {
   hintId: string;
   errorId: string;
   size: RadioSize;
+  labelPosition: RadioLabelPosition;
   variant: RadioVariant;
   mergedChecked: boolean;
   isDisabled: boolean;
@@ -163,6 +173,7 @@ export type RadioFieldContextValue = {
     readOnly?: boolean;
     onBlur?: InputHTMLAttributes<HTMLInputElement>["onBlur"];
     onFocus?: InputHTMLAttributes<HTMLInputElement>["onFocus"];
+    inputRef?: Ref<HTMLInputElement>;
   };
 };
  

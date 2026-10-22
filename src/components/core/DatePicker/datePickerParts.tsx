@@ -5,7 +5,7 @@ import { Field } from "@/components/core/Field";
 import { Popover } from "@/components/core/Popover";
 import { KitChevronDown } from "@/components/core/utils/kitIcons";
 import { dataOpenState, dataFlag } from "@/components/core/utils/dataContract";
-import { ariaInvalidValue, dataInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, dataInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { focusPanelOnOpen } from "@/components/core/utils/focusElement";
 import { cn } from "@/utils/cn";
 
@@ -14,11 +14,16 @@ import {
   isDatePickerRangeValue,
 } from "./datePickerAPI";
 import {
+  resolveDatePickerPopoverPanelMotion,
   useDatePickerChromeSlot,
   useDatePickerIconMotion,
   useDatePickerTriggerMotion,
 } from "./datePickerAnimations";
-import { useDatePickerClassNames, useDatePickerContext } from "./datePickerContext";
+import {
+  useDatePickerClassNames,
+  useDatePickerContext,
+  useOptionalDatePickerMotionScope,
+} from "./datePickerContext";
 import {
   DATE_PICKER_ICON_CLASS,
   DATE_PICKER_POPOVER_CLASS,
@@ -113,16 +118,16 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
     };
 
     return (
-      // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- date field button publishes invalid and required
       <button
         type="button"
         id={field.triggerId}
         ref={trigger.setRef}
         disabled={field.disabled}
+        aria-readonly={field.readOnly || undefined}
         className={datePickerTriggerClass({
           size: field.size,
           variant: field.variant,
-          status: field.status,
+          status: fieldPaintStatus(field.isInvalid),
           disabled: field.disabled,
           shellHoverMotionClass: trigger.shellHoverMotionClass,
           slotClass: slotClassNames.trigger,
@@ -131,6 +136,7 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
         onClick={handleClick}
         {...rest}
         {...trigger.pointerHandlers}
+        role="combobox"
         aria-haspopup="dialog"
         aria-expanded={field.open}
         aria-controls={field.open ? field.panelId : undefined}
@@ -141,6 +147,7 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
         aria-describedby={field.describedBy}
         data-state={dataOpenState(field.open)}
         data-invalid={dataInvalidValue(field.isInvalid)}
+        data-readonly={field.readOnly ? "" : undefined}
         data-required={dataFlag(field.required)}
         data-disabled={dataFlag(field.disabled)}
       >
@@ -155,13 +162,15 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
             >
               {text}
             </span>
+            {field.icon === null ? null : (
             <span
               ref={icon.setRef}
               className={cn(datePickerIconClass(field.size), DATE_PICKER_ICON_CLASS, slotClassNames.icon)}
               aria-hidden
             >
-              <KitChevronDown />
+              {field.icon ?? <KitChevronDown />}
             </span>
+            )}
           </>
         )}
       </button>
@@ -172,10 +181,18 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
 DatePickerTrigger.displayName = "DatePickerTrigger";
 
 export const DatePickerPopover = forwardRef<HTMLDivElement, DatePickerPopoverProps>(
-  function DatePickerPopover({ children, className, ...rest }, ref) {
+  function DatePickerPopover({ children, className, motion, ...rest }, ref) {
     const field = useDatePickerContext();
     const slotClassNames = useDatePickerClassNames();
+    const fieldMotion = useOptionalDatePickerMotionScope();
     const panelRef = useRef<HTMLDivElement | null>(null);
+    const panelMotion = resolveDatePickerPopoverPanelMotion(
+      field.variant,
+      field.disabled,
+      fieldMotion?.getRootMotion()?.popover,
+      motion,
+    );
+    const calendarMotion = fieldMotion?.getRootMotion()?.calendar;
 
     useLayoutEffect(() => {
       if (!field.open) return;
@@ -202,35 +219,70 @@ export const DatePickerPopover = forwardRef<HTMLDivElement, DatePickerPopoverPro
         unstyled
         align="start"
         className={cn(DATE_PICKER_POPOVER_CLASS, slotClassNames.popover, className)}
+        motion={{ content: panelMotion }}
         {...rest}
         id={field.panelId}
       >
         {children ??
           (field.mode === "range" ? (
             <Calendar
-              mode="range"
+              selectionMode="range"
               size={field.size}
               variant={field.variant}
               locale={field.locale}
               minDate={field.minDate}
               maxDate={field.maxDate}
+              isDateUnavailable={field.isDateUnavailable}
               defaultMonth={field.defaultMonth}
+              month={field.month}
+              onMonthChange={field.onMonthChange}
+              view={field.view}
+              defaultView={field.defaultView}
+              onViewChange={field.onViewChange}
               value={isDatePickerRangeValue(field.value) ? field.value : { start: null, end: null }}
               onValueChange={commit}
               className={slotClassNames.calendar}
+              motion={calendarMotion ? { root: calendarMotion } : undefined}
             />
-          ) : (
+          ) : field.mode === "multiple" ? (
             <Calendar
-              mode="single"
+              selectionMode="multiple"
               size={field.size}
               variant={field.variant}
               locale={field.locale}
               minDate={field.minDate}
               maxDate={field.maxDate}
+              isDateUnavailable={field.isDateUnavailable}
               defaultMonth={field.defaultMonth}
+              month={field.month}
+              onMonthChange={field.onMonthChange}
+              view={field.view}
+              defaultView={field.defaultView}
+              onViewChange={field.onViewChange}
+              values={Array.isArray(field.value) ? field.value : []}
+              onValuesChange={commit}
+              className={slotClassNames.calendar}
+              motion={calendarMotion ? { root: calendarMotion } : undefined}
+            />
+          ) : (
+            <Calendar
+              selectionMode="single"
+              size={field.size}
+              variant={field.variant}
+              locale={field.locale}
+              minDate={field.minDate}
+              maxDate={field.maxDate}
+              isDateUnavailable={field.isDateUnavailable}
+              defaultMonth={field.defaultMonth}
+              month={field.month}
+              onMonthChange={field.onMonthChange}
+              view={field.view}
+              defaultView={field.defaultView}
+              onViewChange={field.onViewChange}
               value={field.value instanceof Date ? field.value : null}
               onValueChange={commit}
               className={slotClassNames.calendar}
+              motion={calendarMotion ? { root: calendarMotion } : undefined}
             />
           ))}
       </Popover.Content>
@@ -270,7 +322,6 @@ export const DatePickerHint = forwardRef<HTMLElement, DatePickerHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? field.hintId}
-        status={field.status}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}

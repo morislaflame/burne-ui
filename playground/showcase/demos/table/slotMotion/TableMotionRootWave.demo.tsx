@@ -15,7 +15,7 @@ export function TableMotionRootWaveDemo() {
     >
       <Table.Content aria-label="Wave">
         <Table.Header>
-          <Table.Column isRowHeader>Name</Table.Column>
+          <Table.Column rowHeader>Name</Table.Column>
         </Table.Header>
         <Table.Body>
           <Table.Row>

@@ -15,7 +15,7 @@ export function ContextMenuAsChildDemo() {
 
   return (
     <div className="flex flex-col items-center gap-large">
-      <Text as="span" variant="small" className="text-muted">
+      <Text as="span" textStyle="small" className="text-muted">
         {refLabel}
       </Text>
       <ContextMenu>
@@ -27,15 +27,15 @@ export function ContextMenuAsChildDemo() {
           className="cursor-context-menu"
         >
           <Surface variant="secondary" padding="large" className="w-full max-w-sm">
-            <Text as="span" variant="small" className="font-w-mid">
+            <Text as="span" textStyle="small" className="font-w-mid">
               Card as trigger
             </Text>
           </Surface>
         </ContextMenu.Trigger>
-        <ContextMenu.Content>
+        <ContextMenu.Popover>
           <ContextMenu.Item>Open</ContextMenu.Item>
           <ContextMenu.Item>Rename</ContextMenu.Item>
-        </ContextMenu.Content>
+        </ContextMenu.Popover>
       </ContextMenu>
     </div>
   );

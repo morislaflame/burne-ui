@@ -1,16 +1,16 @@
 /**
  * Slot motion for Tooltip — look here first.
  *
- * DOM slots: `content` (portal surface), `panel`, `title`, `description`, `indicator`, `arrow`
+ * DOM slots: `content` and `panel` share the visual bubble (classes + motion).
+ * The positioning wrapper is not a slot. `title`, `description`, `indicator`, `arrow`
  * (`message` is `display: contents`; `*` are layout)
- 
  *
  * Host: `Tooltip.Content` (`useTooltipPortalMotion`) plays `enter` / `leave` on
- * `content` and broadcasts nested slots (`scheduleNestedEnterBroadcast`).
+ * the bubble (`content`, the same node as `tooltip.panel` classes).
  * Root has no portal DOM — it only passes the `motion` map through context.
  * Defaults wrap the portal host (`TOOLTIP_MOTION_DEFAULTS` on the Content provider).
  */
-import { useLayoutEffect, useRef, type RefObject } from "react";
+import { useLayoutEffect, useRef } from "react";
  
 import {
   hideNestedEnterSlots,
@@ -25,6 +25,10 @@ import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import type { TooltipMotion, TooltipVariant } from "./tooltipTypes";
 import { KIT_TOOLTIP_VARIANTS } from "./tooltipTypes";
+
+import { bindPortalRecipes } from "@/components/core/utils/slotMotion/recipes/bindPortal";
+
+bindPortalRecipes();
  
 export const TOOLTIP_MOTION_HOST_SLOTS = ["content"] as const;
  
@@ -40,13 +44,11 @@ export function useTooltipPortalMotion({
   open,
   portalMounted,
   setPortalMounted,
-  tipRef,
   scope,
 }: {
   open: boolean;
   portalMounted: boolean;
   setPortalMounted: (mounted: boolean) => void;
-  tipRef: RefObject<HTMLDivElement | null>;
   scope: MotionScopeValue;
 }) {
   const enterFrameRef = useRef(0);
@@ -54,7 +56,7 @@ export function useTooltipPortalMotion({
  
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;
-    const el = tipRef.current;
+    const el = scope.getTarget("content");
     if (!el) return undefined;
  
     const cancelEnterFrame = () => invalidateEnterFrame(enterFrameRef, enterGenRef);
@@ -95,6 +97,6 @@ export function useTooltipPortalMotion({
     return () => {
       leaveWait.kill();
     };
-  }, [open, portalMounted, scope, setPortalMounted, tipRef]);
+  }, [open, portalMounted, scope, setPortalMounted]);
 }
  

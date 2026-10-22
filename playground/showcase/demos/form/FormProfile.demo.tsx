@@ -4,17 +4,18 @@ import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
-import { ComboBox, type ComboBoxOption } from "@/components/core/ComboBox";
+import { ComboBox, type ComboBoxItem } from "@/components/core/ComboBox";
 import { Input } from "@/components/core/Input";
-import { Select, type SelectOption } from "@/components/core/Select";
+import { Select, type SelectItem } from "@/components/core/Select";
+import { Label } from "@/components/core/Label";
 
-const localeOptions: ComboBoxOption[] = [
+const localeOptions: ComboBoxItem[] = [
   { value: "ru", label: "Russian", hint: "UI and emails in Russian" },
   { value: "en", label: "English", hint: "UI and emails in English" },
   { value: "de", label: "Deutsch", hint: "Oberfläche und E-Mails auf Deutsch" },
 ];
 
-const timezoneOptions: SelectOption[] = [
+const timezoneOptions: SelectItem[] = [
   { value: "europe/moscow", label: "Europe/Moscow (UTC+3)" },
   { value: "europe/berlin", label: "Europe/Berlin (UTC+1)" },
   { value: "utc", label: "UTC" },
@@ -74,6 +75,7 @@ export function FormProfileDemo() {
             required
             name="email"
             label="Email"
+            type="email"
             placeholder="you@example.com"
             autoComplete="email"
           />
@@ -82,30 +84,30 @@ export function FormProfileDemo() {
 
       <Form.Section>
         <Form.Field name="locale">
-          <ComboBox name="locale" options={localeOptions}>
+          <ComboBox name="locale" items={localeOptions}>
             <ComboBox.Label>Interface language</ComboBox.Label>
-            <ComboBox.InputGroup>
+            <ComboBox.Shell>
               <ComboBox.Input placeholder="Select language" />
               <ComboBox.Trigger />
-            </ComboBox.InputGroup>
+            </ComboBox.Shell>
             <ComboBox.Popover />
             <ComboBox.Hint>Used for UI and transactional emails.</ComboBox.Hint>
           </ComboBox>
         </Form.Field>
         <Form.Field name="timezone">
-          <Select name="timezone" options={timezoneOptions} label="Timezone" />
+          <Select name="timezone" items={timezoneOptions} label="Timezone" />
         </Form.Field>
-        <Input name="avatar" label="Avatar" inputType="file" accept="image/*" placeholder="PNG or JPEG" />
+        <Input name="avatar" label="Avatar" type="file" accept="image/*" placeholder="PNG or JPEG" />
       </Form.Section>
 
       <Form.Section>
-        <CheckboxGroup selection="multiple">
+        <CheckboxGroup selectionMode="multiple" defaultValues={["email"]}>
           <CheckboxGroup.Legend>
-            <CheckboxGroup.Label>Notifications</CheckboxGroup.Label>
+            <Label>Notifications</Label>
             <CheckboxGroup.Hint>Choose one or more channels.</CheckboxGroup.Hint>
           </CheckboxGroup.Legend>
           <CheckboxGroup.List>
-            <Checkbox name="channels" value="email" label="Email digest" defaultChecked />
+            <Checkbox name="channels" value="email" label="Email digest" />
             <Checkbox name="channels" value="push" label="In-app push" />
             <Checkbox name="channels" value="sms" label="SMS alerts" />
           </CheckboxGroup.List>

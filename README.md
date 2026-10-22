@@ -64,8 +64,8 @@ import "burne-ui/styles.css";
 В нём:
 
 - **Дизайн-токены** как CSS-переменные: `--color-*`, `--space` / `--space-*`, `--size` / `--size-*`, `--radius`, `--text-scale-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
-- **Мост Tailwind** (`@theme inline` в ките + consumer-файл **`burne-ui/theme-bridge.css`**): цвета `bg-background`, отступы `gap-large` / `px-2xlarge`, радиусы `rounded-base` и т.д. Prebuilt `ui.css` содержит только классы, встретившиеся при сборке кита — мост нужен, чтобы Tailwind приложения догенерировал остальные.
-- **Кастомные утилиты** (`@utility`): например `border-token`, `border-t-token`, `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
+- **Tailwind приложения** — `burne-ui/tailwind.css` сразу после `styles.css`. Внутри `@theme inline` (токены `bg-background`, `gap-large`, `rounded-base`) и все `@utility` кита. Prebuilt `ui.css` содержит только классы, встретившиеся при сборке кита. `tailwind.css` даёт приложению остальные, включая варианты вроде `md:shadow-token-mid` и `divide-x-token`.
+- **Кастомные утилиты** (`@utility` в `tailwind.css`): например `border-token`, `border-t-token`, `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
 
 Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-large` и т.п.
 
@@ -103,7 +103,9 @@ import "burne-ui/styles.css";
 
 ### BurneUIProvider (рекомендуется)
 
-Entry `burne-ui` поставляется с `"use client";` (Next.js App Router). Client-файл провайдера нужен, если рядом вызываете хуки / `configureMotion`:
+Next.js App Router: simple API (`<Button>`, `<Text>`, `<Alert title>`) с сериализуемыми пропами — из Server Component. Compound (`Card.Title`) и обработчики — в файле с `"use client"`. Если Next пишет `You cannot dot into a client module`, см. [docs/SETUP.md](./docs/SETUP.md#use-client-в-пакете).
+
+`BurneUIProvider` вызывайте из client-файла, если рядом хуки / `configureMotion`:
 
 ```tsx
 "use client";
@@ -155,10 +157,10 @@ const burneTheme = {
 
 ### Devtools темы
 
-Интерактивный редактор устанавливается отдельно и подключается только в development:
+Интерактивный редактор ставится отдельно и подключается только в development. Для burne-ui 2.0 это `burne-ui-devtools@0.2`. Версии 0.2 в npm ещё нет: опубликованная `0.1.5` собрана под burne-ui 1.x (peer `^1.6.2`) и рядом с 2.0 не устанавливается.
 
 ```bash
-npm install -D burne-ui-devtools
+npm install -D burne-ui-devtools@0.2
 ```
 
 Он показывает плавающую кнопку, позволяет менять токены и пресеты в браузере, а затем скопировать
@@ -197,7 +199,7 @@ import "./burne-theme-overrides.css";
 }
 ```
 
-Theme config / playground (`tokens.space` и т.п.) через `applyThemeTokens` пишут scaled `clamp` и shadow-knobs (`--shadow-opacity|blur|spread|offset-x|y`) — оверрайды не ломают fluid. Ручной fixed rem в CSS — да, отключает. Инлайн ставятся **только** токены ≠ дефолтам кита, поэтому CSS-файл оверрайдов может точечно править остальное.
+Theme config / playground (`tokens.space` и т.п.) через `applyThemeTokens` и `exportThemeCss` пишут тот же фиксированный `rem`, что и лист кита, плюс shadow-knobs (`--shadow-opacity|blur|spread|offset-x|y`). Fluid остаётся отдельным: `--space: var(--space-fluid)` (и пары `--size-fluid` / `--radius-fluid`). Инлайн ставятся **только** токены ≠ дефолтам кита, поэтому CSS-файл оверрайдов может точечно править остальное. Модель студии — `burne-ui/studio` (`DesignDocument`, `THEME_TOKEN_SCHEMA`, `renderDesignCss`, `validateDesign`). Вход экспериментальный в 2.x до поставки студии: снимок фиксирует имена, форма `validateDesign` и литералы контролов схемы остаются свободными. Пакет компонентов поверх кита берёт движок из `burne-ui/authoring` (`createMotionScope`, `useMotionPart`, `useSkinSlot`). Слоты скина открываются через `SkinSlotRegistry` и `registerSkinSlots` в `burne-ui/skin`.
 
 Переменные наследуются по дереву DOM — при необходимости задайте их на обёртке виджета вместо `html`.
 
@@ -217,7 +219,7 @@ const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ri
 // @source в глобальном CSS приложения или content — см. документацию Tailwind v4
 // Нужно сканировать как минимум:
 // - ваши **/*.{tsx,jsx},
-// - node_modules/burne-ui/dist/**/*.{js,mjs,cjs}
+// - node_modules/burne-ui/dist/**/*.js
 ```
 
 Без этого часть утилит из переданных вами классов может не попасть в CSS.
@@ -304,7 +306,7 @@ import { Field, Label } from "burne-ui";
 
 ```bash
 bun install
-bun run build    # dist: JS/CJS + ui.css (как burne-ui/styles.css) + типы
+bun run build    # dist: ESM + ui.css (как burne-ui/styles.css) + типы
 bun run lint
 bun run storybook
 ```
@@ -313,4 +315,4 @@ bun run storybook
 
 ## Лицензия
 
-Укажите лицензию в `package.json` при публикации в npm.
+MIT. Текст — в файле `LICENSE`.

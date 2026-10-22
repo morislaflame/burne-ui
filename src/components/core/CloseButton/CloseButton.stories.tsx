@@ -171,7 +171,7 @@ export const CustomClassNames: Story = {
       variant="outline"
       classNames={{
         root: "border-primary/50 bg-primary/5 shadow-token-mid hover:bg-primary/10",
-        icon: "text-primary",
+        icon: "icon-slot-large text-primary",
       }}
       aria-label="Close with custom slots"
     />

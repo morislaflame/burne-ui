@@ -16,8 +16,14 @@ export const MODAL_PANEL_SCALE_FROM = 0.97;
  
 export type GsapMotionVars = NonNullable<Parameters<typeof gsapInstance.to>[1]>;
  
-export function isReducedModalMotion(config?: Readonly<MotionConfig>): boolean {
-  return prefersReducedMotion() || !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableModalMotion");
+export function isReducedModalMotion(
+  config?: Readonly<MotionConfig>,
+  reduced?: boolean,
+): boolean {
+  return (
+    (reduced ?? prefersReducedMotion()) ||
+    !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableModalMotion")
+  );
 }
  
 /** Initial inline style for modal backdrop overlay before enter animation. */

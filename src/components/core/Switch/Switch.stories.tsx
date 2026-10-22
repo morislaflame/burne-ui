@@ -54,7 +54,7 @@ const meta = {
   decorators: [...darkThemeDecorator],
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
-    labelPosition: { control: "select", options: ["left", "right"] },
+    labelPosition: { control: "select", options: ["start", "end"] },
   },
 } satisfies Meta<typeof Switch>;
 
@@ -159,7 +159,7 @@ export const LabelLeft: Story = {
     <Switch
       label="Dark theme"
       hint="Toggle interface theme"
-      labelPosition="left"
+      labelPosition="start"
       defaultChecked
     />
   ),

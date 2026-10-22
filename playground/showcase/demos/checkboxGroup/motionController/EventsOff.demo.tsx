@@ -2,6 +2,7 @@ import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
+import { Label } from "@/components/core/Label";
 
 const live = createMotionEvents({
   "checks:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1, ease: "power2.out" },
@@ -24,7 +25,7 @@ export function CheckboxGroupMotionEventsOffDemo() {
       </div>
       <CheckboxGroup motionController={liveController} motion={{ events: live }}>
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Live</CheckboxGroup.Label>
+          <Label>Live</Label>
           <CheckboxGroup.Hint>Events play.</CheckboxGroup.Hint>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>
@@ -33,7 +34,7 @@ export function CheckboxGroupMotionEventsOffDemo() {
       </CheckboxGroup>
       <CheckboxGroup motionController={offController} motion={{ events: off }}>
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Off</CheckboxGroup.Label>
+          <Label>Off</Label>
           <CheckboxGroup.Hint>events: false skips.</CheckboxGroup.Hint>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>

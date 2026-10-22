@@ -1,8 +1,11 @@
 import type { CSSProperties } from "react";
  
-import { sliderThicknessToCss } from "@/components/core/Slider";
+import { sliderThicknessToCss } from "@/components/core/Slider/sliderStyles";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
  
+import { semanticStatusBgClass } from "@/components/core/utils/semanticStatusSurface";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+
 import type { MeterOrientation, MeterSize } from "./meterTypes";
  
 import { cn } from "@/utils/cn";
@@ -117,16 +120,19 @@ export function meterTrackClass({
 export function meterFillClass({
   isHorizontal,
   hasCustomColor,
+  status,
   slotClass,
 }: {
   isHorizontal: boolean;
   hasCustomColor: boolean;
+  status?: SemanticStatus;
   slotClass?: string;
 }): string {
   return cn(
     METER_FILL_BASE_CLASS,
     isHorizontal ? METER_FILL_HORIZONTAL_CLASS : METER_FILL_VERTICAL_CLASS,
-    !hasCustomColor && METER_FILL_DEFAULT_COLOR_CLASS,
+    semanticStatusBgClass(status, hasCustomColor) ??
+      (!hasCustomColor && METER_FILL_DEFAULT_COLOR_CLASS),
     slotClass,
   );
 }

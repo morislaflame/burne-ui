@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Switch, SWITCH_LAYOUT, type SwitchProps, type SwitchSimpleProps, type SwitchSize, type SwitchLabelPosition, type SwitchClassNames } from "burne-ui";
+import { Switch, type SwitchProps, type SwitchSimpleProps, type SwitchSize, type SwitchLabelPosition, type SwitchClassNames } from "burne-ui";
 ```
 
 ## API
@@ -28,7 +28,7 @@ Props control (`checked`, `iconOff`, `color`, `variant`, …) можно пер�
 ### Compound API
 
 ```tsx
-<Switch defaultChecked variant="default" labelPosition="right">
+<Switch defaultChecked variant="default" labelPosition="end">
   <Switch.Control iconOff={<IoMoon aria-hidden />} iconOn={<IoSunny aria-hidden />} />
   <Switch.Content>
     <Switch.Label>Push-уведомления</Switch.Label>
@@ -56,8 +56,9 @@ Props control (`checked`, `iconOff`, `color`, `variant`, …) можно пер�
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `labelPosition` | `right` | `left` \| `right` — control vs text column |
+| `labelPosition` | `end` | `start` \| `end` — label on the inline start or end |
 | `disabled` | `false` | opacity track + block input |
+| `invalid` | — | `aria-invalid`, `data-invalid` и красный label. `error` делает то же и показывает сообщение |
 | `variant` | `default` | Kit surface или имя скина |
 | `color` | — | CSS custom fill (`switchFillColorStyle`) |
 | `thickness` | — | Кастомная высота thumb (px/rem) |
@@ -66,6 +67,7 @@ Props control (`checked`, `iconOff`, `color`, `variant`, …) можно пер�
 | `classNames` | — | см. стилизацию |
 | `motion` | — | Карта слотов. Хост — `Switch.Track`. `events` — app-команды `MotionController` |
 | `motionController` | — | Simple API: форвардится на Track. Compound: Root chrome (`label` / `hint` / `error`); Track — второй handle |
+| `inputRef` | — | Нативный `<input role="switch">`. `ref` корня — `<label>` или compound `<fieldset>`. `ref` у `Switch.Control` — визуальный контрол (`<span>` или compound `<label>`), не `<input>` |
 
 ### `SwitchClassNames`
 
@@ -130,6 +132,8 @@ Travel thumb — `measureSwitchTravel(track, thumbShell)` (+ ResizeObserver). Fa
 У Track нет слота `root`: `play()` skip. Simple API — `playSlot("track", …)`. Compound chrome — handle на Root (`playSlot("label")`); thumb-хост — отдельный handle на `Switch.Track`. Явный `<Switch.Track motionController>` побеждает форвард с корня. SelectionThumb внутри Switch **не** получает этот handle.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`switch:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("track", event)` (карта `events` с корня мержится в Track). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Пропы есть на корне, на `Switch.Control` и на `Switch.Track`. У каждой части свой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Switch, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -273,7 +277,7 @@ Track opacity `0.48` instant на `trackRef`.
 
 - **Не override `transform` на `thumb`** — GSAP slide по `x`.
 - **`color` prop** — inline style на fill; `classNames.fill` дополняет.
-- **`labelPosition="left"`** — mirror grid: text слева, control справа.
+- **`labelPosition="start"`** — label on the inline start, control on the end.
 - **Порядок мержа:** root `classNames` → `Control.classNames` → part `className`.
 
 ## Доступность
@@ -292,7 +296,7 @@ Track opacity `0.48` instant на `trackRef`.
 Switch/
 ├── Switch.tsx               # карта motion через Provider (Root без defaults)
 ├── index.ts
-├── switchTypes.ts           # SwitchMotion / SwitchCheckMotion
+├── switchTypes.ts           # SwitchMotion / SwitchPartMotion
 ├── switchStyles.ts
 ├── switchGeometry.ts        # travel measure, SWITCH_LAYOUT
 ├── switchAnimations.ts      # SWITCH_MOTION_DEFAULTS, useSwitchTrackAnimations

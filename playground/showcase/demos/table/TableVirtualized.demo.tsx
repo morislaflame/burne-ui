@@ -12,7 +12,7 @@ export function TableVirtualizedDemo() {
       <Table.ScrollContainer className="overflow-y-auto" style={{ maxHeight: "min(16rem, 50dvh)" }}>
         <Table.Content aria-label="Rows">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body virtualized items={rows}>

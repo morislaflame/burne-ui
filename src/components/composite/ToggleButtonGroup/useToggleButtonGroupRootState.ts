@@ -13,41 +13,47 @@ import type {
  
 export function useToggleButtonGroupRootState({
   children,
-  type = "multiple",
+  selectionMode = "multiple",
   disabled = false,
   size = "base",
   variant: variantProp,
   value: valueProp,
   defaultValue,
   onValueChange,
+  values: valuesProp,
+  defaultValues,
+  onValuesChange,
   onKeyDown,
   orientation = "horizontal",
 }: UseToggleButtonGroupRootStateProps) {
   const variant = useSkinVariant(variantProp);
+  const type = selectionMode;
   const isSingle = type === "single";
-  const isControlled = valueProp !== undefined;
+  const controlledSource = isSingle ? valueProp : valuesProp;
+  const defaultSource = isSingle ? defaultValue : defaultValues;
+  const isControlled = controlledSource !== undefined;
  
   const [internalSingle, setInternalSingle] = useState<string | undefined>(() =>
-    normalizeSingleDefault(defaultValue),
+    normalizeSingleDefault(defaultSource),
   );
   const [internalMultiple, setInternalMultiple] = useState<string[]>(() =>
-    normalizeMultipleDefault(defaultValue),
+    normalizeMultipleDefault(defaultSource),
   );
- 
+
   const singleValue = isSingle
     ? isControlled
-      ? normalizeSingleDefault(valueProp)
+      ? normalizeSingleDefault(controlledSource)
       : internalSingle
     : undefined;
- 
+
   const multipleValues = useMemo(
     () =>
       !isSingle
         ? isControlled
-          ? normalizeMultipleDefault(valueProp)
+          ? normalizeMultipleDefault(controlledSource)
           : internalMultiple
         : [],
-    [internalMultiple, isControlled, isSingle, valueProp],
+    [controlledSource, internalMultiple, isControlled, isSingle],
   );
   const latestMultipleRef = useRef(multipleValues);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
@@ -81,16 +87,16 @@ export function useToggleButtonGroupRootState({
         );
         if (change == null || change.kind !== "single") return;
         if (!isControlled) setInternalSingle(change.value);
-        onValueChange?.(change.value);
+        onValueChange?.(change.value || null);
         return;
       }
- 
+
       const next = toggleOptionListSelection(latestMultipleRef.current, itemValue, true);
       latestMultipleRef.current = next;
       if (!isControlled) setInternalMultiple(next);
-      onValueChange?.(next);
+      onValuesChange?.(next);
     },
-    [disabled, isControlled, isSingle, multipleValues, onValueChange, singleValue, type],
+    [disabled, isControlled, isSingle, multipleValues, onValueChange, onValuesChange, singleValue, type],
   );
  
   const tabIndexFor = useCallback(

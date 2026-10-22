@@ -9,7 +9,7 @@ export function DisclosureMotionTitleLiftQuietDemo() {
     >
       <Disclosure.Trigger>Quiet hover</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           `titleLift.hoverIn/Out: false` skips lift. Press squeeze on the title still runs.
         </Text>
       </Disclosure.Content>

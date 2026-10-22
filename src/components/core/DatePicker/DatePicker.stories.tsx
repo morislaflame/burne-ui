@@ -56,7 +56,7 @@ export const Locale: Story = {
 
 export const Range: Story = {
   args: {
-    mode: "range",
+    selectionMode: "range",
     label: "Stay",
   },
 };

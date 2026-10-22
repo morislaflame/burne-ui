@@ -8,13 +8,13 @@ export function SelectionIndicatorShapeCompareDemo() {
 
   return (
     <div className="flex w-full max-w-lg flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Shell shape
       </Text>
       <div className="flex flex-wrap items-end gap-2xlarge">
         <div className="flex flex-col items-center gap-xsmall">
           <SelectionIndicator size="large" variant="default" selected={selected} check />
-          <Text as="span" variant="xsmall" className="text-muted">
+          <Text as="span" textStyle="xsmall" className="text-muted">
             rounded-full
           </Text>
         </div>
@@ -28,7 +28,7 @@ export function SelectionIndicatorShapeCompareDemo() {
               root: "rounded-large",
             }}
           />
-          <Text as="span" variant="xsmall" className="text-muted">
+          <Text as="span" textStyle="xsmall" className="text-muted">
             rounded-large
           </Text>
         </div>

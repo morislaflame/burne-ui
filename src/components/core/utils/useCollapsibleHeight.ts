@@ -10,7 +10,7 @@ import { prefersReducedMotion, usePrefersReducedMotion } from "./reducedMotion";
  * Snapshot before the tween — do not pass as a GSAP function value.
  *
  * Prefer `offsetHeight` over `scrollHeight`: transformed descendants
- * (`motion.body` `y`) inflate scrollable overflow, so the shell overshoots and
+ * (`motion.panel` / `motion.content` `y`) inflate scrollable overflow, so the shell overshoots and
  * snaps when the transform settles. `scrollHeight` is only a fallback when the
  * shell has already clipped the inner to 0.
  */

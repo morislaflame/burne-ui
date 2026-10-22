@@ -8,14 +8,14 @@ export function AvatarCommentRowDemo() {
       <Avatar size="mid" label="Grace Hopper" src={PIN_IMAGE2} alt="" loading="lazy" />
       <div className="flex min-w-0 flex-col gap-xsmall">
         <div className="flex items-baseline gap-small">
-          <Text as="span" variant="small" className="font-medium">
+          <Text as="span" textStyle="small" className="font-medium">
             Grace Hopper
           </Text>
-          <Text as="span" variant="xsmall" className="text-muted">
+          <Text as="span" textStyle="xsmall" className="text-muted">
             2 hours ago
           </Text>
         </div>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Compound Avatar + text - a typical comment line.
         </Text>
       </div>

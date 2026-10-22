@@ -68,7 +68,7 @@ describe("Э3.3 important-free frame", () => {
       </Accordion>);
 
     const root = container.querySelector(".accordion-root");
-    const items = container.querySelectorAll("[data-accordion-item]");
+    const items = container.querySelectorAll(".accordion-item");
 
     expect(root?.className).toContain("[--accordion-item-radius:0px]");
     expect(root?.className).not.toContain("!rounded");

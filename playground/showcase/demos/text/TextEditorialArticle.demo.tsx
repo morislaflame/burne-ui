@@ -6,19 +6,19 @@ export function TextEditorialArticleDemo() {
       <div className="flex flex-wrap items-center gap-small">
         <Text
           as="span"
-          variant="xsmall"
+          textStyle="xsmall"
           className="rounded-full bg-danger/15 px-small py-xsmall font-medium text-danger"
         >
           Draft
         </Text>
-        <Text as="span" variant="xsmall" className="text-muted">
+        <Text as="span" textStyle="xsmall" className="text-muted">
           12 min reading
         </Text>
       </div>
-      <Text as="h3" variant="header-2" className="leading-tight">
+      <Text as="h3" textStyle="header-2" className="leading-tight">
         How to assemble custom sections in playground
       </Text>
-      <Text as="p" variant="small" className="border-l-2 border-primary pl-small text-muted">
+      <Text as="p" textStyle="small" className="border-l-2 border-primary pl-small text-muted">
         Lead-paragraph with an accent bar on the left - typography Text, registration className.
       </Text>
     </article>

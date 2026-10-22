@@ -18,12 +18,12 @@ import {
   SelectionIndicatorMotionSync,
 } from "./selectionIndicatorAnimations";
 import { SelectionIndicatorFill, SelectionIndicatorMark } from "./selectionIndicatorParts";
-import type { SelectionIndicatorCheckMotion, SelectionIndicatorProps } from "./selectionIndicatorTypes";
+import type { SelectionIndicatorPartMotion, SelectionIndicatorProps } from "./selectionIndicatorTypes";
 import { useSelectionIndicatorRootState } from "./useSelectionIndicatorRootState";
  
 const SelectionIndicatorRootSlot = forwardRef<
   HTMLSpanElement,
-  HTMLAttributes<HTMLSpanElement> & { motion?: SelectionIndicatorCheckMotion }
+  HTMLAttributes<HTMLSpanElement> & { motion?: SelectionIndicatorPartMotion }
 >(function SelectionIndicatorRootSlot({ className, motion, children, ...rest }, ref) {
   const { setRef } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalSelectionIndicatorMotionScope(),

@@ -42,6 +42,12 @@ import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import type { TabsMotion, TabsVariant } from "./tabsTypes";
 import { KIT_TABS_VARIANTS } from "./tabsTypes";
 
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindTabsRecipe } from "@/components/core/utils/slotMotion/recipes/bindTabs";
+
+bindLiftRecipes();
+bindTabsRecipe();
+
 export function resolveTabsMotionDefaults(variant: TabsVariant = "default"): TabsMotion {
   return overlaySkinMotion(
     { indicator: { change: "tabsIndicatorMove" } },
@@ -78,7 +84,7 @@ export function resolveTabsTabMotionDefaults({
   };
 }
  
-export function useTabsRootEnter(scope: MotionScopeValue | null, value: string) {
+export function useTabsRootEnter(scope: MotionScopeValue | null, value: string | null) {
   useOptionalEnterOnMount(scope, "root");
   useSlotPhaseOnChange(scope, "root", value, { phase: "change" });
 }

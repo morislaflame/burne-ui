@@ -36,7 +36,15 @@ const twMerge = extendTailwindMerge<
         "min-h-control-mid",
         "min-h-control-large",
       ],
+      w: [
+        "w-control-xsmall",
+        "w-control-small",
+        "w-control-base",
+        "w-control-mid",
+        "w-control-large",
+      ],
       z: [
+        "z-sticky",
         "z-dialog",
         "z-dropdown",
         "z-dropdown-sub",

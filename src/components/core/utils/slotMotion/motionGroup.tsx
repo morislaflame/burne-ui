@@ -400,20 +400,4 @@ export function useMotionGroupMember(
   }, [target, id, controller]);
 }
  
-export function MotionGroupMember({
-  id,
-  controller,
-  group,
-  children,
-}: {
-  id: string;
-  controller: MotionController<string>;
-  group?: MotionGroup;
-  children?: ReactNode;
-}) {
-  useMotionGroupMember(id, controller, group);
-  return children ?? null;
-}
- 
-MotionGroupMember.displayName = "MotionGroupMember";
  

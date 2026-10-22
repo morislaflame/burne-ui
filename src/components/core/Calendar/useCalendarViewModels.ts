@@ -14,6 +14,7 @@ export function useCalendarDayCellModels() {
     locale,
     minDate,
     maxDate,
+    isDateUnavailable,
     today,
   } = useCalendar();
  
@@ -29,6 +30,7 @@ export function useCalendarDayCellModels() {
         locale,
         minDate,
         maxDate,
+        isDateUnavailable,
         today,
       }),
     [
@@ -41,6 +43,7 @@ export function useCalendarDayCellModels() {
       locale,
       minDate,
       maxDate,
+      isDateUnavailable,
       today,
     ],
   );

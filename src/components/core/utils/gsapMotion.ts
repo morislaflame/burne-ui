@@ -136,6 +136,11 @@ export function killMotion(...targets: gsap.TweenTarget[]): void {
   gsap.killTweensOf(targets);
   clearWillChangeOnTargets(targets);
 }
+
+/** Drops GSAP's scale cache and the inline transform. A style write leaves the cache. */
+export function clearMotionTransform(el: HTMLElement): void {
+  gsap.set(el, { clearProps: "scale,transform" });
+}
  
 /** Geometry props kit fill / thumb loops tween — not opacity / autoAlpha (slot enter). */
 const MOTION_GEOMETRY_PROPS =

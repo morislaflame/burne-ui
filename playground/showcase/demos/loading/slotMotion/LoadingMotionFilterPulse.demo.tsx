@@ -26,7 +26,7 @@ export function LoadingMotionFilterPulseDemo() {
   return (
     <Loading
       size="large"
-      label="Loading"
+      aria-label="Loading"
       motion={{
         spinner: { enter: blurIn },
       }}

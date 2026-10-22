@@ -26,15 +26,15 @@ export function ContextMenuMotionEventsOffDemo() {
       <div className="flex flex-wrap gap-xlarge">
         <ContextMenu open>
           <ContextMenu.Trigger className={surface}>Live</ContextMenu.Trigger>
-          <ContextMenu.Content motionController={liveController} motion={{ events: live }}>
+          <ContextMenu.Popover motionController={liveController} motion={{ events: live }}>
             <ContextMenu.Item>Alpha</ContextMenu.Item>
-          </ContextMenu.Content>
+          </ContextMenu.Popover>
         </ContextMenu>
         <ContextMenu open>
           <ContextMenu.Trigger className={surface}>Off</ContextMenu.Trigger>
-          <ContextMenu.Content motionController={offController} motion={{ events: off }}>
+          <ContextMenu.Popover motionController={offController} motion={{ events: off }}>
             <ContextMenu.Item>Alpha</ContextMenu.Item>
-          </ContextMenu.Content>
+          </ContextMenu.Popover>
         </ContextMenu>
       </div>
     </div>

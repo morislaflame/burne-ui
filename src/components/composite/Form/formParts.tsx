@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useMemo, type ForwardedRef, type Ref } from "rea
  
 import { Text } from "@/components/core/Text";
 import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
+import { cn } from "@/utils/cn";
 import { useOptionalFormBindingContext } from "./formContext";
  
 import { formErrorEntries } from "./formAPI";
@@ -94,10 +95,10 @@ function FormSectionSurface({
   return (
     <div
       ref={part.setRef}
-      className={formSectionClass(size, className, {
-        ...rootClassNames,
-        section: classNames?.section,
-      })}
+    className={formSectionClass(size, className, {
+      ...rootClassNames,
+      section: cn(rootClassNames.section, classNames?.section),
+    })}
       {...domRest}
       {...part.pointerHandlers}
     />
@@ -133,10 +134,10 @@ export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
     return (
       <div
         ref={part.setRef}
-        className={formHeaderClass(size, className, {
-          ...rootClassNames,
-          header: classNames?.header,
-        })}
+    className={formHeaderClass(size, className, {
+      ...rootClassNames,
+      header: cn(rootClassNames.header, classNames?.header),
+    })}
         {...rest}
         {...part.pointerHandlers}
       />
@@ -175,7 +176,7 @@ export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
       <Text
         ref={part.setRef as Ref<HTMLElement>}
         as="h2"
-        variant={formTitleVariant(size)}
+        textStyle={formTitleVariant(size)}
         id={id ?? shellIds?.titleId}
         className={formTitleClass(size, className, rootClassNames)}
         {...rest}
@@ -444,7 +445,9 @@ function FormFieldSurface({
   return (
     <div
       ref={part.setRef}
-      className={formFieldClass(className, { ...rootClassNames, field: classNames?.field })}
+      className={formFieldClass(className, {
+        field: cn(rootClassNames.field, classNames?.field),
+      })}
       {...domRest}
       {...part.pointerHandlers}
     >

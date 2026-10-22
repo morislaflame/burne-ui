@@ -92,7 +92,7 @@ export function AlertDialogShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            Tone primary-buttons - helper <code>primaryButtonVariantForAlertTone</code> from the package.{" "}
+            Tone primary-buttons — helper <code>primaryButtonVariantForAlertTone</code> from <code>burne-ui/internal</code>.{" "}
             <code>status</code> fundamentally affects the icon and confirmation button. Slot motion —{" "}
             <code>motion.panel</code> / <code>modalPanel*</code> recipes (portal host <code>AlertDialog.Panel</code>).
           </p>

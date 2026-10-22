@@ -26,7 +26,8 @@ export type TextMotion = {
 };
  
 export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
-  variant: TextVariant;
+  /** Typography role. Default `base`. Surface `variant` is not used here. */
+  textStyle?: TextVariant;
   as?: ElementType;
   inheritColor?: boolean;
   className?: string;

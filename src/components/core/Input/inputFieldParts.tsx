@@ -53,7 +53,6 @@ export const InputHint = forwardRef<HTMLElement, InputHintProps>(
   function InputHint(
     {
       children,
-      status,
       className,
       id: idProp,
       motion,
@@ -67,7 +66,6 @@ export const InputHint = forwardRef<HTMLElement, InputHintProps>(
   ) {
     const field = useInputFieldContext();
     const slotClassNames = useInputClassNames();
-    const hintStatus = status ?? field.status;
     const part = useInputChromeSlot("hint", {
       motion,
       forwardedRef: ref,
@@ -81,7 +79,6 @@ export const InputHint = forwardRef<HTMLElement, InputHintProps>(
       <Field.Hint
         ref={part.setRef}
         id={idProp ?? field.hintId}
-        status={hintStatus}
         className={cn(slotClassNames.hint, className)}
         {...rest}
         {...part.pointerHandlers}

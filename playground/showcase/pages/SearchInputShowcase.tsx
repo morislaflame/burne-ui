@@ -13,6 +13,7 @@ import searchInputFilterResultsSource from "../demos/search-input/SearchInputFil
 import { SearchInputWithResultDemo } from "../demos/search-input/SearchInputWithResult.demo";
 import searchInputWithResultSource from "../demos/search-input/SearchInputWithResult.demo.tsx?raw";
 import { SearchInputSlotMotionGalleryDemo } from "../demos/search-input/slotMotion/gallery";
+import { SearchInputMotionControllerGalleryDemo } from "../demos/search-input/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -52,8 +53,15 @@ export function SearchInputShowcase() {
           source={searchInputClassNamesFullSource}
         />
       </ShowcaseSection>
-<ShowcaseSection title="Slot motion" description="One gallery: instant expand, icon spin, press bounce, hover tilt.">
+      <ShowcaseSection title="Slot motion" description="One gallery: instant expand, icon spin, press bounce, hover tilt.">
         <SearchInputSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot and set on the shell, play versus playSlot, the clear button, stagger, exclude, search events."
+      >
+        <SearchInputMotionControllerGalleryDemo />
       </ShowcaseSection>
 
       <ShowcaseSection

@@ -10,7 +10,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
 
-import type { ComboBoxOption } from "./comboBoxTypes";
+import type { ComboBoxItem } from "./comboBoxTypes";
 import { ComboBox } from ".";
 import { ComboBoxSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/combobox/slotMotion/gallery";
 import { ComboBoxMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/combobox/motionController/gallery";
@@ -42,7 +42,7 @@ const lightThemeDecorator = [
   ),
 ] as const;
 
-const sampleOptions: ComboBoxOption[] = [
+const sampleOptions: ComboBoxItem[] = [
   {
     value: "ru",
     label: "Russian",
@@ -72,7 +72,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Searchable combobox. **Simple** — `options` on root; **Compound** — `<ComboBox.Label>`, `<ComboBox.InputGroup>` + `<ComboBox.Input>` / `<ComboBox.Trigger>`, `<ComboBox.Popover>` with `<ListBox>`. Panel — via `Popover`.",
+          "Searchable combobox. **Simple** — `items` on root; **Compound** — `<ComboBox.Label>`, `<ComboBox.Shell>` + `<ComboBox.Input>` / `<ComboBox.Trigger>`, `<ComboBox.Popover>` with `<ListBox>`. Panel — via `Popover`.",
       },
     },
   },
@@ -80,10 +80,6 @@ const meta = {
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
     variant: { control: "select", options: ["default", "outline", "secondary"] },
-    status: {
-      control: "select",
-      options: ["default", "danger", "success", "warning"],
-    },
   },
 } satisfies Meta<typeof ComboBox>;
 
@@ -101,17 +97,17 @@ export const Default: Story = {
           label="Interface language"
           hint="In the field — only the selected item name."
           placeholder="Select language"
-          options={sampleOptions}
+          items={sampleOptions}
           defaultValue="ru"
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
-        <ComboBox options={sampleOptions} defaultValue="en">
+        <ComboBox items={sampleOptions} defaultValue="en">
           <ComboBox.Label>Interface language</ComboBox.Label>
-          <ComboBox.InputGroup>
+          <ComboBox.Shell>
             <ComboBox.Input placeholder="Select language" />
             <ComboBox.Trigger />
-          </ComboBox.InputGroup>
+          </ComboBox.Shell>
           <ComboBox.Popover />
           <ComboBox.Hint>Item description is visible only in the list.</ComboBox.Hint>
         </ComboBox>
@@ -123,12 +119,12 @@ export const Default: Story = {
 export const CustomListBox: Story = {
   name: "Compound ListBox",
   render: () => (
-    <ComboBox options={sampleOptions} defaultValue="ru">
+    <ComboBox items={sampleOptions} defaultValue="ru">
       <ComboBox.Label>Interface language</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover>
         <ListBox.Section>
           <ListBox.Header>Available languages</ListBox.Header>
@@ -151,7 +147,7 @@ export const CustomListBox: Story = {
   ),
 };
 
-const layoutShowcaseOptions: ComboBoxOption[] = [
+const layoutShowcaseOptions: ComboBoxItem[] = [
   { value: "label-only", label: "Label only" },
   { value: "label-hint", label: "Label + Hint", hint: "ItemHint → second line in the middle column" },
   { value: "label-icon", label: "Label + Icon" },
@@ -169,12 +165,12 @@ const layoutShowcaseOptions: ComboBoxOption[] = [
 export const CustomItemParts: Story = {
   name: "Compound — slot layout",
   render: () => (
-    <ComboBox options={layoutShowcaseOptions} defaultValue="full-grid">
+    <ComboBox items={layoutShowcaseOptions} defaultValue="full-grid">
       <ComboBox.Label>Slot layout</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select item" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover>
         <ListBox>
           <ListBox.Section>
@@ -199,13 +195,13 @@ export const CustomItemParts: Story = {
 type ComboBoxStoryProps = ComponentProps<typeof ComboBox>;
 
 function ControlledComboBox(props: ComboBoxStoryProps) {
-  const [value, setValue] = useState("ru");
+  const [value, setValue] = useState<string | null>("ru");
   return (
     <ComboBox
       {...props}
       value={value}
       onValueChange={setValue}
-      options={props.options ?? sampleOptions}
+      items={props.items ?? sampleOptions}
     />
   );
 }
@@ -234,7 +230,7 @@ export const ControlledOpen: Story = {
         </Button>
         <ComboBox
           label="Language"
-          options={sampleOptions}
+          items={sampleOptions}
           defaultValue="ru"
           open={open}
           onOpenChange={setOpen}
@@ -258,7 +254,7 @@ export const DefaultOpen: Story = {
   render: () => (
     <ComboBox
       label="Language"
-      options={sampleOptions}
+      items={sampleOptions}
       defaultValue="en"
       defaultOpen
       hint="Popup starts open via defaultOpen"
@@ -284,7 +280,7 @@ export const Sizes: Story = {
           key={size}
           size={size}
           label={`size="${size}"`}
-          options={sampleOptions}
+          items={sampleOptions}
           defaultValue="ru"
           placeholder="Select language"
         />
@@ -317,7 +313,7 @@ export const Disabled: Story = {
       disabled
       value="en"
       label="Language"
-      options={sampleOptions}
+      items={sampleOptions}
       placeholder="Select language"
     />
   ),
@@ -329,7 +325,7 @@ export const Virtualized: Story = {
     virtualized: true,
     label: "Item",
     defaultValue: "1",
-    options: Array.from({ length: 200 }, (_, index) => ({
+    items: Array.from({ length: 200 }, (_, index) => ({
       value: String(index + 1),
       label: `Item ${index + 1}`,
     })),
@@ -339,19 +335,19 @@ export const Virtualized: Story = {
 export const LongList: Story = {
   name: "Long list",
   render: function LongList() {
-    const many: ComboBoxOption[] = Array.from({ length: 40 }, (_, i) => ({
+    const many: ComboBoxItem[] = Array.from({ length: 40 }, (_, i) => ({
       value: `opt-${i}`,
       label: `Item ${i + 1}`,
       hint: i % 5 === 0 ? "With optional hint in list" : undefined,
       icon:
         i % 7 === 0 ? <IoCheckmarkCircle aria-hidden className="text-success" /> : undefined,
     }));
-    const [value, setValue] = useState("opt-0");
+    const [value, setValue] = useState<string | null>("opt-0");
     return (
       <ComboBox
         label="Many items"
         hint="Scroll inside `<ComboBox.Popover>`."
-        options={many}
+        items={many}
         value={value}
         onValueChange={setValue}
         menuMaxHeight="min(12rem, 50dvh)"
@@ -370,12 +366,12 @@ export const LightTheme: Story = {
 export const Validation: Story = {
   name: "Validation",
   render: () => (
-    <ComboBox required options={sampleOptions}>
+    <ComboBox required items={sampleOptions}>
       <ComboBox.Label>Interface language</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover />
       <ComboBox.Hint>Language affects the interface and emails.</ComboBox.Hint>
       <ComboBox.Error>Select a language from the list.</ComboBox.Error>
@@ -394,14 +390,14 @@ export const CustomTriggerIcon: Story = {
     },
   },
   render: () => (
-    <ComboBox options={sampleOptions} defaultValue="ru">
+    <ComboBox items={sampleOptions} defaultValue="ru">
       <ComboBox.Label>Interface language</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger>
           <IoCaretDown aria-hidden className="icon-small text-primary" />
         </ComboBox.Trigger>
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover />
     </ComboBox>
   ),
@@ -419,12 +415,12 @@ export const PopoverSideTop: Story = {
     },
   },
   render: () => (
-    <ComboBox options={sampleOptions} defaultValue="ru">
+    <ComboBox items={sampleOptions} defaultValue="ru">
       <ComboBox.Label>Opens upward</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover side="top" />
     </ComboBox>
   ),
@@ -439,12 +435,12 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-controls</code>,{" "}
         <code className="text-primary">aria-activedescendant</code>. Listbox inside Popover.
       </p>
-      <ComboBox required options={sampleOptions}>
+      <ComboBox required items={sampleOptions}>
         <ComboBox.Label>Interface language</ComboBox.Label>
-        <ComboBox.InputGroup>
+        <ComboBox.Shell>
           <ComboBox.Input placeholder="Select language" />
           <ComboBox.Trigger />
-        </ComboBox.InputGroup>
+        </ComboBox.Shell>
         <ComboBox.Popover />
         <ComboBox.Hint>Language affects the interface and emails.</ComboBox.Hint>
         <ComboBox.Error>Select a language from the list.</ComboBox.Error>
@@ -467,9 +463,11 @@ export const CustomClassNames: Story = {
       label="Interface language"
       hint="Slots configured via classNames"
       classNames={{
-        inputGroup: "border-primary/40 bg-primary/5",
+        shell: "border-primary/40 bg-primary/5",
         input: "text-primary placeholder:text-primary/50",
         trigger: "text-primary hover:text-primary",
+        triggerIconWrap: "icon-slot-large",
+        triggerIcon: "text-primary",
         popoverBody: "bg-primary/5",
         listBoxItem: "rounded-lg",
         listBoxLabel: "font-semibold",
@@ -490,12 +488,12 @@ export const ListBoxItemSlots: Story = {
     },
   },
   render: () => (
-    <ComboBox options={sampleOptions} defaultValue="ru">
+    <ComboBox items={sampleOptions} defaultValue="ru">
       <ComboBox.Label>Styled list items</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover
         listBoxProps={{
           classNames: {
@@ -519,7 +517,7 @@ export const MotionControllerGallery: Story = {
     docs: {
       description: {
         story:
-          "`useMotionControllerHandle()` — playSlot on inputGroup/input (no play: no root slot), chrome label on Root, cancel loop, combo events.",
+          "`useMotionControllerHandle()` — playSlot on shell/input (no play: no root slot), chrome label on Root, cancel loop, combo events.",
       },
     },
   },

@@ -9,7 +9,7 @@ export function ContextMenuMotionInstantLeaveDemo() {
   return (
     <ContextMenu motion={{ content: { leave: false } }}>
       <ContextMenu.Trigger className={surface}>Instant leave</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Item>
           <ContextMenu.ItemLabel>Rename</ContextMenu.ItemLabel>
           <ContextMenu.ItemIcon>
@@ -22,7 +22,7 @@ export function ContextMenuMotionInstantLeaveDemo() {
             <IoCopyOutline aria-hidden />
           </ContextMenu.ItemIcon>
         </ContextMenu.Item>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

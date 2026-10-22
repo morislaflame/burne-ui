@@ -37,7 +37,7 @@ export function SurfaceMotionEventsFinishedDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small">
+        <Text as="p" textStyle="small">
           Second event waits until the first MotionRun completes.
         </Text>
       </Surface>

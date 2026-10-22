@@ -2,10 +2,12 @@
 
 Контейнер с compound-разметкой: `Header`, `Title`, `Description`, `Body`, `Footer`. Поддерживает `variant`, статическую тень (passive) и **pressable** режим с hover-lift / squeeze как у кнопки второго уровня.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEvent, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps, type CardMotion, type CardPartMotion } from "burne-ui";
+import { Card, type CardProps, type CardVariant, type CardSize, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps, type CardMotion, type CardPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -28,7 +30,7 @@ import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEv
 ### Pressable card
 
 ```tsx
-<Card pressable onPress={(e) => console.log(e)}>
+<Card pressable onClick={(e) => console.log(e)}>
   <Card.Header>
     <Card.Title>Открыть</Card.Title>
   </Card.Header>
@@ -39,7 +41,7 @@ import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEv
 ### Pressable + Ripple
 
 ```tsx
-<Card pressable variant="outline" onPress={handlePress}>
+<Card pressable variant="outline" onClick={handlePress}>
   <Ripple color="neutral" />
   <div className="relative z-[1] flex flex-col">
     <Card.Header>...</Card.Header>
@@ -54,13 +56,13 @@ Simple API (props `title` на root) нет — только compound children.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — radius (как у Button), padding секций, type scale Title/Description |
 | `shadow` | `base` | `small` \| `base` \| `mid` \| `large` — rest elevation (passive CSS или pressable family) |
 | `pressable` | `false` | Интерактивная карточка (`<button>` root) |
-| `onPress` | — | Активация click / Enter / Space |
-| `onClick` / `onKeyDown` / `onPointerDown` | — | Низкоуровневые handlers |
-| `className` | — | Root / gloss panel |
+| `onClick` | — | Активация click / Enter / Space |
+| `onKeyDown` / `onPointerDown` | — | Дополнительные handlers. Любой из них или `onClick` рисует корень как `<button>` |
+| `className` | — | — |
 | `classNames` | — | Слоты |
 | `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
 | `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
@@ -111,7 +113,6 @@ Simple API (props `title` на root) нет — только compound children.
 | `default` | `bg-surface border-token` |
 | `outline` | transparent + border |
 | `secondary` | `bg-secondary border-token` |
-| `gloss` | `gloss-panel` + `gloss-content` |
 
 ### Тени
 
@@ -119,7 +120,6 @@ Simple API (props `title` на root) нет — только compound children.
 |-------|------|
 | Passive (`pressable={false}`) | `shadow-token-{shadow}` всегда |
 | Pressable `default/outline/secondary` | rest → `{shadow}-hover` на hover; press → `{shadow}-press` |
-| Pressable `gloss` | gloss interactive motion |
 
 ## Анимации
 
@@ -129,10 +129,10 @@ Simple API (props `title` на root) нет — только compound children.
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | при `pressable`: `hoverLiftSecondLevel` или gloss; `pressSqueeze` / `pressSqueezeGloss` (`pressOut: false`) |
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | при `pressable`: `hoverLiftSecondLevel`; `pressSqueeze` (`pressOut: false`) |
 | `title` / `description` / `header` / `headingBlock` / `body` / `footer` | `hoverIn` / `hoverOut` | нет |
 
-`content` / `glossContent` — layout-обёртки, не публичные motion-слоты.
+`content` — layout-обёртка, не публичный motion-слот.
 
 Сырой follow мыши (`gsap.quickTo` на `x`/`y`, не фаза `hoverIn`) — слайд **Mouse follow** в галерее Slot motion.
 
@@ -213,15 +213,12 @@ Ripple **не встроен** — передайте `<Ripple />` первым 
 | `CARD_PRESSABLE_ROOT_CLASS` | `cursor-pointer focus-ring` |
 | `CARD_BUTTON_SHELL_CLASS` | `w-full border-0 p-0 text-left` на `<button>` |
 | `cardHeaderClass` / `cardBodyClass` / `cardFooterClass` | Padding из size layout; footer + `border-t-token` |
-| `CARD_GLOSS_PANEL_BASE_CLASS` | `gloss-panel` (+ size `rounded-*`) |
-| `GLOSS_INTERACTIVE_MOTION_CLASS` | Gloss pressable motion |
 | `SHADOW_LIFT_MOTION_CLASS` | GSAP shadow transition |
 
 ## Стилизация и кастомизация
 
 ### Два уровня
 
-1. **`className` на `Card`** — root / gloss panel (`classNames.root` merge).
 2. **`classNames` на root** — все внутренние слоты через provider.
 
 Compound-подчасти не принимают отдельный `classNames` — только root.
@@ -270,7 +267,7 @@ Compound-подчасти не принимают отдельный `classNames
 <Card
   pressable
   variant="outline"
-  onPress={handleOpen}
+  onClick={handleOpen}
   classNames={{ root: "rounded-large", content: "gap-0" }}
 >
   <Ripple color="neutral" />
@@ -287,11 +284,10 @@ Compound-подчасти не принимают отдельный `classNames
 
 ### Практические заметки
 
-- Внутри pressable card не кладите кнопки/ссылки без `stopPropagation` — сработает `onPress` root.
+- Внутри pressable card не кладите кнопки/ссылки без `stopPropagation` — сработает `onClick` root.
 - Ripple не встроен: первый child `<Ripple />`, контент в `relative z-[1]` внутри `content`.
 - `Card.Title` всегда `h3` — не меняйте heading level через classNames без замены семантики.
 - Passive: `pressable={false}` → постоянная `shadow-token-{shadow}`, без hover lift.
-- Gloss: `className` / `classNames.root` на `gloss-panel`; children в `glossContent`.
 - **Не задавайте `transform` на root при `pressable`** — конфликт с lift/squeeze GSAP.
 - **Порядок мержа:** variant surface → motionClass → `classNames.slot` → `className` root.
 
@@ -306,8 +302,9 @@ Compound-подчасти не принимают отдельный `classNames
 
 ## Доступность
 
+- `href` рисует `<a>`. `asChild` подставляет одного ребёнка (`<a>` или `next/link`) вместо кнопки; заголовок и описание остаются внутри ссылки.
 - `pressable={true}`: root `<button type="button">`, `focus-ring`
-- `onPress` на click и keyboard activation
+- `onClick` на click и keyboard activation
 - `Card.Title`: semantic `h3`
 - Вложенные интерактивные элементы — осторожно с event bubbling
 
@@ -330,4 +327,4 @@ Card/
 
 ## Storybook
 
-`Core Components/Card` — variants, pressable, ripple, gloss, form layout, light theme, `classNames`.
+`Core Components/Card` — variants, pressable, ripple, form layout, light theme, `classNames`.

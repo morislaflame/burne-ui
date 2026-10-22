@@ -13,6 +13,7 @@ export function ColorPickerClassNamesFullDemo() {
         onValueChange={setColor}
         classNames={{
           contentPanel: "border border-info/30 bg-info/5 shadow-token-base",
+          panel: "ring-1 ring-info/20",
           area: "rounded-base ring-1 ring-info/25",
           hexInput: "border-info/30 bg-info/10",
           hexInputField: "text-info",
@@ -35,7 +36,7 @@ export function ColorPickerClassNamesFullDemo() {
           }}
         />
       </div>
-      <Text as="p" variant="small" className="font-mono text-muted">
+      <Text as="p" textStyle="small" className="font-mono text-muted">
         {color}
       </Text>
     </div>

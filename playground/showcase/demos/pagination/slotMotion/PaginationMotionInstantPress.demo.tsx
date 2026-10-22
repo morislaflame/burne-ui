@@ -11,7 +11,9 @@ export function PaginationMotionInstantPressDemo() {
       totalPages={12}
       onPageChange={setPage}
       motion={{
-        control: { pressIn: false },
+        previous: { pressIn: false },
+        next: { pressIn: false },
+        page: { pressIn: false },
       }}
     >
       <Pagination.Summary>Page {page} of 12</Pagination.Summary>

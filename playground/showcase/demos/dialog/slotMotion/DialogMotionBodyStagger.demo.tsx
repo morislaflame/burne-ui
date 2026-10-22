@@ -44,7 +44,7 @@ export function DialogMotionBodyStaggerDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Animate `motion.body` independently from `content` and `title`.
           </Text>
         </Dialog.Body>

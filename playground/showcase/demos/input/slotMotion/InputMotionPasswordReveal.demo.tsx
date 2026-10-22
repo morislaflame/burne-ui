@@ -7,7 +7,7 @@ export function InputMotionPasswordRevealDemo() {
   return (
     <Input
       className="w-full max-w-sm"
-      inputType="password"
+      type="password"
       label="Password reveal"
       defaultValue="secret-token"
       hint="Toggle hover spin + press timeline on control"

@@ -4,6 +4,7 @@ import { Dialog } from "@/components/core/Dialog";
 import { Drawer } from "@/components/core/Drawer";
 import { render } from "@/__tests__/helpers";
 
+import { SkinProvider } from "./skinContext";
 import { registerSkin, unregisterSkin } from "./skinRegistry";
 
 const NAME = "panel-layer";
@@ -28,9 +29,11 @@ describe("panel SkinShell", () => {
     });
 
     const { baseElement } = render(
-      <Dialog defaultOpen>
-        <Dialog.Panel variant={NAME}>pane</Dialog.Panel>
-      </Dialog>,
+      <SkinProvider>
+        <Dialog defaultOpen>
+          <Dialog.Panel variant={NAME}>pane</Dialog.Panel>
+        </Dialog>
+      </SkinProvider>,
     );
 
     const panel = baseElement.querySelector(".skin-panel");
@@ -56,9 +59,11 @@ describe("panel SkinShell", () => {
     });
 
     const { baseElement } = render(
-      <Drawer defaultOpen>
-        <Drawer.Panel variant={NAME}>pane</Drawer.Panel>
-      </Drawer>,
+      <SkinProvider>
+        <Drawer defaultOpen>
+          <Drawer.Panel variant={NAME}>pane</Drawer.Panel>
+        </Drawer>
+      </SkinProvider>,
     );
 
     const panel = baseElement.querySelector(".skin-panel");

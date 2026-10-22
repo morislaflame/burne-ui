@@ -10,7 +10,9 @@ import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import { RadioGroup } from ".";
+import { RadioGroupMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/radioGroup/motionController/gallery";
 import { RadioGroupSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/radioGroup/slotMotion/gallery";
+import { Label } from "@/components/core/Label";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -37,7 +39,7 @@ const meta = {
   argTypes: {
     size: {
       control: "select",
-      options: COMPONENT_SIZES,
+      items: COMPONENT_SIZES,
       table: { defaultValue: { summary: "small" } },
     },
   },
@@ -56,7 +58,7 @@ export const Playground: Story = {
   render: (args) => (
     <RadioGroup {...args} defaultValue="card">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Payment method</RadioGroup.Label>
+        <Label>Payment method</Label>
         <RadioGroup.Hint>Only one option can be selected.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List>
@@ -67,10 +69,10 @@ export const Playground: Story = {
     </RadioGroup>
   ),
   play: async ({ canvas, userEvent }) => {
-    await expect(canvas.getByRole("radio", { name: "card" })).toBeChecked();
-    await userEvent.click(canvas.getByRole("radio", { name: "cash" }));
-    await expect(canvas.getByRole("radio", { name: "cash" })).toBeChecked();
-    await expect(canvas.getByRole("radio", { name: "card" })).not.toBeChecked();
+    await expect(canvas.getByRole("radio", { name: "Bank card" })).toBeChecked();
+    await userEvent.click(canvas.getByRole("radio", { name: "Cash" }));
+    await expect(canvas.getByRole("radio", { name: "Cash" })).toBeChecked();
+    await expect(canvas.getByRole("radio", { name: "Bank card" })).not.toBeChecked();
   },
 };
 
@@ -104,7 +106,7 @@ export const CardLayout: Story = {
     return (
       <RadioGroup defaultValue="hybrid" name="event-format" className="max-w-2xl">
         <RadioGroup.Legend>
-          <RadioGroup.Label>Participation format</RadioGroup.Label>
+          <Label>Participation format</Label>
           <RadioGroup.Hint>Choose how you want to join the event.</RadioGroup.Hint>
         </RadioGroup.Legend>
         <div className="grid gap-large md:grid-cols-3">
@@ -119,7 +121,7 @@ export const CardLayout: Story = {
                   <Radio.Label>{option.title}</Radio.Label>
                   <Radio.Hint>{option.hint}</Radio.Hint>
                 </div>
-                <Text as="span" variant="small" className="font-semibold">
+                <Text as="span" textStyle="small" className="font-semibold">
                   {option.meta}
                 </Text>
               </Radio.Content>
@@ -136,7 +138,7 @@ export const Horizontal: Story = {
   render: () => (
     <RadioGroup defaultValue="s">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Size</RadioGroup.Label>
+        <Label>Size</Label>
         <RadioGroup.Hint>Items in a row with wrap when space is tight.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List orientation="horizontal">
@@ -154,7 +156,7 @@ export const WithDescriptions: Story = {
   render: () => (
     <RadioGroup defaultValue="courier">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Delivery</RadioGroup.Label>
+        <Label>Delivery</Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="courier" label="Courier" hint="1–2 business days" />
@@ -170,7 +172,7 @@ export const Required: Story = {
   render: () => (
     <RadioGroup required>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Plan</RadioGroup.Label>
+        <Label>Plan</Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="free" label="Free" />
@@ -185,7 +187,7 @@ export const WithError: Story = {
   render: () => (
     <RadioGroup required>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Plan</RadioGroup.Label>
+        <Label>Plan</Label>
         <RadioGroup.Hint>Select one option before continuing.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.Group>
@@ -202,12 +204,12 @@ export const WithError: Story = {
 export const Controlled: Story = {
   name: "Controlled",
   render: function Controlled() {
-    const [value, setValue] = useState<string | undefined>("card");
+    const [value, setValue] = useState<string | null>("card");
 
     return (
       <RadioGroup value={value} onValueChange={setValue}>
         <RadioGroup.Legend>
-          <RadioGroup.Label>Controlled</RadioGroup.Label>
+          <Label>Controlled</Label>
           <RadioGroup.Hint>{`Selected: ${value ?? "—"}`}</RadioGroup.Hint>
         </RadioGroup.Legend>
         <RadioGroup.List>
@@ -224,7 +226,7 @@ export const WithoutDescription: Story = {
   render: () => (
     <RadioGroup defaultValue="m">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Size</RadioGroup.Label>
+        <Label>Size</Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="s" label="S" />
@@ -244,7 +246,7 @@ export const Sizes: Story = {
           <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
           <RadioGroup size={size} defaultValue="card">
             <RadioGroup.Legend>
-              <RadioGroup.Label>Payment method</RadioGroup.Label>
+              <Label>Payment method</Label>
               <RadioGroup.Hint>size={size}</RadioGroup.Hint>
             </RadioGroup.Legend>
             <RadioGroup.List>
@@ -285,7 +287,7 @@ export const CustomClassNames: Story = {
       }}
     >
       <RadioGroup.Legend>
-        <RadioGroup.Label>Payment method</RadioGroup.Label>
+        <Label>Payment method</Label>
         <RadioGroup.Hint>Slots via classNames.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.Group>
@@ -296,7 +298,7 @@ export const CustomClassNames: Story = {
         <RadioGroup.Error>Select a payment method to continue.</RadioGroup.Error>
       </RadioGroup.Group>
       <RadioGroup.Actions>
-        <Text as="span" variant="small" className="text-muted">
+        <Text as="span" textStyle="small" className="text-muted">
           Saved automatically
         </Text>
       </RadioGroup.Actions>
@@ -307,6 +309,11 @@ export const CustomClassNames: Story = {
 export const SlotMotionGallery: Story = {
   name: "Slot motion gallery",
   render: () => <RadioGroupSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery",
+  render: () => <RadioGroupMotionControllerGalleryDemo />,
 };
 
 export const Accessibility: Story = {
@@ -321,7 +328,7 @@ export const Accessibility: Story = {
       </p>
       <RadioGroup required>
         <RadioGroup.Legend>
-          <RadioGroup.Label>Delivery</RadioGroup.Label>
+          <Label>Delivery</Label>
           <RadioGroup.Hint>Select one delivery method.</RadioGroup.Hint>
         </RadioGroup.Legend>
         <RadioGroup.List>

@@ -287,6 +287,12 @@ export function fluidScaleRem(maxRem: number): string {
   const max = formatCssNumber(maxRem);
   return `clamp(${min}rem, ${preferredRem}rem + ${preferredVw}vw, ${max}rem)`;
 }
+
+/** Fixed rem, the same unit the kit stylesheet uses for `--space` / `--size` / `--radius`. */
+function fixedRem(value: number): string {
+  if (value === 0) return "0rem";
+  return `${formatCssNumber(value)}rem`;
+}
  
 /**
  * Write shadow knobs as CSS vars; geometry stays in stylesheet `calc(…)`.
@@ -607,17 +613,17 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
   setOrClearInline(
     target,
     "--space",
-    state.space !== defaults.space ? fluidScaleRem(state.space) : null,
+    state.space !== defaults.space ? fixedRem(state.space) : null,
   );
   setOrClearInline(
     target,
     "--size",
-    state.size !== defaults.size ? fluidScaleRem(state.size) : null,
+    state.size !== defaults.size ? fixedRem(state.size) : null,
   );
   setOrClearInline(
     target,
     "--radius",
-    state.radius !== defaults.radius ? fluidScaleRem(state.radius) : null,
+    state.radius !== defaults.radius ? fixedRem(state.radius) : null,
   );
   applyBorderTokenCss(target, state.borderWidth, defaults.borderWidth);
   setOrClearInline(
@@ -685,92 +691,90 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
  
 /** CSS snapshot of tokens that differ from kit defaults (for override stylesheets). */
 export function exportThemeCss(state: ThemeTokenState): string {
-  const defaults = createDefaultThemeState(state.theme);
+  const full = ensureModePalettes(state);
+  const defaults = createDefaultThemeState("dark");
+  const lightDefaults = createDefaultThemeState("light");
+  const darkColors = full.theme === "dark" ? full.colors : full.modePalettes.dark;
+  const lightColors = full.theme === "light" ? full.colors : full.modePalettes.light;
   const lines: string[] = [":root {"];
  
-  if (state.space !== defaults.space) {
-    lines.push(`  --space: ${state.space}rem;`);
+  if (full.space !== defaults.space) {
+    lines.push(`  --space: ${fixedRem(full.space)};`);
   }
-  if (state.size !== defaults.size) {
-    lines.push(`  --size: ${state.size}rem;`);
+  if (full.size !== defaults.size) {
+    lines.push(`  --size: ${fixedRem(full.size)};`);
   }
-  if (state.radius !== defaults.radius) {
-    lines.push(`  --radius: ${state.radius}rem;`);
+  if (full.radius !== defaults.radius) {
+    lines.push(`  --radius: ${fixedRem(full.radius)};`);
   }
-  if (state.borderWidth !== defaults.borderWidth) {
-    const border = resolveBorderTokenCss(state.borderWidth);
+  if (full.borderWidth !== defaults.borderWidth) {
+    const border = resolveBorderTokenCss(full.borderWidth);
     lines.push(`  --border-width: ${border.borderWidth};`);
     lines.push(`  --border-width-outline: ${border.borderWidthOutline};`);
     if (border.borderColor != null) {
       lines.push(`  --border-color: ${border.borderColor};`);
     }
   }
-  if (state.focusRingWidth !== defaults.focusRingWidth) {
-    lines.push(`  --focus-ring-width: ${borderWidthCss(state.focusRingWidth)};`);
+  if (full.focusRingWidth !== defaults.focusRingWidth) {
+    lines.push(`  --focus-ring-width: ${borderWidthCss(full.focusRingWidth)};`);
   }
-  if (state.focusRingOffset !== defaults.focusRingOffset) {
-    lines.push(`  --focus-ring-offset: ${state.focusRingOffset}px;`);
+  if (full.focusRingOffset !== defaults.focusRingOffset) {
+    lines.push(`  --focus-ring-offset: ${full.focusRingOffset}px;`);
   }
-  if (state.fontFamily !== defaults.fontFamily) {
-    lines.push(`  --font-family-sans: ${state.fontFamily};`);
+  if (full.fontFamily !== defaults.fontFamily) {
+    lines.push(`  --font-family-sans: ${full.fontFamily};`);
   }
-  if (state.fontFamilyMono !== defaults.fontFamilyMono) {
-    lines.push(`  --font-family-mono: ${state.fontFamilyMono};`);
+  if (full.fontFamilyMono !== defaults.fontFamilyMono) {
+    lines.push(`  --font-family-mono: ${full.fontFamilyMono};`);
   }
-  if (state.letterSpacing !== defaults.letterSpacing) {
-    lines.push(`  --letter-spacing: ${state.letterSpacing}em;`);
+  if (full.letterSpacing !== defaults.letterSpacing) {
+    lines.push(`  --letter-spacing: ${full.letterSpacing}em;`);
   }
   for (const [key, cssVar] of Object.entries(FONT_WEIGHT_CSS_VAR) as [
     ThemeFontWeightKey,
     string,
   ][]) {
-    if (state.fontWeights[key] !== defaults.fontWeights[key]) {
-      lines.push(`  ${cssVar}: ${state.fontWeights[key]};`);
+    if (full.fontWeights[key] !== defaults.fontWeights[key]) {
+      lines.push(`  ${cssVar}: ${full.fontWeights[key]};`);
     }
   }
  
-  if (state.shadowOpacity !== defaults.shadowOpacity) {
-    lines.push(`  --shadow-opacity: ${state.shadowOpacity};`);
+  if (full.shadowOpacity !== defaults.shadowOpacity) {
+    lines.push(`  --shadow-opacity: ${full.shadowOpacity};`);
   }
-  if (state.shadowBlur !== defaults.shadowBlur) {
-    lines.push(`  --shadow-blur: ${state.shadowBlur};`);
+  if (full.shadowBlur !== defaults.shadowBlur) {
+    lines.push(`  --shadow-blur: ${full.shadowBlur};`);
   }
-  if (state.shadowSpread !== defaults.shadowSpread) {
-    lines.push(`  --shadow-spread: ${state.shadowSpread};`);
+  if (full.shadowSpread !== defaults.shadowSpread) {
+    lines.push(`  --shadow-spread: ${full.shadowSpread};`);
   }
-  if (state.shadowOffsetX !== defaults.shadowOffsetX) {
-    lines.push(`  --shadow-offset-x: ${state.shadowOffsetX}px;`);
+  if (full.shadowOffsetX !== defaults.shadowOffsetX) {
+    lines.push(`  --shadow-offset-x: ${full.shadowOffsetX}px;`);
   }
-  if (state.shadowOffsetY !== defaults.shadowOffsetY) {
-    lines.push(`  --shadow-offset-y: ${state.shadowOffsetY}px;`);
-  }
- 
-  if (state.toastScrimSize !== defaults.toastScrimSize) {
-    lines.push(`  --toast-scrim-size: ${state.toastScrimSize};`);
-  }
-  if (state.toastScrimDensity !== defaults.toastScrimDensity) {
-    lines.push(`  --toast-scrim-density: ${state.toastScrimDensity};`);
+  if (full.shadowOffsetY !== defaults.shadowOffsetY) {
+    lines.push(`  --shadow-offset-y: ${full.shadowOffsetY}px;`);
   }
  
-  if (state.surfaceTransitionDuration !== defaults.surfaceTransitionDuration) {
-    lines.push(`  --motion-surface-duration: ${state.surfaceTransitionDuration}ms;`);
+  if (full.toastScrimSize !== defaults.toastScrimSize) {
+    lines.push(`  --toast-scrim-size: ${full.toastScrimSize};`);
+  }
+  if (full.toastScrimDensity !== defaults.toastScrimDensity) {
+    lines.push(`  --toast-scrim-density: ${full.toastScrimDensity};`);
   }
  
-  if (state.textScale !== defaults.textScale) {
+  if (full.surfaceTransitionDuration !== defaults.surfaceTransitionDuration) {
+    lines.push(`  --motion-surface-duration: ${full.surfaceTransitionDuration}ms;`);
+  }
+ 
+  if (full.textScale !== defaults.textScale) {
     for (const key of Object.keys(TEXT_SCALE_BASES) as TextScaleToken[]) {
       const { size, line } = TEXT_SCALE_BASES[key];
-      const scaledSize = size * state.textScale;
-      const scaledLine = line * state.textScale;
+      const scaledSize = size * full.textScale;
+      const scaledLine = line * full.textScale;
       lines.push(`  --text-scale-${key}: ${scaledSize}rem;`);
       lines.push(
         `  --text-scale-${key}--line-height: calc(${scaledLine}rem / ${scaledSize}rem);`,
       );
-    }
-  }
- 
-  for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
-    if (state.colors[key] !== defaults.colors[key]) {
-      lines.push(`  ${cssVar}: ${state.colors[key]};`);
     }
   }
  
@@ -779,12 +783,31 @@ export function exportThemeCss(state: ThemeTokenState): string {
   }
  
   lines.push("}");
- 
-  if (state.theme === "light") {
-    lines.push("", "/* Optional: light theme via data-attribute */");
-    lines.push('/* <html data-theme="light"> */');
+
+  const blocks = [lines.join("\n")];
+
+  const lightDecls: string[] = [];
+  const darkDecls: string[] = [];
+  for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
+    if (lightColors[key] !== lightDefaults.colors[key]) {
+      lightDecls.push(`  ${cssVar}: ${lightColors[key]};`);
+    }
+    if (darkColors[key] !== defaults.colors[key]) {
+      darkDecls.push(`  ${cssVar}: ${darkColors[key]};`);
+    }
+  }
+  if (lightDecls.length > 0) {
+    blocks.push(['[data-theme="light"] {', ...lightDecls, "}"].join("\n"));
+  }
+  // After the light block. `:root` alone would match `<html data-theme="light">`
+  // at the same specificity and repaint the light page. `:not` misses that node;
+  // `[data-theme="dark"]` still paints an island inside it.
+  if (darkDecls.length > 0) {
+    blocks.push(
+      [':root:not([data-theme="light"]),', '[data-theme="dark"] {', ...darkDecls, "}"].join("\n"),
+    );
   }
  
-  return lines.join("\n");
+  return blocks.join("\n\n");
 }
  

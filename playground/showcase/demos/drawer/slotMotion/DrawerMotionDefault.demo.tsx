@@ -22,7 +22,7 @@ export function DrawerMotionDefaultDemo() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <Text as="p" variant="base">
+            <Text as="p" textStyle="base">
               Panel slides in from the right.
             </Text>
           </Drawer.Body>

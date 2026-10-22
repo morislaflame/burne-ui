@@ -12,7 +12,7 @@ export function ToastMotionBounceDemo() {
         toast.show({
           title: "Bounce",
           description: "root factory — back.out in, fade out on leave.",
-          timeout: 4000,
+          duration: 4000,
           motion: {
             root: {
               enter: (ctx) =>

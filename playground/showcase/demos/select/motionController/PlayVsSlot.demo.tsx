@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { Select } from "@/components/core/Select";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -14,7 +14,7 @@ export function SelectMotionControllerPlayVsSlotDemo() {
   return (
     <div className="flex max-w-sm flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("triggerGroup", "hoverIn")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "hoverIn")}>
           playSlot(group)
         </Button>
         <Button size="small" variant="outline" onClick={() => controller.playSlot("value", "hoverIn")}>
@@ -29,11 +29,11 @@ export function SelectMotionControllerPlayVsSlotDemo() {
       </div>
       <Select
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{
-          triggerGroup: {
+          shell: {
             hoverIn: { y: -4, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },
           },

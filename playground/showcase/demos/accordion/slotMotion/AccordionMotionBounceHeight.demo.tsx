@@ -22,7 +22,7 @@ export function AccordionMotionBounceHeightDemo() {
   return (
     <Accordion
       className="w-full max-w-lg"
-      defaultOpenIndex={0}
+      defaultValue="0"
       motion={{
         panelShell: {
           enter: (ctx) => {

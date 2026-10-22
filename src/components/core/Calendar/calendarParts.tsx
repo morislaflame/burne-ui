@@ -105,7 +105,7 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
     ref,
   ) {
     const labels = useBurneLabels();
-    const { navPrevIcon, navNextIcon } = useCalendar();
+    const { previousIcon, nextIcon } = useCalendar();
     const slotClassNames = useCalendarClassNames();
     const navSlotName = direction === "prev" ? "navPrev" : "navNext";
     const iconSlotName = direction === "prev" ? "navPrevIcon" : "navNextIcon";
@@ -128,7 +128,7 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
     const label = direction === "prev" ? calendarNavBackLabel(labels) : calendarNavForwardLabel(labels);
     const navSlot =
       direction === "prev" ? slotClassNames.navPrev : slotClassNames.navNext;
-    const contextIcon = direction === "prev" ? navPrevIcon : navNextIcon;
+    const contextIcon = direction === "prev" ? previousIcon : nextIcon;
  
     const defaultIcon =
       direction === "prev" ? (
@@ -248,7 +248,7 @@ function CalendarInteractiveCellSurface({
   isToday = false,
   isCurrent = false,
   className = "",
-  onPress,
+  onClick,
   onMouseEnter,
   onMouseLeave,
   children,
@@ -258,12 +258,12 @@ function CalendarInteractiveCellSurface({
 }) {
   const fillRef = useRef<HTMLSpanElement>(null);
   const config = useMotionConfig();
-  const onPressRef = useRef(onPress);
+  const onClickRef = useRef(onClick);
   const onMouseEnterRef = useRef(onMouseEnter);
   const onMouseLeaveRef = useRef(onMouseLeave);
  
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
-  onPressRef.current = onPress;
+  onClickRef.current = onClick;
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onMouseEnterRef.current = onMouseEnter;
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
@@ -333,13 +333,13 @@ function CalendarInteractiveCellSurface({
       ? slotClassNames.monthCell
       : cellKind === "year"
         ? slotClassNames.yearCell
-        : slotClassNames.dayCell;
+        : slotClassNames.day;
  
   const textVariant = calendarInteractiveCellTextVariant(size, rounded);
  
   const handleClick = useCallback(() => {
     if (disabled) return;
-    onPressRef.current();
+    onClickRef.current();
   }, [disabled]);
  
   return (
@@ -381,7 +381,7 @@ function CalendarInteractiveCellSurface({
       />
       <Text
         ref={setTextRef}
-        variant={textVariant}
+        textStyle={textVariant}
         as="span"
         inheritColor
         className={cn(CALENDAR_CELL_TEXT_CLASS, slotClassNames.cellText)}
@@ -421,7 +421,7 @@ function calendarCellPropsEqual(
     prev.children === next.children &&
     prev.motion === next.motion &&
     prev.motionController === next.motionController &&
-    prev.onPress === next.onPress &&
+    prev.onClick === next.onClick &&
     prev.onMouseEnter === next.onMouseEnter &&
     prev.onMouseLeave === next.onMouseLeave
   );
@@ -430,10 +430,20 @@ function calendarCellPropsEqual(
 const CalendarInteractiveCell = memo(CalendarInteractiveCellInner, calendarCellPropsEqual);
  
 export const CalendarDay = forwardRef<HTMLButtonElement, CalendarDayProps>(
-  function CalendarDay({ size: sizeProp, ...props }, ref) {
+  function CalendarDay(
+    { size: sizeProp, today = false, current = false, "aria-label": ariaLabel, ...props },
+    ref,
+  ) {
     const { size } = useCalendar();
     return (
-      <CalendarInteractiveCell ref={ref} size={sizeProp ?? size} {...props} />
+      <CalendarInteractiveCell
+        ref={ref}
+        size={sizeProp ?? size}
+        isToday={today}
+        isCurrent={current}
+        ariaLabel={ariaLabel}
+        {...props}
+      />
     );
   },
 );
@@ -454,6 +464,7 @@ function CalendarDaysView() {
     viewDate,
     minDate,
     maxDate,
+    isDateUnavailable,
   } = useCalendar();
   const cells = useCalendarDayCellModels();
   const gridRef = useRef<HTMLDivElement>(null);
@@ -466,11 +477,11 @@ function CalendarDaysView() {
     locale,
   );
   const hasFocusedInView = cells.some(
-    (c) => !!c.date && !c.isDisabled && isSameDay(c.date, focusedDate),
+    (c) => !!c.date && !c.disabled && isSameDay(c.date, focusedDate),
   );
   const fallbackRovingDate = hasFocusedInView
     ? null
-    : (cells.find((c) => c.date && !c.isDisabled)?.date ?? null);
+    : (cells.find((c) => c.date && !c.disabled)?.date ?? null);
  
   useLayoutEffect(() => {
     if (restoreFocusRef.current) {
@@ -516,13 +527,14 @@ function CalendarDaysView() {
         e.shiftKey,
         minDate,
         maxDate,
+        isDateUnavailable,
       );
       if (!next) return;
       e.preventDefault();
       restoreFocusRef.current = true;
       moveDayFocus(next);
     },
-    [focusedDate, minDate, maxDate, moveDayFocus],
+    [focusedDate, isDateUnavailable, minDate, maxDate, moveDayFocus],
   );
  
   return (
@@ -556,6 +568,7 @@ function CalendarDaysView() {
                   <div
                     key={cell.key}
                     role="gridcell"
+                    aria-hidden="true"
                     className={calendarDayEmptyClass(
                       size,
                       slotClassNames.dayEmpty,
@@ -568,11 +581,11 @@ function CalendarDaysView() {
                 renderDay && cell.date
                   ? renderDay(cell.date, {
                       day: cell.day,
-                      selected: !!cell.isSelected,
-                      disabled: !!cell.isDisabled,
-                      isToday: !!cell.isToday,
-                      isRangeStart: !!cell.isRangeStart,
-                      isRangeEnd: !!cell.isRangeEnd,
+                      selected: !!cell.selected,
+                      disabled: !!cell.disabled,
+                      today: !!cell.today,
+                      rangeStart: !!cell.rangeStart,
+                      rangeEnd: !!cell.rangeEnd,
                       circleActive: !!cell.circleActive,
                     })
                   : cell.day;
@@ -604,8 +617,8 @@ function CalendarDaysView() {
  
                   <CalendarInteractiveCell
                     selected={!!cell.circleActive}
-                    disabled={cell.isDisabled}
-                    isToday={cell.isToday}
+                    disabled={cell.disabled}
+                    isToday={cell.today}
                     size={size}
                     cellKind="day"
                     ariaLabel={cell.ariaLabel}
@@ -613,10 +626,10 @@ function CalendarDaysView() {
                     rovingKey={
                       cell.date ? calendarFocusDayKey(cell.date) : undefined
                     }
-                    onPress={() => cell.date && onDayPress(cell.date)}
+                    onClick={() => cell.date && onDayPress(cell.date)}
                     onMouseEnter={() =>
                       mode === "range" &&
-                      !cell.isDisabled &&
+                      !cell.disabled &&
                       cell.date &&
                       setHoverDate(cell.date)
                     }
@@ -697,7 +710,7 @@ function CalendarMonthsView() {
                 tabIndex={focusedMonth === cell.month ? 0 : -1}
                 rovingKey={String(cell.month)}
                 ariaLabel={cell.name}
-                onPress={() => {
+                onClick={() => {
                   setFocusedMonth(cell.month);
                   onMonthPress(cell.month);
                 }}
@@ -784,7 +797,7 @@ function CalendarYearsView() {
                   tabIndex={focusedIndex === index ? 0 : -1}
                   rovingKey={String(cell.year)}
                   ariaLabel={String(cell.year)}
-                  onPress={() => {
+                  onClick={() => {
                     setFocusedIndex(index);
                     onYearPress(cell.year);
                   }}
@@ -810,10 +823,10 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
     const { view, setView, size } = useCalendar();
     const title = useCalendarHeaderTitle();
     const scope = useOptionalCalendarMotionScope();
-    const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.headerTitle);
+    const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.title);
     const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLButtonElement>({
       scope,
-      slot: "headerTitle",
+      slot: "title",
       motion,
       pointerPhases: pointer,
       pressPhases: pointer,
@@ -821,7 +834,7 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
       onPointerOver,
       onPointerOut,
     });
-    useOptionalEnterOnMount(scope, "headerTitle", targetRef);
+    useOptionalEnterOnMount(scope, "title", targetRef);
  
     return (
       <button
@@ -836,7 +849,7 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
         }}
         className={cn(
           calendarHeaderTitleClass(size, view),
-          slotClassNames.headerTitle,
+          slotClassNames.title,
           className,
         )}
         {...rest}

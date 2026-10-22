@@ -2,25 +2,39 @@ import type { HTMLAttributes, RefObject, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
  
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { InputSize, InputVariant } from "@/components/core/Input";
 import type { LabelProps } from "@/components/core/Label";
 import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
  
-export type SelectOption = {
+export type SelectSize = InputSize;
+export type SelectVariant = InputVariant;
+
+export type SelectItem = {
   value: string;
   label: ReactNode;
   hint?: ReactNode;
   icon?: ReactNode;
   disabled?: boolean;
 };
+
+/** Named group inside `items`. Flat items and groups can sit in one list. */
+export type SelectItemGroup = {
+  label: string;
+  items: readonly SelectItem[];
+};
+
+export type SelectItemSection = {
+  label?: string;
+  items: SelectItem[];
+};
  
 export type SelectClassNames = {
   root?: string;
   label?: string;
-  triggerGroup?: string;
+  shell?: string;
   value?: string;
   trigger?: string;
   triggerIcon?: string;
@@ -49,13 +63,17 @@ export type SelectPartMotion = {
 };
  
 export type SelectMotion = {
-  triggerGroup?: SelectPartMotion;
+  shell?: SelectPartMotion;
   value?: SelectPartMotion;
   trigger?: SelectPartMotion;
-  triggerIcon?: SelectPartMotion;
+  triggerIconWrap?: SelectPartMotion;
   label?: SelectPartMotion;
   hint?: SelectPartMotion;
   error?: SelectPartMotion;
+  /**
+   * Menu panel. Forwarded to the inner Popover `content` slot (not registered on the field scope).
+   */
+  popover?: SelectPartMotion;
 };
  
 export type SelectProps = HTMLAttributes<HTMLDivElement> & {
@@ -68,14 +86,20 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   id?: string;
   name?: string;
   required?: boolean;
-  status?: InputStatus;
+  readOnly?: boolean;
   size?: InputSize;
-  options?: SelectOption[];
-  /** Several values. The menu stays open; each choice toggles. */
-  multiple?: boolean;
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
+  items?: readonly (SelectItem | SelectItemGroup)[];
+  /** Shows a clear control when a value is selected. Sets `null` / `[]`. */
+  clearable?: boolean;
+  /** Menu portal host. Default: `document.body`. A node inside the document is contained. */
+  portalContainer?: HTMLElement | null;
+  /** Simple API chevron. A node replaces it. `null` hides it. `Select.Trigger` children still replace the chevron. */
+  icon?: ReactNode | null;
+  /** `multiple` keeps the menu open and toggles each choice. */
+  selectionMode?: "single" | "multiple";
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null) => void;
   /** Controlled selection when `multiple`. */
   values?: string[];
   /** Uncontrolled selection when `multiple`. */
@@ -88,17 +112,17 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   placeholder?: string;
   menuMaxHeight?: string;
-  /** Mount only the visible options. Flat `options` list. */
+  /** Mount only the visible items. Flat `items` list. */
   virtualized?: boolean;
   /** Fixed option height in px. Measured from the first row when omitted. */
   virtualItemSize?: number;
   classNames?: Prettify<SelectClassNames>;
   /**
-   * Per-slot motion (`triggerGroup`, `value`, `trigger`, `triggerIcon`, `label`, `hint`, `error`).
-   * Menu enter lives on Popover — not duplicated here.
+   * Per-slot motion (`shell`, `value`, `trigger`, `triggerIconWrap`, `label`, `hint`, `error`, `popover`).
+   * `popover` is forwarded to the inner Popover `content` (`portalSurfaceEnter` / `portalSurfaceLeave`).
    * Chrome registers on the Root scope (siblings of TriggerGroup). TriggerGroup is the nested shell host.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
-   * Simple API: `motionController` is forwarded to `Select.TriggerGroup` (shell host).
+   * Simple API: `motionController` is forwarded to `Select.Shell` (shell host).
    * Compound: this handle attaches to the Root chrome scope; pass another handle on `TriggerGroup`.
    */
   motion?: Prettify<MotionMapWithEvents<SelectMotion>>;
@@ -111,7 +135,7 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
 } & MotionStateHostProps;
  
 export type SelectSimpleProps = SelectProps & {
-  options: SelectOption[];
+  items: readonly (SelectItem | SelectItemGroup)[];
 };
  
 export type SelectFieldContextValue = {
@@ -125,7 +149,6 @@ export type SelectFieldContextValue = {
   invalid?: boolean;
   formInvalid?: boolean;
   required: boolean;
-  status: InputStatus;
   size: InputSize;
   errorMessage?: ReactNode;
 };
@@ -145,11 +168,16 @@ export type SelectContextValue = SelectFieldContextValue & {
   valueRef: React.RefObject<HTMLButtonElement | null>;
   variant: InputVariant;
   disabled: boolean;
+  readOnly: boolean;
   placeholder: string;
   menuMaxHeight: string;
   virtualized: boolean;
   virtualItemSize?: number;
-  options: SelectOption[];
+  items: SelectItem[];
+  optionSections: SelectItemSection[];
+  clearable: boolean;
+  portalContainer?: HTMLElement | null;
+  icon?: ReactNode | null;
   optionValues: string[];
   formValueRef?: (node: HTMLButtonElement | null) => void;
   formOnBlur?: () => void;
@@ -160,12 +188,12 @@ export type SelectClassNamesProviderProps = {
   children: ReactNode;
 };
  
-export type SelectTriggerGroupProps = HTMLAttributes<HTMLDivElement> & {
+export type SelectShellProps = HTMLAttributes<HTMLDivElement> & {
   groupSegment?: ButtonGroupSegment;
-  /** Part motion for the `triggerGroup` host slot. Root `motion.triggerGroup` still applies. */
+  /** Part motion for the `shell` host slot. Root `motion.shell` still applies. */
   motion?: Prettify<SelectPartMotion>;
   /**
-   * Deferred handle for the TriggerGroup host (`triggerGroup`, `value`, `trigger`, `triggerIcon`).
+   * Deferred handle for the TriggerGroup host (`shell`, `value`, `trigger`, `triggerIconWrap`).
    * One handle → this nested scope. Simple API: pass `motionController` on `Select` — it is forwarded here.
    */
   motionController?: MotionController;
@@ -191,8 +219,15 @@ export type UseSelectShellAnimationsProps = {
  
 export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  /**
+   * Menu panel motion. Wins over `motion.popover` on the root.
+   * Forwarded to the inner Popover `content` slot.
+   */
+  motion?: Prettify<SelectPartMotion>;
   /** Preferred side relative to the trigger. Default: `bottom`. */
   side?: PopoverSide;
+  /** Overrides the root `portalContainer`. */
+  portalContainer?: HTMLElement | null;
   /** Panel alignment relative to the trigger. Default: `start` when matching width. */
   align?: FloatingAlign;
   offset?: number;
@@ -216,7 +251,6 @@ export type SelectLabelProps = Omit<LabelProps, "motion" | "motionController" | 
  
 export type SelectHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: InputStatus;
   motion?: Prettify<SelectPartMotion>;
 };
  

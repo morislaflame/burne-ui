@@ -1,12 +1,13 @@
 import { useCallback, useId, useMemo, useState } from "react";
  
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
  
 import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { useFieldInvalid } from "@/components/core/Field/fieldContext";
-import { sliderDisplayEqual } from "./sliderAPI";
+import { sliderDisplayEqual, sliderDisplayFromProps } from "./sliderAPI";
 import { sliderLabelId } from "./sliderA11y";
 import type {
   SliderDisplayState,
@@ -18,6 +19,7 @@ import type {
 export function useSliderRootState({
   children,
   id: idProp,
+  name,
   orientation = "horizontal",
   label,
   showValue,
@@ -29,6 +31,7 @@ export function useSliderRootState({
   value,
   defaultValue,
   onValueChange,
+  onValueCommit,
   min,
   max,
   step,
@@ -38,17 +41,43 @@ export function useSliderRootState({
   formatValue,
   icon,
   disabled,
-  ariaLabel,
+  readOnly = false,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   variant,
-  thumbClassName,
 }: UseSliderRootStateProps) {
+  const formBinding = useFormFieldBinding({
+    name,
+    value,
+    disabled,
+    readOnly,
+  });
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const resolvedDisabled = Boolean(formBinding.disabled);
+  const boundValue =
+    formBinding.bound && formBinding.value !== "" && formBinding.value != null
+      ? (formBinding.value as number | [number, number])
+      : undefined;
   const autoId = useId();
   const sliderId = idProp ?? `slider-${autoId}`;
   const hintId = fieldHintId(sliderId);
   const errorId = fieldErrorId(sliderId);
   const labelId = sliderLabelId(sliderId);
  
-  const [display, setDisplayState] = useState<SliderDisplayState | null>(null);
+  const propDisplay = useMemo(
+    () =>
+      sliderDisplayFromProps({
+        range: range === true,
+        value: (boundValue ?? value) as number | [number, number] | undefined,
+        defaultValue: defaultValue as number | [number, number] | undefined,
+        min,
+        max,
+        formatValue,
+      }),
+    [boundValue, defaultValue, formatValue, max, min, range, value],
+  );
+  const [trackDisplay, setDisplayState] = useState<SliderDisplayState | null>(null);
+  const display = trackDisplay ?? propDisplay;
   const setDisplay = useCallback((next: SliderDisplayState | null) => {
     setDisplayState((prev) => (sliderDisplayEqual(prev, next) ? prev : next));
   }, []);
@@ -93,9 +122,17 @@ export function useSliderRootState({
  
   const trackProps = {
     range,
-    value,
+    value: boundValue ?? value,
     defaultValue,
-    onValueChange,
+    onValueChange: ((next: number | [number, number]) => {
+      if (resolvedReadOnly) return;
+      onValueChange?.(next as never);
+      if (formBinding.bound) formBinding.setValue(next);
+    }) as UseSliderRootStateProps["onValueChange"],
+    onValueCommit: ((next: number | [number, number]) => {
+      if (resolvedReadOnly) return;
+      onValueCommit?.(next as never);
+    }) as UseSliderRootStateProps["onValueCommit"],
     min,
     max,
     step,
@@ -104,10 +141,11 @@ export function useSliderRootState({
     thickness,
     formatValue,
     icon,
-    disabled,
-    ariaLabel,
+    disabled: resolvedDisabled,
+    readOnly: resolvedReadOnly,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
     variant,
-    thumbClassName,
     orientation,
   } as SliderTrackProps;
  
@@ -117,6 +155,8 @@ export function useSliderRootState({
     fieldCtx,
     fieldLabelCtx,
     trackProps,
+    readOnly: resolvedReadOnly,
+    name: formBinding.name ?? name,
     label,
     showValue,
     valueText,

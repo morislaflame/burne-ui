@@ -34,7 +34,7 @@ export function ExpandableSettingsStackDemo() {
           icon={section.icon}
           description={section.description}
         >
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             {section.body}
           </Text>
         </Expandable>

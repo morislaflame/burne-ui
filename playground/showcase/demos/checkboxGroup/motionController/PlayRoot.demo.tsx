@@ -2,6 +2,7 @@ import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
+import { Label } from "@/components/core/Label";
 
 export function CheckboxGroupMotionControllerDemo() {
   const controller = useMotionControllerHandle();
@@ -29,7 +30,7 @@ export function CheckboxGroupMotionControllerDemo() {
         }}
       >
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+          <Label>Plan</Label>
           <CheckboxGroup.Hint>Group chrome, not item Checkbox.</CheckboxGroup.Hint>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>

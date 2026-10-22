@@ -9,7 +9,7 @@ export function TimeFieldSegmentedRowDemo() {
 
   return (
     <div className="flex w-full max-w-lg flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Delivery interval
       </Text>
       <div className="flex flex-wrap items-end gap-large">
@@ -17,7 +17,7 @@ export function TimeFieldSegmentedRowDemo() {
           <TimeField.Label>From</TimeField.Label>
           <TimeField.Control variant="segmented" value={start} onValueChange={setStart} />
         </TimeField>
-        <Text as="span" variant="xsmall" className="pb-small text-muted">
+        <Text as="span" textStyle="xsmall" className="pb-small text-muted">
           —
         </Text>
         <TimeField compact>
@@ -25,7 +25,7 @@ export function TimeFieldSegmentedRowDemo() {
           <TimeField.Control variant="segmented" value={end} onValueChange={setEnd} />
         </TimeField>
       </div>
-      <Text as="p" variant="xsmall" className="text-muted">
+      <Text as="p" textStyle="xsmall" className="text-muted">
         Two compact compound TimeField with segmented variant.
       </Text>
     </div>

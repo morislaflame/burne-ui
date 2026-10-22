@@ -1,8 +1,11 @@
 import type { CSSProperties } from "react";
  
-import { sliderThicknessToCss } from "@/components/core/Slider";
+import { sliderThicknessToCss } from "@/components/core/Slider/sliderStyles";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
  
+import { semanticStatusBgClass } from "@/components/core/utils/semanticStatusSurface";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+
 import type { ProgressBarOrientation, ProgressBarSize } from "./progressBarTypes";
  
 import { cn } from "@/utils/cn";
@@ -136,10 +139,12 @@ export function progressBarTrackClass({
 export function progressBarFillClass({
   isHorizontal,
   hasCustomColor,
+  status,
   slotClass,
 }: {
   isHorizontal: boolean;
   hasCustomColor: boolean;
+  status?: SemanticStatus;
   slotClass?: string;
 }): string {
   return cn(
@@ -147,7 +152,8 @@ export function progressBarFillClass({
     isHorizontal
       ? PROGRESS_BAR_FILL_HORIZONTAL_CLASS
       : PROGRESS_BAR_FILL_VERTICAL_CLASS,
-    !hasCustomColor && PROGRESS_BAR_FILL_DEFAULT_COLOR_CLASS,
+    semanticStatusBgClass(status, hasCustomColor) ??
+      (!hasCustomColor && PROGRESS_BAR_FILL_DEFAULT_COLOR_CLASS),
     slotClass,
   );
 }
@@ -155,11 +161,13 @@ export function progressBarFillClass({
 export function progressBarIndeterminateFillClass({
   isHorizontal,
   hasCustomColor,
+  status,
   reduceMotion,
   slotClass,
 }: {
   isHorizontal: boolean;
   hasCustomColor: boolean;
+  status?: SemanticStatus;
   reduceMotion: boolean;
   slotClass?: string;
 }): string {
@@ -168,7 +176,8 @@ export function progressBarIndeterminateFillClass({
     isHorizontal
       ? PROGRESS_BAR_INDETERMINATE_FILL_HORIZONTAL_CLASS
       : PROGRESS_BAR_INDETERMINATE_FILL_VERTICAL_CLASS,
-    !hasCustomColor && PROGRESS_BAR_FILL_DEFAULT_COLOR_CLASS,
+    semanticStatusBgClass(status, hasCustomColor) ??
+      (!hasCustomColor && PROGRESS_BAR_FILL_DEFAULT_COLOR_CLASS),
     reduceMotion &&
       (isHorizontal
         ? PROGRESS_BAR_INDETERMINATE_FILL_REDUCED_HORIZONTAL_CLASS

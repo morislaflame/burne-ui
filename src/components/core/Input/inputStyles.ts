@@ -7,10 +7,10 @@ import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/in
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
  
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
  
-import type { InputSize, InputStatus, InputVariant } from "./inputTypes";
+import type { InputSize, InputVariant } from "./inputTypes";
 import { KIT_INPUT_VARIANTS } from "./inputTypes";
  
 import { cn } from "@/utils/cn";
@@ -98,24 +98,22 @@ export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
   },
 };
  
-export function inputAffixSurfaceClass(_status: InputStatus = "default"): string {
+export function inputAffixSurfaceClass(): string {
   return INPUT_AFFIX_SURFACE_CLASS;
 }
  
 export function inputAffixSlotClass({
   side,
-  status,
   size,
   slotClass,
 }: {
   side: "prefix" | "suffix";
-  status: InputStatus;
   size: InputSize;
   slotClass?: string;
 }): string {
   return cn(
     AFFIX_PADDING[size],
-    inputAffixSurfaceClass(status),
+    inputAffixSurfaceClass(),
     side === "prefix" ? INPUT_AFFIX_PREFIX_EDGE_CLASS : INPUT_AFFIX_SUFFIX_EDGE_CLASS,
     slotClass,
   );
@@ -125,7 +123,6 @@ export function inputShellSurfaceClass({
   variant,
 }: {
   variant: InputVariant;
-  status?: InputStatus;
 }): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "input.shell");
   if (visual.className !== undefined) return visual.className;
@@ -165,7 +162,7 @@ export function inputShellClass({
   slotClass,
 }: {
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   blocked: boolean;
   groupSegment: ButtonGroupSegment | null | undefined;
   fileListEmpty: boolean;
@@ -176,7 +173,7 @@ export function inputShellClass({
   className?: string;
   slotClass?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
  
   return cn(
     INPUT_SHELL_BASE_CLASS,
@@ -190,7 +187,7 @@ export function inputShellClass({
     fieldShellFocusRingClass(status),
     kitSurface && fieldShellHoverClass(!blocked, status, variant),
     shellHoverMotionClass,
-    blocked && "cursor-not-allowed opacity-55 shadow-token-base",
+    blocked && "cursor-not-allowed opacity-55",
     slotClass,
     className,
   );

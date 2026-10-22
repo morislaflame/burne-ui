@@ -1,6 +1,8 @@
 # Surface
 
-Базовая панель с токенами темы: заливка, optional shadow, padding, radius. Примитив для секций и меню — без compound API `Card`. `variant="gloss"` — стеклянная CSS-панель (`gloss-panel`).
+Базовая панель с токенами темы: заливка, optional shadow, padding, radius. Примитив для секций и меню — без compound API `Card`.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
@@ -14,11 +16,7 @@ import { Surface, type SurfaceProps, type SurfaceVariant, type SurfaceShadow, ty
 
 ```tsx
 <Surface variant="default" shadow="mid" padding="mid" radius="mid">
-  <Text variant="base">Контент панели</Text>
-</Surface>
-
-<Surface variant="gloss" padding="mid" radius="large" className="w-56">
-  <Text variant="base" className="font-medium">Gloss panel</Text>
+  <Text textStyle="base">Контент панели</Text>
 </Surface>
 ```
 
@@ -28,7 +26,7 @@ Compound API нет.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `secondary` \| `tertiary` \| `gloss` |
+| `variant` | `default` | `default` \| `secondary` \| `tertiary` |
 | `shadow` | `none` | `none` \| `small` \| `base` \| `mid` \| `large` |
 | `padding` | `none` | `none` \| `small` \| `base` \| `mid` \| `large` |
 | `radius` | `mid` | `base` \| `mid` \| `large` |
@@ -46,11 +44,10 @@ Compound API нет.
 | `default` | `bg-surface` |
 | `secondary` | `bg-secondary` |
 | `tertiary` | `bg-tertiary` |
-| `gloss` | `gloss-panel gloss-wrap` + `gloss-shadow` + inner `gloss-content` |
+
+`tertiary` — **доменное исключение** `variant`: третий уровень поверхности (`bg-tertiary`), не канонический fill `default | outline | secondary`.
 
 Слой скина для `surface.root` монтирует `SkinShell` на корне (`wrapper` / `before` / `content`). `variant="default"` слои не рисует.
-
-`tertiary` — **доменное исключение** `variant`: третий уровень поверхности (`bg-tertiary`), не канонический fill `default | outline | secondary | gloss`.
 
 Без border по умолчанию (в отличие от `Card`).
 
@@ -84,8 +81,6 @@ Compound API нет.
 |-------|------|--------|
 | `root` | `enter` / hover / press (opt-in) | empty |
 
-`glossContent` не публичный слот.
-
 Spotlight через CSS-переменные `--spot-x` / `--spot-y` (`quickTo`, не tween `background`) — слайд **Spotlight** в галерее Slot motion.
 
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
@@ -111,6 +106,7 @@ function Ping() {
 
 Сложенный `ctx.timeline()` (lift → scale → rest), `waitForComplete` bounce и `cancel()` лупа — playground / Storybook **MotionController**.
 
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 Без пропа `motion` hover/press GSAP не играет — пассивный layout primitive плюс opt-in slot motion.
 
@@ -121,25 +117,6 @@ function Ping() {
   children
 </div>
 ```
-
-**DOM (gloss):**
-
-```
-<div class="gloss-panel gloss-wrap" ref=glossRef>
-  <div class="gloss-shadow" aria-hidden="true"></div>
-  <div class="gloss-content">
-    children
-  </div>
-</div>
-```
-
-### 1. Gloss ref binding
-
-`variant="gloss"` → `useMergedGlossPanelRef(ref, true)`:
-
-- Подготавливает gloss panel DOM ref для потенциальных gloss utilities
-- **Без** встроенных `onPointerOver` / squeeze handlers
-- Пассивная стеклянная панель — depth только из CSS (`gloss-panel`, conic border)
 
 ### 2. Shadow / padding / radius
 
@@ -154,15 +131,12 @@ function Ping() {
 - Ripple
 - Persistent shadow animation (`--el-shadow` GSAP)
 
-Для интерактивного gloss hover: `Card pressable`, `Button`, `Popover`, `Kbd`.
-
 ### Сводка: что настраивается где
 
 | Поведение | Механизм | Ключи `configureMotion` | Локальный prop |
 |-----------|----------|---------------------------|----------------|
 | Fill / radius / padding | CSS props | — | `variant`, `padding`, `radius` |
 | Static shadow | CSS class | — | `shadow` |
-| Gloss ref init | `useMergedGlossPanelRef` | — | `variant="gloss"` |
 | Interactive rows | manual `hoverVariant()` на children | — | pattern в stories |
 
 ## Токены и CSS
@@ -172,7 +146,6 @@ function Ping() {
 | `variant="default"` | `bg-surface` |
 | `variant="secondary"` | `bg-secondary` |
 | `variant="tertiary"` | `bg-tertiary` |
-| `variant="gloss"` | `gloss-panel gloss-wrap` + `gloss-shadow` + inner `gloss-content` |
 | `shadow="small"` | `shadow-token-small` |
 | `padding="mid"` | `p-mid` |
 | `padding="large"` | `p-large` |
@@ -189,17 +162,13 @@ function Ping() {
 
 `root`.
 
-`className` мержится в `root`. При `variant="gloss"` внутренний wrapper — слот `glossContent`.
+`className` мержится в `root`.
 
 ### Базовые панели
 
 ```tsx
 <Surface variant="default" shadow="mid" padding="mid" radius="mid" className="w-full max-w-sm">
-  <Text variant="base">Контент панели</Text>
-</Surface>
-
-<Surface variant="gloss" padding="mid" radius="large" className="w-56">
-  <Text variant="base" className="font-medium">Gloss panel</Text>
+  <Text textStyle="base">Контент панели</Text>
 </Surface>
 ```
 
@@ -207,9 +176,9 @@ function Ping() {
 
 ```tsx
 <Surface padding="mid" shadow="small" className="max-w-sm">
-  <Text variant="base" className="font-medium">Outer</Text>
+  <Text textStyle="base" className="font-medium">Outer</Text>
   <Surface variant="tertiary" padding="small" radius="base" className="mt-small">
-    <Text variant="small" className="text-muted">Inner panel</Text>
+    <Text textStyle="small" className="text-muted">Inner panel</Text>
   </Surface>
 </Surface>
 ```
@@ -248,9 +217,7 @@ Hover на **children**, не на Surface root:
 ### Практические заметки
 
 - `shadow` не усиливается на hover — для lift используйте `Card pressable` или `Button`.
-- Gloss — проверяйте на light/dark theme (conic border + blur).
 - `padding="none"` + свой spacing в children для плотных меню.
-- `className` на gloss попадает на внешний `gloss-panel`.
 - **Не ожидайте motion от смены `shadow` prop** — это static CSS class.
 
 ## Интеграции
@@ -276,4 +243,4 @@ Surface/
 
 ## Storybook
 
-`Core Components/Surface` — variants, shadows, padding/radius, nested panels, gloss, light theme, interactive list pattern.
+`Core Components/Surface` — variants, shadows, padding/radius, nested panels, light theme, interactive list pattern.

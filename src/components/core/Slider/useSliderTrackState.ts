@@ -10,9 +10,16 @@ import {
   normalizeSliderMarks,
   partitionSliderTrackChildren,
   readSliderTrackMetrics,
+  readSliderValueBinding,
   resolveSliderFallbackThumbPx,
   resolveSliderThumbIcon,
-  sliderAdjacentMark,
+  sliderExplicitNames,
+  sliderLiveValue,
+  sliderValueIdentity,
+  applySliderPointer,
+  commitSliderRange,
+  commitSliderSingle,
+  applySliderThumbKey,
   sliderFillSpanForValues,
   sliderFillStyleFromSpan,
   sliderPointerToValue,
@@ -25,9 +32,9 @@ import { resolveSliderThumbA11y } from "./sliderA11y";
 import { applySliderFillStyle, useSliderFillCleanup } from "./sliderAnimations";
 import { useOptionalSliderFieldContext, useSliderClassNames } from "./sliderContext";
 import { sliderFillClass, sliderRailClass, sliderTrackCrossStyle, sliderTrackHitAreaClass } from "./sliderStyles";
-import type { SliderThumbKind, SliderTrackContextValue, SliderTrackProps } from "./sliderTypes";
+import type { SliderThumbKind, SliderTrackContextValue, SliderTrackProps, UseSliderTrackStateResult } from "./sliderTypes";
  
-export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTMLDivElement>) {
+export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTMLDivElement>): UseSliderTrackStateResult {
   const {
     orientation: orientationProp,
     size = "base",
@@ -39,12 +46,13 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     formatValue = defaultSliderFormatValue,
     icon,
     variant: variantProp,
-    thumbClassName,
     disabled = false,
+    readOnly = false,
     className,
     style: styleProp,
     classNames: trackClassNames,
-    ariaLabel: ariaLabelProp,
+    "aria-label": ariaLabelProp,
+    "aria-labelledby": ariaLabelledByProp,
     range = false,
     children,
     onPointerDown: onPointerDownProp,
@@ -68,13 +76,14 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
   const labelId = fieldCtx?.labelId;
   const labelConnected = fieldCtx?.labelConnected ?? false;
-  const explicitLabel = ariaLabelProp;
+  const { explicitLabel, labelledBy } = sliderExplicitNames(ariaLabelProp, ariaLabelledByProp);
  
   const resolveThumbA11y = useCallback(
     (kind: SliderThumbKind) =>
       resolveSliderThumbA11y({
         kind,
         explicitLabel,
+        labelledBy,
         labelConnected,
         labelId,
         hintConnected: fieldCtx?.hintConnected ?? false,
@@ -83,7 +92,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
         errorId: fieldCtx?.errorId ?? "",
         labels,
       }),
-    [explicitLabel, fieldCtx?.errorConnected, fieldCtx?.errorId, fieldCtx?.hintConnected, fieldCtx?.hintId, labelConnected, labelId, labels],
+    [explicitLabel, fieldCtx?.errorConnected, fieldCtx?.errorId, fieldCtx?.hintConnected, fieldCtx?.hintId, labelConnected, labelId, labelledBy, labels],
   );
  
   const trackRef = useRef<HTMLDivElement>(null);
@@ -111,45 +120,41 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     [marks, min, max, step],
   );
  
+  const binding = readSliderValueBinding(props, range, min, max);
   const [singleValue, setSingleValue] = useControllableState({
-    value: !range ? (props as Extract<SliderTrackProps, { range?: false }>).value : undefined,
-    defaultValue:
-      (!range ? (props as Extract<SliderTrackProps, { range?: false }>).defaultValue : undefined) ??
-      min,
+    value: binding.singleValue,
+    defaultValue: binding.singleDefault,
   });
  
   const [rangeValue, setRangeValue] = useControllableState<[number, number]>({
-    value: range ? (props as Extract<SliderTrackProps, { range: true }>).value : undefined,
-    defaultValue:
-      (range ? (props as Extract<SliderTrackProps, { range: true }>).defaultValue : undefined) ??
-      ([min, max] as [number, number]),
+    value: binding.rangeValue,
+    defaultValue: binding.rangeDefault,
   });
  
-  const onSingleChange = !range
-    ? (props as Extract<SliderTrackProps, { range?: false }>).onValueChange
-    : undefined;
-  const onRangeChange = range
-    ? (props as Extract<SliderTrackProps, { range: true }>).onValueChange
-    : undefined;
+  const onSingleChange = binding.onSingleChange;
+  const onRangeChange = binding.onRangeChange;
+  const onCommit = binding.onCommit;
+  const latestRef = useRef<number | [number, number]>(singleValue);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- commit reads the value after the latest emit
+  latestRef.current = sliderLiveValue(range, rangeValue, singleValue);
+  const commitValue = useCallback(() => {
+    onCommit?.(latestRef.current);
+  }, [onCommit]);
  
   const emitSingle = useCallback(
     (next: number) => {
-      const snapped = snap(next);
-      if (snapped === singleValue) return;
-      setSingleValue(snapped);
-      onSingleChange?.(snapped);
+      commitSliderSingle(next, singleValue, snap, setSingleValue, onSingleChange, (snapped) => {
+        latestRef.current = snapped;
+      });
     },
     [onSingleChange, setSingleValue, singleValue, snap],
   );
  
   const emitRange = useCallback(
     (next: [number, number]) => {
-      let [a, b] = next.map(snap) as [number, number];
-      if (a > b) [a, b] = [b, a];
-      const [lo, hi] = rangeValue;
-      if (a === lo && b === hi) return;
-      setRangeValue([a, b]);
-      onRangeChange?.([a, b]);
+      commitSliderRange(next, rangeValue, snap, setRangeValue, onRangeChange, (pair) => {
+        latestRef.current = pair;
+      });
     },
     [onRangeChange, rangeValue, setRangeValue, snap],
   );
@@ -201,41 +206,33 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
   const updateFromPointer = useCallback(
     (clientX: number, clientY: number, thumb: "start" | "end" | "single") => {
       const track = trackRef.current;
-      if (!track || disabled) return;
-      const rect = track.getBoundingClientRect();
-      const { thumbSpanPx: thumbPx } = readSliderTrackMetrics(rect, orientation);
-      const raw = sliderPointerToValue(
+      if (!track) return;
+      applySliderPointer({
+        track,
         clientX,
         clientY,
-        rect,
-        orientation,
+        thumb,
+        disabled,
+        readOnly,
+        range,
+        rangeValue,
+        singleValue,
         min,
         max,
-        thumbPx > 0 ? thumbPx : fallbackThumbPx,
-      );
- 
-      if (range) {
-        const [lo, hi] = rangeValue;
-        if (thumb === "start") {
-          const nextLo = snap(Math.min(raw, hi));
-          emitRange([nextLo, hi]);
-          syncFill(singleValue, [nextLo, hi]);
-        } else if (thumb === "end") {
-          const nextHi = snap(Math.max(raw, lo));
-          emitRange([lo, nextHi]);
-          syncFill(singleValue, [lo, nextHi]);
-        }
-      } else {
-        const next = snap(raw);
-        emitSingle(raw);
-        syncFill(next, rangeValue);
-      }
+        orientation,
+        fallbackThumbPx,
+        snap,
+        emitRange,
+        emitSingle,
+        syncFill,
+      });
     },
     [
       disabled,
       emitRange,
       emitSingle,
       fallbackThumbPx,
+      readOnly,
       max,
       min,
       orientation,
@@ -275,6 +272,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       updateFromPointer(e.clientX, e.clientY, thumb);
     };
     const onUp = () => {
+      if (draggingRef.current) commitValue();
       draggingRef.current = null;
       setActiveThumb(null);
     };
@@ -286,106 +284,64 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
     };
-  }, [updateFromPointer]);
+  }, [commitValue, updateFromPointer]);
  
   const handleTrackPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       onPointerDownProp?.(e);
       if (e.defaultPrevented) return;
-      if (disabled || e.button !== 0) return;
+      if (disabled || readOnly || e.button !== 0) return;
       e.preventDefault();
       const thumb = range ? pickRangeThumb(e.clientX, e.clientY) : "single";
       draggingRef.current = thumb;
       setActiveThumb(thumb);
       updateFromPointer(e.clientX, e.clientY, thumb);
     },
-    [disabled, onPointerDownProp, pickRangeThumb, range, updateFromPointer],
+    [disabled, onPointerDownProp, pickRangeThumb, range, readOnly, updateFromPointer],
   );
  
   const onThumbPointerDown = useCallback(
     (thumb: "start" | "end" | "single") => (e: PointerEvent<HTMLButtonElement>) => {
-      if (disabled || e.button !== 0) return;
+      if (disabled || readOnly || e.button !== 0) return;
       e.preventDefault();
       e.stopPropagation();
       draggingRef.current = thumb;
       setActiveThumb(thumb);
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [disabled],
-  );
- 
-  const nudge = useCallback(
-    (thumb: "start" | "end" | "single", delta: number) => {
-      if (range) {
-        const [lo, hi] = rangeValue;
-        if (thumb === "start") emitRange([lo + delta, hi]);
-        else emitRange([lo, hi + delta]);
-      } else {
-        emitSingle(singleValue + delta);
-      }
-    },
-    [emitRange, emitSingle, range, rangeValue, singleValue],
+    [disabled, readOnly],
   );
  
   const onThumbKeyDown = useCallback(
     (thumb: "start" | "end" | "single") => (e: KeyboardEvent<HTMLButtonElement>) => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       const action = sliderStepDelta(marks, step, e.key, orientation);
       if (action === 0) return;
  
       e.preventDefault();
- 
-      const current =
-        thumb === "start"
-          ? rangeValue[0]
-          : thumb === "end"
-            ? rangeValue[1]
-            : singleValue;
- 
-      if (action === "home") {
-        if (range) {
-          if (thumb === "start") emitRange([min, rangeValue[1]]);
-          else emitRange([rangeValue[0], min]);
-        } else {
-          emitSingle(min);
-        }
-        return;
-      }
- 
-      if (action === "end") {
-        if (range) {
-          if (thumb === "start") emitRange([max, rangeValue[1]]);
-          else emitRange([rangeValue[0], max]);
-        } else {
-          emitSingle(max);
-        }
-        return;
-      }
- 
-      if (action === "mark-next" || action === "mark-prev") {
-        if (!marks?.length) return;
-        const next = sliderAdjacentMark(current, marks, action === "mark-next" ? 1 : -1);
-        if (range) {
-          if (thumb === "start") emitRange([next, rangeValue[1]]);
-          else emitRange([rangeValue[0], next]);
-        } else {
-          emitSingle(next);
-        }
-        return;
-      }
- 
-      if (typeof action === "number" && action !== 0) {
-        nudge(thumb, action);
-      }
+      applySliderThumbKey({
+        action,
+        thumb,
+        range,
+        rangeValue,
+        singleValue,
+        min,
+        max,
+        marks,
+        emitRange,
+        emitSingle,
+        commit: commitValue,
+      });
     },
     [
+      commitValue,
       disabled,
+      readOnly,
       emitRange,
       emitSingle,
       marks,
       max,
       min,
-      nudge,
       orientation,
       range,
       rangeValue,
@@ -480,7 +436,6 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       icon,
       range,
       variant,
-      thumbClassName,
       activeThumb,
       singleValue,
       rangeValue,
@@ -514,7 +469,6 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       singleValue,
       size,
       slotClassNames.mark,
-      thumbClassName,
       thumbPercent,
     ],
   );
@@ -549,7 +503,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     hasCompoundParts,
     range,
     icon,
-    valueIdentity: range ? `${rangeValue[0]}:${rangeValue[1]}` : String(singleValue),
+    valueIdentity: sliderValueIdentity(range, rangeValue, singleValue),
     disabled,
   };
 }

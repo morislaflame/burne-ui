@@ -24,7 +24,7 @@ export function DialogCompactConfirmDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Compact dialog without unnecessary fields - only confirmation.
           </Text>
         </Dialog.Body>

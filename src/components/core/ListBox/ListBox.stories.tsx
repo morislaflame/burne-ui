@@ -144,7 +144,7 @@ export const Multiple: Story = {
   render: function MultipleList() {
     const [value, setValue] = useState<string[]>(["a", "c"]);
     return (
-      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} aria-label="Profile fields">
+      <ListBox selectionMode="multiple" values={value} onValuesChange={setValue} aria-label="Profile fields">
         <ListBox.Item value="a" label="User" hint="Name and avatar" indicator />
         <ListBox.Item value="b" label="Country" hint="ISO code" indicator />
         <ListBox.Item value="c" label="Status" indicator />

@@ -12,12 +12,12 @@ export function ToastMotionStackSnapDemo() {
         toast.show({
           title: "Stack snap",
           description: "stackItem change is off — the peek jumps.",
-          timeout: 5000,
+          duration: 5000,
           motion: { stackItem: { enter: false, change: false } },
         });
         toast.show({
           title: "Front card",
-          timeout: 5000,
+          duration: 5000,
           motion: { stackItem: { enter: false, change: false } },
         });
       }}

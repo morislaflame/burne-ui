@@ -27,7 +27,7 @@ export function DialogMotionInstantPanelDemo() {
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             `panel.enter/leave: false` skips scale. Host applies closed state immediately.
           </Text>
         </Dialog.Body>

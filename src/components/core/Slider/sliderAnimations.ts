@@ -26,6 +26,10 @@ import type { SliderMotion, SliderPartMotion, SliderVariant } from "./sliderType
 import { KIT_SLIDER_VARIANTS } from "./sliderTypes";
 import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
+
 export const SLIDER_MOTION_DEFAULTS: SliderMotion = {
   thumb: {
     pressIn: "pressSqueeze",

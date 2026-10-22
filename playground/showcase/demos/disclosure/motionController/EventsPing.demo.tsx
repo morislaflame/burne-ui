@@ -18,7 +18,7 @@ export function DisclosureMotionEventsPingDemo() {
       <Disclosure motionController={controller} motion={{ events }}>
         <Disclosure.Trigger>disclosure:nudge</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">Namespaced event — not open/close.</Text>
+          <Text as="p" textStyle="small" className="text-muted">Namespaced event — not open/close.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

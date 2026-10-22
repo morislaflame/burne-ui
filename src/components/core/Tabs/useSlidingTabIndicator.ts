@@ -91,7 +91,7 @@ function readVisualMetrics(
 export function useSlidingTabIndicator(
   listRef: RefObject<HTMLElement | null>,
   indicatorRef: RefObject<HTMLElement | null>,
-  activeValue: string,
+  activeValue: string | null,
   orientation: TabsOrientation,
   variant: TabsVariant,
   tabElementsRef: RefObject<Map<string, HTMLButtonElement>>,
@@ -106,7 +106,7 @@ export function useSlidingTabIndicator(
   const updateIndicator = useCallback(() => {
     const list = listRef.current;
     const indicator = indicatorRef.current;
-    const activeTab = tabElementsRef.current?.get(activeValue);
+    const activeTab = activeValue == null ? undefined : tabElementsRef.current?.get(activeValue);
  
     if (!list || !indicator || !activeTab) {
       if (indicator) indicator.style.opacity = "0";

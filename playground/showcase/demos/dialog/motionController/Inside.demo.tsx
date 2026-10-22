@@ -26,7 +26,7 @@ export function DialogMotionControllerInsideDemo() {
       >
       {container ? (
         <Dialog open portalContainer={container} size="small">
-          <Dialog.Panel dismissOnBackdrop={false} motion={{ events }}>
+          <Dialog.Panel closeOnInteractOutside={false} motion={{ events }}>
             <Dialog.Header>
               <Dialog.HeadingBlock>
                 <TitlePulse />

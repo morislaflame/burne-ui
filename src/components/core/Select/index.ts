@@ -1,8 +1,8 @@
-import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectRoot, SelectTrigger, SelectTriggerGroup, SelectValue } from "./Select";
+import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectRoot, SelectTrigger, SelectShell, SelectValue } from "./Select";
  
 export const Select = Object.assign(SelectRoot, {
   Label: SelectLabel,
-  TriggerGroup: SelectTriggerGroup,
+  Shell: SelectShell,
   Value: SelectValue,
   Trigger: SelectTrigger,
   Popover: SelectPopover,
@@ -10,15 +10,17 @@ export const Select = Object.assign(SelectRoot, {
   Error: SelectError,
 });
  
-export type { SelectOption } from "./selectTypes";
+export type { SelectItem, SelectItemGroup } from "./selectTypes";
  
 export type {
   SelectProps,
+  SelectSize,
+  SelectVariant,
   SelectSimpleProps,
   SelectHintProps,
   SelectLabelProps,
   SelectErrorProps,
-  SelectTriggerGroupProps,
+  SelectShellProps,
   SelectValueProps,
   SelectTriggerProps,
   SelectPopoverProps,

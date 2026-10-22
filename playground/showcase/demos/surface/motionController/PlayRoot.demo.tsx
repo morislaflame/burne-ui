@@ -32,7 +32,7 @@ export function SurfaceMotionControllerDemo() {
           },
         }}
       >
-        <Text as="p" variant="small">
+        <Text as="p" textStyle="small">
           playSlot / set on Surface.root from outside.
         </Text>
       </Surface>

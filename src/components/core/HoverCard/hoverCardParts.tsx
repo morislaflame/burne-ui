@@ -116,7 +116,6 @@ export const HoverCardTrigger = forwardRef<HTMLButtonElement, HoverCardTriggerPr
 
     const shared = {
       className: hoverCardTriggerClass({
-        rootSlot: slotClassNames.root,
         slotClass: slotClassNames.trigger,
         className,
       }),

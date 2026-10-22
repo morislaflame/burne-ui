@@ -1,13 +1,13 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
 import { iconSlotClass, type IconSlotStep } from "@/components/core/utils/sizeLayout/iconSlot";
 import {
   FIELD_SHELL_TRANSITION_CLASS,
   fieldShellFocusRingClass,
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
-import { KIT_INPUT_VARIANTS, type InputSize, type InputStatus, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const DATE_PICKER_ROOT_CLASS = "w-fit max-w-full min-w-0";
@@ -39,7 +39,7 @@ export const DATE_PICKER_VALUE_MUTED_CLASS = "text-muted";
 
 export const DATE_PICKER_ICON_CLASS = "shrink-0 text-muted";
 
-export const DATE_PICKER_TRIGGER_DISABLED_CLASS = "cursor-not-allowed opacity-55 shadow-token-base";
+export const DATE_PICKER_TRIGGER_DISABLED_CLASS = "cursor-not-allowed opacity-55";
 
 export const DATE_PICKER_POPOVER_CLASS = "z-popover";
 
@@ -67,13 +67,13 @@ export function datePickerTriggerClass({
 }: {
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   shellHoverMotionClass?: string;
   slotClass?: string;
   className?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return cn(
     "relative flex w-auto min-w-0 items-center gap-small border-1 text-start rounded-base",
     DATE_PICKER_TRIGGER_MIN[size],

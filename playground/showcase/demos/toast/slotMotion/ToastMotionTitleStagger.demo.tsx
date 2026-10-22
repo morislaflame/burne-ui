@@ -12,7 +12,7 @@ export function ToastMotionTitleStaggerDemo() {
         toast.show({
           title: "Staggered title",
           description: "Title enters after the card. Leave returns a tween.",
-          timeout: 4000,
+          duration: 4000,
           motion: {
             title: {
               enter: (ctx) =>

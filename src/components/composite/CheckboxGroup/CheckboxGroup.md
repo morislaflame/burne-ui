@@ -1,11 +1,11 @@
 # CheckboxGroup
 
-Группа чекбоксов в `<fieldset>`: compound API с `Legend`, `Label`, `Hint`, `List`. Режимы **multiple** (независимые checkbox) и **single** (radio-like через один `selectedValue`).
+Группа чекбоксов в `<fieldset>`: compound API с `Legend`, `Label`, `Hint`, `List`. **multiple** — набор `values`. **single** — один `value`.
 
 ## Импорт
 
 ```tsx
-import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupClassNames, type CheckboxGroupHintProps, type CheckboxGroupLabelProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps, type CheckboxGroupMotion, type CheckboxGroupPartMotion } from "burne-ui";
+import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupClassNames, type CheckboxGroupHintProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps, type CheckboxGroupMotion, type CheckboxGroupPartMotion } from "burne-ui";
 import { Checkbox } from "burne-ui";
 ```
 
@@ -14,9 +14,15 @@ import { Checkbox } from "burne-ui";
 ### Compound API
 
 ```tsx
-<CheckboxGroup required selection="multiple" size="base">
+<CheckboxGroup
+  required
+  selectionMode="multiple"
+  size="base"
+  defaultValues={["courier"]}
+  onValuesChange={(next) => console.log(next)}
+>
   <CheckboxGroup.Legend>
-    <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+    <Label>Способ доставки</Label>
     <CheckboxGroup.Hint>Можно выбрать несколько вариантов.</CheckboxGroup.Hint>
   </CheckboxGroup.Legend>
   <CheckboxGroup.List orientation="vertical">
@@ -31,12 +37,12 @@ import { Checkbox } from "burne-ui";
 
 ```tsx
 <CheckboxGroup
-  selection="single"
+  selectionMode="single"
   defaultValue="pickup"
   onValueChange={(v) => console.log(v)}
 >
   <CheckboxGroup.Legend>
-    <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+    <Label>Способ доставки</Label>
   </CheckboxGroup.Legend>
   <CheckboxGroup.List>
     <Checkbox name="ship" value="courier" label="Курьер" />
@@ -52,10 +58,13 @@ Simple API нет.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `selection` | `multiple` | `multiple` \| `single` |
-| `value` | — | Controlled (`single` only) |
-| `defaultValue` | — | Uncontrolled initial (`single`) |
-| `onValueChange` | — | `(value: string \| undefined) => void` (`single`) |
+| `selectionMode` | `multiple` | `multiple` \| `single` |
+| `value` | — | Controlled, только `single`. `null` — ничего не выбрано |
+| `defaultValue` | — | Начальный пункт, только `single` |
+| `onValueChange` | — | `(value: string \| null) => void`, только `single` |
+| `values` | — | Controlled, только `multiple` |
+| `defaultValues` | — | Начальный набор, только `multiple` |
+| `onValuesChange` | — | `(values: string[]) => void`, только `multiple` |
 | `required` | `false` | Required mark на Label; `aria-required` на группе. Нативный `required` на checkbox не ставится |
 | `size` | `small` | `small` \| `base` \| `mid` \| `large` — gaps legend/list |
 | `disabled` | `false` | На fieldset + context → Checkbox |
@@ -73,7 +82,7 @@ Simple API нет.
 |-------|-----|------------|
 | `CheckboxGroup` | `<fieldset>` | Root |
 | `CheckboxGroup.Legend` | `<legend>` | Accessible name группы |
-| `CheckboxGroup.Label` | core `Label` | Заголовок в legend |
+| `Label` | core `Label` | Заголовок в legend |
 | `CheckboxGroup.Hint` | `FieldHint` | Подсказка |
 | `CheckboxGroup.Error` | `FieldError` | Ошибка (`role="alert"`) |
 | `CheckboxGroup.List` | `<div>` | Список опций; `orientation` |
@@ -90,12 +99,12 @@ Simple API нет.
 | `className` | — | На list container |
 | `motion` | — | Part motion слота `list` |
 
-## selection и orientation
+## selectionMode и orientation
 
-| `selection` | Поведение |
-|-------------|-----------|
-| `multiple` | Каждый `Checkbox` независим (`checked` / `defaultChecked` / `name`) |
-| `single` | Группа хранит одну `selectedValue`; снятие → `onValueChange(undefined)` |
+| `selectionMode` | Поведение |
+|-----------------|-----------|
+| `multiple` | Группа хранит `values`. Пункт с `value` отмечен, если id есть в наборе. Снятие убирает id и зовёт `onValuesChange` |
+| `single` | Группа хранит один `value`; снятие → `onValueChange(null)` |
 
 | `orientation` | Layout (`optionGroupLayout`) |
 |---------------|------------------------------|
@@ -110,13 +119,15 @@ Simple API нет.
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `root` (fieldset), `list`, `legend`, `hint`, `error`, `actions` | `enter` (opt-in); `change` on `root` when `selection="single"` | empty |
+| `root` (fieldset), `list`, `legend`, `hint`, `error`, `actions` | `enter` (opt-in); `change` on `root` when the selection changes | empty |
 
 `Group` не слот. Motion item Checkbox остаётся на пункте. `OptionGroupFieldset` / Field.Set — отдельный scope; chrome группы регистрируется в scope CheckboxGroup (`ref` на `Field.Hint` / `Field.Legend` / `Field.Error` / `Field.Set.Actions`), без прокидывания group `motion` в Field.
 
 `play()` ищет слот `root` (fieldset). `playSlot("legend")` / `playSlot("list")`. Не класть handle группы на item `Checkbox`.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`checks:nudge`, `checks:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `CheckboxGroup.Label` — алиас `Label` (свой scope). `useMotionController()` в sibling-части (галерея Inside) видит группу; в children Hint — nested `Text`.
+Проп `motionController` + ключ `events` на `motion` — app-команды (`checks:nudge`, `checks:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `Label` — алиас `Label` (свой scope). `useMotionController()` в sibling-части (галерея Inside) видит группу; в children Hint — nested `Text`.
+
+Тройка на корне группы, не на вложенном Checkbox. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Checkbox, CheckboxGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -134,7 +145,7 @@ function Nudge() {
       </Button>
       <CheckboxGroup motionController={controller} motion={{ events }}>
         <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+          <Label>Plan</Label>
         </CheckboxGroup.Legend>
         <CheckboxGroup.List>
           <Checkbox value="pro" label="Pro" />
@@ -239,7 +250,7 @@ configureMotion({
   }}
 >
   <CheckboxGroup.Legend>
-    <CheckboxGroup.Label>Согласия</CheckboxGroup.Label>
+    <Label>Согласия</Label>
     <CheckboxGroup.Hint>Слоты через classNames.</CheckboxGroup.Hint>
   </CheckboxGroup.Legend>
   <CheckboxGroup.Group>
@@ -276,7 +287,7 @@ configureMotion({
 ```tsx
 <CheckboxGroup size="base" className="rounded-large border border-token p-large">
   <CheckboxGroup.Legend>
-    <CheckboxGroup.Label>Теги</CheckboxGroup.Label>
+    <Label>Теги</Label>
     <CheckboxGroup.Hint>Выберите один или несколько.</CheckboxGroup.Hint>
   </CheckboxGroup.Legend>
   <CheckboxGroup.List>
@@ -291,7 +302,7 @@ configureMotion({
 ```tsx
 <CheckboxGroup>
   <CheckboxGroup.Legend>
-    <CheckboxGroup.Label>Размер</CheckboxGroup.Label>
+    <Label>Размер</Label>
   </CheckboxGroup.Legend>
   <CheckboxGroup.List orientation="horizontal">
     <Checkbox name="size" value="s" label="S" />
@@ -306,7 +317,7 @@ configureMotion({
 ```tsx
 <CheckboxGroup>
   <CheckboxGroup.Legend>
-    <CheckboxGroup.Label>Согласия</CheckboxGroup.Label>
+    <Label>Согласия</Label>
   </CheckboxGroup.Legend>
   <CheckboxGroup.List>
     <Checkbox name="terms" label="Пользовательское соглашение" />
@@ -319,9 +330,9 @@ configureMotion({
 
 ```tsx
 <Form.Field name="consent" rules={{ required: true }}>
-  <CheckboxGroup selection="single" required>
+  <CheckboxGroup selectionMode="single" required>
     <CheckboxGroup.Legend>
-      <CheckboxGroup.Label>Согласие</CheckboxGroup.Label>
+      <Label>Согласие</Label>
     </CheckboxGroup.Legend>
     <CheckboxGroup.List>
       <Checkbox name="consent" value="yes" label="Согласен" />
@@ -335,9 +346,10 @@ configureMotion({
 ### Практические заметки
 
 - Паттерн legend: `Legend` → `Label` + опционально `Hint`.
-- `single`: все `Checkbox` должны иметь уникальный `value`.
+- `single`: все `Checkbox` должны иметь уникальный `value`. Начальное и текущее значение — `defaultValue` / `value`.
+- `multiple`: пункт с `value` входит в набор группы. `defaultChecked` на таком пункте не читается — начальный набор это `defaultValues`. Пункт без `value` остаётся на своём `checked` / `defaultChecked`.
 - `required`: `aria-required` на группе. Нативный `required` на checkbox не ставится.
-- `multiple`: каждый checkbox со своим `name` или общим `name` + разными `value` — по сценарию.
+- `name` на `Checkbox` по-прежнему уходит в нативный submit.
 - Стили опций — через `Checkbox` `classNames`, не через группу.
 - Сравнение с `RadioGroup`: checkbox UI + optional single-selection mode.
 
@@ -385,3 +397,7 @@ composite/utils/
 ## Storybook
 
 `Composite Components/CheckboxGroup` — playground, single selection, required, without hint, horizontal, sizes, `classNames` customization, slot motion gallery.
+
+## Данные
+
+`items` рисует список, если дети ещё не содержат `Checkbox` или `CheckboxGroup.List`. Совпадение пишет ошибку в dev. Подпись и подсказка рядом с `items` остаются.

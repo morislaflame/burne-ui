@@ -4,12 +4,16 @@ import { messageBannerGridClass, type MessageBannerGridSlots } from "@/component
 import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-import type { ExpandableSize, ExpandableVariant } from "./expandableTypes";
+import type { ExpandableSize, ExpandableVariant, KitExpandableVariant } from "./expandableTypes";
 import { KIT_EXPANDABLE_VARIANTS } from "./expandableTypes";
 
 export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-start text-foreground";
 
-export const EXPANDABLE_ROOT_SURFACE_CLASS = "border-token bg-surface";
+export const EXPANDABLE_VARIANT_SURFACE: Record<KitExpandableVariant, string> = {
+  default: "border-token bg-surface",
+  outline: "bg-transparent border-token-outline",
+  secondary: "bg-secondary border-token text-secondary-foreground",
+};
 
 export const EXPANDABLE_TRIGGER_BASE_CLASS =
   "relative w-full overflow-hidden rounded-[inherit] text-start outline-none focus-ring";
@@ -60,7 +64,7 @@ export function expandableRootClass({
   const visual = resolveVariantVisual(variant, KIT_EXPANDABLE_VARIANTS, "expandable.root");
   return cn(
     EXPANDABLE_ROOT_BASE_CLASS,
-    visual.className !== undefined ? visual.className : EXPANDABLE_ROOT_SURFACE_CLASS,
+    visual.className !== undefined ? visual.className : EXPANDABLE_VARIANT_SURFACE[visual.key],
     slotClass,
     className,
   );

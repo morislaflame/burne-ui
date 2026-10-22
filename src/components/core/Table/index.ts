@@ -15,8 +15,6 @@ export const Table = Object.assign(TableRoot, {
   Footer: TableFooter,
 });
  
-export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
- 
 export type {
   TableProps,
   TableVariant,

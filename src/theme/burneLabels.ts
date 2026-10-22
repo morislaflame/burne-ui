@@ -11,6 +11,10 @@ export type BurneLabels = {
   openSearch: string;
   search: string;
   clearField: string;
+  resizeColumn: string;
+  /** Template: `{name}` */
+  resizeColumnNamed: string;
+  resizePanels: string;
   time: string;
   timeHours: string;
   timeMinutes: string;
@@ -30,10 +34,6 @@ export type BurneLabels = {
   paginationNext: string;
   /** Template: `{n}` */
   paginationPage: string;
-  drawerDragDownToClose: string;
-  drawerDragUpToClose: string;
-  drawerDragLeftToClose: string;
-  drawerDragRightToClose: string;
   /** Template: `{placement}` */
   toastNotifications: string;
   colorPickerArea: string;
@@ -57,6 +57,20 @@ export type BurneLabels = {
   calendarNext: string;
   listBoxEmpty: string;
   loading: string;
+  /** Placeholder while a promise toast is pending. */
+  loadingStatus: string;
+  toastError: string;
+  selectValue: string;
+  selectDate: string;
+  selectDateRange: string;
+  selectFile: string;
+  searchPlaceholder: string;
+  increase: string;
+  decrease: string;
+  /** Template: `{label}` */
+  sliderRangeStart: string;
+  /** Template: `{label}` */
+  sliderRangeEnd: string;
 };
  
 export type BurneLabelsKey = keyof BurneLabels;
@@ -67,6 +81,9 @@ export const DEFAULT_BURNE_LABELS: BurneLabels = {
   openSearch: "Open search",
   search: "Search",
   clearField: "Clear field",
+  resizeColumn: "Resize column",
+  resizeColumnNamed: "Resize column {name}",
+  resizePanels: "Resize panels",
   time: "Time",
   timeHours: "hours",
   timeMinutes: "minutes",
@@ -84,10 +101,6 @@ export const DEFAULT_BURNE_LABELS: BurneLabels = {
   paginationPrevious: "Back",
   paginationNext: "Forward",
   paginationPage: "Page {n}",
-  drawerDragDownToClose: "Drag down to close",
-  drawerDragUpToClose: "Drag up to close",
-  drawerDragLeftToClose: "Drag left to close",
-  drawerDragRightToClose: "Drag right to close",
   toastNotifications: "Notifications ({placement})",
   colorPickerArea: "Saturation and brightness",
   colorPickerAreaValue: "{saturation}% saturation, {brightness}% brightness",
@@ -107,6 +120,17 @@ export const DEFAULT_BURNE_LABELS: BurneLabels = {
   calendarNext: "Next",
   listBoxEmpty: "No matches",
   loading: "Loading",
+  loadingStatus: "Loading…",
+  toastError: "An error occurred",
+  selectValue: "Select a value",
+  selectDate: "Select a date",
+  selectDateRange: "Select a range",
+  selectFile: "Select file",
+  searchPlaceholder: "Search…",
+  increase: "Increase",
+  decrease: "Decrease",
+  sliderRangeStart: "{label}, minimum",
+  sliderRangeEnd: "{label}, maximum",
 };
  
 /** Russian preset — pass to `BurneUIProvider` `labels={BURNE_LABELS_RU}`. */
@@ -115,6 +139,9 @@ export const BURNE_LABELS_RU: BurneLabels = {
   openSearch: "Открыть поиск",
   search: "Поиск",
   clearField: "Очистить поле",
+  resizeColumn: "Изменить ширину колонки",
+  resizeColumnNamed: "Изменить ширину колонки {name}",
+  resizePanels: "Изменить размер панелей",
   time: "Время",
   timeHours: "часы",
   timeMinutes: "минуты",
@@ -132,10 +159,6 @@ export const BURNE_LABELS_RU: BurneLabels = {
   paginationPrevious: "Назад",
   paginationNext: "Вперёд",
   paginationPage: "Страница {n}",
-  drawerDragDownToClose: "Потяните вниз, чтобы закрыть",
-  drawerDragUpToClose: "Потяните вверх, чтобы закрыть",
-  drawerDragLeftToClose: "Потяните влево, чтобы закрыть",
-  drawerDragRightToClose: "Потяните вправо, чтобы закрыть",
   toastNotifications: "Уведомления ({placement})",
   colorPickerArea: "Насыщенность и яркость",
   colorPickerAreaValue: "Насыщенность {saturation}%, яркость {brightness}%",
@@ -155,6 +178,17 @@ export const BURNE_LABELS_RU: BurneLabels = {
   calendarNext: "Вперёд",
   listBoxEmpty: "Нет совпадений",
   loading: "Загрузка",
+  loadingStatus: "Загрузка…",
+  toastError: "Произошла ошибка",
+  selectValue: "Выберите значение",
+  selectDate: "Выберите дату",
+  selectDateRange: "Выберите диапазон",
+  selectFile: "Выберите файл",
+  searchPlaceholder: "Поиск…",
+  increase: "Увеличить",
+  decrease: "Уменьшить",
+  sliderRangeStart: "{label}, минимум",
+  sliderRangeEnd: "{label}, максимум",
 };
  
 export function mergeBurneLabels(partial?: Partial<BurneLabels> | null): BurneLabels {

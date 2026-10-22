@@ -23,7 +23,7 @@ export function PopoverSizesDemo() {
               </Popover.Description>
             </Popover.Header>
             <Popover.Body>
-              <Text as="p" variant="small" className="text-muted">
+              <Text as="p" textStyle="small" className="text-muted">
                 Body text follows the size preset; long lines wrap within max-w-component.
               </Text>
             </Popover.Body>

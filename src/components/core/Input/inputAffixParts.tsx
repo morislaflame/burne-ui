@@ -22,18 +22,16 @@ import {
   inputFileRemoveButtonClass,
   inputPasswordToggleButtonClass,
 } from "./inputStyles";
-import type { InputSize, InputStatus } from "./inputTypes";
+import type { InputSize } from "./inputTypes";
  
 import { cn } from "@/utils/cn";
  
 export function AffixSlot({
   side,
-  status,
   controlSize,
   children,
 }: {
   side: "prefix" | "suffix";
-  status: InputStatus;
   controlSize: InputSize;
   children: ReactNode;
 }) {
@@ -49,7 +47,6 @@ export function AffixSlot({
       ref={setRef}
       className={inputAffixSlotClass({
         side,
-        status,
         size: controlSize,
         slotClass: side === "prefix" ? slotClassNames.prefix : slotClassNames.suffix,
       })}
@@ -61,13 +58,11 @@ export function AffixSlot({
 }
  
 export function PasswordVisibilityAffix({
-  status,
   controlSize,
   visible,
   disabled,
   onToggle,
 }: {
-  status: InputStatus;
   controlSize: InputSize;
   visible: boolean;
   disabled?: boolean;
@@ -87,7 +82,7 @@ export function PasswordVisibilityAffix({
     <span
       className={cn(
         INPUT_PASSWORD_TOGGLE_WRAP_CLASS,
-        inputAffixSurfaceClass(status),
+        inputAffixSurfaceClass(),
       )}
     >
       <button

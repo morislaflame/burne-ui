@@ -12,6 +12,8 @@ import { SurfaceMotionControllerGalleryDemo } from "../demos/surface/motionContr
 import { SurfaceSlotMotionGalleryDemo } from "../demos/surface/slotMotion/gallery";
 import { SeparatorClassNamesFullDemo } from "../demos/separator/SeparatorClassNamesFull.demo";
 import separatorClassNamesFullSource from "../demos/separator/SeparatorClassNamesFull.demo.tsx?raw";
+import { SeparatorDecorativeDemo } from "../demos/separator/SeparatorDecorative.demo";
+import separatorDecorativeSource from "../demos/separator/SeparatorDecorative.demo.tsx?raw";
 import { SeparatorSlotMotionGalleryDemo } from "../demos/separator/slotMotion/gallery";
 import { SeparatorMotionControllerGalleryDemo } from "../demos/separator/motionController/gallery";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -52,6 +54,10 @@ export function SurfaceShowcase() {
         description="One gallery: playSlot / set, cancel a looping run, ping, timeline, waitForComplete."
       >
         <SurfaceMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Decorative" description="decorative removes the separator role. The line stays on screen.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorDecorativeDemo} source={separatorDecorativeSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="className (Separator)" description="Separator is one node. className tints the line.">

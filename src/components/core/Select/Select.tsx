@@ -1,5 +1,7 @@
+import { forwardRef, useRef, type ForwardedRef } from "react";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { FieldHiddenValues, readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
@@ -10,7 +12,7 @@ import {
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
  
 import { SelectClassNamesProvider, SelectFieldProvider, SelectMotionProvider, SelectProvider } from "./selectContext";
-import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectSimpleBody, SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectParts";
+import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectSimpleBody, SelectTrigger, SelectShell, SelectValue } from "./selectParts";
 import type { SelectProps } from "./selectTypes";
 import { useSelectRootState } from "./useSelectRootState";
  
@@ -23,18 +25,18 @@ export type {
   SelectHintProps,
   SelectLabelProps,
   SelectErrorProps,
-  SelectTriggerGroupProps,
+  SelectShellProps,
   SelectValueProps,
   SelectTriggerProps,
   SelectPopoverProps,
-  SelectOption,
+  SelectItem,
   SelectClassNames,
   SelectMotion,
   SelectPartMotion,
 } from "./selectTypes";
  
  
-export function SelectRoot({
+export const SelectRoot = forwardRef(function SelectRoot({
   children,
   label,
   hint,
@@ -44,10 +46,10 @@ export function SelectRoot({
   classNames,
   id,
   required,
-  status,
   size,
-  options,
-  multiple,
+  items,
+  icon,
+  selectionMode,
   value,
   defaultValue,
   onValueChange,
@@ -59,10 +61,15 @@ export function SelectRoot({
   onOpenChange,
   variant,
   disabled,
+  readOnly,
+  autoFocus,
+  tabIndex,
   placeholder,
   menuMaxHeight,
   virtualized,
   virtualItemSize,
+  clearable,
+  portalContainer,
   name,
   motion,
   motionController,
@@ -70,7 +77,7 @@ export function SelectRoot({
   motionPayload,
   playInitialState,
   ...rest
-}: SelectProps) {
+}: SelectProps, ref: ForwardedRef<HTMLDivElement>) {
   const formCtx = useOptionalFormBindingContext();
   const fieldName = typeof name === "string" ? name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
@@ -88,10 +95,10 @@ export function SelectRoot({
     id,
     name,
     required,
-    status,
     size: resolvedSize,
-    options,
-    multiple,
+    items,
+    icon,
+    selectionMode,
     value,
     defaultValue,
     onValueChange,
@@ -103,18 +110,16 @@ export function SelectRoot({
     onOpenChange,
     variant,
     disabled,
+    readOnly,
     placeholder,
     menuMaxHeight,
     virtualized,
     virtualItemSize,
+    clearable,
+    portalContainer,
   });
-  const isInvalid = useResolvedFieldInvalid({
-    invalid,
-    errorConnected: resolvedError != null,
-    formInvalid: state.fieldCtx.formInvalid,
-  });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
- 
+  const focusRef = useRef<HTMLDivElement>(null);
+  useFieldControlFocus(focusRef, autoFocus, tabIndex);
   return (
     <SelectFieldProvider value={state.fieldCtx}>
       <SelectProvider value={state.selectCtx}>
@@ -131,15 +136,16 @@ export function SelectRoot({
               size={resolvedSize}
               className={cn(
                 inJoinedButtonGroup && BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
-                className,
                 classNames?.root,
+                className,
               )}
               {...rest}
+              ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size: resolvedSize,
                 variant: resolvedVariant,
-                status: paintedStatus,
               })}
+              data-readonly={readOnlyData(state.readOnly)}
             >
               {state.isCompound ? (
                 children
@@ -155,6 +161,10 @@ export function SelectRoot({
                 playInitialState={playInitialState}
                 />
               )}
+              <FieldHiddenValues
+                name={name}
+                value={state.selectCtx.multiple ? state.selectCtx.values : state.selectCtx.value}
+              />
             </Field>
           </FieldLabelContext.Provider>
           </SelectMotionProvider>
@@ -162,12 +172,12 @@ export function SelectRoot({
       </SelectProvider>
     </SelectFieldProvider>
   );
-}
+});
  
 SelectRoot.displayName = "Select";
  
 export {
-  SelectTriggerGroup,
+  SelectShell,
   SelectValue,
   SelectTrigger,
   SelectPopover,

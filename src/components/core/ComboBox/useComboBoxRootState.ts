@@ -8,6 +8,7 @@ import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBin
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useSkinVariant } from "@/skins/skinContext";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
  
 import { comboBoxFieldIds } from "./comboBoxA11y";
 import { comboBoxFilteredValues, EMPTY_COMBOBOX_OPTIONS } from "./comboBoxAPI";
@@ -26,9 +27,11 @@ export function useComboBoxRootState({
   id: idProp,
   name,
   required = false,
-  status = "default",
   size = "base",
-  options = EMPTY_COMBOBOX_OPTIONS,
+  items = EMPTY_COMBOBOX_OPTIONS,
+  filter,
+  allowsCustomValue = false,
+  loading = false,
   value: valueProp,
   defaultValue,
   onValueChange,
@@ -37,8 +40,13 @@ export function useComboBoxRootState({
   onOpenChange,
   variant: variantProp,
   disabled: disabledProp = false,
-  placeholder = "Select a value",
+  readOnly: readOnlyProp = false,
+  placeholder: placeholderProp,
+  inputValue,
+  defaultInputValue,
+  onInputValueChange,
   menuMaxHeight = "min(24rem, 70dvh)",
+  portalContainer,
   virtualized = false,
   virtualItemSize,
 }: UseComboBoxRootStateProps) {
@@ -46,9 +54,13 @@ export function useComboBoxRootState({
     name,
     value: valueProp,
     disabled: disabledProp,
+    readOnly: readOnlyProp,
   });
   const formBound = formBinding.bound;
   const disabled = formBinding.disabled ?? disabledProp;
+  const readOnly = Boolean(formBinding.readOnly);
+  const selectValueLabel = useBurneLabel("selectValue");
+  const placeholder = placeholderProp ?? selectValueLabel;
   const autoId = useId();
   const buttonGroupCtx = useOptionalButtonGroupSegment();
   const variant: InputVariant = useSkinVariant(
@@ -80,20 +92,36 @@ export function useComboBoxRootState({
  
   const setValue = useCallback(
     (next: string) => {
+      if (readOnly) return;
       if (!isControlled) setInternalValue(next);
-      onValueChange?.(next);
+      onValueChange?.(next === "" ? null : next);
       if (formBound) formBinding.setValue(next);
     },
-    [formBound, formBinding, isControlled, onValueChange],
+    [formBound, formBinding, isControlled, onValueChange, readOnly],
   );
  
-  const [open, setOpen] = useControllableState({
+  const [open, setOpenState] = useControllableState({
     value: openProp,
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
-  const [filterQuery, setFilterQuery] = useState("");
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (readOnly) return;
+      setOpenState(next);
+    },
+    [readOnly, setOpenState],
+  );
+  const [filterQuery, setFilterQuery] = useControllableState({
+    value: inputValue,
+    defaultValue: defaultInputValue ?? "",
+    onChange: onInputValueChange,
+  });
   const [activeValue, setActiveValue] = useState<string | null>(null);
+  const blurGeneration = useRef(0);
+  const cancelBlurCommit = useCallback(() => {
+    blurGeneration.current += 1;
+  }, []);
  
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -104,8 +132,8 @@ export function useComboBoxRootState({
   }, [activeValue, listId, open]);
  
   const filteredValues = useMemo(
-    () => comboBoxFilteredValues(options, filterQuery),
-    [filterQuery, options],
+    () => comboBoxFilteredValues(items, filterQuery, filter),
+    [filter, filterQuery, items],
   );
  
   const formInvalid = formBinding["aria-invalid"] === true;
@@ -121,11 +149,10 @@ export function useComboBoxRootState({
       invalid,
       formInvalid,
       required,
-      status,
       size,
       errorMessage: error,
     }),
-    [comboBoxId, error, errorId, formInvalid, hasError, hasHint, hasLabel, hintId, invalid, required, labelId, size, status],
+    [comboBoxId, error, errorId, formInvalid, hasError, hasHint, hasLabel, hintId, invalid, required, labelId, size],
   );
  
   const comboCtx: ComboBoxContextValue = useMemo(
@@ -144,12 +171,19 @@ export function useComboBoxRootState({
       inputRef,
       variant,
       disabled,
+      readOnly,
       placeholder,
       menuMaxHeight,
+      portalContainer,
       virtualized,
       virtualItemSize,
-      options,
+      items,
       filteredValues,
+      allowsCustomValue,
+      loading,
+      filter,
+      blurGeneration,
+      cancelBlurCommit,
       formInputRef: formBound ? (formBinding.ref as (node: HTMLInputElement | null) => void) : undefined,
       formOnBlur: formBound ? formBinding.onBlur : undefined,
     }),
@@ -157,18 +191,26 @@ export function useComboBoxRootState({
       activeValue,
       disabled,
       fieldCtx,
+      readOnly,
       filterQuery,
       filteredValues,
+      allowsCustomValue,
+      blurGeneration,
+      cancelBlurCommit,
+      filter,
+      loading,
       formBound,
       formBinding,
       listId,
       menuMaxHeight,
+      portalContainer,
       virtualized,
       virtualItemSize,
       open,
       setOpen,
-      options,
+      items,
       placeholder,
+      setFilterQuery,
       setValue,
       value,
       variant,
@@ -189,6 +231,7 @@ export function useComboBoxRootState({
     fieldCtx,
     comboCtx,
     fieldLabelCtx,
+    readOnly,
   };
 }
  

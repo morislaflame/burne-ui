@@ -22,7 +22,7 @@ export function DisclosureMotionControllerDemo() {
       <Disclosure motionController={controller} motion={{ titleLift: { hoverIn: { y: -6, duration: 0.28, replay: "rest" }, hoverOut: { y: 0, duration: 0.2 } } }}>
         <Disclosure.Trigger>Title lift</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">No root slot — playSlot on titleLift.</Text>
+          <Text as="p" textStyle="small" className="text-muted">No root slot — playSlot on titleLift.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

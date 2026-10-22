@@ -63,12 +63,18 @@ export function stepperItemClass(
   );
 }
 
-export function stepperTriggerClass(orientation: StepperOrientation): string {
+export function stepperTriggerClass(
+  orientation: StepperOrientation,
+  slotClass?: string,
+  className?: string,
+): string {
   return cn(
     "m-0 min-w-0 cursor-pointer border-0 bg-transparent p-0 font-[inherit] text-inherit outline-none focus-ring rounded-mid disabled:cursor-not-allowed",
     orientation === "vertical"
       ? "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-small gap-y-xsmall text-start"
       : "flex max-w-component-xsmall flex-col items-center gap-xsmall text-center",
+    slotClass,
+    className,
   );
 }
 

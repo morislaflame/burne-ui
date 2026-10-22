@@ -29,6 +29,7 @@ export function FormInlineSubscribeDemo() {
           <Input
             label="Email"
             name="email"
+            type="email"
             placeholder="you@example.com"
             autoComplete="email"
           />

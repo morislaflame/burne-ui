@@ -4,7 +4,7 @@ import { Button } from "@/components/core/Button";
 import { TagsInput } from "@/components/core/TagsInput";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const slots = ["tag", "input", "label", "hint", "error"] as const;
+const slots = ["tag", "control", "label", "hint", "error"] as const;
 
 export function TagsInputMotionPlayPartsDemo() {
   const controller = useMotionControllerHandle();

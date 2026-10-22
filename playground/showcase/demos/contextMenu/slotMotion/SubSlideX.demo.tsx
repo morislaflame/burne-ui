@@ -9,10 +9,10 @@ export function ContextMenuMotionSubSlideDemo() {
   return (
     <ContextMenu>
       <ContextMenu.Trigger className={surface}>Submenu</ContextMenu.Trigger>
-      <ContextMenu.Content>
+      <ContextMenu.Popover>
         <ContextMenu.Sub>
           <ContextMenu.SubTrigger>Invite</ContextMenu.SubTrigger>
-          <ContextMenu.SubContent
+          <ContextMenu.SubPopover
             motion={{
               enter: (ctx) =>
                 ctx.fromTo(
@@ -34,9 +34,9 @@ export function ContextMenuMotionSubSlideDemo() {
                 <IoLinkOutline aria-hidden />
               </ContextMenu.ItemIcon>
             </ContextMenu.Item>
-          </ContextMenu.SubContent>
+          </ContextMenu.SubPopover>
         </ContextMenu.Sub>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

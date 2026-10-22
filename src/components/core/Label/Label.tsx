@@ -1,11 +1,11 @@
 import type { ForwardedRef, HTMLAttributes, PointerEvent as ReactPointerEvent } from "react";
 import { forwardRef, useMemo } from "react";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { resolveLabelMotionDefaults, useLabelRootMotion } from "./labelAnimations";
 import { LabelClassNamesProvider, LabelMotionProvider, useLabelClassNames, useLabelMotionScope } from "./labelContext";
 import { labelRootClass } from "./labelStyles";
-import { LabelContent, LabelSlot } from "./labelParts";
+import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
+import { LabelContent, LabelRequired, LabelSlot, LabelText } from "./labelParts";
 import type { LabelProps } from "./labelTypes";
 import { useLabelRootState } from "./useLabelRootState";
  
@@ -23,7 +23,7 @@ export function LabelRoot({
   required: requiredProp,
   htmlFor: htmlForProp,
   id: idProp,
-  variant = "base",
+  textStyle = "base",
   forwardedRef,
   onPointerOver,
   onPointerOut,
@@ -43,6 +43,8 @@ export function LabelRoot({
     className,
     slotClass: slotClassNames.root,
   });
+  const compound =
+    hasCompoundChild(children, LabelText) || hasCompoundChild(children, LabelRequired);
   const scope = useLabelMotionScope();
   const part = useLabelRootMotion({
     forwardedRef,
@@ -62,11 +64,12 @@ export function LabelRoot({
         className={rootClass}
         {...rest}
         {...part.pointerHandlers}
-        {...dataVariantProps({ variant })}
       >
-        <LabelContent required={required} variant={variant}>
-          {children}
-        </LabelContent>
+        {compound ? children : (
+          <LabelContent required={required} textStyle={textStyle}>
+            {children}
+          </LabelContent>
+        )}
       </label>
     );
   }
@@ -80,11 +83,12 @@ export function LabelRoot({
       className={rootClass}
       {...spanRest}
       {...part.pointerHandlers}
-      {...dataVariantProps({ variant })}
     >
-      <LabelContent required={required} variant={variant}>
-        {children}
-      </LabelContent>
+      {compound ? children : (
+        <LabelContent required={required} textStyle={textStyle}>
+          {children}
+        </LabelContent>
+      )}
     </span>
   );
 }
@@ -106,5 +110,5 @@ export const Label = forwardRef<HTMLElement, LabelProps>(function Label(
   );
 });
  
-export { LabelSlot };
+export { LabelRequired, LabelSlot, LabelText };
  

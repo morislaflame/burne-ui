@@ -1,3 +1,4 @@
+import { ACTION_VARIANTS } from "@/components/core/utils/actionVariant";
 import type { ButtonVariant } from "@/components/core/Button/buttonTypes";
 import { isKitVariant } from "@/skins/resolveVariantVisual";
 import type { SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
@@ -31,7 +32,7 @@ export function fieldShellVariantFromButtonGroup(
   if (groupVariant === "outline") return "outline";
   if (groupVariant === "secondary") return "secondary";
   // Non-kit button variants (skins) pass through as the field shell variant name.
-  if (!isKitVariant(groupVariant, ["default", "primary", "outline", "secondary", "ghost"] as const)) {
+  if (!isKitVariant(groupVariant, ACTION_VARIANTS)) {
     return groupVariant;
   }
   return "default";

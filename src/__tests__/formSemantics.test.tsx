@@ -32,69 +32,46 @@ describe("Э2.1 invalid model", () => {
     expect(dataInvalidNodes(container).length).toBeGreaterThan(0);
   });
 
-  it("Input status=danger is visual only", () => {
-    const { container } = render(<Input label="Name" status="danger" />);
-    expect(screen.getByRole("textbox")).not.toHaveAttribute("aria-invalid");
-    expect(dataInvalidNodes(container)).toHaveLength(0);
-  });
-
   it("Input error sets aria-invalid", () => {
     render(<Input label="Name" error="Required" />);
     expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
   });
 
-  it("TextArea error sets aria-invalid; status=danger does not", () => {
-    const { rerender } = render(<TextArea label="Bio" error="Too short" />);
+  it("TextArea error sets aria-invalid", () => {
+    render(<TextArea label="Bio" error="Too short" />);
     expect(screen.getByText("Too short")).toBeInTheDocument();
     expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
-
-    rerender(<TextArea label="Bio" status="danger" />);
-    expect(screen.getByRole("textbox")).not.toHaveAttribute("aria-invalid");
   });
 
   it("Select error sets aria-invalid on the value button", () => {
-    const { rerender } = render(<Select label="City" options={OPTIONS} error="Pick one" />);
+    render(<Select label="City" items={OPTIONS} error="Pick one" />);
     expect(screen.getByText("Pick one")).toBeInTheDocument();
     expect(selectValueButton()).toHaveAttribute("aria-invalid", "true");
-
-    rerender(<Select label="City" options={OPTIONS} status="danger" />);
-    expect(selectValueButton()).not.toHaveAttribute("aria-invalid");
   });
 
-  it("ComboBox error sets aria-invalid on the input; status=danger does not", () => {
-    const { rerender } = render(<ComboBox label="City" options={OPTIONS} error="Pick one" />);
+  it("ComboBox error sets aria-invalid on the input", () => {
+    render(<ComboBox label="City" items={OPTIONS} error="Pick one" />);
     expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
-
-    rerender(<ComboBox label="City" options={OPTIONS} status="danger" />);
-    expect(screen.getByRole("combobox")).not.toHaveAttribute("aria-invalid");
   });
 
   it("TimeField error sets aria-invalid on the group", () => {
-    const { rerender } = render(<TimeField label="Start" error="Required" />);
+    render(<TimeField label="Start" error="Required" />);
     expect(screen.getByRole("group")).toHaveAttribute("aria-invalid", "true");
     expect(screen.getAllByRole("spinbutton").every((el) => el.getAttribute("aria-invalid") == null)).toBe(true);
 
-    rerender(<TimeField label="Start" status="danger" />);
-    expect(screen.getByRole("group")).not.toHaveAttribute("aria-invalid");
   });
 
   it("Checkbox / Radio / Switch / Slider expose aria-invalid from error, not from visual danger", () => {
     const { rerender } = render(<Checkbox label="Accept" error="Required" />);
     expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
 
-    rerender(<Checkbox label="Accept" status="danger" />);
-    expect(screen.getByRole("checkbox")).not.toHaveAttribute("aria-invalid");
-
     rerender(<Radio label="A" error="Required" />);
     expect(screen.getByRole("radio")).toHaveAttribute("aria-invalid", "true");
-
-    rerender(<Radio label="A" danger />);
-    expect(screen.getByRole("radio")).not.toHaveAttribute("aria-invalid");
 
     rerender(<Switch label="Alerts" error="Required" />);
     expect(screen.getByRole("switch")).toHaveAttribute("aria-invalid", "true");
 
-    rerender(<Slider ariaLabel="Volume" error="Required" defaultValue={10} />);
+    rerender(<Slider aria-label="Volume" error="Required" defaultValue={10} />);
     expect(screen.getByRole("slider")).toHaveAttribute("aria-invalid", "true");
   });
 
@@ -107,7 +84,7 @@ describe("Э2.1 invalid model", () => {
           <Radio value="card" label="Card" />
         </RadioGroup.List>
       </RadioGroup>);
-    expect(screen.getByRole("group")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("radiogroup", { name: "Pay" })).toHaveAttribute("aria-invalid", "true");
     expect(dataInvalidNodes(container).length).toBeGreaterThan(0);
 
     rerender(
@@ -172,10 +149,10 @@ describe("Э2.1 invalid model", () => {
     rerender(<TextArea label="Bio" invalid />);
     expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
 
-    rerender(<Select label="City" options={OPTIONS} invalid />);
+    rerender(<Select label="City" items={OPTIONS} invalid />);
     expect(selectValueButton()).toHaveAttribute("aria-invalid", "true");
 
-    rerender(<ComboBox label="City" options={OPTIONS} invalid />);
+    rerender(<ComboBox label="City" items={OPTIONS} invalid />);
     expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
 
     rerender(<TimeField label="Start" invalid />);
@@ -204,13 +181,13 @@ describe("Э2.1 invalid model", () => {
     expect(screen.getByRole("button")).toHaveAttribute("aria-invalid", "true");
 
     rerender(
-      <RadioGroup invalid>
+      <RadioGroup invalid aria-label="Pay">
         <RadioGroup.List>
           <Radio value="card" label="Card" />
         </RadioGroup.List>
       </RadioGroup>,
     );
-    expect(screen.getByRole("group")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("radiogroup", { name: "Pay" })).toHaveAttribute("aria-invalid", "true");
 
     rerender(
       <CheckboxGroup invalid>
@@ -261,6 +238,6 @@ describe("Э2.3 Field.Set describedby", () => {
           <Radio value="card" label="Card" />
         </RadioGroup.List>
       </RadioGroup>);
-    expect(screen.getByRole("group")).not.toHaveAttribute("aria-describedby");
+    expect(screen.getByRole("radiogroup", { name: "Pay" })).not.toHaveAttribute("aria-describedby");
   });
 });

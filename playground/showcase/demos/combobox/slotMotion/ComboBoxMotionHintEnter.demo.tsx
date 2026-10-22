@@ -10,7 +10,7 @@ export function ComboBoxMotionHintEnterDemo() {
   return (
     <ComboBox
       className="w-64"
-      options={options}
+      items={options}
       defaultValue="lisbon"
       label="City"
       hint="Type to filter."

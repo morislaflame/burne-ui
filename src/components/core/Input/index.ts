@@ -16,7 +16,6 @@ export type {
   InputProps,
   InputSimpleProps,
   InputSize,
-  InputStatus,
   InputVariant,
   InputMotion,
   InputPartMotion,

@@ -16,10 +16,14 @@ import {
   type MotionPartPhases,
 } from "@/components/core/utils/slotMotion";
 import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useNumberInputContext, useOptionalNumberInputMotionScope } from "./numberInputContext";
 import type { NumberInputMotion, NumberInputPartMotion } from "./numberInputTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
 
 export function resolveNumberInputMotionDefaults({
   variant,
@@ -32,8 +36,8 @@ export function resolveNumberInputMotionDefaults({
   return overlaySkinMotion(
     {
       shell: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
       },
       decrement: {
         pressIn: active ? "pressSqueeze" : false,
@@ -59,9 +63,9 @@ export function resolveNumberInputMotionParams({
   disabled: boolean;
   pointerInside: MutableRefObject<boolean>;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return {
-    shadowSize: "base" as const,
+    shadowSize: "none" as const,
     hasHoverShadow: !disabled && kitSurface,
     pointerInside,
   };
@@ -70,11 +74,11 @@ export function resolveNumberInputMotionParams({
 export function useNumberInputShellMotion() {
   const scope = useOptionalNumberInputMotionScope();
   const { pointerInsideRef, disabled, variant } = useNumberInputContext();
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const shellRef = useRef<HTMLDivElement | null>(null);
   const shadow = useSecondLevelShadow(shellRef, !disabled && kitSurface, {
     interactive: false,
-    shadowSize: "base",
+    shadowSize: "none",
     pointerInsideRef,
   });
   const part = useMotionPart<HTMLDivElement>({

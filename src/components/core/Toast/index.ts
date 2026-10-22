@@ -12,8 +12,10 @@ export const Toast = Object.assign(ToastRoot, {
   Close: ToastClose,
 });
  
-export { ToastContext, useToastContext, useToastClassNames } from "./toastContext";
+export { useToastClassNames } from "./toastContext";
 export { useToast } from "./useToast";
+export { toast } from "./toastImperative";
+export type { ToastImperative } from "./toastImperative";
  
 export type {
   ToastClassNames,
@@ -30,6 +32,7 @@ export type {
   ToastCloseProps,
   AddToastOpts,
   PromiseToastOpts,
+  ToastEntry,
   ToastVariant,
   ToastSize,
   ToastContextValue,

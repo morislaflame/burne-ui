@@ -42,7 +42,7 @@ export type ButtonGroupMotion = {
 export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "children"> & {
   orientation?: ButtonGroupOrientation;
   segmented?: boolean;
-  buttonSize?: ButtonSize;
+  size?: ButtonSize;
   variant?: ButtonVariant;
   classNames?: Prettify<ButtonGroupClassNames>;
   children: ReactNode;
@@ -61,7 +61,7 @@ export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "ch
  
 export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
   groupSegment?: ButtonGroupSegment;
-  buttonSize?: ButtonSize;
+  size?: ButtonSize;
   motion?: Prettify<ButtonGroupPartMotion>;
 };
  
@@ -72,7 +72,7 @@ export type ButtonGroupClassNamesProviderProps = {
  
 export type ButtonGroupSegmentContextValue = {
   segment: ButtonGroupSegment;
-  buttonSize: ButtonSize;
+  size: ButtonSize;
   variant?: ButtonVariant;
 };
  
@@ -82,6 +82,6 @@ export type ButtonGroupLayoutContextValue = {
  
 export type UseButtonGroupRootStateProps = Pick<
   ButtonGroupProps,
-  "children" | "orientation" | "segmented" | "buttonSize" | "variant"
+  "children" | "orientation" | "segmented" | "size" | "variant"
 >;
  

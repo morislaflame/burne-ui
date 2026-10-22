@@ -23,7 +23,7 @@ import {
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
  
 import { useInputMotionScope, useOptionalInputMotionScope } from "./inputContext";
 import type {
@@ -33,6 +33,12 @@ import type {
   UseInputShellAnimationsProps,
 } from "./inputTypes";
 import { KIT_INPUT_VARIANTS } from "./inputTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindFileRowRecipe } from "@/components/core/utils/slotMotion/recipes/bindFileRow";
+
+bindLiftRecipes();
+bindFileRowRecipe();
  
 export function resolveInputMotionDefaults({
   variant,
@@ -47,8 +53,8 @@ export function resolveInputMotionDefaults({
   return overlaySkinMotion(
     {
       shell: {
-        hoverIn: active ? "hoverLiftSecondLevel" : false,
-        hoverOut: active ? "hoverLiftSecondLevel" : false,
+        hoverIn: active ? "hoverLiftFirstLevel" : false,
+        hoverOut: active ? "hoverLiftFirstLevel" : false,
         pressIn: active ? "pressSqueeze" : false,
         pressOut: false,
       },
@@ -73,9 +79,9 @@ export function resolveInputMotionParams({
   groupSegment?: unknown;
   pointerInside: MutableRefObject<boolean>;
 }) {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return {
-    shadowSize: "base" as const,
+    shadowSize: "none" as const,
     hasHoverShadow: !blocked && kitSurface && groupSegment == null,
     pointerInside,
   };
@@ -94,7 +100,7 @@ export function useInputShellAnimations({
   const shellMotionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   shellMotionRef.current = motion;
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const shellActive = !blocked && groupSegment == null;
  
   useOptionalEnterOnMount(scope, "shell", shellRef);
@@ -103,6 +109,7 @@ export function useInputShellAnimations({
     shellRef,
     shellActive && kitSurface,
     {
+      shadowSize: "none",
       interactive: false,
       pointerInsideRef,
     },

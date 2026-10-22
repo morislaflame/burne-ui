@@ -28,6 +28,7 @@ export function useProgressBarRootState({
   size,
   thickness,
   color,
+  status,
   formatValue,
 }: UseProgressBarRootStateProps) {
   const autoId = useId();
@@ -74,6 +75,7 @@ export function useProgressBarRootState({
     size,
     thickness,
     color,
+    status,
     formatValue,
     orientation,
   };

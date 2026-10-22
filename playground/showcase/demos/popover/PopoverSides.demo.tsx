@@ -13,7 +13,7 @@ export function PopoverSidesDemo() {
         </Popover.Trigger>
         <Popover.Content showArrow>
           <Popover.Body>
-            <Text as="p" variant="small">
+            <Text as="p" textStyle="small">
               side=top
             </Text>
           </Popover.Body>
@@ -29,7 +29,7 @@ export function PopoverSidesDemo() {
           </Popover.Trigger>
           <Popover.Content showArrow>
             <Popover.Body>
-              <Text as="p" variant="small">
+              <Text as="p" textStyle="small">
                 side=left
               </Text>
             </Popover.Body>
@@ -37,7 +37,7 @@ export function PopoverSidesDemo() {
         </Popover>
 
         <div className="flex min-h-control-base min-w-[7rem] items-center justify-center rounded-base border-token bg-secondary px-base">
-          <Text as="span" variant="small" className="text-muted">
+          <Text as="span" textStyle="small" className="text-muted">
             anchor
           </Text>
         </div>
@@ -50,7 +50,7 @@ export function PopoverSidesDemo() {
           </Popover.Trigger>
           <Popover.Content showArrow>
             <Popover.Body>
-              <Text as="p" variant="small">
+              <Text as="p" textStyle="small">
                 side=right
               </Text>
             </Popover.Body>
@@ -66,7 +66,7 @@ export function PopoverSidesDemo() {
         </Popover.Trigger>
         <Popover.Content showArrow>
           <Popover.Body>
-            <Text as="p" variant="small">
+            <Text as="p" textStyle="small">
               side=bottom
             </Text>
           </Popover.Body>

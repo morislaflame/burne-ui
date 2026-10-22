@@ -35,10 +35,7 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     alt = "",
     loading,
     nickname,
-    tooltipSize = "base",
-    tooltipVariant = "default",
-    tooltipStatus = "default",
-    tooltipSide = "top",
+    tooltip,
     classNames,
     className = "",
     children,
@@ -60,16 +57,13 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     isCompound,
     rootRole,
     ariaLabel,
-    tooltip,
+    tooltip: tooltipView,
   } = useAvatarRootState({
     variant: variantProp,
     size: sizeProp,
     label,
     nickname,
-    tooltipSize,
-    tooltipVariant,
-    tooltipStatus,
-    tooltipSide,
+    tooltip,
     children,
     role,
     "aria-label": ariaLabelProp,
@@ -99,10 +93,10 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
 
   const shell = <AvatarDefaultShell ref={ref} {...shellProps} />;
 
-  const wrapped = tooltip ? (
-    <Tooltip size={tooltip.size} variant={tooltip.variant} side={tooltip.side}>
+  const wrapped = tooltipView ? (
+    <Tooltip size={tooltipView.size} variant={tooltipView.variant} status={tooltipView.status} side={tooltipView.side}>
       <Tooltip.Trigger>{shell}</Tooltip.Trigger>
-      <Tooltip.Content>{tooltip.content}</Tooltip.Content>
+      <Tooltip.Content>{tooltipView.content}</Tooltip.Content>
     </Tooltip>
   ) : (
     shell

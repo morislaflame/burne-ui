@@ -2,7 +2,10 @@ import {
   ColorPickerAlphaInput,
   ColorPickerArea,
   ColorPickerContent,
+  ColorPickerError,
   ColorPickerHexInput,
+  ColorPickerHint,
+  ColorPickerLabel,
   ColorPickerPresets,
   ColorPickerPreview,
   ColorPickerRoot,
@@ -12,6 +15,9 @@ import { ColorSliderRoot, ColorSliderTrack } from "./ColorSlider";
  
 export const ColorPicker = Object.assign(ColorPickerRoot, {
   Trigger: ColorPickerTrigger,
+  Label: ColorPickerLabel,
+  Hint: ColorPickerHint,
+  Error: ColorPickerError,
   Content: ColorPickerContent,
   Area: ColorPickerArea,
   Preview: ColorPickerPreview,
@@ -45,6 +51,7 @@ export type {
 export type {
   ColorSliderTrackProps,
   ColorSliderProps,
+  ColorSliderClassNames,
   ColorChannel,
   ColorSliderSize,
   ColorSliderOrientation,
@@ -62,16 +69,5 @@ export {
   type ColorSwatchPartMotion,
 } from "./ColorSwatch";
  
-export {
-  hsvaToHex,
-  hexToHsva,
-  hsvaToRgba,
-  rgbaToHsva,
-  rgbaToHex,
-  hexToRgba,
-  hsvaToColorString,
-  hueToRgbString,
-  type HSVA,
-  type RGBA,
-} from "./colorUtils";
+export type { HSVA, RGBA } from "./colorUtils";
  

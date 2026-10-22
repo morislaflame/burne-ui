@@ -47,7 +47,7 @@ export function AlertDialogMotionBouncePanelDemo() {
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             Leave must hide the surface (`autoAlpha: 0`) so unmount is not a snap.
           </Text>
         </AlertDialog.Body>

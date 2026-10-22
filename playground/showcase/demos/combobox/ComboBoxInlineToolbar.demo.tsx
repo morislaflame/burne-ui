@@ -66,21 +66,21 @@ function GroupedLanguageItems() {
 }
 
 export function ComboBoxInlineToolbarDemo() {
-  const [value, setValue] = useState("ru");
+  const [value, setValue] = useState<string | null>("ru");
 
   return (
     <ComboBox
       variant="outline"
-      options={COMBO_OPTIONS}
+      items={COMBO_OPTIONS}
       value={value}
       onValueChange={setValue}
       className="w-full max-w-xs"
     >
       <ComboBox.Label>Interface language</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Find language…" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover>
         <GroupedLanguageItems />
       </ComboBox.Popover>

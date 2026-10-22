@@ -5,12 +5,12 @@
 ## Импорт
 
 ```tsx
-import { Label, LabelSlot, FieldLabelContext, useOptionalFieldLabelContext, type LabelProps, type LabelClassNames, type FieldLabelContextValue } from "burne-ui";
+import { Label, type LabelProps, type LabelClassNames } from "burne-ui";
 ```
 
 ## API
 
-Simple API + минимальный compound (`Label.Slot` — null-компонент для разметки).
+Simple API сам рисует текст и `*`. Compound: `Label.Text` и `Label.Required` ставят эти слоты вручную. `Label.Slot` — null-маркер.
 
 ### Props
 
@@ -57,7 +57,20 @@ type LabelClassNames = {
 
 ### Compound
 
-`Label.Slot` — маркер с `displayName = "Label"` для compound-разметки в полях (рендерит `null`).
+| Часть | Роль |
+|-------|------|
+| `Label.Text` | Текст. Слот `text`. `className` на эту строку; `variant` здесь свой, проп корня на неё не переходит |
+| `Label.Required` | Звезда `*`. Слот `required`. Рисуется, когда часть стоит в дереве |
+| `Label.Slot` | Маркер с `displayName = "Label"`, рендерит `null` |
+
+Если среди детей есть `Label.Text` или `Label.Required`, корень не оборачивает текст сам: звезда появляется только из `Label.Required`.
+
+```tsx
+<Label htmlFor="email" required>
+  <Label.Text className="text-primary">Email</Label.Text>
+  <Label.Required className="text-warning" />
+</Label>
+```
 
 ## Рендер: label vs span
 
@@ -97,6 +110,8 @@ type FieldLabelContextValue = {
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`label:nudge`, `label:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в `children` попадает в nested scope внутреннего `Text`, не в Label — handle передавайте на корень Label.
+
+Тройка на корне Label, не на внутреннем `Text`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Label, createMotionEvents, useMotionControllerHandle } from "burne-ui";

@@ -1,66 +1,45 @@
 #!/usr/bin/env node
 // Public component folders are importable as `burne-ui/Button`.
 // `node scripts/check-component-subpath-exports.mjs --write` refreshes package.json exports.
-import { access, readdir, readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  RESERVED_PACKAGE_EXPORTS,
+  componentSubpathExport,
+  listComponentEntries,
+} from "./componentEntries.mjs";
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packagePath = path.join(root, "package.json");
-const groups = ["core", "composite"];
-const reserved = new Set([".", "./internal", "./styles.css", "./theme-bridge.css", "./package.json"]);
 
-function entry(group, name) {
-  const base = `./dist/components/${group}/${name}/index`;
-  return {
-    types: `${base}.d.ts`,
-    import: `${base}.js`,
-    require: `${base}.cjs`,
-    default: `${base}.js`,
-  };
-}
-
-async function componentExports() {
-  /** @type {Map<string, { types: string, import: string, require: string, default: string }>} */
+function componentExports() {
+  /** @type {Map<string, { types: string, import: string, default: string }>} */
   const map = new Map();
-  for (const group of groups) {
-    const dir = path.join(root, "src/components", group);
-    const entries = await readdir(dir, { withFileTypes: true });
-    for (const item of entries) {
-      if (!item.isDirectory()) continue;
-      try {
-        await access(path.join(dir, item.name, "index.ts"));
-      } catch {
-        continue;
-      }
-      const key = `./${item.name}`;
-      if (map.has(key)) {
-        throw new Error(`check-component-subpath-exports: duplicate ${key}`);
-      }
-      map.set(key, entry(group, item.name));
-    }
+  for (const item of listComponentEntries(root)) {
+    map.set(item.exportKey, componentSubpathExport(item.group, item.name));
   }
   return map;
 }
 
 function sameEntry(actual, expected) {
-  return (
-    actual &&
-    actual.types === expected.types &&
-    actual.import === expected.import &&
-    actual.require === expected.require &&
-    actual.default === expected.default
-  );
+  if (!actual) return false;
+  const keys = new Set([...Object.keys(actual), ...Object.keys(expected)]);
+  for (const key of keys) {
+    if (actual[key] !== expected[key]) return false;
+  }
+  return true;
 }
 
-const expected = await componentExports();
+const expected = componentExports();
 const pkg = JSON.parse(await readFile(packagePath, "utf8"));
 const exportsField = pkg.exports ?? {};
 const write = process.argv.includes("--write");
 
 if (write) {
   const next = {};
-  for (const key of reserved) {
+  for (const key of RESERVED_PACKAGE_EXPORTS) {
     if (exportsField[key] != null) next[key] = exportsField[key];
   }
   for (const key of [...expected.keys()].sort((a, b) => a.localeCompare(b))) {
@@ -79,7 +58,7 @@ for (const [key, value] of expected) {
   }
 }
 for (const key of Object.keys(exportsField)) {
-  if (reserved.has(key) || expected.has(key)) continue;
+  if (RESERVED_PACKAGE_EXPORTS.has(key) || expected.has(key)) continue;
   errors.push(`extra export ${key}`);
 }
 

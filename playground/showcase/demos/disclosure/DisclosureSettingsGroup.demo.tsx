@@ -17,7 +17,7 @@ export function DisclosureSettingsGroupDemo() {
       <Disclosure value="privacy">
         <Disclosure.Trigger>Privacy</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Manage Profile Visibility and Analytics Data.
           </Text>
         </Disclosure.Content>

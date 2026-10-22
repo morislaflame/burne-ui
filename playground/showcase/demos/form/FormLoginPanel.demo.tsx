@@ -14,10 +14,10 @@ export function FormLoginPanelDemo() {
   return (
     <Surface variant="secondary" padding="large" className="w-full max-w-sm">
       <div className="mb-large flex flex-col gap-xsmall">
-        <Text as="h3" variant="header-2">
+        <Text as="h3" textStyle="header-2">
           Entrance
         </Text>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Demo account for playground
         </Text>
       </div>
@@ -32,14 +32,14 @@ export function FormLoginPanelDemo() {
       >
         <Form.Section>
           <Form.Field name="login">
-            <Input required label="Email" name="login" autoComplete="email" />
+            <Input required label="Email" name="login" type="email" autoComplete="email" />
           </Form.Field>
           <Form.Field name="password">
             <Input
               required
               label="Password"
               name="password"
-              inputType="password"
+              type="password"
               autoComplete="current-password"
             />
           </Form.Field>

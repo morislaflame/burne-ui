@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 
 import {
   KIT_SLIDER_VARIANTS,
@@ -94,7 +94,7 @@ export function sliderRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return cn(scaleFieldRootClassName(orientation, className), slotClass);
+  return cn(scaleFieldRootClassName(orientation), slotClass, className);
 }
 
 export function sliderRailClass({
@@ -113,7 +113,7 @@ export function sliderRailClass({
   return cn(
     SLIDER_RAIL_LAYOUT_CLASS,
     SELECTION_INDICATOR_RADIUS_CLASS[size],
-    isKitVariant(variant, KIT_SLIDER_VARIANTS) && SLIDER_RAIL_DEFAULT_CLASS,
+    usesKitElevation(variant, KIT_SLIDER_VARIANTS) && SLIDER_RAIL_DEFAULT_CLASS,
     disabled && SLIDER_RAIL_DISABLED_CLASS,
     slotClass,
     className,

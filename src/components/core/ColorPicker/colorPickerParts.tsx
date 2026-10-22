@@ -1,6 +1,7 @@
-import { forwardRef, useCallback, useState } from "react";
+import { forwardRef, useCallback, useState, type HTMLAttributes } from "react";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { Field } from "@/components/core/Field";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
@@ -410,7 +411,7 @@ export const ColorPickerPreview = forwardRef<HTMLSpanElement, ColorPickerPreview
     return (
       <span
         ref={part.setRef}
-        className={cn(COLOR_PICKER_PREVIEW_WRAP_CLASS, className)}
+        className={cn(COLOR_PICKER_PREVIEW_WRAP_CLASS, slotClassNames.previewSwatch, className)}
         {...rest}
         {...part.pointerHandlers}
       >
@@ -500,22 +501,28 @@ function ColorPickerDefaultLayout({
  
 export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger(
-    { swatchSize, className, children, asChild, motion, ...rest },
+    { swatchSize, className, children, asChild = true, motion, autoFocus, tabIndex, ...rest },
     ref,
   ) {
     const labels = useBurneLabels();
-    const { hex, disabled, size, invalid } = useColorPicker();
+    const field = useColorPicker();
+    const { hex, disabled, size, invalid } = field;
     const slotClassNames = useColorPickerClassNames();
  
     return (
       <Popover.Trigger
         ref={ref}
+        id={field.triggerId}
         asChild={asChild}
         motion={motion}
         className={cn(slotClassNames.trigger, className)}
-        aria-invalid={invalid ? true : undefined}
         {...rest}
         {...dataVariantProps({ size })}
+        {...((autoFocus ?? field.autoFocus) ? { autoFocus: true } : {})}
+        tabIndex={tabIndex ?? field.tabIndex}
+        aria-invalid={invalid ? true : undefined}
+        aria-readonly={field.readOnly || undefined}
+        data-readonly={field.readOnly ? "" : undefined}
         data-invalid={invalid ? "" : undefined}
       >
         {children ?? (
@@ -533,6 +540,50 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
 );
  
 ColorPickerTrigger.displayName = "ColorPicker.Trigger";
+
+export const ColorPickerLabel = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
+  function ColorPickerLabel({ children, className, id, ...rest }, ref) {
+    const field = useColorPicker();
+    const slotClassNames = useColorPickerClassNames();
+    return (
+      <Field.Label
+        ref={ref}
+        id={id ?? field.labelId}
+        className={cn(slotClassNames.label, className)}
+        {...rest}
+      >
+        {children ?? field.label}
+      </Field.Label>
+    );
+  },
+);
+ColorPickerLabel.displayName = "ColorPicker.Label";
+
+export const ColorPickerHint = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
+  function ColorPickerHint({ children, className, ...rest }, ref) {
+    const field = useColorPicker();
+    const slotClassNames = useColorPickerClassNames();
+    return (
+      <Field.Hint ref={ref} className={cn(slotClassNames.hint, className)} {...rest}>
+        {children ?? field.hint}
+      </Field.Hint>
+    );
+  },
+);
+ColorPickerHint.displayName = "ColorPicker.Hint";
+
+export const ColorPickerError = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(
+  function ColorPickerError({ children, className, ...rest }, ref) {
+    const field = useColorPicker();
+    const slotClassNames = useColorPickerClassNames();
+    return (
+      <Field.Error ref={ref} className={cn(slotClassNames.error, className)} {...rest}>
+        {children ?? field.error}
+      </Field.Error>
+    );
+  },
+);
+ColorPickerError.displayName = "ColorPicker.Error";
  
 export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
   function ColorPickerContent(

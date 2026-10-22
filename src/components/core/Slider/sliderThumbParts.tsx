@@ -16,7 +16,6 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       size,
       icon,
       variant: variantProp,
-      thumbClassName,
       className,
       style,
       percent,
@@ -31,7 +30,10 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       ariaLabelledBy,
       ariaDescribedBy,
       motion,
+      onPointerOver,
+      onPointerOut,
       onPointerDown,
+      onPointerUp,
       onKeyDown,
       ...rest
     },
@@ -48,7 +50,10 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       forwardedRef,
       pointerPhases: true,
       pressPhases: !disabled,
+      onPointerOver,
+      onPointerOut,
       onPointerDown,
+      onPointerUp,
     });
  
     return (
@@ -87,7 +92,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
           size={size}
           variant={variant}
           shellRef={shellRef}
-          className={cn(slotClassNames.thumbShell, thumbClassName)}
+          className={slotClassNames.thumbShell}
         >
           {icon != null ? (
             <SelectionThumb.Icon size={size} variant={variant}>

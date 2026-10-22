@@ -1,6 +1,6 @@
 import { Select } from "@/components/core/Select";
 
-const options = [
+const items = [
   { value: "ru", label: "Russian" },
   { value: "en", label: "English" },
   { value: "de", label: "Deutsch" },
@@ -16,7 +16,7 @@ export function SelectSizesDemo() {
           key={size}
           size={size}
           label={size}
-          options={options}
+          items={items}
           defaultValue="ru"
         />
       ))}

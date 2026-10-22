@@ -44,7 +44,7 @@ export function DrawerMotionBodyStaggerDemo() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <Text as="p" variant="base">
+            <Text as="p" textStyle="base">
               Animate `motion.body` on the scroll area, not the panel host.
             </Text>
           </Drawer.Body>

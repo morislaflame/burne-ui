@@ -1,18 +1,28 @@
 import type { CSSProperties } from "react";
 
+/** Visually hidden, always-mounted live region for toast announcements. */
+export const TOAST_LIVE_REGION_CLASS =
+  "sr-only absolute m-0 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0";
+
 import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { messageBannerSizePreset } from "@/components/core/utils/sizeLayout";
 import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-import type { LoadingColor } from "@/components/core/Loading";
 
-import type { ToastPlacement, ToastSize, ToastStatus, ToastVariant } from "./toastTypes";
+import type { KitToastVariant, ToastPlacement, ToastSize, ToastStatus, ToastVariant } from "./toastTypes";
 import { KIT_TOAST_VARIANTS } from "./toastTypes";
  
 /** Neutral shell for every status — accents live on the indicator icon. */
-export const TOAST_SURFACE_CLASS = "bg-surface border-token text-foreground";
+export const TOAST_VARIANT_SURFACE: Record<KitToastVariant, string> = {
+  default: "bg-surface border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
+  secondary: "bg-secondary border-token text-secondary-foreground",
+};
+
+/** Rest elevation of the kit card. `useSecondLevelShadow` owns it so hover can grow it. */
+export const TOAST_SHADOW_SIZE = "mid" as const;
  
 export const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
   default: "text-primary",
@@ -53,14 +63,6 @@ export function toastIndicatorClass(
   );
 }
  
-const TOAST_LOADING_COLOR: Record<ToastStatus, LoadingColor> = {
-  default: "primary",
-  success: "success",
-  danger: "danger",
-  info: "info",
-  warning: "warning",
-};
- 
 export const TOAST_VIEWPORT_BASE_CLASS =
   "fixed z-toast pointer-events-none w-[var(--toast-viewport-width)]";
 
@@ -85,22 +87,21 @@ export function toastPlacementClass(placement: ToastPlacement): string {
   return PLACEMENT_CLASS[placement];
 }
  
-export function toastLoadingColor(status: ToastStatus): LoadingColor {
-  return TOAST_LOADING_COLOR[status];
-}
- 
 export function toastRootClass({
   variant,
   size,
   gridSlots,
   slotClass,
   className,
+  liftClass,
 }: {
   variant: ToastVariant;
   size?: ToastSize;
   gridSlots: MessageBannerGridSlots;
   slotClass?: string;
   className?: string;
+  /** `animate-shadow` from `useSecondLevelShadow`. Kit default only. */
+  liftClass?: string;
 }) {
   const visual = resolveVariantVisual(variant, KIT_TOAST_VARIANTS, "toast.root");
   const preset = messageBannerSizePreset(size);
@@ -110,7 +111,7 @@ export function toastRootClass({
     `w-full ${preset.shellPadding}`,
     visual.className !== undefined
       ? visual.className
-      : cn("shadow-token-mid", TOAST_SURFACE_CLASS),
+      : cn(TOAST_VARIANT_SURFACE[visual.key], liftClass),
     slotClass,
     className,
   );

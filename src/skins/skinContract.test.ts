@@ -11,9 +11,9 @@ describe("skin contract", () => {
     expect(new Set(SKIN_SLOTS).size).toBe(SKIN_SLOTS.length);
   });
 
-  it("rejects focus-ring tokens and keeps the rest", () => {
-    expect(isForbiddenSkinToken("--color-focus-ring")).toBe(true);
-    expect(isForbiddenSkinToken("--color-focus-ring-danger")).toBe(true);
+  it("allows focus-ring colors and rejects ring geometry", () => {
+    expect(isForbiddenSkinToken("--color-focus-ring")).toBe(false);
+    expect(isForbiddenSkinToken("--color-focus-ring-danger")).toBe(false);
     expect(isForbiddenSkinToken("--focus-ring-width")).toBe(true);
     expect(isForbiddenSkinToken("--focus-ring-offset")).toBe(true);
     expect(isForbiddenSkinToken("--color-primary")).toBe(false);

@@ -27,7 +27,7 @@ export function FormSizesDemo() {
               <Input name={`name-${size}`} label="Name" placeholder="Ivan" />
             </Form.Field>
             <Form.Field name={`email-${size}`}>
-              <Input name={`email-${size}`} label="Email" placeholder="you@example.com" />
+              <Input name={`email-${size}`} label="Email" type="email" placeholder="you@example.com" />
             </Form.Field>
           </Form.Section>
           <Form.Actions>
@@ -38,7 +38,7 @@ export function FormSizesDemo() {
               Save
             </Button>
           </Form.Actions>
-          <Text as="p" variant="xsmall" className="text-muted">
+          <Text as="p" textStyle="xsmall" className="text-muted">
             Input / Button size is independent of Form size.
           </Text>
         </Form>

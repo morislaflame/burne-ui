@@ -4,7 +4,7 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 
 import { STEPPER_ITEM_NAME, stepperValues } from "./stepperAPI";
-import type { StepperContextValue, StepperProps } from "./stepperTypes";
+import type { StepperContextValue, StepperProps, UseStepperRootStateResult } from "./stepperTypes";
 
 export function useStepperRootState({
   steps,
@@ -22,7 +22,7 @@ export function useStepperRootState({
   motionPayload,
   playInitialState,
   ...rest
-}: StepperProps) {
+}: StepperProps): UseStepperRootStateResult {
   const compound = hasCompoundChild(children, STEPPER_ITEM_NAME);
   const values = useMemo(
     () => stepperValues(compound, steps, children),

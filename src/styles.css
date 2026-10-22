@@ -5,6 +5,25 @@
 
 @import "tailwindcss";
 
+/* Studio state matrix. `data-force-state` is space-separated: hover, focus, press, disabled.
+   Real `:hover` stays inside `@media (hover: hover)`, same as Tailwind's default variant,
+   so a tap on a touch screen does not leave the hover fill stuck. The attribute match
+   sits outside that query: the studio can force hover without a pointing device. */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+  &[data-force-state~="hover"] {
+    @slot;
+  }
+}
+@custom-variant focus (&:focus, &[data-force-state~="focus"]);
+@custom-variant focus-visible (&:focus-visible, &[data-force-state~="focus"]);
+@custom-variant active (&:active, &[data-force-state~="press"]);
+@custom-variant disabled (&:disabled, &[data-force-state~="disabled"]);
+
 p,
 ul,
 ol {
@@ -86,7 +105,8 @@ html {
   --focus-ring-width: var(--focus-ring-width);
   --focus-ring-offset: var(--focus-ring-offset);
 
-  /* Z-INDEX SCALE: overlay stacking → utilities z-dialog, z-dropdown, … */
+  /* Z-INDEX SCALE: page chrome, then overlay stacking → utilities z-sticky, z-dialog, … */
+  --z-index-sticky: var(--z-sticky);
   --z-index-dialog: var(--z-dialog);
   --z-index-dropdown: var(--z-dropdown);
   --z-index-dropdown-sub: var(--z-dropdown-sub);
@@ -364,7 +384,8 @@ html {
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
-  &:focus-visible {
+  &:focus-visible,
+  &[data-force-state~="focus"] {
     outline-style: solid;
     outline-width: var(--focus-ring-width, 2px);
     outline-offset: var(--focus-ring-offset, 0px);
@@ -385,7 +406,8 @@ html {
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible,
-  &:focus-within {
+  &:focus-within,
+  &[data-force-state~="focus"] {
     outline-style: solid;
     outline-width: var(--focus-ring-width, 2px);
     outline-offset: var(--focus-ring-offset, 0px);
@@ -405,7 +427,8 @@ html {
     fill var(--motion-surface-duration) var(--motion-surface-ease),
     stroke var(--motion-surface-duration) var(--motion-surface-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
-  &:focus-visible {
+  &:focus-visible,
+  &[data-force-state~="focus"] {
     outline-style: solid;
     outline-width: var(--focus-ring-width, 2px);
     outline-offset: calc(-1 * var(--focus-ring-width, 2px));
@@ -428,7 +451,8 @@ html {
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   /* Enhancement: ring on the shell when a hidden native input inside is keyboard-focused.
      Without :has() the control still works; the shell ring does not paint. */
-  &:has(:focus-visible) {
+  &:has(:focus-visible),
+  &[data-force-state~="focus"] {
     outline-style: solid;
     outline-width: var(--focus-ring-width, 2px);
     outline-offset: var(--focus-ring-offset, 0px);
@@ -570,9 +594,6 @@ html {
 }
 
 /** Font weight from `--font-w-*` tokens (not Tailwind `font-medium`). */
-@utility font-w-regular {
-  font-weight: var(--font-w-regular);
-}
 @utility font-w-small {
   font-weight: var(--font-w-small);
 }
@@ -643,6 +664,50 @@ html {
 
 @utility min-w-component-2xlarge {
   min-width: var(--max-component-2xlarge);
+}
+
+@utility max-w-page-xsmall {
+  max-width: var(--max-page-xsmall);
+}
+@utility max-w-page-small {
+  max-width: var(--max-page-small);
+}
+@utility max-w-page-base {
+  max-width: var(--max-page-base);
+}
+@utility max-w-page-mid {
+  max-width: var(--max-page-mid);
+}
+@utility max-w-page-large {
+  max-width: var(--max-page-large);
+}
+@utility max-w-page-xlarge {
+  max-width: var(--max-page-xlarge);
+}
+@utility max-w-page-2xlarge {
+  max-width: var(--max-page-2xlarge);
+}
+
+@utility w-page-xsmall {
+  width: var(--max-page-xsmall);
+}
+@utility w-page-small {
+  width: var(--max-page-small);
+}
+@utility w-page-base {
+  width: var(--max-page-base);
+}
+@utility w-page-mid {
+  width: var(--max-page-mid);
+}
+@utility w-page-large {
+  width: var(--max-page-large);
+}
+@utility w-page-xlarge {
+  width: var(--max-page-xlarge);
+}
+@utility w-page-2xlarge {
+  width: var(--max-page-2xlarge);
 }
 
 @utility basis-component-xsmall {
@@ -964,6 +1029,30 @@ html {
     outline-color: Highlight;
   }
 
+  /*
+   * Skinned surfaces often zero their border and paint with gradients.
+   * Those paints disappear here. A system border at least `--border-width`
+   * (and never under 1px) keeps the edge. Author width above 1px stays.
+   */
+  [data-skin] :is(
+    button,
+    [role="button"],
+    input,
+    textarea,
+    select,
+    [role="checkbox"],
+    [role="radio"],
+    [role="switch"],
+    [role="tab"],
+    [role="dialog"],
+    [role="listbox"],
+    [data-variant]
+  ) {
+    border-style: solid;
+    border-color: ButtonText;
+    border-width: max(1px, var(--border-width, 1px));
+  }
+
   :is(
     .bg-danger,
     .bg-success,
@@ -1065,5 +1154,9 @@ html {
     .disabled\:hover\:text-muted:disabled:hover {
       color: var(--color-muted-foreground);
     }
+  }
+
+  .disabled\:hover\:text-muted[data-force-state~="disabled"][data-force-state~="hover"] {
+    color: var(--color-muted-foreground);
   }
 }

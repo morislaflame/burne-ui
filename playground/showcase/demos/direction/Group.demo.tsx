@@ -9,7 +9,7 @@ export function DirectionGroupDemo() {
     <RtlPair>
       {() => (
         <>
-          <Text variant="base">The line starts on this side.</Text>
+          <Text textStyle="base">The line starts on this side.</Text>
           <ButtonGroup aria-label="Document actions">
             <Button variant="outline">Save</Button>
             <Button variant="outline">Edit</Button>

@@ -43,7 +43,7 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormHea
 </Form>
 ```
 
-`FormRoot` автоматически рендерит `<Form.Announce>` и `<Form.ErrorSummary>` — **не дублируйте** в children.
+`FormRoot` сам рисует `<Form.Announce>` и `<Form.ErrorSummary>`, пока этих частей нет среди children. Своя часть заменяет авто-узел, второй не появляется. `Form.Announce` без `message` не монтируется: слот `announce` есть только когда есть текст. Если сообщение пришло из состояния формы, корень передаёт его в вашу `Form.Announce`.
 
 ### Root props
 
@@ -78,8 +78,8 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormHea
 | `Form.Description` | `<p>` | Описание |
 | `Form.Field` | `<div>` | Обёртка + регистрация `rules`; вложенный motion scope (`motionController`, `playSlot("field")`) |
 | `Form.Actions` | `<div>` | Кнопки submit/cancel |
-| `Form.ErrorSummary` | sr-only, `tabIndex={-1}`, `aria-live="polite"` | Сводка ошибок (auto в root). Всегда в DOM, без `role="alert"`. Фокус после submit — на первом невалидном поле. `children` или `Form` prop `errorSummary` — ReactNode / `(entries) => ReactNode` |
-| `Form.Announce` | `role="status"` sr-only | Live region (auto в root) |
+| `Form.ErrorSummary` | sr-only, `tabIndex={-1}`, `aria-live="polite"` | Сводка ошибок. Корень рисует её сам, пока части нет в children. Без `role="alert"`. Фокус после submit — на первом невалидном поле. `children` или `Form` prop `errorSummary` — ReactNode / `(entries) => ReactNode` |
+| `Form.Announce` | `role="status"` sr-only | Live region. В DOM только при непустом `message` (своём или из состояния формы). Слот `classNames.announce` на этот узел |
 
 ### `FormClassNames`
 
@@ -167,6 +167,8 @@ type FormFieldRules = {
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`form:nudge`, `form:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside) видит Form; в children `Form.Title` попадает в nested `Text`.
 
+Тройка на корне, на `Form.Section` и на `Form.Field`. Один набор не играет чужой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 ```tsx
 import { Button, Form, createMotionEvents, useMotionControllerHandle } from "burne-ui";
 
@@ -232,7 +234,7 @@ function Nudge() {
 1. **`className` на `Form`** — layout (horizontal toolbar, max-width).
 2. **`classNames` на root** — все layout-слоты.
 
-`Form.Header` / `Form.Section` / `Form.Field` могут переопределить локальный слот (`header`, `section`, `field`).
+`Form.Header` / `Form.Section` / `Form.Field` могут переопределить локальный слот (`header`, `section`, `field`). Порядок: кит → `classNames.slot` с корня → `classNames` / `className` части — пользовательский `className` на `Form.Field` побеждает `classNames.field`.
 
 ### Слоты `FormClassNames`
 
@@ -268,7 +270,7 @@ function Nudge() {
     <Form.Title>Обратная связь</Form.Title>
   </Form.Header>
   <Form.Section>
-    <Form.Field name="topic">
+    <Form.Field name="topic" className="bg-primary/10">
       <Input name="topic" label="Тема" />
     </Form.Field>
   </Form.Section>
@@ -300,7 +302,7 @@ function Nudge() {
 ```tsx
 <Form className="flex flex-row flex-wrap items-end gap-small" aria-label="Поиск">
   <Form.Section className="flex flex-1 flex-row gap-small">
-    <Input name="q" label="Поиск" compact />
+    <Input name="q" label="Поиск" />
   </Form.Section>
   <Form.Actions className="pt-0">
     <Button type="submit">Найти</Button>
@@ -321,12 +323,17 @@ function Nudge() {
 
 | Компонент | Binding |
 |-----------|---------|
-| `Input` | `useFormControlProps` — event-based |
-| `Checkbox` | `useFormControlProps` (`type="checkbox"`) |
-| `ComboBox` / `Select` | `useFormFieldBinding` — value-based |
+| `Input`, `TextArea`, `SearchInput` | `useFormControlProps` — event-based. Нативный `name` на контроле |
+| `Checkbox`, `Switch` | `useFormControlProps` (`type="checkbox"`). `readOnly` и `<Form readOnly>` блокируют клик |
+| `Radio` | `useFormControlProps`, если радио не внутри `RadioGroup` |
+| `RadioGroup` | `useFormFieldBinding` по явному `name`. В `FormData` значение несёт нативный radio, скрытый input не дублируется |
+| `Select` / `ComboBox` | `useFormFieldBinding` + `<input type="hidden">`. `multiple` — по одному input на значение |
+| `DatePicker` | `form.setValue` + скрытый input |
+| `TimeField`, `Slider`, `ColorPicker` | `useFormFieldBinding` + скрытый input. У Slider range — два значения |
+| `NumberInput` | Своя связь с Form; `name` на нативном input |
+| `PinInput`, `TagsInput` | Скрытые input |
+| `CheckboxGroup` | `useFormFieldBinding` + скрытый input на каждое выбранное значение. `Checkbox` внутри группы сам не bindится |
 | `Button` | `disabled` / `isSubmitting` из контекста (не `size`) |
-| `CheckboxGroup` | Без прямого binding; single selection — отдельный `name`/`value` pattern |
-| `Card` / `Dialog` / `Surface` | Layout wrappers в stories |
 
 ## Доступность
 

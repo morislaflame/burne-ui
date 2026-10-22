@@ -1,3 +1,6 @@
+import type { CSSProperties } from "react";
+
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
  
@@ -25,16 +28,33 @@ export const LOADING_SPINNER_RING: Record<
   },
 };
  
-export const LOADING_SPINNER_COLOR: Record<LoadingColor, string> = {
+const LOADING_SPINNER_TONE: Record<LoadingColor, string> = {
   primary: "text-primary",
   foreground: "text-foreground",
   muted: "text-muted",
   secondary: "text-primary",
+};
+
+const LOADING_SPINNER_STATUS: Record<SemanticStatus, string> = {
+  default: "text-primary",
   danger: "text-danger",
   success: "text-success",
   info: "text-info",
   warning: "text-warning",
 };
+
+function isLoadingTone(color: string): color is LoadingColor {
+  return color === "primary" || color === "foreground" || color === "muted" || color === "secondary";
+}
+
+export function loadingSpinnerPaint(
+  color: string | undefined,
+  status: SemanticStatus | undefined,
+): { className: string; style?: CSSProperties } {
+  if (color && isLoadingTone(color)) return { className: LOADING_SPINNER_TONE[color] };
+  if (color) return { className: "", style: { color } };
+  return { className: LOADING_SPINNER_STATUS[status ?? "default"] };
+}
  
 export const LOADING_ROOT_CLASS = "inline-flex shrink-0 items-center justify-center";
  
@@ -76,24 +96,43 @@ export const LOADING_DOTS_LAYOUT: Record<LoadingSize, LoadingDotsLayout> = {
   },
 };
  
-export const LOADING_DOTS_COLOR: Record<LoadingColor, string> = {
+const LOADING_DOT_TONE: Record<LoadingColor, string> = {
   primary: "bg-primary",
   foreground: "bg-foreground",
   muted: "bg-muted-foreground",
   secondary: "bg-primary",
+};
+
+const LOADING_DOT_STATUS: Record<SemanticStatus, string> = {
+  default: "bg-primary",
   danger: "bg-danger",
   success: "bg-success",
   info: "bg-info",
   warning: "bg-warning",
 };
- 
-export function loadingSpinnerRingClass(size: LoadingSize, color: LoadingColor, className?: string) {
+
+export function loadingDotPaint(
+  color: string | undefined,
+  status: SemanticStatus | undefined,
+): { className: string; style?: CSSProperties } {
+  if (color && isLoadingTone(color)) return { className: LOADING_DOT_TONE[color] };
+  if (color) return { className: "", style: { background: color } };
+  return { className: LOADING_DOT_STATUS[status ?? "default"] };
+}
+
+export function loadingSpinnerRingClass(
+  size: LoadingSize,
+  color: string | undefined,
+  status: SemanticStatus | undefined,
+  className?: string,
+) {
   const ring = LOADING_SPINNER_RING[size];
+  const paint = loadingSpinnerPaint(color, status);
   return cn(
     LOADING_SPINNER_RING_CLASS,
     ring.icon,
     ring.border,
-    LOADING_SPINNER_COLOR[color],
+    paint.className,
     className,
   );
 }
@@ -105,13 +144,15 @@ export function loadingDotsTrackClass(size: LoadingSize, className?: string) {
  
 export function loadingDotClass(
   size: LoadingSize,
-  color: LoadingColor,
+  color: string | undefined,
+  status: SemanticStatus | undefined,
   className?: string,
 ) {
+  const paint = loadingDotPaint(color, status);
   return cn(
     LOADING_DOT_CLASS,
     LOADING_DOTS_LAYOUT[size].dotClass,
-    LOADING_DOTS_COLOR[color],
+    paint.className,
     className,
   );
 }

@@ -10,10 +10,10 @@ export function LinkCardActionsDemo() {
   return (
     <Surface variant="secondary" padding="large" className="flex w-full max-w-sm flex-col gap-large">
       <div className="flex flex-col gap-xsmall">
-        <Text as="p" variant="base" className="font-medium">
+        <Text as="p" textStyle="base" className="font-medium">
           Release 1.2.0
         </Text>
-        <Text as="p" variant="xsmall" className="text-muted">
+        <Text as="p" textStyle="xsmall" className="text-muted">
           Updating form components and theme options.
         </Text>
       </div>

@@ -9,7 +9,7 @@ function TabsSizeRow({ size }: { size: "small" | "base" | "mid" | "large" }) {
         <Tabs.Tab value="two">Two</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="one" className="pt-small">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           size={size}
         </Text>
       </Tabs.Panel>

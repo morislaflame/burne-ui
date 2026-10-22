@@ -9,7 +9,7 @@ export function ContextMenuDefaultDemo() {
   return (
     <ContextMenu>
       <ContextMenu.Trigger className={surface}>Right-click</ContextMenu.Trigger>
-      <ContextMenu.Content className="min-w-52">
+      <ContextMenu.Popover className="min-w-52">
         <ContextMenu.Item>
           <ContextMenu.ItemLabel>Copy</ContextMenu.ItemLabel>
           <ContextMenu.ItemIcon>
@@ -25,7 +25,7 @@ export function ContextMenuDefaultDemo() {
         <ContextMenu.Separator />
         <ContextMenu.Sub>
           <ContextMenu.SubTrigger>Share</ContextMenu.SubTrigger>
-          <ContextMenu.SubContent>
+          <ContextMenu.SubPopover>
             <ContextMenu.Item>
               <ContextMenu.ItemLabel>Mail</ContextMenu.ItemLabel>
               <ContextMenu.ItemIcon>
@@ -38,9 +38,9 @@ export function ContextMenuDefaultDemo() {
                 <IoLinkOutline aria-hidden />
               </ContextMenu.ItemIcon>
             </ContextMenu.Item>
-          </ContextMenu.SubContent>
+          </ContextMenu.SubPopover>
         </ContextMenu.Sub>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

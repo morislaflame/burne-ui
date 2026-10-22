@@ -19,5 +19,6 @@ export type {
   TabsClassNames,
   TabsMotion,
   TabsPartMotion,
+  TabsItem,
 } from "./tabsTypes";
  

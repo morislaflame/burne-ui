@@ -110,11 +110,16 @@ function SkeletonCircleSurface({
     "animation" | "size" | "className" | "classNames" | "style" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...domRest } = rest;
   const part = useSkeletonSlotMotion<HTMLDivElement>({
     scope: useSkeletonMotionScope(),
     slot: "root",
     motion: rootMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -129,8 +134,8 @@ function SkeletonCircleSurface({
       )}
       style={{ ...skeletonVariantStyle(animation), ...style }}
       {...skeletonPresentationProps()}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
       {...dataVariantProps({ size })}
     >
       {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
@@ -201,11 +206,16 @@ function SkeletonTextSurface({
     "animation" | "lines" | "lastShort" | "className" | "classNames" | "style" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...domRest } = rest;
   const part = useSkeletonSlotMotion<HTMLDivElement>({
     scope: useSkeletonMotionScope(),
     slot: "root",
     motion: rootMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
   const lineWidths = Array.from({ length: lines }, (_, index) => {
     if (lastShort && index === lines - 1) return SKELETON_TEXT_LINE_LAST_SHORT_CLASS;
@@ -218,8 +228,8 @@ function SkeletonTextSurface({
       className={cn(SKELETON_TEXT_ROOT_CLASS, classNames?.root, className)}
       style={style}
       {...skeletonPresentationProps()}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     >
       {lineWidths.map((widthClass, index) => (
         <div
@@ -290,11 +300,16 @@ function SkeletonBlockSurface({
     "animation" | "className" | "classNames" | "style" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...domRest } = rest;
   const part = useSkeletonSlotMotion<HTMLDivElement>({
     scope: useSkeletonMotionScope(),
     slot: "root",
     motion: rootMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -308,8 +323,8 @@ function SkeletonBlockSurface({
       )}
       style={{ ...skeletonVariantStyle(animation), ...style }}
       {...skeletonPresentationProps()}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     >
       {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
       {children}
@@ -364,11 +379,16 @@ function SkeletonRegionSurface({
     "busy" | "className" | "classNames" | "children" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
   >;
 }) {
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...domRest } = rest;
   const part = useSkeletonSlotMotion<HTMLDivElement>({
     scope: useSkeletonMotionScope(),
     slot: "region",
     motion: regionMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -376,8 +396,8 @@ function SkeletonRegionSurface({
       ref={part.setRef}
       className={cn(classNames?.root, className)}
       {...skeletonRegionA11yProps(busy)}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     >
       {children}
     </div>

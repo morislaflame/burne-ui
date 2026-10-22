@@ -3,7 +3,6 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
-  type KeyboardEvent,
   type OlHTMLAttributes,
   type PointerEventHandler,
   type ReactNode,
@@ -17,7 +16,7 @@ import { mergeRefs } from "@/components/core/utils/mergeRefs";
 
 import { stepperKeyDelta, stepperCurrent } from "./stepperA11y";
 import { useStepperSlotMotion, useStepperRootMotion } from "./stepperAnimations";
-import { isStepperItem, stepperStepSelectable, stepperStepState } from "./stepperAPI";
+import { isStepperItem, isStepperTrigger, stepperStepSelectable, stepperStepState } from "./stepperAPI";
 import {
   StepperItemProvider,
   useStepperClassNames,
@@ -40,6 +39,7 @@ import type {
   StepperItemProps,
   StepperStep,
   StepperTitleProps,
+  StepperTriggerProps,
 } from "./stepperTypes";
 
 function pointerProps<T extends HTMLElement>(props: {
@@ -150,6 +150,61 @@ function StepperSeparator() {
   );
 }
 
+export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>(
+  function StepperTrigger({ className, children, onClick, onKeyDown, ...rest }, ref) {
+    const root = useStepperContext();
+    const item = useStepperItemContext();
+    const slotClass = useStepperClassNames().trigger;
+    const tabStop =
+      item.selectable &&
+      (item.index === root.currentIndex || (root.currentIndex < 0 && item.index === 0));
+
+    return (
+      <button
+        type="button"
+        ref={ref}
+        disabled={!item.selectable}
+        tabIndex={item.selectable ? (tabStop ? 0 : -1) : undefined}
+        aria-current={stepperCurrent(item.state === "active")}
+        className={stepperTriggerClass(root.orientation, slotClass, className)}
+        {...rest}
+        data-value={item.value}
+        data-disabled={dataFlag(!item.selectable)}
+        onClick={(event) => {
+          onClick?.(event);
+          if (event.defaultPrevented) return;
+          root.select(item.value);
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented) return;
+          const list = event.currentTarget.closest("ol");
+          if (!list) return;
+          const delta = stepperKeyDelta(
+            event.key,
+            root.orientation,
+            getComputedStyle(list).direction === "rtl",
+          );
+          if (delta == null) return;
+          const buttons = [...list.querySelectorAll<HTMLButtonElement>("button:not(:disabled)")];
+          const current = buttons.indexOf(event.currentTarget);
+          if (current < 0) return;
+          const next = delta === "start" ? 0 : delta === "end" ? buttons.length - 1 : current + delta;
+          const button = buttons[next];
+          if (!button || next === current) return;
+          event.preventDefault();
+          focusKeyboard(button);
+          const nextValue = button.getAttribute("data-value");
+          if (nextValue) root.select(nextValue);
+        }}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+StepperTrigger.displayName = "StepperTrigger";
+
 export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
   function StepperItem(
     { value, title, description, className, children, motion, index = 0, isLast = false },
@@ -159,28 +214,11 @@ export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
     const slotClass = useStepperClassNames().item;
     const state = stepperStepState(index, root.currentIndex);
     const selectable = stepperStepSelectable(index, root.currentIndex, root.linear);
-    const tabStop = selectable && (index === root.currentIndex || (root.currentIndex < 0 && index === 0));
     const part = useStepperSlotMotion<HTMLLIElement>({
       slot: "item",
       motion,
       forwardedRef: ref,
     });
-    function onStepKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-      const list = event.currentTarget.closest("ol");
-      if (!list) return;
-      const delta = stepperKeyDelta(event.key, root.orientation, getComputedStyle(list).direction === "rtl");
-      if (delta == null) return;
-      const buttons = [...list.querySelectorAll<HTMLButtonElement>("button:not(:disabled)")];
-      const current = buttons.indexOf(event.currentTarget);
-      if (current < 0) return;
-      const next = delta === "start" ? 0 : delta === "end" ? buttons.length - 1 : current + delta;
-      const button = buttons[next];
-      if (!button || next === current) return;
-      event.preventDefault();
-      focusKeyboard(button);
-      const nextValue = button.getAttribute("data-value");
-      if (nextValue) root.select(nextValue);
-    }
 
     const body = children ?? (
       <>
@@ -198,19 +236,11 @@ export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
         data-state={state}
       >
         <StepperItemProvider value={{ index, value, state, selectable, isLast }}>
-          <button
-            type="button"
-            disabled={!selectable}
-            tabIndex={selectable ? (tabStop ? 0 : -1) : undefined}
-            data-value={value}
-            data-disabled={dataFlag(!selectable)}
-            aria-current={stepperCurrent(state === "active")}
-            className={stepperTriggerClass(root.orientation)}
-            onClick={() => root.select(value)}
-            onKeyDown={onStepKeyDown}
-          >
-            {body}
-          </button>
+          {Children.toArray(children).some(isStepperTrigger) ? (
+            children
+          ) : (
+            <StepperTrigger>{body}</StepperTrigger>
+          )}
           {isLast ? null : <StepperSeparator />}
         </StepperItemProvider>
       </li>

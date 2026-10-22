@@ -13,7 +13,8 @@ import { Checkbox } from "@/components/core/Checkbox";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { ListBox } from "@/components/core/ListBox";
 import { Table } from "@/components/core/Table";
-import { Toast, useToastContext } from "@/components/core/Toast";
+import { Toast } from "@/components/core/Toast";
+import { useToastContext } from "@/components/core/Toast/toastContext";
 
 import {
   hostPlatform,
@@ -49,15 +50,15 @@ function TableTree({
   selectedId: string;
 }) {
   return (
-    <Table>
+    <Table
+          selectionMode="single"
+          selectedKeys={new Set([selectedId])}>
       <Table.ScrollContainer>
         <Table.Content
           aria-label="Team"
-          selectionMode="single"
-          selectedKeys={new Set([selectedId])}
         >
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body items={rows}>
@@ -120,7 +121,7 @@ function ToastSeeder({ count, titleSuffix }: { count: number; titleSuffix: strin
     while (idsRef.current.length < count) {
       const index = idsRef.current.length;
       idsRef.current.push(
-        ctx.add({ title: `Toast ${index}${titleSuffix}`, timeout: 0 }));
+        ctx.add({ title: `Toast ${index}${titleSuffix}`, duration: 0 }));
     }
     const first = idsRef.current[0];
     if (first) ctx.update(first, { title: `Toast 0${titleSuffix}` });

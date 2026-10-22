@@ -68,7 +68,7 @@ describe("Э0.1 keyboard", () => {
   });
 
   it("Select: ArrowDown opens, arrows move, Enter commits, Escape closes", async () => {
-    const { user } = render(<Select label="City" options={OPTIONS} />);
+    const { user } = render(<Select label="City" items={OPTIONS} />);
 
     const trigger = selectValueButton();
     trigger.focus();
@@ -88,7 +88,7 @@ describe("Э0.1 keyboard", () => {
   });
 
   it("ComboBox: ArrowDown opens the list, Escape closes", async () => {
-    const { user } = render(<ComboBox label="City" options={OPTIONS} />);
+    const { user } = render(<ComboBox label="City" items={OPTIONS} />);
 
     const input = screen.getByRole("combobox");
     input.focus();
@@ -117,7 +117,7 @@ describe("Э0.1 keyboard", () => {
 
   it("Slider: ArrowRight steps up; Home/End jump to min/max", async () => {
     const { user } = render(
-      <Slider ariaLabel="Volume" defaultValue={40} min={0} max={100} step={10} />);
+      <Slider aria-label="Volume" defaultValue={40} min={0} max={100} step={10} />);
     const slider = screen.getByRole("slider");
     slider.focus();
     expect(slider).toHaveAttribute("aria-valuenow", "40");

@@ -69,14 +69,14 @@ export function RippleShowcase() {
         <ShowcaseDoc.Block title="Contact with Button">
           <p>
             On <code>Button</code> propa enough <code>ripple</code>. For manual layer —{" "}
-            <code>buttonRippleTone(variant, status)</code> from package or constant <code>RIPPLE_COLOR</code>.
+            <code>buttonRippleTone(variant, status)</code> from <code>burne-ui/internal</code>, or the constant <code>RIPPLE_COLOR</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
             Container with <code>overflow-hidden</code> and <code>position: relative</code>. Duration and easing —{" "}
             <code>configureMotion()</code> (<code>rippleDefaultDuration</code>, <code>rippleEaseCss</code>,{" "}
-            <code>enableRipple</code>). Button tone — <code>buttonRippleTone</code> from the package.
+            <code>enableRipple</code>). Button tone — <code>buttonRippleTone</code> from <code>burne-ui/internal</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

@@ -51,7 +51,7 @@ function ShowcaseSidebar({
         <div key={group.id} className="flex flex-col gap-xsmall">
           <Text
             as="span"
-            variant="xsmall"
+            textStyle="xsmall"
             className="px-small font-semibold uppercase tracking-wider mb-small underline-offset-4 underline"
           >
             {group.label}
@@ -89,7 +89,7 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
 
       <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} placement="left">
         <div className="lg:hidden fixed top-12 left-0 right-0 z-10 flex items-center justify-between border-b border-token bg-surface/90 px-large py-xsmall backdrop-blur-md">
-          <Text as="span" variant="base" className="font-semibold text-foreground">
+          <Text as="span" textStyle="base" className="font-semibold text-foreground">
             {currentPage.label}
           </Text>
           <Drawer.Trigger asChild>
@@ -107,10 +107,10 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
           <div className="flex-1 overflow-y-auto px-large py-2xlarge lg:py-2xlarge max-lg:pt-24">
             {!embedded && (
               <header className="flex flex-col gap-xsmall mb-xlarge max-lg:hidden">
-                <Text as="h1" variant="header-1">
+                <Text as="h1" textStyle="header-1">
                   Burne UI
                 </Text>
-                <Text as="p" variant="base" className="text-muted">
+                <Text as="p" textStyle="base" className="text-muted">
                   Local component directory from <code className="text-primary">src/</code> — Same API,
                   what's in Storybook.
                 </Text>

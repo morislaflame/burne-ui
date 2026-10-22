@@ -7,7 +7,7 @@ export function useButtonGroupRootState({
   children,
   orientation = "horizontal",
   segmented = false,
-  buttonSize = "base",
+  size = "base",
   variant = "default",
 }: UseButtonGroupRootStateProps) {
   const flat = useMemo(() => flattenFragmentChildren(children), [children]);
@@ -20,7 +20,7 @@ export function useButtonGroupRootState({
     layoutValue,
     orientation,
     segmented,
-    buttonSize,
+    size,
     variant,
   };
 }

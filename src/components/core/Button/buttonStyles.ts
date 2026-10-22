@@ -284,16 +284,13 @@ export function buttonContentClass({
 export function buttonLabelClass({
   slotClass,
   className,
-  layoutClass,
 }: {
   slotClass?: string;
   className?: string;
-  layoutClass?: string;
 }): string {
   return cn(
     BUTTON_LABEL_LAYER_CLASS,
     slotClass,
-    layoutClass,
     className,
   );
 }

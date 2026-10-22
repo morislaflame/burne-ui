@@ -2,6 +2,8 @@
 
 Круглая кнопка закрытия с инлайн-иконкой close из кита. Разделяет визуальную систему variant с `Button`, поддерживает GSAP hover/press и опциональный converge-ripple.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -24,7 +26,7 @@ import type {
 
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
-| `variant` | `default` \| `primary` \| `outline` \| `secondary` \| `ghost` \| `gloss` | `default` | Визуальный стиль (общий с Button) |
+| `variant` | `ActionVariant`: `default` \| `primary` \| `outline` \| `secondary` \| `ghost` | `default` | — |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер квадратной области и иконки |
 | `ripple` | `boolean` | `false` | Converge-ripple при нажатии |
 | `disabled` | `boolean` | `false` | `opacity-50`, `cursor-not-allowed` |
@@ -41,7 +43,7 @@ import type {
 ```tsx
 type CloseButtonClassNames = {
   root?: string;    // корневой <button>
-  icon?: string;    // IoClose
+  icon?: string;    // обёртка <span> (icon-slot)
   ripple?: string;  // обёртка <Ripple />
 };
 ```
@@ -68,7 +70,7 @@ type CloseButtonClassNames = {
   variant="outline"
   classNames={{
     root: "border-primary/50 bg-primary/5 shadow-token-md hover:bg-primary/10",
-    icon: "text-primary",
+    icon: "icon-slot-large text-primary",
   }}
   aria-label="Закрыть панель"
 />
@@ -85,7 +87,6 @@ type CloseButtonClassNames = {
 | `outline` | прозрачный + `border-token-outline` | да | neutral; hover `bg-transparent-hover` |
 | `secondary` | `bg-secondary` | да | neutral |
 | `ghost` | прозрачный | да | neutral; hover `bg-transparent-hover` |
-| `gloss` | `gloss-btn` | нет (gloss-motion) | neutral |
 
 У CloseButton **нет** prop `status` — только variant.
 
@@ -93,10 +94,10 @@ type CloseButtonClassNames = {
 
 | size | Корень | Иконка |
 |------|--------|--------|
-| `small` | `min-h-control-xsmall w-control-xsmall min-w-control-xsmall` | `icon-small` |
-| `base` | `min-h-control-small w-control-small min-w-control-small` | `icon-base` |
-| `mid` | `min-h-control-base w-control-base min-w-control-base` | `icon-mid` |
-| `large` | `min-h-control-mid w-control-mid min-w-control-mid` | `icon-large` |
+| `small` | `min-h-control-xsmall w-control-xsmall min-w-control-xsmall` | `icon-slot-small` |
+| `base` | `min-h-control-small w-control-small min-w-control-small` | `icon-slot-base` |
+| `mid` | `min-h-control-base w-control-base min-w-control-base` | `icon-slot-mid` |
+| `large` | `min-h-control-mid w-control-mid min-w-control-mid` | `icon-slot-large` |
 
 Форма всегда `rounded-full` + `aspect-square` (`min-w-control-*` не даёт родителю с `w-fit` сжать круг в овал).
 
@@ -108,7 +109,7 @@ type CloseButtonClassNames = {
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | first-level lift + squeeze; gloss → `hoverLiftGloss` / `pressSqueezeGloss` (`pressOut: false`) |
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | first-level lift + squeeze |
 | `icon` | hover/press | нет |
 
 `false` на фазе — skip без kill.
@@ -143,6 +144,8 @@ function Nudge() {
 
 `play()` ищет слот `root`. `playSlot("icon")` — доменный слот. `playAll` + `stagger`, timeline `dismiss:spin` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
 
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
 Сырой GSAP в Slot motion: **DrawSVG** — два штриха крестика прорисовываются на hover (`classNames.icon: opacity-0`, kit hover/press выключены). Overlay SVG — sibling кнопки, поэтому squeeze на обёртке (`scale: 0.98`); timeline kill на leave, чтобы delayed-штрих не стартовал повторно.
 
 ## Токены и CSS-классы
@@ -151,7 +154,6 @@ function Nudge() {
 
 | variant | Токен |
 |---------|-------|
-| `default`, `outline`, `secondary`, `ghost`, `gloss` | `converge-ripple-neutral` |
 | `primary` | `converge-ripple-primary-fill` |
 
 ### Поверхность и motion
@@ -163,7 +165,7 @@ function Nudge() {
 
 ### Размерные токены
 
-`min-h-control-*`, `w-control-*` (квадрат), `icon-small` / `icon-base` / `icon-mid` / `icon-large`.
+`min-h-control-*`, `w-control-*` (квадрат), `icon-slot` / `icon-slot-*` на обёртке иконки.
 
 ## Стилизация и кастомизация
 
@@ -179,7 +181,7 @@ CloseButton — leaf-компонент (без compound/simple split): один
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
 | `root` | `<button>` | Фон, ring, размер hit-area (`rounded-full`) |
-| `icon` | `IoClose` | Цвет, размер иконки |
+| `icon` | Обёртка `IoClose` | Цвет и размер (`icon-slot-*`) |
 | `ripple` | Ripple overlay | Opacity, clip shape |
 
 ```tsx
@@ -189,7 +191,7 @@ CloseButton — leaf-компонент (без compound/simple split): один
   className="ring-2 ring-primary/20"
   classNames={{
     root: "bg-surface-elevated",
-    icon: "text-muted",
+    icon: "icon-slot-large text-muted",
     ripple: "opacity-80",
   }}
   aria-label="Закрыть диалог"

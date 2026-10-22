@@ -36,6 +36,7 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function Tab
  
 function TabsPanelSurface({
   value: panelValue,
+  keepMounted: keepMountedProp,
   children,
   className,
   itemMotion,
@@ -45,7 +46,7 @@ function TabsPanelSurface({
   itemMotion?: TabsPanelProps["motion"];
   forwardedRef: ForwardedRef<HTMLDivElement>;
 }) {
-  const { value, baseId } = useTabsContext();
+  const { value, baseId, keepMounted: rootKeepMounted } = useTabsContext();
   const slotClassNames = useTabsClassNames();
   const isSelected = value === panelValue;
   const tabId = tabsTabId(baseId, panelValue);
@@ -60,6 +61,8 @@ function TabsPanelSurface({
     pointerPhases: false,
   });
   const { leaving } = useTabsPanelLifecycle(scope, isSelected);
+  const stayMounted = keepMountedProp ?? rootKeepMounted;
+  if (!isSelected && !leaving && !stayMounted) return null;
   const hidden = a11y.hidden && !leaving;
  
   return (

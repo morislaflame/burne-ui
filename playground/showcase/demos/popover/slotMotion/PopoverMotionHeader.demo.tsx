@@ -27,7 +27,7 @@ export function PopoverMotionHeaderDemo() {
           <Popover.Description>Header slides in after the panel.</Popover.Description>
         </Popover.Header>
         <Popover.Body>
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Title and body keep their own slots.
           </Text>
         </Popover.Body>

@@ -35,7 +35,7 @@ export function ExpandableMotionEventsFinishedDemo() {
         motionController={controller}
         motion={{ events }}
       >
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Second playSlot waits until the first MotionRun completes.
         </Text>
       </Expandable>

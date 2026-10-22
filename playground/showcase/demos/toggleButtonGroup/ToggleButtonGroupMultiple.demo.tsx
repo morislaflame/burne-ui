@@ -8,10 +8,10 @@ export function ToggleButtonGroupMultipleDemo() {
 
   return (
     <ToggleButtonGroup
-      type="multiple"
+      selectionMode="multiple"
       aria-label="Formatting"
-      value={formats}
-      onValueChange={(v) => setFormats(v as string[])}
+      values={formats}
+      onValuesChange={setFormats}
     >
       <ToggleButton value="bold">Fatty</ToggleButton>
       <ToggleButton value="italic">Italics</ToggleButton>

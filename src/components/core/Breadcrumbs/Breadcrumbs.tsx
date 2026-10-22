@@ -27,6 +27,7 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
   function BreadcrumbsRoot(
     {
       collapse = true,
+      size = "base",
       className,
       classNames,
       items,
@@ -55,9 +56,11 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
             ref={ref}
             aria-label={resolveBreadcrumbsAriaLabel(ariaLabel, breadcrumbsLabel)}
             className={breadcrumbsRootClass(
+              size,
               cn("", classNames?.root, className),
             )}
             {...rest}
+            data-size={size}
           >
             {isCompound ? (
               children

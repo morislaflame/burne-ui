@@ -10,7 +10,6 @@ export const Card = Object.assign(CardRoot, {
 });
  
 export type {
-  CardPressEvent,
   CardProps,
   CardSize,
   CardVariant,

@@ -2,10 +2,10 @@ import { useCallback, useState } from "react";
  
 export type UseOptionGroupSingleValueOptions = {
   value?: string | null;
-  defaultValue?: string;
-  onValueChange?: (value: string | undefined) => void;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null) => void;
   /**
-   * When `false`, clearing the selection (`undefined`) is ignored.
+   * When `false`, clearing the selection (`null`) is ignored.
    * RadioGroup uses `!required`; CheckboxGroup single always allows clear.
    */
   allowClear?: boolean;
@@ -18,19 +18,15 @@ export function useOptionGroupSingleValue({
   allowClear = true,
 }: UseOptionGroupSingleValueOptions) {
   const controlled = valueProp !== undefined;
-  const [internalValue, setInternalValue] = useState<string | undefined>(defaultValue);
+  const [internalValue, setInternalValue] = useState<string | null>(defaultValue ?? null);
  
-  const selectedValue = controlled
-    ? valueProp == null
-      ? undefined
-      : String(valueProp)
-    : internalValue;
+  const selectedValue = controlled ? (valueProp ?? null) : internalValue;
  
   const selectValue = useCallback(
     (next: string | undefined) => {
-      if (!allowClear && next === undefined) return;
-      if (!controlled) setInternalValue(next);
-      onValueChange?.(next);
+      if (!allowClear && next == null) return;
+      if (!controlled) setInternalValue(next ?? null);
+      onValueChange?.(next ?? null);
     },
     [allowClear, controlled, onValueChange],
   );

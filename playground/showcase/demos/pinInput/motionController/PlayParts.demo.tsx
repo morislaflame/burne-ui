@@ -9,14 +9,14 @@ export function PinInputMotionPlayPartsDemo() {
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      controller.playSlot("group", "enter");
+      controller.playSlot("shell", "enter");
     });
     return () => cancelAnimationFrame(frame);
   }, [controller]);
 
   return (
     <div className="flex flex-col gap-2xlarge">
-      <Button size="small" variant="outline" onClick={() => controller.playSlot("group", "enter")}>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "enter")}>
         Play
       </Button>
       <PinInput
@@ -26,7 +26,7 @@ export function PinInputMotionPlayPartsDemo() {
         length={4}
         motionController={controller}
         motion={{
-          group: {
+          shell: {
             enter: (ctx) => {
               const tl = ctx.timeline();
               const steps: Array<{ el: HTMLElement | null; y: number }> = [
@@ -39,7 +39,7 @@ export function PinInputMotionPlayPartsDemo() {
                 tl.fromTo(step.el, { opacity: 0, y: step.y }, { opacity: 1, y: 0, duration: 0.34 }, at);
                 at += 0.1;
               }
-              for (const el of ctx.getTargets("field")) {
+              for (const el of ctx.getTargets("control")) {
                 tl.fromTo(el, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.34 }, at);
                 at += 0.08;
               }

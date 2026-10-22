@@ -97,10 +97,10 @@ export const Playground: Story = {
     >
       <Ripple {...args} className="rounded-[inherit]" />
       <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-mid py-mid">
-        <Text variant="mid" className="font-medium">
+        <Text textStyle="mid" className="font-medium">
           Ripple area
         </Text>
-        <Text variant="base" className="text-muted">
+        <Text textStyle="base" className="text-muted">
           Click anywhere — the wave converges to the point.
         </Text>
       </div>
@@ -122,7 +122,7 @@ export const ClickInteraction: Story = {
     >
       <Ripple {...args} className="rounded-[inherit]" />
       <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-mid py-mid">
-        <Text variant="mid" className="font-medium">
+        <Text textStyle="mid" className="font-medium">
           Ripple area
         </Text>
       </div>
@@ -159,7 +159,7 @@ export const WithButton: Story = {
   name: "With Button",
   render: () => (
     <div className="flex flex-col gap-small">
-      <Text variant="base" className="text-muted">
+      <Text textStyle="base" className="text-muted">
         In the app, enable <code className="text-xs">ripple</code>
       </Text>
       <div className="flex flex-wrap gap-small">
@@ -184,7 +184,7 @@ export const DirectionCompare: Story = {
       >
         <Ripple color="neutral" direction="in" />
         <div className="relative z-[1] flex h-full items-center justify-center px-mid">
-          <Text variant="small">direction=&quot;in&quot;</Text>
+          <Text textStyle="small">direction=&quot;in&quot;</Text>
         </div>
       </div>
       <div
@@ -193,7 +193,7 @@ export const DirectionCompare: Story = {
       >
         <Ripple color="neutral" direction="out" />
         <div className="relative z-[1] flex h-full items-center justify-center px-mid">
-          <Text variant="small">direction=&quot;out&quot;</Text>
+          <Text textStyle="small">direction=&quot;out&quot;</Text>
         </div>
       </div>
     </div>
@@ -214,7 +214,7 @@ export const WithExpandable: Story = {
         </Expandable.Content>
       </Expandable.Trigger>
       <Expandable.Panel>
-        <Text variant="base" className="leading-relaxed">
+        <Text textStyle="base" className="leading-relaxed">
           Click near the row edge or chevron — effect across the full button.
         </Text>
       </Expandable.Panel>
@@ -226,7 +226,7 @@ export const WithSearchInput: Story = {
   name: "With SearchInput",
   render: () => (
     <div className="flex flex-col gap-small">
-      <Text variant="base" className="text-muted">
+      <Text textStyle="base" className="text-muted">
         <code className="text-xs">ripple</code> — boolean prop
       </Text>
       <SearchInput placeholder="Search…" ripple />
@@ -257,13 +257,13 @@ export const WithInputShell: Story = {
   name: "With Input (shell)",
   render: () => (
     <div className="flex flex-col gap-small">
-      <Text variant="base" className="text-muted">
+      <Text textStyle="base" className="text-muted">
         Shared interactive card around the field
       </Text>
       <div className="relative rounded-base border-token bg-surface p-large shadow-token-base">
         <Ripple color="neutral" />
         <div className="relative z-[1] flex flex-col gap-small">
-          <Text variant="small" className="font-medium text-muted">
+          <Text textStyle="small" className="font-medium text-muted">
             Contact
           </Text>
           <Input>
@@ -284,7 +284,7 @@ export const ArbitraryCssColor: Story = {
     >
       <Ripple color="oklch(0.72 0.14 250 / 0.55)" duration={550} />
       <div className="relative z-[1]">
-        <Text variant="base">The color prop accepts any string, not just presets.</Text>
+        <Text textStyle="base">The color prop accepts any string, not just presets.</Text>
       </div>
     </div>
   ),
@@ -299,7 +299,7 @@ export const CustomClassNames: Story = {
     >
       <Ripple color="info" className="rounded-[inherit]" />
       <div className="relative z-[1] flex items-center px-large py-2xlarge">
-        <Text variant="base">className paints the ripple layer</Text>
+        <Text textStyle="base">className paints the ripple layer</Text>
       </div>
     </div>
   ),
@@ -315,7 +315,7 @@ export const OnLightTheme: Story = {
     >
       <Ripple color="neutral" />
       <div className="relative z-[1] flex min-h-[6rem] items-center justify-center px-mid">
-        <Text variant="base">Ripple on light background</Text>
+        <Text textStyle="base">Ripple on light background</Text>
       </div>
     </div>
   ),

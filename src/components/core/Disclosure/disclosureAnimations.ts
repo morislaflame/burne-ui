@@ -1,17 +1,19 @@
 /**
  * Slot motion for Disclosure — look here first.
  *
- * DOM slots: `titleLift`, `title`, `chevron`, `contentShell`, `icon`, `body`
- * (`panelInner` is an internal target for the height recipe, not a public slot)
+ * DOM slots: `titleLift`, `title`, `chevron`, `contentShell`, `icon`, `content`
+ * (`panelInner` is an internal target for the height recipe, not a public slot;
+ * `contentWrap` is layout-only)
  *
  * Hosts:
  * - Trigger (`useDisclosureTriggerMotion`) plays hover/press on `titleLift` and
  *   `enter`/`leave` on `chevron` when `open` changes.
  * - Content (`useDisclosureContentMotion`) plays `enter`/`leave` on `contentShell`.
- *   The panel `<section>` registers public slot `body`.
+ *   The panel `<section>` registers public slot `content` (`Disclosure.Content`).
  *
  * Handle-drag is kit-internal: it sets `skipContentAnimRef` before `setOpen` so
- * neither host plays (instant apply only). Defaults: `resolveDisclosureMotionDefaults`.
+ * neither host plays (instant apply only). Card `root` hover is `hoverLiftFirstLevel`
+ * (`liftScale` 1). Defaults: `resolveDisclosureMotionDefaults`.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
@@ -33,9 +35,25 @@ import type {
 } from "./disclosureTypes";
 import { KIT_DISCLOSURE_VARIANTS } from "./disclosureTypes";
 
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindChevronRecipe } from "@/components/core/utils/slotMotion/recipes/bindChevron";
+import { bindCollapsibleRecipe } from "@/components/core/utils/slotMotion/recipes/bindCollapsible";
+
+bindLiftRecipes();
+bindChevronRecipe();
+bindCollapsibleRecipe();
+
 export function resolveDisclosureMotionDefaults(variant: DisclosureVariant): DisclosureMotion {
   return overlaySkinMotion(
     {
+      ...(variant === "card"
+        ? {
+            root: {
+              hoverIn: "hoverLiftFirstLevel" as const,
+              hoverOut: "hoverLiftFirstLevel" as const,
+            },
+          }
+        : {}),
       titleLift: {
         hoverIn: "hoverLiftFirstLevel",
         hoverOut: "hoverLiftFirstLevel",

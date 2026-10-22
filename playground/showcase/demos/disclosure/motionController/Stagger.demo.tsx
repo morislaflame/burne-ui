@@ -5,7 +5,7 @@ import { Disclosure } from "@/components/core/Disclosure";
 import { Text } from "@/components/core/Text";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const WAVE_EXCLUDE = ["contentShell", "titleLift", "chevron", "panelInner", "body"] as const;
+const WAVE_EXCLUDE = ["contentShell", "titleLift", "chevron", "panelInner", "content"] as const;
 const events = createMotionEvents({
   "disclosure:wave": { y: -6, duration: 0.22, replay: "rest", ease: "power2.out" },
   "disclosure:rest": { y: 0, duration: 0.16, ease: "power2.out" },
@@ -27,7 +27,7 @@ export function DisclosureMotionControllerStaggerDemo() {
       <Disclosure motionController={controller} motion={{ events }}>
         <Disclosure.Trigger icon={<IoInformationCircleOutline aria-hidden className="size-full" />}>playAll stagger</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">exclude contentShell / chevron so height and rotate stay kit-owned.</Text>
+          <Text as="p" textStyle="small" className="text-muted">exclude contentShell / chevron so height and rotate stay kit-owned.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

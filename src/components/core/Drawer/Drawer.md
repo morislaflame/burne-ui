@@ -2,6 +2,8 @@
 
 Боковая (или верхняя/нижняя) панель поверх контента: нативный `<dialog>`, slide-in/out по `placement`, опциональный drag-to-dismiss через handle. Controlled / uncontrolled: `open` / `defaultOpen` / `onOpenChange`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -29,7 +31,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 |-------|------------|
 | `Drawer.Trigger` | Открытие после press-squeeze; `asChild` |
 | `Drawer.Panel` | Портал + backdrop + slide motion |
-| `Drawer.Backdrop` | Маркер `isDismissable={false}` (рендерит `null`) |
+| `Drawer.Overlay` | Маркер `closeOnInteractOutside={false}` (рендерит `null`) |
 | `Drawer.Handle` | Drag-handle для swipe-dismiss |
 | `Drawer.Content` | Layout-обёртка (`p-xlarge`, `gap-large`) |
 | `Drawer.Header` / `HeadingBlock` / `Title` / `Description` | Шапка |
@@ -42,11 +44,11 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `size` | `default` | `default` \| `mid` \| `full` |
-| `variant` | `default` | `default` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary`. Имя скина — строка |
 | `themeAnchor` | auto | Якорь темы для backdrop портала |
 | `className` | — | На focusable panel wrapper |
 | `motion` | — | Мерж с картой Root; defaults + `params.placement` |
-| `motionController` | — | Handle портального хоста (`panel` / `backdrop` / chrome). `play()` skip. `playSlot("panel")` |
+| `motionController` | — | Handle портального хоста (`panel` / `overlay` / chrome). `play()` skip. `playSlot("panel")` |
 
 ### Пример
 
@@ -70,7 +72,7 @@ const [open, setOpen] = useState(false);
 </Drawer>
 ```
 
-`Drawer.Backdrop isDismissable={false}` — отключить закрытие по клику на backdrop.
+`Drawer.Overlay closeOnInteractOutside={false}` — отключить закрытие по клику на подложку.
 
 ## placement, extent и size
 
@@ -99,7 +101,7 @@ const [open, setOpen] = useState(false);
 
 ```
 <dialog>
-  <div overlayRef>              ← слот `backdrop`
+  <div overlayRef>              ← слот `overlay`
   <div panelRef tabIndex={-1}>  ← слот `panel` (px-slide, не xPercent)
     [Drawer.Handle]             ← слот `handle` + pointer capture drag
     <Drawer.Content>            ← слот `content`
@@ -110,7 +112,7 @@ const [open, setOpen] = useState(false);
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `backdrop` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
+| `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
 | `panel` | `enter` / `leave` | `drawerSlideEnter` / `drawerSlideLeave` (`params.placement`) |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle` | `enter` / `leave` | нет; хост **рассылает**, если задана |
@@ -125,6 +127,8 @@ Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: 
 **Где в коде:** типы — `drawerTypes.ts`; scope — `drawerContext.tsx`; defaults + host play — `drawerAnimations.ts`; Panel-provider — `drawerParts.tsx`; карта на корне — `Drawer.tsx`.
 
 Проп `motionController` на **`Drawer.Panel`**. `play()` skip — нет `root`; `playSlot("panel")`. playground / Storybook **MotionController**.
+
+На корне — scope триггера. На `Drawer.Panel` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Drawer, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -198,10 +202,6 @@ function Nudge() {
 
 Как `Dialog.Trigger`: `e.preventDefault()` + `runOpenAfterSqueeze` → `motion.trigger.pressIn` (дефолт `pressSqueeze`) → `onOpenChange(true)`. Другой рецепт — `motion.trigger.pressIn`.
 
-### Gloss panel
-
-Slide на `panelRef`; `bindGlossPanelRef` на gloss-обёртке — surface gloss motion.
-
 #### Кастомизация
 
 ```ts
@@ -237,7 +237,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 | Panel enter | `modalPanelEnter` (scale) | `drawerSlideEnter` (px по `placement`) |
 | Drag dismiss | нет | `Drawer.Handle` |
 | Close skip | нет | после drag |
-| Scrim slot | `overlay` (публичной `Dialog.Backdrop` нет) | `backdrop` (`Drawer.Backdrop`) |
+| Scrim slot | `overlay` | `overlay` (`Drawer.Overlay` — маркер, сам узел рисует панель) |
 
 ## Токены и CSS
 
@@ -246,7 +246,6 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 | Overlay light | `overlay-backdrop` (`--overlay-backdrop-color` + blur) |
 | Overlay dark | `overlay-backdrop-scrim` (`--overlay-backdrop-scrim`) |
 | Panel | `bg-surface border-token shadow-token-lg` |
-| Gloss | `gloss-panel gloss-deep` |
 | Handle grip | `bg-tertiary`, `rounded-full` |
 | z-index | `z-dialog` (`--z-dialog`) |
 
@@ -265,7 +264,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 |------|---------------|-------------------|
 | `trigger` | `Drawer.Trigger` | Слот на кнопке / asChild |
 | `dialog` | Нативный `<dialog>` | Глобальные правки dialog |
-| `backdrop` | `Drawer.Backdrop` (DOM scrim) | Blur, opacity |
+| `overlay` | Подложка в портале | Blur, opacity. `Drawer.Overlay` этот узел не рисует |
 | `panel` | Surface панели | Width/height по `size`, border, shadow |
 | `content` | `Drawer.Content` | Padding внутри панели |
 | `handle` | Drag handle | Hit-area, padding (не focusable) |
@@ -278,7 +277,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 | `footer` | `Drawer.Footer` | Actions row |
 | `close` | `Drawer.Close` | CloseButton styles |
 
-`Drawer.Panel`: `extent` (`default` | `mid` | `full`), `variant` (`default` | `gloss`); `placement` / `size` на `<Drawer>`.
+`Drawer.Panel`: `extent` (`default` | `mid` | `full`), `variant`; `placement` / `size` на `<Drawer>`.
 
 ### Compound API
 
@@ -288,7 +287,7 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
   onOpenChange={setOpen}
   placement="bottom"
   classNames={{
-    backdrop: "backdrop-blur-2xl",
+    overlay: "backdrop-blur-2xl",
     panel: "max-h-[85vh] border-primary/40 shadow-token-lg",
     handle: "py-mid",
     header: "border-b border-primary/20 pb-small",
@@ -298,20 +297,6 @@ Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
     footer: "border-t border-primary/20 pt-small",
   }}
 >
-  <Drawer.Panel extent="mid" variant="gloss">
-    <Drawer.Handle />
-    <Drawer.Header>
-      <Drawer.HeadingBlock>
-        <Drawer.Title>Настройки</Drawer.Title>
-        <Drawer.Description>Все слоты через classNames.</Drawer.Description>
-      </Drawer.HeadingBlock>
-      <Drawer.Close />
-    </Drawer.Header>
-    <Drawer.Body>…</Drawer.Body>
-    <Drawer.Footer>
-      <Button size="small" onClick={() => setOpen(false)}>Закрыть</Button>
-    </Drawer.Footer>
-  </Drawer.Panel>
 </Drawer>
 ```
 
@@ -348,4 +333,4 @@ Drawer/
 
 ## Storybook
 
-`Core Components/Drawer` — placement, size, gloss, handle drag, `isDismissable={false}`, Trigger, slot motion gallery.
+`Core Components/Drawer` — placement, size, handle drag, `closeOnInteractOutside={false}`, Trigger, slot motion gallery.

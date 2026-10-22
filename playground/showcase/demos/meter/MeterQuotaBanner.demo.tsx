@@ -8,7 +8,7 @@ export function MeterQuotaBannerDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-mid rounded-large border border-warning/30 bg-warning/5 p-large">
       <div className="flex items-baseline justify-between gap-large">
-        <Text as="p" variant="small" className="text-warning">
+        <Text as="p" textStyle="small" className="text-warning">
           API quota almost exhausted
         </Text>
       </div>
@@ -22,7 +22,7 @@ export function MeterQuotaBannerDemo() {
           color="var(--color-warning)"
           className="w-full"
         />
-        <Text as="p" variant="small" className="text-muted mt-small">
+        <Text as="p" textStyle="small" className="text-muted mt-small">
           Reset limit — 1st day of the next month.
         </Text>
       </div>

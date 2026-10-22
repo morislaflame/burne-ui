@@ -31,7 +31,7 @@ export function TablePagesDemo() {
       <Table.ScrollContainer>
         <Table.Content aria-label="Team pages" className="min-w-[28rem]">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column rowHeader>Name</Table.Column>
             <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body>

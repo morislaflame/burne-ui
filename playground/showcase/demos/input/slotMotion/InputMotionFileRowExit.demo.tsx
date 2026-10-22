@@ -4,7 +4,7 @@ export function InputMotionFileRowExitDemo() {
   return (
     <Input
       className="w-full max-w-sm"
-      inputType="file"
+      type="file"
       label="File leave"
       placeholder="Pick a file, then remove it"
       hint="Custom fileRow.leave factory — rotate + slide"

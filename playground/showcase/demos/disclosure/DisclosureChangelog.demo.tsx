@@ -14,7 +14,7 @@ export function DisclosureChangelogDemo() {
         <Disclosure key={release.value} value={release.value}>
           <Disclosure.Trigger>{release.title}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">
+            <Text as="p" textStyle="small" className="text-muted">
               {release.notes}
             </Text>
           </Disclosure.Content>

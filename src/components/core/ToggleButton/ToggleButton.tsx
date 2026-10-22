@@ -1,9 +1,8 @@
 import { forwardRef, useMemo, useRef } from "react";
  
 import { dataGroupSegment, dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
-import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { usesKitElevation } from "@/skins/resolveVariantVisual";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
-import { cn } from "@/utils/cn";
 
 import { resolveToggleButtonMotionDefaults, useToggleButtonAnimations } from "./toggleButtonAnimations";
 import { toggleButtonHasCompoundPart } from "./toggleButtonAPI";
@@ -169,7 +168,6 @@ function ToggleButtonSurface({
         ref={animations.setRefs}
         type={type}
         disabled={state.disabled}
-        data-toggle-button-value={state.itemValue}
         role={state.role}
         aria-pressed={state.ariaPressed}
         aria-checked={state.ariaChecked}
@@ -177,6 +175,7 @@ function ToggleButtonSurface({
         className={buttonClass}
         {...rest}
         {...dataVariantProps({ size: state.size, variant: state.variant })}
+        data-value={state.itemValue}
         data-group-segment={dataGroupSegment(state.groupSegment != null)}
         onPointerOver={animations.pointerHandlers.onPointerOver}
         onPointerOut={animations.pointerHandlers.onPointerOut}
@@ -197,9 +196,7 @@ function ToggleButtonSurface({
             <ToggleButtonContent>{children}</ToggleButtonContent>
           )
         ) : (
-          <ToggleButtonContent
-            className={cn(state.classNames?.content, state.contentLayoutClass)}
-          >
+          <ToggleButtonContent>
             <ToggleButtonSimpleContent icon={icon} iconPosition={iconPosition}>
               {state.children}
             </ToggleButtonSimpleContent>
@@ -258,7 +255,6 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       fillColor,
       size,
       disabled,
-      className,
       classNames,
       children,
       onClick,
@@ -276,7 +272,7 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       () => ({
         pointerInside: hoverPointerInsideRef,
         hasHoverShadow:
-          isKitVariant(state.variant, KIT_TOGGLE_BUTTON_VARIANTS) && !state.groupSegment,
+          usesKitElevation(state.variant, KIT_TOGGLE_BUTTON_VARIANTS) && !state.groupSegment,
         onReleaseStart: () => onReleaseStartRef.current?.(),
       }),
       [state.groupSegment, state.variant],

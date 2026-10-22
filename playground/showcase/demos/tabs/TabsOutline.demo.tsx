@@ -9,12 +9,12 @@ export function TabsOutlineDemo() {
         <Tabs.Tab value="b">Outline B</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="a" className="pt-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           variant outline
         </Text>
       </Tabs.Panel>
       <Tabs.Panel value="b" className="pt-large">
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           primary-tint indicator
         </Text>
       </Tabs.Panel>

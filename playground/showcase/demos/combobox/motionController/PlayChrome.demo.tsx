@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -25,7 +25,7 @@ export function ComboBoxMotionControllerPlayChromeDemo() {
         </Button>
       </div>
       <ComboBox
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{
@@ -40,10 +40,10 @@ export function ComboBoxMotionControllerPlayChromeDemo() {
         }}
       >
         <ComboBox.Label>Framework</ComboBox.Label>
-        <ComboBox.InputGroup>
+        <ComboBox.Shell>
           <ComboBox.Input />
           <ComboBox.Trigger />
-        </ComboBox.InputGroup>
+        </ComboBox.Shell>
         <ComboBox.Popover />
         <ComboBox.Hint>Root chrome scope — not the InputGroup host.</ComboBox.Hint>
       </ComboBox>

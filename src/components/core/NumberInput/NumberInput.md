@@ -39,8 +39,7 @@ import { NumberInput, type NumberInputProps, type NumberInputClassNames, type Nu
 | `min` / `max` | — | Границы. Кнопка на границе выключена |
 | `step` | `1` | Шаг кнопок и стрелок. На blur значение садится на сетку шага |
 | `variant` | `default` | как Input: `default` \| `outline` \| `secondary` |
-| `status` | `default` | Только цвет. Не ставит `aria-invalid` |
-| `invalid` | — | Danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
+| `invalid` | — | Danger-кольцо, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `size` | `base` | Высота поля |
 | `readOnly` | — | Поле можно выделить, степперы выключены |
 | `name` | — | Нативный input. Form `setValue` пишет число или `""` |
@@ -69,14 +68,54 @@ import { NumberInput, type NumberInputProps, type NumberInputClassNames, type Nu
 
 `variant` — оболочка поля, как у Input: `default`, `outline`, `secondary`. `size` — высота: `small`, `base`, `mid`, `large`.
 
-Поле: `role="spinbutton"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`. `aria-invalid` только от `invalid` / `error`. Стрелки вверх и вниз шагают. Кнопки подписаны Decrease и Increase и не забирают фокус у поля.
-
 ## Анимации
 
 ### Slot motion
 
 Хост — `shell` (подъём поля). `decrement` и `increment` сжимаются при нажатии. `control`, `label`, `hint` и `error` на том же scope: у каждого слота свои `hoverIn`, `pressIn` и `enter`. `enter` играет при появлении, если фаза задана.
 
-## Файлы
+## data-*
 
-`NumberInput.tsx` держит scope. Рецепты слотов — `numberInputAnimations.ts`.
+На корне и на поле: `data-invalid`, `data-disabled`, `data-readonly`, `data-required` — пустая строка, когда флаг включён. На корне ещё `data-variant` и `data-size`.
+
+## MotionController
+
+Ручка на корне. Слота `root` в `NumberInputMotion` нет: `play()` без слота пропускается. Оболочка — `playSlot("shell")`, кнопки — `playSlot("decrement")` и `playSlot("increment")`.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+const qty = useMotionControllerHandle();
+
+<NumberInput motionController={qty} label="Количество" />
+```
+
+## Доступность
+
+- Поле: `role="spinbutton"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`. Подпись — `htmlFor`.
+- `aria-invalid` только от `invalid` или `error`. Подсказка и ошибка — в `aria-describedby`, когда части подключены.
+- Стрелки вверх и вниз шагают. Кнопки подписаны Decrease и Increase и не забирают фокус у поля.
+
+## Структура файлов
+
+```
+NumberInput/
+├── NumberInput.tsx
+├── index.ts
+├── NumberInput.stories.tsx
+├── numberInputTypes.ts
+├── numberInputStyles.ts
+├── numberInputA11y.ts
+├── numberInputAPI.ts
+├── numberInputContext.tsx
+├── numberInputAnimations.ts
+├── numberInputParts.tsx
+├── useNumberInputRootState.ts
+├── numberInputAPI.test.ts
+├── numberInput.test.tsx
+└── NumberInput.md
+```
+
+## Формат
+
+`formatOptions` уходит в `Intl.NumberFormat` для уже принятого числа. `locale` по умолчанию `en`. Фокус показывает сырое число, blur снова форматирует. `aria-valuetext` — отформатированная строка.

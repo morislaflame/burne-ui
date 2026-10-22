@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { Badge } from "@/components/core/Badge";
 import { Button } from "@/components/core/Button";
+import { CloseButton } from "@/components/core/CloseButton";
+import { ComboBox } from "@/components/core/ComboBox";
 import { Link } from "@/components/core/Link";
+import { Select } from "@/components/core/Select";
 import { Tooltip } from "@/components/core/Tooltip";
 import { cn } from "@/utils/cn";
 
@@ -58,7 +61,7 @@ describe("D3-19 icon slot size", () => {
 
   it("replaces the Tooltip icon size from the slot", () => {
     render(
-      <Tooltip defaultOpen status="danger" classNames={{ icon: "icon-slot-large" }}>
+      <Tooltip defaultOpen status="danger" classNames={{ indicator: "icon-slot-large" }}>
         <Tooltip.Trigger>Hint</Tooltip.Trigger>
         <Tooltip.Content>Body</Tooltip.Content>
       </Tooltip>,
@@ -68,5 +71,44 @@ describe("D3-19 icon slot size", () => {
     expect(className).toContain("icon-slot-large");
     expect(className).not.toContain("icon-slot-base");
     expect(className).not.toContain("[&_svg]:icon");
+  });
+
+  it("replaces the Select chevron size from triggerIconWrap", () => {
+    const { container } = render(
+      <Select
+        items={[{ value: "a", label: "A" }]}
+        classNames={{ triggerIconWrap: "icon-slot-large" }}
+      />,
+    );
+    const className = wrapClass(container.querySelector("svg"));
+    expect(className).toContain("icon-slot");
+    expect(className).toContain("icon-slot-large");
+    expect(className).not.toContain("icon-slot-base");
+    expect(container.querySelector("svg")?.getAttribute("class") ?? "").not.toMatch(/\bicon-(small|base|mid|large)\b/);
+  });
+
+  it("replaces the ComboBox chevron size from triggerIconWrap", () => {
+    const { container } = render(
+      <ComboBox
+        items={[{ value: "a", label: "A" }]}
+        classNames={{ triggerIconWrap: "icon-slot-large" }}
+      />,
+    );
+    const className = wrapClass(container.querySelector("svg"));
+    expect(className).toContain("icon-slot");
+    expect(className).toContain("icon-slot-large");
+    expect(className).not.toContain("icon-slot-base");
+    expect(container.querySelector("svg")?.getAttribute("class") ?? "").not.toMatch(/\bicon-(small|base|mid|large)\b/);
+  });
+
+  it("replaces the CloseButton icon size from the slot", () => {
+    const { container } = render(
+      <CloseButton aria-label="Close" classNames={{ icon: "icon-slot-large" }} />,
+    );
+    const className = wrapClass(container.querySelector("svg"));
+    expect(className).toContain("icon-slot");
+    expect(className).toContain("icon-slot-large");
+    expect(className).not.toContain("icon-slot-base");
+    expect(container.querySelector("svg")?.getAttribute("class") ?? "").not.toMatch(/\bicon-(small|base|mid|large)\b/);
   });
 });

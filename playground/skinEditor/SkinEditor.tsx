@@ -9,6 +9,7 @@ import { Text } from "@/components/core/Text";
 import { SkinProvider } from "@/skins/skinContext";
 import {
   parseSkinDocument,
+  formatSkinPackage,
   renderSkinPackage,
   renderSkinStylesheet,
   SKIN_EDITOR_EXAMPLE,
@@ -47,10 +48,10 @@ function tokenRows(tokens: Record<string, string> | undefined): TokenRow[] {
 }
 
 function targetRows(targets: SkinDocument["targets"]): TargetRow[] {
-  return Object.entries(targets ?? {}).map(([slot, className], index) => ({
+  return Object.entries(targets ?? {}).map(([slot, spec], index) => ({
     id: `target-${index}`,
     slot,
-    className,
+    className: typeof spec === "string" ? spec : "extend" in spec ? spec.extend : spec.replace,
   }));
 }
 
@@ -168,7 +169,7 @@ export function SkinEditor() {
     <div className="grid items-start gap-large lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
       <div className="flex min-w-0 flex-col gap-large">
         <section className="flex flex-col gap-small">
-          <Text as="h2" variant="mid">
+          <Text as="h2" textStyle="mid">
             Skin
           </Text>
           <Label className="text-small text-muted">Name</Label>
@@ -192,7 +193,7 @@ export function SkinEditor() {
         </section>
 
         <section className="flex flex-col gap-small">
-          <Text as="h2" variant="mid">
+          <Text as="h2" textStyle="mid">
             Tokens
           </Text>
           {tokens.map((row) => (
@@ -248,7 +249,7 @@ export function SkinEditor() {
         </section>
 
         <section className="flex flex-col gap-small">
-          <Text as="h2" variant="mid">
+          <Text as="h2" textStyle="mid">
             Targets
           </Text>
           {targets.map((row) => (
@@ -301,7 +302,7 @@ export function SkinEditor() {
         </section>
 
         <section className="flex flex-col gap-small">
-          <Text as="h2" variant="mid">
+          <Text as="h2" textStyle="mid">
             Layers
           </Text>
           <select
@@ -345,7 +346,7 @@ export function SkinEditor() {
             Apply JSON
           </Button>
           {jsonError ? (
-            <Text as="p" variant="small" className="text-danger">
+            <Text as="p" textStyle="small" className="text-danger">
               {jsonError}
             </Text>
           ) : null}
@@ -355,7 +356,7 @@ export function SkinEditor() {
           <ul className="flex flex-col gap-xsmall">
             {parsed.errors.map((error) => (
               <li key={error}>
-                <Text as="span" variant="small" className="text-danger">
+                <Text as="span" textStyle="small" className="text-danger">
                   {error}
                 </Text>
               </li>
@@ -370,7 +371,7 @@ export function SkinEditor() {
           <Button type="button" size="small" variant="secondary" onClick={() => download(`${draft.name}.css`, renderSkinStylesheet(preview))}>
             CSS
           </Button>
-          <Button type="button" size="small" variant="secondary" onClick={() => void copy("package", renderSkinPackage(preview))}>
+          <Button type="button" size="small" variant="secondary" onClick={() => void copy("package", formatSkinPackage(renderSkinPackage(preview)))}>
             {copied === "package" ? "Copied" : "Copy package"}
           </Button>
           <Button type="button" size="small" variant="outline" onClick={share}>
@@ -385,7 +386,7 @@ export function SkinEditor() {
           data-testid="skin-preview"
           className="relative flex min-h-64 flex-col gap-mid overflow-auto rounded-large border-token bg-background p-large"
         >
-          <Text as="p" variant="small" className="text-muted">
+          <Text as="p" textStyle="small" className="text-muted">
             Preview stays in this box. Dialog and popover use it as the portal.
           </Text>
           <div className="flex flex-wrap gap-small">
@@ -400,7 +401,7 @@ export function SkinEditor() {
                   <Dialog.Close />
                 </Dialog.Header>
                 <Dialog.Body>
-                  <Text as="p" variant="base">
+                  <Text as="p" textStyle="base">
                     The panel is portaled into the preview, so it keeps the skin.
                   </Text>
                 </Dialog.Body>
@@ -419,7 +420,7 @@ export function SkinEditor() {
               </Card.HeadingBlock>
             </Card.Header>
             <Card.Body>
-              <Text as="p" variant="base">
+              <Text as="p" textStyle="base">
                 Foreground on the surface is the pair the validator measures.
               </Text>
             </Card.Body>

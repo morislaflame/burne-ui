@@ -1,11 +1,11 @@
 import { isValidElement, type ReactElement } from "react";
  
-import type { BadgeInlineIconPosition } from "./badgeTypes";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
  
-export function readBadgeInlineIconPosition(el: ReactElement): BadgeInlineIconPosition | null {
+export function readBadgeInlineIconPosition(el: ReactElement): IconPosition | null {
   const raw = (el.props as { "data-icon"?: string })["data-icon"];
-  if (raw === "inline-start" || raw === "start") return "inline-start";
-  if (raw === "inline-end" || raw === "end") return "inline-end";
+  if (raw === "start") return "start";
+  if (raw === "end") return "end";
   return null;
 }
  

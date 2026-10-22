@@ -69,8 +69,6 @@ export {
 } from "@/components/core/utils/useFieldShellHoverLift";
 export {
   SHADOW_LIFT_MOTION_CLASS,
-  firstLevelHoverShadow,
-  secondLevelShadow,
   shadowMotionFor,
   usePersistentElShadow,
   useSecondLevelShadow,
@@ -78,12 +76,38 @@ export {
 } from "@/components/core/utils/useShadowMotion";
 export { gsap, killMotion, tweenCssColor, resolveCssColor, ensureRippleEase } from "@/components/core/utils/gsapMotion";
 export {
+  getMotionConfig,
   MOTION_CONFIG_DEFAULTS,
   MOTION_CONFIG_LIMITS,
   MOTION_CSS_VAR,
   applyMotionCssTokens,
+  motionPressSqueezeTotalFor,
   overlayMotionConfig,
 } from "@/components/core/utils/motionConfig";
+export {
+  resolveAdaptiveHoverLiftScale,
+  resolveAdaptivePressSqueezeScale,
+} from "@/components/core/utils/hoverInteractiveLift";
+export {
+  playShadowFade,
+  removeShadowFadeHost,
+  snapShadowFade,
+  type ShadowFadeKind,
+  type ShadowFadeName,
+} from "@/components/core/utils/shadowFade";
+export type { TweenCssColorOptions } from "@/components/core/utils/gsapMotion";
+export {
+  hasMotionRecipe,
+  isKitMotionRecipe,
+  isMotionRunActive,
+  KIT_MOTION_RECIPE_META,
+  listMotionRecipes,
+  MOTION_RECIPE_METADATA_DEFAULTS,
+  unregisterMotionRecipe,
+  type MotionBroadcastOptions,
+  type MotionCancelReason,
+  type MotionRun,
+} from "@/components/core/utils/slotMotion";
 export type {
   MotionRecipeParams,
   MotionTransformVars,
@@ -91,7 +115,6 @@ export type {
 export {
   SHADOW_INTERACTION_GEOM,
   SHADOW_KNOB_CSS_DEFAULTS,
-  SHADOW_LAYER_GEOM,
   SHADOW_LIFT_CSS_VAR,
   SHADOW_OPACITY_BASE,
 } from "@/tokens/shadows";
@@ -157,9 +180,15 @@ export {
 
 export {
   SKIN_FORBIDDEN_TOKENS,
+  SKIN_LAYER_SLOTS,
+  SKIN_MOTION_SLOTS,
   SKIN_SLOTS,
+  SKIN_TARGET_SLOTS,
   isForbiddenSkinToken,
   type SkinForbiddenToken,
+  type SkinLayerSlot,
+  type SkinMotionSlot,
+  type SkinTargetSlot,
 } from "@/skins/skinTypes";
 export {
   resolveSkinTokens,
@@ -183,4 +212,60 @@ export {
   type SkinDocument,
   type SkinParseResult,
 } from "@/skins/skinDocument";
+
+export {
+  resolveAlertLiveRole,
+} from "@/components/core/Alert/alertA11y";
+export {
+  resolveAlertStatus,
+  resolveAlertVariant,
+} from "@/components/core/Alert/alertAPI";
+export {
+  primaryButtonStatusForAlertTone,
+  primaryButtonVariantForAlertTone,
+} from "@/components/composite/AlertDialog/alertDialogAPI";
+export { footerButtonSizeForAlertDialog } from "@/components/composite/AlertDialog/alertDialogStyles";
+export { sliderThicknessToCss } from "@/components/core/Slider/sliderStyles";
+export { TABLE_ROW_TONE_SURFACE } from "@/components/core/Table/tableStyles";
+export {
+  SELECTION_INDICATOR_FILL_CLASS,
+  SELECTION_INDICATOR_ICON_CLASS,
+  SELECTION_INDICATOR_RADIUS_CLASS,
+  SELECTION_INDICATOR_SHELL_CLASS,
+  SELECTION_INDICATOR_SIZE_CLASS,
+  selectionIndicatorFallbackPx,
+  selectionIndicatorShellClass,
+  selectionIndicatorVariantClass,
+} from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
+export {
+  SELECTION_INDICATOR_FILL_DISPLAY_NAME,
+  SELECTION_INDICATOR_MARK_DISPLAY_NAME,
+} from "@/components/core/SelectionIndicator/selectionIndicatorAPI";
+export { useSelectionIndicatorAnimation } from "@/components/core/SelectionIndicator/selectionIndicatorAnimations";
+export {
+  hexToHsva,
+  hexToRgba,
+  hsvaToColorString,
+  hsvaToHex,
+  hsvaToRgba,
+  hueToRgbString,
+  rgbaToHex,
+  rgbaToHsva,
+} from "@/components/core/ColorPicker/colorUtils";
+export { RIPPLE_COLOR } from "@/components/core/Ripple/rippleTokens";
+export {
+  HOVER_CARD_CLOSE_DELAY,
+  HOVER_CARD_OPEN_DELAY,
+} from "@/components/core/HoverCard/hoverCardTypes";
+export { ToastContext, useToastContext } from "@/components/core/Toast/toastContext";
+export { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
+export { KIT_MOTION_RECIPES } from "@/components/core/utils/slotMotion/slotMotionTypes";
+export {
+  NARROW_VIEWPORT_MAX_PX,
+  SHADOW_CSS_VAR,
+  TOUCH_OR_NARROW_VIEWPORT_MQL,
+  TOUCH_OR_NARROW_VIEWPORT_MQL_ANY_POINTER,
+  Z_INDEX_CSS_VAR,
+  Z_INDEX_DEFAULTS,
+} from "@/tokens";
  

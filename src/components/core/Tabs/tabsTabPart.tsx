@@ -32,7 +32,7 @@ import {
   useTabsContext,
   useTabsMotionScope,
 } from "./tabsContext";
-import { TABS_TAB_AS_CHILD_CLASS, tabsTabClass, tabsTabTextClass, tabTextVariant } from "./tabsStyles";
+import { tabsTabClass, tabsTabTextClass, tabTextVariant } from "./tabsStyles";
 import type { TabsTabProps } from "./tabsTypes";
  
 import { cn } from "@/utils/cn";
@@ -177,7 +177,7 @@ function TabsTabSurface({
     const child = children as ReactElement<
       ButtonHTMLAttributes<HTMLButtonElement> & {
         ref?: Ref<HTMLElement>;
-        "data-tab-value"?: string;
+        "data-value"?: string;
       }
     >;
  
@@ -185,7 +185,7 @@ function TabsTabSurface({
       ...rest,
       role: "tab",
       id: tabId,
-      "data-tab-value": tabValue,
+      "data-value": tabValue,
       "aria-selected": a11y["aria-selected"],
       "aria-controls": a11y["aria-controls"],
       tabIndex: a11y.tabIndex,
@@ -194,7 +194,7 @@ function TabsTabSurface({
         setRefs(node as HTMLButtonElement | null);
         if (child.props.ref) mergeForwardedRef(child.props.ref, node);
       },
-      className: cn(child.props.className, TABS_TAB_AS_CHILD_CLASS, className),
+      className: cn(tabButtonClassName, child.props.className),
       onClick: (e: MouseEvent<HTMLButtonElement>) => {
         child.props.onClick?.(e);
         handleClick(e);
@@ -228,7 +228,6 @@ function TabsTabSurface({
       type="button"
       role="tab"
       id={tabId}
-      data-tab-value={tabValue}
       aria-selected={a11y["aria-selected"]}
       aria-controls={a11y["aria-controls"]}
       tabIndex={a11y.tabIndex}
@@ -236,6 +235,7 @@ function TabsTabSurface({
       className={tabButtonClassName}
       onClick={handleClick}
       {...rest}
+      data-value={tabValue}
       data-state={a11y["aria-selected"] ? "active" : "inactive"}
       onPointerEnter={pointer.handlePointerEnter}
       onPointerLeave={pointer.handlePointerLeave}
@@ -247,7 +247,7 @@ function TabsTabSurface({
         as="span"
         inheritColor
         ref={textPart.setRef}
-        variant={tabTextVariant(size)}
+        textStyle={tabTextVariant(size)}
         className={tabsTabTextClass(slotClassNames.tabText)}
       >
         {children}

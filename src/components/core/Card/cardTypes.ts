@@ -1,7 +1,5 @@
 import type {
   HTMLAttributes,
-  KeyboardEvent,
-  MouseEvent,
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
@@ -15,10 +13,6 @@ export type { CardSize } from "./cardStyles";
 export const KIT_CARD_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitCardVariant = (typeof KIT_CARD_VARIANTS)[number];
 export type CardVariant = KitCardVariant | (string & {});
-
-export type CardPressEvent =
-  | MouseEvent<HTMLElement>
-  | KeyboardEvent<HTMLElement>;
 
 export type CardClassNames = {
   root?: string;
@@ -68,11 +62,17 @@ export type CardProps = Omit<
   /**
    * Interactive card: hover-lift, shadow and squeeze on press (like a button).
    * Ripple is not built-in — if needed, pass `<Ripple />` as the first child and wrap the rest of the content in a layer with `relative z-[1]`.
-   * Do not place other buttons/links inside without `stopPropagation` on their click — otherwise the `onPress` of the card will also trigger.
+   * Do not place other buttons/links inside without `stopPropagation` on their click — otherwise the card `onClick` will also trigger.
    */
   pressable?: boolean;
-  /** Called when activated (`click` or Enter / Space on the root). Only meaningful when `pressable`. */
-  onPress?: (event: CardPressEvent) => void;
+  /** Renders the pressable shell as a link. */
+  href?: string;
+  /**
+   * The single child becomes the shell (`next/link`, `<a>`).
+   * Card content stays inside that child.
+   */
+  asChild?: boolean;
+  /** Activation (`click`, and Enter / Space when the root is a button). */
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
   classNames?: Prettify<CardClassNames>;
@@ -131,7 +131,6 @@ export type UseCardAnimationsProps = {
   variant: CardVariant;
   shadow?: ShadowLevel;
   motion?: CardMotion;
-  onPress?: (event: CardPressEvent) => void;
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
   onPointerDown?: HTMLAttributes<HTMLElement>["onPointerDown"];
@@ -145,6 +144,8 @@ export type UseCardAnimationsProps = {
 export type CardRootShellProps = {
   pressable: boolean;
   renderAsButton: boolean;
+  href?: string;
+  asChild?: boolean;
   rootClassName: string;
   setRootRef: (node: HTMLElement | null) => void;
   rest: HTMLAttributes<HTMLElement>;

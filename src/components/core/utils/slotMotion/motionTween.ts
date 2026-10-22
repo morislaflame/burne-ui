@@ -1,6 +1,7 @@
 import { gsap } from "@/components/core/utils/gsapMotion";
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
  
+import { warnMotionLayoutKeys } from "./resolveMotionValue";
 import { isMotionPhaseName } from "./slotMotionTypes";
 import type {
   MotionAnimation,
@@ -27,7 +28,16 @@ const TRANSFORM_KEYS = [
   "opacity",
 ] as const;
  
-const PUBLIC_TRANSFORM_KEYS = ["x", "y", "scale", "autoAlpha"] as const;
+const PUBLIC_TRANSFORM_KEYS = [
+  "x",
+  "y",
+  "scale",
+  "scaleX",
+  "scaleY",
+  "rotation",
+  "autoAlpha",
+  "opacity",
+] as const;
  
 export const MOTION_REST_POSE = {
   x: 0,
@@ -179,6 +189,7 @@ export function playDeclarativeMotion(
     config: Readonly<MotionConfig>;
   },
 ): MotionAnimation | undefined {
+  warnMotionLayoutKeys(vars);
   const tweenVars: MotionTweenVars = {};
   for (const key of PUBLIC_TRANSFORM_KEYS) {
     if (vars[key] !== undefined) tweenVars[key] = vars[key];
@@ -239,14 +250,16 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
     el: HTMLElement | null | undefined,
     from: MotionTweenVars | undefined,
     vars: MotionTweenVars,
-  ): MotionAnimation | undefined =>
-    track(
+  ): MotionAnimation | undefined => {
+    warnMotionLayoutKeys(vars);
+    return track(
       playTween(el, from, vars, {
         reduced: host.reduced,
         config: host.config,
         overwrite,
       }),
     );
+  };
  
   const to: MotionTweenApi["to"] = (
     a: MotionTweenVars | HTMLElement | null | undefined,
@@ -333,6 +346,7 @@ export function createMotionTweenApi(host: MotionTweenHost): MotionTweenApi {
       vars: MotionTweenVars,
       position: MotionTimelinePosition | undefined,
     ): void {
+      warnMotionLayoutKeys(vars);
       if (!el || !hasTransform(vars)) return;
       if (host.reduced) {
         gsap.set(el, { ...pickTransform(vars), force3D: false });

@@ -26,7 +26,7 @@ function DrawerHandlePanel({ placement }: { placement: DrawerPlacement }) {
         <Drawer.Close />
       </Drawer.Header>
       <Drawer.Body>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           {HANDLE_HINT[placement]} Swipe via <code>Drawer.Handle</code>.
         </Text>
       </Drawer.Body>

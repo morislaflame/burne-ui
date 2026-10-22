@@ -2,10 +2,13 @@
 
 Выбор цвета в popover: 2D saturation/value area, hue/alpha sliders, hex input, presets. Compound API на базе `Popover`. Экспортируются standalone `ColorSlider`, `ColorSwatch` и color utils.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexToHsva, hsvaToRgba, rgbaToHsva, type ColorPickerProps, type ColorPickerTriggerProps, type ColorPickerContentProps, type ColorPickerSize, type ColorPickerVariant, type ColorPickerClassNames, type ColorSliderTrackProps, type ColorSwatchProps, type ColorSwatchMotion, type ColorSwatchPartMotion, type HSVA, type RGBA } from "burne-ui";
+import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, type ColorPickerProps, type ColorPickerTriggerProps, type ColorPickerContentProps, type ColorPickerSize, type ColorPickerVariant, type ColorPickerClassNames, type ColorSliderTrackProps, type ColorSwatchProps, type ColorSwatchMotion, type ColorSwatchPartMotion, type HSVA, type RGBA } from "burne-ui";
+import { hexToHsva, hsvaToHex, hsvaToRgba, rgbaToHsva } from "burne-ui/internal";
 ```
 
 ## API
@@ -28,19 +31,34 @@ import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexTo
 </ColorPicker>
 ```
 
+### Simple API
+
+Без compound-частей корень сам рисует подпись, trigger, панель, hint и error.
+
+```tsx
+<ColorPicker name="brand" label="Цвет" hint="Hex" defaultValue="#3b82f6" />
+```
+
+`name` пишет текущий hex в `<input type="hidden">` и связывается с `Form`.
+
 ### Root props
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `value` / `defaultValue` | `#3b82f6` | Hex string |
 | `onValueChange` | — | `(hex: string) => void` |
+| `label` / `hint` / `error` | — | Поле, как у DatePicker. Части: `ColorPicker.Label`, `.Hint`, `.Error` |
+| `id` / `name` / `required` | — | `id` на trigger. `name` — скрытый input и `Form` |
+| `readOnly` | `false` | Не меняет цвет. `aria-readonly` на trigger, `data-readonly` на корне |
 | `open` / `defaultOpen` / `onOpenChange` | — | Popover state |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` | `default` \| `gloss` (→ `Popover`) |
+| `variant` | `default` | `default` (→ `Popover`) |
 | `side` | `bottom` | Popover side |
+| `portalContainer` | `document.body` | Хост портала панели |
 | `disabled` | `false` | Блокирует trigger |
-| `classNames` | — | Слоты |
-| `motion` | — | Карта слотов `contentPanel` / `area` / `hexInput` / … + `events`. Нет слота `root` |
+| `autoFocus` / `tabIndex` | — | Уходят на trigger, не на обёртку |
+| `classNames` | — | Слоты, включая `root` / `label` / `hint` / `error` |
+| `motion` | — | Карта слотов `contentPanel` / `area` / `hexInput` / … + `events`. Нет слота `root`. Подпись, hint и error в motion не входят |
 | `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Слоты живы, пока `Content` открыт |
 
 ### `ColorPicker.Trigger` props
@@ -62,7 +80,15 @@ Compound внутри Content: `ColorPicker.Area`, `ColorPicker.Preview` (сло
 
 ### `ColorPickerClassNames`
 
-`content`, `contentPanel`, `trigger`, `area`, `areaThumb`, `slidersRow`, `slidersStack`, `previewSwatch`, `hueSlider`, `alphaSlider`, `inputsRow`, `hexInput`, `hexPrefix`, `hexInputField`, `alphaInput`, `alphaInputField`, `alphaSuffix`, `presets`, `presetSwatch`.
+`root`, `label`, `hint`, `error`, `content`, `contentPanel`, `trigger`, `panel`, `panelRelative`, `area`, `areaThumb`, `slidersRow`, `slidersStack`, `previewSwatch`, `hueSlider`, `alphaSlider`, `inputsRow`, `hexInput`, `hexPrefix`, `hexInputField`, `alphaInput`, `alphaInputField`, `alphaSuffix`, `presets`, `presetSwatch`.
+
+`panel` и `panelRelative` — оболочка `Popover` вокруг `content`. `content` остаётся на `ColorPicker.Content`.
+
+### `ColorSliderClassNames`
+
+`root`, `label`, `value`, `track`, `thumb`.
+
+`label` и `value` есть в simple API, когда задан `label`. `thumb` — кнопка бегунка. Motion-слоты — только `root` и `track`.
 
 ### `ColorSwatchClassNames`
 
@@ -96,7 +122,6 @@ Channels: `hue`, `saturation`, `value`, `alpha`, `red`, `green`, `blue`.
 | `ColorPicker` variant | Поведение |
 |-----------------------|-----------|
 | `default` | Standard popover panel |
-| `gloss` | Gloss popover surface |
 
 `status` нет.
 
@@ -122,6 +147,8 @@ Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не
 `play()` ищет слот `root` — у ColorPicker его нет, только `playSlot("contentPanel")` / `playSlot("area")` / `playAll`. Слоты регистрируются, когда панель открыта (`open` / `defaultOpen`). `hueSlider` / `alphaSlider` / ColorSwatch — вложенные scope, не этот handle.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`picker:nudge`, `picker:pulse`), не фазы. `createMotionEvents`. События тоже через `playSlot("contentPanel", event)`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на `ColorPicker`, на `ColorSlider` (и его Track) и на `ColorSwatch`. Каждый держит свой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, ColorPicker, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -198,7 +225,6 @@ function Nudge() {
 ```
 
 Thumb ColorSlider = `SliderThumbButton`, не дублирует публичный слот Slider thumb.
-
 
 Motion разбит: pointer drag (без GSAP) + Popover portal + optional swatch GSAP.
 

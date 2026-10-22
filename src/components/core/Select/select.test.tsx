@@ -14,7 +14,7 @@ const OPTIONS = [
 describe("Select multiple", () => {
   it("toggles values, keeps the menu open, and lists labels in option order", async () => {
     const { user } = render(
-      <Select multiple label="Frameworks" options={OPTIONS} defaultValues={["vue"]} />,
+      <Select selectionMode="multiple" label="Frameworks" items={OPTIONS} defaultValues={["vue"]} />,
     );
     const trigger = selectValueButton();
     expect(trigger).toHaveTextContent("Vue");
@@ -37,7 +37,7 @@ describe("Select multiple", () => {
 
   it("toggles the active option with Enter and stays open", async () => {
     const { user } = render(
-      <Select multiple label="Frameworks" options={OPTIONS} defaultValues={["react"]} />,
+      <Select selectionMode="multiple" label="Frameworks" items={OPTIONS} defaultValues={["react"]} />,
     );
     const trigger = selectValueButton();
     trigger.focus();
@@ -49,7 +49,7 @@ describe("Select multiple", () => {
   });
 
   it("commits a single value and closes the menu", async () => {
-    const { user } = render(<Select label="Frameworks" options={OPTIONS} />);
+    const { user } = render(<Select label="Frameworks" items={OPTIONS} />);
     const trigger = selectValueButton();
     trigger.focus();
     await user.keyboard("{ArrowDown}");
@@ -66,7 +66,7 @@ describe("Select virtualized", () => {
   }));
 
   it("mounts a window and keeps the active option in the document", async () => {
-    const { user } = render(<Select virtualized label="Item" options={many} defaultValue="1" />);
+    const { user } = render(<Select virtualized label="Item" items={many} defaultValue="1" />);
     const trigger = selectValueButton();
     trigger.focus();
     await user.keyboard("{ArrowDown}");
@@ -82,5 +82,24 @@ describe("Select virtualized", () => {
     expect(document.getElementById(activeId!)).toBeTruthy();
     expect(screen.getByRole("option", { name: "Item 26" })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: "Item 80" })).toBeNull();
+  });
+});
+
+describe("Select trigger icon", () => {
+  it("keeps custom Trigger children in the rotating wrap", () => {
+    const { container } = render(
+      <Select items={OPTIONS} defaultValue="react">
+        <Select.Shell>
+          <Select.Value />
+          <Select.Trigger>
+            <svg data-testid="custom-chevron" />
+          </Select.Trigger>
+        </Select.Shell>
+      </Select>,
+    );
+    const svg = container.querySelector("[data-testid=custom-chevron]");
+    const wrap = svg?.parentElement;
+    expect(wrap?.tagName).toBe("SPAN");
+    expect(wrap?.className).toContain("icon-slot");
   });
 });

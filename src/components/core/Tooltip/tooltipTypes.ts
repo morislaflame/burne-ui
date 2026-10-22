@@ -9,7 +9,9 @@ import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons
  
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
-import type { TooltipSide } from "./tooltipPosition";
+import type { OverlayDismissProps } from "@/components/core/utils/overlayLayer";
+import type { FloatingAlign, TooltipSide } from "./tooltipPosition";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
 export type { TooltipSide };
  
@@ -17,10 +19,10 @@ export const KIT_TOOLTIP_VARIANTS = ["default", "outline", "secondary"] as const
 export type KitTooltipVariant = (typeof KIT_TOOLTIP_VARIANTS)[number];
 export type TooltipVariant = KitTooltipVariant | (string & {});
  
-export type TooltipSize = "small" | "base" | "mid" | "large";
+export type TooltipSize = ComponentSize;
+export type TooltipStatus = SemanticStatus;
  
 export type TooltipClassNames = {
-  root?: string;
   trigger?: string;
   content?: string;
   panelRelative?: string;
@@ -28,7 +30,6 @@ export type TooltipClassNames = {
   panel?: string;
   message?: string;
   indicator?: string;
-  icon?: string;
   title?: string;
   description?: string;
 };
@@ -57,10 +58,19 @@ export type TooltipProps = {
   size?: TooltipSize;
   variant?: TooltipVariant;
   status?: SemanticStatus;
-  delayShowMs?: number;
+  /** Delay before the tip opens. Default `240`, or `OverlayDelayProvider`. */
+  openDelay?: number;
+  /** Delay before the tip closes after pointer leave. Default `0`. */
+  closeDelay?: number;
   side?: TooltipSide;
-  icon?: ReactNode;
-  showIcon?: boolean;
+  align?: FloatingAlign;
+  offset?: number;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
+  closeOnEscape?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  /** Status glyph. `null` hides it. A node replaces the status icon. */
+  icon?: ReactNode | null;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -84,6 +94,10 @@ export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   showArrow?: boolean;
   offset?: number;
+  side?: TooltipSide;
+  align?: FloatingAlign;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   motion?: Prettify<MotionMapWithEvents<TooltipMotion>>;
@@ -102,19 +116,16 @@ export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TooltipVariant;
   status?: SemanticStatus;
   size?: TooltipSize;
-  icon?: ReactNode;
-  showIcon?: boolean;
+  /** Status glyph. `null` hides it. A node replaces the status icon. */
+  icon?: ReactNode | null;
   title?: ReactNode;
   description?: ReactNode;
   motion?: Prettify<TooltipPartMotion>;
 };
  
 export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
-  showIcon?: boolean;
   motion?: Prettify<TooltipPartMotion>;
 };
- 
-export type TooltipIconProps = TooltipIndicatorProps;
  
 /** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
 export type TooltipMessageProps = HTMLAttributes<HTMLDivElement>;
@@ -133,8 +144,12 @@ export type TooltipContextValue = {
   status: SemanticStatus;
   size: TooltipSize;
   side: TooltipSide;
-  icon?: ReactNode;
-  showIcon?: boolean;
+  align?: FloatingAlign;
+  offset?: number;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
+  /** Status glyph. `null` hides it. A node replaces the status icon. */
+  icon?: ReactNode | null;
   triggerRef: React.RefObject<HTMLElement | null>;
   scheduleShow: () => void;
   hide: () => void;
@@ -146,8 +161,8 @@ export type TooltipBodyContextValue = {
   variant: TooltipVariant;
   status: SemanticStatus;
   size: TooltipSize;
-  icon?: ReactNode;
-  showIcon?: boolean;
+  /** Status glyph. `null` hides it. A node replaces the status icon. */
+  icon?: ReactNode | null;
   gridSlots: MessageBannerGridSlots;
 };
  

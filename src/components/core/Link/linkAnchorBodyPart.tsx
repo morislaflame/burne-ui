@@ -16,6 +16,10 @@ export function LinkBodyContent({
   textChildren,
   startIcon,
   endIcon,
+  startIconClassName,
+  endIconClassName,
+  startIconRef,
+  endIconRef,
   startIconMuted,
   endIconMuted,
   usesDefaultAtStart,
@@ -41,14 +45,16 @@ export function LinkBodyContent({
           muted={startIconMuted}
           slot="iconStart"
           slotClass={slotClassNames.iconStart}
+          className={startIconClassName}
+          forwardedRef={startIconRef}
         >
           {resolvedStart}
         </LinkIconSlot>
       ) : null}
-      <span ref={setTextRef} {...textPointer}>
+      <span ref={setTextRef} className={slotClassNames.text} {...textPointer}>
         <Text
           as="span"
-          variant={textVariant}
+          textStyle={textVariant}
           inheritColor
           className={linkTextClass({
             underline,
@@ -64,6 +70,8 @@ export function LinkBodyContent({
           muted={endIconMuted}
           slot="iconEnd"
           slotClass={slotClassNames.iconEnd}
+          className={endIconClassName}
+          forwardedRef={endIconRef}
         >
           {resolvedEnd}
         </LinkIconSlot>
@@ -80,6 +88,10 @@ export function LinkAnchorBody({
   textChildren,
   startIcon,
   endIcon,
+  startIconClassName,
+  endIconClassName,
+  startIconRef,
+  endIconRef,
   startIconMuted,
   endIconMuted,
   usesDefaultAtStart,
@@ -116,6 +128,10 @@ export function LinkAnchorBody({
         textChildren={textChildren}
         startIcon={startIcon}
         endIcon={endIcon}
+        startIconClassName={startIconClassName}
+        endIconClassName={endIconClassName}
+        startIconRef={startIconRef}
+        endIconRef={endIconRef}
         startIconMuted={startIconMuted}
         endIconMuted={endIconMuted}
         usesDefaultAtStart={usesDefaultAtStart}

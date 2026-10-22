@@ -12,12 +12,13 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
+import type { OverlayDismissProps } from "@/components/core/utils/overlayLayer";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
 /** Viewport extent of the panel (orthogonal to chrome `size`). */
 export type DrawerExtent = "default" | "mid" | "full";
-export const KIT_DRAWER_VARIANTS = ["default"] as const;
+export const KIT_DRAWER_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitDrawerVariant = (typeof KIT_DRAWER_VARIANTS)[number];
 export type DrawerVariant = KitDrawerVariant | (string & {});
 export type DrawerSize = PanelSize;
@@ -43,7 +44,7 @@ export type DrawerSizePreset = Pick<
 export type DrawerClassNames = {
   trigger?: string;
   dialog?: string;
-  backdrop?: string;
+  overlay?: string;
   panel?: string;
   content?: string;
   handle?: string;
@@ -70,7 +71,7 @@ export type DrawerPartMotion = DrawerLifecycleMotion & {
 };
  
 export type DrawerMotion = {
-  backdrop?: DrawerLifecycleMotion;
+  overlay?: DrawerLifecycleMotion;
   panel?: DrawerPartMotion;
   title?: DrawerPartMotion;
   description?: DrawerPartMotion;
@@ -98,7 +99,7 @@ export type DrawerProps = {
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DrawerClassNames>;
   /**
-   * Per-slot enter/leave (`backdrop`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle`) plus `trigger` press on Root.
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `handle`) plus `trigger` press on Root.
    * Backdrop/panel defaults are kit overlay + drawer slide recipes; trigger defaults to `pressSqueeze`.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    * Root has no portal DOM — portal slots live on `Drawer.Panel`.
@@ -111,7 +112,7 @@ export type DrawerProps = {
   motionController?: MotionController;
 } & MotionStateHostProps;
  
-export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
+export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & OverlayDismissProps & {
   extent?: DrawerExtent;
   variant?: DrawerVariant;
   themeAnchor?: HTMLElement | null;
@@ -119,7 +120,7 @@ export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
   portalContainer?: HTMLElement | null;
   motion?: Prettify<MotionMapWithEvents<DrawerMotion>>;
   /**
-   * Handle for the portal host (`panel`, `backdrop`, chrome). `play()` skips — there is no `root`.
+   * Handle for the portal host (`panel`, `overlay`, chrome). `play()` skips — there is no `root`.
    * Use `playSlot("panel")`. Not placed on the DOM.
    */
   motionController?: MotionController;
@@ -158,10 +159,7 @@ export type DrawerClassNamesProviderProps = {
   children: ReactNode;
 };
  
-export type DrawerBackdropProps = HTMLAttributes<HTMLDivElement> & {
-  /** Close on click outside panel. Default `true`. */
-  isDismissable?: boolean;
-};
+export type DrawerOverlayProps = OverlayDismissProps;
  
 export type DrawerHandleProps = Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -216,7 +214,11 @@ export type UseDrawerModalMotionProps = {
   onOpenChange: (open: boolean) => void;
   variant: DrawerVariant;
   placement: DrawerPlacement;
-  backdropIsDismissable: boolean;
+  closeOnInteractOutside: boolean;
+  closeOnEscape?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
   /** When true, open with `show()` + absolute positioning inside a custom portal host. */
   contained?: boolean;
 };

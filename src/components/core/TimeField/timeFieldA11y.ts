@@ -1,4 +1,4 @@
-import type { TimeFieldSegId, TimeFieldStatus } from "./timeFieldTypes";
+import type { TimeFieldSegId } from "./timeFieldTypes";
  
 import { DEFAULT_BURNE_LABELS, type BurneLabels } from "@/theme/burneLabels";
  
@@ -54,9 +54,5 @@ export function timeFieldSegSpinbuttonA11y({
     "aria-valuetext": String(value).padStart(2, "0"),
     tabIndex: disabled ? -1 : 0,
   };
-}
- 
-export function timeFieldHintStatus(status: TimeFieldStatus) {
-  return status;
 }
  

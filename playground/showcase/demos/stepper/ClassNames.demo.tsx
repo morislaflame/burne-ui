@@ -18,6 +18,7 @@ export function StepperClassNamesDemo() {
         title: "text-primary",
         description: "text-muted",
         separator: "bg-primary/40",
+        trigger: "rounded-large",
       }}
     />
   );

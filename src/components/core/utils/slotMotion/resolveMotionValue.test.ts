@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { mergeMotionSlotMaps, resolveMotionValue, resolveSlotPhase } from "./resolveMotionValue";
 import { MOTION_PHASE_NAMES, type MotionValue } from "./slotMotionTypes";
@@ -24,6 +24,42 @@ describe("resolveMotionValue", () => {
   it("treats false as a real disable, not a fallthrough", () => {
     expect(resolveMotionValue(false, "hoverLiftSecondLevel", "customLift")).toBe(false);
     expect(resolveMotionValue(undefined, false, "hoverLiftSecondLevel")).toBe(false);
+  });
+
+  it("warns once when the winning map carries a layout key", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const value = { width: 120, y: -2 } as MotionValue;
+    expect(resolveMotionValue(value, undefined, undefined)).toBe(value);
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0]?.[0])).toContain("width");
+    resolveMotionValue(value, undefined, undefined);
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
+  });
+
+  it("warns for margin longhands and skips a transform-only map", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    resolveMotionValue({ y: -2 }, undefined, undefined);
+    expect(warn).not.toHaveBeenCalled();
+    resolveMotionValue({ marginTop: 8 } as MotionValue, undefined, undefined);
+    expect(String(warn.mock.calls[0]?.[0])).toContain("marginTop");
+    warn.mockRestore();
+  });
+
+  it("does not warn for the SearchInput searchExpand recipe", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect(resolveMotionValue(undefined, "searchExpand", "hoverLiftSecondLevel")).toBe("searchExpand");
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("does not warn for a layout key that lost precedence", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect(resolveMotionValue("pressSqueeze", { width: 40 } as MotionValue, undefined)).toBe(
+      "pressSqueeze",
+    );
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
   });
 });
 

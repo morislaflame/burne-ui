@@ -26,7 +26,7 @@ export function FormClassNamesFullDemo() {
         <Form.Description>Slots include errorSummary and announce.</Form.Description>
       </Form.Header>
       <Form.Section>
-        <Form.Field name="topic">
+        <Form.Field name="topic" className="bg-primary/10">
           <Input name="topic" label="Topic" />
         </Form.Field>
       </Form.Section>

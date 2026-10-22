@@ -30,7 +30,7 @@ export function ExpandableMotionControllerDemo() {
           },
         }}
       >
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           playSlot on `title` from a handle outside Expandable.
         </Text>
       </Expandable>

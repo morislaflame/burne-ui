@@ -151,7 +151,7 @@ export const Sizes: Story = {
 export const InParagraph: Story = {
   name: "In text",
   render: () => (
-    <Text as="p" variant="base" className="max-w-md text-center text-muted">
+    <Text as="p" textStyle="base" className="max-w-md text-center text-muted">
       Read the{" "}
       <Link href="#" underline showDefaultIcon className="inline-flex align-baseline">
         guide

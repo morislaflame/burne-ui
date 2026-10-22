@@ -12,26 +12,8 @@ export type {
   SelectionIndicatorFillProps,
   SelectionIndicatorMarkProps,
   SelectionIndicatorMotion,
-  SelectionIndicatorCheckMotion,
+  SelectionIndicatorPartMotion,
   SelectionIndicatorSize,
   SelectionIndicatorVariant,
 } from "./selectionIndicatorTypes";
- 
-export {
-  SELECTION_INDICATOR_FILL_CLASS,
-  SELECTION_INDICATOR_ICON_CLASS,
-  SELECTION_INDICATOR_RADIUS_CLASS,
-  SELECTION_INDICATOR_SHELL_CLASS,
-  SELECTION_INDICATOR_SIZE_CLASS,
-  selectionIndicatorFallbackPx,
-  selectionIndicatorShellClass,
-  selectionIndicatorVariantClass,
-} from "./selectionIndicatorStyles";
- 
-export {
-  SELECTION_INDICATOR_FILL_DISPLAY_NAME,
-  SELECTION_INDICATOR_MARK_DISPLAY_NAME,
-} from "./selectionIndicatorAPI";
- 
-export { useSelectionIndicatorAnimation } from "./selectionIndicatorAnimations";
  

@@ -2,6 +2,8 @@ import { TabsClassNamesFullDemo } from "../demos/tabs/TabsClassNamesFull.demo";
 import tabsClassNamesFullSource from "../demos/tabs/TabsClassNamesFull.demo.tsx?raw";
 import { TabsDashboardShellDemo } from "../demos/tabs/TabsDashboardShell.demo";
 import tabsDashboardShellSource from "../demos/tabs/TabsDashboardShell.demo.tsx?raw";
+import { TabsActivationDemo } from "../demos/tabs/TabsActivation.demo";
+import tabsActivationSource from "../demos/tabs/TabsActivation.demo.tsx?raw";
 import { TabsDefaultDemo } from "../demos/tabs/TabsDefault.demo";
 import tabsDefaultSource from "../demos/tabs/TabsDefault.demo.tsx?raw";
 import { TabsSizesDemo } from "../demos/tabs/TabsSizes.demo";
@@ -31,6 +33,10 @@ export function TabsShowcase() {
     >
       <ShowcaseSection title="Default" description="Controlled tabs with disabled-condition.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsDefaultDemo} source={tabsDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Activation" description="manual selects on Enter or click. keepMounted false unmounts the inactive panel, so its timer restarts.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TabsActivationDemo} source={tabsActivationSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">

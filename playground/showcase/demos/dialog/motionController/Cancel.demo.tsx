@@ -42,7 +42,7 @@ export function DialogMotionControllerCancelDemo() {
       >
       {container ? (
         <Dialog open portalContainer={container} size="small">
-          <Dialog.Panel motionController={controller} dismissOnBackdrop={false} motion={{ events }}>
+          <Dialog.Panel motionController={controller} closeOnInteractOutside={false} motion={{ events }}>
             <Dialog.Header>
               <Dialog.HeadingBlock>
                 <Dialog.Title>Title</Dialog.Title>

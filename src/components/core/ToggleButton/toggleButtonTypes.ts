@@ -9,6 +9,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
  
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
+import type { ActionVariant } from "@/components/core/utils/actionVariant";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type {
@@ -19,7 +20,7 @@ import type {
  
 export type ToggleButtonSize = ComponentSize;
  
-export const KIT_TOGGLE_BUTTON_VARIANTS = ["default", "outline", "ghost"] as const;
+export const KIT_TOGGLE_BUTTON_VARIANTS = ["default", "outline", "ghost"] as const satisfies readonly ActionVariant[];
 export type KitToggleButtonVariant = (typeof KIT_TOGGLE_BUTTON_VARIANTS)[number];
 export type ToggleButtonVariant = KitToggleButtonVariant | (string & {});
  
@@ -160,7 +161,6 @@ export type UseToggleButtonRootStateProps = Pick<
   | "fillColor"
   | "size"
   | "disabled"
-  | "className"
   | "classNames"
   | "children"
   | "onClick"

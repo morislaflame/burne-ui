@@ -9,6 +9,7 @@ import selectionIndicatorThumbGallerySource from "../demos/selectionIndicator/Se
 import { SelectionIndicatorVariantMixDemo } from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo";
 import selectionIndicatorVariantMixSource from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo.tsx?raw";
 import { SelectionIndicatorMotionControllerGalleryDemo } from "../demos/selectionIndicator/motionController/gallery";
+import { SelectionIndicatorSlotMotionGalleryDemo } from "../demos/selectionIndicator/slotMotion/gallery";
 import { SelectionThumbClassNamesFullDemo } from "../demos/selectionThumb/SelectionThumbClassNamesFull.demo";
 import selectionThumbClassNamesFullSource from "../demos/selectionThumb/SelectionThumbClassNamesFull.demo.tsx?raw";
 import { SelectionThumbMotionControllerGalleryDemo } from "../demos/selectionThumb/motionController/gallery";
@@ -31,7 +32,14 @@ export function SelectionIndicatorShowcase() {
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGalleryDemo} source={selectionIndicatorGallerySource} />
       </ShowcaseSection>
-<ShowcaseSection
+      <ShowcaseSection
+        title="Slot motion"
+        description="Kit fill and mark, instant skip, root scale, spinning mark, fill-then-mark timeline, compound parts, classNames, stroke draw."
+      >
+        <SelectionIndicatorSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="MotionController"
         description="One gallery: play(check) on root, play vs playSlot, stagger, exclude fill, inside Fill, cancel, indicator events. Do not put the handle on Checkbox."
       >

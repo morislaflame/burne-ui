@@ -12,8 +12,8 @@ export function TableAlignDemo() {
       <Table.ScrollContainer>
         <Table.Content aria-label="Column alignment" className="min-w-[28rem]">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
-            <Table.Column className="text-center" allowsSorting>
+            <Table.Column rowHeader>Name</Table.Column>
+            <Table.Column className="text-center" sortable>
               Role
             </Table.Column>
           </Table.Header>

@@ -3,8 +3,7 @@ import {
   memo,
   useCallback,
   type HTMLAttributes,
-  type Ref,
-} from "react";
+  type Ref, type ForwardedRef } from "react";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
@@ -17,7 +16,7 @@ import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, O
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { useOptionalPopoverMotionScope } from "@/components/core/Popover/popoverContext";
  
-import { useDropdownClassNames } from "./dropdownContext";
+import { useDropdown, useDropdownClassNames } from "./dropdownContext";
 import { dropdownItemRowClass, resolveDropdownItemIndicatorClassNames } from "./dropdownStyles";
 import type {
   DropdownItemHintProps,
@@ -30,15 +29,16 @@ import { useDropdownItemState } from "./useDropdownItemState";
  
 import { cn } from "@/utils/cn";
  
-export function DropdownItemLabel({
+export const DropdownItemLabel = forwardRef(function DropdownItemLabel({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   ...props
-}: DropdownItemLabelProps) {
+}: DropdownItemLabelProps, ref: ForwardedRef<HTMLSpanElement>) {
   const slotClassNames = useDropdownClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
     scope: useOptionalPopoverMotionScope(),
     slot: "itemLabel",
     motion,
@@ -55,19 +55,20 @@ export function DropdownItemLabel({
       {...pointerHandlers}
     />
   );
-}
+});
  
 DropdownItemLabel.displayName = "DropdownItemLabel";
  
-export function DropdownItemHint({
+export const DropdownItemHint = forwardRef(function DropdownItemHint({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   ...props
-}: DropdownItemHintProps) {
+}: DropdownItemHintProps, ref: ForwardedRef<HTMLElement>) {
   const slotClassNames = useDropdownClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLElement>({
+    forwardedRef: ref,
     scope: useOptionalPopoverMotionScope(),
     slot: "itemHint",
     motion,
@@ -84,19 +85,20 @@ export function DropdownItemHint({
       {...pointerHandlers}
     />
   );
-}
+});
  
 DropdownItemHint.displayName = "DropdownItemHint";
  
-export function DropdownItemIcon({
+export const DropdownItemIcon = forwardRef(function DropdownItemIcon({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   ...props
-}: DropdownItemIconProps) {
+}: DropdownItemIconProps, ref: ForwardedRef<HTMLSpanElement>) {
   const slotClassNames = useDropdownClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
     scope: useOptionalPopoverMotionScope(),
     slot: "itemIcon",
     motion,
@@ -113,19 +115,20 @@ export function DropdownItemIcon({
       {...pointerHandlers}
     />
   );
-}
+});
  
 DropdownItemIcon.displayName = "DropdownItemIcon";
  
-export function DropdownItemIndicator({
+export const DropdownItemIndicator = forwardRef(function DropdownItemIndicator({
   variant: variantProp,
   size = "small",
   check,
+  icon,
   children,
   className,
   classNames: classNamesProp,
   ...rest
-}: DropdownItemIndicatorProps) {
+}: DropdownItemIndicatorProps, ref: ForwardedRef<HTMLSpanElement>) {
   const variant = useSkinVariant(variantProp);
   const ctx = useOptionListItemContext("Dropdown.ItemIndicator");
   const slotClassNames = useDropdownClassNames();
@@ -142,12 +145,14 @@ export function DropdownItemIndicator({
         className,
       )}
       {...rest}
+      ref={ref}
     >
       <SelectionIndicator
         variant={variant}
         size={size}
         selected={ctx.selected}
         check={showCheck}
+        icon={icon}
         classNames={resolveDropdownItemIndicatorClassNames({
           slotClassNames,
           classNames: classNamesProp,
@@ -157,7 +162,7 @@ export function DropdownItemIndicator({
       </SelectionIndicator>
     </OptionListItemIndicatorShell>
   );
-}
+});
  
 DropdownItemIndicator.displayName = "DropdownItemIndicator";
  
@@ -182,6 +187,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
   ) {
     const config = useMotionConfig();
     const slotClassNames = useDropdownClassNames();
+    const { size } = useDropdown();
     const { setRef: setItemMotionRef } = useMotionPart<HTMLElement>({
       scope: useOptionalPopoverMotionScope(),
       slot: "item",
@@ -226,6 +232,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       hasIcon,
       className,
       slotClass: slotClassNames.item,
+      size,
     });
  
     const handlePointerDown = useCallback(

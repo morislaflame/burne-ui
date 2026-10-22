@@ -6,7 +6,7 @@ export function PinInputMotionHoverOffDemo() {
       label="Code"
       length={4}
       motion={{
-        field: { hoverIn: false, hoverOut: false },
+        control: { hoverIn: false, hoverOut: false },
       }}
     />
   );

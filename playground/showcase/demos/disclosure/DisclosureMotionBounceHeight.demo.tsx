@@ -27,7 +27,7 @@ export function DisclosureMotionBounceHeightDemo() {
         root: "border-token-primary overflow-hidden",
         trigger: "bg-primary/5",
         title: "text-primary font-w-strong",
-        contentPanel: "border-t border-primary/20 bg-primary/5",
+        content: "border-t border-primary/20 bg-primary/5",
       }}
       motion={{
         contentShell: {
@@ -89,7 +89,7 @@ export function DisclosureMotionBounceHeightDemo() {
     >
       <Disclosure.Trigger>Bounce height</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Height still goes 0 → measured, but easing overshoots. Leave must collapse to `0`.
         </Text>
       </Disclosure.Content>

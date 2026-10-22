@@ -11,7 +11,6 @@ export type {
   BadgeStatus,
   BadgeSize,
   BadgePlacement,
-  BadgeInlineIconPosition,
   BadgeClassNames,
   BadgeMotion,
   BadgePartMotion,

@@ -130,7 +130,7 @@ export const Segmented: Story = {
           onValueChange={setValue}
           prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
           suffix={
-            <Text as="span" variant="small" className="text-muted">
+            <Text as="span" textStyle="small" className="text-muted">
               MSK
             </Text>
           }
@@ -172,7 +172,7 @@ export const WithAffixes: Story = {
         defaultValue="01:30:00"
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
         suffix={
-          <Text as="span" variant="small" className="font-medium text-muted">
+          <Text as="span" textStyle="small" className="font-medium text-muted">
             UTC+3
           </Text>
         }
@@ -241,26 +241,6 @@ export const Danger: Story = {
       <TimeField.Label>Time</TimeField.Label>
       <TimeField.Control defaultValue="25:00" />
       <TimeField.Error>Invalid time.</TimeField.Error>
-    </TimeField>
-  ),
-};
-
-export const Success: Story = {
-  render: () => (
-    <TimeField status="success">
-      <TimeField.Label>Time</TimeField.Label>
-      <TimeField.Control defaultValue="09:00" />
-      <TimeField.Hint>Saved.</TimeField.Hint>
-    </TimeField>
-  ),
-};
-
-export const Warning: Story = {
-  render: () => (
-    <TimeField status="warning">
-      <TimeField.Label>Time</TimeField.Label>
-      <TimeField.Control defaultValue="23:59" />
-      <TimeField.Hint>Close to the end of the workday.</TimeField.Hint>
     </TimeField>
   ),
 };

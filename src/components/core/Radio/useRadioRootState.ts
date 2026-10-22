@@ -2,6 +2,7 @@ import { useSkinVariant } from "@/skins/skinContext";
 import { useOptionalRadioGroupContext } from "@/components/composite/RadioGroup/radioGroupContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type MouseEvent, type ReactNode } from "react";
  
@@ -15,8 +16,8 @@ import type { RadioFieldContextValue, UseRadioRootStateProps } from "./radioType
 export function useRadioRootState(
   {
     size = "base",
+    labelPosition = "end",
     variant: variantProp,
-    danger = false,
     disabled,
     checked,
     defaultChecked,
@@ -31,6 +32,7 @@ export function useRadioRootState(
     readOnly,
     onBlur,
     onFocus,
+    inputRef,
     label,
     hint,
     error,
@@ -44,6 +46,15 @@ export function useRadioRootState(
   const group = useOptionalRadioGroupContext();
   const optionValueStr = value !== undefined && value !== null ? String(value) : undefined;
   const inGroup = group != null && optionValueStr != null;
+  const formBinding = useFormControlProps({
+    name: inGroup ? undefined : typeof name === "string" ? name : undefined,
+    value: checked,
+    onChange: onChange as ((event: unknown) => void) | undefined,
+    onBlur: onBlur as ((event: unknown) => void) | undefined,
+    disabled,
+    readOnly: Boolean(readOnly || group?.readOnly),
+  });
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
  
   const autoId = useId();
   const inputId = radioInputId(idProp, autoId);
@@ -52,11 +63,15 @@ export function useRadioRootState(
  
   const isExplicitlyControlled = checked !== undefined;
   const groupChecked = inGroup ? group.selectedValue === optionValueStr : undefined;
+  const formChecked =
+    !inGroup && formBinding.bound
+      ? String(formBinding.value ?? "") === String(value ?? "on")
+      : undefined;
   const resolvedChecked = isExplicitlyControlled
     ? checked
     : groupChecked !== undefined
       ? groupChecked
-      : undefined;
+      : formChecked;
  
   const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
     value: resolvedChecked,
@@ -85,7 +100,7 @@ export function useRadioRootState(
     error: (isCompound ? hasCompoundError : hasError) ? true : undefined,
     inheritedInvalid: useFieldInvalid(),
   });
-  const showDanger = danger || isInvalid;
+  const showDanger = isInvalid;
   const secondaryLines = isCompound
     ? (hasCompoundHint ? 1 : 0) + (hasCompoundError ? 1 : 0)
     : (hasHint ? 1 : 0) + (hasError ? 1 : 0);
@@ -94,18 +109,24 @@ export function useRadioRootState(
  
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (!isExplicitlyControlled && !inGroup) setMergedChecked(e.target.checked);
+      if (resolvedReadOnly) {
+        e.preventDefault();
+        return;
+      }
+      if (!isExplicitlyControlled && !inGroup && !formBinding.bound) setMergedChecked(e.target.checked);
       onChange?.(e);
       if (e.defaultPrevented) return;
       if (inGroup && e.target.checked && optionValueStr != null) {
         group.selectValue(optionValueStr);
+        return;
       }
+      if (formBinding.bound) formBinding.onChange(e);
     },
-    [group, inGroup, isExplicitlyControlled, onChange, optionValueStr, setMergedChecked],
+    [formBinding, group, inGroup, isExplicitlyControlled, onChange, optionValueStr, resolvedReadOnly, setMergedChecked],
   );
  
   const canClearSelection =
-    !isDisabled && !readOnly && !required && !(inGroup && group.required);
+    !isDisabled && !resolvedReadOnly && !required && !(inGroup && group.required);
  
   const inputRequired =
     required ?? (inGroup && group.required ? group.claimRequiredAnchor() : undefined);
@@ -143,6 +164,7 @@ export function useRadioRootState(
       hintId,
       errorId,
       size,
+      labelPosition,
       variant,
       mergedChecked,
       isDisabled,
@@ -167,9 +189,10 @@ export function useRadioRootState(
         form,
         autoFocus,
         tabIndex,
-        readOnly,
+        readOnly: resolvedReadOnly,
         onBlur,
         onFocus,
+        inputRef,
       },
     }),
     [
@@ -196,8 +219,10 @@ export function useRadioRootState(
       mergedChecked,
       onBlur,
       onFocus,
+      inputRef,
       inputRequired,
-      readOnly,
+      resolvedReadOnly,
+      labelPosition,
       size,
       tabIndex,
       value,
@@ -221,7 +246,7 @@ export function useRadioRootState(
     error,
     hintId,
     errorId,
-    danger,
+    danger: showDanger,
   };
 }
  

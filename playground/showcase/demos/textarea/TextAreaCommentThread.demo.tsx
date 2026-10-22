@@ -5,7 +5,7 @@ export function TextAreaCommentThreadDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-small">
       <div className="rounded-large border-token bg-secondary px-large py-small w-fit self-end">
-        <Text as="p" variant="base" className="text-muted">
+        <Text as="p" textStyle="base" className="text-muted">
           Alex: “Can I restyle SearchInput?”
         </Text>
       </div>

@@ -61,9 +61,9 @@ const [page, setPage] = useState(1);
 | `Pagination.Summary` | Текстовая сводка (опционально) |
 | `Pagination.Content` | `<ol>` списка controls |
 | `Pagination.Item` | `<li>` wrapper |
-| `Pagination.Previous` / `Next` | Nav buttons с auto disable; nested motion scope (`motionController`, `playSlot("control")`) |
+| `Pagination.Previous` / `Next` | Nav buttons с auto disable. Слоты `previous` / `next` |
 | `Pagination.PreviousIcon` / `NextIcon` | Chevron back / forward (кит) |
-| `Pagination.Page` | Кнопка номера страницы; nested motion scope (`motionController`, `playSlot("control")`) |
+| `Pagination.Page` | Неактивная кнопка (`page`) или активный `<span>` (`pageActive`) |
 | `Pagination.Pages` | Auto range из context |
 | `Pagination.Ellipsis` | Декоративное `…` (`children ?? "…"`) |
 
@@ -138,20 +138,23 @@ configureMotion({
 
 ### 2. Slot motion (кнопки)
 
-Публичный slot motion. Root — map-only Provider. Каждый Previous / Next / Page — nested scope слота `control`. FLIP на `<ol>` (`Pagination.Content`) остаётся kit-internal (`usePaginationFlip`) — Content / Item / Page не отдельные публичные слоты.
+Публичный slot motion. Все слоты регистрируются на корне, на том же узле, что `classNames`. FLIP на `<ol>` (`Pagination.Content`) остаётся kit-internal (`usePaginationFlip`). `content` и `item` — не motion-слоты.
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `control` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
-| `previousIcon` / `nextIcon` | press (broadcast с `control`) | нет |
+| `previous` / `next` / `page` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
+| `pageActive` | hover/press | нет. Активная страница — `<span>` |
+| `previousIcon` / `nextIcon` | press вместе с кнопкой, внутри которой иконка | нет |
 | `summary` | `change` (смена `page`); hover (opt-in) | нет |
-| `ellipsis` | `enter` / hover (opt-in) | empty; root scope, не nested `control` |
+| `ellipsis` | `enter` / hover (opt-in) | empty |
 
-`false` на `control.pressIn` — skip без kill. Active page — `<span>`, без squeeze.
+`false` на `next.pressIn` выключает squeeze только у «Вперёд». `previous` и `page` при этом остаются. Active page — слот `pageActive`.
 
-Слота `root` нет: `play()` skip. `playSlot("summary")` / `playAll` — chrome (`summary` / `ellipsis`), не nested Previous / Next / Page. Каждый control — **вложенный** scope: свой `motionController`, `playSlot("control")`. Один handle ≠ два scope. FLIP на `<ol>` не слот.
+Слота `root` нет: `play()` skip. `playSlot("previous")` / `playSlot("page")` / `playSlot("pageActive")` / `playAll` играют слоты корня. `Pagination.Previous` `motion` побеждает `motion.previous`. Один handle на корне. FLIP на `<ol>` не слот.
 
-Проп `motionController` + ключ `events` на `motion` — app-команды (`pagination:nudge`, `pagination:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Pagination.Summary`) видит Pagination; внутри Previous / Page — scope control.
+Проп `motionController` + ключ `events` на `motion` — app-команды (`pagination:nudge`, `pagination:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Pagination.Summary`) видит те же слоты.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Pagination, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -188,7 +191,7 @@ Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.
 **Где в коде:** типы — `paginationTypes.ts`; scope — `paginationContext.tsx`; defaults — `paginationAnimations.ts`; слот — `paginationParts.tsx`; карта на Root — `Pagination.tsx`.
 
 ```tsx
-<Pagination motion={{ control: { pressIn: false } }} page={page} totalPages={12} onPageChange={setPage}>
+<Pagination motion={{ next: { pressIn: false } }} page={page} totalPages={12} onPageChange={setPage}>
   …
 </Pagination>
 ```

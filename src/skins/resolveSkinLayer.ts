@@ -1,5 +1,5 @@
-import { getSkin } from "./skinRegistry";
-import type { SkinDeclarativeLayers, SkinLayerRenderer, SkinSlot } from "./skinTypes";
+import { lookupSkin } from "./skinLookup";
+import type { SkinDeclarativeLayers, SkinLayerRenderer, SkinLayerSlot } from "./skinTypes";
 
 export type ResolvedSkinLayer = {
   name: string;
@@ -14,12 +14,13 @@ export type ResolvedSkinLayer = {
  */
 export function resolveSkinLayer(
   variant: string | undefined,
-  part: SkinSlot): ResolvedSkinLayer | null {
+  part: string): ResolvedSkinLayer | null {
   if (!variant || variant === "default") return null;
-  const skin = getSkin(variant);
+  const skin = lookupSkin(variant);
   if (!skin) return null;
-  const renderer = skin.layers?.[part];
-  const declarative = skin.layersDeclarative?.[part];
+  const slot = part as SkinLayerSlot;
+  const renderer = skin.layers?.[slot];
+  const declarative = skin.layersDeclarative?.[slot];
   if (!renderer && !declarative) return null;
   return { name: skin.name, renderer, declarative };
 }

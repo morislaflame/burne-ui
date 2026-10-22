@@ -30,7 +30,7 @@ export function DialogMotionControllerPlayVsSlotDemo() {
       >
       {container ? (
         <Dialog open portalContainer={container} size="small">
-          <Dialog.Panel motionController={controller} dismissOnBackdrop={false} motion={{
+          <Dialog.Panel motionController={controller} closeOnInteractOutside={false} motion={{
           panel: {
             hoverIn: { y: -2, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },

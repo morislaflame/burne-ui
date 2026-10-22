@@ -15,6 +15,10 @@ export function useAlertDialogRootState({
   variant: variantProp,
   size = "base",
   closeOnEscape = true,
+  closeOnInteractOutside = false,
+  onEscapeKeyDown,
+  onInteractOutside,
+  initialFocus,
   portalContainer,
 }: UseAlertDialogRootStateProps) {
   const variant = useSkinVariant(variantProp);
@@ -50,6 +54,10 @@ export function useAlertDialogRootState({
     setHasDescription: setHasDescriptionStable,
     onOpenChange: setOpen,
     closeOnEscape,
+    closeOnInteractOutside,
+    onEscapeKeyDown,
+    onInteractOutside,
+    initialFocus,
     variant: resolvedVariant,
     status: resolvedStatus,
     size,

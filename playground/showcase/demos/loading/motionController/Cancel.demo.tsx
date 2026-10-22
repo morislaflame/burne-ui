@@ -33,7 +33,7 @@ export function LoadingMotionControllerCancelDemo() {
           Cancel
         </Button>
       </div>
-      <Loading size="large" label="Loading" motionController={controller} motion={{ events }} />
+      <Loading size="large" aria-label="Loading" motionController={controller} motion={{ events }} />
     </div>
   );
 }

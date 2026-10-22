@@ -1,5 +1,6 @@
 import { RadioGroup } from "@/components/composite/RadioGroup";
 import { Radio } from "@/components/core/Radio";
+import { Label } from "@/components/core/Label";
 
 export function RadioGroupMotionHintEnterDemo() {
   return (
@@ -20,7 +21,7 @@ export function RadioGroupMotionHintEnterDemo() {
       }}
     >
       <RadioGroup.Legend>
-        <RadioGroup.Label>Channel</RadioGroup.Label>
+        <Label>Channel</Label>
         <RadioGroup.Hint>Only one option can be selected.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List>

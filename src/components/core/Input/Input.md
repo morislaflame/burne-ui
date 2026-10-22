@@ -2,10 +2,12 @@
 
 Текстовое поле с оболочкой (shell), affix-слотами, типами `text` / `number` / `password` / `file`. Simple и compound API. Интеграция с `Form`, `ButtonGroup`, `FieldLabelContext`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
-import { Input, type InputControlProps, type InputSimpleProps, type InputProps, type InputVariant, type InputStatus, type InputSize, type InputClassNames, type InputMotion, type InputPartMotion } from "burne-ui";
+import { Input, type InputControlProps, type InputSimpleProps, type InputProps, type InputVariant, type InputSize, type InputClassNames, type InputMotion, type InputPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -46,11 +48,10 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `outline` \| `gloss` |
-| `status` | `default` | Только цвет: `default` \| `danger` \| `success` \| `warning`. Не ставит `aria-invalid` |
-| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""` без текста. `error` делает то же и показывает сообщение |
+| `variant` | `default` | `default` \| `outline` |
+| `invalid` | — | `true` — danger-кольцо, `aria-invalid` и `data-invalid=""` без текста. `error` делает то же и показывает сообщение |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `inputType` | `text` | `text` \| `number` \| `password` \| `file` |
+| `type` | `text` | Нативный `type` (`email`, `tel`, `url`, `search`, `number`, …). `password` показывает переключатель видимости, `file` — зону файла |
 | `prefix` / `suffix` | — | Affix-слоты (не для `file`) |
 | `groupSegment` | — | Сегмент `ButtonGroup` |
 | `classNames` | — | См. ниже |
@@ -62,28 +63,29 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 
 `root`, `label`, `shell`, `control`, `prefix`, `suffix`, `passwordToggle`, `fileArea`, `fileEmpty`, `fileRow`, `fileGlyph`, `filePreview`, `fileRemove`, `hint`, `error`.
 
-### Типы поля (`inputType`)
+### Типы поля (`type`)
 
-| `inputType` | Особенности |
-|-------------|-------------|
-| `text` | Стандартный input |
-| `number` | `type="number"` |
-| `password` | Toggle visibility (`IoEye` / `IoEyeOff`) |
+Нативный атрибут `type` уходит на `<input>`: мобильная клавиатура, автозаполнение и проверка браузера (`email`, `tel`, `url`, `search`, `date`).
+
+| `type` | Особенности |
+|--------|-------------|
+| `text` и остальные | Стандартный input с этим `type` |
+| `number` | Числовая клавиатура |
+| `password` | Toggle visibility (`IoEye` / `IoEyeOff`); открытый пароль временно `type="text"` |
 | `file` | Drag-area, preview, multi-file, remove с exit-анимацией |
 
 Preview: `file.type` `image/*`, иначе последнее расширение после `.` (`my photo.jpg` → `jpg`). Имя без точки, с одной ведущей точкой или с точкой в конце не считается картинкой — не `split(".").pop()`.
 
 Remove файла вызывает `onChange` один раз после синхронизации `input.files`, не из `setState` updater (в StrictMode updater может вызваться дважды).
 
-## variant и status
+## variant
 
 | variant | Shell |
 |---------|-------|
 | `default` | `bg-surface border-token` |
 | `outline` | прозрачный + `border-token-outline` |
-| `gloss` | `gloss-control` |
 
-При `status` danger/success/info/warning — нейтральный фон и border; постоянный внешний статусный ring (геометрия `--focus-ring-*`). Affix: `bg-primary-tint`.
+Ошибка — только `invalid` или `error`: нейтральный фон и border, постоянное danger-кольцо (геометрия `--focus-ring-*`). `data-status` на поле нет. Affix: `bg-primary-tint`.
 
 ## Размеры
 
@@ -91,13 +93,13 @@ Remove файла вызывает `onChange` один раз после син�
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `Input.Control` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. File row leave — рецепт `fileRowExit` (scale / y / autoAlpha).
+Публичный slot motion. Root передаёт карту `motion`; хост — `Input.Control` (defaults + `play`). File row leave — рецепт `fileRowExit` (scale / y / autoAlpha).
 
 ### Slot motion
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | — |
 | `control` / `prefix` / `suffix` / `passwordToggle` / `fileRemove` | hover/press | нет |
 | `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
 | `fileRow` | `leave` | `fileRowExit` |
@@ -166,7 +168,7 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 | Контекст | Поведение |
 |----------|-----------|
 | `Form` | `error` из `getError(name)`, `size`, `disabled` |
-| `ButtonGroup` | `groupSegment`, `variant` gloss, без shell hover |
+| `ButtonGroup` | — |
 | `FieldLabelContext` | auto `htmlFor`, `labelId`, `required` |
 
 ## Стилизация и кастомизация
@@ -196,7 +198,7 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 | `fileRemove` | Кнопка удаления файла | Hit-area remove |
 | `hint` / `error` | `Field.Hint` / `Field.Error` | Цвет, размер подсказки/ошибки |
 
-`variant`, `status`, `size` задают базовые токены в `inputStyles.ts`. `classNames` **дополняют** их, не отменяя variant-логику (кроме явного override Tailwind-классами).
+`variant` и `size` задают базовые токены в `inputStyles.ts`. `classNames` **дополняют** их, не отменяя variant-логику (кроме явного override Tailwind-классами).
 
 ### Simple API
 
@@ -221,7 +223,7 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 />
 ```
 
-Для `inputType="file"` дополнительно: `fileArea`, `fileEmpty`, `fileRow`, `filePreview`, `fileRemove`.
+Для `type="file"` дополнительно: `fileArea`, `fileEmpty`, `fileRow`, `filePreview`, `fileRemove`.
 
 ### Compound API
 
@@ -255,19 +257,19 @@ Resize/file geometry не в публичных vars. Password toggle и file re
 
 `Input.Label` также принимает вложенные `classNames` компонента `Label` (`root`, `text`, `required`) — они мержатся с `classNames.label` из контекста Input.
 
-`Input.Control` наследует `variant`, `status`, `size` из field context (или props). Affix (`prefix` / `suffix`) — только на `Control`.
+`Input.Control` наследует `variant` и `size` из field context (или props). Affix (`prefix` / `suffix`) — только на `Control`.
 
 ### Практические заметки
 
-- **Shell vs control:** тень и hover-lift вешаются на `shell`; текст и caret — на `control`.
-- **Gloss:** не переопределяйте `gloss-control` на shell без необходимости — ломается gloss motion.
+- **Shell vs control:** тень и hover-lift вешаются на `shell` (`classNames.shell`). `className` и `ref` у `Input.Control` попадают на `<input>` — тот же узел, что `classNames.control`. Текст и caret — на `control`.
 - **ButtonGroup:** при `groupSegment` shell hover отключён; стили сегмента задаёт группа.
 - **Порядок мержа:** `базовые стили` → `classNames.slot` → `className` на подчасти.
+- **Мобильный шрифт контрола:** класс `field-control-mobile-no-zoom` стоит после слота намеренно — iOS зумит поле, если размер шрифта < 16px. Размер текста на `control` этим классом не перебить.
 
 ## Доступность
 
 - `joinFieldDescribedBy(hintId, errorId)` на control
-- `error` или `invalid` ставят `aria-invalid` на control и пустой `data-invalid` на корне. `status` этого не делает
+- `error` или `invalid` ставят `aria-invalid` на control, пустой `data-invalid` на корне и danger-кольцо на shell
 - `aria-required` из `required`
 - Password toggle: `aria-label`, `aria-pressed`
 - File remove: `aria-label`
@@ -294,4 +296,4 @@ Input/
 
 ## Storybook
 
-`Core Components/Input` — simple/compound, variant, status, password, file, gloss, ButtonGroup segment, `classNames`, Slot motion, MotionController.
+`Core Components/Input` — simple/compound, variant, invalid, password, file, ButtonGroup segment, `classNames`, Slot motion, MotionController.

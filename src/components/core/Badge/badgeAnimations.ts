@@ -17,8 +17,12 @@ import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components
 import { SHADOW_LIFT_MOTION_CLASS, useSecondLevelShadow, useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
  
 import { useBadgeLiftContext, useBadgeMotionScope } from "./badgeContext";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import { KIT_BADGE_VARIANTS, type BadgeMotion, type BadgeVariant, type UseBadgeAnimationsProps } from "./badgeTypes";
+
+import { bindSecondLevelRecipe } from "@/components/core/utils/slotMotion/recipes/bindSecondLevel";
+
+bindSecondLevelRecipe();
  
  
 export function resolveBadgeMotionDefaults({
@@ -70,11 +74,12 @@ export function useBadgeAnimations({
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
  
-  const kitSurface = isKitVariant(variant, KIT_BADGE_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_BADGE_VARIANTS);
   const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && kitSurface);
   const selfLiftEnabled = hoverLift && !splitLift;
 
-  const selfLiftShadow = useSecondLevelShadow(rootRef, selfLiftEnabled && kitSurface, {
+  const restShadow = kitSurface && !splitLift;
+  const selfLiftShadow = useSecondLevelShadow(rootRef, restShadow, {
     interactive: false,
   });
 
@@ -117,7 +122,7 @@ export function useBadgeAnimations({
     [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp],
   );
  
-  const selfLiftMotionCls = selfLiftEnabled && kitSurface ? selfLiftShadow.motionClass : "";
+  const selfLiftMotionCls = restShadow ? selfLiftShadow.motionClass : "";
 
   const splitLiftMotionCls = splitLift ? SHADOW_LIFT_MOTION_CLASS : "";
  
@@ -152,7 +157,7 @@ export function useBadgeAnimations({
   ]);
  
   return {
-    kitSurface: isKitVariant(variant, KIT_BADGE_VARIANTS),
+    kitSurface: usesKitElevation(variant, KIT_BADGE_VARIANTS),
     splitLift,
     selfLiftEnabled,
     innerLiftRef,

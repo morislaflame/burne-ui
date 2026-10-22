@@ -17,7 +17,7 @@ export function TooltipPortalContainerDemo() {
       >
         <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
         {container ? (
-          <Tooltip delayShowMs={0} portalContainer={container}>
+          <Tooltip openDelay={0} portalContainer={container}>
             <Tooltip.Trigger>
               <Button variant="outline" type="button">
                 Hover in host

@@ -1,27 +1,34 @@
 import { fireEvent } from "@testing-library/react";
-import { useState, type ComponentProps, type HTMLAttributes, type ReactNode, type Ref } from "react";
+import { forwardRef, useState, type ComponentProps, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createMotionScope, type MotionScopeValue } from "@/components/core/utils/slotMotion";
 import { render } from "@/__tests__/helpers";
 
 import { resolveSkinLayer } from "./resolveSkinLayer";
+import { SkinProvider } from "./skinContext";
 import { unregisterSkin, registerSkin } from "./skinRegistry";
 import { SkinShell } from "./skinShell";
-import type { SkinLayerProps } from "./skinTypes";
+import type { SkinLayerProps, SkinLayerRenderer } from "./skinTypes";
 
 const { MotionScopeProvider, useMotionScope } = createMotionScope("SkinShellTest");
 
 let scope: MotionScopeValue | null = null;
 
 function Host({ children }: { children: ReactNode }) {
-  return <MotionScopeProvider>{children}</MotionScopeProvider>;
+  return (
+    <SkinProvider>
+      <MotionScopeProvider>{children}</MotionScopeProvider>
+    </SkinProvider>
+  );
 }
 
-function Probe(props: Omit<ComponentProps<typeof SkinShell>, "scope">) {
-  scope = useMotionScope();
-  return <SkinShell scope={scope} {...props} />;
-}
+const Probe = forwardRef<HTMLElement, Omit<ComponentProps<typeof SkinShell>, "scope">>(
+  function Probe(props, ref) {
+    scope = useMotionScope();
+    return <SkinShell scope={scope} {...props} ref={ref} />;
+  },
+);
 
 const LAYER_DECL_FIXTURE = {
   name: "layer-decl",
@@ -54,12 +61,9 @@ describe("SkinShell", () => {
       name: "layer-code",
       styleUrl: "skin-fixture/styles.css",
       layers: {
-        "card.root": (props: SkinLayerProps) => (
-          <div
-            data-layer="code"
-            {...(props as HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> })}
-          />
-        ),
+        "card.root": forwardRef<HTMLDivElement, SkinLayerProps>(function CardRoot(props, ref) {
+          return <div data-layer="code" {...props} ref={ref} />;
+        }) as unknown as SkinLayerRenderer,
       },
     });
 

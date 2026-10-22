@@ -1,4 +1,4 @@
-import type { HTMLAttributes, OlHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, OlHTMLAttributes, ReactNode } from "react";
 
 import type {
   MotionController,
@@ -7,11 +7,12 @@ import type {
   MotionValue,
 } from "@/components/core/utils/slotMotion";
 import type { Prettify } from "@/utils/prettify";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
 /** Axis of the track. Not a `variant`: `horizontal` | `vertical` only. */
 export type StepperOrientation = "horizontal" | "vertical";
 
-export type StepperSize = "small" | "base" | "mid" | "large";
+export type StepperSize = ComponentSize;
 
 /** `active` is the current step, `checked` is complete, `inactive` is ahead. */
 export type StepperStepState = "active" | "checked" | "inactive";
@@ -19,6 +20,7 @@ export type StepperStepState = "active" | "checked" | "inactive";
 export type StepperClassNames = {
   root?: string;
   item?: string;
+  trigger?: string;
   indicator?: string;
   title?: string;
   description?: string;
@@ -88,6 +90,8 @@ export type StepperItemProps = {
   isLast?: boolean;
 };
 
+export type StepperTriggerProps = ButtonHTMLAttributes<HTMLButtonElement>;
+
 export type StepperIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   motion?: Prettify<StepperPartMotion>;
 };
@@ -106,6 +110,37 @@ export type StepperContextValue = {
   currentIndex: number;
   linear: boolean;
   select: (value: string) => void;
+};
+
+/** Named so declaration emit keeps `rest` as `Omit`, not an inlined attribute map. */
+export type UseStepperRootStateResult = {
+  compound: boolean;
+  steps: readonly StepperStep[] | undefined;
+  children: ReactNode;
+  classNames: StepperProps["classNames"];
+  motion: StepperProps["motion"];
+  motionController: StepperProps["motionController"];
+  motionState: StepperProps["motionState"];
+  motionPayload: StepperProps["motionPayload"];
+  playInitialState: StepperProps["playInitialState"];
+  context: StepperContextValue;
+  rest: Omit<
+    StepperProps,
+    | "steps"
+    | "children"
+    | "value"
+    | "defaultValue"
+    | "onValueChange"
+    | "orientation"
+    | "linear"
+    | "size"
+    | "classNames"
+    | "motion"
+    | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
+  >;
 };
 
 export type StepperItemContextValue = {

@@ -86,6 +86,21 @@ export type MotionRecipeMetadata = {
   /** Pointer phases (hover / press), not open / close / check. */
   interactive: boolean;
   defaultDurationToken: MotionDurationToken;
+  /** Studio picker label. */
+  label: { ru: string; en: string };
+  /** Phases this recipe is meant for. */
+  phases: readonly MotionPhaseName[];
+  /** Knobs the studio shows for the recipe. */
+  parameters: readonly MotionRecipeParameter[];
+};
+
+export type MotionRecipeParameter = {
+  key: string;
+  label: { ru: string; en: string };
+  type: "number";
+  unit: "ms";
+  min: number;
+  max: number;
 };
  
 export const MOTION_RECIPE_METADATA_DEFAULTS: MotionRecipeMetadata = {
@@ -96,6 +111,11 @@ export const MOTION_RECIPE_METADATA_DEFAULTS: MotionRecipeMetadata = {
   supportsLeaveCompletion: false,
   interactive: false,
   defaultDurationToken: "interactiveDuration",
+  label: { ru: "Рецепт", en: "Recipe" },
+  phases: ["enter", "leave"],
+  parameters: [
+    { key: "interactiveDuration", label: { ru: "Длительность", en: "Duration" }, type: "number", unit: "ms", min: 0, max: 2000 },
+  ],
 };
  
 /** Canonical lifecycle phases. App events are a separate W3 API — do not add them here. */
@@ -126,8 +146,8 @@ export function isMotionHostLifecyclePhase(phase: string | undefined): phase is 
 /**
  * Compositor vars for `MotionController.set` and kit recipes.
  * Layout (`width` / `height` / `top` / `left` / `margin`) is forbidden — no index signature.
- * Declarative `motion` maps stay on `MotionVars`; `rotation` / `scaleX` / `opacity` in a
- * factory belong in `ctx.fromRest` / `ctx.to` or `gsap.to`, not in `MotionVars`.
+ * Declarative `motion` maps and `MotionController.set` share this compositor set.
+ * Layout stays out. 3D (`rotationX` / `rotationY`) and CSS color stay in a factory.
  */
 export type MotionTransformVars = {
   x?: number;
@@ -145,22 +165,25 @@ export type MotionTransformVars = {
  
 /**
  * Where a declarative tween starts. `"current"` continues from the live pose
- * (hover / press). `"rest"` restarts from identity (`x`/`y` `0`, `scale` `1`, …)
+ * (hover / press). `"rest"` restarts from identity (`x`/`y` `0`, `scale` `1`, `rotation` `0`, …)
  * so a retriggered ping does not freeze at the peak.
  */
 export type MotionReplay = "rest" | "current";
  
 /**
- * Transform / opacity vars for the public motion API (safe subset of compositor props).
+ * Transform / opacity vars for the public motion API (compositor props).
  * Duration is seconds (GSAP). Do not pass layout props (`width`, `height`, `top`, `left`).
- * `rotation` / `scaleX` / `scaleY` / `opacity` are not in `MotionVars` — use a factory
- * (`ctx.fromRest` / `ctx.to`) or `MotionController.set` with `MotionTransformVars`.
+ * `replay: "rest"` restarts a listed key from identity: `rotation` 0, `scaleX` / `scaleY` 1, `opacity` 1.
  */
 export type MotionVars = {
   x?: number;
   y?: number;
   scale?: number;
+  scaleX?: number;
+  scaleY?: number;
+  rotation?: number;
   autoAlpha?: number;
+  opacity?: number;
   duration?: number;
   ease?: string;
   yoyo?: boolean;

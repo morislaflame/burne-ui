@@ -17,7 +17,7 @@ export function SliderOpacityStripDemo() {
           max={100}
           step={1}
           thickness="1rem"
-          ariaLabel="Contrast"
+          aria-label="Contrast"
         >
           <Slider.Rail>
             <Slider.Fill className="bg-primary/80" />
@@ -29,7 +29,7 @@ export function SliderOpacityStripDemo() {
           </Slider.Thumb>
         </Slider.Track>
       </Slider>
-      <Text as="p" variant="xsmall" className="text-center tabular-nums text-muted">
+      <Text as="p" textStyle="xsmall" className="text-center tabular-nums text-muted">
         Thickness 1rem · {value}%
       </Text>
     </div>

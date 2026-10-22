@@ -1,20 +1,26 @@
 import { useCallback, useMemo, useRef, useState } from "react";
  
-import { accordionDefaultValue } from "./accordionAPI";
 import type { AccordionContextValue, UseAccordionRootStateProps } from "./accordionTypes";
  
 export function useAccordionRootState({
+  selectionMode = "single",
   defaultValue: defaultValueProp = null,
-  defaultOpenIndex = null,
   value: valueProp,
   onValueChange,
+  values: valuesProp,
+  defaultValues = [],
+  onValuesChange,
+  variant = "default",
   size = "base",
   motion,
 }: UseAccordionRootStateProps) {
-  const controlled = valueProp !== undefined;
-  const defaultValue = accordionDefaultValue(defaultValueProp, defaultOpenIndex);
-  const [internalValue, setInternalValue] = useState<string | null>(defaultValue);
-  const value = controlled ? valueProp : internalValue;
+  const singleControlled = valueProp !== undefined;
+  const [internalValue, setInternalValue] = useState<string | null>(defaultValueProp);
+  const value = singleControlled ? (valueProp ?? null) : internalValue;
+
+  const manyControlled = valuesProp !== undefined;
+  const [internalValues, setInternalValues] = useState<string[]>(defaultValues);
+  const values = manyControlled ? valuesProp : internalValues;
   /** Auto-ids for items without `value`. Never reset during render (Strict Mode / concurrent). */
   const itemIndexRef = useRef(0);
  
@@ -24,25 +30,36 @@ export function useAccordionRootState({
     return id;
   }, []);
  
-  const setValue = useCallback(
-    (next: string | null) => {
-      if (!controlled) setInternalValue(next);
+  const setItemOpen = useCallback(
+    (id: string, open: boolean) => {
+      if (selectionMode === "multiple") {
+        const next = open
+          ? values.includes(id) ? values : [...values, id]
+          : values.filter((item) => item !== id);
+        if (!manyControlled) setInternalValues(next);
+        onValuesChange?.(next);
+        return;
+      }
+      const next = open ? id : null;
+      if (!singleControlled) setInternalValue(next);
       onValueChange?.(next);
     },
-    [controlled, onValueChange],
+    [manyControlled, onValueChange, onValuesChange, selectionMode, singleControlled, values],
   );
  
   const contextValue = useMemo<AccordionContextValue>(
     () => ({
+      selectionMode,
       value,
-      setValue,
+      values,
+      setItemOpen,
       allocateAutoItemId,
+      variant,
       size,
       motion,
     }),
-    [allocateAutoItemId, motion, value, setValue, size],
+    [allocateAutoItemId, motion, selectionMode, setItemOpen, size, value, values, variant],
   );
  
   return { contextValue };
 }
- 

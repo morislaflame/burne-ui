@@ -70,7 +70,7 @@ export function TooltipShowcase() {
 
       <ShowcaseSection
         title="Customization classNames"
-        description="Slots root, trigger, content, arrow, panel, message, indicator, icon, title and description."
+        description="Slots trigger, content, arrow, panel, message, indicator, title and description."
       >
         <ShowcaseDemoFromFile Demo={TooltipClassNamesFullDemo} source={tooltipClassNamesFullSource} />
       </ShowcaseSection>

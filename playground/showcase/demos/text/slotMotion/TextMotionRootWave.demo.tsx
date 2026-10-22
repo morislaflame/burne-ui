@@ -3,7 +3,7 @@ import { Text } from "@/components/core/Text";
 export function TextMotionRootWaveDemo() {
   return (
     <Text
-      variant="large"
+      textStyle="large"
       motion={{
         root: {
           enter: (ctx) =>

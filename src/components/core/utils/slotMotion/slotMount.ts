@@ -9,7 +9,7 @@ import type { MotionRegistration } from "./createMotionRegistry";
 import { getMotionRecipe } from "./motionRecipeRegistry";
 import { createMotionSurfaceApi } from "./motionSurface";
 import { createMotionTweenApi, playDeclarativeMotion } from "./motionTween";
-import { registerKitMotionRecipes } from "./recipes";
+import { loadKitRecipe } from "./recipes/loadKitRecipe";
 import {
   isMotionAbortError,
   isMotionFactory,
@@ -123,18 +123,21 @@ export function createSlotMounts(options: {
     } satisfies MotionContext;
 
     const runRecipe = (name: string, extra?: MotionRecipeParams) => {
-      registerKitMotionRecipes();
-      const recipe = getMotionRecipe(name);
-      if (!recipe) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error(
-            `[burne-ui] unknown motion recipe "${name}" (slot "${reg.slot}", phase "mount")`,
-          );
-        }
-        return undefined;
-      }
       const recipeCtx = extra ? { ...ctx, params: { ...params, ...extra } } : ctx;
-      return recipe(recipeCtx);
+      const recipe = getMotionRecipe(name);
+      if (recipe) return recipe(recipeCtx);
+      return loadKitRecipe(name).then((loaded) => {
+        if (abort.signal.aborted) return undefined;
+        if (!loaded) {
+          if (process.env.NODE_ENV !== "production") {
+            console.error(
+              `[burne-ui] unknown motion recipe "${name}" (slot "${reg.slot}", phase "mount")`,
+            );
+          }
+          return undefined;
+        }
+        return loaded(recipeCtx);
+      });
     };
 
     const watch = (result: unknown) => {

@@ -22,7 +22,7 @@ export function ToggleButtonGroupMotionEventsStackDemo() {
         Stack
       </Button>
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         defaultValue="list"
         aria-label="View"
         motionController={controller}

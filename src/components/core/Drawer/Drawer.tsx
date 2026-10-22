@@ -1,6 +1,6 @@
  
 import { DrawerClassNamesProvider, DrawerMotionProvider, DrawerProvider } from "./drawerContext";
-import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerTitle, DrawerTrigger } from "./drawerParts";
+import { DrawerOverlayInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerTitle, DrawerTrigger } from "./drawerParts";
 import type { DrawerProps } from "./drawerTypes";
 import { useDrawerRootState } from "./useDrawerRootState";
 import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlayTriggerSqueeze";
@@ -14,7 +14,7 @@ export type {
   DrawerSize,
   DrawerVariant,
   DrawerClassNames,
-  DrawerBackdropProps,
+  DrawerOverlayProps,
   DrawerHandleProps,
   DrawerHeaderProps,
   DrawerHeadingBlockProps,
@@ -70,7 +70,7 @@ export function DrawerRoot({
 DrawerRoot.displayName = "Drawer";
  
 export {
-  DrawerBackdropInner,
+  DrawerOverlayInner,
   DrawerHandleInner,
   DrawerContent,
   DrawerHeader,

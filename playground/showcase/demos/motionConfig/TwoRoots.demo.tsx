@@ -14,7 +14,7 @@ function Island({ title, testId }: { title: string; testId: string }) {
         <Button size="small" variant="outline" onClick={() => void controller.play("hoverIn")}>
           Lift
         </Button>
-        <Text variant="small" className="text-muted" data-testid={testId}>
+        <Text textStyle="small" className="text-muted" data-testid={testId}>
           {title}: {config.interactiveDuration}ms
         </Text>
       </div>

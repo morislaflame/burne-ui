@@ -15,10 +15,10 @@ export function TabsMotionInstantEnterDemo() {
         <Tabs.Tab value="two">Two</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="one">
-        <Text variant="base">Default tab hover skipped</Text>
+        <Text textStyle="base">Default tab hover skipped</Text>
       </Tabs.Panel>
       <Tabs.Panel value="two">
-        <Text variant="base">Second</Text>
+        <Text textStyle="base">Second</Text>
       </Tabs.Panel>
     </Tabs>
   );

@@ -1,3 +1,5 @@
+import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
+
 import type { FormFieldRules, FormValues } from "./formTypes";
  
 export function countFormErrors(errors: Record<string, string>): number {
@@ -90,6 +92,24 @@ export function mergeFormFieldRules(
   return Object.keys(merged).length > 0 ? merged : undefined;
 }
  
+/** Puts the form's live announcement on the user's `Form.Announce` when it has no message. */
+export function withFormAnnounceMessage(children: ReactNode, announce: string | null): ReactNode {
+  if (!announce) return children;
+  return Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+    const name = (child.type as { displayName?: string }).displayName;
+    const props = child.props as { children?: ReactNode; message?: string | null };
+    if (name === "Form.Announce") {
+      if (props.message != null && props.message !== "") return child;
+      return cloneElement(child as ReactElement<{ message?: string | null }>, {
+        message: announce,
+      });
+    }
+    if (props.children == null) return child;
+    return cloneElement(child, {}, withFormAnnounceMessage(props.children, announce));
+  });
+}
+
 export function readControlValueFromEvent(event: unknown, type?: string): unknown {
   if (event == null || typeof event !== "object" || !("target" in event)) {
     return event;

@@ -10,7 +10,6 @@ import type {
  
 export function useExpandableRootState({
   children,
-  compound: compoundProp,
   defaultOpen = false,
   open: openProp,
   onOpenChange,
@@ -30,7 +29,8 @@ export function useExpandableRootState({
   }, []);
  
   const open = controlled ? openProp! : internalOpen;
- 
+  const isCompound = hasExpandableCompoundChildren(children);
+
   const toggle = useCallback(() => {
     if (disabled || !hasPanel) return;
     const next = !open;
@@ -42,6 +42,7 @@ export function useExpandableRootState({
     open,
     disabled,
     hasPanel,
+    compound: isCompound,
     size,
     variant,
     toggle,
@@ -49,10 +50,7 @@ export function useExpandableRootState({
     panelId,
     setHasPanel,
   };
- 
-  const isCompound =
-    compoundProp === true || hasExpandableCompoundChildren(children);
- 
+
   return {
     contextValue,
     isCompound,

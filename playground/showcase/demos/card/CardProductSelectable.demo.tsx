@@ -12,7 +12,7 @@ export function CardProductSelectableDemo() {
     <Card
       pressable
       variant={selected ? "secondary" : "default"}
-      onPress={() => setSelected((v) => !v)}
+      onClick={() => setSelected((v) => !v)}
       className="max-w-xs"
     >
       <Ripple color="neutral" />

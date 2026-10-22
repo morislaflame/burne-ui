@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { ComboBox } from "@/components/core/ComboBox";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -11,7 +11,7 @@ const options = [
 const VARIANTS = ["default", "outline", "secondary"] as const;
 
 export function ComboBoxVariantsDemo() {
-  const [value, setValue] = useState("react");
+  const [value, setValue] = useState<string | null>("react");
 
   return (
     <div className="grid w-full max-w-2xl gap-xlarge sm:grid-cols-2">
@@ -20,7 +20,7 @@ export function ComboBoxVariantsDemo() {
           key={variant}
           label={variant}
           variant={variant}
-          options={options}
+          items={items}
           value={value}
           onValueChange={setValue}
           hint={`variant="${variant}"`}

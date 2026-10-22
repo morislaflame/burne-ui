@@ -35,7 +35,6 @@ export const OptionGroupLegend = forwardRef<HTMLLegendElement, OptionGroupLegend
 OptionGroupLegend.displayName = "OptionGroupLegend";
  
 export const OptionGroupGroup = Field.Set.Group;
-export const OptionGroupActions = Field.Set.Actions;
  
 export type OptionGroupHintProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
@@ -44,7 +43,7 @@ export type OptionGroupHintProps = HTMLAttributes<HTMLSpanElement> & {
  
 export function OptionGroupHint({ children, className, id, ...rest }: OptionGroupHintProps) {
   return (
-    <Field.Hint as="span" variant="small" id={id} className={className} {...rest}>
+    <Field.Hint as="span" textStyle="small" id={id} className={className} {...rest}>
       {children}
     </Field.Hint>
   );

@@ -1,4 +1,8 @@
-import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
+import {
+  messageBannerGridClass,
+  messageBannerIndicatorCellClass,
+  type MessageBannerGridSlots,
+} from "@/components/core/utils/messageBannerGridLayout";
 import { iconSlotClass } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import { SEMANTIC_STATUS_TEXT } from "@/components/core/utils/semanticStatusSurface";
@@ -108,12 +112,16 @@ export function tooltipTitleClass(status: SemanticStatus): string {
 
 export function tooltipIndicatorClass(
   status: SemanticStatus,
+  size: TooltipSize,
+  gridSlots: MessageBannerGridSlots,
   slotClass?: string,
   className?: string,
 ): string {
   return cn(
     TOOLTIP_INDICATOR_BASE_CLASS,
     TOOLTIP_STATUS_ACCENT_CLASS[status],
+    TOOLTIP_ICON_SLOT_SIZE[size],
+    messageBannerIndicatorCellClass(gridSlots),
     slotClass,
     className,
   );
@@ -124,12 +132,14 @@ export function tooltipPanelClass({
   size,
   gridSlots,
   slotClass,
+  contentSlot,
   className,
 }: {
   variant: TooltipVariant;
   size: TooltipSize;
   gridSlots: Parameters<typeof messageBannerGridClass>[0];
   slotClass?: string;
+  contentSlot?: string;
   className?: string;
 }) {
   const visual = resolveVariantVisual(variant, KIT_TOOLTIP_VARIANTS, "tooltip.panel");
@@ -142,6 +152,7 @@ export function tooltipPanelClass({
       : cn(TOOLTIP_PANEL_SHADOW_CLASS, TOOLTIP_VARIANT_SURFACE_CLASS[visual.key]),
     TOOLTIP_TEXT_LAYOUT[size],
     slotClass,
+    contentSlot,
     className,
   );
 }

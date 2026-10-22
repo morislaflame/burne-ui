@@ -1,13 +1,13 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
 import {
   FIELD_SHELL_TRANSITION_CLASS,
   fieldShellFocusRingClass,
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
-import { KIT_INPUT_VARIANTS, type InputSize, type InputStatus, type InputVariant } from "@/components/core/Input/inputTypes";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const PIN_INPUT_ROOT_CLASS = "w-fit max-w-full min-w-0";
@@ -29,7 +29,7 @@ export const PIN_INPUT_DISABLED_CLASS = "cursor-not-allowed opacity-55";
 export const PIN_INPUT_MASK_CLASS = "[-webkit-text-security:disc] [text-security:disc]";
 
 export function pinInputFieldSurface(variant: InputVariant): string {
-  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "pinInput.field");
+  const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "pinInput.control");
   if (visual.className !== undefined) return visual.className;
   return resolveFieldShellSurfaceClass({ variant });
 }
@@ -56,14 +56,14 @@ export function pinInputFieldClass({
 }: {
   size: InputSize;
   variant: InputVariant;
-  status: InputStatus;
+  status: FieldShellStatus;
   disabled: boolean;
   mask: boolean;
   motionClass?: string;
   slotClass?: string;
   className?: string;
 }): string {
-  const kitSurface = isKitVariant(variant, KIT_INPUT_VARIANTS);
+  const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return cn(
     "box-border shrink-0 border-1 text-center text-foreground outline-none tabular-nums placeholder:text-muted",
     PIN_INPUT_CELL_BOX[size],

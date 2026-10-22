@@ -38,13 +38,14 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
         ref={ref}
         className={cn(
           radioControlClass(ctx.size),
-          radioControlCellClass(),
+          radioControlCellClass(ctx.labelPosition),
           slotClassNames.control,
           className,
         )}
         {...rest}
       >
-        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- ARIA 1.2 global states on radio */}
+        {/* The kit contract publishes aria-invalid on the control. The native radio role mapping does not list it. */}
+        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- invalid radios publish aria-invalid */}
         <input
           id={ctx.inputId}
           type="radio"
@@ -57,13 +58,21 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
           name={ctx.inputName}
           value={ctx.inputProps.value}
           required={ctx.inputProps.required}
-          aria-required={ctx.inputProps.required || undefined}
           aria-invalid={ctx.isInvalid ? true : undefined}
           data-invalid={ctx.isInvalid ? "" : undefined}
           form={ctx.inputProps.form}
           autoFocus={ctx.inputProps.autoFocus}
           tabIndex={ctx.inputProps.tabIndex}
           readOnly={ctx.inputProps.readOnly}
+          data-readonly={ctx.inputProps.readOnly ? "" : undefined}
+          onClick={(event) => {
+            if (ctx.inputProps.readOnly) {
+              event.preventDefault();
+              return;
+            }
+            ctx.onActivate?.(event);
+          }}
+          ref={ctx.inputProps.inputRef}
           onBlur={ctx.inputProps.onBlur}
           onFocus={ctx.inputProps.onFocus}
           aria-describedby={joinFieldDescribedBy(
@@ -72,7 +81,6 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
           )}
           aria-label={radioInputAriaLabel(ctx.inputProps.value, ctx.hasLabel, unnamedLabel)}
           onChange={ctx.onChange}
-          onClick={ctx.onActivate}
         />
         <span
           ref={trackRef}
@@ -93,8 +101,10 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
  
 RadioControl.displayName = "RadioControl";
  
-export function RadioIndicator({
+export const RadioIndicator = forwardRef<HTMLSpanElement, RadioIndicatorProps>(
+  function RadioIndicator({
   children,
+  icon,
   className,
   classNames: classNamesProp,
   size: sizeProp,
@@ -104,7 +114,7 @@ export function RadioIndicator({
   motionPayload,
   playInitialState,
   ...rest
-}: RadioIndicatorProps) {
+}, ref) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const rootMotion = useRadioMotion();
@@ -122,6 +132,7 @@ export function RadioIndicator({
       variant={radioVariantToIndicator(ctx.variant)}
       selected={ctx.mergedChecked}
       dot
+      icon={icon}
       classNames={resolveRadioIndicatorClassNames({
         slotClassNames,
         classNames: classNamesProp,
@@ -133,11 +144,12 @@ export function RadioIndicator({
                 motionPayload={motionPayload}
                 playInitialState={playInitialState}
       {...rest}
+      ref={ref}
     >
       {children}
     </SelectionIndicator>
   );
-}
+});
  
 RadioIndicator.displayName = "RadioIndicator";
  
@@ -165,13 +177,13 @@ export const RadioContent = forwardRef<HTMLDivElement, RadioContentProps>(
  
 RadioContent.displayName = "RadioContent";
  
-export function RadioLabel({
+export const RadioLabel = forwardRef<HTMLSpanElement, RadioLabelProps>(function RadioLabel({
   children,
   className,
   required: requiredProp,
   motion,
   ...rest
-}: RadioLabelProps) {
+}, ref) {
   const field = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const labelCtx = useOptionalFieldLabelContext();
@@ -181,14 +193,14 @@ export function RadioLabel({
  
   return (
     <span
-      ref={mergeRefs(setRef, (node) => {
+      ref={mergeRefs(setRef, ref, (node) => {
         if (field.isCompound && field.useInlineCompoundMotion) {
           field.textMotionRef.current = node;
         }
       })}
       className={cn(
         RADIO_LABEL_CLASS,
-        field.isCompound && radioLabelCellClass(),
+        field.isCompound && radioLabelCellClass(field.labelPosition),
         field.isCompound &&
           (field.hasCompoundHint || field.hasCompoundError) &&
           RADIO_LABEL_COMPOUND_SECONDARY_CLASS,
@@ -200,7 +212,7 @@ export function RadioLabel({
     >
       <Text
         as="span"
-        variant={sz.title}
+        textStyle={sz.title}
         inheritColor
         className={cn(
           field.isDisabled && RADIO_LABEL_TEXT_DISABLED_CLASS,
@@ -223,23 +235,29 @@ export function RadioLabel({
       ) : null}
     </span>
   );
-}
+});
  
 RadioLabel.displayName = "RadioLabel";
  
-export function RadioHint({ children, className, variant, motion, ...rest }: RadioHintProps) {
+export const RadioHint = forwardRef<HTMLElement, RadioHintProps>(function RadioHint({
+  children,
+  className,
+  textStyle,
+  motion,
+  ...rest
+}, ref) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const { setRef } = useRadioChromeSlot("hint", motion);
  
   return (
     <Field.Hint
-      ref={setRef}
+      ref={mergeRefs(setRef, ref)}
       as="span"
       id={ctx.hintId}
-      variant={variant ?? RADIO_SIZE_LAYOUT[ctx.size].desc}
+      textStyle={textStyle ?? RADIO_SIZE_LAYOUT[ctx.size].desc}
       className={cn(
-        ctx.isCompound && radioSecondaryCellClass(2),
+        ctx.isCompound && radioSecondaryCellClass(2, ctx.labelPosition),
         ctx.isDisabled && RADIO_HINT_DISABLED_CLASS,
         slotClassNames.hint,
         className,
@@ -249,23 +267,28 @@ export function RadioHint({ children, className, variant, motion, ...rest }: Rad
       {children}
     </Field.Hint>
   );
-}
+});
  
 RadioHint.displayName = "RadioHint";
  
-export function RadioError({ children, className, motion, ...rest }: RadioErrorProps) {
+export const RadioError = forwardRef<HTMLElement, RadioErrorProps>(function RadioError({
+  children,
+  className,
+  motion,
+  ...rest
+}, ref) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
   const { setRef } = useRadioChromeSlot("error", motion);
  
   return (
     <Field.Error
-      ref={setRef}
+      ref={mergeRefs(setRef, ref)}
       as="span"
       id={ctx.errorId}
-      variant={RADIO_SIZE_LAYOUT[ctx.size].desc}
+      textStyle={RADIO_SIZE_LAYOUT[ctx.size].desc}
       className={cn(
-        ctx.isCompound && radioSecondaryCellClass(radioErrorRow(ctx.hasCompoundHint)),
+        ctx.isCompound && radioSecondaryCellClass(radioErrorRow(ctx.hasCompoundHint), ctx.labelPosition),
         ctx.isDisabled && RADIO_ERROR_DISABLED_CLASS,
         slotClassNames.error,
         className,
@@ -275,7 +298,7 @@ export function RadioError({ children, className, motion, ...rest }: RadioErrorP
       {children}
     </Field.Error>
   );
-}
+});
  
 RadioError.displayName = "RadioError";
  
@@ -312,6 +335,7 @@ export function RadioSimpleBody({
   motionController?: MotionController;
 } & MotionStateHostProps) {
   const slotClassNames = useRadioClassNames();
+  const { labelPosition } = useRadioFieldContext();
   const sz = RADIO_SIZE_LAYOUT[size];
   const { setRef: setLabelMotionRef } = useRadioLabelSlot();
   const { setRef: setHintMotionRef } = useRadioChromeSlot("hint");
@@ -326,7 +350,7 @@ export function RadioSimpleBody({
       <span
         ref={mergeRefs(textColRef, setLabelMotionRef)}
         className={cn(
-          radioLabelCellClass(),
+          radioLabelCellClass(labelPosition),
           !secondaryLines && RADIO_SIMPLE_LABEL_WRAP_CLASS,
           slotClassNames.simpleLabelWrap,
           slotClassNames.label,
@@ -334,7 +358,7 @@ export function RadioSimpleBody({
       >
         <Text
           as="span"
-          variant={sz.title}
+          textStyle={sz.title}
           inheritColor
           className={cn(
             RADIO_SIMPLE_LABEL_TEXT_CLASS,
@@ -352,9 +376,9 @@ export function RadioSimpleBody({
           ref={setHintMotionRef}
           as="span"
           id={hintId}
-          variant={sz.desc}
+          textStyle={sz.desc}
           className={cn(
-            radioSecondaryCellClass(2),
+            radioSecondaryCellClass(2, labelPosition),
             isDisabled && RADIO_HINT_DISABLED_CLASS,
             slotClassNames.hint,
           )}
@@ -367,9 +391,9 @@ export function RadioSimpleBody({
           ref={setErrorMotionRef}
           as="span"
           id={errorId}
-          variant={sz.desc}
+          textStyle={sz.desc}
           className={cn(
-            radioSecondaryCellClass(radioErrorRow(hasHint)),
+            radioSecondaryCellClass(radioErrorRow(hasHint), labelPosition),
             isDisabled && RADIO_ERROR_DISABLED_CLASS,
             slotClassNames.error,
           )}

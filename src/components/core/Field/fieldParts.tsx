@@ -1,5 +1,5 @@
 import type { ElementType, ReactNode } from "react";
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo, type ForwardedRef } from "react";
  
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
@@ -52,7 +52,10 @@ import type {
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
-export function FieldRootShell({
+export const FieldRootShell = forwardRef<
+  HTMLDivElement,
+  Omit<FieldProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">
+>(function FieldRootShell({
   className,
   size: sizeProp,
   children,
@@ -62,11 +65,12 @@ export function FieldRootShell({
   onPointerDown,
   onPointerUp,
   ...rest
-}: Omit<FieldProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">) {
+}, ref) {
   const slotClassNames = useFieldClassNames();
   const inheritedSize = useOptionalFieldSize();
   const size = resolveFieldSize(sizeProp ?? inheritedSize ?? undefined);
   const part = useFieldSlotMotion<HTMLDivElement>("root", {
+    forwardedRef: ref,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -86,8 +90,8 @@ export function FieldRootShell({
         className,
         slotClass: slotClassNames.root,
       })}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size })}
       data-invalid={invalid ? "" : undefined}
     >
@@ -96,9 +100,9 @@ export function FieldRootShell({
   );
 
   return invalid ? <FieldInvalidProvider value>{tree}</FieldInvalidProvider> : tree;
-}
+});
  
-export function FieldRoot({ classNames, size, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest }: FieldProps) {
+export const FieldRoot = forwardRef<HTMLDivElement, FieldProps>(function FieldRoot({ classNames, size, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
   const motionDefaults = useMemo(() => resolveFieldMotionDefaults(), []);
   const content = (
     <FieldClassNamesProvider classNames={classNames}>
@@ -106,7 +110,7 @@ export function FieldRoot({ classNames, size, children, motion, motionController
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}>
-        <FieldRootShell size={size} {...rest}>
+        <FieldRootShell ref={ref} size={size} {...rest}>
           {children}
         </FieldRootShell>
       </FieldMotionProvider>
@@ -118,7 +122,7 @@ export function FieldRoot({ classNames, size, children, motion, motionController
   return (
     <FieldSetSizeProvider size={resolveFieldSize(size)}>{content}</FieldSetSizeProvider>
   );
-}
+});
  
 export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
   function FieldHint(
@@ -127,7 +131,7 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
       className,
       status = "default",
       as = "p",
-      variant: variantProp,
+      textStyle: textStyleProp,
       motion,
       onPointerOver,
       onPointerOut,
@@ -139,7 +143,7 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
   ) {
     const slotClassNames = useFieldClassNames();
     const size = useFieldSetSize();
-    const variant = variantProp ?? fieldHintVariant(size);
+    const textStyle = textStyleProp ?? fieldHintVariant(size);
     const part = useFieldSlotMotion<HTMLElement>("hint", {
       motion,
       forwardedRef: ref,
@@ -153,15 +157,15 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
       <Text
         ref={part.setRef}
         as={as as ElementType}
-        variant={variant}
+        textStyle={textStyle}
         inheritColor={as === "span"}
         className={fieldHintClass({
           status,
           className,
           slotClass: slotClassNames.hint,
         })}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
         {...dataVariantProps({ status })}
       >
         {children}
@@ -175,7 +179,7 @@ FieldHint.displayName = "FieldHint";
 export const FieldLabel = forwardRef<HTMLElement, FieldLabelProps>(
   function FieldLabel(
     {
-      variant: variantProp,
+      textStyle: textStyleProp,
       motion,
       onPointerOver,
       onPointerOut,
@@ -188,7 +192,7 @@ export const FieldLabel = forwardRef<HTMLElement, FieldLabelProps>(
   ) {
     const slotClassNames = useFieldClassNames();
     const size = useFieldSetSize();
-    const variant = variantProp ?? fieldLabelVariant(size);
+    const textStyle = textStyleProp ?? fieldLabelVariant(size);
     const part = useFieldSlotMotion<HTMLElement>("label", {
       motion,
       forwardedRef: ref,
@@ -201,7 +205,7 @@ export const FieldLabel = forwardRef<HTMLElement, FieldLabelProps>(
     return (
       <Label
         ref={part.setRef}
-        variant={variant}
+        textStyle={textStyle}
         className={cn(slotClassNames.label, className)}
         {...rest}
         {...part.pointerHandlers}
@@ -241,14 +245,14 @@ export const FieldError = forwardRef<HTMLElement, FieldErrorProps>(
       <Text
         ref={part.setRef}
         as="p"
-        variant={fieldHintVariant(size)}
+        textStyle={fieldHintVariant(size)}
         role={role}
         className={fieldHintClass({
           status: "danger",
           className: cn(slotClassNames.error, className),
         })}
-        {...part.pointerHandlers}
         {...props}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -288,8 +292,8 @@ export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
           slotClassNames.legend,
           className,
         )}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {children}
       </legend>
@@ -299,7 +303,7 @@ export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
  
 FieldLegend.displayName = "FieldLegend";
  
-export function FieldLegendHeader({
+export const FieldLegendHeader = forwardRef(function FieldLegendHeader({
   children,
   className,
   motion,
@@ -308,10 +312,11 @@ export function FieldLegendHeader({
   onPointerDown,
   onPointerUp,
   ...rest
-}: FieldLegendHeaderProps) {
+}: FieldLegendHeaderProps, ref: ForwardedRef<HTMLSpanElement>) {
   const size = useFieldSetSize();
   const slotClassNames = useFieldSetClassNames();
   const part = useFieldSetSlotMotion<HTMLSpanElement>("legendHeader", {
+    forwardedRef: ref,
     motion,
     onPointerOver,
     onPointerOut,
@@ -327,13 +332,13 @@ export function FieldLegendHeader({
         className,
         slotClass: slotClassNames.legendHeader,
       })}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
     >
       {children}
     </span>
   );
-}
+});
  
 export const FieldSetGroup = forwardRef<HTMLDivElement, FieldSetGroupProps>(
   function FieldSetGroup(
@@ -368,8 +373,8 @@ export const FieldSetGroup = forwardRef<HTMLDivElement, FieldSetGroupProps>(
           className,
           slotClass: slotClassNames.group,
         })}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {children}
       </div>
@@ -412,8 +417,8 @@ export const FieldSetActions = forwardRef<HTMLDivElement, FieldSetActionsProps>(
           className,
           slotClass: slotClassNames.actions,
         })}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {children}
       </div>
@@ -487,7 +492,7 @@ export const FieldSetRootInner = forwardRef<
   const size = useFieldSetSize();
   const isInvalid = resolveFieldInvalid({
     invalid: invalidProp,
-    error: state.hasError ? true : undefined,
+    error: state.errorConnected ? true : undefined,
     inheritedInvalid: useFieldInvalid(),
   });
   const slotClassNames = useFieldSetClassNames();
@@ -504,16 +509,16 @@ export const FieldSetRootInner = forwardRef<
       ref={part.setRef}
       disabled={disabled}
       aria-describedby={joinFieldDescribedBy(
-        state.hasHint ? hintId : undefined,
-        state.hasError ? errorId : undefined,
+        state.hintConnected ? hintId : undefined,
+        state.errorConnected ? errorId : undefined,
       )}
       className={cn(
         FIELD_SET_CLASS,
         slotClassNames.root,
         className,
       )}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size })}
       aria-invalid={isInvalid ? true : undefined}
       data-invalid={isInvalid ? "" : undefined}

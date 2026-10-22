@@ -5,9 +5,9 @@ import { Calendar } from "@/components/core/Calendar";
 export function CalendarCustomNavIconsDemo() {
   return (
     <Calendar
-      mode="single"
-      navPrevIcon={<IoArrowBack aria-hidden className="icon-xsmall text-primary" />}
-      navNextIcon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
+      selectionMode="single"
+      previousIcon={<IoArrowBack aria-hidden className="icon-xsmall text-primary" />}
+      nextIcon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
     />
   );
 }

@@ -35,7 +35,7 @@ export function PopoverAsChildMergedPropsDemo() {
             </Popover.Description>
           </Popover.Header>
           <Popover.Body>
-            <Text as="p" variant="small">
+            <Text as="p" textStyle="small">
               Inspect the trigger for id / data-analytics / ring.
             </Text>
           </Popover.Body>

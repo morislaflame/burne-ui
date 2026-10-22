@@ -114,7 +114,7 @@ function KbdGroupSurface({
           {index > 0 && separator != null ? (
             <Text
               as="span"
-              variant="xsmall"
+              textStyle="xsmall"
               aria-hidden={KBD_GROUP_SEPARATOR_ARIA_HIDDEN}
               className={kbdGroupSeparatorClass(
                 classNames?.separator ?? slotClassNames.separator,

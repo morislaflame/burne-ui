@@ -1,4 +1,4 @@
-import { Children, Fragment, createElement, isValidElement, type ReactNode } from "react";
+import { Children, Fragment, createElement, isValidElement, type ReactNode, type Ref } from "react";
  
 import type {
   LinkIconPlacement,
@@ -29,6 +29,8 @@ function resolveIconSlot(props: LinkIconProps): ResolvedLinkIconSlot {
   return {
     node: hasCustomIcon ? props.children! : "default",
     muted: !hasCustomIcon,
+    className: props.className,
+    ref: props.ref,
   };
 }
  
@@ -107,6 +109,10 @@ export function resolveLinkBodyIcons({
   textChildren: ReactNode;
   startIcon: ReactNode | null;
   endIcon: ReactNode | null;
+  startIconClassName?: string;
+  endIconClassName?: string;
+  startIconRef?: Ref<HTMLSpanElement>;
+  endIconRef?: Ref<HTMLSpanElement>;
   startIconMuted: boolean;
   endIconMuted: boolean;
   usesDefaultAtStart: boolean;
@@ -123,6 +129,10 @@ export function resolveLinkBodyIcons({
       textChildren: body.textChildren,
       startIcon: start.node,
       endIcon: end.node,
+      startIconClassName: body.startIcon?.className,
+      endIconClassName: body.endIcon?.className,
+      startIconRef: body.startIcon?.ref,
+      endIconRef: body.endIcon?.ref,
       startIconMuted: start.muted,
       endIconMuted: end.muted,
       usesDefaultAtStart: body.startIcon?.node === "default",

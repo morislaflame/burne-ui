@@ -12,8 +12,8 @@ export function useFieldSetRootState(children: ReactNode): UseFieldSetRootStateR
       loose,
       groups,
       actions,
-      hasHint: fieldSetHasHint(children),
-      hasError: fieldSetHasError(children),
+      hintConnected: fieldSetHasHint(children),
+      errorConnected: fieldSetHasError(children),
     };
   }, [children]);
 }

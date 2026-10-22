@@ -1,8 +1,15 @@
 import { StepperRoot } from "./Stepper";
-import { StepperDescription, StepperIndicator, StepperItem, StepperTitle } from "./stepperParts";
+import {
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperTitle,
+  StepperTrigger,
+} from "./stepperParts";
 
 export const Stepper = Object.assign(StepperRoot, {
   Item: StepperItem,
+  Trigger: StepperTrigger,
   Indicator: StepperIndicator,
   Title: StepperTitle,
   Description: StepperDescription,
@@ -21,4 +28,5 @@ export type {
   StepperStep,
   StepperStepState,
   StepperTitleProps,
+  StepperTriggerProps,
 } from "./stepperTypes";

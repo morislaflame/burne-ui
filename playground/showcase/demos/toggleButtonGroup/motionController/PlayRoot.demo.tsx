@@ -20,7 +20,7 @@ export function ToggleButtonGroupMotionControllerDemo() {
         </Button>
       </div>
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         defaultValue="list"
         aria-label="View"
         motionController={controller}

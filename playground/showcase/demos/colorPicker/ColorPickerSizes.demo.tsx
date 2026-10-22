@@ -23,7 +23,7 @@ export function ColorPickerSizesDemo() {
     <div className="flex flex-wrap items-end justify-center gap-2xlarge py-large">
       {SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-xsmall">
-          <Text as="span" variant="xsmall" className="capitalize text-muted">
+          <Text as="span" textStyle="xsmall" className="capitalize text-muted">
             {size}
           </Text>
           <ColorPicker

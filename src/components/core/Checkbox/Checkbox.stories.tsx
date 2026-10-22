@@ -57,7 +57,6 @@ const meta = {
     size: "base" as const,
     variant: "default" as const,
     disabled: false,
-    status: "default",
   },
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
@@ -183,7 +182,7 @@ export const States: Story = {
   name: "States",
   render: () => (
     <div className="flex max-w-md flex-col gap-large">
-      <Checkbox label="Regular" hint="Without status" />
+      <Checkbox label="Regular" hint="Muted hint" />
       <Checkbox error="Consent is required" label="With error" hint="Subtitle stays muted" />
       <Checkbox disabled label="Disabled" hint="Cannot toggle" />
       <Checkbox disabled defaultChecked label="Disabled, checked" />
@@ -203,9 +202,7 @@ export const CustomIndicator: Story = {
   render: () => (
     <Checkbox defaultChecked>
       <Checkbox.Control>
-        <Checkbox.Indicator>
-          <IoStar aria-hidden className="text-primary-foreground -translate-y-[0.5px]" />
-        </Checkbox.Indicator>
+        <Checkbox.Indicator icon={<IoStar aria-hidden className="text-primary-foreground -translate-y-[0.5px]" />} />
       </Checkbox.Control>
       <Checkbox.Content>
         <Checkbox.Label>Favorites</Checkbox.Label>

@@ -30,7 +30,7 @@ export function ToggleButtonGroupMotionEventsFinishedDemo() {
         Bounce
       </Button>
       <ToggleButtonGroup
-        type="single"
+        selectionMode="single"
         defaultValue="list"
         aria-label="View"
         motionController={controller}

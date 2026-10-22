@@ -4,7 +4,7 @@ import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -22,8 +22,8 @@ export function ComboBoxMotionEventsFinishedDemo() {
   async function bounce() {
     setBusy(true);
     try {
-      await controller.playSlot("inputGroup", "combo:out", { waitForComplete: true }).finished;
-      await controller.playSlot("inputGroup", "combo:rest", { waitForComplete: true }).finished;
+      await controller.playSlot("shell", "combo:out", { waitForComplete: true }).finished;
+      await controller.playSlot("shell", "combo:rest", { waitForComplete: true }).finished;
     } finally {
       setBusy(false);
     }
@@ -36,7 +36,7 @@ export function ComboBoxMotionEventsFinishedDemo() {
       </Button>
       <ComboBox
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{ events }}

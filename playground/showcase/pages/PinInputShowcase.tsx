@@ -8,6 +8,8 @@ import { PinInputSizesDemo } from "../demos/pinInput/Sizes.demo";
 import sizesSource from "../demos/pinInput/Sizes.demo.tsx?raw";
 import { PinInputVariantsDemo } from "../demos/pinInput/Variants.demo";
 import variantsSource from "../demos/pinInput/Variants.demo.tsx?raw";
+import { PinInputControlDemo } from "../demos/pinInput/Field.demo";
+import fieldSource from "../demos/pinInput/Field.demo.tsx?raw";
 import { PinInputCompoundDemo } from "../demos/pinInput/Compound.demo";
 import compoundSource from "../demos/pinInput/Compound.demo.tsx?raw";
 import { PinInputInvalidDemo } from "../demos/pinInput/Invalid.demo";
@@ -50,6 +52,9 @@ export function PinInputShowcase() {
       </ShowcaseSection>
       <ShowcaseSection title="Separator" description="separator is drawn once, after the first half of the cells.">
         <ShowcaseDemoFromFile align="start" Demo={PinInputSeparatorDemo} source={separatorSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Cell" description="PinInput.Control takes className for one cell. classNames.control still paints every cell. The field count matches length.">
+        <ShowcaseDemoFromFile align="start" Demo={PinInputControlDemo} source={fieldSource} />
       </ShowcaseSection>
       <ShowcaseSection title="Compound" description="Label, Hint, and Group in the order you write them.">
         <ShowcaseDemoFromFile align="start" Demo={PinInputCompoundDemo} source={compoundSource} />

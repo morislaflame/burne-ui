@@ -1,10 +1,10 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useId, useState, type PointerEvent as ReactPointerEvent, type ReactElement } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useId, useState, type PointerEvent as ReactPointerEvent, type ReactElement, type ForwardedRef } from "react";
  
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
-import { dataOpenState } from "@/components/core/utils/dataContract";
+import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
@@ -14,10 +14,8 @@ import {
   useDropdown,
   useDropdownClassNames,
   useDropdownGroupLabelRegister,
-  useDropdownIndicatorPreference,
   useOptionalDropdownMotionScope,
   DropdownGroupLabelRegisterProvider,
-  DropdownIndicatorPreferenceProvider,
 } from "./dropdownContext";
 import {
   DROPDOWN_GROUP_CLASS,
@@ -43,7 +41,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
     {
       children,
       className,
-      asChild,
+      asChild = true,
       motion,
       onClick,
       onPointerDown,
@@ -180,7 +178,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
     {
       children,
       className,
-      bodyClassName,
+      classNames: popoverClassNames,
       variant: variantProp,
       side = "bottom",
       align,
@@ -205,6 +203,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       contentId,
       subPanelRootsRef,
       popoverVariant,
+      size,
       portalContainer: portalContainerFromRoot,
     } = useDropdown();
     const slotClassNames = useDropdownClassNames();
@@ -216,12 +215,13 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
  
     const panelVariant = variantProp ?? popoverVariant;
  
-    const shouldDismiss = useCallback(
-      (target: Node) => {
+    const onInteractOutside = useCallback(
+      (event: { target: EventTarget | null; preventDefault: () => void }) => {
+        const target = event.target;
+        if (!(target instanceof Node)) return;
         for (const root of subPanelRootsRef.current) {
-          if (root.contains(target)) return false;
+          if (root.contains(target)) event.preventDefault();
         }
-        return true;
       },
       [subPanelRootsRef],
     );
@@ -240,7 +240,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         side={side}
         variant={panelVariant}
         anchorRef={anchorRefProp ?? triggerRef}
-        shouldDismiss={shouldDismiss}
+        onInteractOutside={onInteractOutside}
         portalContainer={portalContainerProp ?? portalContainerFromRoot}
         motion={popoverMotion}
       >
@@ -271,8 +271,9 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
             className={cn(
               DROPDOWN_POPOVER_BODY_CLASS,
               slotClassNames.popoverBody,
-              bodyClassName,
+              popoverClassNames?.popoverBody,
             )}
+            {...dataVariantProps({ size })}
           >
             {children}
           </Popover.Body>
@@ -285,14 +286,8 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
 DropdownPopover.displayName = "Dropdown.Popover";
  
 export const DropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(
-  function DropdownGroup(
-    { className, children, selectionIndicator, ...rest },
-    ref,
-  ) {
-    const parentPreference = useDropdownIndicatorPreference();
+  function DropdownGroup({ className, children, ...rest }, ref) {
     const slotClassNames = useDropdownClassNames();
-    const resolvedPreference =
-      selectionIndicator !== undefined ? selectionIndicator : parentPreference;
     const [labelId, setLabelId] = useState<string | undefined>();
  
     const registerLabel = useCallback((id: string | undefined) => {
@@ -300,23 +295,21 @@ export const DropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(
     }, []);
  
     return (
-      <DropdownIndicatorPreferenceProvider value={resolvedPreference}>
-        <DropdownGroupLabelRegisterProvider value={registerLabel}>
-          <div
-            ref={ref}
-            role="group"
-            aria-labelledby={labelId}
-            className={cn(
-              DROPDOWN_GROUP_CLASS,
-              slotClassNames.group,
-              className,
-            )}
-            {...rest}
-          >
-            {children}
-          </div>
-        </DropdownGroupLabelRegisterProvider>
-      </DropdownIndicatorPreferenceProvider>
+      <DropdownGroupLabelRegisterProvider value={registerLabel}>
+        <div
+          ref={ref}
+          role="group"
+          aria-labelledby={labelId}
+          className={cn(
+            DROPDOWN_GROUP_CLASS,
+            slotClassNames.group,
+            className,
+          )}
+          {...rest}
+        >
+          {children}
+        </div>
+      </DropdownGroupLabelRegisterProvider>
     );
   },
 );
@@ -370,7 +363,7 @@ export const DropdownLabel = forwardRef<HTMLDivElement, DropdownLabelProps>(
       >
         <Text
           as="span"
-          variant="small"
+          textStyle="small"
           className={DROPDOWN_LABEL_TEXT_CLASS}
         >
           {children}
@@ -382,7 +375,7 @@ export const DropdownLabel = forwardRef<HTMLDivElement, DropdownLabelProps>(
  
 DropdownLabel.displayName = "Dropdown.Label";
  
-export function DropdownSeparator({
+export const DropdownSeparator = forwardRef(function DropdownSeparator({
   className,
   motion,
   onPointerOver,
@@ -390,9 +383,10 @@ export function DropdownSeparator({
   onPointerDown,
   onPointerUp,
   ...rest
-}: DropdownSeparatorProps) {
+}: DropdownSeparatorProps, ref: ForwardedRef<HTMLDivElement>) {
   const slotClassNames = useDropdownClassNames();
   const part = useDropdownMenuSlotMotion("separator", {
+    forwardedRef: ref,
     motion,
     onPointerOver,
     onPointerOut,
@@ -408,7 +402,7 @@ export function DropdownSeparator({
       {...part.pointerHandlers}
     />
   );
-}
+});
  
 DropdownSeparator.displayName = "Dropdown.Separator";
  
@@ -422,7 +416,7 @@ export {
 } from "./dropdownItemParts";
 export {
   DropdownSub,
-  DropdownSubContent,
+  DropdownSubPopover,
   DropdownSubTrigger,
 } from "./dropdownSubParts";
  

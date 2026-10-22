@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { Accordion } from "@/components/composite/Accordion";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const WAVE_EXCLUDE = ["panelShell", "triggerLift", "chevron", "panelInner", "body"] as const;
+const WAVE_EXCLUDE = ["panelShell", "triggerLift", "chevron", "panelInner", "panel"] as const;
 const events = createMotionEvents({
   "accordion:wave": { y: -6, duration: 0.22, replay: "rest", ease: "power2.out" },
   "accordion:rest": { y: 0, duration: 0.16, ease: "power2.out" },

@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
  
 import { createMotionScope } from "@/components/core/utils/slotMotion";
@@ -17,7 +17,7 @@ export function FormClassNamesProvider({
   children: ReactNode;
 }) {
   const parent = useContext(FormClassNamesContext);
-  const merged = { ...parent, ...classNames };
+  const merged = useMemo(() => ({ ...parent, ...classNames }), [parent, classNames]);
   return (
     <FormClassNamesContext.Provider value={merged}>{children}</FormClassNamesContext.Provider>
   );
@@ -32,7 +32,7 @@ export function FormShellProvider({
   size?: FormSize;
   children: ReactNode;
 }) {
-  const value: FormShellValue = { shellIds, size };
+  const value = useMemo<FormShellValue>(() => ({ shellIds, size }), [shellIds, size]);
   return <FormShellContext.Provider value={value}>{children}</FormShellContext.Provider>;
 }
  

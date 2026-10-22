@@ -1,9 +1,10 @@
+import { forwardRef, type ForwardedRef, type HTMLAttributes } from "react";
  
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { useResolvedFieldInvalid, visualStatusForInvalid } from "@/components/core/utils/fieldInvalid";
+import { splitFieldHostRest } from "@/components/core/utils/fieldFormDom";
 import { useSkinVariant } from "@/skins/skinContext";
  
 import { InputClassNamesProvider, InputFieldProvider, InputMotionProvider } from "./inputContext";
@@ -22,7 +23,6 @@ export type {
   InputProps,
   InputSimpleProps,
   InputSize,
-  InputStatus,
   InputVariant,
   InputMotion,
   InputPartMotion,
@@ -30,7 +30,7 @@ export type {
  
 export { InputControl, InputError, InputHint, InputLabel } from "./inputParts";
  
-export function InputRoot({
+export const InputRoot = forwardRef(function InputRoot({
   children,
   label,
   hint,
@@ -40,7 +40,6 @@ export function InputRoot({
   classNames,
   id: idProp,
   required = false,
-  status = "default",
   size = "base",
   variant,
   motion,
@@ -49,19 +48,14 @@ export function InputRoot({
   motionPayload,
   playInitialState,
   ...rest
-}: InputSimpleProps) {
+}: InputSimpleProps, ref: ForwardedRef<HTMLInputElement>) {
+  const { host: hostRest, control: controlRest } = splitFieldHostRest(rest);
   const formCtx = useOptionalFormBindingContext();
-  const fieldName = typeof rest.name === "string" ? rest.name : undefined;
+  const fieldName = typeof controlRest.name === "string" ? controlRest.name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
   const resolvedError = error ?? formError;
   const resolvedSize = size ?? "base";
   const resolvedVariant = useSkinVariant(variant);
-  const isInvalid = useResolvedFieldInvalid({
-    invalid,
-    errorConnected: resolvedError != null,
-  });
-  const paintedStatus = visualStatusForInvalid(status, isInvalid, "default");
- 
   const state = useInputRootState({
     children,
     label,
@@ -70,7 +64,6 @@ export function InputRoot({
     invalid,
     id: idProp,
     required,
-    status,
     size: resolvedSize,
   });
  
@@ -84,8 +77,8 @@ export function InputRoot({
       inputId={state.inputId}
       labelId={state.fieldCtx.labelId}
       size={state.size}
-      status={state.status}
-      controlProps={{ ...rest, variant, motionController, motionState, motionPayload, playInitialState }}
+      controlProps={{ ...controlRest, variant, motionController, motionState, motionPayload, playInitialState }}
+      inputRef={ref}
     />
   );
  
@@ -103,10 +96,10 @@ export function InputRoot({
             <Field
               className={cn(classNames?.root, className)}
               size={resolvedSize}
+              {...(state.isCompound ? (rest as HTMLAttributes<HTMLDivElement>) : hostRest)}
               {...dataVariantProps({
                 size: resolvedSize,
                 variant: resolvedVariant,
-                status: paintedStatus,
               })}
             >
               {body}
@@ -116,5 +109,5 @@ export function InputRoot({
       </InputClassNamesProvider>
     </InputFieldProvider>
   );
-}
+});
  

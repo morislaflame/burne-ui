@@ -25,7 +25,7 @@ export type {
   CheckboxVariant,
   CheckboxClassNames,
   CheckboxMotion,
-  CheckboxCheckMotion,
+  CheckboxPartMotion,
 } from "./checkboxTypes";
  
 export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
@@ -37,8 +37,8 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       error,
       invalid,
       size,
+      labelPosition,
       variant,
-      status,
       icon,
       disabled,
       checked,
@@ -55,6 +55,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       readOnly,
       onBlur,
       onFocus,
+      inputRef,
       className,
       classNames,
       motion,
@@ -77,8 +78,8 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
     const state = useCheckboxRootState(
       {
         size,
+        labelPosition,
         variant,
-        status,
         invalid,
         icon,
         disabled,
@@ -96,6 +97,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
         readOnly,
         onBlur,
         onFocus,
+        inputRef,
         "aria-label": ariaLabel,
         label,
         hint,
@@ -114,9 +116,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
     });
  
     const gridClass = cn(
-      checkboxGridClass(state.secondaryLines, state.sz.gridGap, className),
+      checkboxGridClass(state.secondaryLines, state.sz.gridGap, state.contextValue.labelPosition),
       state.isDisabled && CHECKBOX_ROOT_DISABLED_CLASS,
       classNames?.root,
+      className,
     );
  
     if (state.isCompound) {
@@ -143,7 +146,6 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
                 {...dataVariantProps({
                   size: state.contextValue.size,
                   variant: state.contextValue.variant,
-                  status: state.contextValue.status,
                 })}
                 data-state={dataCheckedState(state.mergedChecked, state.contextValue.indeterminate)}
                 data-checked={state.mergedChecked ? "true" : undefined}
@@ -176,7 +178,6 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
             {...dataVariantProps({
               size: state.contextValue.size,
               variant: state.contextValue.variant,
-              status: state.contextValue.status,
             })}
             data-state={dataCheckedState(state.mergedChecked, state.contextValue.indeterminate)}
             data-checked={state.mergedChecked ? "true" : undefined}
@@ -191,7 +192,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
               textColRef={state.textColRef}
               size={state.contextValue.size}
               isDisabled={state.isDisabled}
-              status={state.isDanger}
+              isDanger={state.isDanger}
               hintId={state.hintId}
               errorId={state.errorId}
               motionController={motionController}

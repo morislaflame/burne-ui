@@ -36,7 +36,7 @@ function MotionDialog({
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             {body}
           </Text>
         </Dialog.Body>

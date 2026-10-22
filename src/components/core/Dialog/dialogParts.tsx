@@ -25,6 +25,7 @@ import type {
   DialogFooterProps,
   DialogHeaderProps,
   DialogHeadingBlockProps,
+  DialogOverlayProps,
   DialogPanelProps,
   DialogPortalShellProps,
   DialogTitleProps,
@@ -113,7 +114,7 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="h2"
-        variant={sizePreset.titleVariant}
+        textStyle={sizePreset.titleVariant}
         id={id ?? titleId}
         className={cn(
           DIALOG_TITLE_CLASS,
@@ -158,7 +159,7 @@ export const DialogDescription = forwardRef<
     <Text
       ref={setRef as Ref<HTMLElement>}
       as="p"
-      variant={sizePreset.descVariant}
+      textStyle={sizePreset.descVariant}
       id={id ?? descriptionId}
       className={cn(
         sizePreset.descClassName,
@@ -173,16 +174,17 @@ export const DialogDescription = forwardRef<
  
 DialogDescription.displayName = "DialogDescription";
  
-export function DialogHeadingBlock({
+export const DialogHeadingBlock = forwardRef(function DialogHeadingBlock({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   ...rest
-}: DialogHeadingBlockProps) {
+}: DialogHeadingBlockProps, ref: ForwardedRef<HTMLDivElement>) {
   const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope: useOptionalDialogMotionScope(),
     slot: "headingBlock",
     motion,
@@ -204,7 +206,7 @@ export function DialogHeadingBlock({
       {...pointerHandlers}
     />
   );
-}
+});
  
 DialogHeadingBlock.displayName = "DialogHeadingBlock";
  
@@ -319,7 +321,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
   function DialogTrigger(
     {
       children,
-      asChild,
+      asChild = true,
       className,
       motion,
       onClick,
@@ -442,6 +444,13 @@ DialogTrigger.displayName = "Dialog.Trigger";
  
 // ─── Dialog.Panel ─────────────────────────────────────────────────────────────
  
+/** Marker. The backdrop node is owned by the panel. Dismiss props here override `Dialog.Panel`. */
+export const DialogOverlay = forwardRef(function DialogOverlay(_props: DialogOverlayProps, _ref) {
+  return null;
+});
+
+DialogOverlay.displayName = "Dialog.Overlay";
+
 export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
   function DialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props }, forwardedRef) {
     const parentScope = useOptionalDialogMotionScope();
@@ -476,8 +485,11 @@ DialogPanel.displayName = "Dialog.Panel";
  
 function DialogPanelHost({
   variant: variantProp,
-  dismissOnBackdrop = true,
+  closeOnEscape = true,
+  closeOnInteractOutside = true,
+  onEscapeKeyDown,
   onInteractOutside,
+  initialFocus,
   className,
   style,
   themeAnchor,
@@ -501,6 +513,13 @@ function DialogPanelHost({
   } = useDialog();
   const motionScope = useDialogMotionScope();
  
+  let overlayDismiss: DialogOverlayProps = {};
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+    if ((child.type as { displayName?: string }).displayName !== "Dialog.Overlay") return;
+    overlayDismiss = child.props as DialogOverlayProps;
+  });
+
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
   );
@@ -510,8 +529,11 @@ function DialogPanelHost({
     open,
     onOpenChange,
     variant,
-    dismissOnBackdrop,
-    onInteractOutside,
+    closeOnEscape: overlayDismiss.closeOnEscape ?? closeOnEscape,
+    closeOnInteractOutside: overlayDismiss.closeOnInteractOutside ?? closeOnInteractOutside,
+    onEscapeKeyDown: overlayDismiss.onEscapeKeyDown ?? onEscapeKeyDown,
+    onInteractOutside: overlayDismiss.onInteractOutside ?? onInteractOutside,
+    initialFocus: overlayDismiss.initialFocus ?? initialFocus,
     contained,
     motionScope,
   });
@@ -544,7 +566,7 @@ function DialogPanelHost({
       onDialogClose={() => onOpenChange(false)}
       onDialogCancel={(e) => {
         e.preventDefault();
-        onOpenChange(false);
+        motion.handleDialogCancel(e);
       }}
       contained={contained}
     >

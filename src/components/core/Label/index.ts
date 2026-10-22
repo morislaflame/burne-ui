@@ -1,14 +1,27 @@
-import { Label, LabelRoot, LabelSlot } from "./Label";
+import { Label, LabelRequired, LabelSlot, LabelText } from "./Label";
  
 export type LabelComponent = typeof Label & {
   Slot: typeof LabelSlot;
+  Text: typeof LabelText;
+  Required: typeof LabelRequired;
 };
  
-const LabelCompound = Object.assign(Label, { Slot: LabelSlot }) as LabelComponent;
+const LabelCompound = Object.assign(Label, {
+  Slot: LabelSlot,
+  Text: LabelText,
+  Required: LabelRequired,
+}) as LabelComponent;
  
-export { LabelCompound as Label, LabelRoot, LabelSlot };
+export { LabelCompound as Label };
  
-export type { LabelProps, LabelClassNames, LabelMotion, LabelPartMotion, FieldLabelContextValue } from "./labelTypes";
+export type {
+  LabelProps,
+  LabelClassNames,
+  LabelMotion,
+  LabelPartMotion,
+  LabelTextProps,
+  LabelRequiredProps,
+} from "./labelTypes";
  
 export {
   FieldLabelContext,

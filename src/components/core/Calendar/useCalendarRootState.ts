@@ -11,6 +11,8 @@ import {
   createInitialViewDate,
   getDaysInMonth,
   isSameDay,
+  calendarRangeHitsUnavailable,
+  isCalendarDateDisabled,
   navigateViewDate,
   resolveInitialFocusDate,
   resolveRangeEnd,
@@ -28,21 +30,31 @@ import type {
  
 export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
   const {
-    mode = "single",
+    selectionMode: mode = "single",
     variant: variantProp,
     size = "base",
     defaultMonth,
-    initialView = "days",
+    month,
+    onMonthChange,
+    view: viewProp,
+    defaultView = "days",
+    onViewChange,
     locale: localeProp = EN_LOCALE,
     minDate,
     maxDate,
-    navPrevIcon,
-    navNextIcon,
+    isDateUnavailable,
+    previousIcon,
+    nextIcon,
     renderDay,
-    value,
+    value: valueProp,
+    values,
     defaultValue,
+    defaultValues,
     onValueChange,
+    onValuesChange,
   } = rawProps;
+  const value = mode === "multiple" ? values : valueProp;
+  const resolvedDefault = mode === "multiple" ? defaultValues : defaultValue;
  
   const variant = useSkinVariant(variantProp);
   const locale = useMemo(() => resolveCalendarLocale(localeProp), [localeProp]);
@@ -50,7 +62,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
   const isControlled = value !== undefined;
  
   const [internalValue, setInternalValue] = useState<unknown>(() =>
-    createDefaultCalendarValue(mode as CalendarMode, defaultValue),
+    createDefaultCalendarValue(mode as CalendarMode, resolvedDefault),
   );
  
   const resolvedValue = isControlled ? value : internalValue;
@@ -67,14 +79,45 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
           : newValOrUpdater;
       resolvedValueRef.current = newVal;
       if (!isControlled) setInternalValue(newVal);
-      onValueChange?.(newVal);
+      if (mode === "multiple") onValuesChange?.(newVal as Date[]);
+      else onValueChange?.(newVal);
     },
-    [isControlled, onValueChange],
+    [isControlled, mode, onValueChange, onValuesChange],
   );
  
-  const [view, setView] = useState<CalendarView>(initialView);
-  const [viewDate, setViewDateRaw] = useState<Date>(() =>
-    createInitialViewDate(defaultMonth, mode as CalendarMode, resolvedValue, today),
+  const viewControlled = viewProp !== undefined;
+  const [viewInternal, setViewInternal] = useState<CalendarView>(defaultView);
+  const view = viewControlled ? viewProp : viewInternal;
+  const setView = useCallback(
+    (next: CalendarView) => {
+      if (!viewControlled) setViewInternal(next);
+      onViewChange?.(next);
+    },
+    [onViewChange, viewControlled],
+  );
+
+  const monthControlled = month !== undefined;
+  const [viewDateInternal, setViewDateInternal] = useState<Date>(() =>
+    createInitialViewDate(month ?? defaultMonth, mode as CalendarMode, resolvedValue, today),
+  );
+  const viewYear = monthControlled ? month.getFullYear() : viewDateInternal.getFullYear();
+  const viewMonthIndex = monthControlled ? month.getMonth() : viewDateInternal.getMonth();
+  const viewDate = useMemo(
+    () => new Date(viewYear, viewMonthIndex, 1),
+    [viewYear, viewMonthIndex],
+  );
+  const viewDateRef = useRef(viewDate);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest month so navigation sees this render
+  viewDateRef.current = viewDate;
+  const setViewDateRaw = useCallback(
+    (updater: Date | ((prev: Date) => Date)) => {
+      const prev = viewDateRef.current;
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      const normalized = new Date(next.getFullYear(), next.getMonth(), 1);
+      if (!monthControlled) setViewDateInternal(normalized);
+      onMonthChange?.(normalized);
+    },
+    [monthControlled, onMonthChange],
   );
  
   const [rangePending, setRangePending] = useState<Date | null>(null);
@@ -102,9 +145,9 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       setFocusedDateRaw(next);
       setViewDateRaw(new Date(next.getFullYear(), next.getMonth(), 1));
     },
-    [minDate, maxDate],
+    [minDate, maxDate, setViewDateRaw],
   );
- 
+
   const selectedDates = useMemo(
     () => resolveSelectedDates(mode as CalendarMode, resolvedValue),
     [mode, resolvedValue],
@@ -133,12 +176,13 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
         return clampCalendarDate(addCalendarYears(fd, delta * 10), minDate, maxDate);
       });
     },
-    [view, minDate, maxDate],
+    [view, minDate, maxDate, setViewDateRaw],
   );
  
   const onDayPress = useCallback(
     (d: Date) => {
       const day = startOfDay(d);
+      if (isCalendarDateDisabled(day, minDate, maxDate, isDateUnavailable)) return;
       setFocusedDateRaw(day);
       if (mode === "single") {
         setValue((current: unknown) => {
@@ -160,13 +204,14 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
         } else {
           const s = day <= rangePending ? day : rangePending;
           const e = day <= rangePending ? rangePending : day;
+          if (calendarRangeHitsUnavailable(s, e, isDateUnavailable)) return;
           setRangePending(null);
           setHoverDate(null);
           setValue({ start: s, end: e } satisfies CalendarRangeValue);
         }
       }
     },
-    [mode, rangePending, setValue],
+    [isDateUnavailable, maxDate, minDate, mode, rangePending, setValue],
   );
  
   const onMonthPress = useCallback(
@@ -183,7 +228,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       });
       setView("days");
     },
-    [viewDate, minDate, maxDate],
+    [viewDate, minDate, maxDate, setView, setViewDateRaw],
   );
  
   const onYearPress = useCallback(
@@ -198,7 +243,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       );
       setView("months");
     },
-    [viewDate, minDate, maxDate],
+    [viewDate, minDate, maxDate, setView, setViewDateRaw],
   );
  
   const onClear = useCallback(() => {
@@ -213,7 +258,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     setViewDateRaw(new Date(today.getFullYear(), today.getMonth(), 1));
     setFocusedDateRaw(clampCalendarDate(today, minDate, maxDate));
     setView("days");
-  }, [today, minDate, maxDate]);
+  }, [today, minDate, maxDate, setView, setViewDateRaw]);
  
   const contextValue: CalendarContextValue = useMemo(
     () => ({
@@ -240,14 +285,16 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       locale,
       minDate,
       maxDate,
+      isDateUnavailable,
       today,
-      navPrevIcon,
-      navNextIcon,
+      previousIcon,
+      nextIcon,
       renderDay,
     }),
     [
       mode,
       view,
+      setView,
       viewDate,
       navigate,
       focusedDate,
@@ -267,9 +314,10 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       locale,
       minDate,
       maxDate,
+      isDateUnavailable,
       today,
-      navPrevIcon,
-      navNextIcon,
+      previousIcon,
+      nextIcon,
       renderDay,
     ],
   );

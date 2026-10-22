@@ -12,7 +12,7 @@ export function ContextMenuSideDemo() {
         <IoLanguageOutline aria-hidden className="icon-small" />
         Language
       </ContextMenu.Trigger>
-      <ContextMenu.Content side="top" className="min-w-44">
+      <ContextMenu.Popover side="top" className="min-w-44">
         <ContextMenu.Label>Interface</ContextMenu.Label>
         <ContextMenu.Item value="en" selection>
           <ContextMenu.ItemIndicator />
@@ -22,7 +22,7 @@ export function ContextMenuSideDemo() {
           <ContextMenu.ItemIndicator />
           <ContextMenu.ItemLabel>Russian</ContextMenu.ItemLabel>
         </ContextMenu.Item>
-      </ContextMenu.Content>
+      </ContextMenu.Popover>
     </ContextMenu>
   );
 }

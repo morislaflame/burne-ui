@@ -1,7 +1,9 @@
 import { useCallback } from "react";
+
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
  
 import type { AddToastOpts, PromiseToastOpts, ToastStatus } from "./toastTypes";
-import { TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
+import { TOAST_DEFAULT_DURATION_MS } from "./toastAPI";
 import { useToastContext } from "./toastContext";
  
 type ToastAPI = {
@@ -12,10 +14,13 @@ type ToastAPI = {
   warning: (title: string, opts?: Omit<AddToastOpts, "status" | "title">) => string;
   promise: <T>(p: Promise<T>, opts: PromiseToastOpts<T>) => string;
   dismiss: (id: string) => void;
+  dismissAll: () => void;
 };
  
 export function useToast(): { toast: ToastAPI } {
   const ctx = useToastContext();
+  const loadingStatus = useBurneLabel("loadingStatus");
+  const toastError = useBurneLabel("toastError");
  
   const show = useCallback((opts: AddToastOpts) => ctx.add(opts), [ctx]);
  
@@ -30,8 +35,9 @@ export function useToast(): { toast: ToastAPI } {
     <T,>(p: Promise<T>, opts: PromiseToastOpts<T>): string => {
       const id = ctx.add({
         status: "default",
-        title: opts.loading ?? "Loading…",
-        timeout: 0,
+        title: opts.loading ?? loadingStatus,
+        duration: 0,
+        onClose: opts.onClose,
         loading: true,
         placement: opts.placement,
         classNames: opts.classNames,
@@ -52,13 +58,13 @@ export function useToast(): { toast: ToastAPI } {
             status: "success",
             title: successTitle,
             loading: false,
-            timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
+            duration: opts.duration ?? TOAST_DEFAULT_DURATION_MS,
           });
         },
         (err: unknown) => {
           const errorTitle =
             opts.error == null
-              ? "An error occurred"
+              ? toastError
               : typeof opts.error === "function"
                 ? (opts.error as (e: unknown) => string)(err)
                 : opts.error;
@@ -66,14 +72,14 @@ export function useToast(): { toast: ToastAPI } {
             status: "danger",
             title: errorTitle,
             loading: false,
-            timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
+            duration: opts.duration ?? TOAST_DEFAULT_DURATION_MS,
           });
         },
       );
  
       return id;
     },
-    [ctx],
+    [ctx, loadingStatus, toastError],
   );
  
   const toast: ToastAPI = {
@@ -84,6 +90,7 @@ export function useToast(): { toast: ToastAPI } {
     warning: byStatus("warning"),
     promise,
     dismiss: ctx.dismiss,
+    dismissAll: ctx.dismissAll,
   };
  
   return { toast };

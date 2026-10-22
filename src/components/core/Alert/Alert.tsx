@@ -116,8 +116,8 @@ const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function Aler
         classNames?.root,
         className,
       )}
-      {...pointerHandlers}
       {...rest}
+      {...pointerHandlers}
       style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
       {...dataVariantProps({ size, variant, status })}
     >

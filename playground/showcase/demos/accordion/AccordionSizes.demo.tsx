@@ -8,7 +8,7 @@ export function AccordionSizesDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-large">
       {SIZES.map((size) => (
-        <Accordion key={size} size={size} defaultOpenIndex={0}>
+        <Accordion key={size} size={size} defaultValue="0">
           <Accordion.Item>
             <Accordion.Heading>
               <Accordion.Trigger>

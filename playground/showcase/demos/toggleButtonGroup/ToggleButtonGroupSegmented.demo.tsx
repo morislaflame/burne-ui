@@ -9,10 +9,10 @@ export function ToggleButtonGroupSegmentedDemo() {
   return (
     <ToggleButtonGroup
       segmented
-      type="multiple"
+      selectionMode="multiple"
       aria-label="Tags"
-      value={tags}
-      onValueChange={(v) => setTags(v as string[])}
+      values={tags}
+      onValuesChange={setTags}
     >
       <ToggleButton value="design">Design</ToggleButton>
       <ToggleButton value="dev">Dev</ToggleButton>

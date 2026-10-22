@@ -126,7 +126,7 @@ export function resolveBadgeBody({
  
   const textSlot =
     meaningChild && !inlineIconMode ? (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
+      <Text as="span" textStyle={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
         {children}
       </Text>
     ) : null;
@@ -149,7 +149,7 @@ export function resolveBadgeBody({
     const iconOnlyBody = singleDigit ? (
       <Text
         as="span"
-        variant={BADGE_TEXT_VARIANT[size]}
+        textStyle={BADGE_TEXT_VARIANT[size]}
         inheritColor
         className={cn(BADGE_TEXT_CLASS, "tabular-nums")}
       >

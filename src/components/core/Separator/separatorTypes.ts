@@ -20,6 +20,11 @@ export type SeparatorMotion = {
 export type SeparatorProps = Omit<HTMLAttributes<HTMLElement>, "role"> & {
   orientation?: SeparatorOrientation;
   /**
+   * Hides the separator from the accessibility tree (`role="none"`).
+   * Omitted or `false` keeps separator semantics.
+   */
+  decorative?: boolean;
+  /**
    * Per-slot motion (`root`). Defaults are empty — custom factories are opt-in.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */

@@ -11,6 +11,7 @@ import type { Prettify } from "@/utils/prettify";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
 export const KIT_BADGE_VARIANTS = ["default", "primary", "outline", "secondary"] as const;
 export type KitBadgeVariant = (typeof KIT_BADGE_VARIANTS)[number];
@@ -18,7 +19,7 @@ export type BadgeVariant = KitBadgeVariant | (string & {});
  
 export type BadgeStatus = SemanticStatus;
  
-export type BadgeSize = "small" | "base" | "mid" | "large";
+export type BadgeSize = ComponentSize;
  
 export type BadgePlacement =
   | "top-right"
@@ -26,7 +27,6 @@ export type BadgePlacement =
   | "bottom-right"
   | "bottom-left";
  
-export type BadgeInlineIconPosition = "inline-start" | "inline-end";
  
 export type BadgeClassNames = {
   root?: string;

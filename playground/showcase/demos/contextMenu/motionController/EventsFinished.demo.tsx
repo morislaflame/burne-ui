@@ -33,10 +33,10 @@ export function ContextMenuMotionEventsFinishedDemo() {
       </Button>
       <ContextMenu open>
         <ContextMenu.Trigger className={surface}>Menu</ContextMenu.Trigger>
-        <ContextMenu.Content motionController={controller} motion={{ events }}>
+        <ContextMenu.Popover motionController={controller} motion={{ events }}>
           <ContextMenu.Item>Alpha</ContextMenu.Item>
           <ContextMenu.Item>Beta</ContextMenu.Item>
-        </ContextMenu.Content>
+        </ContextMenu.Popover>
       </ContextMenu>
     </div>
   );

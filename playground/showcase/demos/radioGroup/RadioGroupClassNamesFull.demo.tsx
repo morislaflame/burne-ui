@@ -1,6 +1,7 @@
 import { Radio } from "@/components/core/Radio";
 import { Text } from "@/components/core/Text";
 import { RadioGroup } from "@/components/composite/RadioGroup";
+import { Label } from "@/components/core/Label";
 
 export function RadioGroupClassNamesFullDemo() {
   return (
@@ -20,7 +21,7 @@ export function RadioGroupClassNamesFullDemo() {
       }}
     >
       <RadioGroup.Legend>
-        <RadioGroup.Label>Payment method</RadioGroup.Label>
+        <Label>Payment method</Label>
         <RadioGroup.Hint>Slots via classNames.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.Group>
@@ -31,7 +32,7 @@ export function RadioGroupClassNamesFullDemo() {
         <RadioGroup.Error>Select a payment method to continue.</RadioGroup.Error>
       </RadioGroup.Group>
       <RadioGroup.Actions>
-        <Text as="span" variant="small" className="text-muted">
+        <Text as="span" textStyle="small" className="text-muted">
           Saved automatically
         </Text>
       </RadioGroup.Actions>

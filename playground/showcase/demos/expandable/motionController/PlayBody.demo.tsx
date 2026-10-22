@@ -9,29 +9,29 @@ export function ExpandableMotionControllerPlayBodyDemo() {
   return (
     <div className="flex flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("body", "enter")}>
-          Pulse body
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("panel", "enter")}>
+          Pulse panel
         </Button>
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("body", "leave")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("panel", "leave")}>
           Reset
         </Button>
-        <Button size="small" variant="ghost" onClick={() => controller.set("body", { y: 0, opacity: 1 })}>
+        <Button size="small" variant="ghost" onClick={() => controller.set("panel", { y: 0, opacity: 1 })}>
           Snap
         </Button>
       </div>
       <Expandable
         className="max-w-lg"
-        title="Body slot"
+        title="Panel slot"
         motionController={controller}
         motion={{
-          body: {
+          panel: {
             enter: { y: -6, duration: 0.28, replay: "rest" },
             leave: { y: 0, duration: 0.2 },
           },
         }}
       >
-        <Text as="p" variant="small" className="text-muted">
-          playSlot on `body`. Open the panel to see it.
+        <Text as="p" textStyle="small" className="text-muted">
+          playSlot on `panel`. Open the panel to see it.
         </Text>
       </Expandable>
     </div>

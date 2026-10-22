@@ -2,13 +2,15 @@ import { Fragment, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, 
  
 import { buildButtonGroupSegment, resolveButtonGroupSegmentPosition } from "@/components/composite/ButtonGroup/buttonGroupAPI";
 import { ButtonGroupSegmentProvider } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { toggleButtonGroupRootClass } from "./toggleButtonGroupStyles";
 import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";
 import { KIT_TOGGLE_BUTTON_VARIANTS } from "@/components/core/ToggleButton/toggleButtonTypes";
 import { isKitVariant } from "@/skins/resolveVariantVisual";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
+import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
+import { ToggleButton } from "@/components/core/ToggleButton";
 import { isToggleButtonChild } from "./toggleButtonGroupAPI";
 import { resolveToggleButtonGroupMotionDefaults, useToggleButtonGroupRootMotion } from "./toggleButtonGroupAnimations";
 import { ToggleButtonGroupClassNamesProvider, ToggleButtonGroupMotionProvider } from "./toggleButtonGroupContext";
@@ -24,6 +26,7 @@ export type {
   ToggleButtonGroupClassNames,
   ToggleButtonGroupMotion,
   ToggleButtonGroupPartMotion,
+  ToggleButtonGroupItem,
 } from "./toggleButtonGroupTypes";
  
 export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGroupProps>(
@@ -37,10 +40,13 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
       disabled = false,
       size = "base",
       variant: _variant,
-      type: _type = "multiple",
+      selectionMode: _selectionMode = "multiple",
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,
+      values: _values,
+      defaultValues: _defaultValues,
+      onValuesChange: _onValuesChange,
       onKeyDown: _onKeyDown,
       motion,
       motionController,
@@ -51,11 +57,24 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
       onPointerOut,
       onPointerDown,
       onPointerUp,
+      items,
       ...rest
     } = props;
- 
+
+    const itemButtons =
+      items && !itemsPartTaken("ToggleButtonGroup", props.children, "ToggleButtonRoot")
+        ? items.map((item) => (
+      <ToggleButton key={item.value} value={item.value} disabled={item.disabled}>
+        {item.label}
+      </ToggleButton>
+    ))
+        : undefined;
     const { flat, segmentCount, contextValue, handleKeyDown, selectionIdentity } =
-      useToggleButtonGroupRootState(props);
+      useToggleButtonGroupRootState(
+        itemButtons
+          ? { ...props, children: <>{itemButtons}{props.children}</> }
+          : props,
+      );
     const motionDefaults = useMemo(() => resolveToggleButtonGroupMotionDefaults(), []);
  
     let segmentIndex = -1;
@@ -102,7 +121,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
  
                 return (
                   <Fragment key={child.key ?? `tbg-seg-${i}`}>
-                    <ButtonGroupSegmentProvider segment={segment} buttonSize={size}>
+                    <ButtonGroupSegmentProvider segment={segment} size={size}>
                       {child}
                     </ButtonGroupSegmentProvider>
                     {isKitVariant(contextValue.variant, KIT_TOGGLE_BUTTON_VARIANTS) &&
@@ -179,7 +198,7 @@ function ToggleButtonGroupRootSurface({
       role="toolbar"
       aria-orientation={orientation}
       aria-disabled={disabled || undefined}
-      className={buttonGroupRootClass({
+      className={toggleButtonGroupRootClass({
         orientation,
         segmented,
         variant,
@@ -188,8 +207,8 @@ function ToggleButtonGroupRootSurface({
         skinSlot: "toggleButtonGroup.root",
       })}
       onKeyDown={handleKeyDown}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
       {...dataVariantProps({ size, variant })}
     >
       {children}

@@ -3,7 +3,7 @@ import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 
 export function TableMotionRowCheckDemo() {
   return (
-    <Table
+    <Table selectionMode="single"
       motion={{
         row: {
           check: (ctx) => {
@@ -18,9 +18,9 @@ export function TableMotionRowCheckDemo() {
         },
       }}
     >
-      <Table.Content aria-label="Select" selectionMode="single">
+      <Table.Content aria-label="Select">
         <Table.Header>
-          <Table.Column isRowHeader>Name</Table.Column>
+          <Table.Column rowHeader>Name</Table.Column>
         </Table.Header>
         <Table.Body>
           <Table.Row id="ada">

@@ -2,6 +2,8 @@
 
 Вкладки с compound API: `List`, `Tab`, `Panel`. Sliding indicator (GSAP), hover/press на тексте неактивных табов. Поддерживает horizontal/vertical, `variant`, `size`. Simple API нет — только compound children.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -40,10 +42,10 @@ const [tab, setTab] = useState("profile");
 |------|--------------|----------|
 | `value` | — | Контролируемое значение вкладки |
 | `defaultValue` | — | Начальное (uncontrolled) |
-| `onValueChange` | — | `(value: string) => void` |
+| `onValueChange` | — | `(value: string \| null) => void`. Пустой выбор — `null` |
 | `orientation` | `horizontal` | `horizontal` \| `vertical` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` |
 | `disabled` | `false` | Отключает всю группу |
 | `className` | — | На root `<div>` |
 | `classNames` | — | Слоты |
@@ -68,7 +70,6 @@ const [tab, setTab] = useState("profile");
 | `default` | border-bottom/left line | `bg-primary` линия 2px |
 | `outline` | `bg-transparent border-token rounded-large` | bbox таба, `bg-secondary` |
 | `secondary` | `bg-secondary border-token rounded-large` | bbox, `bg-tertiary` |
-| `gloss` | `gloss-panel rounded-large` | bbox, `bg-tertiary` |
 
 `status` нет — только `variant` + `size`.
 
@@ -80,8 +81,6 @@ const [tab, setTab] = useState("profile");
 | `large` | `CONTROL_SIZE_LAYOUT.large` | `large` |
 
 ## Анимации
-
-`tabsAnimations.ts` + `useSlidingTabIndicator.ts` + gloss на `Tabs.List`.
 
 **DOM:**
 
@@ -126,7 +125,7 @@ configureMotion({
 
 Выбранная вкладка — без motion (статичный primary text).
 
-`asChild` — motion не вешается (нет внутреннего ref `Text`).
+`asChild` получает `tabsTabClass` и `classNames.tab`. `className` child идёт последним и побеждает. Внутреннего слота `tabText` нет, text motion не вешается.
 
 ### Slot motion
 
@@ -147,6 +146,8 @@ configureMotion({
 `play()` ищет слот `root` у Tabs. `playSlot("list")` / `playAll` — chrome (`root` / `list`), не nested Tab/Panel. `Tabs.Tab` и `Tabs.Panel` создают **вложенный** scope: свой `motionController`, `playSlot("tab")` / `playSlot("tabText")` / `playSlot("panel")` (своего `root` нет). Один handle ≠ два scope. Indicator FLIP не слот.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`tabs:nudge`, `tabs:kick`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Tabs.List`) видит Tabs; внутри Tab/Panel — их nested scope.
+
+Тройка на корне, на `Tabs.Tab` и на `Tabs.Panel`. Один набор не играет чужой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Tabs, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -173,11 +174,7 @@ function Nudge() {
 }
 ```
 
-`asChild` на Tab — нет внутреннего `tabText` слота.
-
-### 3. Gloss list (`variant="gloss"`)
-
-`useMergedGlossPanelRef` на `Tabs.List` — gloss box-shadow/lift панели списка.
+`asChild` на Tab — классы вкладки на child, слота `tabText` нет.
 
 ### Чего нет
 
@@ -192,7 +189,6 @@ function Nudge() {
 |----------|---------|---------------------------|----------------|
 | Indicator slide | `useSlidingTabIndicator` | `interactiveDuration`, `interactiveEase`, `enableTabsIndicator` | `variant`, `orientation` |
 | Tab text hover/squeeze | slot motion `tabText` | `hoverLiftScale`, `pressSqueezeScale` | `motion.tabText`, selected |
-| Gloss list | gloss utils | gloss tokens | `variant="gloss"` |
 
 ## Токены и CSS
 
@@ -256,7 +252,7 @@ function Nudge() {
 </Tabs.Tab>
 ```
 
-Handlers и ARIA merge на child; text motion отключён.
+Handlers и ARIA merge на child. `className` child побеждает `classNames.tab`. Text motion отключён. `Tabs.List` принимает `classNames` и `ref`: слоты List перекрывают карту корня.
 
 ### Практические заметки
 
@@ -303,3 +299,11 @@ Tabs/
 ## Storybook
 
 `Core Components/Tabs` — default, vertical, variants, sizes, controlled, disabled, `CustomClassNames`.
+
+## Данные
+
+`items` заполняет список или панели, которых нет среди детей. Совпадение части пишет ошибку в dev и пропускает сгенерированную копию.
+
+## Активация
+
+`activationMode="manual"` стрелками только переносит фокус; выбор — Enter или клик. `automatic` выбирает вкладку сразу. `keepMounted` по умолчанию держит неактивные панели в DOM. `false` на корне или на `Tabs.Panel` снимает неактивную панель.

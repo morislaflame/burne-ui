@@ -5,6 +5,7 @@ import { PinInputMotionControllerGalleryDemo } from "../../../../playground/show
 import { PinInputSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/pinInput/slotMotion/gallery";
 import { PinInput } from ".";
 import { PinInputCodeDemo } from "../../../../playground/showcase/demos/pinInput/Code.demo";
+import { PinInputControlDemo } from "../../../../playground/showcase/demos/pinInput/Field.demo";
 import { PinInputCompoundDemo } from "../../../../playground/showcase/demos/pinInput/Compound.demo";
 import { PinInputSizesDemo } from "../../../../playground/showcase/demos/pinInput/Sizes.demo";
 import { PinInputVariantsDemo } from "../../../../playground/showcase/demos/pinInput/Variants.demo";
@@ -55,7 +56,7 @@ export const Letters: Story = {
   args: {
     label: "Room code",
     hint: "Letters and digits",
-    type: "text",
+    charset: "text",
     length: 4,
   },
 };
@@ -77,6 +78,11 @@ export const Separator: Story = {
   },
 };
 
+export const Cell: Story = {
+  name: "Field className",
+  render: () => <PinInputControlDemo />,
+};
+
 export const Compound: Story = {
   render: () => <PinInputCompoundDemo />,
 };
@@ -89,8 +95,8 @@ export const ClassNames: Story = {
     separator: "–",
     classNames: {
       label: "font-w-mid",
-      group: "gap-mid",
-      field: "bg-primary-tint",
+      shell: "gap-mid",
+      control: "bg-primary-tint",
       separator: "text-primary",
     },
   },

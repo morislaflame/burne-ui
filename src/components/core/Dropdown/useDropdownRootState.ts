@@ -11,12 +11,16 @@ export function useDropdownRootState({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
-  multiple = false,
+  selectionMode = "single",
   value: valueProp,
   defaultValue,
   onValueChange,
+  values: valuesProp,
+  defaultValues,
+  onValuesChange,
   closeOnSelect: closeOnSelectProp,
-  popoverVariant: popoverVariantProp,
+  size = "base",
+  variant: popoverVariantProp,
   portalContainer,
 }: UseDropdownRootStateProps) {
   const popoverVariant = useSkinVariant(popoverVariantProp);
@@ -42,13 +46,16 @@ export function useDropdownRootState({
     [isControlledOpen, onOpenChange],
   );
  
-  const isControlledValue = valueProp !== undefined;
+  const multiple = selectionMode === "multiple";
+  const controlledSource = multiple ? valuesProp : valueProp;
+  const defaultSource = multiple ? defaultValues : defaultValue;
+  const isControlledValue = controlledSource !== undefined;
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
-    normalizeDropdownValues(defaultValue),
+    normalizeDropdownValues(defaultSource),
   );
- 
+
   const selectedArr = isControlledValue
-    ? normalizeDropdownValues(valueProp)
+    ? normalizeDropdownValues(controlledSource)
     : internalSelected;
   const selected = useMemo(() => new Set(selectedArr), [selectedArr]);
   const latestSelectedRef = useRef(selectedArr);
@@ -58,9 +65,10 @@ export function useDropdownRootState({
   const setSelectedArr = useCallback(
     (next: string[]) => {
       if (!isControlledValue) setInternalSelected(next);
-      onValueChange?.(multiple ? next : (next[0] ?? ""));
+      if (multiple) onValuesChange?.(next);
+      else onValueChange?.(next[0] ?? null);
     },
-    [isControlledValue, multiple, onValueChange],
+    [isControlledValue, multiple, onValueChange, onValuesChange],
   );
  
   const selectItem = useCallback(
@@ -89,6 +97,7 @@ export function useDropdownRootState({
       selectItem,
       indicatorMode,
       closeOnSelect: closeOnSelectProp ?? !multiple,
+      size,
       popoverVariant,
       triggerRef,
       contentRef,
@@ -104,6 +113,7 @@ export function useDropdownRootState({
       selectItem,
       indicatorMode,
       closeOnSelectProp,
+      size,
       popoverVariant,
       contentId,
       portalContainer,

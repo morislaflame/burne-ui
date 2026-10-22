@@ -13,6 +13,7 @@
  * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
  * | Indicators | `--size` / `--radius` | `--selection-indicator-*` + `--selection-indicator-radius-*` (`--radius-*` × 0.618) | — | `selection-indicator-*` |
  * | Panels | `--size` | `--max-component-*` | — | `min/max-w-component-*` |
+ * | Page column | `--size` | `--max-page-*` | — | `max-w-page-*`, `w-page-*` |
  *
  * ## Typography
  *
@@ -36,7 +37,8 @@
  * - `--motion-surface-duration` — CSS transitions for `surface-color-transition` / `animate-shadow` / field shells (from `surfaceTransitionDuration` in motion config).
  * - `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate` — frosted modal scrim (`overlay-backdrop`); `--overlay-backdrop-scrim` — solid dark-UI scrim.
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
- * - `--max-component-*` — panel/container widths (`min/max-w-component-*`); Dialog size props map onto base…2xlarge.
+ * - `--max-component-*` — panel widths (`min/max-w-component-*`); Dialog size props map onto base…2xlarge.
+ * - `--max-page-*` — page column (`max-w-page-*` on Container, `w-page-*` on Sidebar). Steps × `--size`: 16, 20, 24, 48, 80, 90, 112.
  * - `NARROW_VIEWPORT_MAX_PX` (1024) — shared with CSS `field-control-mobile-no-zoom` media query.
  * - `--letter-spacing` — global tracking (em); apply on `html`/`body` as `letter-spacing: var(--letter-spacing)`.
  * - `--text-scale-*` — primitive typography; roles `text-base` / `text-mid` / … map 1:1 by name.

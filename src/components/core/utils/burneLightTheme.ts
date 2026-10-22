@@ -30,28 +30,26 @@ export function isBurneLightTheme(anchor?: Element | null): boolean {
 }
  
 export type BurneLightThemePortalProps = {
-  "data-theme"?: "light";
+  "data-theme"?: "light" | "dark";
 };
- 
+
 /**
- * Theme attributes for portal in `body`: copies light theme from `anchor` or root.
- * Used in portals (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, `Dropdown`, `Popover`).
+ * Theme attribute for a portal in `body`.
+ * `<html>` is inherited, so the portal does not repeat it.
+ * A nested island is copied (`light` or `dark`) so the panel does not take the page mode.
  */
 export function burneLightThemePortalProps(
   anchor?: Element | null,
 ): BurneLightThemePortalProps {
   if (typeof document === "undefined") return {};
- 
+
   const themedAncestor =
     anchor?.closest(THEME_ATTR_SELECTOR) ?? document.documentElement;
-  if (readBurneThemeFromElement(themedAncestor) !== "light") return {};
- 
-  // If light theme is set on <html>, portal in document.body already inherits
-  // all CSS variables from root. Repeating data-theme="light" on the portal itself
-  // would re-apply default light tokens and override playground inline presets.
   if (themedAncestor === document.documentElement) return {};
- 
-  return { "data-theme": "light" };
+
+  const mode = readBurneThemeFromElement(themedAncestor);
+  if (mode === "light" || mode === "dark") return { "data-theme": mode };
+  return {};
 }
  
 function collectThemeObserveTargets(anchor?: Element | null): Element[] {

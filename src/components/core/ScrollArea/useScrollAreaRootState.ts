@@ -98,9 +98,6 @@ export function useScrollAreaRootState({
     );
   }, []);
 
-  const paintRef = useRef(paint);
-  paintRef.current = paint;
-
   const markScrolling = useCallback(() => {
     setScrolling(true);
     window.clearTimeout(hideTimer.current);
@@ -112,7 +109,7 @@ export function useScrollAreaRootState({
     if (!viewport) return undefined;
     const onScroll = () => {
       markScrolling();
-      paintRef.current();
+      paint();
     };
     viewport.addEventListener("scroll", onScroll, { passive: true });
     const content = viewport.firstElementChild;
@@ -120,29 +117,29 @@ export function useScrollAreaRootState({
       typeof ResizeObserver === "undefined"
         ? null
         : new ResizeObserver(() => {
-            paintRef.current();
+            paint();
           });
     observer?.observe(viewport);
     if (content) observer?.observe(content);
-    paintRef.current();
+    paint();
     return () => {
       viewport.removeEventListener("scroll", onScroll);
       observer?.disconnect();
       window.clearTimeout(hideTimer.current);
     };
-  }, [markScrolling]);
+  }, [markScrolling, paint]);
 
   useLayoutEffect(() => {
-    paintRef.current();
-  }, [overflow.vertical, overflow.horizontal]);
+    paint();
+  }, [overflow.vertical, overflow.horizontal, paint]);
 
   const registerBar = useCallback((bar: ScrollAreaBarRegistration) => {
     barsRef.current.add(bar);
-    paintRef.current();
+    paint();
     return () => {
       barsRef.current.delete(bar);
     };
-  }, []);
+  }, [paint]);
 
   const setDragging = useCallback((axis: ScrollAxis, next: boolean) => {
     draggingRef.current = { ...draggingRef.current, [axis]: next };

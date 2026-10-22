@@ -1,7 +1,14 @@
 import { forwardRef, useCallback, useMemo, useRef, type ForwardedRef } from "react";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  mergeMotionPointerHandlers,
+  useMotionPart,
+  useMotionPointerPhases,
+} from "@/components/core/utils/slotMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
+import { usesKitElevation } from "@/skins/resolveVariantVisual";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
  
 import { resolveToastMotionDefaults } from "./toastMotionDefaults";
@@ -11,11 +18,11 @@ import {
   ToastItemProvider,
   ToastMotionProvider,
   useOptionalToastMotionScope,
-  useToastClassNames,
 } from "./toastContext";
 import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastSimpleBody, ToastTitle } from "./toastParts";
-import { toastRootClass } from "./toastStyles";
+import { TOAST_SHADOW_SIZE, toastRootClass } from "./toastStyles";
 import type { ToastProps } from "./toastTypes";
+import { KIT_TOAST_VARIANTS } from "./toastTypes";
 import { useToastRootState } from "./useToastRootState";
  
 export type {
@@ -55,10 +62,15 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRo
     return <ToastRootInner {...props} variant={variant} forwardedRef={ref} registerRoot={false} />;
   }
   return (
-    <ToastMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
-        motionState={motionState}
-        motionPayload={motionPayload}
-        playInitialState={playInitialState}>
+    <ToastMotionProvider
+      motion={motion}
+      defaults={motionDefaults}
+      params={{ shadowSize: TOAST_SHADOW_SIZE }}
+      controller={motionController}
+      motionState={motionState}
+      motionPayload={motionPayload}
+      playInitialState={playInitialState}
+    >
       <ToastRootInner {...props} variant={variant} forwardedRef={ref} registerRoot />
     </ToastMotionProvider>
   );
@@ -102,10 +114,42 @@ function ToastRootInner({
  
   const rootRef = useRef<HTMLDivElement | null>(null);
   const scope = useOptionalToastMotionScope();
+  const kitSurface = usesKitElevation(variant, KIT_TOAST_VARIANTS);
   const { setRef: setRootPartRef } = useMotionPart<HTMLDivElement>({
     scope: registerRoot ? scope : null,
     slot: "root",
   });
+  const secondLevelLift = useSecondLevelShadow(rootRef, kitSurface, {
+    shadowSize: TOAST_SHADOW_SIZE,
+    interactive: false,
+  });
+  const motionPointer = useMotionPointerPhases<HTMLDivElement>({
+    enabled: kitSurface && scope != null,
+    targetRef: rootRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onHoverIn: (el) => {
+      if (!scope) return;
+      const value = scope.resolve("root", "hoverIn");
+      if (value === undefined) return;
+      scope.play("root", "hoverIn", { el });
+    },
+    onHoverOut: (el) => {
+      if (!scope) return;
+      const value = scope.resolve("root", "hoverOut");
+      if (value === undefined) return;
+      scope.play("root", "hoverOut", { el });
+    },
+  });
+  const pointerHandlers = useMemo(
+    () =>
+      mergeMotionPointerHandlers(
+        onPointerOverProp,
+        onPointerOutProp,
+        motionPointer.onPointerOver,
+        motionPointer.onPointerOut,
+      ),
+    [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp],
+  );
  
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -116,7 +160,6 @@ function ToastRootInner({
     },
     [forwardedRef, setRootPartRef],
   );
-  const slotClassNames = useToastClassNames();
   const hasTitle = state.gridSlots.hasTitle;
   const {
     "aria-label": restAriaLabel,
@@ -140,16 +183,12 @@ function ToastRootInner({
             variant,
             size: state.size,
             gridSlots: state.gridSlots,
-            slotClass: slotClassNames.root,
+            slotClass: classNames?.root,
             className,
+            liftClass: kitSurface ? secondLevelLift.motionClass : undefined,
           })}
-          onPointerOver={(e) => {
-            onPointerOverProp?.(e);
-          }}
-          onPointerOut={(e) => {
-            onPointerOutProp?.(e);
-          }}
           {...domRest}
+          {...pointerHandlers}
           style={mergeSkinSurfaceStyle(surfaceStyle, domRest.style)}
           {...dataVariantProps({ size: state.size, variant, status })}
           data-state="open"

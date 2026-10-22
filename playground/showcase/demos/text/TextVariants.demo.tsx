@@ -3,28 +3,28 @@ import { Text } from "@/components/core/Text";
 export function TextVariantsDemo() {
   return (
     <div className="flex flex-col gap-small">
-      <Text as="p" variant="accent-header">
+      <Text as="p" textStyle="accent-header">
         accent-header
       </Text>
-      <Text as="p" variant="header-1">
+      <Text as="p" textStyle="header-1">
         header-1
       </Text>
-      <Text as="p" variant="header-2">
+      <Text as="p" textStyle="header-2">
         header-2
       </Text>
-      <Text as="p" variant="large">
+      <Text as="p" textStyle="large">
         text-large
       </Text>
-      <Text as="p" variant="mid">
+      <Text as="p" textStyle="mid">
         text-mid
       </Text>
-      <Text as="p" variant="base">
+      <Text as="p" textStyle="base">
         text-base — main text
       </Text>
-      <Text as="p" variant="small" className="text-muted">
+      <Text as="p" textStyle="small" className="text-muted">
         text-small muted
       </Text>
-      <Text as="p" variant="xsmall" className="text-muted">
+      <Text as="p" textStyle="xsmall" className="text-muted">
         text-xsmall
       </Text>
     </div>

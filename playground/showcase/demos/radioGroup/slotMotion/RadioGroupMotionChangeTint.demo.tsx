@@ -1,6 +1,7 @@
 import { RadioGroup } from "@/components/composite/RadioGroup";
 import { Radio } from "@/components/core/Radio";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
+import { Label } from "@/components/core/Label";
 
 export function RadioGroupMotionChangeTintDemo() {
   return (
@@ -19,7 +20,7 @@ export function RadioGroupMotionChangeTintDemo() {
       }}
     >
       <RadioGroup.Legend>
-        <RadioGroup.Label>Single</RadioGroup.Label>
+        <Label>Single</Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="pro" label="Pro" />

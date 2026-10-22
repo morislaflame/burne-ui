@@ -8,7 +8,7 @@ const CHANGES = [
     version: "1.2.0",
     badge: "Latest",
     title: "Showcase and playground",
-    items: ["Custom variations in showcase", "SelectionIndicator rounded-large", "Slider thumbClassName"],
+    items: ["Custom variations in showcase", "SelectionIndicator rounded-large", "Slider thumbShell"],
   },
   {
     version: "1.1.0",
@@ -20,7 +20,7 @@ const CHANGES = [
 
 export function AccordionReleaseNotesDemo() {
   return (
-    <Accordion className="w-full max-w-lg" defaultOpenIndex={0}>
+    <Accordion className="w-full max-w-lg" defaultValue="0">
       {CHANGES.map((release) => (
         <Accordion.Item key={release.version}>
           <Accordion.Heading>

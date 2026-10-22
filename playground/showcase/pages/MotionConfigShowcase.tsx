@@ -24,7 +24,7 @@ export function MotionConfigShowcase() {
             Precedence (inner wins): <code>MotionConfigProvider</code> /{" "}
             <code>BurneUIProvider</code> <code>motion</code> / <code>config.motion</code> /{" "}
             <code>ThemeProvider</code> <code>motion</code> → parent overlay →{" "}
-            <code>configureMotion()</code> → <code>MOTION_CONFIG_DEFAULTS</code>. Unspecified keys
+            <code>configureMotion()</code> → <code>MOTION_CONFIG_DEFAULTS</code> (<code>burne-ui/internal</code>). Unspecified keys
             inherit. GSAP reads <code>useMotionConfig()</code> / <code>ctx.config</code> at play
             start. CSS tokens are per DOM root, not the global singleton.
           </p>

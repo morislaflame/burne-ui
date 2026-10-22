@@ -48,7 +48,7 @@ export function MotionAsyncWaitDemo() {
         <Button size="small" variant="ghost" onClick={() => controller.cancel()}>
           Cancel
         </Button>
-        <Text variant="small" className="text-muted">
+        <Text textStyle="small" className="text-muted">
           {note}
         </Text>
       </div>

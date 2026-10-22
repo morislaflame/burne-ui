@@ -41,7 +41,7 @@ export function AlertDialogMotionBodyStaggerDemo() {
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Body>
-          <Text as="p" variant="base">
+          <Text as="p" textStyle="base">
             `motion.body` is the scroll area, separate from `content`.
           </Text>
         </AlertDialog.Body>

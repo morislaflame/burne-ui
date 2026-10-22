@@ -1,7 +1,7 @@
 /**
  * Slot motion for Expandable — look here first.
  *
- * DOM slots: `root`, `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`, `body`
+ * DOM slots: `root`, `triggerLift`, `chevron`, `panelShell`, `title`, `icon`, `description`, `panel`
  * (`panelInner` is an internal target for the height recipe, not a public slot;
  * `message` / `content` are `display: contents`)
  *
@@ -10,10 +10,12 @@
  *   `enter`/`leave` on `chevron` when `open` changes (`skipFirst` — mount is instant
  *   via refs, not a second enter).
  * - Panel (`useExpandablePanelMotion`) plays `enter`/`leave` on `panelShell`
- *   the same way. The panel `<section>` registers public slot `body`.
- *   Accordion embeds this host.
+ *   the same way. The panel `<section>` registers public slot `panel`.
+ *   Accordion embeds this host. Accordion.Body registers extra slot `body`
+ *   on the same Expandable scope.
  *
- * Defaults: `resolveExpandableMotionDefaults` (kit map + skin overlay). `root` is the shell.
+ * Defaults: `resolveExpandableMotionDefaults` (kit map + skin overlay).
+ * `root` hover is `hoverLiftFirstLevel` (`params.liftScale` 1, `hasHoverShadow`). Scale stays 1.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
@@ -33,8 +35,17 @@ import type {
   UseExpandableTriggerMotionProps,
 } from "./expandableTypes";
 import { KIT_EXPANDABLE_VARIANTS } from "./expandableTypes";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+import { bindChevronRecipe } from "@/components/core/utils/slotMotion/recipes/bindChevron";
+import { bindCollapsibleRecipe } from "@/components/core/utils/slotMotion/recipes/bindCollapsible";
+
+bindLiftRecipes();
+bindChevronRecipe();
+bindCollapsibleRecipe();
  
 export const EXPANDABLE_MOTION_DEFAULTS: ExpandableMotion = {
+  root: { hoverIn: "hoverLiftFirstLevel", hoverOut: "hoverLiftFirstLevel" },
   triggerLift: { pressIn: "pressSqueeze", pressOut: false },
   chevron: { enter: "chevronRotate", leave: "chevronRotate" },
   panelShell: { enter: "collapsibleHeight", leave: "collapsibleHeight" },

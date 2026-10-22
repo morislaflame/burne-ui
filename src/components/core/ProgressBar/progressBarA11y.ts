@@ -1,9 +1,7 @@
 import { fieldErrorId, fieldHintId, joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
  
 import type { ProgressBarTrackAriaProps } from "./progressBarTypes";
- 
-export const PROGRESS_BAR_INDETERMINATE_STATUS_TEXT = "Loading…";
- 
+
 export function progressBarLabelId(progressId: string): string {
   return `${progressId}-label`;
 }

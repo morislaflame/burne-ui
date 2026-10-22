@@ -5,6 +5,8 @@ import cardClassNamesFullSource from "../demos/card/CardClassNamesFull.demo.tsx?
 import { CardMotionControllerGalleryDemo } from "../demos/card/motionController/gallery";
 import { CardMetricTilesDemo } from "../demos/card/CardMetricTiles.demo";
 import cardMetricTilesSource from "../demos/card/CardMetricTiles.demo.tsx?raw";
+import { CardLinkDemo } from "../demos/card/CardLink.demo";
+import cardLinkSource from "../demos/card/CardLink.demo.tsx?raw";
 import { CardPressableDemo } from "../demos/card/CardPressable.demo";
 import cardPressableSource from "../demos/card/CardPressable.demo.tsx?raw";
 import { CardPricingGridDemo } from "../demos/card/CardPricingGrid.demo";
@@ -42,6 +44,7 @@ export function CardShowcase() {
 
       <ShowcaseSection title="Pressable" description="Clickable card with ripple and preview.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardPressableDemo} source={cardPressableSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardLinkDemo} source={cardLinkSource} />
       </ShowcaseSection>
 <ShowcaseSection title="Slot motion" description="One gallery: instant hover, press bounce, title pop, header/footer split.">
         <CardSlotMotionGalleryDemo />
@@ -86,7 +89,7 @@ export function CardShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="pressable and onPress on the root - an interactive card-button."
+            description="pressable and onClick on the root - an interactive card-button."
           />
           <ShowcaseDoc.ApiRow
             api="compound"

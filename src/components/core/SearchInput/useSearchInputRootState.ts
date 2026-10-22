@@ -11,6 +11,7 @@ import {
 } from "react";
  
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -38,7 +39,8 @@ export function useSearchInputRootState({
   collapseOnBlur = true,
   disabled,
   readOnly,
-  placeholder = "Search…",
+  name,
+  placeholder: placeholderProp,
   value: valueProp,
   defaultValue,
   onChange,
@@ -50,9 +52,21 @@ export function useSearchInputRootState({
   groupSegment: groupSegmentProp,
   className = "",
   classNames,
-  forwardedRef,
+  inputRef: inputRefProp,
 }: UseSearchInputRootStateProps) {
+  const formBinding = useFormControlProps({
+    name: typeof name === "string" ? name : undefined,
+    value: valueProp,
+    onChange: onChange as ((event: unknown) => void) | undefined,
+    onBlur: onBlur as ((event: unknown) => void) | undefined,
+    disabled,
+    readOnly,
+  });
+  const resolvedValue = formBinding.bound ? (formBinding.value as typeof valueProp) : valueProp;
+  const resolvedDisabled = formBinding.disabled ?? disabled;
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
   const labels = useBurneLabels();
+  const placeholder = placeholderProp ?? labels.searchPlaceholder;
   const layoutCtx = useOptionalButtonGroupLayout();
   const groupCtx = useOptionalButtonGroupSegment();
   const groupSegment = layoutCtx?.segmented
@@ -75,43 +89,40 @@ export function useSearchInputRootState({
   });
  
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const blurTimerRef = useRef<number | undefined>(undefined);
   const rootRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLSpanElement>(null);
   const expandTriggerRef = useRef<HTMLButtonElement>(null);
  
-  const isValueControlled = valueProp !== undefined;
-  const [hasQuery, setHasQuery] = useState(
-    () =>
-      (defaultValue != null && String(defaultValue).trim().length > 0) ||
-      (valueProp != null && String(valueProp).trim().length > 0),
+  const isValueControlled = resolvedValue !== undefined;
+  const [uncontrolledHasQuery, setUncontrolledHasQuery] = useState(
+    () => defaultValue != null && String(defaultValue).trim().length > 0,
   );
- 
-  useEffect(() => {
-    if (isValueControlled) {
-      setHasQuery(String(valueProp ?? "").trim().length > 0);
-    }
-  }, [isValueControlled, valueProp]);
+  const hasQuery = isValueControlled
+    ? String(resolvedValue ?? "").trim().length > 0
+    : uncontrolledHasQuery;
  
   const setInputRef = useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
-      mergeForwardedRef(forwardedRef, node);
+      formBinding.ref(node);
+      if (inputRefProp) mergeForwardedRef(inputRefProp, node);
     },
-    [forwardedRef],
+    [formBinding, inputRefProp],
   );
  
-  const blocked = Boolean(disabled || readOnly);
+  const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
   const layout = resolveSearchLayout(sizeProp);
   const targetW = expandedWidth ?? layout.defaultExpandedW;
  
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      onChange?.(e);
+      formBinding.onChange(e);
       if (!isValueControlled) {
-        setHasQuery(e.target.value.trim().length > 0);
+        setUncontrolledHasQuery(e.target.value.trim().length > 0);
       }
     },
-    [isValueControlled, onChange],
+    [formBinding, isValueControlled],
   );
  
   const handleClearClick = useCallback(
@@ -122,7 +133,7 @@ export function useSearchInputRootState({
       const el = inputRef.current;
       if (!el) return;
       if (!isValueControlled) {
-        setHasQuery(false);
+        setUncontrolledHasQuery(false);
       }
       const nativeSet = Object.getOwnPropertyDescriptor(
         HTMLInputElement.prototype,
@@ -161,9 +172,10 @@ export function useSearchInputRootState({
  
   const handleInputBlur = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
-      onBlur?.(e);
+      formBinding.onBlur(e);
       if (!collapseOnBlur || blocked) return;
-      window.setTimeout(() => {
+      window.clearTimeout(blurTimerRef.current);
+      blurTimerRef.current = window.setTimeout(() => {
         const root = rootRef.current;
         if (!root?.contains(document.activeElement)) {
           const el = inputRef.current;
@@ -172,8 +184,14 @@ export function useSearchInputRootState({
         }
       }, 0);
     },
-    [blocked, collapseOnBlur, onBlur, rootRef, setExpanded],
+    [blocked, collapseOnBlur, formBinding, setExpanded],
   );
+
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(blurTimerRef.current);
+    };
+  }, []);
  
   const handleRootKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
@@ -221,10 +239,12 @@ export function useSearchInputRootState({
     ripple,
     inputId,
     placeholder,
-    valueProp,
-    defaultValue,
-    disabled,
-    readOnly,
+    valueProp: resolvedValue,
+    defaultValue: formBinding.bound ? undefined : defaultValue,
+    disabled: resolvedDisabled,
+    readOnly: resolvedReadOnly,
+    formInvalid: formBinding["aria-invalid"] === true,
+    name: formBinding.name ?? name,
     classNames,
     className,
     showClear,

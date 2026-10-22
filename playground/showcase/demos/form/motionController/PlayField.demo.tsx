@@ -28,7 +28,7 @@ export function FormMotionControllerPlayFieldDemo() {
             hoverOut: { y: 0, duration: 0.16 },
           }}
         >
-          <Text as="p" variant="small">
+          <Text as="p" textStyle="small">
             Nested Form.Field scope — not the Form root, not Input.
           </Text>
         </Form.Field>

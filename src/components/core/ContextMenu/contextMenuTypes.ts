@@ -13,7 +13,7 @@ export type ContextMenuProps = DropdownProps;
 
 export type ContextMenuTriggerProps = DropdownTriggerProps;
 
-export type ContextMenuContentProps = Omit<
+export type ContextMenuPopoverProps = Omit<
   DropdownPopoverProps,
   "anchorRef" | "matchAnchorWidth"
 >;

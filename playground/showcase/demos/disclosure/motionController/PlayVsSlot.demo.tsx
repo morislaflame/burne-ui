@@ -27,7 +27,7 @@ export function DisclosureMotionControllerPlayVsSlotDemo() {
       <Disclosure motionController={controller} motion={{ title: { hoverIn: { x: 8, duration: 0.22, replay: "rest" }, hoverOut: { x: 0, duration: 0.16 } }, icon: { hoverIn: { y: -4, duration: 0.22, replay: "rest" }, hoverOut: { y: 0, duration: 0.16 } } }}>
         <Disclosure.Trigger icon={<IoInformationCircleOutline aria-hidden className="size-full" />}>play vs playSlot</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">play() looks for root — skip. playAll hits title + icon, not nested kit height.</Text>
+          <Text as="p" textStyle="small" className="text-muted">play() looks for root — skip. playAll hits title + icon, not nested kit height.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

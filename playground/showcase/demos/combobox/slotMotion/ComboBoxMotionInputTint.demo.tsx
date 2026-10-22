@@ -9,9 +9,9 @@ const options = [
 
 export function ComboBoxMotionInputTintDemo() {
   return (
-    <ComboBox className="w-64" options={options} defaultValue="vue">
+    <ComboBox className="w-64" items={options} defaultValue="vue">
       <ComboBox.Label>Input tint</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input
           motion={{
             hoverIn: (ctx) => {
@@ -36,7 +36,7 @@ export function ComboBoxMotionInputTintDemo() {
               ctx.to({ rotate: 0, scale: 1, duration: 0.18, ease: "power2.inOut" }),
           }}
         />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Hint>Compound motion on Input + Trigger</ComboBox.Hint>
       <ComboBox.Popover />
     </ComboBox>

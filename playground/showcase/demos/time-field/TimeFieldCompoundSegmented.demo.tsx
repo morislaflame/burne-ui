@@ -5,7 +5,7 @@ import { TimeField } from "@/components/core/TimeField";
 export function TimeFieldCompoundSegmentedDemo() {
   return (
     <div className="flex flex-col gap-large items-center w-full">
-      <TimeField status="default" className="w-64" compact>
+      <TimeField className="w-64" compact>
         <TimeField.Label>End of shift (compound)</TimeField.Label>
         <TimeField.Control
           defaultValue="18:00"

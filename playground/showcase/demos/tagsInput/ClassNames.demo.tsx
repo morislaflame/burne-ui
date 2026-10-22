@@ -10,7 +10,8 @@ export function TagsInputClassNamesDemo() {
       classNames={{
         shell: "border-token-primary",
         tag: "bg-primary-tint text-primary",
-        input: "text-primary",
+        tagText: "font-medium",
+        control: "text-primary",
       }}
     />
   );

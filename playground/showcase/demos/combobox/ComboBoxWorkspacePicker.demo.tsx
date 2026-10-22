@@ -82,20 +82,20 @@ function MemberListItems() {
 }
 
 export function ComboBoxWorkspacePickerDemo() {
-  const [value, setValue] = useState("anya");
+  const [value, setValue] = useState<string | null>("anya");
 
   return (
     <ComboBox
-      options={COMBO_OPTIONS}
+      items={COMBO_OPTIONS}
       value={value}
       onValueChange={setValue}
       className="w-full max-w-sm"
     >
       <ComboBox.Label>Task executor</ComboBox.Label>
-      <ComboBox.InputGroup>
+      <ComboBox.Shell>
         <ComboBox.Input placeholder="Search by command…" />
         <ComboBox.Trigger />
-      </ComboBox.InputGroup>
+      </ComboBox.Shell>
       <ComboBox.Popover>
         <MemberListItems />
       </ComboBox.Popover>

@@ -7,6 +7,7 @@ import {
   initElementShadow,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { createMotionScopeController } from "@/components/core/utils/slotMotion/createMotionScope";
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
 import { pressSqueezeRecipe } from "@/components/core/utils/slotMotion/recipes/pressSqueeze";
 import type { MotionContext } from "@/components/core/utils/slotMotion/slotMotionTypes";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
@@ -216,6 +217,7 @@ describe("shadow fade layers", () => {
       getParams: () => ({ pointerInside: true }),
     });
     scope.registerTarget("root", el);
+    bindLiftRecipes();
     scope.play("root", "pressIn");
 
     const tl = created[0];

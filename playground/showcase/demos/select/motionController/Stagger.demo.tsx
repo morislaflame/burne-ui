@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { Select } from "@/components/core/Select";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -27,11 +27,11 @@ export function SelectMotionControllerStaggerDemo() {
       </div>
       <Select
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{
-          triggerGroup: {
+          shell: {
             hoverIn: { y: -2, duration: 0.22, replay: "rest" },
             hoverOut: { y: 0, duration: 0.16 },
           },

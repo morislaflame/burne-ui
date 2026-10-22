@@ -1,5 +1,6 @@
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Checkbox } from "@/components/core/Checkbox";
+import { Label } from "@/components/core/Label";
 
 export function CheckboxGroupMotionHintEnterDemo() {
   return (
@@ -19,7 +20,7 @@ export function CheckboxGroupMotionHintEnterDemo() {
       }}
     >
       <CheckboxGroup.Legend>
-        <CheckboxGroup.Label>Plan</CheckboxGroup.Label>
+        <Label>Plan</Label>
         <CheckboxGroup.Hint>Shown on invoices and receipts.</CheckboxGroup.Hint>
       </CheckboxGroup.Legend>
       <CheckboxGroup.List>

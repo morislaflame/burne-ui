@@ -8,12 +8,14 @@ export function ColorPickerBasicDemo() {
 
   return (
     <div className="flex flex-wrap items-center gap-large">
-      <ColorPicker value={color} onValueChange={setColor}>
+      <ColorPicker name="brand" value={color} onValueChange={setColor}>
+        <ColorPicker.Label>Brand</ColorPicker.Label>
         <ColorPicker.Trigger />
         <ColorPicker.Content />
+        <ColorPicker.Hint>Hex</ColorPicker.Hint>
       </ColorPicker>
       <ColorSwatch color={color} size="large" />
-      <Text as="span" variant="small" className="font-mono text-muted">
+      <Text as="span" textStyle="small" className="font-mono text-muted">
         {color}
       </Text>
     </div>

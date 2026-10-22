@@ -6,7 +6,7 @@ export function DisclosureMotionInstantPanelDemo() {
     <Disclosure className="max-w-lg" motion={{ contentShell: { enter: false, leave: false } }}>
       <Disclosure.Trigger>No height tween</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Instant open/close; chevron still rotates. Hover/press on the title still run.
         </Text>
       </Disclosure.Content>

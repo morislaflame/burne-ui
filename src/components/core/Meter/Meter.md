@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, type MeterSize, type MeterOrientation, type MeterClassNames } from "burne-ui";
+import { Meter, type MeterProps, type MeterTrackProps, type MeterSize, type MeterOrientation, type MeterClassNames } from "burne-ui";
 ```
 
 ## API
@@ -96,6 +96,8 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("track", …)` / `playSlot("fill", …)`. Compound chrome — handle на Root (`playSlot("value")`); fill-хост — отдельный handle на `Meter.Track`. Один handle ≠ два scope.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`meter:nudge`, `meter:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("track", event)` (карта `events` с корня мержится в Track). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на `Meter.Track`. Simple API мержит карту корня в Track. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Meter, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -251,7 +253,7 @@ configureMotion({
 
 ## Контекст
 
-`useMeterFieldContext()` — `display`, `orientation`, ids для a11y.
+Состояние показа остаётся внутри поля: `display`, ось и id для a11y. Отдельный хук наружу не отдаётся.
 
 ## Структура файлов
 

@@ -5,14 +5,18 @@ import type {
   LabelHTMLAttributes,
   PointerEvent,
   ReactNode,
+  Ref,
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
  
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
+import type { FieldLabelContextValue } from "@/components/core/Label/labelTypes";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
+import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type { SwitchSize } from "./switchGeometry";
  
 export type { SwitchSize };
@@ -21,7 +25,8 @@ export const KIT_SWITCH_VARIANTS = ["default"] as const;
 export type KitSwitchVariant = (typeof KIT_SWITCH_VARIANTS)[number];
 export type SwitchVariant = KitSwitchVariant | (string & {});
  
-export type SwitchLabelPosition = "left" | "right";
+/** Label on the inline start or end. Default `end` (control first). */
+export type SwitchLabelPosition = IconPosition;
  
 export type SwitchClassNames = {
   root?: string;
@@ -44,7 +49,7 @@ export type SwitchClassNames = {
   simpleLabelText?: string;
 };
  
-export type SwitchCheckMotion = {
+export type SwitchPartMotion = {
   check?: MotionValue;
   uncheck?: MotionValue;
   enter?: MotionValue;
@@ -56,14 +61,14 @@ export type SwitchCheckMotion = {
 };
  
 export type SwitchMotion = {
-  fill?: SwitchCheckMotion;
-  thumb?: SwitchCheckMotion;
-  iconOff?: SwitchCheckMotion;
-  iconOn?: SwitchCheckMotion;
-  track?: SwitchCheckMotion;
-  label?: SwitchCheckMotion;
-  hint?: SwitchCheckMotion;
-  error?: SwitchCheckMotion;
+  fill?: SwitchPartMotion;
+  thumb?: SwitchPartMotion;
+  iconOff?: SwitchPartMotion;
+  iconOn?: SwitchPartMotion;
+  track?: SwitchPartMotion;
+  label?: SwitchPartMotion;
+  hint?: SwitchPartMotion;
+  error?: SwitchPartMotion;
 };
  
 export type SwitchFieldContextValue = {
@@ -95,6 +100,7 @@ export type SwitchTrackContextValue = {
   disabled?: boolean;
   size: SwitchSize;
   color?: string;
+  status?: SemanticStatus;
   variant: SwitchVariant;
   trackFillRef: RefObject<HTMLSpanElement | null>;
   thumbRef: RefObject<HTMLSpanElement | null>;
@@ -112,6 +118,9 @@ export type SwitchControlProps = Omit<
     thickness?: number | string;
     iconOff?: ReactNode;
     iconOn?: ReactNode;
+    /** Kit fill. A custom `color` wins. */
+    status?: SemanticStatus;
+    /** Custom fill. Wins over `status`. */
     color?: string;
     variant?: SwitchVariant;
     className?: string;
@@ -122,6 +131,8 @@ export type SwitchControlProps = Omit<
       >
     >;
     children?: ReactNode;
+    /** Native `<input>`. `ref` on `Switch.Control` is the visual control (`span` or compound `label`). */
+    inputRef?: Ref<HTMLInputElement>;
     /**
      * Forwarded to an auto-created `Switch.Track` (simple / Control without a Track child).
      * Explicit `<Switch.Track motionController>` wins on that nested host.
@@ -134,6 +145,7 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   thickness?: number | string;
   checked?: boolean;
   disabled?: boolean;
+  status?: SemanticStatus;
   color?: string;
   squeezeToken?: number;
   iconOff?: ReactNode;
@@ -152,12 +164,12 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
 } & MotionStateHostProps;
  
 export type SwitchFillProps = HTMLAttributes<HTMLSpanElement> & {
-  motion?: Prettify<SwitchCheckMotion>;
+  motion?: Prettify<SwitchPartMotion>;
 };
  
 export type SwitchThumbProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
-  motion?: Prettify<SwitchCheckMotion>;
+  motion?: Prettify<SwitchPartMotion>;
 };
  
 export type SwitchIconWhen = "off" | "on";
@@ -165,7 +177,7 @@ export type SwitchIconWhen = "off" | "on";
 export type SwitchIconProps = HTMLAttributes<HTMLSpanElement> & {
   when: SwitchIconWhen;
   children?: ReactNode;
-  motion?: Prettify<SwitchCheckMotion>;
+  motion?: Prettify<SwitchPartMotion>;
 };
  
 export type SwitchProps = Omit<
@@ -179,10 +191,16 @@ export type SwitchProps = Omit<
   /** `aria-invalid`, `data-invalid`, and a danger label. `error` does the same and shows the message. */
   invalid?: boolean;
   labelPosition?: SwitchLabelPosition;
+  /** Kit fill. A custom `color` wins. */
+  status?: SemanticStatus;
+  /** Custom fill. Wins over `status`. */
+  color?: string;
   size?: SwitchSize;
   disabled?: boolean;
   className?: string;
   classNames?: Prettify<SwitchClassNames>;
+  /** Native `<input role="switch">`. Root `ref` stays on the `<label>` or compound `<fieldset>`. `Switch.Control` `ref` is the same node. */
+  inputRef?: Ref<HTMLInputElement>;
   /**
    * Per-slot motion (`track`, `fill`, `thumb`, `iconOn`, `iconOff`, `label`, `hint`, `error`).
    * Track is the nested fill host. Chrome registers on the Root scope.
@@ -208,15 +226,15 @@ export type SwitchContentProps = HTMLAttributes<HTMLDivElement> & {
 };
  
 export type SwitchLabelProps = Omit<LabelProps, "htmlFor" | "motion"> & {
-  motion?: Prettify<SwitchCheckMotion>;
+  motion?: Prettify<SwitchPartMotion>;
 };
  
-export type SwitchHintProps = Omit<FieldHintProps, "id" | "as" | "motion"> & {
-  motion?: Prettify<SwitchCheckMotion>;
+export type SwitchHintProps = Omit<FieldHintProps, "id" | "as" | "motion" | "status"> & {
+  motion?: Prettify<SwitchPartMotion>;
 };
  
 export type SwitchErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
-  motion?: Prettify<SwitchCheckMotion>;
+  motion?: Prettify<SwitchPartMotion>;
 };
  
 export type SwitchClassNamesProviderProps = {
@@ -230,6 +248,49 @@ export type UseSwitchRootStateProps = Omit<
 > &
   Partial<Omit<SwitchControlProps, "motionController">>;
  
+export type SwitchRootControlRest = Omit<
+  UseSwitchRootStateProps,
+  | "children"
+  | "label"
+  | "hint"
+  | "error"
+  | "invalid"
+  | "labelPosition"
+  | "size"
+  | "disabled"
+  | "className"
+>;
+
+export type SwitchLayoutMetrics = {
+  track: string;
+  travelPx: number;
+  title: string;
+  desc: string;
+  gap: string;
+};
+
+/** Named so declaration emit does not inline the control rest. */
+export type UseSwitchRootStateResult = {
+  fieldCtx: SwitchFieldContextValue;
+  fieldLabelContext: FieldLabelContextValue;
+  isCompound: boolean;
+  hasTextColumn: boolean;
+  secondaryLines: number;
+  sz: SwitchLayoutMetrics;
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  hasHint: boolean;
+  hasError: boolean;
+  hintId: string;
+  errorId: string;
+  disabled?: boolean;
+  enableTextMotion: boolean;
+  textColRef: RefObject<HTMLElement | null>;
+  labelPosition: SwitchLabelPosition;
+  controlRest: SwitchRootControlRest;
+};
+
 export type UseSwitchAnimationsProps = {
   isDisabled?: boolean;
   enableTextMotion: boolean;

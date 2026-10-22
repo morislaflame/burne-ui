@@ -6,7 +6,7 @@ export function DisclosureMotionBodyDemo() {
     <Disclosure
       className="max-w-lg"
       motion={{
-        body: {
+        content: {
           enter: (ctx) =>
             ctx.fromTo(
               { y: 8, autoAlpha: 0 },
@@ -16,10 +16,10 @@ export function DisclosureMotionBodyDemo() {
         },
       }}
     >
-      <Disclosure.Trigger>Body slot</Disclosure.Trigger>
+      <Disclosure.Trigger>Content slot</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
-          `delay: "expand"` starts `motion.body` after collapsibleHeight.
+        <Text as="p" textStyle="small" className="text-muted">
+          `delay: "expand"` starts `motion.content` after collapsibleHeight.
         </Text>
       </Disclosure.Content>
     </Disclosure>

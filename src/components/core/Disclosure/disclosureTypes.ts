@@ -25,10 +25,9 @@ export type DisclosureClassNames = {
   chevron?: string;
   contentShell?: string;
   contentWrap?: string;
-  contentPanel?: string;
+  content?: string;
   handle?: string;
   group?: string;
-  body?: string;
 };
  
 export type DisclosureLifecycleMotion = {
@@ -49,25 +48,29 @@ export type DisclosureTitleLiftMotion = {
  
 /**
  * Per-slot motion. DOM slots: `titleLift` (`classNames.titleLift`), `title`, `chevron`,
- * `contentShell`, `icon`, `body` (Content `<section>`). `panelInner` is an internal height-recipe target, not a public slot.
- * Handle-drag is kit-internal (not a slot).
+ * `contentShell`, `icon`, `content` (Content `<section>`). `panelInner` is an internal height-recipe target, not a public slot.
+ * Handle-drag is kit-internal (not a slot). `contentWrap` is layout-only.
  */
 export type DisclosureMotion = {
+  /** Card shell. `hoverLiftFirstLevel` with scale locked at 1. */
+  root?: DisclosureLifecycleMotion;
   titleLift?: DisclosureTitleLiftMotion;
   title?: DisclosureLifecycleMotion;
   chevron?: DisclosureLifecycleMotion;
   contentShell?: DisclosureLifecycleMotion;
   icon?: DisclosureLifecycleMotion;
-  body?: DisclosureLifecycleMotion;
+  content?: DisclosureLifecycleMotion;
 };
  
 export type DisclosureGroupContextValue = {
+  selectionMode: "single" | "multiple";
   openValue: string | null;
+  values: string[];
   setOpenValue: (val: string | null) => void;
+  setItemOpen: (id: string, open: boolean) => void;
   variant: DisclosureVariant;
   size: DisclosureSize;
   separated: boolean;
-  accordion: boolean;
   motion?: DisclosureMotion;
 };
  
@@ -106,7 +109,7 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<DisclosureClassNames>;
   /**
    * Per-slot motion: `titleLift` (hover/press), `title` (enter/leave broadcast), `chevron` (enter/leave rotate),
-   * `contentShell` (height), `icon` / `body` (broadcast on open). Group `motion` is merged into each item.
+   * `contentShell` (height), `icon` / `content` (broadcast on open). Group `motion` is merged into each item.
    * There is no `root` slot — `play()` skips; use `playSlot("titleLift")` / `playAll`.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    */
@@ -121,13 +124,17 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
  
 export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
-  accordion?: boolean;
+  /** `single` keeps one item open. `multiple` uses `values`. Default `single`. */
+  selectionMode?: "single" | "multiple";
   separated?: boolean;
   variant?: DisclosureVariant;
   size?: DisclosureSize;
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
+  values?: string[];
+  defaultValues?: string[];
+  onValuesChange?: (values: string[]) => void;
   classNames?: Prettify<DisclosureClassNames>;
   /** Merged into each item’s slot map (same as Accordion). */
   motion?: Prettify<DisclosureMotion>;

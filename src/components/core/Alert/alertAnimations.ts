@@ -17,13 +17,17 @@ import {
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import { isKitVariant, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import { useAlertMotionScope } from "./alertContext";
 import { alertSurfaceClass } from "./alertStyles";
 import type { AlertMotion, AlertVariant, UseAlertAnimationsProps } from "./alertTypes";
 import { KIT_ALERT_VARIANTS } from "./alertTypes";
+
+import { bindSecondLevelRecipe } from "@/components/core/utils/slotMotion/recipes/bindSecondLevel";
+
+bindSecondLevelRecipe();
 
 export function resolveAlertMotionDefaults({
   variant,
@@ -44,7 +48,6 @@ export function resolveAlertMotionDefaults({
 export function useAlertAnimations({
   variant,
   status,
-  hoverLift = true,
   shadow = "base",
   motion,
   ref,
@@ -57,7 +60,7 @@ export function useAlertAnimations({
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
 
-  const hasHoverShadow = isKitVariant(variant, KIT_ALERT_VARIANTS) && hoverLift;
+  const kitSurface = usesKitElevation(variant, KIT_ALERT_VARIANTS);
 
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -70,7 +73,7 @@ export function useAlertAnimations({
 
   useOptionalEnterOnMount(scope, "root", rootRef);
 
-  const secondLevelLift = useSecondLevelShadow(rootRef, hasHoverShadow, {
+  const secondLevelLift = useSecondLevelShadow(rootRef, kitSurface, {
     shadowSize: shadow,
     interactive: false,
   });
@@ -91,7 +94,7 @@ export function useAlertAnimations({
     },
   });
 
-  const motionClass = hasHoverShadow ? secondLevelLift.motionClass : "";
+  const motionClass = kitSurface ? secondLevelLift.motionClass : "";
   const surfaceClass = cn(alertSurfaceClass(variant, status), motionClass);
 
   const pointerHandlers = useMemo(

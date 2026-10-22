@@ -21,10 +21,10 @@ export function TextMotionEventsOffDemo() {
           Off nudge
         </Button>
       </div>
-      <Text variant="large" motionController={liveController} motion={{ events: live }}>
+      <Text textStyle="large" motionController={liveController} motion={{ events: live }}>
         Live copy
       </Text>
-      <Text variant="large" className="opacity-70" motionController={offController} motion={{ events: off }}>
+      <Text textStyle="large" className="opacity-70" motionController={offController} motion={{ events: off }}>
         Events off
       </Text>
     </div>

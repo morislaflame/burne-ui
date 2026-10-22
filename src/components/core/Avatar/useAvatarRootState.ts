@@ -13,16 +13,13 @@ export function useAvatarRootState({
   size: sizeProp,
   label,
   nickname,
-  tooltipSize = "base",
-  tooltipVariant: tooltipVariantProp,
-  tooltipStatus = "default",
-  tooltipSide = "top",
+  tooltip,
   children,
   role,
   "aria-label": ariaLabelProp,
 }: UseAvatarRootStateProps) {
   const variant = resolveAvatarVariant(useSkinVariant(variantProp));
-  const tooltipVariant = useSkinVariant(tooltipVariantProp);
+  const tooltipVariant = useSkinVariant(tooltip?.variant ?? "default");
   const size = resolveAvatarSize(sizeProp);
   const [imageStatus, setImageStatus] = useState<ImageStatus>("idle");
  
@@ -51,12 +48,12 @@ export function useAvatarRootState({
   const rootRole = avatarRootRole(role);
   const ariaLabel = avatarRootAriaLabel(ariaLabelProp, label);
 
-  const tooltip = nick
+  const tooltipView = nick
     ? {
-        size: tooltipSize,
+        size: tooltip?.size ?? "base",
         variant: tooltipVariant,
-        status: tooltipStatus,
-        side: tooltipSide,
+        status: tooltip?.status ?? "default",
+        side: tooltip?.side ?? "top",
         content: nick,
       }
     : null;
@@ -69,7 +66,7 @@ export function useAvatarRootState({
     hasLabel,
     rootRole,
     ariaLabel,
-    tooltip,
+    tooltip: tooltipView,
   };
 }
  

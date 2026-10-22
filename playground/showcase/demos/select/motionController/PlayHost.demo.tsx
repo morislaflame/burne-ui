@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { Select } from "@/components/core/Select";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -14,23 +14,23 @@ export function SelectMotionControllerDemo() {
   return (
     <div className="flex max-w-sm flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("triggerGroup", "hoverIn")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "hoverIn")}>
           Pulse
         </Button>
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("triggerGroup", "hoverOut")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "hoverOut")}>
           Reset
         </Button>
-        <Button size="small" variant="ghost" onClick={() => controller.set("triggerGroup", { y: 0 })}>
+        <Button size="small" variant="ghost" onClick={() => controller.set("shell", { y: 0 })}>
           Snap
         </Button>
       </div>
       <Select
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{
-          triggerGroup: {
+          shell: {
             hoverIn: { y: -4, duration: 0.28, replay: "rest" },
             hoverOut: { y: 0, duration: 0.2 },
           },

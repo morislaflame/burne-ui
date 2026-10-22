@@ -7,7 +7,7 @@ import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 export function TooltipMotionSideSlideDemo() {
   return (
     <Tooltip
-      delayShowMs={0}
+      openDelay={0}
       variant="secondary"
       side="bottom"
       classNames={{

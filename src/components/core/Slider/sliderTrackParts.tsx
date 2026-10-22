@@ -1,3 +1,4 @@
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { forwardRef, type ForwardedRef, type ReactNode } from "react";
  
 import { useMotionPart } from "@/components/core/utils/slotMotion";
@@ -36,14 +37,25 @@ export function SliderTrackMarks() {
  
 SliderTrackMarks.displayName = "SliderTrackMarks";
  
-export function SliderFill({ className, ...rest }: SliderFillProps) {
+export const SliderFill = forwardRef(function SliderFill({
+  className,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...rest
+}: SliderFillProps, ref: ForwardedRef<HTMLSpanElement>) {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalSliderMotionScope(),
     slot: "fill",
-    forwardedRef: ctx.fillRef,
+    forwardedRef: mergeRefs(ctx.fillRef, ref),
     pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -54,17 +66,30 @@ export function SliderFill({ className, ...rest }: SliderFillProps) {
       {...pointerHandlers}
     />
   );
-}
+});
  
 SliderFill.displayName = "SliderFill";
  
-export function SliderRail({ className, children, ...rest }: SliderRailProps) {
+export const SliderRail = forwardRef(function SliderRail({
+  className,
+  children,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...rest
+}: SliderRailProps, ref: ForwardedRef<HTMLDivElement>) {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope: useOptionalSliderMotionScope(),
     slot: "rail",
     pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
  
   return (
@@ -83,7 +108,7 @@ export function SliderRail({ className, children, ...rest }: SliderRailProps) {
       )}
     </div>
   );
-}
+});
  
 SliderRail.displayName = "SliderRail";
  
@@ -109,7 +134,6 @@ function SliderTrackThumb({
         size={ctx.size}
         icon={icon}
         variant={ctx.variant}
-        thumbClassName={ctx.thumbClassName}
         className={className}
         style={style}
         percent={ctx.thumbPercent("start")}
@@ -136,7 +160,6 @@ function SliderTrackThumb({
         size={ctx.size}
         icon={icon}
         variant={ctx.variant}
-        thumbClassName={ctx.thumbClassName}
         className={className}
         style={style}
         percent={ctx.thumbPercent("end")}
@@ -162,7 +185,6 @@ function SliderTrackThumb({
       size={ctx.size}
       icon={icon}
       variant={ctx.variant}
-      thumbClassName={ctx.thumbClassName}
       className={className}
       style={style}
       percent={ctx.thumbPercent("single")}
@@ -205,13 +227,17 @@ export const SliderCompoundThumb = forwardRef<HTMLButtonElement, SliderCompoundT
 SliderCompoundThumb.displayName = "SliderThumb";
  
 export const SliderIcon = forwardRef<HTMLSpanElement, SliderIconProps>(
-  function SliderIcon({ children, className, ...rest }, ref) {
+  function SliderIcon({ children, className, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
     const slotClassNames = useSliderClassNames();
     const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
       scope: useOptionalSliderMotionScope(),
       slot: "icon",
       forwardedRef: ref,
       pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     return (
       <span

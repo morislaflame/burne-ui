@@ -13,7 +13,7 @@ export function DisclosureCardGroupDemo() {
         <Disclosure key={value} value={value}>
           <Disclosure.Trigger>{title}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">
+            <Text as="p" textStyle="small" className="text-muted">
               Disclosure.Group variant=&quot;card&quot; — general card with dividers.
             </Text>
           </Disclosure.Content>

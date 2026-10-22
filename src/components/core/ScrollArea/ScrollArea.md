@@ -66,7 +66,7 @@ import { ScrollArea, type ScrollAreaProps, type ScrollAreaClassNames, type Scrol
 
 ## Поведение
 
-Полоса: `data-orientation` `vertical` \| `horizontal`, `data-state` `active` \| `inactive`. `active` — полоса видна. Пока контент помещается, полоса `hidden` и вне tab sequence. Прозрачность полосы — канал показа и скрытия. Анимация бегунка — `transform` (`y`, `scale`), не `opacity`.
+Прозрачность полосы — канал показа и скрытия. Анимация бегунка — `transform` (`y`, `scale`), не `opacity`.
 
 Обёртка контента внутри viewport не слот: при `horizontal` и `both` она `w-max`, чтобы ряд мог быть шире окна.
 
@@ -76,6 +76,44 @@ import { ScrollArea, type ScrollAreaProps, type ScrollAreaClassNames, type Scrol
 
 Хост — корень. Слоты: `root`, `viewport`, `scrollbar`, `thumb`, `corner`. У каждой оси свой `scrollbar` и `thumb`. `enter` играет при появлении, если фаза задана. Повторные слоты — `ctx.getTargets("thumb")`. Китовых рецептов наведения нет: показ полосы делает `visibility`.
 
-## Файлы
+## data-*
 
-`ScrollArea.tsx` держит scope. Рецепты слотов — `scrollAreaAnimations.ts`. Геометрия бегунка — `scrollAreaAPI.ts`.
+На полосе: `data-orientation` `vertical` \| `horizontal`, `data-state` `active` \| `inactive`. `active` — полоса видна. Пока контент помещается, полоса `hidden` и вне tab sequence.
+
+## MotionController
+
+Ручка на корне. `play()` играет слот `root`. У каждой оси свой `scrollbar` и `thumb`: `playSlot("thumb")` обходит живые бегунки, из фабрики — `ctx.getTargets("thumb")`. Китовых рецептов наведения нет.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+const scroller = useMotionControllerHandle();
+
+<ScrollArea motionController={scroller} aria-label="Cities" className="h-48 w-64" />
+```
+
+## Доступность
+
+- Имя области — `aria-label` или `aria-labelledby` на корне. На корне атрибут не остаётся: его получает viewport.
+- Полоса: `role="scrollbar"`, `aria-controls` на viewport, `aria-orientation`, `aria-valuemin` / `aria-valuemax` / `aria-valuenow`. Tab stop есть, пока контент не помещается.
+- На полосе стрелки, Page Up / Page Down, Home и End. В RTL горизонтальные стрелки идут к логическому концу.
+
+## Структура файлов
+
+```
+ScrollArea/
+├── ScrollArea.tsx
+├── index.ts
+├── ScrollArea.stories.tsx
+├── scrollAreaTypes.ts
+├── scrollAreaStyles.ts
+├── scrollAreaA11y.ts
+├── scrollAreaAPI.ts
+├── scrollAreaContext.tsx
+├── scrollAreaAnimations.ts
+├── scrollAreaParts.tsx
+├── useScrollAreaRootState.ts
+├── scrollAreaAPI.test.ts
+├── scrollArea.test.tsx
+└── ScrollArea.md
+```

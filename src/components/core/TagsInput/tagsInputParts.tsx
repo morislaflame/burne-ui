@@ -1,8 +1,8 @@
-import { forwardRef, useRef, useState, type ReactNode } from "react";
+import { forwardRef, useRef, type ReactNode } from "react";
 
 import { Field } from "@/components/core/Field";
 import { KitClose } from "@/components/core/utils/kitIcons";
-import { ariaInvalidValue } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { cn } from "@/utils/cn";
 
 import { tagsInputRemoveLabel } from "./tagsInputA11y";
@@ -21,44 +21,18 @@ import {
   tagsInputTagTextClass,
 } from "./tagsInputStyles";
 import type {
-  TagsInputControlProps,
+  TagsInputShellProps,
   TagsInputErrorProps,
   TagsInputHintProps,
   TagsInputLabelProps,
+  TagsInputRemoveProps,
+  TagsInputTagProps,
 } from "./tagsInputTypes";
 
-function TagsInputChip({ value }: { value: string }) {
-  const field = useTagsInputContext();
-  const slotClassNames = useTagsInputClassNames();
-  const tag = useTagsInputSlotMotion<HTMLSpanElement>("tag");
-  const remove = useTagsInputSlotMotion<HTMLButtonElement>("remove");
-  const locked = field.disabled || field.readOnly;
-
-  return (
-    <span
-      ref={tag.setRef}
-      className={tagsInputTagClass(field.size, field.variant, slotClassNames.tag)}
-      {...tag.pointerHandlers}
-    >
-      <span className={tagsInputTagTextClass()}>{value}</span>
-      <button
-        ref={remove.setRef}
-        type="button"
-        className={tagsInputRemoveClass(slotClassNames.remove)}
-        aria-label={tagsInputRemoveLabel(value)}
-        disabled={locked}
-        onClick={() => field.remove(value)}
-        {...remove.pointerHandlers}
-      >
-        <KitClose aria-hidden />
-      </button>
-    </span>
-  );
-}
-
-export const TagsInputControl = forwardRef<HTMLDivElement, TagsInputControlProps>(function TagsInputControl(
+export const TagsInputTag = forwardRef<HTMLSpanElement, TagsInputTagProps>(function TagsInputTag(
   {
     className,
+    children,
     motion,
     onPointerOver,
     onPointerOut,
@@ -70,12 +44,111 @@ export const TagsInputControl = forwardRef<HTMLDivElement, TagsInputControlProps
 ) {
   const field = useTagsInputContext();
   const slotClassNames = useTagsInputClassNames();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const inputPart = useTagsInputSlotMotion<HTMLInputElement>("input");
-  const [draft, setDraft] = useState("");
-  const shell = useTagsInputShellMotion({
+  const tag = useTagsInputSlotMotion<HTMLSpanElement>("tag", {
     motion,
     forwardedRef: ref,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+
+  return (
+    <span
+      ref={tag.setRef}
+      className={tagsInputTagClass(field.size, field.variant, cn(slotClassNames.tag, className))}
+      {...rest}
+      {...tag.pointerHandlers}
+    >
+      {children}
+    </span>
+  );
+});
+TagsInputTag.displayName = "TagsInputTag";
+
+export const TagsInputRemove = forwardRef<HTMLButtonElement, TagsInputRemoveProps>(
+  function TagsInputRemove(
+    {
+      value,
+      className,
+      children,
+      motion,
+      onClick,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const field = useTagsInputContext();
+    const slotClassNames = useTagsInputClassNames();
+    const remove = useTagsInputSlotMotion<HTMLButtonElement>("remove", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+    const locked = field.disabled || field.readOnly;
+
+    return (
+      <button
+        ref={remove.setRef}
+        type="button"
+        className={tagsInputRemoveClass(cn(slotClassNames.remove, className))}
+        aria-label={tagsInputRemoveLabel(value)}
+        disabled={locked}
+        onClick={(event) => {
+          onClick?.(event);
+          if (event.defaultPrevented) return;
+          field.remove(value);
+        }}
+        {...rest}
+        {...remove.pointerHandlers}
+      >
+        {children ?? <KitClose aria-hidden />}
+      </button>
+    );
+  },
+);
+TagsInputRemove.displayName = "TagsInputRemove";
+
+function TagsInputChip({ value }: { value: string }) {
+  const slotClassNames = useTagsInputClassNames();
+
+  return (
+    <TagsInputTag>
+      <span className={tagsInputTagTextClass(slotClassNames.tagText)}>{value}</span>
+      <TagsInputRemove value={value} />
+    </TagsInputTag>
+  );
+}
+
+export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(function TagsInputShell(
+  {
+    className,
+    inputRef,
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
+  ref,
+) {
+  const field = useTagsInputContext();
+  const slotClassNames = useTagsInputClassNames();
+  const draftInputRef = useRef<HTMLInputElement>(null);
+  const inputPart = useTagsInputSlotMotion<HTMLInputElement>("control");
+  const draft = field.inputValue;
+  const setDraft = field.setInputValue;
+  const shell = useTagsInputShellMotion({
+    forwardedRef: ref,
+    motion,
     onPointerOver,
     onPointerOut,
     onPointerDown: (event) => {
@@ -83,7 +156,7 @@ export const TagsInputControl = forwardRef<HTMLDivElement, TagsInputControlProps
       const target = event.target;
       if (!(target instanceof Element)) return;
       if (target.closest("button, input")) return;
-      inputRef.current?.focus();
+      draftInputRef.current?.focus();
     },
     onPointerUp,
   });
@@ -110,11 +183,10 @@ export const TagsInputControl = forwardRef<HTMLDivElement, TagsInputControlProps
       className={tagsInputShellClass({
         size: field.size,
         variant: field.variant,
-        status: field.status,
+        status: fieldPaintStatus(field.isInvalid),
         disabled: field.disabled,
         motionClass: shell.motionClass,
-        slotClass: slotClassNames.shell,
-        className,
+        slotClass: cn(slotClassNames.shell, className),
       })}
       {...rest}
       {...shell.pointerHandlers}
@@ -124,11 +196,13 @@ export const TagsInputControl = forwardRef<HTMLDivElement, TagsInputControlProps
       ))}
       <input
         ref={(node) => {
-          inputRef.current = node;
+          draftInputRef.current = node;
           inputPart.setRef(node);
+          if (typeof inputRef === "function") inputRef(node);
+          else if (inputRef) inputRef.current = node;
         }}
         id={field.inputId}
-        className={tagsInputFieldClass(slotClassNames.input)}
+        className={tagsInputFieldClass(slotClassNames.control)}
         value={draft}
         placeholder={field.values.length === 0 ? field.placeholder : undefined}
         disabled={field.disabled || field.atMax}
@@ -157,7 +231,7 @@ export const TagsInputControl = forwardRef<HTMLDivElement, TagsInputControlProps
   );
 });
 
-TagsInputControl.displayName = "TagsInputControl";
+TagsInputShell.displayName = "TagsInput.Shell";
 
 export const TagsInputLabel = forwardRef<HTMLElement, TagsInputLabelProps>(function TagsInputLabel(
   {
@@ -228,7 +302,6 @@ export const TagsInputHint = forwardRef<HTMLElement, TagsInputHintProps>(functio
     <Field.Hint
       ref={part.setRef}
       id={idProp ?? field.hintId}
-      status={field.status}
       className={cn(slotClassNames.hint, className)}
       {...rest}
       {...part.pointerHandlers}
@@ -285,7 +358,7 @@ export function TagsInputSimpleBody() {
   return (
     <>
       {field.label != null ? <TagsInputLabel /> : null}
-      <TagsInputControl />
+      <TagsInputShell />
       {field.hint != null ? <TagsInputHint /> : null}
       {field.error != null ? <TagsInputError /> : null}
     </>

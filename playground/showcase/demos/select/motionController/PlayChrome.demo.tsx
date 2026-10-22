@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { Select } from "@/components/core/Select";
 import { useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -25,7 +25,7 @@ export function SelectMotionControllerPlayChromeDemo() {
         </Button>
       </div>
       <Select
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{
@@ -40,10 +40,10 @@ export function SelectMotionControllerPlayChromeDemo() {
         }}
       >
         <Select.Label>Framework</Select.Label>
-        <Select.TriggerGroup>
+        <Select.Shell>
           <Select.Value />
           <Select.Trigger />
-        </Select.TriggerGroup>
+        </Select.Shell>
         <Select.Popover />
         <Select.Hint>Root chrome scope — not the TriggerGroup host.</Select.Hint>
       </Select>

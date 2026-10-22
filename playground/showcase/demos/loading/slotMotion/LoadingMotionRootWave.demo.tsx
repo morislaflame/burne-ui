@@ -3,7 +3,7 @@ import { Loading } from "@/components/core/Loading";
 export function LoadingMotionRootWaveDemo() {
   return (
     <Loading
-      type="dots"
+      indicator="dots"
       motion={{
         root: {
           enter: (ctx) => {

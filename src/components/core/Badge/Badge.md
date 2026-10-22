@@ -1,11 +1,13 @@
 # Badge
 
-Компактный статус-бейдж: текст, иконка, icon-only, dot и overlay через `Badge.Anchor`. Есть `variant`, `status`, размеры, `gloss` и hover-lift как у компонентов второго уровня.
+Компактный статус-бейдж: текст, иконка, icon-only, dot и overlay через `Badge.Anchor`. Есть `variant`, `status`, размеры и hover-lift как у компонентов второго уровня.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
 ```tsx
-import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type IconPosition, type BadgeInlineIconPosition, type BadgeClassNames, type BadgeMotion, type BadgePartMotion } from "burne-ui";
+import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type IconPosition, type BadgeClassNames, type BadgeMotion, type BadgePartMotion } from "burne-ui";
 ```
 
 ## API
@@ -28,13 +30,13 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 ```tsx
 <Badge variant="secondary">
-  <IoCheckmarkCircleOutline data-icon="inline-start" />
+  <IoCheckmarkCircleOutline data-icon="start" />
   Verified
 </Badge>
 
 <Badge variant="outline">
   Bookmark
-  <IoBookmarkOutline data-icon="inline-end" />
+  <IoBookmarkOutline data-icon="end" />
 </Badge>
 ```
 
@@ -65,7 +67,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `primary` \| `outline` \| `secondary` \| `gloss` |
+| `variant` | `default` | `default` \| `primary` \| `outline` \| `secondary` |
 | `status` | `default` | `default` \| `danger` \| `success` \| `info` \| `warning` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `icon` | — | Любой `ReactNode` (в т.ч. `react-icons/io5`) |
@@ -107,7 +109,6 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `primary` | `bg-primary text-primary-foreground` |
 | `outline` | transparent + border |
 | `secondary` | `bg-secondary text-secondary-foreground` |
-| `gloss` | `gloss-panel` |
 
 ### Status
 
@@ -119,7 +120,6 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `primary` | `bg-primary` | fill (`bg-danger` / … + `*-foreground`) |
 | `outline` | transparent + outline border | `border-token-*` + `text-*` |
 | `secondary` | `bg-secondary` | тот же surface; `text-*` |
-| `gloss` | `gloss-panel` | `text-*` (стекло без `bg-surface-tint-*`) |
 
 `dot` — заливка точки следует status/variant (индикатор).
 
@@ -151,7 +151,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss`; `false` внутри `Badge.Anchor` split-lift |
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel`; `false` внутри `Badge.Anchor` split-lift |
 | `anchor` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` с `params.liftScale` = `badgeAnchorHoverLiftScale` |
 
 `hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). На `Badge.Anchor` то же для `motion.anchor`. Явный `motion.root.hoverIn` важнее `hoverLift`. Не `motion={{ hoverIn }}` на корне — в dev это `console.error` и игнор.
@@ -224,7 +224,6 @@ configureMotion({ enableHoverLift: false, badgeAnchorHoverLiftScale: 1.04 });
 | `semanticStatusSurface` | Status overlay per variant (tint / fill / outline / text) |
 | `--chip-px/py-*`, `--chip-gap-*`, `--chip-box-*`, `--chip-size-*` | Internal chip inset / circle diameter (Badge + Kbd; not public API) |
 | `shadow-token-base` + `-hover` | Через `--el-shadow` (rest всегда; hover при lift) |
-| `gloss-panel gloss-deep` | Gloss badge surface |
 | `data-badge-anchor` | Anchor grid positioning |
 
 ## Стилизация и кастомизация
@@ -232,7 +231,7 @@ configureMotion({ enableHoverLift: false, badgeAnchorHoverLiftScale: 1.04 });
 ### Два уровня
 
 1. **`className` на `Badge`** — конкретный rendered layout (`text`, `dot`, `iconOnly`).
-2. **`classNames` на root** — общие слоты, включая `anchor` для `Badge.Anchor`.
+2. **`classNames` на root** — общие слоты, включая `anchor` для `Badge.Anchor`. У Badge внутри якоря `classNames.anchor` тоже садится на корень `Badge.Anchor`.
 
 ### Слоты `BadgeClassNames`
 
@@ -341,4 +340,4 @@ Badge/
 
 ## Storybook
 
-`Core Components/Badge` — размеры/variants, statuses, light theme, `Badge.Anchor`, inline icons, icon-only, dots, custom colors, `classNames`, gloss.
+`Core Components/Badge` — размеры/variants, statuses, light theme, `Badge.Anchor`, inline icons, icon-only, dots, custom colors, `classNames`.

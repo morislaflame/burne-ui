@@ -1,4 +1,4 @@
-import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
+import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
  
 export type SwitchSize = "small" | "base" | "mid" | "large";

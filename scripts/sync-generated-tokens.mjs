@@ -86,17 +86,20 @@ function shadowLayer(geom, opacity) {
 
 const SHADOW_LEVELS = ["small", "base", "mid", "large", "xlarge"];
 
+function shadowKnobs() {
+  return [
+    `  --shadow-opacity: 1;`,
+    `  --shadow-blur: 1;`,
+    `  --shadow-spread: 1;`,
+    `  --shadow-offset-x: 0px;`,
+    `  --shadow-offset-y: 0px;`,
+  ].join("\n");
+}
+
 function shadowBlock(theme) {
   const opacity = primitives.shadowOpacity[theme];
   const geom = primitives.shadowGeom;
   const lines = [];
-  if (theme === "dark") {
-    lines.push(`  --shadow-opacity: 1;`);
-    lines.push(`  --shadow-blur: 1;`);
-    lines.push(`  --shadow-spread: 1;`);
-    lines.push(`  --shadow-offset-x: 0px;`);
-    lines.push(`  --shadow-offset-y: 0px;`);
-  }
   lines.push(`  --shadow-none:`, shadowNoneLayer());
 
   for (const level of SHADOW_LEVELS) {
@@ -153,7 +156,11 @@ const checkOnly = process.argv.includes("--check");
 
 let css = readFileSync(cssPath, "utf8");
 const next = replaceMarked(
-  replaceMarked(replaceMarked(css, "fonts", fontBlock()), "text-scale", textScaleBlock()),
+  replaceMarked(
+    replaceMarked(replaceMarked(css, "fonts", fontBlock()), "text-scale", textScaleBlock()),
+    "shadow-knobs",
+    shadowKnobs(),
+  ),
   "shadows-dark",
   shadowBlock("dark"),
 );

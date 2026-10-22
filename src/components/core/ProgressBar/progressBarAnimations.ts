@@ -22,6 +22,10 @@ import { progressScaleFromPercent } from "@/components/core/utils/slotMotion/rec
  
 import { useOptionalProgressBarMotionScope } from "./progressBarContext";
 import type { ProgressBarMotion, ProgressBarPartMotion } from "./progressBarTypes";
+
+import { bindProgressRecipes } from "@/components/core/utils/slotMotion/recipes/bindProgress";
+
+bindProgressRecipes();
  
 export { progressScaleFromPercent };
  

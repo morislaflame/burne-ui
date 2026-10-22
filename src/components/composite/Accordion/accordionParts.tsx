@@ -1,8 +1,9 @@
-import { forwardRef, useCallback, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useMemo, useRef, type ForwardedRef } from "react";
  
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
 import { dataExpandedState } from "@/components/core/utils/dataContract";
-import { useExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useExpandableMotionScope, useExpandableSimpleModeGuard, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
 import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
@@ -66,7 +67,15 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   { value, disabled, classNames, className, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest },
   ref,
 ) {
-  const { value: openValue, setValue, size, motion: rootMotion } = useAccordionContext();
+  const {
+    selectionMode,
+    value: openValue,
+    values,
+    setItemOpen,
+    variant,
+    size,
+    motion: rootMotion,
+  } = useAccordionContext();
   const parentClassNames = useAccordionClassNames();
   const mergedClassNames = useMemo(
     () => ({ ...parentClassNames, ...classNames }),
@@ -77,26 +86,25 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
     [motion, rootMotion],
   );
   const itemId = useAccordionItemId(value);
-  const isOpen = openValue === itemId;
+  const isOpen = selectionMode === "multiple" ? values.includes(itemId) : openValue === itemId;
  
   return (
     <AccordionClassNamesProvider classNames={classNames}>
       <Expandable
         ref={ref}
-        compound
+        variant={variant}
         size={size}
         disabled={disabled}
         open={isOpen}
-        onOpenChange={(next) => setValue(next ? itemId : null)}
-        className={accordionItemClass(className)}
+        onOpenChange={(next) => setItemOpen(itemId, next)}
         classNames={resolveAccordionItemExpandableClassNames(mergedClassNames)}
         motion={mergedMotion}
         motionController={motionController}
                 motionState={motionState}
                 motionPayload={motionPayload}
                 playInitialState={playInitialState}
+        className={accordionItemClass(cn("accordion-item", className))}
         {...rest}
-        data-accordion-item
         data-state={dataExpandedState(isOpen)}
       >
         {children}
@@ -107,16 +115,18 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
  
 AccordionItem.displayName = "Accordion.Item";
  
-export function AccordionHeading({ className, children, ...rest }: AccordionHeadingProps) {
+export const AccordionHeading = forwardRef(function AccordionHeading({ className, children, ...rest }: AccordionHeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
+  useExpandableSimpleModeGuard("Accordion.Heading");
   const slotClassNames = useAccordionClassNames();
   const Heading = accordionHeadingTag();
  
   return (
-    <Heading className={accordionHeadingClass({ className, slotClass: slotClassNames.heading })} {...rest}>
+    <Heading className={accordionHeadingClass({ className, slotClass: slotClassNames.heading })} {...rest}
+      ref={ref}>
       {children}
     </Heading>
   );
-}
+});
  
 AccordionHeading.displayName = "Accordion.Heading";
  
@@ -130,37 +140,47 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
  
 AccordionTrigger.displayName = "Accordion.Trigger";
  
-export function AccordionMessage(props: AccordionMessageProps) {
-  return <Expandable.Message {...props} />;
-}
+export const AccordionMessage = forwardRef(function AccordionMessage(props: AccordionMessageProps, ref: ForwardedRef<HTMLDivElement>) {
+  return <Expandable.Message {...props}
+      ref={ref} />;
+});
  
 AccordionMessage.displayName = "Accordion.Message";
  
-export function AccordionIcon(props: AccordionIconProps) {
-  return <Expandable.Icon {...props} />;
-}
+export const AccordionIcon = forwardRef<HTMLSpanElement, AccordionIconProps>(
+  function AccordionIcon(props, ref) {
+    return <Expandable.Icon ref={ref} {...props} />;
+  },
+);
  
 AccordionIcon.displayName = "Accordion.Icon";
  
-export function AccordionContent(props: AccordionContentProps) {
-  return <Expandable.Content {...props} />;
-}
+export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
+  function AccordionContent(props, ref) {
+    return <Expandable.Content ref={ref} {...props} />;
+  },
+);
  
 AccordionContent.displayName = "Accordion.Content";
  
-export function AccordionTitle(props: AccordionTitleProps) {
-  return <Expandable.Title {...props} />;
-}
+export const AccordionTitle = forwardRef<HTMLDivElement, AccordionTitleProps>(
+  function AccordionTitle(props, ref) {
+    return <Expandable.Title ref={ref} {...props} />;
+  },
+);
  
 AccordionTitle.displayName = "Accordion.Title";
  
-export function AccordionDescription(props: AccordionDescriptionProps) {
-  return <Expandable.Description {...props} />;
-}
+export const AccordionDescription = forwardRef<HTMLDivElement, AccordionDescriptionProps>(
+  function AccordionDescription(props, ref) {
+    return <Expandable.Description ref={ref} {...props} />;
+  },
+);
  
 AccordionDescription.displayName = "Accordion.Description";
  
-export function AccordionChevron({ className, children, motion, ...rest }: AccordionChevronProps) {
+export const AccordionChevron = forwardRef<HTMLSpanElement, AccordionChevronProps>(
+  function AccordionChevron({ className, children, motion, ...rest }, ref) {
   const { open, hasPanel } = useExpandableContext();
   const slotClassNames = useAccordionClassNames();
   const gridSlots = useOptionalExpandableTriggerGrid();
@@ -175,6 +195,7 @@ export function AccordionChevron({ className, children, motion, ...rest }: Accor
     scope,
     slot: "chevron",
     motion,
+    forwardedRef: ref,
   });
   const setChevronRef = useCallback(
     (node: HTMLSpanElement | null) => {
@@ -199,7 +220,8 @@ export function AccordionChevron({ className, children, motion, ...rest }: Accor
       {children ?? <AccordionChevronSvg />}
     </span>
   );
-}
+},
+);
  
 AccordionChevron.displayName = "Accordion.Chevron";
  
@@ -212,14 +234,26 @@ export const AccordionPanel = forwardRef<HTMLDivElement, AccordionPanelProps>(
 AccordionPanel.displayName = "Accordion.Panel";
  
 export const AccordionBody = forwardRef<HTMLDivElement, AccordionBodyProps>(
-  function AccordionBody({ className, ...rest }, ref) {
+  function AccordionBody({ className, motion, ...rest }, ref) {
     const slotClassNames = useAccordionClassNames();
- 
+    const { setRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalExpandableMotionScope(),
+      slot: "body",
+      motion,
+    });
+    const setBodyRef = useCallback(
+      (node: HTMLElement | null) => {
+        setRef(node);
+        mergeForwardedRef(ref, node as HTMLDivElement | null);
+      },
+      [ref, setRef],
+    );
+
     return (
       <Text
         as="div"
-        ref={ref}
-        variant="base"
+        ref={setBodyRef}
+        textStyle="base"
         className={accordionBodyClass({
           className,
           slotClass: slotClassNames.body,

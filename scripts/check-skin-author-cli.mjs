@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const result = spawnSync(process.execPath, ["--test", "cli/skin-validate.test.mjs"], {
+const result = spawnSync(process.execPath, ["--test", "cli/skin-validate.test.mjs", "cli/init.test.mjs"], {
   cwd: root,
   stdio: "inherit",
 });

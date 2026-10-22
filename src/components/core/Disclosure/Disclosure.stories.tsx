@@ -63,7 +63,7 @@ export const Basic: Story = {
     <Disclosure defaultOpen>
       <Disclosure.Trigger>Main information</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+        <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
       </Disclosure.Content>
     </Disclosure>
   ),
@@ -85,11 +85,11 @@ export const Variants: Story = {
     <div className="flex flex-col gap-large">
       {(["default", "outline", "secondary", "card", "ghost"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-xsmall">
-          <Text as="p" variant="small" className="text-muted capitalize">{variant}</Text>
+          <Text as="p" textStyle="small" className="text-muted capitalize">{variant}</Text>
           <Disclosure variant={variant} defaultOpen>
             <Disclosure.Trigger>Title ({variant})</Disclosure.Trigger>
             <Disclosure.Content>
-              <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+              <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
             </Disclosure.Content>
           </Disclosure>
         </div>
@@ -108,7 +108,7 @@ export const Sizes: Story = {
         <Disclosure key={size} variant="outline" size={size}>
           <Disclosure.Trigger>Size: {size}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -125,13 +125,13 @@ export const ChevronAndIcon: Story = {
       <Disclosure variant="outline" chevronPosition="end" defaultOpen>
         <Disclosure.Trigger>Chevron on the right (default)</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" chevronPosition="start">
         <Disclosure.Trigger>Chevron on the left</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" chevronPosition="end">
@@ -141,7 +141,7 @@ export const ChevronAndIcon: Story = {
           Leading icon + default chevron
         </Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" chevronPosition="end">
@@ -149,13 +149,13 @@ export const ChevronAndIcon: Story = {
           Custom chevron
         </Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" chevronPosition="end">
         <Disclosure.Trigger chevron={null}>No chevron</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>
@@ -182,7 +182,7 @@ export const Controlled: Story = {
         <Disclosure variant="outline" open={open} onOpenChange={setOpen}>
           <Disclosure.Trigger>Controlled block</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       </div>
@@ -198,7 +198,7 @@ export const Disabled: Story = {
     <Disclosure variant="outline" disabled>
       <Disclosure.Trigger>Unavailable block</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+        <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
       </Disclosure.Content>
     </Disclosure>
   ),
@@ -218,7 +218,7 @@ export const GroupDefault: Story = {
         <Disclosure key={value} value={value}>
           <Disclosure.Trigger icon={icon}>{title}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -236,7 +236,7 @@ export const GroupSecondary: Story = {
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -252,7 +252,7 @@ export const GroupOutline: Story = {
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -270,7 +270,7 @@ export const GroupCard: Story = {
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Item {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -287,13 +287,13 @@ export const FramedVariantsClosed: Story = {
       <Disclosure variant="outline">
         <Disclosure.Trigger>Outline — title outside border</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="secondary">
         <Disclosure.Trigger>Secondary — title outside border</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+          <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>
@@ -308,7 +308,7 @@ export const GroupSeparated: Story = {
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -324,7 +324,7 @@ export const CardDragHandle: Story = {
     <Disclosure variant="card" dragHandle defaultOpen>
       <Disclosure.Trigger>Drag the handle down or up</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           {bodyText} Expand and collapse work by dragging the handle or clicking the title.
         </Text>
       </Disclosure.Content>
@@ -341,7 +341,7 @@ export const GroupSeparatedCard: Story = {
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Card {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -354,12 +354,12 @@ export const GroupSeparatedCard: Story = {
 export const GroupNonAccordion: Story = {
   name: "Disclosure.Group — multiple open",
   render: () => (
-    <Disclosure.Group variant="outline" accordion={false}>
+    <Disclosure.Group variant="outline" selectionMode="multiple" defaultValues={["a", "b"]}>
       {["a", "b", "c"].map((v) => (
-        <Disclosure key={v} value={v} defaultOpen={v === "a" || v === "b"}>
+        <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
-            <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+            <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
         </Disclosure>
       ))}
@@ -392,7 +392,7 @@ export const GroupControlled: Story = {
             <Disclosure key={v} value={v}>
               <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
               <Disclosure.Content>
-                <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+                <Text as="p" textStyle="small" className="text-muted">{bodyText}</Text>
               </Disclosure.Content>
             </Disclosure>
           ))}
@@ -418,12 +418,12 @@ export const CustomClassNames: Story = {
       classNames={{
         trigger: "border border-primary/30 rounded-large",
         title: "text-primary font-semibold",
-        contentPanel: "border border-primary/20 bg-primary/5",
+        content: "border border-primary/20 bg-primary/5",
       }}
     >
       <Disclosure.Trigger>Notification settings</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Slots configured via classNames on root.
         </Text>
       </Disclosure.Content>

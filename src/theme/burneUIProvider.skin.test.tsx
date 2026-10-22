@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import { render } from "@/__tests__/helpers";
+import { Button } from "@/components/core/Button";
 import { SkinProvider, useSkin } from "@/skins/skinContext";
 import { clearSkinsForTests, hasSkin } from "@/skins/skinRegistry";
 import type { SkinDefinition } from "@/skins/skinTypes";
@@ -51,15 +52,21 @@ describe("BurneUIProvider skin", () => {
     expect(host("brutal")?.style.getPropertyValue("--radius").trim()).toBe("0px");
   });
 
-  it("registers skins without a host when skin is omitted", () => {
-    const { getByTestId } = render(
-      <BurneUIProvider toast={false} storageKey={null} skins={[brutal]}>
+  it("keeps skins in scope when skin is omitted", () => {
+    const scoped: SkinDefinition = {
+      ...brutal,
+      targets: { "button.root": "brutal-btn" },
+    };
+    const { getByTestId, getByRole } = render(
+      <BurneUIProvider toast={false} storageKey={null} skins={[scoped]}>
         <Read />
+        <Button type="button" variant="brutal">Brutal</Button>
       </BurneUIProvider>,
     );
-    expect(hasSkin("brutal")).toBe(true);
+    expect(hasSkin("brutal")).toBe(false);
     expect(getByTestId("read").dataset.name).toBe("");
     expect(document.querySelector("[data-skin]")).toBeNull();
+    expect(getByRole("button", { name: "Brutal" }).className).toContain("brutal-btn");
   });
 
   it("does not mount a skin host when skin props are omitted", () => {

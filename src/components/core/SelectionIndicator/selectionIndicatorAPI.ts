@@ -33,7 +33,6 @@ export function isSelectionIndicatorMarkElement(
 export type PartitionedSelectionIndicatorChildren = {
   fillSlot?: ReactElement<SelectionIndicatorFillProps>;
   markSlot?: ReactElement<SelectionIndicatorMarkProps>;
-  legacyIcon?: ReactNode;
 };
  
 export function resolveSelectionIndicatorMarkContent({
@@ -84,33 +83,20 @@ export function usesCompoundSelectionIndicatorChildren(children: ReactNode): boo
 export function partitionSelectionIndicatorChildren(
   children: ReactNode,
 ): PartitionedSelectionIndicatorChildren {
-  const parts = Children.toArray(children);
   let fillSlot: ReactElement<SelectionIndicatorFillProps> | undefined;
   let markSlot: ReactElement<SelectionIndicatorMarkProps> | undefined;
-  const legacy: ReactNode[] = [];
- 
-  for (const child of parts) {
+
+  for (const child of Children.toArray(children)) {
     if (isValidElement(child) && isSelectionIndicatorFillElement(child)) {
       fillSlot = child;
       continue;
     }
     if (isValidElement(child) && isSelectionIndicatorMarkElement(child)) {
       markSlot = child;
-      continue;
     }
-    legacy.push(child);
   }
- 
-  return {
-    fillSlot,
-    markSlot,
-    legacyIcon:
-      legacy.length === 0
-        ? undefined
-        : legacy.length === 1
-          ? legacy[0]
-          : legacy,
-  };
+
+  return { fillSlot, markSlot };
 }
  
 export function resolveSelectionIndicatorClassNames({

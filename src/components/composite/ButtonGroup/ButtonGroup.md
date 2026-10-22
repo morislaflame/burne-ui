@@ -2,6 +2,8 @@
 
 Layout-обёртка для склеенных или раздельных сегментов: `Button`, `Input.Control`, `ComboBox`, `Select`, `SearchInput`, `Dropdown`, `ButtonGroup.Text`. Compound API: `ButtonGroup` + `ButtonGroup.Text`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -15,7 +17,7 @@ Style helpers (из модуля): `buttonGroupRoundingClasses`, `buttonGroupSeg
 ### Joined (fused) группа
 
 ```tsx
-<ButtonGroup aria-label="Действия с документом" buttonSize="base" variant="default">
+<ButtonGroup aria-label="Действия с документом" size="base" variant="default">
   <ButtonGroup.Text>Вид</ButtonGroup.Text>
   <Button variant="secondary">Список</Button>
   <Button variant="primary">Сетка</Button>
@@ -38,7 +40,7 @@ Style helpers (из модуля): `buttonGroupRoundingClasses`, `buttonGroupSeg
 ### Segmented (с зазорами)
 
 ```tsx
-<ButtonGroup segmented aria-label="Действия" buttonSize="base">
+<ButtonGroup segmented aria-label="Действия" size="base">
   <Button variant="outline">Отмена</Button>
   <Button variant="outline">Черновик</Button>
   <Button variant="primary">Сохранить</Button>
@@ -53,8 +55,8 @@ Compound part: `ButtonGroup.Text`.
 |------|--------------|----------|
 | `orientation` | `horizontal` | `horizontal` \| `vertical` |
 | `segmented` | `false` | `true` — gap между сегментами, без glue |
-| `buttonSize` | `base` | Каскад в сегменты: `small` \| `base` \| `mid` \| `large` |
-| `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` \| `primary` |
+| `size` | `base` | Каскад в сегменты: `small` \| `base` \| `mid` \| `large` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` \| `primary` |
 | `className` | — | На root `<div role="group">` |
 | `classNames` | — | Слоты: `root`, `separator`, `text`, `textLabel` |
 | `motion` | — | Per-slot (`root`, `text`). `events` — app-команды `MotionController`, не DOM-слот |
@@ -75,7 +77,7 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 
 | Prop | Описание |
 |------|----------|
-| `buttonSize` | Высота frame (из context или prop) |
+| `size` | Высота frame (из context или prop) |
 | `groupSegment` | Override позиции сегмента |
 | `className` | На span-оболочку |
 | `motion` | Per-slot `text` (enter / pointer). Дефолты empty |
@@ -103,10 +105,9 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 |-------|-----------|
 | joined (`segmented=false`) | Общая рамка, скругления по позиции, separators |
 | segmented | `gap-xsmall`, каждый сегмент `rounded-base` |
-| `variant="gloss"` | `gloss-panel`; separators скрыты |
 | `orientation="vertical"` | `flex-col`, separators `border-b-token` |
 
-| `buttonSize` | `ButtonGroup.Text` Text variant |
+| `size` | `ButtonGroup.Text` Text variant |
 |--------------|-------------------------------|
 | `small` | `small` |
 | `base` | `base` |
@@ -126,6 +127,8 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`toolbar:nudge`), не фазы. `createMotionEvents`. `play` ищет слот `root`; `playSlot("text")` — подпись. `waitForComplete` — playground / Storybook **MotionController**.
+
+Тройка на корне группы, не на вложенной кнопке. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, ButtonGroup, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -216,7 +219,6 @@ configureMotion({
 | `buttonGroupTextFrameClass` | Высота из `CONTROL_SIZE_LAYOUT` |
 | `BUTTON_GROUP_TEXT_LABEL_CLASS` | `truncate font-medium` |
 
-
 ## Стилизация и кастомизация
 
 ### `className` и `classNames`
@@ -249,7 +251,7 @@ configureMotion({
 ### Toolbar с Input
 
 ```tsx
-<ButtonGroup aria-label="Поиск и фильтры" buttonSize="base" className="w-full max-w-md">
+<ButtonGroup aria-label="Поиск и фильтры" size="base" className="w-full max-w-md">
   <Input.Control name="q" placeholder="Поиск…" />
   <Button variant="outline" iconOnly aria-label="Фильтр">
     <IoFilter aria-hidden />

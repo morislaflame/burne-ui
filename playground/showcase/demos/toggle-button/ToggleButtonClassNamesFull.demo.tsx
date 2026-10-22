@@ -7,6 +7,7 @@ export function ToggleButtonClassNamesFullDemo() {
     <ToggleButton
       defaultPressed
       icon={<IoHeartOutline aria-hidden />}
+      className="px-xlarge"
       classNames={{
         root: "rounded-large ring-1 ring-danger/25",
         fill: "bg-danger/20",

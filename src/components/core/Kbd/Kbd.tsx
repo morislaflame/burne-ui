@@ -74,7 +74,6 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
           rootClass={state.rootClass}
           size={state.size}
           variant={state.variant}
-          hoverLift={hoverLift}
           motion={motion}
           forwardedRef={ref}
           onPointerOver={onPointerOver}
@@ -94,7 +93,6 @@ function KbdSurface({
   rootClass,
   size,
   variant,
-  hoverLift,
   motion,
   forwardedRef,
   onPointerOver,
@@ -105,7 +103,6 @@ function KbdSurface({
   rootClass: string;
   size: NonNullable<KbdProps["size"]>;
   variant: NonNullable<KbdProps["variant"]>;
-  hoverLift: boolean;
   motion?: KbdMotion;
   forwardedRef: React.ForwardedRef<HTMLElement>;
   onPointerOver: KbdProps["onPointerOver"];
@@ -116,7 +113,6 @@ function KbdSurface({
   const surfaceStyle = useSkinSurfaceStyle(variant);
   const animations = useKbdAnimations({
     variant,
-    hoverLift,
     motion,
     forwardedRef,
     onPointerOver,
@@ -127,8 +123,8 @@ function KbdSurface({
     <kbd
       ref={animations.setMergedRef}
       className={cn(rootClass, animations.motionClass)}
-      {...animations.pointerHandlers}
       {...rest}
+      {...animations.pointerHandlers}
       style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
       {...dataVariantProps({ size, variant })}
     >

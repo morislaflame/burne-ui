@@ -9,8 +9,9 @@
  * Use `@theme inline` so identity mappings (`--color-background: var(--color-background)`)
  * do not emit circular `:root` custom properties.
  *
- * Import after `burne-ui/styles.css`:
- *   @import "burne-ui/theme-bridge.css";
+ * Folded into the public entry `burne-ui/tailwind.css`.
+ *   @import "burne-ui/styles.css";
+ *   @import "burne-ui/tailwind.css";
  */
 @theme inline {
   --font-sans: var(--font-family-sans);
@@ -41,6 +42,7 @@
   --focus-ring-width: var(--focus-ring-width);
   --focus-ring-offset: var(--focus-ring-offset);
 
+  --z-index-sticky: var(--z-sticky);
   --z-index-dialog: var(--z-dialog);
   --z-index-dropdown: var(--z-dropdown);
   --z-index-dropdown-sub: var(--z-dropdown-sub);

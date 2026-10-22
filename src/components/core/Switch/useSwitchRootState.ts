@@ -8,7 +8,7 @@ import { useFieldInvalid } from "@/components/core/Field/fieldContext";
 import { compoundHasLabel, compoundUsesInlineMotion, countSecondaryLines } from "./switchAPI";
 import { switchErrorId, switchHintId, switchInputId, switchLabelId } from "./switchA11y";
 import { SWITCH_LAYOUT } from "./switchStyles";
-import type { SwitchFieldContextValue, UseSwitchRootStateProps } from "./switchTypes";
+import type { SwitchFieldContextValue, UseSwitchRootStateProps, UseSwitchRootStateResult } from "./switchTypes";
  
 export function useSwitchRootState(
   {
@@ -17,13 +17,13 @@ export function useSwitchRootState(
     hint,
     error,
     invalid,
-    labelPosition = "right",
+    labelPosition = "end",
     size = "base",
     disabled: disabledRoot,
     className,
     ...controlRest
   }: UseSwitchRootStateProps & { className?: string },
-) {
+): UseSwitchRootStateResult {
   const autoId = useId();
   const switchId = switchInputId(
     typeof controlRest.id === "string" ? controlRest.id : undefined,

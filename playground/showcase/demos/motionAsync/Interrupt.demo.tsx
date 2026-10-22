@@ -39,7 +39,7 @@ export function MotionAsyncInterruptDemo() {
         <Button size="small" variant="ghost" onClick={() => void controller.play("async:boom")}>
           Throw
         </Button>
-        <Text variant="small" className="text-muted">
+        <Text textStyle="small" className="text-muted">
           {note}
         </Text>
       </div>

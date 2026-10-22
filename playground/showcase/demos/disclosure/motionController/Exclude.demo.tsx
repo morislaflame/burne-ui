@@ -21,7 +21,7 @@ export function DisclosureMotionControllerExcludeDemo() {
       <Disclosure motionController={controller} motion={{ titleLift: { hoverIn: { y: -8, duration: 0.22, replay: "rest" }, hoverOut: { y: 0, duration: 0.16 } }, title: { hoverIn: { x: 8, duration: 0.22, replay: "rest" }, hoverOut: { x: 0, duration: 0.16 } }, icon: { hoverIn: { y: -4, duration: 0.22, replay: "rest" }, hoverOut: { y: 0, duration: 0.16 } } }}>
         <Disclosure.Trigger icon={<IoInformationCircleOutline aria-hidden className="size-full" />}>exclude titleLift</Disclosure.Trigger>
         <Disclosure.Content>
-          <Text as="p" variant="small" className="text-muted">title + icon move; titleLift stays.</Text>
+          <Text as="p" textStyle="small" className="text-muted">title + icon move; titleLift stays.</Text>
         </Disclosure.Content>
       </Disclosure>
     </div>

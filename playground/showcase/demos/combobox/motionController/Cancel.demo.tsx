@@ -2,7 +2,7 @@ import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { createMotionEvents, useMotionControllerHandle } from "@/components/core/utils/slotMotion";
 
-const options = [
+const items = [
   { value: "react", label: "React" },
   { value: "svelte", label: "Svelte" },
   { value: "vue", label: "Vue" },
@@ -25,15 +25,15 @@ export function ComboBoxMotionControllerCancelDemo() {
   return (
     <div className="flex max-w-sm flex-col gap-2xlarge">
       <div className="flex flex-wrap gap-small">
-        <Button size="small" variant="outline" onClick={() => controller.playSlot("inputGroup", "combo:pulse")}>
+        <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "combo:pulse")}>
           Loop
         </Button>
         <Button
           size="small"
           variant="ghost"
           onClick={() => {
-            controller.cancel("inputGroup");
-            controller.set("inputGroup", { y: 0 });
+            controller.cancel("shell");
+            controller.set("shell", { y: 0 });
           }}
         >
           Cancel
@@ -41,7 +41,7 @@ export function ComboBoxMotionControllerCancelDemo() {
       </div>
       <ComboBox
         label="Framework"
-        options={options}
+        items={items}
         defaultValue="react"
         motionController={controller}
         motion={{ events }}

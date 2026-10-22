@@ -20,7 +20,7 @@ import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContextMenuKey, nudgeOpenContextMenu, placeContextMenuAnchor } from "./contextMenuAPI";
 import { ContextMenuAnchorProvider, useContextMenuAnchor } from "./contextMenuContext";
 import { CONTEXT_MENU_ANCHOR_CLASS, CONTEXT_MENU_TRIGGER_CLASS } from "./contextMenuStyles";
-import type { ContextMenuContentProps, ContextMenuProps, ContextMenuTriggerProps } from "./contextMenuTypes";
+import type { ContextMenuPopoverProps, ContextMenuProps, ContextMenuTriggerProps } from "./contextMenuTypes";
 
 import { cn } from "@/utils/cn";
 
@@ -148,8 +148,8 @@ export const ContextMenuTrigger = forwardRef<HTMLElement, ContextMenuTriggerProp
 
 ContextMenuTrigger.displayName = "ContextMenu.Trigger";
 
-export const ContextMenuContent = forwardRef<HTMLDivElement, ContextMenuContentProps>(
-  function ContextMenuContent({ side = "bottom", align = "start", offset = 4, ...rest }, forwardedRef) {
+export const ContextMenuPopover = forwardRef<HTMLDivElement, ContextMenuPopoverProps>(
+  function ContextMenuPopover({ side = "bottom", align = "start", offset = 4, ...rest }, forwardedRef) {
     const anchorRef = useContextMenuAnchor();
     return (
       <Dropdown.Popover
@@ -165,7 +165,7 @@ export const ContextMenuContent = forwardRef<HTMLDivElement, ContextMenuContentP
   },
 );
 
-ContextMenuContent.displayName = "ContextMenu.Content";
+ContextMenuPopover.displayName = "ContextMenu.Popover";
 
 export const ContextMenuItem = forwardRef<HTMLElement, DropdownItemProps>(
   function ContextMenuItem({ selection = false, ...rest }, ref) {

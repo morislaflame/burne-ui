@@ -4,7 +4,7 @@ import { ToggleButton } from "@/components/core/ToggleButton";
 export function ToggleButtonGroupMotionRootWaveDemo() {
   return (
     <ToggleButtonGroup
-      type="single"
+      selectionMode="single"
       defaultValue="a"
       motion={{
         root: {

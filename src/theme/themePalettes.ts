@@ -2,7 +2,7 @@ import type { ThemeColors } from "./themeDefaults";
  
 /**
  * Default dark/light palettes — flat ThemeColors snapshots (same shape as Copy config).
- * Named presets live on the docs site / playground.
+ * Named presets live in `namedPalettes.ts`.
  */
  
 const DARK_RIPPLE = {
@@ -59,9 +59,9 @@ export const DARK_COLORS: ThemeColors = {
   success: "#35b664",
   info: "#389dcc",
   warning: "#daa13e",
-  dangerForeground: "#fafafa",
-  successForeground: "#fafafa",
-  infoForeground: "#fafafa",
+  dangerForeground: "#ffffff",
+  successForeground: "#0c0c0e",
+  infoForeground: "#0c0c0e",
   warningForeground: "#0c0c0e",
   primaryHover: "color-mix(in oklab, var(--color-primary) 80%, var(--color-surface))",
   defaultHover: "color-mix(in oklab, var(--color-foreground) 8%, var(--color-surface))",
@@ -107,9 +107,9 @@ export const LIGHT_COLORS: ThemeColors = {
   focusRingWarning: "color-mix(in oklab, var(--color-warning) 60%, transparent)",
   indicator: "#18181b",
   indicatorForeground: "#fafafa",
-  danger: "#df4e4e",
-  success: "#2ebd62",
-  info: "#31a0d3",
+  danger: "#d14143",
+  success: "#00873f",
+  info: "#007dac",
   warning: "#e1a53d",
   dangerForeground: "#ffffff",
   successForeground: "#ffffff",

@@ -7,7 +7,8 @@
  *
  * Each rest size has its own hover/press tokens (not cross-tier base→mid):
  * - Level 1 (Button): `shadowMotionFor("none")` — none → `--shadow-lift` → none
- * - Level 2 (Alert, Badge, fields): `shadowMotionFor("small"|"base"|"mid"|"large")`
+ * - Level 2 (Alert, Badge, Kbd, Calendar, Toast): `shadowMotionFor("small"|"base"|"mid"|"large")`
+ * - Fields are level 1: `shadowMotionFor("none")` — no rest shadow, `--shadow-lift` on hover
  * - Static overlays (Dialog, Drawer, Popover, Tooltip): CSS `shadow-token-large`
  *
  * At rest the rest layer paints `var(--el-shadow)`. Hover and press cross-fade
@@ -19,6 +20,7 @@ import { useCallback, useLayoutEffect, useMemo, type MutableRefObject, type RefO
 import {
   animateInteractiveHoverLift,
   initElementShadow,
+  resetInteractiveLiftScale,
   shadowBase,
   shadowCssVar,
   shadowNone,
@@ -26,7 +28,6 @@ import {
   useInteractiveHoverLiftContainerHandlers,
   type HoverShadowConfig,
 } from "./hoverInteractiveLift";
-import { gsap } from "./gsapMotion";
 import { useMotionConfig } from "./motionConfigContext";
 import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
 import type { ShadowSize } from "@/tokens/shadows";
@@ -53,17 +54,7 @@ export function shadowMotionFor(size: ShadowSize = "base"): HoverShadowConfig {
     press: shadowCssVar(size, "press"),
   };
 }
- 
-/** @deprecated Prefer `shadowMotionFor("none")`. */
-export function firstLevelHoverShadow(): HoverShadowConfig {
-  return shadowMotionFor("none");
-}
- 
-/** @deprecated Prefer `shadowMotionFor(size)`. Default `base`. */
-export function secondLevelShadow(size: ShadowSize = "base"): HoverShadowConfig {
-  return shadowMotionFor(size);
-}
- 
+
 /**
  * Persistent `--el-shadow` without hover-lift (Tooltip, Popover).
  * `resolveShadow` is recomputed when `syncKey` changes (e.g. expanded on SearchInput).
@@ -105,11 +96,6 @@ export type UseSecondLevelShadowOptions = {
   killMotionOnUnmount?: boolean;
 };
  
-function resetLiftScale(element: HTMLElement | null): void {
-  if (!element) return;
-  gsap.set(element, { scale: 1, force3D: false, overwrite: "auto" });
-}
- 
 /**
  * Level 2: persistent rest shadow + optional guarded pointerover/out.
  * Handlers ignore moves between descendants (`cameFromOutsideContainer`).
@@ -134,7 +120,7 @@ export function useSecondLevelShadow(
   useLayoutEffect(() => {
     if (!enabled || interactive) return;
     const el = targetRef.current;
-    resetLiftScale(el);
+    resetInteractiveLiftScale(el);
     initElementShadow(el, idleShadow);
   }, [enabled, interactive, targetRef, idleShadow]);
  
@@ -195,7 +181,7 @@ export function useSecondLevelShadowContainer(
   useLayoutEffect(() => {
     if (!enabled || interactive) return;
     const el = liftedRef.current;
-    resetLiftScale(el);
+    resetInteractiveLiftScale(el);
     initElementShadow(el, idleShadow);
   }, [enabled, interactive, liftedRef, idleShadow]);
  

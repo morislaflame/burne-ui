@@ -8,6 +8,8 @@ import {
  
 import { useSkinRegistryRevision } from "@/skins/skinContext";
 
+import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
+
 import { resolveTabsMotionDefaults, useTabsRootEnter } from "./tabsAnimations";
 import {
   TabsClassNamesProvider,
@@ -32,11 +34,13 @@ export type {
   TabsClassNames,
   TabsMotion,
   TabsPartMotion,
+  TabsItem,
 } from "./tabsTypes";
  
 export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
   {
     children,
+    items,
     className,
     classNames,
     value,
@@ -46,6 +50,8 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
     size = "base",
     variant,
     disabled = false,
+    activationMode,
+    keepMounted,
     motion,
     motionController,
     motionState,
@@ -67,6 +73,8 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
     size,
     variant,
     disabled,
+    activationMode,
+    keepMounted,
   });
   const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(() => {
@@ -93,6 +101,22 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
             onPointerUp={onPointerUp}
             rest={rest}
           >
+            {items && !itemsPartTaken("Tabs", children, "TabsList", "TabsTab") ? (
+              <TabsList>
+                {items.map((item) => (
+                  <TabsTab key={item.value} value={item.value} disabled={item.disabled}>
+                    {item.label}
+                  </TabsTab>
+                ))}
+              </TabsList>
+            ) : null}
+            {items && !itemsPartTaken("Tabs", children, "TabsPanel")
+              ? items.map((item) => (
+                  <TabsPanel key={item.value} value={item.value}>
+                    {item.content}
+                  </TabsPanel>
+                ))
+              : null}
             {children}
           </TabsRootSurface>
         </TabsMotionProvider>
@@ -116,7 +140,7 @@ function TabsRootSurface({
   rest,
   children,
 }: {
-  value: string;
+  value: string | null;
   orientation: ReturnType<typeof useTabsRootState>["contextValue"]["orientation"];
   slotClass?: string;
   className?: string;

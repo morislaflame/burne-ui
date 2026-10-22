@@ -10,7 +10,7 @@
  * Defaults: `resolveButtonMotionDefaults` (first-level lift + squeeze). A skin overlays its own recipes.
  * Overlay `loader` / `success` / `error` stay CSS-hidden until the app plays `motion.states`.
  */
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearMotionTransform, killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
  
 import {
@@ -28,7 +28,7 @@ import {
 } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
  
-import { hasKitMember, overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { overlaySkinMotion, usesKitElevationMember } from "@/skins/resolveVariantVisual";
 
 import { useButtonMotionScope } from "./buttonContext";
 import type {
@@ -38,6 +38,10 @@ import type {
 } from "./buttonTypes";
 import { KIT_BUTTON_VARIANTS } from "./buttonTypes";
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
+
+import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
+
+bindLiftRecipes();
  
 /** Nested pointer broadcast skips overlay layers (app `motion.states` owns their autoAlpha). */
 const BUTTON_POINTER_BROADCAST_EXCLUDE = ["root", "loader", "success", "error"] as const;
@@ -79,7 +83,7 @@ export function useButtonAnimations({
 }: UseButtonAnimationsProps) {
   const useContentRef = Boolean(groupSegment);
   const hasHoverShadow =
-    hasKitMember(variant, KIT_BUTTON_VARIANTS, BUTTON_VARIANT_HAS_HOVER_SHADOW) && !useContentRef;
+    usesKitElevationMember(variant, KIT_BUTTON_VARIANTS, BUTTON_VARIANT_HAS_HOVER_SHADOW) && !useContentRef;
   const enabled = !blocked;
   const scope = useButtonMotionScope();
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -129,7 +133,7 @@ export function useButtonAnimations({
       killStoredMotion(el);
       el.style.removeProperty("--el-shadow");
       el.style.removeProperty("box-shadow");
-      gsap.set(el, { clearProps: "scale,transform" });
+      clearMotionTransform(el);
     }
     if (content) {
       killMotion(content);

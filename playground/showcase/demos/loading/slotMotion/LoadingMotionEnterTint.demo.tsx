@@ -4,7 +4,7 @@ import { tweenCssColor } from "@/components/core/utils/gsapMotion";
 export function LoadingMotionEnterTintDemo() {
   return (
     <Loading
-      type="spinner"
+      indicator="spinner"
       motion={{
         spinner: {
           enter: (ctx) => {

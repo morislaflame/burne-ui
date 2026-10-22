@@ -8,8 +8,8 @@ export function PinInputClassNamesDemo() {
       length={6}
       classNames={{
         label: "font-w-mid",
-        group: "gap-mid",
-        field: "bg-primary-tint",
+        shell: "gap-mid",
+        control: "bg-primary-tint",
         separator: "text-primary",
       }}
       separator="–"

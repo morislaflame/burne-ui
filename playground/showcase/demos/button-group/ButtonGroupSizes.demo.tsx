@@ -7,7 +7,7 @@ export function ButtonGroupSizesDemo() {
   return (
     <div className="flex flex-col gap-large">
       {SIZES.map((size) => (
-        <ButtonGroup key={size} aria-label={size} buttonSize={size}>
+        <ButtonGroup key={size} aria-label={size} size={size}>
           <Button variant="outline">A</Button>
           <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "last" }}>
             B

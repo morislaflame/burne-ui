@@ -1,5 +1,6 @@
 import { createContext, useContext, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
  
+import { bindStudioController } from "@/studio/studioNodes";
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
@@ -61,6 +62,8 @@ export type PlayBroadcastOptions = {
 };
  
 export type MotionScopeValue = {
+  /** `createMotionScope("Button")` → `Button`. Studio mode turns this into `data-skin-slot`. */
+  debugName?: string;
   getRootMotion: () => MotionSlotMap | undefined;
   getEvents: () => MotionEvents | undefined;
   getStates: () => MotionStates | undefined;
@@ -251,6 +254,7 @@ export function createMotionScopeController({
     controller: null as unknown as MotionController,
   };
   scope.controller = createMotionControllerFromScope(scope);
+  bindStudioController(scope, scope.controller);
   return scope;
 }
  
@@ -293,21 +297,28 @@ export function createMotionScope(debugName: string) {
     // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
     configRef.current = config;
  
-    const scope = useMemo(
-      () =>
-        createMotionScopeController({
-          getRootMotion: () => motionRef.current,
-          getDefaults: () => defaultsRef.current,
-          getParams: () => paramsRef.current,
-          getConfig: () => configRef.current,
-        }),
-      [],
-    );
+    const scope = useMemo(() => {
+      const created = createMotionScopeController({
+        getRootMotion: () => motionRef.current,
+        getDefaults: () => defaultsRef.current,
+        getParams: () => paramsRef.current,
+        getConfig: () => configRef.current,
+      });
+      created.debugName = debugName;
+      return created;
+    }, []);
  
     useLayoutEffect(() => {
-      if (!appController) return;
+      if (!appController) {
+        bindStudioController(scope, scope.controller);
+        return;
+      }
+      bindStudioController(scope, appController);
       attachMotionController(appController, scope);
-      return () => attachMotionController(appController, null);
+      return () => {
+        attachMotionController(appController, null);
+        bindStudioController(scope, scope.controller);
+      };
     }, [appController, scope]);
  
     useMotionStatePlayback(scope, motionState, motionPayload, playInitialState);
@@ -343,6 +354,9 @@ export function createMotionScope(debugName: string) {
     useOptionalMotionScope,
   };
 }
+
+/** Nameable from `burne-ui/authoring`, so a component package can emit `.d.ts`. */
+export type MotionScope = ReturnType<typeof createMotionScope>;
  
 export function killMotionScope(scope: Pick<MotionScopeValue, "getRegistrations">): void {
   const seen = new Set<HTMLElement>();

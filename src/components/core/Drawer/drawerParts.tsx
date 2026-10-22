@@ -17,14 +17,13 @@ import { useBurneLabels } from "@/theme/BurneLabelsProvider";
  
 import {
   drawerHandleAriaLabel,
-  isDrawerHandleActivateKey,
 } from "./drawerA11y";
 import { partitionDrawerChildren, injectFooterButtonSize } from "./drawerAPI";
 import { resolveDrawerMotionDefaults, useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerMotionProvider, DrawerProvider, useDrawer, useDrawerClassNames, useDrawerMotionScope, useOptionalDrawerMotionScope } from "./drawerContext";
 import { DRAWER_CLOSE_CLASS, DRAWER_FOOTER_CLASS, DRAWER_HEADER_CLASS, DRAWER_HEADING_BLOCK_CLASS, DRAWER_PANEL_LAYER_CONTENT_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
 import type {
-  DrawerBackdropProps,
+  DrawerOverlayProps,
   DrawerBodyProps,
   DrawerCloseProps,
   DrawerContentProps,
@@ -44,11 +43,11 @@ import { useDrawerHandleDrag } from "./useDrawerHandleDrag";
  
 import { cn } from "@/utils/cn";
  
-export function DrawerBackdropInner(_props: DrawerBackdropProps) {
+export const DrawerOverlayInner = forwardRef(function DrawerOverlayInner(_props: DrawerOverlayProps, _ref) {
   return null;
-}
- 
-DrawerBackdropInner.displayName = "DrawerBackdrop";
+});
+
+DrawerOverlayInner.displayName = "Drawer.Overlay";
  
 export const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
   function DrawerContent({ className, motion, ...rest }, ref) {
@@ -86,13 +85,13 @@ function DrawerPanelSegment({
   return <DrawerContent>{segment.children}</DrawerContent>;
 }
 
-export function DrawerHandleInner({
+export const DrawerHandleInner = forwardRef(function DrawerHandleInner({
   className,
   onPointerDown,
   onKeyDown,
   motion,
   ...rest
-}: DrawerHandleProps) {
+}: DrawerHandleProps, ref: ForwardedRef<HTMLDivElement>) {
   const {
     onOpenChange,
     placement,
@@ -112,6 +111,7 @@ export function DrawerHandleInner({
     skipCloseAnimRef,
   );
   const { setRef } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope: useOptionalDrawerMotionScope(),
     slot: "handle",
     motion,
@@ -131,25 +131,21 @@ export function DrawerHandleInner({
       }}
       {...rest}
     >
-      <span
-        role="button"
-        tabIndex={0}
+      <button
+        type="button"
         aria-label={drawerHandleAriaLabel(placement, labels)}
         className={drawerHandleGripClass({
           placement,
           slotClass: slotClassNames.handleGrip,
         })}
-        onKeyDown={(e) => {
-          onKeyDown?.(e);
-          if (e.defaultPrevented) return;
-          if (!isDrawerHandleActivateKey(e.key)) return;
-          e.preventDefault();
+        onClick={() => {
           close();
         }}
+        onKeyDown={onKeyDown}
       />
     </div>
   );
-}
+});
  
 DrawerHandleInner.displayName = "DrawerHandle";
  
@@ -182,16 +178,17 @@ export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
  
 DrawerHeader.displayName = "DrawerHeader";
  
-export function DrawerHeadingBlock({
+export const DrawerHeadingBlock = forwardRef(function DrawerHeadingBlock({
   className,
   motion,
   onPointerOver,
   onPointerOut,
   ...rest
-}: DrawerHeadingBlockProps) {
+}: DrawerHeadingBlockProps, ref: ForwardedRef<HTMLDivElement>) {
   const { sizePreset } = useDrawer();
   const slotClassNames = useDrawerClassNames();
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
     scope: useOptionalDrawerMotionScope(),
     slot: "headingBlock",
     motion,
@@ -213,12 +210,12 @@ export function DrawerHeadingBlock({
       {...pointerHandlers}
     />
   );
-}
+});
  
 DrawerHeadingBlock.displayName = "DrawerHeadingBlock";
  
 export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
-  function DrawerTitle({ className, id, motion, onPointerOver, onPointerOut, ...rest }, ref) {
+  function DrawerTitle({ className, id, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
     const { titleId, setHasTitle, sizePreset } = useDrawer();
     const slotClassNames = useDrawerClassNames();
     const { setRef, pointerHandlers } = useMotionPart<HTMLHeadingElement>({
@@ -229,6 +226,8 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
       pointerPhases: true,
       onPointerOver,
       onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
  
     useLayoutEffect(() => {
@@ -240,7 +239,7 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="h2"
-        variant={sizePreset.titleVariant}
+        textStyle={sizePreset.titleVariant}
         id={id ?? titleId}
         className={cn(
           DRAWER_TITLE_CLASS,
@@ -248,8 +247,8 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
           slotClassNames.title,
           className,
         )}
-        {...pointerHandlers}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -259,7 +258,7 @@ DrawerTitle.displayName = "DrawerTitle";
  
 export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescriptionProps>(
   function DrawerDescription(
-    { className, id, motion, onPointerOver, onPointerOut, ...rest },
+    { className, id, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest },
     ref,
   ) {
     const { descriptionId, setHasDescription, sizePreset } = useDrawer();
@@ -272,6 +271,8 @@ export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescript
       pointerPhases: true,
       onPointerOver,
       onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
  
     useLayoutEffect(() => {
@@ -283,15 +284,15 @@ export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescript
       <Text
         ref={setRef as Ref<HTMLElement>}
         as="p"
-        variant={sizePreset.descVariant}
+        textStyle={sizePreset.descVariant}
         id={id ?? descriptionId}
         className={cn(
           sizePreset.descClassName,
           slotClassNames.description,
           className,
         )}
-        {...pointerHandlers}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -413,7 +414,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
   function DrawerTrigger(
     {
       children,
-      asChild,
+      asChild = true,
       className,
       motion,
       onClick,
@@ -566,6 +567,11 @@ DrawerPanel.displayName = "Drawer.Panel";
 function DrawerPanelHost({
   extent = "default",
   variant: variantProp,
+  closeOnEscape = true,
+  closeOnInteractOutside = true,
+  onEscapeKeyDown,
+  onInteractOutside,
+  initialFocus,
   className,
   style,
   themeAnchor,
@@ -585,10 +591,11 @@ function DrawerPanelHost({
   } = baseCtx;
   const motionScope = useDrawerMotionScope();
  
-  const { backdropIsDismissable, panelSegments } = useMemo(
+  const { overlayDismiss, panelSegments } = useMemo(
     () => partitionDrawerChildren(children),
     [children],
   );
+  const resolvedCloseOutside = overlayDismiss.closeOnInteractOutside ?? closeOnInteractOutside;
  
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
@@ -600,7 +607,11 @@ function DrawerPanelHost({
     onOpenChange,
     variant,
     placement,
-    backdropIsDismissable,
+    closeOnInteractOutside: resolvedCloseOutside,
+    closeOnEscape: overlayDismiss.closeOnEscape ?? closeOnEscape,
+    onEscapeKeyDown: overlayDismiss.onEscapeKeyDown ?? onEscapeKeyDown,
+    onInteractOutside: overlayDismiss.onInteractOutside ?? onInteractOutside,
+    initialFocus: overlayDismiss.initialFocus ?? initialFocus,
     contained,
     motionScope,
   });
@@ -636,7 +647,7 @@ function DrawerPanelHost({
         descriptionId={baseCtx.descriptionId}
         hasTitle={baseCtx.hasTitle}
         hasDescription={baseCtx.hasDescription}
-        backdropIsDismissable={backdropIsDismissable}
+        backdropIsDismissable={resolvedCloseOutside}
         panelSegments={panelSegments}
         dialogRef={motion.dialogRef}
         overlayRef={motion.overlayRef}
@@ -647,7 +658,7 @@ function DrawerPanelHost({
         onDialogClose={() => onOpenChange(false)}
         onDialogCancel={(e) => {
           e.preventDefault();
-          onOpenChange(false);
+          motion.handleDialogCancel(e);
         }}
         contained={contained}
       />
@@ -713,11 +724,11 @@ export function DrawerPortalShell({
       className={cn(drawerNativeClass(contained), slotClassNames.dialog)}
     >
       <div
-        ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("backdrop", node))}
+        ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}
         className={drawerOverlayClass({
           lightUi,
           dismissable: backdropIsDismissable,
-          slotClass: slotClassNames.backdrop,
+          slotClass: slotClassNames.overlay,
         })}
         style={drawerOverlayEnterStyle()}
         aria-hidden

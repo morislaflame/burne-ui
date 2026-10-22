@@ -3,7 +3,7 @@ export {
   type LoadingProps,
   type LoadingSize,
   type LoadingColor,
-  type LoadingType,
+  type LoadingIndicator,
   type LoadingClassNames,
   type LoadingMotion,
   type LoadingPartMotion,

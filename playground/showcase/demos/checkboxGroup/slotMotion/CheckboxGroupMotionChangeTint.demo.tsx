@@ -1,11 +1,12 @@
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Checkbox } from "@/components/core/Checkbox";
 import { tweenCssColor } from "@/components/core/utils/gsapMotion";
+import { Label } from "@/components/core/Label";
 
 export function CheckboxGroupMotionChangeTintDemo() {
   return (
     <CheckboxGroup
-      selection="single"
+      selectionMode="single"
       defaultValue="pro"
       motion={{
         root: {
@@ -20,7 +21,7 @@ export function CheckboxGroupMotionChangeTintDemo() {
       }}
     >
       <CheckboxGroup.Legend>
-        <CheckboxGroup.Label>Single</CheckboxGroup.Label>
+        <Label>Single</Label>
       </CheckboxGroup.Legend>
       <CheckboxGroup.List>
         <Checkbox value="pro" label="Pro" />

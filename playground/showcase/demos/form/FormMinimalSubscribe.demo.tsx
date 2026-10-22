@@ -18,7 +18,7 @@ export function FormMinimalSubscribeDemo() {
     >
       <Form.Section>
         <Form.Field name="subscribe">
-          <Input label="Email" name="subscribe" placeholder="you@example.com" autoComplete="email" />
+          <Input label="Email" name="subscribe" type="email" placeholder="you@example.com" autoComplete="email" />
         </Form.Field>
       </Form.Section>
       <Form.Actions>

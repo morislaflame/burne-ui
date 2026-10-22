@@ -20,7 +20,7 @@ const FAQ = [
 
 export function AccordionCheckoutFaqDemo() {
   return (
-    <Accordion className="w-full max-w-lg" defaultOpenIndex={0}>
+    <Accordion className="w-full max-w-lg" defaultValue="0">
       {FAQ.map((item, index) => (
         <Accordion.Item key={item.title} value={String(index)}>
           <Accordion.Heading>

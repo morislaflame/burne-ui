@@ -18,11 +18,11 @@ export function DisclosureMotionEventsOffDemo() {
       </div>
       <Disclosure motionController={liveController} motion={{ events: live }}>
         <Disclosure.Trigger>Live</Disclosure.Trigger>
-        <Disclosure.Content><Text as="p" variant="small" className="text-muted">Event plays.</Text></Disclosure.Content>
+        <Disclosure.Content><Text as="p" textStyle="small" className="text-muted">Event plays.</Text></Disclosure.Content>
       </Disclosure>
       <Disclosure motionController={offController} motion={{ events: off }}>
         <Disclosure.Trigger>Off</Disclosure.Trigger>
-        <Disclosure.Content><Text as="p" variant="small" className="text-muted">events false → skip.</Text></Disclosure.Content>
+        <Disclosure.Content><Text as="p" textStyle="small" className="text-muted">events false → skip.</Text></Disclosure.Content>
       </Disclosure>
     </div>
   );

@@ -33,11 +33,11 @@ describe("Э0.1 overlays", () => {
     expect(trigger).toHaveFocus();
   });
 
-  it("Dialog: dismissOnBackdrop=false keeps the dialog open on overlay pointerdown", async () => {
+  it("Dialog: closeOnInteractOutside=false keeps the dialog open on overlay pointerdown", async () => {
     const { user } = render(
       <Dialog>
         <Dialog.Trigger>Open</Dialog.Trigger>
-        <Dialog.Panel dismissOnBackdrop={false}>
+        <Dialog.Panel closeOnInteractOutside={false}>
           <Dialog.Title>Locked</Dialog.Title>
         </Dialog.Panel>
       </Dialog>);

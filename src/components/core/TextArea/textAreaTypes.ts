@@ -4,6 +4,7 @@ import type {
   PointerEvent,
   PointerEventHandler,
   ReactNode,
+  Ref,
   RefObject,
   TextareaHTMLAttributes,
 } from "react";
@@ -11,14 +12,11 @@ import type { Prettify } from "@/utils/prettify";
  
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { LabelProps } from "@/components/core/Label";
-import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
 export const KIT_TEXT_AREA_VARIANTS = ["default", "outline", "secondary"] as const;
 export type KitTextAreaVariant = (typeof KIT_TEXT_AREA_VARIANTS)[number];
 export type TextAreaVariant = KitTextAreaVariant | (string & {});
- 
-export type TextAreaStatus = SemanticStatus;
  
 export type TextAreaSize = ComponentSize;
  
@@ -56,7 +54,6 @@ export type TextAreaControlProps = Omit<
 > & {
   variant?: TextAreaVariant;
   size?: TextAreaSize;
-  status?: TextAreaStatus;
   rows?: number;
   resizable?: boolean;
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
@@ -78,7 +75,6 @@ export type TextAreaFieldContextValue = {
   errorConnected: boolean;
   invalid?: boolean;
   required: boolean;
-  status: TextAreaStatus;
   size: TextAreaSize;
 };
  
@@ -96,7 +92,6 @@ export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
   invalid?: boolean;
   id?: string;
   required?: boolean;
-  status?: TextAreaStatus;
   size?: TextAreaSize;
   classNames?: Prettify<TextAreaClassNames>;
   /**
@@ -134,7 +129,6 @@ export type TextAreaLabelProps = Omit<LabelProps, "motion" | "motionController" 
  
 export type TextAreaHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
-  status?: TextAreaStatus;
   motion?: Prettify<TextAreaPartMotion>;
 };
  
@@ -152,7 +146,7 @@ export type TextAreaSimpleBodyProps = {
   textareaId: string;
   labelId: string;
   size: TextAreaSize;
-  status: TextAreaStatus;
   controlProps: TextAreaControlProps;
+  textareaRef?: Ref<HTMLTextAreaElement>;
 };
  

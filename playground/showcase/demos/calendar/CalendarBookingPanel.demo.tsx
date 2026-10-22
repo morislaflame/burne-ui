@@ -15,14 +15,14 @@ export function CalendarBookingPanelDemo() {
   return (
     <Surface variant="secondary" padding="large" className="flex w-full max-w-sm flex-col gap-large">
       <div className="flex flex-col gap-xsmall">
-        <Text as="p" variant="small" className="font-medium">
+        <Text as="p" textStyle="small" className="font-medium">
           Booking
         </Text>
-        <Text as="p" variant="xsmall" className="text-muted">
+        <Text as="p" textStyle="xsmall" className="text-muted">
           {formatDate(range.start)} — {formatDate(range.end)}
         </Text>
       </div>
-      <Calendar mode="range" value={range} onValueChange={setRange}>
+      <Calendar selectionMode="range" value={range} onValueChange={setRange}>
         <Calendar.Header />
         <Calendar.Grid />
         <Calendar.Footer />

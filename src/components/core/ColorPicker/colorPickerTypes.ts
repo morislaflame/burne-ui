@@ -4,16 +4,25 @@ import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHos
  
 import type { ColorSwatchShape, ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
-export type ColorPickerSize = "small" | "base" | "mid" | "large";
+export type ColorPickerSize = ComponentSize;
  
 export const KIT_COLOR_PICKER_VARIANTS = ["default"] as const;
 export type KitColorPickerVariant = (typeof KIT_COLOR_PICKER_VARIANTS)[number];
 export type ColorPickerVariant = KitColorPickerVariant | (string & {});
  
 export type ColorPickerClassNames = {
+  root?: string;
+  label?: string;
+  hint?: string;
+  error?: string;
   content?: string;
   contentPanel?: string;
+  /** Popover shell around `ColorPicker.Content`. */
+  panel?: string;
+  /** Relative wrapper between the portal and the Popover panel. */
+  panelRelative?: string;
   trigger?: string;
   area?: string;
   areaThumb?: string;
@@ -57,8 +66,15 @@ export type ColorPickerMotion = {
   trigger?: ColorPickerPartMotion;
 };
  
-export type ColorPickerProps = {
+export type ColorPickerProps = Omit<HTMLAttributes<HTMLDivElement>, "color" | "defaultValue" | "onChange"> & {
   children?: ReactNode;
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  id?: string;
+  name?: string;
+  required?: boolean;
+  readOnly?: boolean;
   value?: string;
   defaultValue?: string;
   onValueChange?: (hex: string) => void;
@@ -68,6 +84,12 @@ export type ColorPickerProps = {
   size?: ColorPickerSize;
   variant?: ColorPickerVariant;
   side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
+  offset?: number;
+  collisionPadding?: number;
+  avoidCollisions?: boolean;
+  /** Popover portal host. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   disabled?: boolean;
   "aria-invalid"?: boolean;
   /** `aria-invalid` and `data-invalid` on the trigger without a message. Native `aria-invalid` still wins when it is true. */
@@ -143,8 +165,18 @@ export type ColorPickerContextValue = {
   setHsva: (next: HSVA) => void;
   hex: string;
   disabled: boolean;
+  readOnly: boolean;
   size: ColorPickerSize;
   invalid: boolean;
+  triggerId: string;
+  labelId: string;
+  required: boolean;
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  name?: string;
+  autoFocus?: boolean;
+  tabIndex?: number;
 };
  
 export type ColorPickerClassNamesProviderProps = {

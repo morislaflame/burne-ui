@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 export function KbdShortcutsDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-large">
-      <Text as="p" variant="small" className="font-medium">
+      <Text as="p" textStyle="small" className="font-medium">
         Hotkeys
       </Text>
       <div className="grid gap-small">

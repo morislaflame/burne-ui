@@ -30,7 +30,7 @@ export function MotionGroupGetTargetDemo() {
         <Button size="small" variant="ghost" onClick={() => group.set("alert", "title", { y: 0 })}>
           Snap
         </Button>
-        <Text variant="small" className="text-muted">
+        <Text textStyle="small" className="text-muted">
           {label}
         </Text>
       </div>

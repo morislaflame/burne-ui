@@ -11,12 +11,12 @@ export function DisclosureClassNamesFullDemo() {
         title: "text-info font-semibold",
         icon: "text-info",
         chevron: "text-info",
-        contentPanel: "border border-info/20 bg-info/5",
+        content: "border border-info/20 bg-info/5",
       }}
     >
       <Disclosure.Trigger icon={<span aria-hidden>📦</span>}>Delivery and payment</Disclosure.Trigger>
       <Disclosure.Content>
-        <Text as="p" variant="small" className="text-muted">
+        <Text as="p" textStyle="small" className="text-muted">
           Customization trigger, title, chevron and content through classNames.
         </Text>
       </Disclosure.Content>

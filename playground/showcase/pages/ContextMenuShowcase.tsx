@@ -57,7 +57,7 @@ export function ContextMenuShowcase() {
 
       <ShowcaseSection
         title="MotionController"
-        description="Handle on ContextMenu.Content. play() skips. playSlot(content / item) and playAll move the open menu."
+        description="Handle on ContextMenu.Popover. play() skips. playSlot(content / item) and playAll move the open menu."
       >
         <ContextMenuMotionControllerGalleryDemo />
       </ShowcaseSection>
@@ -69,7 +69,7 @@ export function ContextMenuShowcase() {
         <ShowcaseDemoFromFile Demo={ContextMenuSubIconDemo} source={contextMenuSubIconSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Content side" description="ContextMenu.Content side='top' opens the menu upward.">
+      <ShowcaseSection title="Popover side" description="ContextMenu.Popover side='top' opens the menu upward.">
         <ShowcaseDemoFromFile Demo={ContextMenuSideDemo} source={contextMenuSideSource} />
       </ShowcaseSection>
 
@@ -94,13 +94,13 @@ export function ContextMenuShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ContextMenu.Trigger, Content, Item, ItemLabel, ItemHint, ItemIcon, ItemIndicator, Sub."
+            description="ContextMenu.Trigger, Popover, Item, ItemLabel, ItemHint, ItemIcon, ItemIndicator, Sub."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
             <code>classNames</code> uses the Dropdown slots. Menu motion is the Dropdown map.
-            The controller lives on <code>ContextMenu.Content</code>.
+            The controller lives on <code>ContextMenu.Popover</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

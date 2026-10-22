@@ -10,6 +10,7 @@ export const SelectionThumb = Object.assign(SelectionThumbRoot, {
 export type {
   SelectionThumbIconProps,
   SelectionThumbProps,
+  SelectionThumbSize,
   SelectionThumbClassNames,
   SelectionThumbIconClassNames,
   SelectionThumbMotion,

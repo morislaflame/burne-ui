@@ -7,11 +7,12 @@ import * as prompts from "./prompts.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const THEME_BRIDGE_IMPORT = `@import "burne-ui/theme-bridge.css";`;
+const TAILWIND_ENTRY_IMPORT = `@import "burne-ui/tailwind.css";`;
 
 /** @param {string} css */
 function hasThemeBridge(css) {
   return (
+    css.includes("burne-ui/tailwind.css") ||
     css.includes("burne-ui/theme-bridge.css") ||
     css.includes("--text-base: var(--text-base-size)")
   );
@@ -21,16 +22,18 @@ function hasThemeBridge(css) {
  * @returns {Promise<string>}
  */
 async function loadDefaultThemeSource() {
-  const distEntry = path.join(__dirname, "../dist/index.js");
+  // The public home of this function is `burne-ui/internal`. That barrel imports
+  // the gsap peer, which is not installed yet when `init` writes the theme file.
+  const distEntry = path.join(__dirname, "../dist/theme/themeConfig.js");
   if (!fs.existsSync(distEntry)) {
     throw new Error(
-      "burne-ui dist missing — reinstall the package (need burne-ui ≥ 1.5.9 with exportDefaultBurneThemeConfigSource).",
+      "burne-ui dist missing — reinstall the package (exportDefaultBurneThemeConfigSource).",
     );
   }
   const mod = await import(pathToFileURL(distEntry).href);
   if (typeof mod.exportDefaultBurneThemeConfigSource !== "function") {
     throw new Error(
-      "This burne-ui build has no exportDefaultBurneThemeConfigSource — upgrade to ≥ 1.5.9.",
+      "This burne-ui build has no exportDefaultBurneThemeConfigSource.",
     );
   }
   return mod.exportDefaultBurneThemeConfigSource();
@@ -138,16 +141,16 @@ export function patchCssFile(cssPath) {
     css += `\n@import "burne-ui/styles.css";\n`;
   }
 
-  if (!css.includes("burne-ui/theme-bridge.css")) {
+  if (!hasThemeBridge(css)) {
     const burneImport = css.match(/@import\s+["']burne-ui\/styles\.css["']\s*;/);
     if (burneImport && burneImport.index != null) {
       const insertAt = burneImport.index + burneImport[0].length;
       css =
         css.slice(0, insertAt) +
-        `\n${THEME_BRIDGE_IMPORT}\n` +
+        `\n${TAILWIND_ENTRY_IMPORT}\n` +
         css.slice(insertAt);
     } else {
-      css += `\n${THEME_BRIDGE_IMPORT}\n`;
+      css += `\n${TAILWIND_ENTRY_IMPORT}\n`;
     }
   }
 
@@ -425,7 +428,7 @@ export async function runInit(argv, cliVersion) {
     if (!fs.existsSync(abs)) throw new Error(`CSS not found: ${cssRel}`);
     const { hadBurne, hadTailwind, hadThemeBridge } = patchCssFile(abs);
     console.log(hadBurne ? `CSS OK (already linked): ${cssRel}` : `Patched CSS: ${cssRel}`);
-    if (!hadThemeBridge) console.log("Added @theme bridge (burne-ui/theme-bridge.css).");
+    if (!hadThemeBridge) console.log("Added Tailwind entry (burne-ui/tailwind.css).");
     if (!hadTailwind) {
       console.log('Note: no @import "tailwindcss" — add Tailwind v4 for className utilities.');
     }

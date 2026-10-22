@@ -1,11 +1,13 @@
 # TextArea
 
-Многострочное поле с shell, опциональным resize-handle и теми же variant/status, что у Input. Simple и compound API.
+Многострочное поле с shell, опциональным resize-handle и теми же variant, что у Input. Ошибка — `invalid` / `error`. Simple и compound API.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
 
 ## Импорт
 
 ```tsx
-import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaStatus, type TextAreaSize, type TextAreaClassNames, type TextAreaMotion, type TextAreaPartMotion } from "burne-ui";
+import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaSize, type TextAreaClassNames, type TextAreaMotion, type TextAreaPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -42,9 +44,8 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `outline` \| `gloss` |
-| `status` | `default` | Только цвет: постоянный статусный ring. Не ставит `aria-invalid` |
-| `invalid` | — | `true` — danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
+| `variant` | `default` | `default` \| `outline` |
+| `invalid` | — | `true` — danger-кольцо, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
 | `size` | `base` | размер padding / min-height |
 | `rows` | `1` | Нативные rows |
 | `resizable` | `true` | Drag-handle в углу |
@@ -56,9 +57,9 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 
 `root`, `label`, `shell`, `control`, `resizeHandle`, `hint`, `error`.
 
-## variant и status
+## variant
 
-Аналогично Input: `default` / `outline` / `gloss`; при status — нейтральный фон/border + постоянный статусный ring.
+`invalid` или `error` — нейтральный фон/border и постоянное danger-кольцо. `data-status` нет.
 
 ## Размеры
 
@@ -68,13 +69,13 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 
 ## Анимации
 
-Публичный slot motion. Root передаёт карту `motion`; хост — `TextArea.Control` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Drag-resize высоты — kit-internal (`useTextAreaResize`), не публичные MotionVars.
+Публичный slot motion. Root передаёт карту `motion`; хост — `TextArea.Control` (defaults + `play`). Drag-resize высоты — kit-internal (`useTextAreaResize`), не публичные MotionVars.
 
 ### Slot motion
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` |
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | — |
 | `control` / `resizeHandle` | hover/press | нет |
 | `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
 
@@ -96,6 +97,8 @@ Compound: `motion` на `TextArea.Control` — part motion слота `shell`. �
 Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("resizeHandle", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `TextArea.Control`. Один handle ≠ два scope.
 
 Проп `motionController` + ключ `events` на `motion` — app-команды (`area:nudge`, `area:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в Control). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на корне и на `TextArea.Control`. Simple API мержит карту корня в Control. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, TextArea, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -153,7 +156,7 @@ configureMotion({
 | `resizeHandle` | `[data-textarea-resize-handle]` | Видимость grip, hit-area (только при `resizable`) |
 | `hint` / `error` | `Field.Hint` / `Field.Error` | Подсказка и ошибка |
 
-`variant`, `status`, `size` — базовая поверхность и padding из `textAreaStyles.ts`. `classNames` дополняют, не заменяя variant автоматически.
+`variant` и `size` — базовая поверхность и padding из `textAreaStyles.ts`. `classNames` дополняют, не заменяя variant автоматически.
 
 ### Simple API
 
@@ -212,14 +215,15 @@ configureMotion({
 
 - **Высота:** минимум — через `rows` + `size`; drag-resize пишет `height` на `shell`; авто-рост контента — CSS `field-sizing: content` на `control`.
 - **Shell vs control:** hover-lift и squeeze на `shell`; перенос строк и скролл — на `control`.
-- **Gloss:** как у Input — не ломайте `gloss-control` на shell без нужды.
+- **Shell vs control:** hover-lift на `shell` (`classNames.shell`). `className` и `ref` у `TextArea.Control` попадают на `<textarea>` — тот же узел, что `classNames.control`.
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти.
+- **Мобильный шрифт контрола:** класс `field-control-mobile-no-zoom` стоит после слота намеренно — iOS зумит поле, если размер шрифта < 16px. Размер текста на `control` этим классом не перебить.
 
 ## Доступность
 
 - `aria-describedby` через hint/error ids
 - Resize handle: `aria-label` («Изменить высоту»); ArrowUp/Down (±16px), Home/End при фокусе на handle
-- `error` или `invalid` ставят `aria-invalid` и пустой `data-invalid` на корне. `status` этого не делает. `aria-required` — из `required`
+- `error` или `invalid` ставят `aria-invalid`, пустой `data-invalid` на корне и danger-кольцо. `aria-required` — из `required`
 
 ## Структура файлов
 
@@ -239,4 +243,4 @@ TextArea/
 
 ## Storybook
 
-`Core Components/TextArea` — simple/compound, resizable, gloss, status, `classNames`, Slot motion, MotionController.
+`Core Components/TextArea` — simple/compound, resizable, invalid, `classNames`, Slot motion, MotionController.

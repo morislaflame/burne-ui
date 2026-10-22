@@ -1,3 +1,5 @@
+import type { SemanticStatus } from "./semanticStatusIcons";
+
 /** Semantic statuses with tint/fill/border (shared by Badge, Button, etc.). */
 export type SemanticSurfaceStatus = "danger" | "success" | "info" | "warning";
  
@@ -29,6 +31,22 @@ export const SEMANTIC_STATUS_FILL_TEXT: Record<SemanticSurfaceStatus, string> = 
   warning: "text-warning-foreground",
 };
  
+export const SEMANTIC_STATUS_BG: Record<SemanticSurfaceStatus, string> = {
+  danger: "bg-danger",
+  success: "bg-success",
+  info: "bg-info",
+  warning: "bg-warning",
+};
+
+/** Fill paint for Meter, ProgressBar, and Switch. `color` wins. `default` keeps the kit fill. */
+export function semanticStatusBgClass(
+  status: SemanticStatus | undefined,
+  hasCustomColor: boolean,
+): string | undefined {
+  if (hasCustomColor || status == null || status === "default") return undefined;
+  return SEMANTIC_STATUS_BG[status];
+}
+
 export const SEMANTIC_STATUS_OUTLINE_BORDER: Record<SemanticSurfaceStatus, string> = {
   danger: "border-token-danger",
   success: "border-token-success",

@@ -18,7 +18,7 @@ export function PopoverFilterPanelDemo() {
       <Popover.Content className="w-56">
         <Popover.Body className="flex flex-col gap-large">
           <CheckboxGroup 
-            selection="single"
+            selectionMode="single"
           >
             <CheckboxGroup.Legend>
               <Label>

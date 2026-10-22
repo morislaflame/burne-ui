@@ -2,21 +2,17 @@ import type { HTMLAttributes } from "react";
 import type { Prettify } from "@/utils/prettify";
 import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
  
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
  
 export type LoadingSize = ComponentSize;
  
-export type LoadingType = "spinner" | "dots";
+export type LoadingIndicator = "spinner" | "dots";
  
-export type LoadingColor =
-  | "primary"
-  | "foreground"
-  | "muted"
-  | "secondary"
-  | "danger"
-  | "success"
-  | "info"
-  | "warning";
+/** Token paint. Semantic roles use `status`. Any other string is a CSS color. */
+export type LoadingColor = "primary" | "foreground" | "muted" | "secondary";
+ 
+export type { SemanticStatus };
  
 export type LoadingClassNames = {
   root?: string;
@@ -43,10 +39,11 @@ export type LoadingMotion = {
 };
  
 export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
-  type?: LoadingType;
+  indicator?: LoadingIndicator;
   size?: LoadingSize;
-  color?: LoadingColor;
-  label?: string;
+  /** Token name (`primary`, `foreground`, `muted`, `secondary`) or a CSS color. */
+  color?: string;
+  status?: SemanticStatus;
   classNames?: Prettify<LoadingClassNames>;
   /**
    * Per-slot motion (`root`, `spinner`, `dots`, `dot`). `dot.enter` is the wave (`loadingDots`).

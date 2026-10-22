@@ -12,6 +12,8 @@ import { CalendarInlineWidgetDemo } from "../demos/calendar/CalendarInlineWidget
 import calendarInlineWidgetSource from "../demos/calendar/CalendarInlineWidget.demo.tsx?raw";
 import { CalendarLocaleDemo } from "../demos/calendar/CalendarLocale.demo";
 import calendarLocaleSource from "../demos/calendar/CalendarLocale.demo.tsx?raw";
+import { CalendarUnavailableDemo } from "../demos/calendar/CalendarUnavailable.demo";
+import calendarUnavailableSource from "../demos/calendar/CalendarUnavailable.demo.tsx?raw";
 import { CalendarModesDemo } from "../demos/calendar/CalendarModes.demo";
 import calendarModesSource from "../demos/calendar/CalendarModes.demo.tsx?raw";
 import { CalendarRenderDayDemo } from "../demos/calendar/CalendarRenderDay.demo";
@@ -35,6 +37,10 @@ export function CalendarShowcase() {
     >
       <ShowcaseSection title="Selection Modes" description="mode: single, range, multiple and compound with Calendar.Footer.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarModesDemo} source={calendarModesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Unavailable days" description="isDateUnavailable keeps the day visible and blocks selection.">
+        <ShowcaseDemoFromFile align="start" Demo={CalendarUnavailableDemo} source={calendarUnavailableSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Locale" description="locale is a BCP 47 tag. Month names, weekdays, and Today/Clear come from Intl.">
@@ -103,7 +109,7 @@ export function CalendarShowcase() {
 
       <ShowcaseSection
         title="MotionController"
-        description="One gallery: playSlot on header (no root), playAll chrome without nested cells, Calendar.Day scope, calendar events."
+        description="One gallery: playSlot on header, playAll chrome without nested cells, Calendar.Day scope, calendar events. Panel hover is the root slot."
       >
         <CalendarMotionControllerGalleryDemo />
       </ShowcaseSection>

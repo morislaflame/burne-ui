@@ -2,6 +2,8 @@
 
 Интерактивная плавающая панель: click/pointer toggle, outside dismiss, portal positioning. Compound API с `Header` / `Label` / `Hint` / `Body`. Позиционирование и стрелка переиспользуют `tooltipPosition`.
 
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
 ## Импорт
 
 ```tsx
@@ -46,13 +48,13 @@ const [open, setOpen] = useState(false);
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `variant` | `default` | `default` \| `gloss` |
+| `variant` | `default` | `default` \| `outline` \| `secondary`. Имя скина — строка |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `side` | `bottom` | Сторона якоря |
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled |
 | `onOpenChange` | — | Колбэк |
 | `anchorRef` | trigger | Внешний anchor для positioning |
-| `shouldDismiss` | — | `(target) => boolean` — veto outside dismiss |
+| `onInteractOutside` | — | `(target) => boolean` — veto outside dismiss |
 | `restoreFocus` | `true` | На закрытии вернуть фокус на trigger. `false` — не трогать фокус (так делает HoverCard) |
 | `classNames` | — | Слоты |
 | `motion` | — | Карта слотов. Root без portal DOM — хост `Popover.Content`. `events` — app-команды |
@@ -86,14 +88,13 @@ const [open, setOpen] = useState(false);
 
 ### `PopoverClassNames`
 
-`root`, `trigger`, `content`, `panelRelative`, `panel`, `arrow`, `header`, `title`, `description`, `body`.
+`trigger`, `content`, `panelRelative`, `panel`, `arrow`, `header`, `title`, `description`, `body`.
 
 ## Variant / размеры
 
 | Variant | Поверхность |
 |---------|-------------|
 | `default` | `bg-surface border-token` + `shadow-token-xlarge` |
-| `gloss` | `gloss-panel` + gloss interactive handlers |
 
 Sizes влияют на padding частей (`Header` / `Body`), typography (`Popover.Title` / `Hint`), radius и min/max width — общий пресет `PANEL_SIZE_LAYOUT` (с Dialog / AlertDialog / Card).
 
@@ -116,9 +117,9 @@ Title/Description — отдельная шкала Popover (компактне�
 <div class=root>                         ← inline wrapper
   <button|asChild> Trigger               ← squeeze (не публичный слот)
   portal → document.body
-    <div ref=panelRef role=dialog>       ← слот `content`
+    <div ref=panelRef role=dialog>       ← позиция, не слот
       [Popover.Arrow]
-      <div class=panel | glossPanel>
+      <div class=panel>                  ← `classNames.content` и `classNames.panel`, motion
         <Popover.Header>
           <h2 Title>                     ← слот `title` (`classNames.title`)
           <FieldHint Description>        ← слот `description` (`classNames.description`)
@@ -129,7 +130,7 @@ Title/Description — отдельная шкала Popover (компактне�
 
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
-| `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` (`motionTooltip()`) |
+| `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` на том же узле, что классы `panel` |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `body` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 | `header` | `enter` / `leave` | нет; хост **рассылает**, если задана |
@@ -146,6 +147,8 @@ Nested `enter` — следующий кадр после host (`portalSurfaceEn
 **Где в коде:** типы — `popoverTypes.ts`; scope — `popoverContext.tsx`; defaults + host — `popoverAnimations.ts`; Content-provider — `popoverParts.tsx`; карта на корне — `Popover.tsx`.
 
 Проп `motionController` на **`Popover.Content`**. `play()` skip — нет `root`; `playSlot("content")`. `events` на Content (или Root — мерж). playground / Storybook **MotionController**.
+
+На корне — scope триггера. На `Popover.Content` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
 
 ```tsx
 import { Button, Popover, createMotionEvents, useMotionControllerHandle } from "burne-ui";
@@ -227,18 +230,15 @@ configureMotion({
 
 `resolvedSide` — фактическая сторона после flip.
 
-### Shadow / gloss
+### Shadow
 
 | variant | Поведение |
 |---------|-----------|
 | `default` | CSS `shadow-token-xlarge` в покое (floating overlay, как Dialog) |
-| `gloss` | `createGlossInteractiveRefCallback` на gloss panel; gloss pointer handlers |
-
-Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 ### Outside dismiss
 
-`pointerdown` на document → close, если target не в trigger/panel и `shouldDismiss(target)` !== false.
+`pointerdown` на document → close, если target не в trigger/panel и `onInteractOutside(target)` !== false.
 
 `Escape` → close. При `restoreFocus` (по умолчанию) фокус возвращается на trigger.
 
@@ -257,7 +257,6 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | Nested title / body | slot broadcast | — | `motion.title` / `description` / `body` |
 | Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale` | `motion.trigger.pressIn` |
 | Rest shadow | `shadow-token-xlarge` | — | `variant="default"` |
-| Gloss interactive | gloss utils | gloss tokens | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side`, `align`, `offset` |
 
 ## Токены и CSS
@@ -265,7 +264,6 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | Класс / токен | Назначение |
 |---------------|------------|
 | `POPOVER_DEFAULT_PANEL_CLASS` | `bg-surface border-token shadow-token-xlarge` + radius из `PANEL_SIZE_LAYOUT` |
-| `POPOVER_GLOSS_PANEL_CLASS` | `gloss-panel gloss-deep` |
 | `shadow-token-xlarge` | Rest panel shadow (default variant) |
 | `burneLightThemePortalProps` | Theme sync в portal |
 | `z-popover` stacking | Panel above page / dialog (`--z-popover`) |
@@ -283,9 +281,8 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 | Слот | DOM | Когда использовать |
 |------|-----|-------------------|
-| `root` | Wrapper | Outer layout (редко) |
 | `trigger` | Trigger element | Ring, rounding на кнопке |
-| `content` | Portal outer shell | z-index, outer ring |
+| `content` | Bubble, тот же узел, что `panel` | Ring вместе с поверхностью |
 | `panelRelative` | Relative wrapper вокруг panel | Positioning host между content и panel |
 | `panel` | Default inner panel | Surface, border, radius |
 | `arrow` | Arrow span | Side tint, size |
@@ -332,13 +329,13 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 </Popover>
 ```
 
-### `anchorRef` + `shouldDismiss`
+### `anchorRef` + `onInteractOutside`
 
 ```tsx
 const anchorRef = useRef<HTMLDivElement>(null);
 
 <div ref={anchorRef}>Custom anchor</div>
-<Popover anchorRef={anchorRef} shouldDismiss={(t) => !nestedPortalContains(t)}>
+<Popover anchorRef={anchorRef} onInteractOutside={(t) => !nestedPortalContains(t)}>
   ...
 </Popover>
 ```
@@ -346,11 +343,10 @@ const anchorRef = useRef<HTMLDivElement>(null);
 ### Практические заметки
 
 - `anchorRef` — panel к произвольному элементу, не только trigger.
-- `shouldDismiss` — veto для nested portals (Dropdown submenu pattern).
+- `onInteractOutside` — veto для nested portals (Dropdown submenu pattern).
 - `contentRole={undefined}` — убрать dialog semantics для decorative panels.
 - `unstyled` + свой layout в `Body` для кастомных меню.
 - **Не override `position`/`left`/`top`/`transform` на content** — positioning + GSAP scale.
-- Gloss: стили panel на `glossPanel`, контент в `glossContent`.
 - **Порядок мержа:** variant panel → `classNames.slot` → `className` подчасти.
 
 ## Интеграции
@@ -369,7 +365,7 @@ const anchorRef = useRef<HTMLDivElement>(null);
 - При open — фокус на первый focusable внутри панели
 - При close — возврат фокуса на trigger / `anchorRef`
 - `Escape` закрывает
-- Outside `pointerdown` dismiss (с учётом `shouldDismiss`)
+- Outside `pointerdown` dismiss (с учётом `onInteractOutside`)
 - Portal theme sync через `burneLightThemePortalProps`
 - **`asChild`:** child должен быть фокусируемым интерактивным элементом (`Button`, `Link`, native `<button>`). Нефокусируемый child (например `Avatar` без `tabIndex`) не получит keyboard focus / ring — используйте default Trigger или явно задайте `tabIndex={0}` + `focus-ring` на child.
 
@@ -392,4 +388,3 @@ Popover/
 
 ## Storybook
 
-`Core Components/Popover` — default/gloss, controlled, anchorRef, matchAnchorWidth, arrow, light theme, `classNames`, slot motion gallery.

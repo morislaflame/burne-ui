@@ -1,6 +1,6 @@
 import { TagsInput } from "@/components/core/TagsInput";
 
-const slots = ["tag", "input", "label", "hint", "error"] as const;
+const slots = ["tag", "control", "label", "hint", "error"] as const;
 
 export function TagsInputMotionAppearDemo() {
   return (

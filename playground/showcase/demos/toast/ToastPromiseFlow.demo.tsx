@@ -12,7 +12,7 @@ export function ToastPromiseFlowDemo() {
     toast.promise(promise, {
       loading: "Saving…",
       success: "Changes saved",
-      timeout: 3000,
+      duration: 3000,
     });
   };
 
