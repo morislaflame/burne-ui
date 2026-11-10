@@ -1,0 +1,177 @@
+import type {
+  AnchorHTMLAttributes,
+  ForwardedRef,
+  KeyboardEvent,
+  PointerEvent,
+  ReactNode,
+  Ref,
+} from "react";
+import type { Prettify } from "@/utils/prettify";
+ 
+import type {
+  MotionController,
+  MotionMapWithEvents,
+  MotionValue, MotionStateHostProps, } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
+ 
+export type LinkSize = ComponentSize;
+ 
+export type LinkClassNames = {
+  /** Root `<a>`. */
+  root?: string;
+  /** Link text (`Text`). */
+  text?: string;
+  /** Icon wrapper before the text (`Link.Icon` with `position="start"`). */
+  iconStart?: string;
+  /** Icon wrapper after the text (`Link.Icon` with `position="end"`). */
+  iconEnd?: string;
+};
+ 
+export type LinkPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+ 
+export type LinkMotion = {
+  root?: LinkPartMotion;
+  text?: LinkPartMotion;
+  iconStart?: LinkPartMotion;
+  iconEnd?: LinkPartMotion;
+};
+ 
+type LinkSharedProps = Omit<
+  AnchorHTMLAttributes<HTMLAnchorElement>,
+  "children" | "href"
+> & {
+  children?: ReactNode;
+  size?: LinkSize;
+  underline?: boolean;
+  icon?: ReactNode;
+  /** @default "start" */
+  iconPosition?: IconPosition;
+  showDefaultIcon?: boolean;
+  defaultIconPosition?: IconPosition;
+  classNames?: Prettify<LinkClassNames>;
+  /**
+   * Per-slot motion (`root`, `text`, `iconStart`, `iconEnd`). No hover shadow.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * `states` — app modes for `motionState` (not a DOM slot, not a phase).
+   */
+  motion?: Prettify<MotionMapWithEvents<LinkMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type LinkProps =
+  | (LinkSharedProps & {
+      /** Merge Link styles onto the single child (router `Link`, custom `<a>`). */
+      asChild: true;
+      href?: string;
+    })
+  | (LinkSharedProps & {
+      asChild?: false;
+      href: string;
+    });
+ 
+export type LinkIconProps = {
+  iconPosition?: IconPosition;
+  children?: ReactNode;
+  /** Extra classes on the icon wrapper. */
+  className?: string;
+  ref?: Ref<HTMLSpanElement>;
+};
+ 
+export type ResolvedLinkIconSlot = {
+  node: ReactNode | "default";
+  muted: boolean;
+  className?: string;
+  ref?: Ref<HTMLSpanElement>;
+};
+ 
+export type ResolvedLinkCompoundBody = {
+  textChildren: ReactNode;
+  startIcon?: ResolvedLinkIconSlot;
+  endIcon?: ResolvedLinkIconSlot;
+};
+ 
+export type UseLinkRootStateProps = Pick<
+  LinkSharedProps,
+  | "size"
+  | "underline"
+  | "icon"
+  | "iconPosition"
+  | "showDefaultIcon"
+  | "defaultIconPosition"
+  | "children"
+>;
+ 
+export type LinkIconPlacement = {
+  usesDefaultIcon: boolean;
+  defaultIconAtStart: boolean;
+  defaultIconAtEnd: boolean;
+};
+ 
+export type LinkClassNamesProviderProps = {
+  classNames?: Prettify<LinkClassNames>;
+  children: ReactNode;
+};
+ 
+export type LinkBodyContentProps = {
+  size: LinkSize;
+  underline: boolean;
+  textVariant: import("@/components/core/Text").TextVariant;
+  textChildren: ReactNode;
+  startIcon: ReactNode | null;
+  endIcon: ReactNode | null;
+  startIconClassName?: string;
+  endIconClassName?: string;
+  startIconRef?: Ref<HTMLSpanElement>;
+  endIconRef?: Ref<HTMLSpanElement>;
+  startIconMuted: boolean;
+  endIconMuted: boolean;
+  usesDefaultAtStart: boolean;
+  usesDefaultAtEnd: boolean;
+};
+ 
+export type LinkAnchorBodyProps = LinkBodyContentProps & {
+  href: string;
+  className?: string;
+  setAnchorRef: (node: HTMLAnchorElement | null) => void;
+  handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;
+  handlePointerLeave: (event: PointerEvent<HTMLAnchorElement>) => void;
+  pointerHandlers: {
+    onPointerOver: (event: PointerEvent<HTMLAnchorElement>) => void;
+    onPointerOut: (event: PointerEvent<HTMLAnchorElement>) => void;
+    onPointerDown: (event: PointerEvent<HTMLAnchorElement>) => void;
+    onPointerUp: (event: PointerEvent<HTMLAnchorElement>) => void;
+  };
+  handleKeyDown: (event: KeyboardEvent<HTMLAnchorElement>) => void;
+} & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href" | "className">;
+ 
+export type LinkIconSlotProps = {
+  children: ReactNode;
+  size: LinkSize;
+  muted?: boolean;
+  slotClass?: string;
+  className?: string;
+  forwardedRef?: Ref<HTMLSpanElement>;
+  slot: "iconStart" | "iconEnd";
+};
+ 
+export type UseLinkAnimationsProps = {
+  forwardedRef: ForwardedRef<HTMLAnchorElement>;
+  onPointerEnter?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerLeave?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerOver?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerOut?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerDown?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerUp?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLAnchorElement>) => void;
+};
+ 

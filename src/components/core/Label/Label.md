@@ -1,0 +1,270 @@
+# Label
+
+Подпись поля формы: `<label htmlFor>` или `<span id>` для legend-подобных заголовков. Маркер обязательности `*`, интеграция с `FieldLabelContext` из Input и других контролов.
+
+## Импорт
+
+```tsx
+import { Label, type LabelProps, type LabelClassNames } from "burne-ui";
+```
+
+## API
+
+Simple API сам рисует текст и `*`. Compound: `Label.Text` и `Label.Required` ставят эти слоты вручную. `Label.Slot` — null-маркер.
+
+### Props
+
+| Prop | Тип | По умолчанию | Описание |
+|------|-----|--------------|----------|
+| `htmlFor` | `string` | из context | ID контрола; при наличии рендерится `<label>` |
+| `id` | `string` | из context | ID подписи (`aria-labelledby`); на `<label>` и на `<span>` |
+| `required` | `boolean` | `false` / context | Показывает `*` (`text-danger`) |
+| `className` | `string` | — | На root |
+| `classNames` | `LabelClassNames` | — | Слоты: `root`, `text`, `required` |
+| `motion` | — | — | Per-slot (`root`, `text`, `required`). `events` — app-команды `MotionController` |
+| `motionController` | — | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
+| `children` | `ReactNode` | — | Текст подписи |
+
+### `LabelClassNames`
+
+```tsx
+type LabelClassNames = {
+  root?: string;
+  text?: string;
+  required?: string;
+};
+```
+
+### Примеры
+
+```tsx
+// Явная привязка
+<Label htmlFor="email" required>Email</Label>
+<Input><Input.Control id="email" /></Input>
+
+// Через Input (label prop → внутренний Label + context)
+<Input label="Имя" placeholder="…" />
+
+// Span без привязки (заголовок секции)
+<Label id="section-title">Контактные данные</Label>
+
+// Field.Label — алиас Label
+<Field>
+  <Field.Label htmlFor="name">Имя</Field.Label>
+  …
+</Field>
+```
+
+### Compound
+
+| Часть | Роль |
+|-------|------|
+| `Label.Text` | Текст. Слот `text`. `className` на эту строку; `variant` здесь свой, проп корня на неё не переходит |
+| `Label.Required` | Звезда `*`. Слот `required`. Рисуется, когда часть стоит в дереве |
+| `Label.Slot` | Маркер с `displayName = "Label"`, рендерит `null` |
+
+Если среди детей есть `Label.Text` или `Label.Required`, корень не оборачивает текст сам: звезда появляется только из `Label.Required`.
+
+```tsx
+<Label htmlFor="email" required>
+  <Label.Text className="text-primary">Email</Label.Text>
+  <Label.Required className="text-warning" />
+</Label>
+```
+
+## Рендер: label vs span
+
+| Условие | Элемент | Назначение |
+|---------|---------|------------|
+| `htmlFor` задан | `<label id htmlFor>` | Клик фокусирует контрол; `id` для `aria-labelledby` |
+| только `id` | `<span id>` | Подпись без прямой привязки |
+
+Текст: `Text` variant `base`, `font-medium`. Required: `*` с `aria-hidden` (семантика через `required` на контроле / `required` в форме).
+
+## FieldLabelContext
+
+Контролы (`Input`, `ComboBox`, `Slider`, `Meter`, …) поднимают context:
+
+```tsx
+type FieldLabelContextValue = {
+  controlId?: string;
+  labelId?: string;
+  required?: boolean;
+};
+```
+
+`useLabelRootState` мержит props с context: `htmlFor ?? ctx.controlId`, `id ?? ctx.labelId`, `required ?? ctx.required`.
+
+`useOptionalFieldLabelContext()` — для Checkbox/Radio label-связки без throw.
+
+## Анимации
+
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `text`, `required` | `enter` (opt-in); hover/press if you set them | empty |
+
+Не крадёт motion Input. `play()` ищет слот `root`. `playSlot("text")` / `playAll` — соседние слоты. `required` должен быть `true`, иначе слот `required` не в DOM.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`label:nudge`, `label:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в `children` попадает в nested scope внутреннего `Text`, не в Label — handle передавайте на корень Label.
+
+Тройка на корне Label, не на внутреннем `Text`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Label, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "label:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("label:nudge")}>
+        Nudge
+      </Button>
+      <Label required motionController={controller} motion={{ events }}>
+        Email
+      </Label>
+    </>
+  );
+}
+```
+
+**DOM-структура:**
+
+```
+<label|span> (inline-flex, gap-x-xsmall)
+  <Text span> подпись
+  <span * aria-hidden>   ← optional required
+```
+
+### Что не анимируется
+
+- Появление маркера `*`
+- Смена `required`
+- Focus на связанном контроле (стили focus — на Input shell, не на Label)
+
+### Связанная motion у соседей
+
+| Сосед | Анимация |
+|-------|----------|
+| `Input` shell | `useFieldShellHoverLift` (sm→md) |
+| `Checkbox` / `Radio` label area | `usePressableElementTextMotion` (squeeze) |
+
+Кастомный transition на текст подписи — только через `classNames.text` / CSS:
+
+```tsx
+<Label classNames={{ text: "transition-colors duration-200" }}>
+  Email
+</Label>
+```
+
+### Сводка
+
+| Анимация | В Label | Где настраивать |
+|----------|---------|-----------------|
+| Slot motion / MotionController | opt-in | `motion` / `motionController` |
+| Hover lift контрола | нет | контрол (Input и др.) |
+| CSS transition | вручную | `classNames` |
+
+## Токены и CSS
+
+| Класс | Назначение |
+|-------|------------|
+| `inline-flex flex-wrap items-baseline gap-x-xsmall` | root |
+| `font-medium` | текст |
+| `text-danger` | маркер `*` |
+| `text-base` | через `Text` variant |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на root** — мерж с `classNames.root` на `<label>` (или span при отсутствии `htmlFor`).
+2. **`classNames`** — `root`, `text`, `required` через `LabelClassNamesProvider`.
+
+Label — leaf-компонент без compound API; используется standalone и как `Input.Label`, `TextArea.Label` и т.д.
+
+### Слоты `LabelClassNames`
+
+| Слот | DOM / элемент | Когда использовать |
+|------|---------------|-------------------|
+| `root` | `<label>` / span | Flex layout, padding, border вокруг label |
+| `text` | `Text` внутри label | Шрифт, цвет текста |
+| `required` | Маркер `*` | Цвет обязательности |
+
+### Standalone
+
+```tsx
+<Label
+  htmlFor="email"
+  required
+  className="mb-small"
+  classNames={{
+    root: "rounded-large border border-primary/30 px-base py-xsmall",
+    text: "text-primary font-semibold",
+    required: "text-warning",
+  }}
+>
+  Email
+</Label>
+```
+
+### Внутри полей (Input, TextArea, ComboBox)
+
+Слот `label` на root поля прокидывается в Label:
+
+```tsx
+<Input
+  classNames={{ label: "uppercase tracking-wide text-mid" }}
+  label="Email"
+/>
+
+// Compound — вложенные classNames Label мержатся с контекстом Input:
+<Input classNames={{ label: "text-muted" }}>
+  <Input.Label
+    classNames={{ text: "font-bold", required: "text-danger" }}
+  >
+    Email
+  </Input.Label>
+  <Input.Control />
+</Input>
+```
+
+Порядок: `Input.classNames.label` → `Label.classNames.root` → `Input.Label className`.
+
+### Практические заметки
+
+- **`htmlFor`:** без него Label рендерится как span — для `aria-labelledby` на группе.
+- **`*`:** `aria-hidden`; дублируйте `required` / `aria-required` на контроле.
+- **FieldLabelContext:** Input/TextArea подставляют `htmlFor` автоматически — не дублируйте id вручную.
+
+## Доступность
+
+- `<label htmlFor>` — нативная связь с контролом
+- `*` — `aria-hidden={true}`; обязательность дублируйте `required` / `aria-required` на input
+- Для span-режима: `id` на Label + `aria-labelledby` на группе полей
+
+## Структура файлов
+
+```
+Label/
+├── Label.tsx
+├── index.ts
+├── labelTypes.ts
+├── labelStyles.ts
+├── labelParts.tsx
+├── labelContext.tsx
+├── labelA11y.ts
+├── useLabelRootState.ts
+└── Label.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Label` — default, required, с Input, span-режим, `classNames`, Slot motion, MotionController.

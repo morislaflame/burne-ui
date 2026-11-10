@@ -1,0 +1,369 @@
+# Tooltip
+
+Подсказка по **hover** и **focus**. Рендерится в portal (`document.body`), позиционируется относительно триггера. Compound API: `Tooltip.Trigger` + `Tooltip.Content`; опционально grid-слоты как у `Alert` (`Indicator`, `Title`, `Description`).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type TooltipSide, type TooltipClassNames, type TooltipMotion, type TooltipTriggerProps, type TooltipContentProps } from "burne-ui";
+```
+
+## API
+
+### Базовое использование
+
+```tsx
+<Tooltip openDelay={240} variant="default" side="top">
+  <Tooltip.Trigger>
+    <Button variant="outline" type="button">
+      Наведи или сфокусируй
+    </Button>
+  </Tooltip.Trigger>
+  <Tooltip.Content showArrow>
+    <Tooltip.Arrow />
+    Подсказка
+  </Tooltip.Content>
+</Tooltip>
+```
+
+### Compound с title / description
+
+### Root props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `variant` | `default` | `default` \| `outline` \| `secondary` \| `danger` \| `success` \| `info` \| `warning` |
+| `status` | `default` | `default` | `danger` | `success` | `info` | `warning` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `side` | `top` | `top` \| `bottom` \| `left` \| `right` (+ auto-flip) |
+| `openDelay` | `240` | Задержка перед показом |
+| `open` / `defaultOpen` / `onOpenChange` | — | Controlled / uncontrolled. Галерея MotionController держит `open` |
+| `icon` | — | Иконка для semantic variants |
+| `icon` | status glyph | `null` прячет indicator, узел заменяет иконку статуса |
+| `classNames` | — | Слоты (см. ниже) |
+| `motion` | — | Карта слотов; хост — `Tooltip.Content` (`content.enter` / `leave`). `events` — app-команды |
+
+### Compound-подчасти
+
+| Часть | Назначение |
+|-------|------------|
+| `Tooltip.Trigger` | Hover/focus target; `aria-describedby` |
+| `Tooltip.Content` | Portal wrapper + positioning |
+| `Tooltip.Panel` | Поверхность bubble (simple title/description внутри) |
+| `Tooltip.Arrow` | Стрелка к триггеру |
+| `Tooltip.Indicator` | Semantic icon slot |
+| `Tooltip.Message` | Grid wrapper (`display: contents` — padding, border, background и width не рисуются) |
+| `Tooltip.Title` / `Description` | Текстовые слоты |
+
+### `TooltipClassNames`
+
+`trigger`, `content`, `panelRelative`, `arrow`, `panel`, `message`, `indicator`, `title`, `description`.
+
+`trigger` применяется к триггеру (в т.ч. при `cloneElement` единственного child).
+
+## Variant / status / размеры
+
+### Status
+
+Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral panel** (by `variant`) and accent **title + icon** only — same pattern as Alert / Toast. Auto icon via `SEMANTIC_STATUS_ICONS` (kit inline SVG) unless custom `icon` is passed.
+
+### Surface / variant
+
+| Surface | Поведение |
+|---------|-----------|
+| `default` | `bg-surface` + `shadow-token-xlarge` |
+| `outline` / `secondary` | transparent / secondary shell |
+
+Размер влияет на padding panel, typography (`Text` variants) и icon box.
+
+| size | Panel padding | Title Text |
+|------|---------------|------------|
+| `small` | compact | `small` |
+| `base` | default | `base` |
+| `mid` / `large` | увеличенные | `mid` |
+
+## Анимации
+
+`tooltipAnimations.ts` → slot motion на портале (`TOOLTIP_MOTION_DEFAULTS`). Root без DOM портала передаёт карту `motion` в context; хост — `Tooltip.Content`.
+
+**DOM:**
+
+```
+<button|span|asChild> Trigger          ← слот `trigger`, aria-describedby when open
+portal → document.body
+    <div role=tooltip id=tooltipId ref=tipRef>   ← позиция, не слот
+      [Tooltip.Arrow]
+```
+
+Нет trigger squeeze (в отличие от Popover) — show по hover/focus.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` на том же узле, что классы `panel` |
+| `title` / `description` / `indicator` / `arrow` / `panel` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
+
+`leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Nested `enter` — следующий кадр после host (`scheduleNestedEnterBroadcast`).
+
+**Где в коде:** типы — `tooltipTypes.ts`; scope — `tooltipContext.tsx`; defaults + host — `tooltipAnimations.ts`; Content-provider — `tooltipParts.tsx`; карта на корне — `Tooltip.tsx`.
+
+Проп `motionController` на **`Tooltip.Content`**. `play()` skip — нет `root`; `playSlot("content")`. Controlled `open` оставляет слоты живыми. playground / Storybook **MotionController**.
+
+На корне — scope карты. На `Tooltip.Content` — scope панели. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Tooltip, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "tooltip:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("content", "tooltip:nudge")}>
+        Nudge
+      </Button>
+      <Tooltip open openDelay={0}>
+        <Tooltip.Trigger>
+          <Button size="small" variant="outline">Trigger</Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content motionController={controller} motion={{ events }}>
+          <Tooltip.Title>Title</Tooltip.Title>
+        </Tooltip.Content>
+      </Tooltip>
+    </>
+  );
+}
+```
+
+```tsx
+<Tooltip motion={{ content: { leave: false } }}>…</Tooltip>
+
+<Tooltip
+  motion={{
+    content: {
+      enter: (ctx) => ctx.fromTo({ y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.22 }),
+      leave: (ctx) => ctx.to({ y: 8, autoAlpha: 0, duration: 0.16 }),
+    },
+  }}
+>
+```
+
+`classNames` / `className` на `title` / `description` / `indicator` сочетаются с factory на `content`. Вложенные части — слоты: `ctx.getTarget("title")` (или `motion.title.enter`). `leave` factory должна вернуть tween.
+
+```tsx
+<Tooltip
+  openDelay={0}
+  status="info"
+  classNames={{
+    panel: "border-token-info",
+    indicator: "text-info",
+    title: "text-info font-w-strong",
+    description: "text-foreground/75",
+  }}
+  motion={{
+    content: {
+      enter: (ctx) => {
+        const tl = ctx.timeline();
+        const title = ctx.getTarget("title");
+        tl.fromTo(ctx.el, { y: 12, autoAlpha: 0, scale: 0.96 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.24 }, 0);
+        if (title) tl.fromTo(title, { y: 8 }, { y: 0, duration: 0.26 }, 0.08);
+        return tl;
+      },
+      leave: (ctx) => ctx.to({ y: 8, autoAlpha: 0, duration: 0.16 }),
+    },
+  }}
+>
+  <Tooltip.Trigger asChild><Button>Hint</Button></Tooltip.Trigger>
+  <Tooltip.Content>
+    <Tooltip.Title className="font-w-strong">Stagger</Tooltip.Title>
+    <Tooltip.Description className="text-muted">…</Tooltip.Description>
+  </Tooltip.Content>
+</Tooltip>
+```
+
+### 1. Show / hide pipeline
+
+**Планирование показа:**
+
+1. `pointerenter` / `focus` → `scheduleShow()` после `openDelay`
+2. `pointerleave` / `blur` / `Escape` → `hide()` + отмена таймера
+
+**Монтаж портала + анимация:**
+
+1. `open=true` → mount portal
+2. `computeTooltipPlacement()` — fixed `left`/`top`, auto side flip
+3. `animatePortalOpen({ scale: 0.97→1, ...motionTooltip() })`
+4. Close: `animatePortalClose({ autoAlpha: 0 })` → unmount
+
+**Reduced motion:** `applyReducedPortalMotion` / мгновенный unmount.
+
+#### Кастомизация timing
+
+```ts
+configureMotion({
+  tooltipDuration: 200,
+  interactiveEase: "power2.out",
+});
+```
+
+Локально: `openDelay` на root (default `240`). **Reduced motion:** `applyReducedPortalMotion` / instant unmount.
+
+### 2. Shadow surface
+
+| surface | Поведение |
+|---------|-----------|
+| `default` | `shadow-token-xlarge` — large elevation на bubble |
+
+Tooltip — floating overlay с постоянной large-тенью (как Popover / Dialog).
+
+### 3. Reposition on reflow
+
+На `open`, `scroll` (passive capture), `resize`, `visualViewport` — пересчёт placement без re-mount.
+
+Arrow position синхронизируется с `resolvedSide`.
+
+### 4. Semantic icon
+
+Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не анимируется отдельно.
+
+### Чего нет
+
+- Trigger press squeeze
+- Hover lift на trigger
+- Ripple
+- Outside click dismiss (tooltip не modal)
+
+### Сводка: что настраивается где
+
+| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
+|----------|---------|---------------------------|----------------|
+| Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
+| Show delay | `setTimeout` | — | `openDelay` |
+| Rest shadow | `shadow-token-xlarge` | — | `variant="default"` |
+| Reposition | `computeTooltipPlacement` | — | `side` |
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `TOOLTIP_PANEL_CLASS` | Bubble surface, border, padding per size |
+| `TOOLTIP_MESSAGE_GRID` | Alert-like grid для Icon/Title/Description |
+| status accents | `text-*` on title + indicator only (neutral shell) |
+| `burneLightThemePortalProps` | Light theme inheritance в portal |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на подчастях** — `Trigger`, `Content`, `Panel`, `Arrow` merge в слот.
+2. **`classNames` на root `Tooltip`** — все слоты через `TooltipClassNamesProvider`.
+
+`trigger` применяется к trigger element (в т.ч. `cloneElement` единственного child).
+
+### Слоты `TooltipClassNames`
+
+| Слот | DOM | Когда использовать |
+|------|-----|-------------------|
+| `trigger` | Trigger element | Ring, focus outline helpers |
+| `content` | Bubble, тот же узел, что `panel` | Ring вместе с поверхностью |
+| `panelRelative` | Inner relative wrapper | Isolation, overflow |
+| `arrow` | Arrow span | Fill/border стрелки (matches panel, not status) |
+| `panel` | Bubble surface | Background, border, padding |
+| `message` | Grid wrapper (`display:contents`) | Compound layout spacing |
+| `indicator` | Icon cell | Цвет и размер. Размер — `icon-slot-*` на обёртке (`classNames.indicator="icon-slot-large"` или `className` на `Tooltip.Indicator`) |
+| `title` / `description` | Text cells | Typography hierarchy |
+
+### Simple text tooltip
+
+```tsx
+<Tooltip openDelay={240} side="top">
+  <Tooltip.Trigger>
+    <Button variant="outline" type="button">Наведи</Button>
+  </Tooltip.Trigger>
+  <Tooltip.Content showArrow>
+    <Tooltip.Arrow />
+    Короткая подсказка
+  </Tooltip.Content>
+</Tooltip>
+```
+
+### Semantic compound (как Alert grid)
+
+```tsx
+<Tooltip
+  openDelay={0}
+  status="info"
+  classNames={{
+    panel: "border-primary/30",
+    title: "text-primary font-semibold",
+    description: "text-muted/80",
+  }}
+>
+  <Tooltip.Trigger>
+    <Button variant="outline" type="button">Статус</Button>
+  </Tooltip.Trigger>
+  <Tooltip.Content showArrow>
+    <Tooltip.Arrow />
+    <Tooltip.Indicator />
+    <Tooltip.Title>Информация</Tooltip.Title>
+    <Tooltip.Description>Дополнительный контекст</Tooltip.Description>
+  </Tooltip.Content>
+</Tooltip>
+```
+
+### asChild trigger
+
+`asChild` (по умолчанию `true` при одном element-child): handlers и `aria-describedby` merge на child — задайте `aria-label` на icon-only кнопках. `asChild={false}` — обёртка `<span>`.
+
+### Практические заметки
+
+- `openDelay={0}` — Storybook / instant tooltips.
+- Portal наследует light theme через `burneLightThemePortalProps`.
+- **Не фиксируйте `transform`/`left`/`top` на `content`** — positioning + GSAP.
+- Semantic variants: icon auto unless `icon={null}` или свой `icon`.
+- **Порядок мержа:** variant/status → `classNames.slot` → `className` подчасти.
+
+## Интеграции
+
+| Компонент | Использование |
+|-----------|---------------|
+| `Avatar` | Tooltip по `nickname` |
+| `Button` | Частый trigger |
+| `Alert` | Общий message banner grid layout |
+
+## Доступность
+
+- Trigger: `aria-describedby={tooltipId}` когда `open`
+- Content: `role="tooltip"`, `id={tooltipId}`
+- Keyboard: `Escape` закрывает
+- Focus: trigger получает `tabIndex={0}` + `focus-ring` если рендерится как `<span>` wrapper (`asChild={false}`)
+- **`asChild` (default):** child должен быть фокусируемым интерактивным элементом; ring управляет child (Button/Link). Avatar без `tabIndex` — невалидный trigger
+- Arrow / icons: `aria-hidden`
+
+## Структура файлов
+
+```
+Tooltip/
+├── Tooltip.tsx               # карта motion через Provider (Root без портала)
+├── index.ts
+├── tooltipTypes.ts           # TooltipMotion
+├── tooltipStyles.ts
+├── tooltipAnimations.ts      # TOOLTIP_MOTION_DEFAULTS, useTooltipPortalMotion
+├── tooltipParts.tsx          # Content — хост + useMotionPart
+├── tooltipPosition.ts
+├── useTooltipRootState.ts
+├── tooltipAPI.ts
+├── tooltipA11y.ts
+├── tooltipContext.tsx        # createMotionScope("Tooltip")
+└── Tooltip.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Tooltip` — variants, statuses grid, semantic icons, light theme, a11y, `classNames`.

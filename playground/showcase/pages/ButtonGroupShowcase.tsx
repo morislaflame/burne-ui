@@ -1,0 +1,89 @@
+import { ButtonGroupButtonsOnlyDemo } from "../demos/button-group/ButtonGroupButtonsOnly.demo";
+import buttonGroupButtonsOnlySource from "../demos/button-group/ButtonGroupButtonsOnly.demo.tsx?raw";
+import { ButtonGroupClassNamesFullDemo } from "../demos/button-group/ButtonGroupClassNamesFull.demo";
+import buttonGroupClassNamesFullSource from "../demos/button-group/ButtonGroupClassNamesFull.demo.tsx?raw";
+import { ButtonGroupHorizontalDemo } from "../demos/button-group/ButtonGroupHorizontal.demo";
+import buttonGroupHorizontalSource from "../demos/button-group/ButtonGroupHorizontal.demo.tsx?raw";
+import { ButtonGroupPricingTierDemo } from "../demos/button-group/ButtonGroupPricingTier.demo";
+import buttonGroupPricingTierSource from "../demos/button-group/ButtonGroupPricingTier.demo.tsx?raw";
+import { ButtonGroupSizesDemo } from "../demos/button-group/ButtonGroupSizes.demo";
+import buttonGroupSizesSource from "../demos/button-group/ButtonGroupSizes.demo.tsx?raw";
+import { ButtonGroupVerticalMenuDemo } from "../demos/button-group/ButtonGroupVerticalMenu.demo";
+import buttonGroupVerticalMenuSource from "../demos/button-group/ButtonGroupVerticalMenu.demo.tsx?raw";
+import { ButtonGroupMotionControllerGalleryDemo } from "../demos/buttonGroup/motionController/gallery";
+import { ButtonGroupSlotMotionGalleryDemo } from "../demos/buttonGroup/slotMotion/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function ButtonGroupShowcase() {
+  return (
+    <ShowcasePage
+      title="ButtonGroup"
+      description="Glued buttons and labels: single stroke, segments and nested controls."
+      importPath='import { ButtonGroup } from "@/components/composite/ButtonGroup";'
+      tags={["composite", "actions"]}
+    >
+      <ShowcaseSection
+        title="Horizontal group"
+        description="ButtonGroup.Text, segments groupSegment and Dropdown in the last segment."
+      >
+        <ShowcaseDemoFromFile Demo={ButtonGroupHorizontalDemo} source={buttonGroupHorizontalSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Buttons only" description="Some outline-buttons without signature.">
+        <ShowcaseDemoFromFile Demo={ButtonGroupButtonsOnlyDemo} source={buttonGroupButtonsOnlySource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large — height of all segments.">
+        <ShowcaseDemoFromFile Demo={ButtonGroupSizesDemo} source={buttonGroupSizesSource} />
+      </ShowcaseSection>
+<ShowcaseSection title="classNames" description="Slots root, separator, text, textLabel via classNames.">
+        <ShowcaseDemoFromFile Demo={ButtonGroupClassNamesFullDemo} source={buttonGroupClassNamesFullSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Vertical panels and colored segments — demo-files in `demos/button-group/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={ButtonGroupVerticalMenuDemo} source={buttonGroupVerticalMenuSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ButtonGroupPricingTierDemo} source={buttonGroupPricingTierSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root/text timeline, Text enter tint, ScrambleText on the caption. Item Button motion is separate.">
+        <ButtonGroupSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play vs playSlot, stagger, inside Text, toolbar events, waitForComplete."
+      >
+        <ButtonGroupMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/composite/ButtonGroup" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="aria-label, size, orientation, variant, segmented on the root ButtonGroup. Child Button and ButtonGroup.Text; groupSegment for buttons is specified by the group context."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="ButtonGroup.Text — segment signature; nested Input/ComboBox inherit variant groups."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization>
+          <p>
+            Segment positions: <code>first</code>, <code>middle</code>, <code>last</code>,{" "}
+            <code>only</code>. For vertical group — <code>orientation=&quot;vertical&quot;</code> on
+            root.
+          </p>
+        </ShowcaseDoc.Customization>
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

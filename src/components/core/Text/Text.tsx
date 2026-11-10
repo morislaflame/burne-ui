@@ -1,67 +1,114 @@
-import { createElement, forwardRef, type ElementType, type HTMLAttributes } from "react";
-
-import { cn } from "@/utils/cn";
-
-/** Роли типографики из `@utility` / темы (см. Foundations/Typography). */
-export type TextVariant =
-  | "accent-header"
-  | "header-1"
-  | "header-2"
-  | "large"
-  | "mid"
-  | "base"
-  | "small"
-  | "tools";
-
-const VARIANT_CLASS: Record<TextVariant, string> = {
-  "accent-header": "text-accent-header",
-  "header-1": "text-header-1",
-  "header-2": "text-header-2",
-  large: "text-large",
-  mid: "text-mid",
-  base: "text-base",
-  small: "text-small",
-  tools: "text-tools",
-};
-
-/**
- * Семантика по умолчанию: заголовки — уровни 1–3, остальное — абзац.
- * Задайте `as`, если нужен `span` внутри строки или другой тег.
- */
-const VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
-  "accent-header": "h1",
-  "header-1": "h2",
-  "header-2": "h3",
-  large: "p",
-  mid: "p",
-  base: "p",
-  small: "p",
-  tools: "p",
-};
-
-export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
-  variant: TextVariant;
-  /** HTML-тег или компонент. По умолчанию зависит от `variant`. */
-  as?: ElementType;
-  /** Без `text-foreground` — цвет наследуется от родителя (например, `Button`). */
-  inheritColor?: boolean;
-  className?: string;
-};
-
+import { createElement, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "react";
+ 
+import { resolveTextAs } from "./textA11y";
+import { resolveTextMotionDefaults, useTextRootMotion } from "./textAnimations";
+import { TextMotionProvider } from "./textContext";
+import { TEXT_VARIANT_DEFAULT_AS, textRootClass } from "./textStyles";
+import type { TextPartMotion, TextProps } from "./textTypes";
+ 
+export type { TextProps, TextVariant, TextMotion, TextPartMotion } from "./textTypes";
+ 
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
-  { variant, as, inheritColor, className, children, ...rest },
+  {
+    textStyle = "base",
+    as,
+    inheritColor,
+    className,
+    children,
+    motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
   ref,
 ) {
-  const Comp = as ?? VARIANT_DEFAULT_AS[variant];
-
-  return createElement(Comp, {
-    ...rest,
-    ref,
-    className: cn(
-      VARIANT_CLASS[variant],
-      !inheritColor && "text-foreground",
-      className,
-    ),
-    children,
-  });
+  const motionDefaults = useMemo(() => resolveTextMotionDefaults(), []);
+ 
+  return (
+    <TextMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
+      <TextSurface
+        textStyle={textStyle}
+        as={as}
+        inheritColor={inheritColor}
+        className={className}
+        forwardedRef={ref}
+        rootMotion={motion?.root}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        rest={rest}
+      >
+        {children}
+      </TextSurface>
+    </TextMotionProvider>
+  );
 });
+ 
+function TextSurface({
+  textStyle,
+  as,
+  inheritColor,
+  className,
+  children,
+  forwardedRef,
+  rootMotion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  rest,
+}: {
+  textStyle: TextProps["textStyle"];
+  as: TextProps["as"];
+  inheritColor: TextProps["inheritColor"];
+  className: TextProps["className"];
+  children: TextProps["children"];
+  forwardedRef: ForwardedRef<HTMLElement>;
+  rootMotion?: TextPartMotion;
+  onPointerOver: TextProps["onPointerOver"];
+  onPointerOut: TextProps["onPointerOut"];
+  onPointerDown: TextProps["onPointerDown"];
+  onPointerUp: TextProps["onPointerUp"];
+  rest: Omit<
+    HTMLAttributes<HTMLElement>,
+    | "className"
+    | "children"
+    | "onPointerOver"
+    | "onPointerOut"
+    | "onPointerDown"
+    | "onPointerUp"
+  >;
+}) {
+  const style = textStyle ?? "base";
+  const Comp = resolveTextAs(as, TEXT_VARIANT_DEFAULT_AS[style]);
+  const part = useTextRootMotion({
+    forwardedRef,
+    motion: rootMotion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+ 
+  return createElement(
+    Comp,
+    {
+      ...rest,
+      ref: part.setRef,
+      className: textRootClass(style, inheritColor, className),
+      ...part.pointerHandlers,
+    },
+    children,
+  );
+}
+ 

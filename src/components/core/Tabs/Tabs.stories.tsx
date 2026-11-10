@@ -1,0 +1,261 @@
+import { useState, type ComponentType } from "react";
+
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
+import { IoDocumentTextOutline, IoSettingsOutline, IoPersonOutline } from "react-icons/io5";
+
+import { Text } from "@/components/core/Text";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
+
+import { Tabs, type TabsOrientation, type TabsVariant } from ".";
+import { TabsSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/tabs/slotMotion/gallery";
+import { TabsMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/tabs/motionController/gallery";
+
+const framedDecorator = [
+  (Story: ComponentType) => (
+    <div
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <Story />
+    </div>
+  ),
+] as const;
+
+const VARIANTS: TabsVariant[] = ["default", "outline", "secondary"];
+
+const TAB_ITEMS = [
+  { value: "account", label: "Account", icon: IoPersonOutline },
+  { value: "documents", label: "Documents", icon: IoDocumentTextOutline },
+  { value: "settings", label: "Settings", icon: IoSettingsOutline },
+] as const;
+
+function TabsDemo({
+  orientation = "horizontal",
+  size = "base",
+  variant = "default",
+  defaultValue = "account",
+}: {
+  orientation?: TabsOrientation;
+  size?: (typeof COMPONENT_SIZES)[number];
+  variant?: TabsVariant;
+  defaultValue?: string;
+}) {
+  return (
+    <Tabs
+      defaultValue={defaultValue}
+      orientation={orientation}
+      size={size}
+      variant={variant}
+      className={orientation === "vertical" ? "w-full max-w-2xl" : "w-full max-w-xl"}
+    >
+      <Tabs.List aria-label="Account">
+        {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
+          <Tabs.Tab key={value} value={value}>
+            <Icon aria-hidden className="icon-base shrink-0" />
+            {label}
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+      {TAB_ITEMS.map(({ value, label }) => (
+        <Tabs.Panel key={value} value={value}>
+          <Text as="p" textStyle="base" className="text-muted">
+            Tab content «{label}».
+          </Text>
+        </Tabs.Panel>
+      ))}
+    </Tabs>
+  );
+}
+
+const meta = {
+  title: "Core Components/Tabs",
+  component: Tabs,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Compound Tabs: horizontal or vertical orientation, `small | base | mid | large` scale, three surface variants (`default`, `outline`, `secondary`). Inactive tabs — `text-muted`; on hover text lifts and becomes primary; on press — squeeze. Active tab indicator moves smoothly.",
+      },
+    },
+  },
+  decorators: [...framedDecorator],
+  argTypes: {
+    orientation: { control: "select", options: ["horizontal", "vertical"] },
+    size: { control: "select", options: COMPONENT_SIZES },
+    variant: { control: "select", options: VARIANTS },
+  },
+} satisfies Meta<typeof Tabs>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  render: () => <TabsDemo />,
+};
+
+export const SwitchTabInteraction: Story = {
+  name: "Interaction: tabs",
+  render: () => <TabsDemo />,
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("tab", { name: "Account" })).toHaveAttribute(
+      "aria-selected",
+      "true");
+    await userEvent.click(canvas.getByRole("tab", { name: "Documents" }));
+    await expect(canvas.getByRole("tab", { name: "Documents" })).toHaveAttribute(
+      "aria-selected",
+      "true");
+    await expect(canvas.getByRole("tabpanel")).toHaveTextContent("Documents");
+  },
+};
+
+export const Vertical: Story = {
+  name: "Vertical",
+  render: () => <TabsDemo orientation="vertical" />,
+};
+
+export const Variants: Story = {
+  name: "Variants",
+  render: () => (
+    <div className="flex w-full max-w-3xl flex-col gap-2xlarge">
+      {VARIANTS.map((variant) => (
+        <div key={variant} className="flex flex-col gap-small">
+          <Text as="span" textStyle="small" className="font-medium capitalize text-muted">
+            {variant}
+          </Text>
+          <TabsDemo variant={variant} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Sizes",
+  render: () => (
+    <div className="flex w-full max-w-3xl flex-col gap-2xlarge">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col gap-small">
+          <Text as="span" textStyle="small" className="font-medium capitalize text-muted">
+            {size}
+          </Text>
+          <TabsDemo size={size} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Controlled: Story = {
+  name: "Controlled mode",
+  render: function ControlledTabs() {
+    const [value, setValue] = useState<string | null>("documents");
+    return (
+      <div className="flex w-full max-w-xl flex-col gap-large">
+        <Tabs value={value} onValueChange={setValue}>
+          <Tabs.List>
+            {TAB_ITEMS.map(({ value: tabValue, label }) => (
+              <Tabs.Tab key={tabValue} value={tabValue}>
+                {label}
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+          {TAB_ITEMS.map(({ value: tabValue, label }) => (
+            <Tabs.Panel key={tabValue} value={tabValue}>
+              <Text as="p" textStyle="base">
+                Active: {label}
+              </Text>
+            </Tabs.Panel>
+          ))}
+        </Tabs>
+        <Text as="p" textStyle="small" className="text-muted">
+          value=&quot;{value}&quot;
+        </Text>
+      </div>
+    );
+  },
+};
+
+export const Disabled: Story = {
+  name: "Disabled",
+  render: () => (
+    <Tabs defaultValue="account" disabled>
+      <Tabs.List>
+        {TAB_ITEMS.map(({ value, label }) => (
+          <Tabs.Tab key={value} value={value}>
+            {label}
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+      <Tabs.Panel value="account">
+        <Text as="p" textStyle="base" className="text-muted">
+          Group is disabled.
+        </Text>
+      </Tabs.Panel>
+    </Tabs>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Tabs (compound API)",
+      },
+    },
+  },
+  render: () => (
+    <Tabs
+      defaultValue="account"
+      classNames={{
+        root: "max-w-xl rounded-large border border-info/25 p-base",
+        list: "bg-info/5 ring-1 ring-info/15",
+        indicator: "bg-info/30",
+        tab: "font-medium",
+        tabText: "gap-small",
+        panel: "rounded-small bg-info/5 p-large",
+      }}
+    >
+      <Tabs.List
+        aria-label="Account"
+        classNames={{ list: "bg-primary/10" }}
+      >
+        {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
+          <Tabs.Tab key={value} value={value}>
+            <Icon aria-hidden className="icon-base shrink-0" />
+            {label}
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+      {TAB_ITEMS.map(({ value, label }) => (
+        <Tabs.Panel key={value} value={value}>
+          <Text as="p" textStyle="base" className="text-muted">
+            Tab content «{label}».
+          </Text>
+        </Tabs.Panel>
+      ))}
+    </Tabs>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TabsSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on Tabs chrome, nested Tab / Panel scopes, tabs events.",
+      },
+    },
+  },
+  render: () => <TabsMotionControllerGalleryDemo />,
+};

@@ -1,0 +1,108 @@
+import { TextAreaClassNamesCompoundDemo, TextAreaClassNamesFullDemo } from "../demos/textarea/TextAreaClassNamesFull.demo";
+import textAreaClassNamesFullSource from "../demos/textarea/TextAreaClassNamesFull.demo.tsx?raw";
+import { TextAreaBasicDemo } from "../demos/textarea/TextAreaBasic.demo";
+import textAreaBasicSource from "../demos/textarea/TextAreaBasic.demo.tsx?raw";
+import { TextAreaVariantsDemo } from "../demos/textarea/TextAreaVariants.demo";
+import textAreaVariantsSource from "../demos/textarea/TextAreaVariants.demo.tsx?raw";
+import { TextAreaSizesDemo } from "../demos/textarea/TextAreaSizes.demo";
+import textAreaSizesSource from "../demos/textarea/TextAreaSizes.demo.tsx?raw";
+import { TextAreaNotResizableDemo } from "../demos/textarea/TextAreaNotResizable.demo";
+import textAreaNotResizableSource from "../demos/textarea/TextAreaNotResizable.demo.tsx?raw";
+import { TextAreaCommentThreadDemo } from "../demos/textarea/TextAreaCommentThread.demo";
+import textAreaCommentThreadSource from "../demos/textarea/TextAreaCommentThread.demo.tsx?raw";
+import { TextAreaReleaseNotesDemo } from "../demos/textarea/TextAreaReleaseNotes.demo";
+import textAreaReleaseNotesSource from "../demos/textarea/TextAreaReleaseNotes.demo.tsx?raw";
+import { TextAreaSupportTicketDemo } from "../demos/textarea/TextAreaSupportTicket.demo";
+import textAreaSupportTicketSource from "../demos/textarea/TextAreaSupportTicket.demo.tsx?raw";
+import { TextAreaWithErrorDemo } from "../demos/textarea/TextAreaWithError.demo";
+import textAreaWithErrorSource from "../demos/textarea/TextAreaWithError.demo.tsx?raw";
+import { TextAreaSlotMotionGalleryDemo } from "../demos/textarea/slotMotion/gallery";
+import { TextAreaMotionControllerGalleryDemo } from "../demos/textarea/motionController/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function TextAreaShowcase() {
+  return (
+    <ShowcasePage
+      title="TextArea"
+      description="Multiline input field with the same Simple API, what and Input."
+      importPath='import { TextArea } from "@/components/core/TextArea";'
+      tags={["core", "forms"]}
+    >
+      <ShowcaseSection title="Base" description="label, hint and rows at the root of the component.">
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaBasicDemo} source={textAreaBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Without resize"
+        description="resizable={false} — drag handle is not rendered; height stays fixed (aside from content field-sizing)."
+      >
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaNotResizableDemo} source={textAreaNotResizableSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaVariantsDemo} source={textAreaVariantsSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaSizesDemo} source={textAreaSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="With an error" description="Validation message via error. invalid paints the danger ring.">
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaWithErrorDemo} source={textAreaWithErrorSource} />
+      </ShowcaseSection>
+<ShowcaseSection title="Slot motion" description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor.">
+        <TextAreaSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on shell (no play: no root slot), chrome label on Root, cancel loop, area events."
+      >
+        <TextAreaMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Full customization classNames"
+        description="Slots root, shell, control, resizeHandle, hint, error through classNames on the root."
+      >
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaClassNamesFullDemo} source={textAreaClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaClassNamesCompoundDemo} source={textAreaClassNamesFullSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Release notes, support ticket and comment thread — demo-files in `demos/textarea/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaReleaseNotesDemo} source={textAreaReleaseNotesSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaSupportTicketDemo} source={textAreaSupportTicketSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaCommentThreadDemo} source={textAreaCommentThreadSource} />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/TextArea" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="label, hint, error, rows, placeholder, variant, status, resizable — on the root TextArea without children."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="TextArea.Label, TextArea.Control, TextArea.Hint, TextArea.Error — custom markup. resizable on Control."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Behavior">
+          <p>
+            Inherits visual variant and status from Input. Hints — <code>hint</code>, not{" "}
+            <code>description</code>. Controlled/uncontrolled through value/defaultValue. Drag resize —
+            default on; <code>resizable=&#123;false&#125;</code> removes the corner handle.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

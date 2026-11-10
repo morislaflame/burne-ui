@@ -1,20 +1,20 @@
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 
-import { resolveAlertStatus } from "@/components/core/Alert";
 import { Button } from "@/components/core/Button";
-import {
-  AlertDialog,
-  primaryButtonVariantForAlertTone,
-  type AlertDialogProps,
-  type AlertDialogSize,
-} from "./AlertDialog";
+import { primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone } from "./alertDialogAPI";
+import { AlertDialog, type AlertDialogSize } from "./index";
+import { useAlertDialog } from "./useAlertDialog";
+import type { AlertStatus } from "@/components/core/Alert";
+import { AlertDialogSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/alertDialog/slotMotion/gallery";
+import { AlertDialogMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/alertDialog/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модалка подтверждения (`alertdialog`): те же семантические варианты и иконки, что у `Alert`; размеры `small`–`large`. В `AlertDialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Подложка и Escape не закрывают окно.",
+          "Confirmation modal (`alertdialog`): same semantic statuses and icons as `Alert`; sizes `small`–`large`.  In `AlertDialog.Footer`, direct `Button` children without `size` inherit the modal button size (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Escape closes (Cancel); backdrop does not. Use `closeOnEscape={false}` to block Escape.",
       },
     },
   },
@@ -38,15 +38,15 @@ const meta = {
   argTypes: {
     size: {
       control: "select",
-      options: ["small", "base", "large"],
+      options: ["small", "base", "mid", "large"],
     },
     variant: {
       control: "select",
-      options: ["default", "outline", "secondary", "danger", "success", "info"],
+      options: ["default", "outline", "secondary"],
     },
     status: {
       control: "select",
-      options: ["warning"],
+      options: ["default", "danger", "success", "info", "warning"],
     },
   },
 } satisfies Meta;
@@ -56,88 +56,357 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 function ConfirmTemplate({
-  toneProps,
+  status: statusProp,
   size = "base",
-  label = "Открыть",
+  label = "Open",
+  variant = "default",
 }: {
-  toneProps: Pick<AlertDialogProps, "variant" | "status">;
+  status?: AlertStatus;
   size?: AlertDialogSize;
   label?: string;
+  variant?: "default" | "outline" | "secondary" ;
 }) {
   const [open, setOpen] = useState(false);
-  const tone = resolveAlertStatus(toneProps.status, toneProps.variant);
-  const primaryVariant = primaryButtonVariantForAlertTone(tone);
+  const status = statusProp ?? "default";
+  const primaryVariant = primaryButtonVariantForAlertTone(status);
+  const primaryStatus = primaryButtonStatusForAlertTone(status);
   return (
-    <>
-      <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
-        {label}
-      </Button>
-      <AlertDialog open={open} onOpenChange={setOpen} size={size} {...toneProps}>
+    <AlertDialog open={open} onOpenChange={setOpen} size={size} status={status} variant={variant}>
+      <AlertDialog.Trigger asChild>
+        <Button type="button" size="base" variant="outline">
+          {label}
+        </Button>
+      </AlertDialog.Trigger>
+      <AlertDialog.Panel>
         <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Подтверждение</AlertDialog.Title>
+            <AlertDialog.Title>Confirmation</AlertDialog.Title>
             <AlertDialog.Description>
-              Выберите действие — окно не закроется по клику вне панели.
+              Choose an action — clicking outside the panel will not close the dialog.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
-          <Button type="button" variant={primaryVariant} onClick={() => setOpen(false)}>
-            Продолжить
+          <Button type="button" variant={primaryVariant} status={primaryStatus} onClick={() => setOpen(false)}>
+            Continue
           </Button>
         </AlertDialog.Footer>
-      </AlertDialog>
-    </>
+      </AlertDialog.Panel>
+    </AlertDialog>
   );
 }
 
 export const ConfirmDelete: Story = {
   name: "Danger",
-  render: () => <ConfirmTemplate toneProps={{ variant: "danger" }} label="Удалить (danger)" />,
+  render: () => <ConfirmTemplate status="danger" label="Delete (danger)" />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Delete (danger)" }));
+    await expect(
+      await screen.findByRole("alertdialog", { name: "Confirmation" })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Continue" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
+  },
 };
 
-export const VariantDefault: Story = {
-  name: "Вариант default",
-  render: () => <ConfirmTemplate toneProps={{ variant: "default" }} label="Default" />,
+function AlertDialogUncontrolledActions({
+  status,
+}: {
+  status: AlertStatus;
+}) {
+  const { onOpenChange } = useAlertDialog();
+  const primaryVariant = primaryButtonVariantForAlertTone(status);
+  const primaryStatus = primaryButtonStatusForAlertTone(status);
+  return (
+    <>
+      <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+        Cancel
+      </Button>
+      <Button
+        type="button"
+        variant={primaryVariant}
+        status={primaryStatus}
+        onClick={() => onOpenChange(false)}
+      >
+        Continue
+      </Button>
+    </>
+  );
+}
+
+export const Uncontrolled: Story = {
+  name: "Uncontrolled (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Without `open` — internal state. Trigger opens; footer actions call `onOpenChange(false)` from context.",
+      },
+    },
+  },
+  render: function UncontrolledDemo() {
+    return (
+      <AlertDialog status="warning">
+        <AlertDialog.Trigger asChild>
+          <Button type="button" size="base" variant="outline">
+            Open (uncontrolled)
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
+            <AlertDialog.HeadingBlock>
+              <AlertDialog.Title>Uncontrolled alert</AlertDialog.Title>
+              <AlertDialog.Description>
+                No parent React state — only Trigger and footer actions.
+              </AlertDialog.Description>
+            </AlertDialog.HeadingBlock>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialogUncontrolledActions status="warning" />
+          </AlertDialog.Footer>
+        </AlertDialog.Panel>
+      </AlertDialog>
+    );
+  },
 };
 
-
-export const VariantSuccess: Story = {
-  name: "Вариант success",
-  render: () => <ConfirmTemplate toneProps={{ variant: "success" }} label="Success" />,
+export const StatusDefault: Story = {
+  name: "Status default",
+  render: () => <ConfirmTemplate status="default" label="Default" />,
 };
 
-export const VariantInfo: Story = {
-  name: "Вариант info",
-  render: () => <ConfirmTemplate toneProps={{ variant: "info" }} label="Info" />,
+export const StatusSuccess: Story = {
+  name: "Status success",
+  render: () => <ConfirmTemplate status="success" label="Success" />,
+};
+
+export const StatusInfo: Story = {
+  name: "Status info",
+  render: () => <ConfirmTemplate status="info" label="Info" />,
 };
 
 export const StatusWarning: Story = {
-  name: "Статус warning",
-  render: () => <ConfirmTemplate toneProps={{ status: "warning" }} label="Warning" />,
+  name: "Status warning",
+  render: () => <ConfirmTemplate status="warning" label="Warning" />,
 };
 
 export const Sizes: Story = {
-  name: "Размеры small · base · large",
+  name: "Sizes small · base · mid · large",
   render: function SizesDemo() {
     return (
-      <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
-        {(["small", "base", "large"] as const).map((size) => (
+      <div className="flex max-w-2xl flex-col flex-wrap gap-2xlarge sm:flex-row sm:items-start">
+        {(["small", "base", "mid", "large"] as const).map((size) => (
           <div key={size} className="flex flex-col items-start gap-base">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
               {size}
             </span>
-            <ConfirmTemplate
-              toneProps={{ variant: "info" }}
-              size={size}
-              label={`Открыть (${size})`}
-            />
+            <ConfirmTemplate status="info" size={size} label={`Open (${size})`} />
           </div>
         ))}
       </div>
     );
   },
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Custom `portalContainer` uses non-modal `dialog.show()` + `position: absolute`, so the alert stays inside the host. Host must be `position: relative`.",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [open, setOpen] = useState(false);
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-large">
+        <p className="text-sm text-muted">
+          Overlay stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
+        </p>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open in custom host
+        </Button>
+        <div
+          ref={setContainer}
+          className="relative h-72 overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+        >
+          <p className="text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <AlertDialog
+              open={open}
+              onOpenChange={setOpen}
+              portalContainer={container}
+              status="warning"
+              size="small"
+            >
+              <AlertDialog.Panel>
+                <AlertDialog.Header>
+                  <AlertDialog.HeadingBlock>
+                    <AlertDialog.Title>Inside host</AlertDialog.Title>
+                    <AlertDialog.Description>
+                      Panel is a DOM child of the dashed container.
+                    </AlertDialog.Description>
+                  </AlertDialog.HeadingBlock>
+                </AlertDialog.Header>
+                <AlertDialog.Footer>
+                  <Button type="button" size="small" variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="button" size="small" onClick={() => setOpen(false)}>
+                    Continue
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Panel>
+            </AlertDialog>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`AlertDialog.Trigger asChild` merges host `id`, `data-*`, `className`, and `ref` onto the child via `mergeAsChildProps`.",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+    const [open, setOpen] = useState(false);
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-large">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <AlertDialog open={open} onOpenChange={setOpen} status="danger">
+          <AlertDialog.Trigger
+            asChild
+            ref={triggerRef}
+            id="story-alert-dialog-trigger"
+            data-testid="story-alert-dialog-trigger"
+            data-analytics="open-alert-dialog"
+            className="ring-2 ring-primary/30"
+          >
+            <Button type="button" variant="outline">
+              Open (merged props)
+            </Button>
+          </AlertDialog.Trigger>
+          <AlertDialog.Panel>
+            <AlertDialog.Header>
+              <AlertDialog.HeadingBlock>
+                <AlertDialog.Title>Merged trigger</AlertDialog.Title>
+                <AlertDialog.Description>
+                  Host props from Trigger land on the Button child.
+                </AlertDialog.Description>
+              </AlertDialog.HeadingBlock>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" onClick={() => setOpen(false)}>
+                Confirm
+              </Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Panel>
+        </AlertDialog>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-alert-dialog-trigger");
+    await expect(btn).toHaveAttribute("id", "story-alert-dialog-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "open-alert-dialog");
+  },
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "Slot customization via `classNames` on root (like `Dialog`).",
+      },
+    },
+  },
+  render: function AlertDialogClassNamesStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <AlertDialog
+        open={open}
+        onOpenChange={setOpen}
+        status="warning"
+        classNames={{
+          panel: "ring-1 ring-warning/30",
+          title: "text-warning font-semibold",
+          description: "text-foreground/80",
+          footer: "border-t border-warning/20 pt-small",
+        }}
+      >
+        <AlertDialog.Trigger asChild>
+          <Button type="button" variant="outline">
+            Open
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
+            <AlertDialog.HeadingBlock>
+              <AlertDialog.Title>Unsaved changes</AlertDialog.Title>
+              <AlertDialog.Description>
+                All slots configured via classNames on root.
+              </AlertDialog.Description>
+            </AlertDialog.HeadingBlock>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={() => setOpen(false)}>
+              Continue
+            </Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Panel>
+      </AlertDialog>
+    );
+  },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, indicator, chrome, overlay)",
+  render: () => <AlertDialogSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `AlertDialog.Panel` — `playSlot(\"panel\")`. `play()` skips (no `root`). Panel stays open in a contained portal.",
+      },
+    },
+  },
+  render: () => <AlertDialogMotionControllerGalleryDemo />,
 };

@@ -1,0 +1,27 @@
+import { formatLocaleNumber } from "@/components/core/utils/intlFormat";
+
+import type { MeterDisplayState } from "./meterTypes";
+ 
+export function meterValueToPercent(value: number, min: number, max: number): number {
+  if (max <= min) return 0;
+  return ((value - min) / (max - min)) * 100;
+}
+ 
+export function defaultMeterFormatValue(value: number): string {
+  return formatLocaleNumber(value);
+}
+ 
+export function meterDisplayEqual(
+  a: MeterDisplayState | null,
+  b: MeterDisplayState | null,
+): boolean {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  return (
+    a.clampedValue === b.clampedValue &&
+    a.statusText === b.statusText &&
+    a.min === b.min &&
+    a.max === b.max
+  );
+}
+ 

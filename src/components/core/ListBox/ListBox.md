@@ -1,0 +1,277 @@
+# ListBox
+
+Список выбора (`role="listbox"`): single / multiple, keyboard-friendly items, опциональный selection indicator. Используется standalone и внутри Select / ComboBox / Dropdown.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type ListBoxSize, type ListBoxVariant, type ListBoxClassNames, type ListBoxMotion, type ListBoxPartMotion } from "burne-ui";
+```
+
+## API
+
+### Simple API (items с props)
+
+```tsx
+<ListBox
+  aria-label="Язык"
+  defaultValue="ru"
+  onValueChange={setLang}
+>
+  <ListBox.Item value="ru" label="Русский" hint="Кириллица" indicator />
+  <ListBox.Item value="en" label="English" indicator />
+</ListBox>
+```
+
+`indicator` на Item — то же, что явный `<ListBox.ItemIndicator />` в compound.
+
+### Compound API (секции)
+
+```tsx
+<ListBox selectionMode="multiple" defaultValue={["ru"]}>
+  <ListBox.Section>
+    <ListBox.Header>Доступные языки</ListBox.Header>
+    <ListBox.Item value="ru">
+      <ListBox.ItemIndicator />
+      <ListBox.Label>Русский</ListBox.Label>
+      <ListBox.Hint>Кириллица</ListBox.Hint>
+    </ListBox.Item>
+    <ListBox.Separator />
+    <ListBox.Empty>Нет опций</ListBox.Empty>
+  </ListBox.Section>
+</ListBox>
+```
+
+### Freeform children
+
+Произвольная разметка в `Item` (как `Dropdown.Item` `parts.rest`) — без обязательного `Label`:
+
+```tsx
+<ListBox.Item value="maya" className="flex items-start gap-mid">
+  <Avatar … />
+  <div className="min-w-0 flex-1">…</div>
+</ListBox.Item>
+```
+
+Option-grid (indicator | label | icon) включается только когда есть слоты `ItemIndicator` / `Label` / `Hint` / `Icon` или simple props. Freeform — layout через `className` / `classNames.item`.
+
+`ItemIndicator` **не** инжектится автоматически — только явный `<ListBox.ItemIndicator />`.
+
+### Root props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `variant` | `default` | `default` |
+| `selectionMode` | `single` | `single` \| `multiple` |
+| `virtualized` | `false` | Плоский список `ListBox.Item`: в DOM только видимые строки |
+| `value` / `defaultValue` | — | Одно значение, `string \| null`. Пустой выбор — `null` |
+| `onValueChange` | — | `(value: string \| null) => void`, только `single` |
+| `values` / `defaultValues` | — | Набор при `selectionMode="multiple"` |
+| `onValuesChange` | — | `(values: string[]) => void`, только `multiple` |
+| `activeValue` / `onActiveValueChange` | — | Keyboard hover option (Select/ComboBox) |
+| `disabled` | `false` | Блокирует все items |
+| `listId` | auto | id для `aria-*` |
+| `aria-label` / `aria-labelledby` | — | Accessible name списка |
+| `classNames` | — | см. стилизацию |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `ListBox.Item` |
+
+### Compound-подчасти
+
+| Часть | Роль |
+|-------|------|
+| `ListBox.Section` | `role="group"` + `aria-labelledby` |
+| `ListBox.Header` | Заголовок секции |
+| `ListBox.Separator` | Разделитель |
+| `ListBox.Empty` | Пустое состояние |
+| `ListBox.Item` | `role="option"` button; simple: `label` / `hint` / `icon` / `indicator`; nested motion scope (`motionController`, `playSlot("item")`) |
+| `ListBox.Label` / `Hint` / `Icon` | Слоты grid item |
+| `ListBox.ItemIndicator` | `SelectionIndicator` (compound: `.Fill`, `.Mark`). Иконка — проп `icon` |
+
+### `useListBox()`
+
+Контекст выбора внутри `ListBox`: `selected`, `selectItem`, `setActiveValue`, `indicatorMode` (`radio` | `multi`).  
+`activeValue` вынесен в отдельный контекст (`useListBoxActiveValue`) + подсветка через DOM-атрибут `data-active`, чтобы стрелки/hover не перерендеривали все опции.
+
+### `useListBoxActiveValue()`
+
+Текущее keyboard/hover значение активной опции (`string | null`).
+
+## variant
+
+| variant | Root |
+|---------|------|
+| `default` | `flex flex-col gap-xsmall` |
+
+## Размеры
+
+`size` влияет на padding items, типографику label, gap indicator↔label (`OPTION_CONTROL_SIZE_LAYOUT.listItemGapX`) и размер `SelectionIndicator` (`small` list → `xsmall` indicator, далее на шаг меньше списка). `xsmall` у `ListBox.ItemIndicator` — доменный размер вне `ComponentSize` (`SelectionIndicatorSize`).
+
+## Анимации
+
+Публичный slot motion. Root Provider несёт defaults (keyboard `play("item", "pressIn", { el })`). Каждый `ListBox.Item` — nested scope + `useMotionPart`. SelectionIndicator fill — публичный motion SelectionIndicator.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `item` | `pressIn` / `pressOut` (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
+| `label` / `hint` / `icon` | hover/press; `enter` (opt-in) | нет |
+| `section` / `header` / `empty` / `separator` | `enter` (opt-in); hover/press если задать | нет |
+
+`false` на `item.pressIn` — skip без kill.
+
+Слота `root` нет: `play` skip. `playSlot("header")` / `playAll` — chrome (`section` / `header` / `empty` / `separator`, repeated), не nested Item. Каждый `ListBox.Item` — **вложенный** scope: свой `motionController`, `playSlot("item")` / `playSlot("label")`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`listbox:nudge`, `listbox:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `ListBox.Header`) видит ListBox; внутри Item — scope пункта.
+
+Тройка на корне и отдельно на `ListBox.Item`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, ListBox, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "listbox:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("header", "listbox:nudge")}>
+        Nudge
+      </Button>
+      <ListBox aria-label="Lang" motionController={controller} motion={{ events }}>
+        <ListBox.Header>Lang</ListBox.Header>
+        <ListBox.Item value="en" label="English" />
+      </ListBox>
+    </>
+  );
+}
+```
+
+**Где в коде:** типы — `listBoxTypes.ts`; scope — `listBoxContext.tsx`; defaults + keyboard play — `listBoxAnimations.ts`; слоты — `listBoxParts.tsx`; Provider — `ListBox.tsx`.
+
+```tsx
+<ListBox motion={{ item: { pressIn: false } }} aria-label="Lang">
+  <ListBox.Item value="en" label="English" />
+</ListBox>
+```
+
+Compound: `motion` на `ListBox.Item` — part motion слота `item`; на `ListBox.Label` / `ListBox.Hint` / `ListBox.Icon` / `ListBox.Section` / `ListBox.Header` / `ListBox.Empty` / `ListBox.Separator` — свои слоты. `headerText` не слот.
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на root** — мерж с `classNames.root` на `ListBox`.
+2. **`classNames`** — все слоты через `ListBoxClassNamesProvider`.
+
+Подчасти (`ListBox.Item`, `ListBox.Header`, …) — **`className`** поверх слота. У `ListBox.Header` — также `textClassName` для внутреннего `Text` (мержится после `classNames.headerText`).
+
+### Слоты `ListBoxClassNames`
+
+| Слот | Элемент | Назначение |
+|------|---------|------------|
+| `root` | `role="listbox"` | Padding, border surface |
+| `section` | `role="group"` | Gap секции |
+| `header` | Header wrapper | Padding заголовка |
+| `headerText` | `Text` в header | Типографика секции |
+| `separator` | Divider | Margin/border |
+| `empty` | Empty state | Центрирование, muted |
+| `item` | Item button | Rounded, active/hover (**мержится после** grid-классов строки — можно перебить раскладку) |
+| `label` | Item label | Font weight, color |
+| `hint` | Item hint | Muted secondary |
+| `icon` | Trailing icon | Размер иконки |
+| `itemIndicator` | Indicator shell grid | Cell layout |
+| `itemIndicatorShell` | `SelectionIndicator` root | Border ring |
+| `itemIndicatorFill` | Fill layer | Checked background |
+| `itemIndicatorMark` | Check/dot mark | Icon color |
+
+### Standalone
+
+```tsx
+<ListBox
+  defaultValue="ru"
+  aria-label="Язык интерфейса"
+  classNames={{
+    root: "rounded-large border border-primary/20 p-base",
+    headerText: "text-primary",
+    item: "rounded-lg",
+    label: "font-semibold",
+    hint: "text-muted/80",
+    itemIndicatorShell: "border-primary/40",
+  }}
+>
+  <ListBox.Section>
+    <ListBox.Header>Доступные языки</ListBox.Header>
+    <ListBox.Item value="ru">
+      <ListBox.ItemIndicator />
+      <ListBox.Label>Русский</ListBox.Label>
+      <ListBox.Hint>Кириллица</ListBox.Hint>
+    </ListBox.Item>
+    <ListBox.Item value="en">
+      <ListBox.ItemIndicator />
+      <ListBox.Label>English</ListBox.Label>
+    </ListBox.Item>
+  </ListBox.Section>
+</ListBox>
+```
+
+### Compound item layout
+
+```tsx
+<ListBox.Item value="de" className="py-xlarge">
+  <ListBox.ItemIndicator
+    classNames={{ itemIndicatorFill: "bg-primary/20" }}
+  />
+  <ListBox.Label className="text-mid">Deutsch</ListBox.Label>
+  <ListBox.Icon><IoFlag aria-hidden /></ListBox.Icon>
+</ListBox.Item>
+```
+
+### В Select / ComboBox
+
+Стили list — через `classNames.listBox` на Select/ComboBox root; пункты — дефолтный map или кастомный `Popover` children.
+
+### Практические заметки
+
+- **`ItemIndicator`:** явный слот в children **или** simple prop `indicator` на Item.
+- **Active vs selected:** active — keyboard hover (`bg-default-hover`); selected — `aria-selected` + optional indicator.
+- **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
+- **Full-width label:** при слоте `Label` дефолт `w-fit`; для растягивания: `classNames={{ label: "w-full justify-self-stretch" }}`. Для rich freeform предпочитайте children без `Label` + `className` на Item.
+
+## Доступность
+
+- Root: `role="listbox"`, `aria-label` / `aria-labelledby`
+- Standalone (без controlled `activeValue`): `tabIndex={0}`, `aria-activedescendant`, стрелки / Home / End, Enter/Space — выбор, typeahead по тексту опций
+- Внутри Select / ComboBox: keyboard на combobox; у ListBox нет собственного tab-stop
+- Item: `role="option"`, `aria-selected`, `id={listId}-opt-{value}`, `data-value`
+- Section: `aria-labelledby` от Header id
+- Active option: синхронизация с parent combobox через `aria-activedescendant`
+
+## Структура файлов
+
+```
+ListBox/
+├── ListBox.tsx
+├── index.ts
+├── listBoxTypes.ts
+├── listBoxStyles.ts
+├── listBoxParts.tsx
+├── useListBoxRootState.ts
+├── useListBoxItemState.ts
+├── listBoxAPI.ts
+├── listBoxA11y.ts
+└── ListBox.stories.tsx
+```
+
+## Storybook
+
+`Core Components/ListBox` — single/multiple, sections, indicator, `classNames`, slot motion gallery, MotionController.
+
+## Данные
+
+`items` рисует строки, если дети ещё не содержат `ListBox.Item`. Совпадение пишет ошибку в dev.

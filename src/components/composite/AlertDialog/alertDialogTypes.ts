@@ -1,0 +1,274 @@
+import type { ButtonHTMLAttributes, HTMLAttributes, MouseEvent, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
+ 
+import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
+import type { CloseButtonProps } from "@/components/core/CloseButton";
+import type { ButtonSize } from "@/components/core/Button";
+import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { OverlayDismissEvent, OverlayDismissProps } from "@/components/core/utils/overlayLayer";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type {
+  PanelSize,
+  PanelSizeLayout,
+} from "@/components/core/utils/sizeLayout";
+ 
+export type AlertDialogSize = PanelSize;
+ 
+export type AlertDialogClassNames = {
+  dialog?: string;
+  overlay?: string;
+  panel?: string;
+  content?: string;
+  trigger?: string;
+  header?: string;
+  indicator?: string;
+  headingBlock?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  footer?: string;
+  close?: string;
+};
+ 
+export type AlertDialogLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+ 
+/** Nested text slots also listen for local pointer phases. */
+export type AlertDialogPartMotion = AlertDialogLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+ 
+/**
+ * Overlay / panel / chrome. Overlay+panel defaults: `modalOverlay*` / `modalPanel*`.
+ * Nested chrome enter/leave is broadcast from the panel host.
+ */
+export type AlertDialogMotion = {
+  overlay?: AlertDialogLifecycleMotion;
+  panel?: AlertDialogPartMotion;
+  title?: AlertDialogPartMotion;
+  description?: AlertDialogPartMotion;
+  close?: AlertDialogLifecycleMotion;
+  header?: AlertDialogLifecycleMotion;
+  headingBlock?: AlertDialogPartMotion;
+  footer?: AlertDialogLifecycleMotion;
+  content?: AlertDialogLifecycleMotion;
+  body?: AlertDialogLifecycleMotion;
+  indicator?: AlertDialogLifecycleMotion;
+  /** Open squeeze on `AlertDialog.Trigger` (Root scope — outside Panel). */
+  trigger?: AlertDialogPartMotion;
+};
+ 
+/** Size tokens from shared `PANEL_SIZE_LAYOUT` (AlertDialog slice). */
+export type AlertDialogSizePreset = Pick<
+  PanelSizeLayout,
+  | "rounded"
+  | "panelMax"
+  | "maxHeight"
+  | "headerPadding"
+  | "bodyPadding"
+  | "footerPadding"
+  | "titleVariant"
+  | "titleClassName"
+  | "descVariant"
+  | "descClassName"
+  | "bodyVariant"
+  | "iconClass"
+  | "footerButtonSize"
+  | "closeButtonSize"
+> & {
+  /** Alert header grid gap (`alertHeaderGap` in panel layout). */
+  headerGap: string;
+};
+ 
+export type AlertDialogProps = {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: ReactNode;
+  status?: AlertStatus;
+  variant?: AlertVariant;
+  size?: AlertDialogSize;
+  /**
+   * Whether Escape dismisses the dialog (APG: least destructive / Cancel).
+   * Set `false` to keep Escape blocked (opt-in hard confirmations).
+   * @default true
+   */
+  closeOnEscape?: boolean;
+  /** Backdrop click closes. Default false (APG). */
+  closeOnInteractOutside?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
+  classNames?: Prettify<AlertDialogClassNames>;
+  /**
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator`) plus `trigger` press on Root.
+   * Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Root has no portal DOM — portal slots live on `AlertDialog.Panel`.
+   */
+  motion?: Prettify<MotionMapWithEvents<AlertDialogMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Portal slots need a separate handle on `AlertDialog.Panel`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type AlertDialogClassNamesProviderProps = {
+  classNames?: Prettify<AlertDialogClassNames>;
+  children?: ReactNode;
+};
+ 
+export type AlertDialogPanelProps = {
+  className?: string;
+  /**
+   * Anchor for inheriting the light theme from the wrapper (`data-theme`).
+   * By default — `document.activeElement` at the moment of opening.
+   */
+  themeAnchor?: HTMLElement | null;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
+  children?: ReactNode;
+  motion?: Prettify<MotionMapWithEvents<AlertDialogMotion>>;
+  /**
+   * Handle for the portal host (`panel`, `overlay`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("panel")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  /** Render trigger as a child element (the child receives all trigger props). */
+  asChild?: boolean;
+  children?: ReactNode;
+  motion?: Prettify<AlertDialogPartMotion>;
+};
+
+export type AlertDialogOverlayProps = OverlayDismissProps;
+
+export type AlertDialogActionProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  children?: ReactNode;
+};
+ 
+export type AlertDialogContextValue = {
+  /** Whether the alert dialog is currently open. */
+  open: boolean;
+  titleId: string;
+  descriptionId: string;
+  hasTitle: boolean;
+  setHasTitle: (v: boolean) => void;
+  hasDescription: boolean;
+  setHasDescription: (v: boolean) => void;
+  onOpenChange: (open: boolean) => void;
+  /** Escape dismisses when true (default). */
+  closeOnEscape: boolean;
+  closeOnInteractOutside: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
+  variant: AlertVariant;
+  status: AlertStatus;
+  size: AlertDialogSize;
+  sizePreset: AlertDialogSizePreset;
+  footerButtonSize: ButtonSize;
+  /** Portal mount node from Root; Panel may override via its own prop. */
+  portalContainer?: HTMLElement | null;
+};
+ 
+export type AlertDialogHeaderContextValue = {
+  variant: AlertVariant;
+  status: AlertStatus;
+  sizePreset: AlertDialogSizePreset;
+  gridSlots: MessageBannerGridSlots;
+  headerIcon?: ReactNode | null;
+};
+ 
+export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  icon?: ReactNode | null;
+  showClose?: boolean;
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+ 
+export type AlertDialogIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<AlertDialogPartMotion>;
+};
+export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<AlertDialogPartMotion>;
+};
+export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogCloseProps = CloseButtonProps & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogContentProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
+export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogPartMotion>;
+};
+ 
+export type UseAlertDialogRootStateProps = Pick<
+  AlertDialogProps,
+  | "open"
+  | "defaultOpen"
+  | "onOpenChange"
+  | "status"
+  | "variant"
+  | "size"
+  | "closeOnEscape"
+  | "closeOnInteractOutside"
+  | "onEscapeKeyDown"
+  | "onInteractOutside"
+  | "initialFocus"
+  | "portalContainer"
+>;
+ 
+export type UseAlertDialogModalMotionProps = {
+  open: boolean;
+  onOpenChange?: (open: boolean) => void;
+  closeOnEscape?: boolean;
+  closeOnInteractOutside?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: OverlayDismissProps["onInteractOutside"];
+  initialFocus?: OverlayDismissProps["initialFocus"];
+  variant: AlertVariant;
+  /** When true, open with `show()` + absolute positioning inside a custom portal host. */
+  contained?: boolean;
+};
+ 
+export type AlertDialogPortalShellProps = {
+  open: boolean;
+  children: ReactNode;
+  className?: string;
+  variant: AlertVariant;
+  sizePreset: AlertDialogSizePreset;
+  portalTheme: Record<string, string | undefined>;
+  lightUi: boolean;
+  titleId: string;
+  descriptionId: string;
+  hasTitle: boolean;
+  hasDescription: boolean;
+  onDialogCancel: (event: OverlayDismissEvent) => void;
+  onBackdropMouseDown: (event: MouseEvent<HTMLDivElement>) => void;
+  dialogRef: React.RefObject<HTMLDialogElement | null>;
+  overlayRef: React.RefObject<HTMLDivElement | null>;
+  panelRef: React.RefObject<HTMLDivElement | null>;
+  /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
+  contained?: boolean;
+};
+ 

@@ -1,0 +1,247 @@
+import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
+import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
+ 
+import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import {
+  resolveFieldShellSurfaceClass,
+  type FieldShellFilledVariant,
+  type FieldShellStatus,
+} from "@/components/core/utils/fieldShellVariant";
+ 
+import {
+  KIT_TIME_FIELD_VARIANTS,
+  type TimeFieldSize,
+  type TimeFieldVariant,
+} from "./timeFieldTypes";
+ 
+import { cn } from "@/utils/cn";
+ 
+function timeFieldShellHoverVariant(variant: TimeFieldVariant): FieldShellFilledVariant {
+  if (variant === "outline") return "outline";
+  if (variant === "secondary") return "secondary";
+  return "default";
+}
+ 
+export const TIME_FIELD_AFFIX_SURFACE_CLASS = "bg-primary-tint";
+ 
+export const TIME_FIELD_AFFIX_PREFIX_EDGE_CLASS = "border-e-token";
+export const TIME_FIELD_AFFIX_SUFFIX_EDGE_CLASS = "border-s-token";
+ 
+export const TIME_FIELD_KEYBOARD_INPUT_CLASS =
+  `pointer-events-none absolute h-px w-px opacity-0 ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
+ 
+export const TIME_FIELD_SEGMENT_BASE_CLASS =
+  "inline-flex min-w-[2ch] select-none items-center justify-center outline-none";
+ 
+/** Segment chrome: em/ch track the mono digit metrics; pad/radius use tokens. */
+export const TIME_FIELD_SEGMENT_SEGMENTED_CLASS =
+  "h-[1.65em] min-w-[2.25ch] rounded-xsmall px-xsmall bg-default-hover";
+ 
+export const TIME_FIELD_SEGMENT_DEFAULT_CLASS = "rounded-xsmall px-[length:calc(var(--border-width)*2)]";
+ 
+export const TIME_FIELD_SEGMENT_FOCUSED_CLASS = "bg-primary text-primary-foreground";
+ 
+export const TIME_FIELD_SEGMENT_DISABLED_CLASS = "cursor-not-allowed";
+export const TIME_FIELD_SEGMENT_ENABLED_CLASS = "cursor-default";
+ 
+export const TIME_FIELD_SEGMENT_SEPARATOR_BASE_CLASS =
+  "inline-flex w-[0.45em] shrink-0 select-none items-center justify-center self-center text-muted";
+ 
+export const TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS =
+  "mx-[length:var(--border-width)]";
+ 
+export const TIME_FIELD_SEGMENT_GROUP_CLASS = "inline-flex items-center";
+ 
+export const TIME_FIELD_SEGMENTS_BASE_CLASS =
+  "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none";
+ 
+/** Flex row inside `<fieldset>` — flex on fieldset itself breaks height on resize. */
+export const TIME_FIELD_SHELL_INNER_CLASS =
+  "flex min-w-0 w-full items-stretch";
+ 
+export const TIME_FIELD_SEGMENTS_SEGMENTED_CLASS = "gap-xsmall";
+ 
+const AFFIX_PADDING: Record<TimeFieldSize, string> = {
+  small: affixSlotClass("small"),
+  base: affixSlotClass("base"),
+  mid: affixSlotClass("mid"),
+  large: affixSlotClass("large"),
+};
+ 
+export function timeFieldAffixSurfaceClass(): string {
+  return TIME_FIELD_AFFIX_SURFACE_CLASS;
+}
+ 
+export function timeFieldAffixSlotClass({
+  side,
+  size,
+  slotClass,
+}: {
+  side: "prefix" | "suffix";
+  size: TimeFieldSize;
+  slotClass?: string;
+}) {
+  return cn(
+    AFFIX_PADDING[size],
+    timeFieldAffixSurfaceClass(),
+    side === "prefix"
+      ? TIME_FIELD_AFFIX_PREFIX_EDGE_CLASS
+      : TIME_FIELD_AFFIX_SUFFIX_EDGE_CLASS,
+    slotClass,
+  );
+}
+ 
+export function timeFieldShellSurfaceClass({
+  variant,
+}: {
+  variant: TimeFieldVariant;
+}): string {
+  return resolveFieldShellSurfaceClass({
+    variant: variant === "segmented" ? "default" : variant,
+  });
+}
+ 
+export function timeFieldShellClass({
+  variant,
+  status,
+  disabled,
+  compact,
+  shellSurface,
+  shellHoverMotionClass,
+  slotClass,
+  className,
+}: {
+  variant: TimeFieldVariant;
+  status: FieldShellStatus;
+  disabled: boolean;
+  size: TimeFieldSize;
+  compact: boolean;
+  shellSurface: string;
+  shellHoverMotionClass?: string;
+  slotClass?: string;
+  className?: string;
+}) {
+  const visual = resolveVariantVisual(variant, KIT_TIME_FIELD_VARIANTS, "timeField.shell");
+  const kitSurface = usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS);
+
+  return cn(
+    "relative m-0 min-w-0 overflow-hidden rounded-base p-0",
+    kitSurface && "border-1",
+    visual.className,
+    compact ? "w-fit shrink-0" : "w-full min-w-0",
+    kitSurface ? shellSurface : undefined,
+    FIELD_SHELL_TRANSITION_CLASS,
+    fieldShellFocusRingClass(status),
+    kitSurface && fieldShellHoverClass(!disabled, status, timeFieldShellHoverVariant(variant)),
+    shellHoverMotionClass,
+    disabled ? "cursor-not-allowed opacity-55" : "",
+    slotClass,
+    className,
+  );
+}
+ 
+export function timeFieldShellInnerClass({
+  variant,
+  slotClass,
+}: {
+  variant: TimeFieldVariant;
+  slotClass?: string;
+}): string {
+  return cn(
+    TIME_FIELD_SHELL_INNER_CLASS,
+    usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS) && "min-h-full",
+    slotClass,
+  );
+}
+ 
+export function timeFieldSegmentGroupClass({
+  slotClass,
+}: {
+  slotClass?: string;
+} = {}): string {
+  return cn(TIME_FIELD_SEGMENT_GROUP_CLASS, slotClass);
+}
+ 
+export function timeFieldSegmentsMotionClass(slotClass?: string): string {
+  return cn("flex min-w-0 flex-1 items-center", slotClass);
+}
+
+export function timeFieldSegmentsClass({
+  variant,
+  size,
+  compact,
+  slotClass,
+}: {
+  variant: TimeFieldVariant;
+  size: TimeFieldSize;
+  compact: boolean;
+  slotClass?: string;
+}) {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  const segTextCls =
+    layout.controlText === "small"
+      ? "text-small"
+      : layout.controlText === "mid"
+        ? "text-mid"
+        : "text-base";
+ 
+  return cn(
+    TIME_FIELD_SEGMENTS_BASE_CLASS,
+    compact ? "justify-center px-small" : layout.padX,
+    layout.padY,
+    variant === "segmented" && TIME_FIELD_SEGMENTS_SEGMENTED_CLASS,
+    segTextCls,
+    slotClass,
+  );
+}
+ 
+export function timeFieldSegmentClass({
+  variant,
+  focused,
+  disabled,
+  slotClass,
+}: {
+  variant: TimeFieldVariant;
+  focused: boolean;
+  disabled: boolean;
+  slotClass?: string;
+}) {
+  return cn(
+    TIME_FIELD_SEGMENT_BASE_CLASS,
+    variant === "segmented"
+      ? TIME_FIELD_SEGMENT_SEGMENTED_CLASS
+      : TIME_FIELD_SEGMENT_DEFAULT_CLASS,
+    focused && TIME_FIELD_SEGMENT_FOCUSED_CLASS,
+    disabled ? TIME_FIELD_SEGMENT_DISABLED_CLASS : TIME_FIELD_SEGMENT_ENABLED_CLASS,
+    slotClass,
+  );
+}
+ 
+export function timeFieldSegmentSeparatorClass({
+  variant,
+  slotClass,
+}: {
+  variant: TimeFieldVariant;
+  slotClass?: string;
+}) {
+  return cn(
+    TIME_FIELD_SEGMENT_SEPARATOR_BASE_CLASS,
+    variant === "segmented" && TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS,
+    slotClass,
+  );
+}
+ 
+export function timeFieldRootClass({
+  compact,
+  slotClass,
+  className,
+}: {
+  compact: boolean;
+  slotClass?: string;
+  className?: string;
+}) {
+  return cn(compact && "w-fit", slotClass, className);
+}
+ 

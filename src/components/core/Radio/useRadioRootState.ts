@@ -1,0 +1,252 @@
+import { useSkinVariant } from "@/skins/skinContext";
+import { useOptionalRadioGroupContext } from "@/components/composite/RadioGroup/radioGroupContext";
+import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
+import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
+import { useControllableState } from "@/components/core/utils/useControllableState";
+import { useCallback, useId, useMemo, useRef, type ChangeEvent, type MouseEvent, type ReactNode } from "react";
+ 
+import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
+import { useFieldInvalid } from "@/components/core/Field/fieldContext";
+import { radioErrorId, radioHintId, radioInputId } from "./radioA11y";
+import { compoundUsesInlineMotion } from "./radioAPI";
+import { RADIO_SIZE_LAYOUT } from "./radioStyles";
+import type { RadioFieldContextValue, UseRadioRootStateProps } from "./radioTypes";
+ 
+export function useRadioRootState(
+  {
+    size = "base",
+    labelPosition = "end",
+    variant: variantProp,
+    disabled,
+    checked,
+    defaultChecked,
+    onChange,
+    id: idProp,
+    name,
+    value,
+    required,
+    form,
+    autoFocus,
+    tabIndex,
+    readOnly,
+    onBlur,
+    onFocus,
+    inputRef,
+    label,
+    hint,
+    error,
+    invalid,
+  }: UseRadioRootStateProps,
+  children: ReactNode | undefined,
+  className?: string,
+  onClick?: (e: MouseEvent<HTMLInputElement>) => void,
+) {
+  const variant = useSkinVariant(variantProp);
+  const group = useOptionalRadioGroupContext();
+  const optionValueStr = value !== undefined && value !== null ? String(value) : undefined;
+  const inGroup = group != null && optionValueStr != null;
+  const formBinding = useFormControlProps({
+    name: inGroup ? undefined : typeof name === "string" ? name : undefined,
+    value: checked,
+    onChange: onChange as ((event: unknown) => void) | undefined,
+    onBlur: onBlur as ((event: unknown) => void) | undefined,
+    disabled,
+    readOnly: Boolean(readOnly || group?.readOnly),
+  });
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
+ 
+  const autoId = useId();
+  const inputId = radioInputId(idProp, autoId);
+  const hintId = radioHintId(inputId);
+  const errorId = radioErrorId(inputId);
+ 
+  const isExplicitlyControlled = checked !== undefined;
+  const groupChecked = inGroup ? group.selectedValue === optionValueStr : undefined;
+  const formChecked =
+    !inGroup && formBinding.bound
+      ? String(formBinding.value ?? "") === String(value ?? "on")
+      : undefined;
+  const resolvedChecked = isExplicitlyControlled
+    ? checked
+    : groupChecked !== undefined
+      ? groupChecked
+      : formChecked;
+ 
+  const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
+    value: resolvedChecked,
+    defaultValue: Boolean(inGroup || isExplicitlyControlled ? undefined : defaultChecked),
+  });
+ 
+  const inputName = name ?? group?.name;
+  const isDisabled = Boolean(disabled ?? group?.disabled);
+  const { isCompound, hasCompoundLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasCompoundLabel: compound ? hasCompoundChild(children, "RadioLabel") : false,
+      hasCompoundHint: compound ? hasCompoundChild(children, "RadioHint") : false,
+      hasCompoundError: compound ? hasCompoundChild(children, "RadioError") : false,
+    };
+  }, [children]);
+  const hasLabel = isCompound ? hasCompoundLabel : Boolean(label);
+  const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
+  const enableTextMotion = !isDisabled && (!isCompound || useInlineCompoundMotion);
+  const sz = RADIO_SIZE_LAYOUT[size];
+  const hasHint = hint != null;
+  const hasError = error != null;
+  const isInvalid = resolveFieldInvalid({
+    invalid,
+    error: (isCompound ? hasCompoundError : hasError) ? true : undefined,
+    inheritedInvalid: useFieldInvalid(),
+  });
+  const showDanger = isInvalid;
+  const secondaryLines = isCompound
+    ? (hasCompoundHint ? 1 : 0) + (hasCompoundError ? 1 : 0)
+    : (hasHint ? 1 : 0) + (hasError ? 1 : 0);
+ 
+  const textColRef = useRef<HTMLElement>(null);
+ 
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (resolvedReadOnly) {
+        e.preventDefault();
+        return;
+      }
+      if (!isExplicitlyControlled && !inGroup && !formBinding.bound) setMergedChecked(e.target.checked);
+      onChange?.(e);
+      if (e.defaultPrevented) return;
+      if (inGroup && e.target.checked && optionValueStr != null) {
+        group.selectValue(optionValueStr);
+        return;
+      }
+      if (formBinding.bound) formBinding.onChange(e);
+    },
+    [formBinding, group, inGroup, isExplicitlyControlled, onChange, optionValueStr, resolvedReadOnly, setMergedChecked],
+  );
+ 
+  const canClearSelection =
+    !isDisabled && !resolvedReadOnly && !required && !(inGroup && group.required);
+ 
+  const inputRequired =
+    required ?? (inGroup && group.required ? group.claimRequiredAnchor() : undefined);
+ 
+  const handleClick = useCallback(
+    (e: MouseEvent<HTMLInputElement>) => {
+      onClick?.(e);
+      if (e.defaultPrevented || !canClearSelection || !mergedChecked) return;
+ 
+      e.preventDefault();
+ 
+      if (inGroup) {
+        group.selectValue(undefined);
+        return;
+      }
+ 
+      if (!isExplicitlyControlled) {
+        setMergedChecked(false);
+      }
+    },
+    [
+      canClearSelection,
+      group,
+      inGroup,
+      isExplicitlyControlled,
+      mergedChecked,
+      onClick,
+      setMergedChecked,
+    ],
+  );
+ 
+  const contextValue: RadioFieldContextValue = useMemo(
+    () => ({
+      inputId,
+      hintId,
+      errorId,
+      size,
+      labelPosition,
+      variant,
+      mergedChecked,
+      isDisabled,
+      isControlled,
+      isCompound,
+      hasCompoundHint,
+      hasCompoundError,
+      hintConnected: isCompound ? hasCompoundHint : hasHint,
+      errorConnected: isCompound ? hasCompoundError : hasError,
+      isInvalid,
+      hasLabel,
+      useInlineCompoundMotion,
+      textMotionRef: textColRef,
+      danger: showDanger,
+      inputName,
+      onChange: handleChange,
+      onActivate: handleClick,
+      inputProps: {
+        value,
+        defaultChecked: !isControlled ? defaultChecked : undefined,
+        required: inputRequired,
+        form,
+        autoFocus,
+        tabIndex,
+        readOnly: resolvedReadOnly,
+        onBlur,
+        onFocus,
+        inputRef,
+      },
+    }),
+    [
+      showDanger,
+      isInvalid,
+      defaultChecked,
+      form,
+      autoFocus,
+      errorId,
+      handleChange,
+      handleClick,
+      hasCompoundError,
+      hasCompoundHint,
+      hasError,
+      hasHint,
+      hasLabel,
+      hintId,
+      inputId,
+      inputName,
+      isCompound,
+      useInlineCompoundMotion,
+      isControlled,
+      isDisabled,
+      mergedChecked,
+      onBlur,
+      onFocus,
+      inputRef,
+      inputRequired,
+      resolvedReadOnly,
+      labelPosition,
+      size,
+      tabIndex,
+      value,
+      variant,
+    ],
+  );
+ 
+  return {
+    contextValue,
+    isCompound,
+    isDisabled,
+    mergedChecked,
+    enableTextMotion,
+    textColRef,
+    secondaryLines,
+    sz,
+    hasHint,
+    hasError,
+    label,
+    hint,
+    error,
+    hintId,
+    errorId,
+    danger: showDanger,
+  };
+}
+ 

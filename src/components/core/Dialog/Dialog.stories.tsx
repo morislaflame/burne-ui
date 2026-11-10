@@ -1,16 +1,26 @@
-import type { ComponentType, FormEvent } from "react";
-import { useCallback, useState } from "react";
+import type { ComponentType } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fireEvent, screen, waitFor } from "storybook/test";
+import gsap from "gsap";
 
-import { Form } from "@/components/composite/Form";
+import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
-import { Input } from "@/components/core/Input/Input";
-import { Dialog } from "./Dialog";
+import { Input } from "@/components/core/Input";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
+import {
+  playKeyboardOpensDialog,
+  playOpenCloseUnmounts,
+} from "@/stories-utils/motionStoryPlay";
+import { Dialog, type DialogSize } from ".";
+import { useDialog } from "./dialogContext";
+import { DialogSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/dialog/slotMotion/gallery";
+import { DialogMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/dialog/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
@@ -24,7 +34,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
@@ -42,16 +52,24 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модальное окно (портал в `document.body`). Длинный контент скроллится в `Dialog.Body`; шапка и футер фиксированы. Управление через `open` / `onOpenChange`.",
+          "Modal dialog (portal to `document.body`). Panel: shared `p-xlarge` and `gap-large` between `Header` / `Body` / `Footer`; scroll lives in `Body`. Sizes `small`–`large`.  In `Dialog.Footer`, direct `Button` children without `size` inherit the modal button size.\n\n`Dialog.Trigger` — built-in trigger that opens the dialog after the press animation.",
       },
     },
   },
   decorators: [...darkThemeDecorator],
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+    },
+  },
 } satisfies Meta;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+// ─── Default ─────────────────────────────────────────────────────────────────
 
 export const Default: Story = {
   render: function DialogDemo() {
@@ -59,146 +77,452 @@ export const Default: Story = {
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть диалог
+          Open dialog
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <Dialog.Header>
-            <Dialog.HeadingBlock>
-              <Dialog.Title>Настройки экспорта</Dialog.Title>
-              <Dialog.Description>
-                Выберите формат и директорию. Изменения не применятся, пока вы не
-                сохраните проект.
-              </Dialog.Description>
-            </Dialog.HeadingBlock>
-            <Dialog.Close />
-          </Dialog.Header>
-          <Dialog.Body>
-            <p className="text-sm leading-relaxed text-muted">
-              Произвольный контент: поля формы, списки, предпросмотр. Здесь только
-              иллюстрация скролла при большом объёме текста.
-            </p>
-            <p className="mt-plus text-sm leading-relaxed text-muted">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-          </Dialog.Body>
-          <Dialog.Footer>
-            <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-              Отмена
-            </Button>
-            <Button type="button" size="base" variant="default" onClick={() => setOpen(false)}>
-              Сохранить
-            </Button>
-          </Dialog.Footer>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Export settings</Dialog.Title>
+                <Dialog.Description>
+                  Choose format and directory. Changes will not apply until you
+                  save the project.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm leading-relaxed text-muted">
+                Arbitrary content: form fields, lists, preview. Here only
+                an illustration of scroll with a large amount of text.
+              </p>
+              <p className="mt-mid text-sm leading-relaxed text-muted">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
+                Save
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
         </Dialog>
       </>
     );
   },
 };
 
+// ─── With built-in Trigger ────────────────────────────────────────────────────
+
+export const WithTrigger: Story = {
+  name: "With Dialog.Trigger",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Dialog.Trigger asChild` — the trigger opens the dialog after the button press animation completes. `e.preventDefault()` suppresses the `Button`'s own animation; Trigger controls it.",
+      },
+    },
+  },
+  render: function WithTriggerDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog.Trigger asChild>
+          <Button type="button">Open dialog</Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Settings</Dialog.Title>
+              <Dialog.Description>
+                Dialog opened after the button press animation.
+              </Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">Dialog content.</p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+              Close
+            </Button>
+            <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
+              Done
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await playKeyboardOpensDialog({
+      canvas,
+      userEvent,
+      triggerName: "Open dialog",
+      dialogName: "Settings",
+    });
+  },
+};
+
+// ─── Uncontrolled (defaultOpen) ───────────────────────────────────────────────
+
+function DialogUncontrolledDone() {
+  const { onOpenChange } = useDialog();
+  return (
+    <Button type="button" size="base" variant="primary" onClick={() => onOpenChange(false)}>
+      Done
+    </Button>
+  );
+}
+
+export const Uncontrolled: Story = {
+  name: "Uncontrolled (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Without `open` — internal state via `defaultOpen` (here `false`). Trigger and Close/Done drive open/close through context.",
+      },
+    },
+  },
+  render: function UncontrolledDemo() {
+    return (
+      <Dialog>
+        <Dialog.Trigger asChild>
+          <Button type="button">Open dialog</Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Uncontrolled dialog</Dialog.Title>
+              <Dialog.Description>
+                No React state on the parent — only Trigger / Close.
+              </Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">
+              Use <code className="text-foreground">defaultOpen</code> for the initial state.
+            </p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <DialogUncontrolledDone />
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+    );
+  },
+};
+
+// ─── Interaction test ─────────────────────────────────────────────────────────
+
+export const OpenCloseInteraction: Story = {
+  name: "Interaction: open",
+  render: function DialogInteractionDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Export settings</Dialog.Title>
+                <Dialog.Description>
+                  Choose format and directory.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Dialog content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
+                Save
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await playOpenCloseUnmounts({
+      canvas,
+      userEvent,
+      openName: "Open dialog",
+      closeName: "Cancel",
+      dialogName: "Export settings",
+    });
+  },
+};
+
+export const InteractOutsidePreventDefault: Story = {
+  name: "Interaction: onInteractOutside preventDefault",
+  render: function InteractOutsideDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dirty form
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel
+            onInteractOutside={(event) => {
+              event.preventDefault();
+            }}
+          >
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Unsaved changes</Dialog.Title>
+                <Dialog.Description>
+                  Backdrop click is cancelled with preventDefault.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Returning false from the handler does not keep the dialog open.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Discard
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Open dirty form" }));
+    const dialog = await screen.findByRole("dialog", { name: "Unsaved changes" });
+    const overlay = dialog.querySelector("[aria-hidden='true']");
+    await expect(overlay).toBeTruthy();
+    fireEvent.mouseDown(overlay as HTMLElement);
+    await expect(dialog).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Discard" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "Unsaved changes" })).toBeNull();
+    });
+  },
+};
+
+export const ReducedMotionOpenClose: Story = {
+  name: "Motion contract: reduced motion",
+  render: function ReducedMotionDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <MotionConfigProvider motion={{ enableAnimations: false }}>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Export settings</Dialog.Title>
+                <Dialog.Description>Choose format and directory.</Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Dialog content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </MotionConfigProvider>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await playOpenCloseUnmounts({
+      canvas,
+      userEvent,
+      openName: "Open dialog",
+      closeName: "Cancel",
+      dialogName: "Export settings",
+    });
+  },
+};
+
+export const TitlePointerComposition: Story = {
+  name: "Motion contract: title pointer handler",
+  render: function TitlePointerDemo() {
+    const [open, setOpen] = useState(false);
+    const [hoverCount, setHoverCount] = useState(0);
+    return (
+      <>
+        <p>hover:{hoverCount}</p>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title
+                  onPointerOver={() => setHoverCount((n) => n + 1)}
+                >
+                  Export settings
+                </Dialog.Title>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Dialog content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Open dialog" }));
+    const title = await screen.findByRole("heading", { name: "Export settings" });
+    await userEvent.hover(title);
+    await waitFor(() => {
+      expect(canvas.getByText(/hover:[1-9]/)).toBeInTheDocument();
+    });
+    await expect(screen.getByRole("dialog", { name: "Export settings" })).toBeVisible();
+  },
+};
+
+// ─── With form ────────────────────────────────────────────────────────────────
+
 export const WithForm: Story = {
-  name: "С формой",
+  name: "With form",
   render: function DialogWithFormDemo() {
     const [open, setOpen] = useState(false);
-    const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+    const onSubmit = useCallback((values: FormValues) => {
+      void values;
       setOpen(false);
     }, []);
 
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть форму в диалоге
+          Open form in dialog
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <Dialog.Header>
-            <Dialog.HeadingBlock>
-              <Dialog.Title>Быстрое редактирование</Dialog.Title>
-              <Dialog.Description>
-                Данные отправляются только в демо — страница не перезагружается.
-              </Dialog.Description>
-            </Dialog.HeadingBlock>
-            <Dialog.Close />
-          </Dialog.Header>
-          <Form
-            onSubmit={onSubmit}
-            aria-label="Форма в диалоге"
-            className="min-w-0"
-          >
-            <Dialog.Body className="flex flex-col gap-mid">
-              <Input
-                label="Имя"
-                name="name"
-                placeholder="Иван"
-                autoComplete="name"
-              />
-              <Input
-                label="Email"
-                name="email"
-                inputType="text"
-                placeholder="you@example.com"
-                autoComplete="email"
-              />
-            </Dialog.Body>
-            <Dialog.Footer>
-              <Button
-                type="button"
-                size="base"
-                variant="ghost"
-                onClick={() => setOpen(false)}
-              >
-                Отмена
-              </Button>
-              <Button type="submit" size="base" variant="default">
-                Сохранить
-              </Button>
-            </Dialog.Footer>
-          </Form>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Quick edit</Dialog.Title>
+                <Dialog.Description>
+                  Data is submitted in the demo only — the page does not reload.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Form
+              onSubmit={onSubmit}
+              aria-label="Form in dialog"
+              className="min-w-0"
+            >
+              <Dialog.Body>
+                <Form.Section>
+                  <Input>
+                    <Input.Label>Name</Input.Label>
+                    <Input.Control name="name" placeholder="Ivan" autoComplete="name" />
+                  </Input>
+                  <Input>
+                    <Input.Label>Email</Input.Label>
+                    <Input.Control
+                      name="email"
+                      type="text"
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                    />
+                  </Input>
+                </Form.Section>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Button
+                  type="button"
+                  size="base"
+                  variant="ghost"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" size="base" variant="primary">
+                  Save
+                </Button>
+              </Dialog.Footer>
+            </Form>
+          </Dialog.Panel>
         </Dialog>
       </>
     );
   },
 };
 
+// ─── Scrollable content ───────────────────────────────────────────────────────
+
 export const ScrollableContent: Story = {
-  name: "С прокручиваемым контентом",
+  name: "With scrollable content",
   render: function ScrollableContentDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
         <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
-          Длинный контент
+          Long content
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <Dialog.Header>
-            <Dialog.HeadingBlock>
-              <Dialog.Title>Прокручиваемый контент</Dialog.Title>
-              <Dialog.Description>
-                Заголовок и описание остаются на месте; прокрутка только в области ниже.
-              </Dialog.Description>
-            </Dialog.HeadingBlock>
-            <Dialog.Close />
-          </Dialog.Header>
-          <Dialog.Body>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <p key={index} className="mb-mid text-sm leading-normal text-muted last:mb-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                culpa qui officia deserunt mollit anim id est laborum.
-              </p>
-            ))}
-          </Dialog.Body>
-          <Dialog.Footer>
-            <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-              Закрыть
-            </Button>
-            <Button type="button" size="base" variant="default" onClick={() => setOpen(false)}>
-              Готово
-            </Button>
-          </Dialog.Footer>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Scrollable content</Dialog.Title>
+                <Dialog.Description>
+                  Header and description stay in place; scroll only in the area below.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              {Array.from({ length: 10 }).map((_, index) => (
+                <p key={index} className="mb-large text-sm leading-normal text-muted last:mb-0">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                  nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                  fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                  culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              ))}
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Close
+              </Button>
+              <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
+                Done
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
         </Dialog>
       </>
     );
@@ -206,7 +530,317 @@ export const ScrollableContent: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: Default.render,
+};
+
+
+
+function DialogTemplate({
+  size = "base",
+  label = "Open dialog",
+}: {
+  size?: DialogSize;
+  label?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+        {label}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen} size={size}>
+        <Dialog.Panel>
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Export settings</Dialog.Title>
+              <Dialog.Description>
+                Choose format and directory. Changes will not apply until you
+                save the project.
+              </Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">Dialog content to demonstrate size.</p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" variant="primary" onClick={() => setOpen(false)}>
+              Save
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+    </>
+  );
+}
+
+export const Sizes: Story = {
+  name: "Sizes small · base · mid · large",
+  render: function SizesDemo() {
+    return (
+      <div className="flex max-w-2xl flex-col flex-wrap gap-2xlarge sm:flex-row sm:items-start">
+        {(["small", "base", "mid", "large"] as const).map((size) => (
+          <div key={size} className="flex flex-col items-start gap-base">
+            <span className="text-xs font-medium uppercase tracking-wide text-muted">
+              {size}
+            </span>
+            <DialogTemplate size={size} label={`Open (${size})`} />
+          </div>
+        ))}
+      </div>
+    );
+  },
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Custom `portalContainer` uses non-modal `dialog.show()` + `position: absolute`, so the overlay fills the host (not the viewport top layer from `showModal()`). Host must be `position: relative` (or absolute/fixed).",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [open, setOpen] = useState(false);
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-large">
+        <p className="text-sm text-muted">
+          Overlay stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
+        </p>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open in custom host
+        </Button>
+        <div
+          ref={setContainer}
+          className="relative h-72 overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+        >
+          <p className="text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Dialog open={open} onOpenChange={setOpen} portalContainer={container} size="small">
+              <Dialog.Panel>
+                <Dialog.Header>
+                  <Dialog.HeadingBlock>
+                    <Dialog.Title>Inside host</Dialog.Title>
+                    <Dialog.Description>
+                      This panel is a child of the dashed container in the DOM.
+                    </Dialog.Description>
+                  </Dialog.HeadingBlock>
+                  <Dialog.Close />
+                </Dialog.Header>
+                <Dialog.Body>
+                  <p className="text-sm text-muted">Useful for shadow roots, iframes, and nested scroll regions.</p>
+                </Dialog.Body>
+                <Dialog.Footer>
+                  <Button type="button" size="small" onClick={() => setOpen(false)}>
+                    Close
+                  </Button>
+                </Dialog.Footer>
+              </Dialog.Panel>
+            </Dialog>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Dialog.Trigger asChild` merges host `id`, `data-*`, `className`, handlers, and `ref` onto the child via `mergeAsChildProps` (props are no longer dropped).",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-large">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <Dialog>
+          <Dialog.Trigger
+            asChild
+            ref={triggerRef}
+            id="story-dialog-trigger"
+            data-testid="story-dialog-trigger"
+            data-analytics="open-dialog"
+            className="ring-2 ring-primary/30"
+          >
+            <Button type="button" variant="outline">
+              Open (merged props)
+            </Button>
+          </Dialog.Trigger>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Merged trigger</Dialog.Title>
+                <Dialog.Description>
+                  Inspect the trigger: <code className="text-foreground">id</code>,{" "}
+                  <code className="text-foreground">data-analytics</code>, and the ring class live on the Button.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Opened via asChild trigger with forwarded props.</p>
+            </Dialog.Body>
+          </Dialog.Panel>
+        </Dialog>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-dialog-trigger");
+    await expect(btn).toHaveAttribute("id", "story-dialog-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "open-dialog");
+    await expect(btn).toHaveAttribute("aria-haspopup", "dialog");
+  },
+};
+
+// ─── Custom classNames ────────────────────────────────────────────────────────
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Dialog",
+      },
+    },
+  },
+  render: function DialogClassNamesStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </Button>
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          classNames={{
+            trigger: "font-medium",
+            panel: "border-primary/40 bg-primary/5 shadow-token-large",
+            title: "text-primary font-semibold",
+            description: "text-foreground/80",
+            footer: "border-t border-primary/20 pt-small",
+          }}
+        >
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Settings</Dialog.Title>
+                <Dialog.Description>All slots configured via classNames.</Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Modal content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="small" onClick={() => setOpen(false)}>
+                Close
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+};
+
+export const SlotMotion: Story = {
+  name: "Slot motion — title enter stagger",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`motion.title.enter` staggers after the panel. `leave` returns a tween so the portal unmounts.",
+      },
+    },
+  },
+  render: function DialogSlotMotion() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open staggered title
+        </Button>
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          motion={{
+            title: {
+              enter: (ctx) =>
+                gsap.fromTo(
+                  ctx.el,
+                  { y: 12, autoAlpha: 0 },
+                  { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.08 }),
+              leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
+            },
+          }}
+        >
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Staggered title</Dialog.Title>
+                <Dialog.Description>
+                  Title enters after the panel. Overlay and panel keep kit recipes.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-small text-muted">Modal content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="small" onClick={() => setOpen(false)}>
+                Close
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, bounce, color, parts, timeline)",
+  render: () => <DialogSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `Dialog.Panel` — `playSlot(\"panel\")`. `play()` skips (no `root`). Panel stays open in a contained portal.",
+      },
+    },
+  },
+  render: () => <DialogMotionControllerGalleryDemo />,
 };

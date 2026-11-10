@@ -1,0 +1,46 @@
+import { useMemo, type RefObject } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
+ 
+import type { MotionConfig } from "@/components/core/utils/motionConfig";
+import { useContainerPointerHoverHandlers } from "@/components/core/utils/useContainerPointerHoverHandlers";
+ 
+export function useMotionPointerPhases<Element extends HTMLElement = HTMLElement>({
+  enabled,
+  targetRef,
+  onHoverIn,
+  onHoverOut,
+  skipHover,
+  pointerInsideRef,
+}: {
+  enabled: boolean;
+  targetRef: RefObject<HTMLElement | null>;
+  onHoverIn?: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
+  onHoverOut?: (el: HTMLElement, e: ReactPointerEvent<Element>) => void;
+  skipHover?: (config: Readonly<MotionConfig>) => boolean;
+  pointerInsideRef?: RefObject<boolean>;
+}): {
+  onPointerOver: (e: ReactPointerEvent<Element>) => void;
+  onPointerOut: (e: ReactPointerEvent<Element>) => void;
+} {
+  const handlers = useContainerPointerHoverHandlers<Element>({
+    enabled,
+    targetRef,
+    skipHover,
+    pointerInsideRef,
+    // Slot enter (`opacity` / `y` fromTo) lives on this same node. Hover-handler
+    // unmount `killMotion` (React Strict Mode setup→cleanup→setup) would freeze
+    // the from-pose — parts stay in the tree and clickable, but invisible.
+    killMotionOnUnmount: false,
+    onEnter: (el, e) => onHoverIn?.(el, e),
+    onLeave: (el, e) => onHoverOut?.(el, e),
+  });
+ 
+  return useMemo(
+    () => ({
+      onPointerOver: handlers.onPointerOver,
+      onPointerOut: handlers.onPointerOut,
+    }),
+    [handlers.onPointerOver, handlers.onPointerOut],
+  );
+}
+ 

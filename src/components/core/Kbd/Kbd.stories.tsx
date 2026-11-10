@@ -1,0 +1,168 @@
+import type { ComponentType } from "react";
+
+import type { Meta, StoryObj } from "@storybook/react-vite";
+
+import { Button } from "@/components/core/Button";
+import { Text } from "@/components/core/Text";
+
+import { Kbd, type KbdVariant } from ".";
+import { KbdSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/kbd/slotMotion/gallery";
+import { KbdMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/kbd/motionController/gallery";
+
+const framedDecorator = [
+  (Story: ComponentType) => (
+    <div
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <Story />
+    </div>
+  ),
+] as const;
+
+const KBD_VARIANTS: KbdVariant[] = [
+  "default",
+  "primary",
+  "outline",
+  "secondary",
+];
+
+const meta = {
+  title: "Core Components/Kbd",
+  component: Kbd,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Key or key combination. Variants and sizes like `Badge`, without `status`. Compound: `Kbd.Group` for multiple keys with a separator.",
+      },
+    },
+  },
+  decorators: [...framedDecorator],
+  argTypes: {
+    variant: {
+      control: "select",
+      options: KBD_VARIANTS,
+    },
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+    },
+  },
+} satisfies Meta<typeof Kbd>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Variants: Story = {
+  name: "Variants",
+  render: () => (
+    <div className="flex flex-wrap items-center gap-small">
+      {KBD_VARIANTS.map((variant) => (
+        <Kbd key={variant} variant={variant}>
+          {variant}
+        </Kbd>
+      ))}
+    </div>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Sizes",
+  render: () => (
+    <div className="flex flex-wrap items-end gap-small">
+      <Kbd size="small">Esc</Kbd>
+      <Kbd size="base">Esc</Kbd>
+      <Kbd size="mid">Esc</Kbd>
+      <Kbd size="large">Esc</Kbd>
+    </div>
+  ),
+};
+
+export const Group: Story = {
+  name: "Kbd.Group",
+  render: () => (
+    <div className="flex flex-col gap-large">
+      <Kbd.Group>
+        <Kbd>⌘</Kbd>
+        <Kbd>K</Kbd>
+      </Kbd.Group>
+      <Kbd.Group separator={null}>
+        <Kbd variant="secondary">Ctrl</Kbd>
+        <Kbd variant="secondary">S</Kbd>
+      </Kbd.Group>
+      <Kbd.Group separator="then">
+        <Kbd variant="outline">G</Kbd>
+        <Kbd variant="outline">G</Kbd>
+      </Kbd.Group>
+    </div>
+  ),
+};
+
+export const InContext: Story = {
+  name: "In context",
+  render: () => (
+    <div className="flex max-w-md flex-col gap-large text-left">
+      <Text as="p" textStyle="small" className="text-muted">
+        Press <Kbd>Esc</Kbd> to close. Save —{" "}
+        <Kbd.Group>
+          <Kbd>⌘</Kbd>
+          <Kbd>S</Kbd>
+        </Kbd.Group>
+        .
+      </Text>
+      <Button variant="outline" size="base" type="button" className="justify-between">
+        <span>Command palette</span>
+        <Kbd.Group>
+          <Kbd size="small" variant="secondary">
+            ⌘
+          </Kbd>
+          <Kbd size="small" variant="secondary">
+            K
+          </Kbd>
+        </Kbd.Group>
+      </Button>
+    </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "classNames",
+  render: () => (
+    <Kbd
+      variant="outline"
+      classNames={{
+        root: "border-primary/40 bg-primary/5",
+        text: "tracking-tight",
+      }}
+    >
+      /
+    </Kbd>
+  ),
+};
+
+export const HoverLiftOff: Story = {
+  name: "hoverLift={false}",
+  render: () => <Kbd hoverLift={false}>Tab</Kbd>,
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <KbdSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot vs playAll, standalone Group host, cancel loop, kbd events.",
+      },
+    },
+  },
+  render: () => <KbdMotionControllerGalleryDemo />,
+};

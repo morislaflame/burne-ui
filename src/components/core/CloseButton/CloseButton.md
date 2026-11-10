@@ -1,0 +1,255 @@
+# CloseButton
+
+Круглая кнопка закрытия с инлайн-иконкой close из кита. Разделяет визуальную систему variant с `Button`, поддерживает GSAP hover/press и опциональный converge-ripple.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { CloseButton } from "burne-ui";
+import type {
+  CloseButtonProps,
+  CloseButtonVariant,
+  CloseButtonSize,
+  CloseButtonClassNames,
+  CloseButtonMotion,
+  CloseButtonPartMotion,
+} from "burne-ui";
+```
+
+## API
+
+Компонент — **simple API** (один `<button>` без children). Compound-подчастей нет.
+
+### Props
+
+| Prop | Тип | По умолчанию | Описание |
+|------|-----|--------------|----------|
+| `variant` | `ActionVariant`: `default` \| `primary` \| `outline` \| `secondary` \| `ghost` | `default` | — |
+| `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер квадратной области и иконки |
+| `ripple` | `boolean` | `false` | Converge-ripple при нажатии |
+| `disabled` | `boolean` | `false` | `opacity-50`, `cursor-not-allowed` |
+| `aria-label` | `string` | `"Close"` (из `BurneLabels`, см. ниже) | Доступное имя; без пропа — дефолт из `BurneUIProvider` `labels` |
+| `className` | `string` | — | Классы на корневой `<button>` |
+| `classNames` | `CloseButtonClassNames` | — | Слоты: `root`, `icon`, `ripple` |
+| `motion` | `MotionMapWithEvents<CloseButtonMotion>` | — | Slot map `root` / `icon`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+| `type` | `button` \| `submit` \| `reset` | `button` | Нативный type |
+| … | `ButtonHTMLAttributes` (без `children`) | — | `onClick`, `onPointer*`, и т.д. |
+
+### `CloseButtonClassNames`
+
+```tsx
+type CloseButtonClassNames = {
+  root?: string;    // корневой <button>
+  icon?: string;    // обёртка <span> (icon-slot)
+  ripple?: string;  // обёртка <Ripple />
+};
+```
+
+### Примеры
+
+```tsx
+// Базовая
+<CloseButton onClick={onClose} />
+
+// В шапке диалога
+<CloseButton
+  variant="ghost"
+  size="small"
+  aria-label="Закрыть диалог"
+  onClick={onClose}
+/>
+
+// С ripple
+<CloseButton variant="outline" ripple aria-label="Закрыть" />
+
+// Кастомизация слотов
+<CloseButton
+  variant="outline"
+  classNames={{
+    root: "border-primary/50 bg-primary/5 shadow-token-md hover:bg-primary/10",
+    icon: "icon-slot-large text-primary",
+  }}
+  aria-label="Закрыть панель"
+/>
+```
+
+## variant
+
+Используется общая карта поверхностей `INTERACTIVE_VARIANT_ROOT` из `buttonStyles.ts`:
+
+| variant | Поверхность | Hover shadow | Ripple tone |
+|---------|-------------|--------------|-------------|
+| `default` | `bg-surface`, `border-token` | да | `converge-ripple-neutral` |
+| `primary` | `bg-primary` | да | `converge-ripple-primary-fill` |
+| `outline` | прозрачный + `border-token-outline` | да | neutral; hover `bg-transparent-hover` |
+| `secondary` | `bg-secondary` | да | neutral |
+| `ghost` | прозрачный | да | neutral; hover `bg-transparent-hover` |
+
+У CloseButton **нет** prop `status` — только variant.
+
+## Размеры
+
+| size | Корень | Иконка |
+|------|--------|--------|
+| `small` | `min-h-control-xsmall w-control-xsmall min-w-control-xsmall` | `icon-slot-small` |
+| `base` | `min-h-control-small w-control-small min-w-control-small` | `icon-slot-base` |
+| `mid` | `min-h-control-base w-control-base min-w-control-base` | `icon-slot-mid` |
+| `large` | `min-h-control-mid w-control-mid min-w-control-mid` | `icon-slot-large` |
+
+Форма всегда `rounded-full` + `aspect-square` (`min-w-control-*` не даёт родителю с `w-fit` сжать круг в овал).
+
+## Анимации
+
+Публичный slot motion. Свой scope: Root — Provider с defaults + params + `useCloseButtonAnimations`. Ripple остаётся kit-internal.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | first-level lift + squeeze |
+| `icon` | hover/press | нет |
+
+`false` на фазе — skip без kill.
+
+**Где в коде:** типы — `closeButtonTypes.ts`; scope — `closeButtonContext.tsx`; defaults + host — `closeButtonAnimations.ts`; слот `icon` — `closeButtonParts.tsx`; Provider — `CloseButton.tsx`.
+
+```tsx
+<CloseButton aria-label="Close" motion={{ root: { hoverIn: false, hoverOut: false } }} />
+```
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`dismiss:nudge`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent`. См. [Motion](/docs/motion-events).
+
+```tsx
+import { Button, CloseButton, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "dismiss:nudge": { y: -8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("dismiss:nudge")}>
+        Nudge
+      </Button>
+      <CloseButton aria-label="Close" motionController={controller} motion={{ events, root: { pressIn: false } }} />
+    </>
+  );
+}
+```
+
+`play()` ищет слот `root`. `playSlot("icon")` — доменный слот. `playAll` + `stagger`, timeline `dismiss:spin` через `ctx.targets`, `waitForComplete` — playground / Storybook **MotionController**.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+Сырой GSAP в Slot motion: **DrawSVG** — два штриха крестика прорисовываются на hover (`classNames.icon: opacity-0`, kit hover/press выключены). Overlay SVG — sibling кнопки, поэтому squeeze на обёртке (`scale: 0.98`); timeline kill на leave, чтобы delayed-штрих не стартовал повторно.
+
+## Токены и CSS-классы
+
+### Цветовые токены (ripple)
+
+| variant | Токен |
+|---------|-------|
+| `primary` | `converge-ripple-primary-fill` |
+
+### Поверхность и motion
+
+- База: `INTERACTIVE_VARIANT_ROOT[variant]` (из Button)
+- Hover: `hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant])`
+- Focus: `focus-ring` (цвет `--color-focus-ring`, ширина/offset — `--focus-ring-width` / `--focus-ring-offset`)
+- Disabled: `opacity-50`, `cursor-not-allowed`
+
+### Размерные токены
+
+`min-h-control-*`, `w-control-*` (квадрат), `icon-slot` / `icon-slot-*` на обёртке иконки.
+
+## Стилизация и кастомизация
+
+CloseButton — leaf-компонент (без compound/simple split): один `<button>` с иконкой.
+
+### Два уровня
+
+1. **`className`** — доп. классы на root (мерж после базовых).
+2. **`classNames`** — `root`, `icon`, `ripple` через `CloseButtonClassNamesProvider`.
+
+### Слоты `CloseButtonClassNames`
+
+| Слот | DOM / элемент | Когда использовать |
+|------|---------------|-------------------|
+| `root` | `<button>` | Фон, ring, размер hit-area (`rounded-full`) |
+| `icon` | Обёртка `IoClose` | Цвет и размер (`icon-slot-*`) |
+| `ripple` | Ripple overlay | Opacity, clip shape |
+
+```tsx
+<CloseButton
+  variant="ghost"
+  size="mid"
+  className="ring-2 ring-primary/20"
+  classNames={{
+    root: "bg-surface-elevated",
+    icon: "icon-slot-large text-muted",
+    ripple: "opacity-80",
+  }}
+  aria-label="Закрыть диалог"
+/>
+```
+
+`variant`, `size` — surface и `toggleBox` из токенов. В Dialog/Drawer слот `close` прокидывает стили в CloseButton.
+
+### Отключение анимаций
+
+```ts
+configureMotion({ enableAnimations: false });
+// или точечно:
+configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
+```
+
+Локального пропа `animated` нет.
+
+### Практические заметки
+
+- **aria-label:** без пропа — `"Close"` из `DEFAULT_BURNE_LABELS` (или `labels` на `BurneUIProvider`, напр. `BURNE_LABELS_RU`). Явный `aria-label` побеждает. В UI лучше уточнять контекст: «Закрыть диалог».
+- **Порядок мержа:** `closeButtonRootClass` → `classNames.root` → `className`.
+
+## Доступность
+
+- Только иконка — **всегда** есть accessible name: дефолт из `BurneLabels.close` или ваш `aria-label`.
+- Иконка `IoClose` — `aria-hidden`.
+- Нативный `disabled` на `<button>`.
+- Focus ring: `outline-none` + `focus-ring`.
+
+## Отличия от Button
+
+| | Button | CloseButton |
+|---|--------|-------------|
+| Children | текст / иконка | нет (`IoClose` внутри) |
+| `status` | да | нет |
+| Async states | да | нет |
+| `icon` / `iconOnly` | да | нет (всегда icon-only) |
+| `classNames` | нет | `root`, `icon`, `ripple` |
+| Форма | `rounded-base` (или segment) | `rounded-full` |
+| Размерная сетка | `minWButton`, padding | `toggleBox` (квадрат) |
+
+## Структура файлов компонента
+
+```
+CloseButton/
+├── CloseButton.tsx
+├── index.ts
+├── closeButtonTypes.ts
+├── closeButtonStyles.ts
+├── closeButtonA11y.ts         # resolve aria-label (+ BurneLabels.close)
+├── closeButtonContext.tsx     # classNames provider
+├── closeButtonParts.tsx       # Icon, Ripple
+├── closeButtonAnimations.ts
+├── useCloseButtonRootState.ts
+└── CloseButton.stories.tsx
+```
+
+## Storybook
+
+`Core Components/CloseButton` — размеры, варианты, матрица variant×size, ripple, кастомизация `classNames`, slot motion gallery, `motionController`, светлая/тёмная тема.

@@ -1,0 +1,722 @@
+import type { ChangeEvent, MouseEvent, MutableRefObject, Ref } from "react";
+import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { KitFolderOpen } from "@/components/core/utils/kitIcons";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
+ 
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { Text } from "@/components/core/Text";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+ 
+import {
+  resolveInputMotionDefaults,
+  resolveInputMotionParams,
+  useInputShellAnimations,
+} from "./inputAnimations";
+import { assignInputFiles, inputSizeFromButtonSize, isImageFile } from "./inputAPI";
+import {
+  AffixSlot,
+  FileGlyph,
+  FileRemoveButton,
+  InputFileRow,
+  PasswordVisibilityAffix,
+} from "./inputAffixParts";
+import {
+  InputMotionProvider,
+  useInputClassNames,
+  useOptionalInputFieldContext,
+  useOptionalInputMotionScope,
+} from "./inputContext";
+import {
+  INPUT_CONTROL_BASE_CLASS,
+  INPUT_CONTROL_PAD,
+  INPUT_FILE_EMPTY_ICON_CLASS,
+  INPUT_FILE_EMPTY_TEXT_CLASS,
+  INPUT_FILE_INPUT_CLASS,
+  INPUT_FILE_NAME_CLASS,
+  INPUT_FILE_PREVIEW_CLASS,
+  INPUT_FILE_ROW_CLASS,
+  INPUT_FILE_ROW_SINGLE_CLASS,
+  inputFileEmptyAreaClass,
+  inputFileFilledAreaClass,
+  inputFileEmptySurfaceClass,
+  inputShellClass,
+  inputShellSurfaceClass,
+} from "./inputStyles";
+import type { InputControlProps, InputPartMotion, PickedFileEntry } from "./inputTypes";
+ 
+import { cn } from "@/utils/cn";
+ 
+function usePickedFileEntries(pickedFiles: File[]): PickedFileEntry[] {
+  const [previewByFile, setPreviewByFile] = useState<ReadonlyMap<File, string>>(
+    () => new Map(),
+  );
+ 
+  useLayoutEffect(() => {
+    const next = new Map<File, string>();
+    for (const file of pickedFiles) {
+      if (!isImageFile(file)) continue;
+      next.set(file, URL.createObjectURL(file));
+    }
+    setPreviewByFile((prev) => (next.size === 0 && prev.size === 0 ? prev : next));
+    return () => {
+      for (const url of next.values()) URL.revokeObjectURL(url);
+    };
+  }, [pickedFiles]);
+ 
+  return pickedFiles.map((file) => ({
+    file,
+    previewUrl: previewByFile.get(file) ?? null,
+  }));
+}
+ 
+export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
+  function InputControl(
+    {
+      variant: variantProp,
+      size: sizeProp,
+      type = "text",
+      placeholder,
+      prefix,
+      suffix,
+      id: idProp,
+      disabled,
+      readOnly,
+      className = "",
+      groupSegment: groupSegmentProp,
+      onPointerDown,
+      onChange,
+      onBlur,
+      "aria-describedby": ariaDescribedByProp,
+      name,
+      value,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
+      ...rest
+    },
+    ref,
+  ) {
+    const variant = useSkinVariant(variantProp);
+    const formBinding = useFormControlProps({
+      name: typeof name === "string" ? name : undefined,
+      value,
+      onChange: onChange as ((event: unknown) => void) | undefined,
+      onBlur: onBlur as ((event: unknown) => void) | undefined,
+      disabled,
+      readOnly,
+      type,
+    });
+ 
+    const resolvedName = formBinding.name ?? name;
+    const resolvedValue = formBinding.bound ? formBinding.value : value;
+    const resolvedOnChange = formBinding.onChange;
+    const resolvedOnBlur = formBinding.onBlur;
+    const resolvedDisabled = formBinding.disabled ?? disabled;
+    const resolvedReadOnly = formBinding.readOnly ?? readOnly;
+    const resolvedRef = formBinding.ref;
+ 
+    const fieldCtx = useOptionalInputFieldContext();
+    const slotClassNames = useInputClassNames();
+    const layoutCtx = useOptionalButtonGroupLayout();
+    const groupCtx = useOptionalButtonGroupSegment();
+    const genId = useId();
+    const id = idProp ?? fieldCtx?.inputId ?? genId;
+    const isInvalid = useResolvedFieldInvalid({
+      invalid: fieldCtx?.invalid,
+      errorConnected: fieldCtx?.errorConnected ?? false,
+      formInvalid: formBinding["aria-invalid"] === true,
+    });
+    const status = fieldPaintStatus(isInvalid);
+    const size =
+      sizeProp ??
+      fieldCtx?.size ??
+      inputSizeFromButtonSize(groupCtx?.size ?? "base");
+    const required = fieldCtx?.required ?? false;
+    const hintConnected = fieldCtx?.hintConnected ?? false;
+    const errorConnected = fieldCtx?.errorConnected ?? false;
+    const hintId = fieldCtx?.hintId;
+    const errorId = fieldCtx?.errorId;
+    const ariaDescribedBy =
+      ariaDescribedByProp ??
+      joinFieldDescribedBy(
+        hintConnected ? hintId : undefined,
+        errorConnected ? errorId : undefined,
+      );
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
+    const shellRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const pointerInsideRef = useRef(false);
+ 
+    const setInputRef = useCallback(
+      (node: HTMLInputElement | null) => {
+        inputRef.current = node;
+        resolvedRef(node);
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref, resolvedRef],
+    );
+ 
+    const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
+ 
+    const parentScope = useOptionalInputMotionScope();
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveInputMotionDefaults({ variant, blocked, groupSegment });
+    }, [blocked, groupSegment, skinRevision, variant]);
+    const motionParams = useMemo(
+      () =>
+        resolveInputMotionParams({
+          variant,
+          blocked,
+          groupSegment,
+          pointerInside: pointerInsideRef,
+        }),
+      [blocked, groupSegment, variant],
+    );
+    const mergedSlots = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { shell: motion } : undefined,
+    );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
+ 
+    const isFile = type === "file";
+    const isPassword = type === "password";
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const passwordShown = isPassword && passwordVisible;
+    const [pickedFiles, setPickedFiles] = useState<File[]>([]);
+    const pickedFilesRef = useRef<File[]>([]);
+    const commitPickedFiles = useCallback((next: File[]) => {
+      pickedFilesRef.current = next;
+      setPickedFiles(next);
+    }, []);
+ 
+    const fileEntries = usePickedFileEntries(pickedFiles);
+ 
+    useEffect(() => {
+      if (!isFile) return;
+      const el = inputRef.current;
+      const form = el?.form;
+      if (!form) return;
+      const onFormReset = () => commitPickedFiles([]);
+      form.addEventListener("reset", onFormReset);
+      return () => form.removeEventListener("reset", onFormReset);
+    }, [commitPickedFiles, isFile]);
+ 
+    const handleFileChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        const list = e.target.files;
+        commitPickedFiles(list ? Array.from(list) : []);
+        resolvedOnChange?.(e);
+      },
+      [commitPickedFiles, resolvedOnChange],
+    );
+ 
+    const commitRemoveFile = useCallback(
+      (file: File) => {
+        const input = inputRef.current;
+        const fromInput = input?.files ? Array.from(input.files) : [];
+        const prev = fromInput.length > 0 ? fromInput : pickedFilesRef.current;
+        const next = prev.filter((f) => f !== file);
+        commitPickedFiles(next);
+        if (!input) return;
+        assignInputFiles(input, next);
+        resolvedOnChange?.({
+          target: input,
+          currentTarget: input,
+        } as ChangeEvent<HTMLInputElement>);
+      },
+      [commitPickedFiles, resolvedOnChange],
+    );
+ 
+    return (
+      <InputMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
+        <InputControlSurface
+          variant={variant}
+          status={status}
+          size={size}
+          type={type}
+          blocked={blocked}
+          groupSegment={groupSegment}
+          className={className}
+          slotClassNames={slotClassNames}
+          shellRef={shellRef}
+          pointerInsideRef={pointerInsideRef}
+          shellPartMotion={motion}
+          onPointerDown={onPointerDown}
+          showAffixes={!isFile}
+          prefix={prefix}
+          suffix={suffix}
+          isPassword={isPassword}
+          passwordVisible={passwordShown}
+          onTogglePassword={() => setPasswordVisible((v) => !v)}
+          disabled={disabled}
+          isFile={isFile}
+          fileEntries={fileEntries}
+          pickedFilesLength={pickedFiles.length}
+          placeholder={placeholder}
+          commitRemoveFile={commitRemoveFile}
+          setInputRef={setInputRef}
+          id={id}
+          resolvedName={resolvedName}
+          resolvedDisabled={resolvedDisabled}
+          resolvedReadOnly={resolvedReadOnly}
+          handleFileChange={handleFileChange}
+          resolvedOnBlur={resolvedOnBlur}
+          required={required}
+          ariaInvalid={ariaInvalidValue(isInvalid)}
+          ariaDescribedBy={ariaDescribedBy}
+          resolvedValue={resolvedValue}
+          resolvedOnChange={resolvedOnChange}
+          rest={rest}
+        />
+      </InputMotionProvider>
+    );
+  },
+);
+ 
+InputControl.displayName = "InputControl";
+ 
+function InputTextControl({
+  setInputRef,
+  id,
+  resolvedName,
+  isPassword,
+  passwordVisible,
+  nativeType,
+  resolvedDisabled,
+  resolvedReadOnly,
+  placeholder,
+  resolvedValue,
+  resolvedOnChange,
+  resolvedOnBlur,
+  required,
+  ariaInvalid,
+  ariaDescribedBy,
+  size,
+  slotControlClass,
+  className,
+  rest,
+}: {
+  setInputRef: (node: HTMLInputElement | null) => void;
+  id: string;
+  resolvedName: InputControlProps["name"];
+  isPassword: boolean;
+  passwordVisible: boolean;
+  nativeType: NonNullable<InputControlProps["type"]>;
+  resolvedDisabled?: boolean;
+  resolvedReadOnly?: boolean;
+  placeholder?: string;
+  resolvedValue: unknown;
+  resolvedOnChange: InputControlProps["onChange"];
+  resolvedOnBlur: InputControlProps["onBlur"];
+  required: boolean;
+  ariaInvalid?: boolean;
+  ariaDescribedBy?: string;
+  size: NonNullable<InputControlProps["size"]>;
+  slotControlClass?: string;
+  className?: string;
+  rest: Omit<
+    InputControlProps,
+    | "variant"
+    | "status"
+    | "size"
+    | "type"
+    | "placeholder"
+    | "prefix"
+    | "suffix"
+    | "id"
+    | "disabled"
+    | "readOnly"
+    | "className"
+    | "groupSegment"
+    | "onPointerDown"
+    | "onChange"
+    | "onBlur"
+    | "aria-describedby"
+    | "name"
+    | "value"
+    | "motion"
+    | "motionController"
+  >;
+}) {
+  const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
+    scope: useOptionalInputMotionScope(),
+    slot: "control",
+    forwardedRef: setInputRef as Ref<HTMLInputElement>,
+    pointerPhases: true,
+  });
+ 
+  return (
+    <input
+      ref={setRef}
+      id={id}
+      name={resolvedName}
+      type={isPassword && passwordVisible ? "text" : nativeType}
+      disabled={resolvedDisabled}
+      readOnly={resolvedReadOnly}
+      placeholder={placeholder}
+      value={resolvedValue as string | number | readonly string[] | undefined}
+      onChange={resolvedOnChange}
+      onBlur={resolvedOnBlur}
+      className={cn(
+        INPUT_CONTROL_BASE_CLASS,
+        INPUT_CONTROL_PAD[size],
+        slotControlClass,
+        FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
+        className,
+      )}
+      {...rest}
+      {...pointerHandlers}
+      aria-required={required || undefined}
+      aria-invalid={ariaInvalid}
+      aria-describedby={ariaDescribedBy}
+      data-invalid={ariaInvalid ? "" : undefined}
+      data-required={required ? "" : undefined}
+    />
+  );
+}
+ 
+function InputControlSurface({
+  variant,
+  status,
+  size,
+  type,
+  blocked,
+  groupSegment,
+  className,
+  slotClassNames,
+  shellRef,
+  pointerInsideRef,
+  shellPartMotion,
+  onPointerDown,
+  showAffixes,
+  prefix,
+  suffix,
+  isPassword,
+  passwordVisible,
+  onTogglePassword,
+  disabled,
+  isFile,
+  fileEntries,
+  pickedFilesLength,
+  placeholder,
+  commitRemoveFile,
+  setInputRef,
+  id,
+  resolvedName,
+  resolvedDisabled,
+  resolvedReadOnly,
+  handleFileChange,
+  resolvedOnBlur,
+  required,
+  ariaInvalid,
+  ariaDescribedBy,
+  resolvedValue,
+  resolvedOnChange,
+  rest,
+}: {
+  variant: NonNullable<InputControlProps["variant"]>;
+  status: "default" | "danger";
+  size: NonNullable<InputControlProps["size"]>;
+  type: NonNullable<InputControlProps["type"]>;
+  blocked: boolean;
+  groupSegment: InputControlProps["groupSegment"];
+  className: string;
+  slotClassNames: ReturnType<typeof useInputClassNames>;
+  shellRef: React.RefObject<HTMLDivElement | null>;
+  pointerInsideRef: MutableRefObject<boolean>;
+  shellPartMotion?: InputPartMotion;
+  onPointerDown?: InputControlProps["onPointerDown"];
+  showAffixes: boolean;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+  isPassword: boolean;
+  passwordVisible: boolean;
+  onTogglePassword: () => void;
+  disabled?: boolean;
+  isFile: boolean;
+  fileEntries: PickedFileEntry[];
+  pickedFilesLength: number;
+  placeholder?: string;
+  commitRemoveFile: (file: File) => void;
+  setInputRef: (node: HTMLInputElement | null) => void;
+  id: string;
+  resolvedName: InputControlProps["name"];
+  resolvedDisabled?: boolean;
+  resolvedReadOnly?: boolean;
+  handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  resolvedOnBlur: InputControlProps["onBlur"];
+  required: boolean;
+  ariaInvalid?: boolean;
+  ariaDescribedBy?: string;
+  resolvedValue: unknown;
+  resolvedOnChange: InputControlProps["onChange"];
+  rest: Omit<
+    InputControlProps,
+    | "variant"
+    | "status"
+    | "size"
+    | "type"
+    | "placeholder"
+    | "prefix"
+    | "suffix"
+    | "id"
+    | "disabled"
+    | "readOnly"
+    | "className"
+    | "groupSegment"
+    | "onPointerDown"
+    | "onChange"
+    | "onBlur"
+    | "aria-describedby"
+    | "name"
+    | "value"
+    | "motion"
+    | "motionController"
+  >;
+}) {
+  const {
+    playFileRowLeave,
+    bindShellRef,
+    shellPointerDown,
+    shellPointerUp,
+    shellPointerEnter,
+    shellPointerLeave,
+    shellHoverMotionClass,
+  } = useInputShellAnimations({
+    shellRef,
+    blocked,
+    variant,
+    groupSegment,
+    motion: shellPartMotion,
+    pointerInsideRef,
+    onPointerDown,
+  });
+ 
+  const removePickedFile = useCallback(
+    (file: File, rowEl: HTMLElement | null) => {
+      if (blocked) return;
+      if (!rowEl || prefersReducedMotion()) {
+        commitRemoveFile(file);
+        return;
+      }
+      void playFileRowLeave(rowEl).then(() => commitRemoveFile(file));
+    },
+    [blocked, commitRemoveFile, playFileRowLeave],
+  );
+ 
+  const onFileRowRemoveClick =
+    (file: File) => (e: MouseEvent<HTMLButtonElement>) => {
+      const row = e.currentTarget.closest("[data-file-row]");
+      removePickedFile(file, row instanceof HTMLElement ? row : null);
+    };
+ 
+  const selectFileLabel = useBurneLabel("selectFile");
+  const surfaceStyle = useSkinSurfaceStyle(variant);
+  const multipleFiles = pickedFilesLength > 1;
+  const fileListEmpty = isFile && pickedFilesLength === 0;
+  const shellSurface = inputShellSurfaceClass({ variant });
+  const shellFileEmptySurface = fileListEmpty
+    ? inputFileEmptySurfaceClass(shellSurface)
+    : null;
+ 
+  return (
+    <div
+      ref={bindShellRef}
+      data-slot="input-shell"
+      data-group-segment={dataGroupSegment(groupSegment != null)}
+      role="presentation"
+      onPointerDown={shellPointerDown}
+      onPointerUp={shellPointerUp}
+      onPointerEnter={shellPointerEnter}
+      onPointerLeave={shellPointerLeave}
+      className={inputShellClass({
+        variant,
+        status,
+        blocked,
+        groupSegment,
+        fileListEmpty,
+        size,
+        shellSurface,
+        shellFileEmptySurface,
+        shellHoverMotionClass,
+        slotClass: slotClassNames.shell,
+      })}
+      style={mergeSkinSurfaceStyle(surfaceStyle)}
+      {...dataVariantProps({ size, variant })}
+    >
+      {showAffixes && prefix != null ? (
+        <AffixSlot side="prefix" controlSize={size}>
+          {prefix}
+        </AffixSlot>
+      ) : null}
+      {isFile ? (
+        <div
+          className={
+            fileListEmpty
+              ? inputFileEmptyAreaClass(slotClassNames.fileArea)
+              : inputFileFilledAreaClass({
+                  multipleFiles,
+                  slotClass: slotClassNames.fileArea,
+                })
+          }
+        >
+          {fileListEmpty ? (
+            <>
+              <KitFolderOpen
+                className={cn(
+                  INPUT_FILE_EMPTY_ICON_CLASS,
+                  slotClassNames.fileEmpty,
+                )}
+                aria-hidden
+              />
+              <Text
+                as="span"
+                textStyle="base"
+                className={cn(
+                  INPUT_FILE_EMPTY_TEXT_CLASS,
+                  slotClassNames.fileEmpty,
+                )}
+              >
+                {placeholder ?? selectFileLabel}
+              </Text>
+            </>
+          ) : multipleFiles ? (
+            fileEntries.map(({ file, previewUrl }) => (
+              <InputFileRow
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                className={cn(INPUT_FILE_ROW_CLASS, slotClassNames.fileRow)}
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt=""
+                    className={cn(
+                      INPUT_FILE_PREVIEW_CLASS,
+                      slotClassNames.filePreview,
+                    )}
+                  />
+                ) : (
+                  <FileGlyph />
+                )}
+                <Text as="span" textStyle="base" className={INPUT_FILE_NAME_CLASS}>
+                  {file.name}
+                </Text>
+                {!blocked ? (
+                  <FileRemoveButton onRemove={onFileRowRemoveClick(file)} />
+                ) : null}
+              </InputFileRow>
+            ))
+          ) : (
+            <InputFileRow
+              className={cn(INPUT_FILE_ROW_SINGLE_CLASS, slotClassNames.fileRow)}
+            >
+              {fileEntries[0]!.previewUrl ? (
+                <img
+                  src={fileEntries[0]!.previewUrl}
+                  alt=""
+                  className={cn(
+                    INPUT_FILE_PREVIEW_CLASS,
+                    slotClassNames.filePreview,
+                  )}
+                />
+              ) : (
+                <FileGlyph />
+              )}
+              <Text as="span" textStyle="base" className={INPUT_FILE_NAME_CLASS}>
+                {fileEntries[0]!.file.name}
+              </Text>
+              {!blocked ? (
+                <FileRemoveButton
+                  onRemove={onFileRowRemoveClick(fileEntries[0]!.file)}
+                />
+              ) : null}
+            </InputFileRow>
+          )}
+          <input
+            ref={setInputRef}
+            id={id}
+            name={resolvedName}
+            type="file"
+            disabled={resolvedDisabled}
+            readOnly={resolvedReadOnly}
+            onChange={handleFileChange}
+            onBlur={resolvedOnBlur}
+            className={cn(
+              INPUT_FILE_INPUT_CLASS,
+              slotClassNames.control,
+              className,
+            )}
+            {...rest}
+            aria-required={required || undefined}
+            aria-invalid={ariaInvalid}
+            aria-describedby={ariaDescribedBy}
+            data-invalid={ariaInvalid ? "" : undefined}
+            data-required={required ? "" : undefined}
+          />
+        </div>
+      ) : (
+        <InputTextControl
+          setInputRef={setInputRef}
+          id={id}
+          resolvedName={resolvedName}
+          isPassword={isPassword}
+          passwordVisible={passwordVisible}
+          nativeType={type}
+          resolvedDisabled={resolvedDisabled}
+          resolvedReadOnly={resolvedReadOnly}
+          placeholder={placeholder}
+          resolvedValue={resolvedValue}
+          resolvedOnChange={resolvedOnChange}
+          resolvedOnBlur={resolvedOnBlur}
+          required={required}
+          ariaInvalid={ariaInvalid}
+          ariaDescribedBy={ariaDescribedBy}
+          size={size}
+          slotControlClass={slotClassNames.control}
+          className={className}
+          rest={rest}
+        />
+      )}
+      {showAffixes && suffix != null ? (
+        <AffixSlot side="suffix" controlSize={size}>
+          {suffix}
+        </AffixSlot>
+      ) : null}
+      {showAffixes && isPassword ? (
+        <PasswordVisibilityAffix
+          controlSize={size}
+          visible={passwordVisible}
+          disabled={disabled}
+          onToggle={onTogglePassword}
+        />
+      ) : null}
+    </div>
+  );
+}
+ 

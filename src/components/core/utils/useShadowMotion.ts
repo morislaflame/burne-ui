@@ -1,0 +1,217 @@
+/**
+ * Unified shadow + hover-lift patterns via `--el-shadow` and `animate-shadow`.
+ *
+ * Rest elevation and hover motion are independent:
+ * - `enabled` → persistent rest `--el-shadow` + `animate-shadow` class
+ * - `interactive` → pointer handlers + GSAP lift/press (defaults to `enabled`)
+ *
+ * Each rest size has its own hover/press tokens (not cross-tier base→mid):
+ * - Level 1 (Button): `shadowMotionFor("none")` — none → `--shadow-lift` → none
+ * - Level 2 (Alert, Badge, Kbd, Calendar, Toast): `shadowMotionFor("small"|"base"|"mid"|"large")`
+ * - Fields are level 1: `shadowMotionFor("none")` — no rest shadow, `--shadow-lift` on hover
+ * - Static overlays (Dialog, Drawer, Popover, Tooltip): CSS `shadow-token-large`
+ *
+ * At rest the rest layer paints `var(--el-shadow)`. Hover and press cross-fade
+ * static layer opacity; GSAP does not tween the shadow string.
+ */
+ 
+import { useCallback, useLayoutEffect, useMemo, type MutableRefObject, type RefObject } from "react";
+ 
+import {
+  animateInteractiveHoverLift,
+  initElementShadow,
+  resetInteractiveLiftScale,
+  shadowBase,
+  shadowCssVar,
+  shadowNone,
+  shouldSkipInteractiveHoverLift,
+  useInteractiveHoverLiftContainerHandlers,
+  type HoverShadowConfig,
+} from "./hoverInteractiveLift";
+import { useMotionConfig } from "./motionConfigContext";
+import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
+import type { ShadowSize } from "@/tokens/shadows";
+ 
+/** Class for JS-animated shadow and scale-lift. */
+export const SHADOW_LIFT_MOTION_CLASS =
+  "animate-shadow origin-center";
+ 
+/**
+ * Idle / hover / press refs for a rest shadow size.
+ * `none` uses dedicated `--shadow-lift` on hover (not `--shadow-base`).
+ */
+export function shadowMotionFor(size: ShadowSize = "base"): HoverShadowConfig {
+  if (size === "none") {
+    return {
+      idle: shadowNone(),
+      hover: shadowCssVar("none", "hover"),
+      press: shadowNone(),
+    };
+  }
+  return {
+    idle: shadowCssVar(size, "rest"),
+    hover: shadowCssVar(size, "hover"),
+    press: shadowCssVar(size, "press"),
+  };
+}
+
+/**
+ * Persistent `--el-shadow` without hover-lift (Tooltip, Popover).
+ * `resolveShadow` is recomputed when `syncKey` changes (e.g. expanded on SearchInput).
+ */
+export function usePersistentElShadow(
+  ref: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  resolveShadow: () => string = shadowBase,
+  syncKey?: unknown,
+): void {
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    initElementShadow(ref.current, resolveShadow());
+  }, [enabled, ref, resolveShadow, syncKey]);
+}
+ 
+export type UseSecondLevelShadowOptions = {
+  liftScale?: number;
+  pointerInsideRef?: MutableRefObject<boolean>;
+  /**
+   * Rest shadow size — hover/press from the same family (`none` → `--shadow-lift`).
+   * @default "base"
+   */
+  shadowSize?: ShadowSize;
+  /** Override idle token (rare); default = rest for `shadowSize`. */
+  resolveIdle?: () => string;
+  /** Key to recompute idle shadow (expanded, etc.). */
+  idleSyncKey?: unknown;
+  /**
+   * Hover/press GSAP motion. Rest elevation still applies when `enabled`.
+   * @default true (same as `enabled`)
+   */
+  interactive?: boolean;
+  /**
+   * Slot hosts that also play `enter` must pass `false`. Strict Mode cleanup
+   * otherwise `killMotion`s the node and leaves `opacity: 0`.
+   * @default true
+   */
+  killMotionOnUnmount?: boolean;
+};
+ 
+/**
+ * Level 2: persistent rest shadow + optional guarded pointerover/out.
+ * Handlers ignore moves between descendants (`cameFromOutsideContainer`).
+ */
+export function useSecondLevelShadow(
+  targetRef: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  options?: UseSecondLevelShadowOptions,
+) {
+  const shadowSize = options?.shadowSize ?? "base";
+  const interactive = enabled && (options?.interactive ?? true);
+  const shadow = useMemo(() => shadowMotionFor(shadowSize), [shadowSize]);
+  const idleShadow = options?.resolveIdle?.() ?? shadow.idle ?? shadowNone();
+  const liftScale = options?.liftScale;
+  const config = useMotionConfig();
+ 
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    initElementShadow(targetRef.current, idleShadow);
+  }, [enabled, targetRef, idleShadow, options?.idleSyncKey]);
+ 
+  useLayoutEffect(() => {
+    if (!enabled || interactive) return;
+    const el = targetRef.current;
+    resetInteractiveLiftScale(el);
+    initElementShadow(el, idleShadow);
+  }, [enabled, interactive, targetRef, idleShadow]);
+ 
+  const onEnter = useCallback(
+    (el: HTMLElement) => {
+      animateInteractiveHoverLift(el, true, liftScale, shadow, config);
+    },
+    [config, liftScale, shadow],
+  );
+ 
+  const onLeave = useCallback(
+    (el: HTMLElement) => {
+      animateInteractiveHoverLift(el, false, liftScale, shadow, config);
+    },
+    [config, liftScale, shadow],
+  );
+ 
+  const { onPointerOver, onPointerOut } = useContainerPointerHoverHandlers({
+    enabled: interactive,
+    targetRef,
+    pointerInsideRef: options?.pointerInsideRef,
+    skipHover: () => shouldSkipInteractiveHoverLift(config),
+    killMotionOnUnmount: options?.killMotionOnUnmount,
+    onEnter,
+    onLeave,
+  });
+ 
+  return {
+    motionClass: enabled ? SHADOW_LIFT_MOTION_CLASS : "",
+    shadow,
+    onPointerOver,
+    onPointerOut,
+    /** Alias of guarded `onPointerOver` — safe on `pointerenter` or `pointerover`. */
+    onPointerEnter: onPointerOver,
+    /** Alias of guarded `onPointerOut` — safe on `pointerleave` or `pointerout`. */
+    onPointerLeave: onPointerOut,
+  };
+}
+ 
+/**
+ * Level 2: init on `liftedRef`, handlers on container (Badge.Anchor).
+ */
+export function useSecondLevelShadowContainer(
+  liftedRef: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  options?: UseSecondLevelShadowOptions,
+) {
+  const shadowSize = options?.shadowSize ?? "base";
+  const interactive = enabled && (options?.interactive ?? true);
+  const shadow = useMemo(() => shadowMotionFor(shadowSize), [shadowSize]);
+  const idleShadow = options?.resolveIdle?.() ?? shadow.idle ?? shadowNone();
+ 
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    initElementShadow(liftedRef.current, idleShadow);
+  }, [enabled, liftedRef, idleShadow, options?.idleSyncKey]);
+ 
+  useLayoutEffect(() => {
+    if (!enabled || interactive) return;
+    const el = liftedRef.current;
+    resetInteractiveLiftScale(el);
+    initElementShadow(el, idleShadow);
+  }, [enabled, interactive, liftedRef, idleShadow]);
+ 
+  const containerHandlers = useInteractiveHoverLiftContainerHandlers(
+    liftedRef,
+    interactive,
+    options?.pointerInsideRef,
+    options?.liftScale,
+    shadow,
+  );
+ 
+  return {
+    motionClass: enabled ? SHADOW_LIFT_MOTION_CLASS : "",
+    shadow,
+    ...containerHandlers,
+  };
+}
+
+/**
+ * First-level panel: no rest shadow, `--shadow-lift` on hover, scale stays 1.
+ * For a shell that already lifts its children (Expandable, Disclosure card).
+ */
+export function useFirstLevelHoverShadow(
+  targetRef: RefObject<HTMLElement | null>,
+  enabled: boolean,
+) {
+  return useSecondLevelShadow(targetRef, enabled, {
+    shadowSize: "none",
+    liftScale: 1,
+    killMotionOnUnmount: false,
+  });
+}
+ 

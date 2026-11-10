@@ -1,12 +1,34 @@
 # Burne UI
 
-React-компоненты с Tailwind CSS v4, анимациями на **anime.js** и тёмной/светлой темой. Иконки рассчитаны на **react-icons** (Io5).
+React-компоненты с Tailwind CSS v4, анимациями на **GSAP** и тёмной/светлой темой. Дефолтные иконки — инлайн-SVG в ките; `react-icons` опционален для своих глифов.
 
 ## Установка
 
 ```bash
-npm install burne-ui
+npm install burne-ui gsap
 # или: pnpm / yarn / bun
+```
+
+Опционально, если в приложении нужны иконки из Io5:
+
+```bash
+npm install react-icons
+```
+
+**Полная пошаговая настройка** (Tailwind v4, Next.js, тема, motion, SSR, troubleshooting): **[docs/SETUP.md](./docs/SETUP.md)**.
+
+**Готовый проект одной командой** (npm / pnpm / bun):
+
+```bash
+npm create burne-app@latest my-app
+# pnpm create burne-app my-app
+# bunx create-burne-app my-app
+```
+
+В существующий проект:
+
+```bash
+npx burne-ui@latest init
 ```
 
 ### Peer-зависимости
@@ -14,11 +36,26 @@ npm install burne-ui
 Убедитесь, что в приложении установлены совместимые версии:
 
 - `react`, `react-dom` (18 или 19)
-- `react-icons` (^5)
+- `gsap` (^3.12)
+- `react-icons` (^5) — **опционально**, только если передаёте свои иконки из Io5
+
+## Браузеры
+
+Опубликованный JS — **ES2020** (`build.target`). CSS и DOM-фичи кита требуют:
+
+| Браузер | Мин. версия | Почему |
+|---------|-------------|--------|
+| Chrome / Edge / Android Chrome | 111 | `color-mix()` |
+| Safari / iOS | 16.4 | `@property` |
+| Firefox / Android Firefox | 128 | `@property` |
+
+Также используются `:has()`, `dvh`, `inert`. Gloss-бордер — `mask-composite: exclude` и `-webkit-mask-composite: xor` (Chrome 111–119). `field-sizing: content` у TextArea — progressive enhancement (Chromium 123+); без него поле не авторастёт, остальное работает.
+
+Ниже этой планки ломаются тени и прозрачности (`color-mix()`). Раскладка остаётся. Матрица, `browserslist` и решение — в [docs/SETUP.md](./docs/SETUP.md#браузеры) и [docs/adr/0001-browser-floor.md](./docs/adr/0001-browser-floor.md).
 
 ## Стили
 
-Подключите собранный CSS пакета **один раз** в точке входа (или в корневом layout):
+Стили **не** идут вместе с JS-импортом. Подключите CSS пакета **один раз** в точке входа (или в корневом layout):
 
 ```ts
 import "burne-ui/styles.css";
@@ -26,13 +63,116 @@ import "burne-ui/styles.css";
 
 В нём:
 
-- **Дизайн-токены** как CSS-переменные: `--color-*`, `--space-*`, `--font-family-*`, `--text-*-size` / `line-height` / `weight`, `--radius-value-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
-- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-base`, `bg-accent`, отступы `gap-mid`, `p-plus`, радиусы `rounded-base` и т.д.
-- **Кастомные утилиты** (`@utility`): например `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
+- **Дизайн-токены** как CSS-переменные: `--color-*`, `--space` / `--space-*`, `--size` / `--size-*`, `--radius`, `--text-scale-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
+- **Tailwind приложения** — `burne-ui/tailwind.css` сразу после `styles.css`. Внутри `@theme inline` (токены `bg-background`, `gap-large`, `rounded-base`) и все `@utility` кита. Prebuilt `ui.css` содержит только классы, встретившиеся при сборке кита. `tailwind.css` даёт приложению остальные, включая варианты вроде `md:shadow-token-mid` и `divide-x-token`.
+- **Кастомные утилиты** (`@utility` в `tailwind.css`): например `border-token`, `border-t-token`, `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
 
-Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-mid` и т.п.
+Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-large` и т.п.
+
+### Слои имён токенов
+
+| Домен | Knob | Шаги (design) | Мост Tailwind | Утилиты |
+|-------|------|---------------|---------------|---------|
+| Spacing | `--space` | `--space-*` (`xsmall`…`3xlarge`) | `--spacing-*` | `gap-*`, `p-*`, `m-*` |
+| Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
+| Control | — | `--control-height-*` / `--control-size-*` (= height) | — | `min-h-control-*`, `w-control-*` |
+| Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
+
+`--space-*` и `--spacing-*` — разные имена **намеренно**: у Tailwind namespace отступов — `spacing`.
+
+Шкала spacing: `xsmall` 0.618 · `small` 0.875 · `base` 1 · `mid` 1.5 · `large` 2 · `xlarge` 2.5 · `2xlarge` 4 · `3xlarge` 6 (× `--space`).
+
+### Типографика
+
+Примитивы `--text-scale-*` и UI-роли/`text-*` утилиты совпадают по имени:
+
+| Шаг / утилита | rem |
+|---------------|-----|
+| `xsmall` / `text-xsmall` | 0.6875 |
+| `small` / `text-small` | 0.75 |
+| `base` / `text-base` | 0.875 |
+| `mid` / `text-mid` | 1 |
+| `large` / `text-large` | 1.125 |
+| `xlarge` → `text-header-2` | 1.5 |
+| `2xlarge` → `text-header-1` | 1.875 |
+| `3xlarge` → `text-accent-header` | 2.25 |
+
+Чтобы увеличить «обычный» текст в компонентах, переопределяйте `--text-scale-base`.
 
 ## Кастомизация темы
+
+### BurneUIProvider (рекомендуется)
+
+Next.js App Router: simple API (`<Button>`, `<Text>`, `<Alert title>`) с сериализуемыми пропами — из Server Component. Compound (`Card.Title`) и обработчики — в файле с `"use client"`. Если Next пишет `You cannot dot into a client module`, см. [docs/SETUP.md](./docs/SETUP.md#use-client-в-пакете).
+
+`BurneUIProvider` вызывайте из client-файла, если рядом хуки / `configureMotion`:
+
+```tsx
+"use client";
+
+import { BurneUIProvider } from "burne-ui";
+import burneTheme from "./burne-theme";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider config={burneTheme} defaultTheme="system" toast>
+      {children}
+    </BurneUIProvider>
+  );
+}
+```
+
+Для русской локали дефолтных aria-строк:
+
+```tsx
+import { BurneUIProvider, BURNE_LABELS_RU } from "burne-ui";
+
+<BurneUIProvider config={burneTheme} labels={BURNE_LABELS_RU} defaultTheme="system">
+  {children}
+</BurneUIProvider>
+```
+
+Scaffold (`create-burne-app` / `burne-ui init`) уже кладёт `burne-theme.ts` с **`tokens`** (shared), **`colors.light` / `colors.dark`** и **`motion`**. `BurneUIProvider` оверлеит `config.motion` на это дерево; отдельный `configureMotion()` не нужен (он остаётся app default).
+
+Проектные CSS-переменные можно описать в том же конфиге. Они применяются Provider и автоматически
+появляются в `burne-ui-devtools`:
+
+```ts
+const burneTheme = {
+  // tokens, colors, motion...
+  customTokens: {
+    "--app-brand": "#38bdf8",
+    "--app-sidebar-width": {
+      value: 320,
+      unit: "px",
+      label: "Sidebar width",
+      control: "slider",
+      min: 240,
+      max: 480,
+      step: 4,
+    },
+  },
+} satisfies BurneThemeConfig;
+```
+
+### Devtools темы
+
+Интерактивный редактор ставится отдельно и подключается только в development. Для burne-ui 2.0 это `burne-ui-devtools@0.2`. Версии 0.2 в npm ещё нет: опубликованная `0.1.5` собрана под burne-ui 1.x (peer `^1.6.2`) и рядом с 2.0 не устанавливается.
+
+```bash
+npm install -D burne-ui-devtools@0.2
+```
+
+Он показывает плавающую кнопку, позволяет менять токены и пресеты в браузере, а затем скопировать
+или скачать готовый `burne-theme.ts`. Пресеты шрифтов подгружают Google Fonts лениво только в
+devtools; в production выбранный face нужно подключить самим. Полная интеграция для Vite и Next.js —
+в [`burne-ui-devtools`](https://www.npmjs.com/package/burne-ui-devtools) и
+[docs/SETUP.md](./docs/SETUP.md).
+
+
+Только переключение `data-theme`: `ThemeProvider` + `useBurneTheme()`. Для SSR без вспышки темы — `ThemeScript` (или `getThemeScript`) в root layout. Подробности — [docs/SETUP.md](./docs/SETUP.md).
+
+### CSS-переопределения
 
 Чтобы поменять палитру, отступы, шрифты, шкалу типографики и прочее, переопределите те же переменные **после** импорта `burne-ui/styles.css`:
 
@@ -45,18 +185,21 @@ import "./burne-theme-overrides.css";
 
 ```css
 :root {
-  --color-accent: #6366f1;
-  --space-mid: 1.125rem;
+  --color-primary: #6366f1;
+  --space: 0.5625rem;   /* fixed rem — без fluid; для fluid см. theme config ниже */
+  --size: 1.0625rem;
+  --radius: 0.625rem;
   --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --text-base-size: 0.9375rem;
+  --text-scale-base: 0.9375rem; /* UI-текст (роль text-base) */
 }
 
 /* Светлая тема: те же ветки, что и в пакете */
-[data-brn-theme="light"],
 [data-theme="light"] {
-  --color-accent: #4f46e5;
+  --color-primary: #4f46e5;
 }
 ```
+
+Theme config / playground (`tokens.space` и т.п.) через `applyThemeTokens` и `exportThemeCss` пишут тот же фиксированный `rem`, что и лист кита, плюс shadow-knobs (`--shadow-opacity|blur|spread|offset-x|y`). Fluid остаётся отдельным: `--space: var(--space-fluid)` (и пары `--size-fluid` / `--radius-fluid`). Инлайн ставятся **только** токены ≠ дефолтам кита, поэтому CSS-файл оверрайдов может точечно править остальное. Модель студии — `burne-ui/studio` (`DesignDocument`, `THEME_TOKEN_SCHEMA`, `renderDesignCss`, `validateDesign`). Вход экспериментальный в 2.x до поставки студии: снимок фиксирует имена, форма `validateDesign` и литералы контролов схемы остаются свободными. Пакет компонентов поверх кита берёт движок из `burne-ui/authoring` (`createMotionScope`, `useMotionPart`, `useSkinSlot`). Слоты скина открываются через `SkinSlotRegistry` и `registerSkinSlots` в `burne-ui/skin`.
 
 Переменные наследуются по дереву DOM — при необходимости задайте их на обёртке виджета вместо `html`.
 
@@ -65,18 +208,18 @@ import "./burne-theme-overrides.css";
 ```ts
 import { designTokenNames, colorToken } from "burne-ui";
 
-const ripple = colorToken("converge-ripple-accent-soft"); // var(--color-converge-ripple-accent-soft)
+const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ripple-neutral)
 ```
 
 ## Tailwind в приложении-потребителе
 
-Компоненты используют классы Tailwind, сопоставленные с токенами пакета (`bg-surface`, `text-muted`, `gap-plus`, …). Чтобы **ваши** классы в `className` и классы из prebuilt-бандла библиотеки попали в итоговый CSS, Tailwind должен сканировать артефакты пакета. Добавьте путь к сборке (пример для Tailwind v4 / Vite):
+Компоненты используют классы Tailwind, сопоставленные с токенами пакета (`bg-surface`, `text-muted`, `gap-mid`, …). Чтобы **ваши** классы в `className` и классы из prebuilt-бандла библиотеки попали в итоговый CSS, Tailwind должен сканировать артефакты пакета. Добавьте путь к сборке (пример для Tailwind v4 / Vite):
 
 ```ts
 // @source в глобальном CSS приложения или content — см. документацию Tailwind v4
 // Нужно сканировать как минимум:
 // - ваши **/*.{tsx,jsx},
-// - node_modules/burne-ui/dist/**/*.{js,mjs,cjs}
+// - node_modules/burne-ui/dist/**/*.js
 ```
 
 Без этого часть утилит из переданных вами классов может не попасть в CSS.
@@ -86,10 +229,10 @@ const ripple = colorToken("converge-ripple-accent-soft"); // var(--color-converg
 На корне (например `<html>`) или на обёртке портала:
 
 ```html
-<html data-brn-theme="light">
+<html data-theme="light">
 ```
 
-Поддерживается также `data-theme="light"` (как в Storybook). В коде проверка: `document.documentElement.dataset.brnTheme === "light"`.
+Атрибут `data-theme="light"` на `<html>` или на обёртке включает светлые токены. Портальные компоненты (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, …) наследуют тему с триггера/якоря или с корня документа; overlay модалок обновляется при смене атрибута.
 
 ## Экспорт `cn`
 
@@ -103,15 +246,73 @@ import { cn } from "burne-ui";
 
 Функция реэкспортируется из корня пакета; зависимости уже входят в `burne-ui`, отдельно ставить их не обязательно.
 
+## `classNames` и тип `Prettify`
+
+Почти у всех компонентов есть проп **`classNames`** — объект слотов стилей (`root`, `icon`, `label`, …; набор зависит от компонента). Имена слотов совпадают с compound-частями (camelCase); корень — всегда `root`.
+
+В типах слоты описаны именованным алиасом (`BadgeClassNames`, `ButtonClassNames`, …), а на **пропе** обёрнуты в **`Prettify<…>`**, чтобы IDE при наведении показывала развёрнутый объект слотов, а не только имя алиаса:
+
+```ts
+import type { Prettify, BadgeClassNames } from "burne-ui";
+
+// Hover на classNames у <Badge> → { root?: string; text?: string; iconOnly?: string; … }
+<Badge classNames={{ root: "rounded-large", text: "bg-primary/10" }}>Label</Badge>
+```
+
+`Prettify` экспортируется из корня пакета (`src/utils/prettify.ts`). В коде кита на пропах пишите `classNames?: Prettify<XxxClassNames>` (или `Prettify<Pick<XxxClassNames, …>>`); локальные копии `Expand` / `Prettify` не заводить.
+
+## Поля формы: `Field`, `Hint`, dual API
+
+### Примитив `Field`
+
+Общая оболочка для кастомных полей и внутренних компонентов:
+
+```tsx
+import { Field, Label } from "burne-ui";
+
+<Field>
+  <Label htmlFor="custom-id">Подпись</Label>
+  <input id="custom-id" />
+  <Field.Error>Сообщение об ошибке</Field.Error>
+</Field>
+```
+
+`Field.Hint` — единый компонент подсказки для всех field-like компонентов. По умолчанию `as="p"` (под полем); для inline-подписи внутри label/grid — `as="span"`.
+
+### Dual API (simple + compound)
+
+У **Input**, **Selector**, **Switch**, **Meter**, **ProgressBar**, **Slider**, **Avatar**:
+
+| Режим | Когда | Пример |
+|-------|-------|--------|
+| **Simple** | Без `children` | `<Input label="Email" hint="…" placeholder="…" />`, `<Avatar label="Ada" src="…" />` |
+| **Compound** | С `children` | `<Input><Input.Label>…</Input.Label><Input.Control … /></Input>`, `<Avatar><Avatar.Image … /><Avatar.Fallback /></Avatar>` |
+
+В compound-режиме props layout (`label`, `hint`, `showValue`, `src` …) на root **игнорируются**.
+
+**Checkbox** / **Radio** — **Simple** (`label`, `hint`) и **Compound** (`*.Control`, `*.Indicator`, `*.Content`, `*.Label`, `*.Hint`). **CheckboxGroup** / **RadioGroup** — compound с `Legend`, `Label`, `Hint`, `List`; у **RadioGroup** также **`Error`** для сообщения валидации на fieldset.
+
+**Badge** — simple-only для контента (`children`, prop `icon`); иконки в разметке — `data-icon="inline-start" | "inline-end"` на child; для наложения на якорь — **`Badge.Anchor`**.
+
+### SearchInput
+
+`SearchInput` — отдельный atomic-компонент для строки поиска (иконка, ripple, clear, раскрытие). Для полей формы используйте `Input` (simple или compound) или `Input.Control` с `prefix`. Задавайте **`aria-label`** — placeholder не заменяет подпись для AT.
+
+### Миграция
+
+См. [CHANGELOG.md](./CHANGELOG.md): `description` → `hint`, `*.Description` → `*.Hint`, `descriptionId` → `hintId`.
+
 ## Сборка и разработка репозитория
 
 ```bash
 bun install
-bun run build    # dist: JS/CJS + ui.css (как burne-ui/styles.css) + типы
+bun run build    # dist: ESM + ui.css (как burne-ui/styles.css) + типы
 bun run lint
 bun run storybook
 ```
 
+Конвенции компонентов (структура папки, `classNames` + `Prettify`, focus ring, dual API) — в `.cursor/rules/ui-kit.mdc` в корне монорепо.
+
 ## Лицензия
 
-Укажите лицензию в `package.json` при публикации в npm.
+MIT. Текст — в файле `LICENSE`.

@@ -1,0 +1,572 @@
+import type { PointerEventHandler, ReactNode } from "react";
+import { forwardRef, useMemo, useRef } from "react";
+ 
+import { FieldHiddenValues } from "@/components/core/utils/fieldFormDom";
+import { Field } from "@/components/core/Field";
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
+ 
+import {
+  resolveTimeFieldMotionDefaults,
+  resolveTimeFieldMotionParams,
+  useTimeFieldChromeSlot,
+  useTimeFieldShellAnimations,
+} from "./timeFieldAnimations";
+import { timeFieldSegLabel, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
+import {
+  TimeFieldMotionProvider,
+  useOptionalTimeFieldMotionScope,
+  useTimeFieldClassNames,
+  useOptionalTimeFieldContext,
+  useTimeFieldContext,
+} from "./timeFieldContext";
+import { TIME_FIELD_KEYBOARD_INPUT_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentGroupClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldSegmentsMotionClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
+import type {
+  TimeFieldControlProps,
+  TimeFieldErrorProps,
+  TimeFieldHintProps,
+  TimeFieldLabelProps,
+  TimeFieldPartMotion,
+  TimeFieldSimpleBodyProps,
+} from "./timeFieldTypes";
+import { useTimeFieldControlState } from "./useTimeFieldControlState";
+ 
+import { cn } from "@/utils/cn";
+ 
+function TimeFieldAffixSlot({
+  side,
+  size,
+  className,
+  children,
+}: {
+  side: "prefix" | "suffix";
+  size: ReturnType<typeof useTimeFieldControlState>["size"];
+  className?: string;
+  children: ReactNode;
+}) {
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalTimeFieldMotionScope(),
+    slot: side,
+    pointerPhases: true,
+  });
+ 
+  return (
+    <span
+      ref={setRef}
+      className={timeFieldAffixSlotClass({ side, size, slotClass: className })}
+      {...pointerHandlers}
+    >
+      {children}
+    </span>
+  );
+}
+ 
+export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps>(
+  function TimeFieldControl(props, ref) {
+    const {
+      value,
+      defaultValue,
+      onValueChange,
+      format,
+      disabled,
+      readOnly,
+      name,
+      size,
+      variant,
+      compact,
+      prefix,
+      suffix,
+      segmentSeparator: segmentSeparatorProp,
+      className,
+      id,
+      onPointerDown,
+      onPointerEnter,
+      onPointerLeave,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
+      ...rest
+    } = props;
+    const resolvedDisabled = disabled ?? false;
+    const fieldCtx = useOptionalTimeFieldContext();
+    const resolvedVariant = useSkinVariant(variant ?? fieldCtx?.variant);
+    const pointerInsideRef = useRef(false);
+    const parentScope = useOptionalTimeFieldMotionScope();
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveTimeFieldMotionDefaults({ variant: resolvedVariant, disabled: resolvedDisabled });
+    }, [resolvedDisabled, resolvedVariant, skinRevision]);
+    const motionParams = useMemo(
+      () =>
+        resolveTimeFieldMotionParams({
+          variant: resolvedVariant,
+          disabled: resolvedDisabled,
+          pointerInside: pointerInsideRef,
+        }),
+      [resolvedDisabled, resolvedVariant],
+    );
+    const mergedSlots = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { shell: motion } : undefined,
+    );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
+ 
+    return (
+      <TimeFieldMotionProvider
+        motion={mergedMotion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
+        <TimeFieldControlSurface
+          forwardedRef={ref}
+          value={value}
+          defaultValue={defaultValue}
+          onValueChange={onValueChange}
+          format={format}
+          disabled={disabled}
+          readOnly={readOnly}
+          name={name}
+          size={size}
+          variant={variant}
+          compact={compact}
+          prefix={prefix}
+          suffix={suffix}
+          segmentSeparator={segmentSeparatorProp}
+          className={className}
+          id={id}
+          onPointerDown={onPointerDown}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          pointerInsideRef={pointerInsideRef}
+          shellPartMotion={motion}
+          rest={rest}
+        />
+      </TimeFieldMotionProvider>
+    );
+  },
+);
+ 
+TimeFieldControl.displayName = "TimeField.Control";
+ 
+function TimeFieldControlSurface({
+  forwardedRef,
+  value,
+  defaultValue,
+  onValueChange,
+  format,
+  disabled,
+  readOnly,
+  name,
+  size,
+  variant,
+  compact,
+  prefix,
+  suffix,
+  segmentSeparator,
+  className,
+  id,
+  onPointerDown,
+  onPointerEnter,
+  onPointerLeave,
+  pointerInsideRef,
+  shellPartMotion,
+  rest,
+}: {
+  forwardedRef: React.ForwardedRef<HTMLDivElement>;
+  value?: TimeFieldControlProps["value"];
+  defaultValue?: TimeFieldControlProps["defaultValue"];
+  onValueChange?: TimeFieldControlProps["onValueChange"];
+  format?: TimeFieldControlProps["format"];
+  disabled?: TimeFieldControlProps["disabled"];
+  readOnly?: TimeFieldControlProps["readOnly"];
+  name?: TimeFieldControlProps["name"];
+  size?: TimeFieldControlProps["size"];
+  variant?: TimeFieldControlProps["variant"];
+  compact?: TimeFieldControlProps["compact"];
+  prefix?: TimeFieldControlProps["prefix"];
+  suffix?: TimeFieldControlProps["suffix"];
+  segmentSeparator?: TimeFieldControlProps["segmentSeparator"];
+  className?: string;
+  id?: string;
+  onPointerDown?: PointerEventHandler<HTMLFieldSetElement>;
+  onPointerEnter?: TimeFieldControlProps["onPointerEnter"];
+  onPointerLeave?: TimeFieldControlProps["onPointerLeave"];
+  pointerInsideRef: React.MutableRefObject<boolean>;
+  shellPartMotion?: TimeFieldPartMotion;
+  rest: Omit<
+    TimeFieldControlProps,
+    | "value"
+    | "defaultValue"
+    | "onValueChange"
+    | "format"
+    | "disabled"
+    | "readOnly"
+    | "name"
+    | "size"
+    | "status"
+    | "variant"
+    | "compact"
+    | "prefix"
+    | "suffix"
+    | "segmentSeparator"
+    | "className"
+    | "id"
+    | "onPointerDown"
+    | "onPointerEnter"
+    | "onPointerLeave"
+    | "motion"
+    | "motionController"
+  >;
+}) {
+  const labels = useBurneLabels();
+  const slotClassNames = useTimeFieldClassNames();
+  const state = useTimeFieldControlState({
+    value,
+    defaultValue,
+    onValueChange,
+    format,
+    disabled,
+    readOnly,
+    name,
+    size,
+    variant,
+    compact,
+    id,
+  });
+  const {
+    bindShellRef,
+    shellPointerDown,
+    shellPointerUp,
+    shellPointerEnter,
+    shellPointerLeave,
+    shellHoverMotionClass,
+  } = useTimeFieldShellAnimations({
+    shellRef: state.shellRef,
+    disabled: state.disabled,
+    variant: state.variant,
+    motion: shellPartMotion,
+    pointerInsideRef,
+    onPointerDown,
+  });
+  const { setRef: setSegmentsRef, pointerHandlers: segmentsPointer } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalTimeFieldMotionScope(),
+    slot: "segments",
+    pointerPhases: true,
+  });
+ 
+  return (
+    <fieldset
+      ref={(node) => {
+        state.bindShellRef(node);
+        bindShellRef(node);
+      }}
+      id={state.controlId}
+      aria-label={state.shellAria["aria-label"]}
+      aria-labelledby={state.shellAria["aria-labelledby"]}
+      aria-describedby={state.ariaDescribedBy}
+      aria-required={state.required || undefined}
+      aria-invalid={state.isInvalid ? true : undefined}
+      aria-readonly={state.readOnly || undefined}
+      data-slot="timefield-shell"
+      onPointerDown={shellPointerDown}
+      onPointerUp={shellPointerUp}
+      onPointerEnter={(e) => {
+        onPointerEnter?.(e);
+        if (e.defaultPrevented) return;
+        shellPointerEnter?.(e);
+      }}
+      onPointerLeave={(e) => {
+        onPointerLeave?.(e);
+        if (e.defaultPrevented) return;
+        shellPointerLeave?.(e);
+      }}
+      className={timeFieldShellClass({
+        variant: state.variant,
+        status: state.status,
+        disabled: state.disabled,
+        size: state.size,
+        compact: state.compact,
+        shellSurface: state.shellSurface,
+        shellHoverMotionClass,
+        slotClass: slotClassNames.shell,
+      })}
+      {...rest}
+      {...dataVariantProps({
+        size: state.size,
+        variant: state.variant,
+      })}
+      data-invalid={state.isInvalid ? "" : undefined}
+      data-readonly={state.readOnly ? "" : undefined}
+    >
+      <div
+        className={timeFieldShellInnerClass({
+          variant: state.variant,
+          slotClass: slotClassNames.shellInner,
+        })}
+        onClick={state.handleShellClick}
+      >
+        {prefix != null ? (
+          <TimeFieldAffixSlot
+            side="prefix"
+            size={state.size}
+            className={slotClassNames.prefix}
+          >
+            {prefix}
+          </TimeFieldAffixSlot>
+        ) : null}
+ 
+        <div
+          ref={forwardedRef}
+          className={cn(
+            timeFieldSegmentsClass({
+              variant: state.variant,
+              size: state.size,
+              compact: state.compact,
+            }),
+            slotClassNames.control,
+            className,
+          )}
+        >
+        <div
+          ref={setSegmentsRef}
+          className={timeFieldSegmentsMotionClass(slotClassNames.segments)}
+          {...segmentsPointer}
+        >
+          <input
+            ref={state.keyboardInputRef}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
+            aria-hidden
+            tabIndex={-1}
+            disabled={state.disabled}
+            className={cn(
+              TIME_FIELD_KEYBOARD_INPUT_CLASS,
+              slotClassNames.keyboardInput,
+              FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
+            )}
+            onInput={state.handleKeyboardInput}
+            onKeyDown={state.handleKeyboardInputKeyDown}
+            onBlur={state.handleFieldBlur}
+          />
+          <FieldHiddenValues name={state.name} value={state.text} />
+          {state.segments.map((seg, i) => (
+            <span
+              key={seg}
+              className={timeFieldSegmentGroupClass({
+                slotClass: slotClassNames.segmentGroup,
+              })}
+            >
+              {i > 0 && (
+                <span
+                  aria-hidden
+                  className={timeFieldSegmentSeparatorClass({
+                    variant: state.variant,
+                    slotClass: slotClassNames.segmentSeparator,
+                  })}
+                >
+                  {segmentSeparator ?? ":"}
+                </span>
+              )}
+              <span
+                ref={state.segRefById[seg]}
+                {...timeFieldSegSpinbuttonA11y({
+                  seg,
+                  value: state.hms[seg],
+                  required: state.required,
+                  isDanger: state.status === "danger",
+                  isFirstSegment: seg === state.segments[0],
+                  disabled: state.disabled,
+                  segLabel: timeFieldSegLabel(seg, labels),
+                })}
+                className={timeFieldSegmentClass({
+                  variant: state.variant,
+                  focused: state.focusedSeg === seg,
+                  disabled: state.disabled,
+                  slotClass: slotClassNames.segment,
+                })}
+                onKeyDown={(e) => state.handleSegKeyDown(e, seg)}
+                onFocus={() => state.handleSegFocus(seg)}
+                onBlur={state.handleFieldBlur}
+                onClick={(e) => state.handleSegClick(e, seg)}
+              >
+                {state.segDisplay(seg)}
+              </span>
+            </span>
+          ))}
+        </div>
+        </div>
+ 
+        {suffix != null ? (
+          <TimeFieldAffixSlot
+            side="suffix"
+            size={state.size}
+            className={slotClassNames.suffix}
+          >
+            {suffix}
+          </TimeFieldAffixSlot>
+        ) : null}
+      </div>
+    </fieldset>
+  );
+}
+ 
+export const TimeFieldLabel = forwardRef<HTMLElement, TimeFieldLabelProps>(
+  function TimeFieldLabel(
+    {
+      className,
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useTimeFieldClassNames();
+    const part = useTimeFieldChromeSlot("label", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    return (
+      <Field.Label
+        ref={part.setRef}
+        className={className}
+        classNames={{
+          ...classNames,
+          root: cn(slotClassNames.label, classNames?.root),
+        }}
+        {...rest}
+        {...part.pointerHandlers}
+      />
+    );
+  },
+);
+ 
+TimeFieldLabel.displayName = "TimeFieldLabel";
+ 
+export const TimeFieldHint = forwardRef<HTMLElement, TimeFieldHintProps>(
+  function TimeFieldHint(
+    {
+      children,
+      id: idProp,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useTimeFieldContext();
+    const slotClassNames = useTimeFieldClassNames();
+    const part = useTimeFieldChromeSlot("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    return (
+      <Field.Hint
+        ref={part.setRef}
+        id={idProp ?? ctx.hintId}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
+ 
+TimeFieldHint.displayName = "TimeFieldHint";
+ 
+export const TimeFieldError = forwardRef<HTMLElement, TimeFieldErrorProps>(
+  function TimeFieldError(
+    {
+      children,
+      id: idProp,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = useTimeFieldContext();
+    const slotClassNames = useTimeFieldClassNames();
+    const part = useTimeFieldChromeSlot("error", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    return (
+      <Field.Error
+        ref={part.setRef}
+        id={idProp ?? ctx.errorId}
+        role="alert"
+        className={cn(slotClassNames.error, className)}
+        {...rest}
+        {...part.pointerHandlers}
+      >
+        {children}
+      </Field.Error>
+    );
+  },
+);
+ 
+TimeFieldError.displayName = "TimeFieldError";
+ 
+export function TimeFieldSimpleBody({
+  label,
+  hint,
+  error,
+  labelId,
+  controlProps,
+}: TimeFieldSimpleBodyProps) {
+  return (
+    <>
+      {label != null ? <TimeFieldLabel id={labelId}>{label}</TimeFieldLabel> : null}
+      <TimeFieldControl {...controlProps} />
+      {hint != null && <TimeFieldHint>{hint}</TimeFieldHint>}
+      {error != null && <TimeFieldError>{error}</TimeFieldError>}
+    </>
+  );
+}
+ 

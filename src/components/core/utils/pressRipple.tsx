@@ -1,51 +1,14 @@
-import { animate, remove } from "animejs";
-import { useLayoutEffect, useRef } from "react";
-import type { PointerEvent } from "react";
-
-import {
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
-  MOTION_RIPPLE_EASE,
-  MOTION_RIPPLE_MIN_SCALE,
-} from "./motionTokens";
-
+import { memo, useLayoutEffect, useRef } from "react";
+import { PRESS_RIPPLE_DOT_CLASS } from "./pressRippleStyles";
+import type { ConvergeRipple } from "./convergeRippleGeometry";
+import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
+import { useMotionConfig } from "./motionConfigContext";
+ 
+/** Minimum ripple "core" scale — intentional visual constant, not in `configureMotion`. */
+const RIPPLE_MIN_SCALE = 0.12;
+ 
 export type RippleDirection = "in" | "out";
-
-export type ConvergeRipple = { id: number; x: number; y: number; size: number };
-
-function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
-  const corners: [number, number][] = [
-    [0, 0],
-    [w, 0],
-    [0, h],
-    [w, h],
-  ];
-  return Math.max(...corners.map(([cx, cy]) => Math.hypot(cx - px, cy - py)));
-}
-
-export function createConvergeRippleAtPointer(
-  target: HTMLElement,
-  clientX: number,
-  clientY: number,
-  id: number,
-): ConvergeRipple {
-  const r = target.getBoundingClientRect();
-  const x = clientX - r.left;
-  const y = clientY - r.top;
-  const size = maxDistanceToCorners(x, y, r.width, r.height) * 2;
-  return { id, x, y, size };
-}
-
-/** Только в синхронной фазе обработчика: позже `e.currentTarget` у React может стать `null`. */
-export function createConvergeRippleFromPointer(
-  e: PointerEvent<HTMLElement>,
-  id: number,
-): ConvergeRipple | null {
-  const target = e.currentTarget;
-  if (!target) return null;
-  return createConvergeRippleAtPointer(target, e.clientX, e.clientY, id);
-}
-
+ 
 function ConvergeRippleDot({
   id,
   x,
@@ -55,45 +18,52 @@ function ConvergeRippleDot({
   opacityFrom,
   background,
   direction,
+  easeCss,
   onDone,
 }: ConvergeRipple & {
   durationMs: number;
   opacityFrom: number;
   background: string;
   direction: RippleDirection;
+  easeCss: string;
   onDone: (id: number) => void;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const onDoneRef = useRef(onDone);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   onDoneRef.current = onDone;
-
+ 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     let finished = false;
-    remove(el);
-    const scaleFrom = direction === "out" ? MOTION_RIPPLE_MIN_SCALE : 1;
-    const scaleTo = direction === "out" ? 1 : MOTION_RIPPLE_MIN_SCALE;
-    const anim = animate(el, {
-      scale: [scaleFrom, scaleTo],
-      opacity: [opacityFrom, 0],
-      duration: durationMs,
-      ease: MOTION_RIPPLE_EASE,
-    });
-    void anim.then(() => {
-      if (!finished) onDoneRef.current(id);
-    });
+    killMotion(el);
+    const scaleFrom = direction === "out" ? RIPPLE_MIN_SCALE : 1;
+    const scaleTo = direction === "out" ? 1 : RIPPLE_MIN_SCALE;
+    const tween = gsap.fromTo(
+      el,
+      { scale: scaleFrom, autoAlpha: opacityFrom },
+      {
+        scale: scaleTo,
+        autoAlpha: 0,
+        duration: durationMs / 1000,
+        ease: ensureRippleEase(easeCss),
+        onComplete: () => {
+          if (!finished) onDoneRef.current(id);
+        },
+      },
+    );
     return () => {
       finished = true;
-      remove(el);
-      anim.revert();
+      tween.kill();
+      killMotion(el);
     };
-  }, [id, x, y, size, durationMs, opacityFrom, background, direction]);
-
+  }, [id, x, y, size, durationMs, opacityFrom, background, direction, easeCss]);
+ 
   return (
     <span
       ref={ref}
-      className="pointer-events-none absolute z-0 rounded-full"
+      className={PRESS_RIPPLE_DOT_CLASS}
       style={{
         left: x - size / 2,
         top: y - size / 2,
@@ -101,19 +71,19 @@ function ConvergeRippleDot({
         height: size,
         background,
         transformOrigin: "center center",
-        transform: `scale(${direction === "out" ? MOTION_RIPPLE_MIN_SCALE : 1})`,
+        transform: `scale(${direction === "out" ? RIPPLE_MIN_SCALE : 1})`,
       }}
       aria-hidden
     />
   );
 }
-
-export function ConvergeRippleLayer({
+ 
+export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
   ripples,
   tone,
   onDone,
-  durationMs = MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  opacityFrom = MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
+  durationMs,
+  opacityFrom,
   direction = "in",
 }: {
   ripples: ConvergeRipple[];
@@ -123,6 +93,9 @@ export function ConvergeRippleLayer({
   opacityFrom?: number;
   direction?: RippleDirection;
 }) {
+  const motion = useMotionConfig();
+  const resolvedDuration = durationMs ?? motion.rippleDefaultDuration;
+  const resolvedOpacity = opacityFrom ?? motion.rippleDefaultOpacityFrom;
   return (
     <>
       {ripples.map((rp) => (
@@ -130,12 +103,14 @@ export function ConvergeRippleLayer({
           key={rp.id}
           {...rp}
           background={tone}
-          durationMs={durationMs}
-          opacityFrom={opacityFrom}
+          durationMs={resolvedDuration}
+          opacityFrom={resolvedOpacity}
           direction={direction}
+          easeCss={motion.rippleEaseCss}
           onDone={onDone}
         />
       ))}
     </>
   );
-}
+});
+ 

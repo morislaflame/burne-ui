@@ -1,0 +1,73 @@
+import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
+import type { TextVariant } from "@/components/core/Text";
+import type { Prettify } from "@/utils/prettify";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+ 
+export type LabelClassNames = {
+  root?: string;
+  text?: string;
+  required?: string;
+};
+ 
+export type LabelPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+ 
+export type LabelMotion = {
+  root?: LabelPartMotion;
+  text?: LabelPartMotion;
+  required?: LabelPartMotion;
+};
+ 
+export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
+  children?: ReactNode;
+  required?: boolean;
+  /** Typography role for the label copy. Default `base`. */
+  textStyle?: TextVariant;
+  classNames?: Prettify<LabelClassNames>;
+  /**
+   * Per-slot motion (`root`, `text`, `required`). Defaults are empty — custom factories are opt-in.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   */
+  motion?: Prettify<MotionMapWithEvents<LabelMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type LabelClassNamesProviderProps = {
+  classNames?: Prettify<LabelClassNames>;
+  children: ReactNode;
+};
+ 
+export type FieldLabelContextValue = {
+  controlId?: string;
+  labelId?: string;
+  required?: boolean;
+};
+ 
+export type UseLabelRootStateProps = Pick<
+  LabelProps,
+  "required" | "htmlFor" | "id"
+>;
+ 
+export type LabelContentProps = {
+  children?: ReactNode;
+  required: boolean;
+  textStyle?: TextVariant;
+};
+
+export type LabelTextProps = HTMLAttributes<HTMLSpanElement> & {
+  /** Typography role. Default `base`. Root `textStyle` applies only to the automatic text, not to this part. */
+  textStyle?: TextVariant;
+};
+
+export type LabelRequiredProps = HTMLAttributes<HTMLSpanElement>;
+ 

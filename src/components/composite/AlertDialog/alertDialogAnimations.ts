@@ -1,0 +1,85 @@
+/**
+ * Slot motion for AlertDialog — look here first.
+ *
+ * DOM slots: `overlay`, `panel`, `title`, `description`, `close`, `header`,
+ * `headingBlock`, `footer`, `content`, `body`, `indicator`, plus `trigger` on Root.
+ * Host: `AlertDialog.Panel` (`useAlertDialogModalMotion`) plays `enter` / `leave`
+ * and broadcasts nested slots. Root has no portal DOM — it passes the `motion` map
+ * and trigger defaults. Overlay/panel defaults wrap the portal host (`ALERT_DIALOG_MOTION_DEFAULTS`
+ * on the Panel provider).
+ *
+ * Backdrop does not dismiss (APG). Escape is handled on `<dialog cancel>`.
+ */
+import { useCallback } from "react";
+ 
+import { useModalMotion } from "@/components/core/utils/useModalMotion";
+import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
+import {
+  useModalSlotMotionController,
+  type ModalHostSlot,
+} from "@/components/core/utils/slotMotion/modalSlotMotionHost";
+import {
+  applyModalOverlayInstant,
+  applyModalPanelInstant,
+} from "@/components/core/utils/slotMotion/recipes/modalSurface";
+ 
+import type { AlertDialogMotion, UseAlertDialogModalMotionProps } from "./alertDialogTypes";
+
+import { bindModalRecipes } from "@/components/core/utils/slotMotion/recipes/bindModal";
+
+bindModalRecipes();
+ 
+export const ALERT_DIALOG_MOTION_HOST_SLOTS = ["overlay", "panel"] as const;
+ 
+export const ALERT_DIALOG_MOTION_DEFAULTS: AlertDialogMotion = {
+  overlay: { enter: "modalOverlayEnter", leave: "modalOverlayLeave" },
+  panel: { enter: "modalPanelEnter", leave: "modalPanelLeave" },
+};
+ 
+function applyAlertDialogHostInstant(
+  slot: ModalHostSlot,
+  el: HTMLElement,
+  phase: "enter" | "leave",
+): void {
+  const open = phase === "enter";
+  if (slot === "overlay") applyModalOverlayInstant(el, open);
+  else applyModalPanelInstant(el, open);
+}
+ 
+export function useAlertDialogModalMotion({
+  open,
+  onOpenChange,
+  closeOnEscape = true,
+  closeOnInteractOutside = false,
+  onEscapeKeyDown,
+  onInteractOutside,
+  initialFocus,
+  contained = false,
+  motionScope,
+}: UseAlertDialogModalMotionProps & { motionScope?: MotionScopeValue | null }) {
+  const applyInstant = useCallback(applyAlertDialogHostInstant, []);
+  const slotMotion = useModalSlotMotionController({ motionScope, applyInstant });
+ 
+  const motion = useModalMotion({
+    open,
+    onOpenChange,
+    contained,
+    closeOnEscape,
+    closeOnInteractOutside,
+    onEscapeKeyDown,
+    onInteractOutside,
+    initialFocus,
+    slotMotion,
+  });
+ 
+  return {
+    mounted: motion.mounted,
+    showPortal: motion.showPortal,
+    dialogRef: motion.dialogRef,
+    overlayRef: motion.overlayRef,
+    panelRef: motion.panelRef,
+    handleBackdropPointerDown: motion.handleBackdropPointerDown,
+    handleDialogCancel: motion.handleDialogCancel,
+  };
+}
+ 

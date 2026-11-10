@@ -1,259 +1,259 @@
-import {
-  createContext,
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  type HTMLAttributes,
-} from "react";
-import type { IconType } from "react-icons";
-import { IoHelpCircleOutline } from "react-icons/io5";
-
-import { Text } from "@/components/core/Text";
-import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM, SHADOW_MD, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  SEMANTIC_STATUS_ICON_TEXT_CLASS,
-  SEMANTIC_STATUS_ICONS,
-  type SemanticStatus,
-} from "@/components/core/utils/semanticStatusIcons";
+import { forwardRef, useMemo, type HTMLAttributes, type ReactNode } from "react";
+ 
+import { messageBannerGridClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import { alertRootShellClass } from "@/components/core/utils/sizeLayout";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
-/** Визуальный вариант заливки (без отдельного статуса). */
-export type AlertVariant =
-  | "default"
-  | "outline"
-  | "secondary"
-  | "danger"
-  | "success"
-  | "info";
-
-export type AlertStatus = AlertVariant | "warning";
-
-export function resolveAlertStatus(
-  status?: AlertStatus,
-  variant?: AlertVariant,
-): AlertStatus {
-  return status ?? variant ?? "default";
-}
-
-function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
-  return tone !== "default" && tone !== "secondary";
-}
-
-/**
- * Компактный Alert: фон по семантике типа (тинты surface).
- * default — плотный surface; outline — `surface-outline`; secondary — `surface-secondary`.
- */
-const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
-  default: "border border-base bg-surface text-foreground",
-  outline: "surface-outline text-foreground",
-  secondary: "surface-secondary text-foreground",
-  danger: "bg-surface-tint-danger text-foreground",
-  success: "bg-surface-tint-success text-foreground",
-  info: "bg-surface-tint-info text-foreground",
-  warning: "bg-surface-tint-warning text-foreground",
+import type { ShadowLevel } from "@/tokens/shadows";
+ 
+import { AlertClassNamesProvider, AlertContext, AlertMotionProvider } from "./alertContext";
+import { AlertSimpleContent } from "./alertSimpleContent";
+import { resolveAlertMotionDefaults, useAlertAnimations } from "./alertAnimations";
+import { useAlertRootState } from "./useAlertRootState";
+import type {
+  AlertClassNames,
+  AlertLiveRole,
+  AlertMotion,
+  AlertProps,
+  AlertSize,
+  AlertStatus,
+  AlertVariant,
+} from "./alertTypes";
+ 
+export type {
+  AlertActionProps,
+  AlertContentProps,
+  AlertDescriptionProps,
+  AlertIndicatorProps,
+  AlertMessageProps,
+  AlertSimpleContentProps,
+  AlertVariant,
+  AlertStatus,
+  AlertLiveRole,
+  AlertClassNames,
+  AlertMotion,
+  AlertPartMotion,
+  AlertSize,
+  AlertProps,
+  AlertTitleProps,
+} from "./alertTypes";
+ 
+type AlertSurfaceProps = {
+  variant: AlertVariant;
+  status: AlertStatus;
+  hoverLift: boolean;
+  shadow: ShadowLevel;
+  motion?: AlertMotion;
+  classNames?: AlertClassNames;
+  className: string;
+  sizePresetGridGap: string;
+  gridSlots: MessageBannerGridSlots;
+  size: AlertSize;
+  liveRole: AlertLiveRole;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  isCompound: boolean;
+  title?: ReactNode;
+  description?: ReactNode;
+  icon?: ReactNode | null;
+  action?: ReactNode;
+  onPointerOver?: HTMLAttributes<HTMLDivElement>["onPointerOver"];
+  onPointerOut?: HTMLAttributes<HTMLDivElement>["onPointerOut"];
+  rest: HTMLAttributes<HTMLDivElement>;
+  children?: ReactNode;
 };
-
-function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
-  switch (tone) {
-    case "danger":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.danger;
-    case "success":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.success;
-    case "info":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.info;
-    case "warning":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
-    default:
-      return "text-accent";
-  }
-}
-
-function alertDefaultIndicatorIcon(tone: AlertStatus): IconType | null {
-  if (tone === "default" || tone === "secondary") return null;
-  if (tone === "outline") return IoHelpCircleOutline;
-  return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
-}
-
-export type AlertProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: AlertVariant;
-  status?: AlertStatus;
-};
-
-type AlertIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
-  status?: AlertStatus;
-};
-type AlertContentProps = HTMLAttributes<HTMLDivElement>;
-type AlertMessageProps = HTMLAttributes<HTMLDivElement>;
-type AlertTitleProps = HTMLAttributes<HTMLDivElement>;
-type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
-type AlertActionProps = HTMLAttributes<HTMLDivElement>;
-
-const AlertStatusContext = createContext<AlertStatus>("default");
-
-function AlertIndicator({
-  status,
-  className = "",
-  children,
-  ...rest
-}: AlertIndicatorProps) {
-  const statusFromContext = useContext(AlertStatusContext);
-  const tone = status ?? statusFromContext;
-
-  if (children === null) return null;
-
-  const DefaultIcon = alertDefaultIndicatorIcon(tone);
-  const inner =
-    children !== undefined
-      ? children
-      : alertShowsDefaultIndicatorIcon(tone) && DefaultIcon !== null
-        ? <DefaultIcon aria-hidden />
-        : null;
-
-  if (inner === null) return null;
-
-  return (
-    <span
-      className={cn(
-        "shrink-0 [&_svg]:icon-mid",
-        alertIndicatorWrapperTextClass(tone),
-        className,
-      )}
-      {...rest}
-    >
-      {inner}
-    </span>
-  );
-}
-
-function AlertContent({ className = "", ...rest }: AlertContentProps) {
-  return (
-    <div
-      className={cn(
-        "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
-
-const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(
-  function AlertMessage({ className = "", ...rest }, ref) {
-    return (
-      <div
-        ref={ref}
-        className={cn("flex min-w-0 flex-1 items-start gap-base", className)}
-        {...rest}
-      />
-    );
-  },
-);
-
-function AlertTitle({ className = "", ...rest }: AlertTitleProps) {
-  return (
-    <Text
-      as="div"
-      variant="base"
-      className={cn("font-medium leading-snug", className)}
-      {...rest}
-    />
-  );
-}
-
-function AlertDescription({
-  className = "",
-  ...rest
-}: AlertDescriptionProps) {
-  return (
-    <Text
-      as="div"
-      variant="base"
-      className={cn("leading-normal text-muted", className)}
-      {...rest}
-    />
-  );
-}
-
-function AlertAction({ className = "", ...rest }: AlertActionProps) {
-  return <div className={cn("shrink-0 self-start", className)} {...rest} />;
-}
-
-const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+ 
+const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function AlertSurface(
   {
     variant,
     status,
+    hoverLift,
+    shadow,
+    motion,
+    classNames,
+    className,
+    sizePresetGridGap,
+    gridSlots,
+    size,
+    liveRole,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    isCompound,
+    title,
+    description,
+    icon,
+    action,
+    onPointerOver,
+    onPointerOut,
+    rest,
+    children,
+  },
+  ref,
+) {
+  const surfaceStyle = useSkinSurfaceStyle(variant);
+  const { setRootRef, surfaceClass, pointerHandlers } = useAlertAnimations({
+    variant,
+    status,
+    hoverLift,
+    shadow,
+    motion,
+    ref,
+    onPointerOver,
+    onPointerOut,
+  });
+ 
+  return (
+    <div
+      ref={setRootRef}
+      role={liveRole}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
+      className={cn(
+        messageBannerGridClass(gridSlots, sizePresetGridGap),
+        alertRootShellClass(size),
+        surfaceClass,
+        classNames?.root,
+        className,
+      )}
+      {...rest}
+      {...pointerHandlers}
+      style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
+      {...dataVariantProps({ size, variant, status })}
+    >
+      {isCompound ? (
+        children
+      ) : (
+        <AlertSimpleContent
+          gridSlots={gridSlots}
+          title={title}
+          description={description}
+          icon={icon}
+          action={action}
+        >
+          {children}
+        </AlertSimpleContent>
+      )}
+    </div>
+  );
+});
+ 
+export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  {
+    variant,
+    status,
+    size = "base",
+    role: roleProp,
+    title,
+    description,
+    icon,
+    action,
+    classNames,
+    motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
+    hoverLift = true,
+    shadow = "base",
     className = "",
     children,
-    onPointerOver: onPointerOverProp,
-    onPointerOut: onPointerOutProp,
+    onPointerOver,
+    onPointerOut,
+    "aria-labelledby": ariaLabelledByProp,
+    "aria-describedby": ariaDescribedByProp,
     ...rest
   },
   ref,
 ) {
-  const tone = resolveAlertStatus(status, variant);
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  const setRootRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
+  const {
+    isCompound,
+    gridSlots,
+    sizePreset,
+    liveRole,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    contextValue,
+  } = useAlertRootState({
+    variant,
+    status,
+    size,
+    role: roleProp,
+    title,
+    description,
+    icon,
+    action,
+    children,
+    ariaLabelledByProp,
+    ariaDescribedByProp,
+  });
+ 
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(
+    () => {
+      void skinRevision;
+      return resolveAlertMotionDefaults({ variant: contextValue.variant, hoverLift });
     },
-    [ref],
+    [contextValue.variant, hoverLift, skinRevision],
   );
-
-  useEffect(() => { initElementShadow(rootRef.current, SHADOW_SM()); }, []);
-
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
-    rootRef,
-    true,
-    undefined,
-    undefined,
-    { idle: SHADOW_SM(), hover: SHADOW_MD() },
+ 
+  const motionParams = useMemo(
+    () => ({ shadowSize: shadow, variant: contextValue.variant }),
+    [contextValue.variant, shadow],
   );
-
+ 
   return (
-    <AlertStatusContext.Provider value={tone}>
-      <div
-        ref={setRootRef}
-        role="status"
-        className={cn(
-          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid text-left animate-shadow",
-          ALERT_INLINE_SURFACE_CLASSES[tone],
-          className,
-        )}
-        onPointerOver={(e) => {
-          onPointerOverProp?.(e);
-          if (!e.defaultPrevented) liftPointerHandlers.onPointerOver(e);
-        }}
-        onPointerOut={(e) => {
-          onPointerOutProp?.(e);
-          liftPointerHandlers.onPointerOut(e);
-        }}
-        {...rest}
-      >
-        {children}
-      </div>
-    </AlertStatusContext.Provider>
+    <AlertContext.Provider value={contextValue}>
+      <AlertClassNamesProvider classNames={classNames}>
+        <AlertMotionProvider
+          motion={motion}
+          defaults={motionDefaults}
+          params={motionParams}
+          controller={motionController}
+          motionState={motionState}
+          motionPayload={motionPayload}
+          playInitialState={playInitialState}
+        >
+          <AlertSurface
+            ref={ref}
+            variant={contextValue.variant}
+            status={contextValue.status}
+            hoverLift={hoverLift}
+            shadow={shadow}
+            motion={motion}
+            classNames={classNames}
+            className={className}
+            sizePresetGridGap={sizePreset.gridGap}
+            gridSlots={gridSlots}
+            size={size}
+            liveRole={liveRole}
+            ariaLabelledBy={ariaLabelledBy}
+            ariaDescribedBy={ariaDescribedBy}
+            isCompound={isCompound}
+            title={title}
+            description={description}
+            icon={icon}
+            action={action}
+            onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
+            rest={rest}
+          >
+            {children}
+          </AlertSurface>
+        </AlertMotionProvider>
+      </AlertClassNamesProvider>
+    </AlertContext.Provider>
   );
 });
-
-export const Alert = Object.assign(AlertRoot, {
-  Indicator: AlertIndicator,
-  Message: AlertMessage,
-  Content: AlertContent,
-  Title: AlertTitle,
-  Description: AlertDescription,
-  Action: AlertAction,
-});
-
-export type {
-  AlertIndicatorProps,
-  AlertContentProps,
-  AlertMessageProps,
-  AlertTitleProps,
-  AlertDescriptionProps,
-  AlertActionProps,
-};
+ 
+AlertRoot.displayName = "AlertRoot";
+ 
+export {
+  AlertAction,
+  AlertContent,
+  AlertDescription,
+  AlertIndicator,
+  AlertMessage,
+  AlertTitle,
+} from "./alertParts";
+ 

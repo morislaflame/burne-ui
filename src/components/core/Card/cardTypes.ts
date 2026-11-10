@@ -1,0 +1,162 @@
+import type {
+  HTMLAttributes,
+  ReactNode,
+} from "react";
+import type { Prettify } from "@/utils/prettify";
+
+import type { ShadowLevel } from "@/tokens/shadows";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { CardSize } from "./cardStyles";
+
+export type { CardSize } from "./cardStyles";
+
+export const KIT_CARD_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitCardVariant = (typeof KIT_CARD_VARIANTS)[number];
+export type CardVariant = KitCardVariant | (string & {});
+
+export type CardClassNames = {
+  root?: string;
+  content?: string;
+  header?: string;
+  headingBlock?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  footer?: string;
+};
+
+export type CardPointerMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type CardRootMotion = CardPointerMotion & {
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type CardPartMotion = CardPointerMotion;
+
+export type CardMotion = {
+  root?: CardRootMotion;
+  title?: CardPartMotion;
+  description?: CardPartMotion;
+  header?: CardPartMotion;
+  headingBlock?: CardPartMotion;
+  body?: CardPartMotion;
+  footer?: CardPartMotion;
+};
+
+export type CardProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  "onClick" | "onKeyDown"
+> & {
+  variant?: CardVariant;
+  /** Radius, padding and title/description type scale. @default "base" */
+  size?: CardSize;
+  /**
+   * Rest shadow size (passive CSS or pressable `--el-shadow` family).
+   * @default "base"
+   */
+  shadow?: ShadowLevel;
+  /**
+   * Interactive card: hover-lift, shadow and squeeze on press (like a button).
+   * Ripple is not built-in — if needed, pass `<Ripple />` as the first child and wrap the rest of the content in a layer with `relative z-[1]`.
+   * Do not place other buttons/links inside without `stopPropagation` on their click — otherwise the card `onClick` will also trigger.
+   */
+  pressable?: boolean;
+  /** Renders the pressable shell as a link. */
+  href?: string;
+  /**
+   * The single child becomes the shell (`next/link`, `<a>`).
+   * Card content stays inside that child.
+   */
+  asChild?: boolean;
+  /** Activation (`click`, and Enter / Space when the root is a button). */
+  onClick?: HTMLAttributes<HTMLElement>["onClick"];
+  onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
+  classNames?: Prettify<CardClassNames>;
+  /**
+   * Per-slot motion (`root`, `title`, `description`, `header`, `headingBlock`, `body`, `footer`).
+   * Pressable defaults: second-level hover lift + squeeze.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * `states` — app modes for `motionState` (not a DOM slot, not a phase).
+   */
+  motion?: Prettify<MotionMapWithEvents<CardMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Forwarded to the motion Provider (`controller`), not onto the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+
+export type CardHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+
+export type CardProviderProps = {
+  classNames?: Prettify<CardClassNames>;
+  size: CardSize;
+  children: ReactNode;
+};
+
+export type UseCardRootStateProps = Pick<
+  CardProps,
+  | "variant"
+  | "size"
+  | "pressable"
+  | "className"
+  | "onClick"
+  | "onKeyDown"
+  | "onPointerDown"
+>;
+
+export type UseCardAnimationsProps = {
+  pressable: boolean;
+  variant: CardVariant;
+  shadow?: ShadowLevel;
+  motion?: CardMotion;
+  onClick?: HTMLAttributes<HTMLElement>["onClick"];
+  onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
+  onPointerDown?: HTMLAttributes<HTMLElement>["onPointerDown"];
+  onPointerUp?: HTMLAttributes<HTMLElement>["onPointerUp"];
+  onPointerOver?: HTMLAttributes<HTMLElement>["onPointerOver"];
+  onPointerOut?: HTMLAttributes<HTMLElement>["onPointerOut"];
+  hoverPointerInsideRef: React.RefObject<boolean>;
+  forwardedRef: React.ForwardedRef<HTMLElement>;
+};
+
+export type CardRootShellProps = {
+  pressable: boolean;
+  renderAsButton: boolean;
+  href?: string;
+  asChild?: boolean;
+  rootClassName: string;
+  setRootRef: (node: HTMLElement | null) => void;
+  rest: HTMLAttributes<HTMLElement>;
+  children: ReactNode;
+  variant: CardVariant;
+  size: CardSize;
+  /** Merged handlers (user prop + animation). Safe to use in all branches. */
+  onPointerOver?: HTMLAttributes<HTMLElement>["onPointerOver"];
+  onPointerOut?: HTMLAttributes<HTMLElement>["onPointerOut"];
+  onPointerDown?: HTMLAttributes<HTMLElement>["onPointerDown"];
+  onPointerUp?: HTMLAttributes<HTMLElement>["onPointerUp"];
+  onClick?: HTMLAttributes<HTMLElement>["onClick"];
+  onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
+};

@@ -1,0 +1,309 @@
+# Tabs
+
+Вкладки с compound API: `List`, `Tab`, `Panel`. Sliding indicator (GSAP), hover/press на тексте неактивных табов. Поддерживает horizontal/vertical, `variant`, `size`. Simple API нет — только compound children.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Tabs, useTabsContext, type TabsProps, type TabsListProps, type TabsTabProps, type TabsPanelProps, type TabsSize, type TabsOrientation, type TabsVariant, type TabsClassNames } from "burne-ui";
+```
+
+## API
+
+### Compound API
+
+```tsx
+<Tabs defaultValue="profile" variant="outline" size="base">
+  <Tabs.List>
+    <Tabs.Tab value="profile">Профиль</Tabs.Tab>
+    <Tabs.Tab value="settings">Настройки</Tabs.Tab>
+  </Tabs.List>
+  <Tabs.Panel value="profile">Контент профиля</Tabs.Panel>
+  <Tabs.Panel value="settings">Контент настроек</Tabs.Panel>
+</Tabs>
+```
+
+### Controlled
+
+```tsx
+const [tab, setTab] = useState("profile");
+
+<Tabs value={tab} onValueChange={setTab}>
+  <Tabs.List>...</Tabs.List>
+  <Tabs.Panel value="profile">...</Tabs.Panel>
+</Tabs>
+```
+
+### Root props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `value` | — | Контролируемое значение вкладки |
+| `defaultValue` | — | Начальное (uncontrolled) |
+| `onValueChange` | — | `(value: string \| null) => void`. Пустой выбор — `null` |
+| `orientation` | `horizontal` | `horizontal` \| `vertical` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` |
+| `disabled` | `false` | Отключает всю группу |
+| `className` | — | На root `<div>` |
+| `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Tabs.Tab` / `Tabs.Panel` |
+
+### Compound-подчасти
+
+| Часть | Назначение |
+|-------|------------|
+| `Tabs.List` | `role="tablist"`, indicator, keyboard nav |
+| `Tabs.Tab` | Кнопка вкладки; `value`, `asChild`, `disabled`; вложенный motion scope (`motionController`, `playSlot("tab")`) |
+| `Tabs.Panel` | `role="tabpanel"`, `value`; вложенный motion scope (`motionController`, `playSlot("panel")`) |
+
+### `TabsClassNames`
+
+`root`, `list`, `indicator`, `tab`, `tabText`, `panel`.
+
+## variant и размеры
+
+| variant | List surface | Indicator |
+|---------|--------------|-----------|
+| `default` | border-bottom/left line | `bg-primary` линия 2px |
+| `outline` | `bg-transparent border-token rounded-large` | bbox таба, `bg-secondary` |
+| `secondary` | `bg-secondary border-token rounded-large` | bbox, `bg-tertiary` |
+
+`status` нет — только `variant` + `size`.
+
+| size | Высота таба | Text variant |
+|------|-------------|--------------|
+| `small` | `CONTROL_SIZE_LAYOUT.small` | `small` |
+| `base` | `CONTROL_SIZE_LAYOUT.base` | `base` |
+| `mid` | `CONTROL_SIZE_LAYOUT.mid` | `mid` |
+| `large` | `CONTROL_SIZE_LAYOUT.large` | `large` |
+
+## Анимации
+
+**DOM:**
+
+```
+<div class=root>
+  <div role=tablist class=list ref=listRef>
+    <span class=indicator />              ← layout left/top/w/h; GSAP x/y/scaleX/scaleY (FLIP)
+    <button role=tab>
+      <Text ref=motionRef class=tabText>  ← hover squeeze (не selected)
+  <div role=tabpanel hidden=...>
+```
+
+### 1. Sliding indicator (`useSlidingTabIndicator`)
+
+При смене `value` / resize:
+
+1. Находит selected tab в list
+2. Считает metrics (bbox или линия 2px для `default`)
+3. Ставит layout `left/top/width/height` мгновенно; FLIP через GSAP `x/y/scaleX/scaleY` (`transform-origin: 0 0`) + `motionInteractive()`
+4. `ResizeObserver` на list + tabs → пересчёт
+
+**First layout / reduced motion:** мгновенный layout + сброс transform, без tween.
+
+#### Кастомизация
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  interactiveDuration: 280,
+  interactiveEase: "power2.out",
+  enableTabsIndicator: true,
+});
+```
+
+### 2. Tab text hover/press (`useTabPointerMotion`)
+
+Только **неактивные** вкладки (`!isSelected`):
+
+- **Hover:** `animateInteractiveHoverLift` на span `tabText`
+- **Press:** `animateInteractivePressSqueeze`
+
+Выбранная вкладка — без motion (статичный primary text).
+
+`asChild` получает `tabsTabClass` и `classNames.tab`. `className` child идёт последним и побеждает. Внутреннего слота `tabText` нет, text motion не вешается.
+
+### Slot motion
+
+Публичные слоты = compound / `classNames` DOM: `root`, `list`, `tab`, `tabText`, `panel`.
+
+**`indicator.change`** — рецепт `tabsIndicatorMove`. Хост по-прежнему пишет `left` / `top` / `width` / `height`. Рецепт твинит только `x` / `y` / `scaleX` / `scaleY`. `indicator.change: false` ставит позу сразу.
+
+| Слот | Фазы | Дефолт |
+|------|------|--------|
+| `root` | `enter`; `change` when the selected tab updates; hover / press if set | empty |
+| `list` | `enter` | empty |
+| `tab` | `enter` (opt-in mount); `check` / `uncheck` на selection (`skipFirst`) | empty |
+| `tabText` | hover / press; `check` / `uncheck` на selection (`skipFirst`) | неактивный: `hoverLiftFirstLevel` + `pressSqueeze` (`pressOut: false`); selected / disabled → эти фазы `false` |
+| `panel` | `enter` / `leave` | empty (opt-in) |
+
+Каждый Tab / Panel — nested Provider. `tab` / `tabText` `enter` — opt-in mount; selection — `check` / `uncheck` (`skipFirst`). `panel` `enter` / `leave` — видимость панели, не selection вкладки. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in. Смена вкладки во время `panel.leave` отменяет run (`cancelled`) и не оставляет панель в leaving.
+
+`play()` ищет слот `root` у Tabs. `playSlot("list")` / `playAll` — chrome (`root` / `list`), не nested Tab/Panel. `Tabs.Tab` и `Tabs.Panel` создают **вложенный** scope: свой `motionController`, `playSlot("tab")` / `playSlot("tabText")` / `playSlot("panel")` (своего `root` нет). Один handle ≠ два scope. Indicator FLIP не слот.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`tabs:nudge`, `tabs:kick`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Tabs.List`) видит Tabs; внутри Tab/Panel — их nested scope.
+
+Тройка на корне, на `Tabs.Tab` и на `Tabs.Panel`. Один набор не играет чужой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Tabs, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "tabs:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("tabs:nudge")}>
+        Nudge
+      </Button>
+      <Tabs defaultValue="one" motionController={controller} motion={{ events }}>
+        <Tabs.List>
+          <Tabs.Tab value="one">One</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="one">Panel</Tabs.Panel>
+      </Tabs>
+    </>
+  );
+}
+```
+
+`asChild` на Tab — классы вкладки на child, слота `tabText` нет.
+
+### Чего нет
+
+- Press squeeze на selected tab
+- Portal motion
+- Ripple
+- `status` semantic colors
+
+### Сводка: что настраивается где
+
+| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
+|----------|---------|---------------------------|----------------|
+| Indicator slide | `useSlidingTabIndicator` | `interactiveDuration`, `interactiveEase`, `enableTabsIndicator` | `variant`, `orientation` |
+| Tab text hover/squeeze | slot motion `tabText` | `hoverLiftScale`, `pressSqueezeScale` | `motion.tabText`, selected |
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `tabsRootClass` | `flex gap-large`, orientation row/col |
+| `LIST_VARIANT_CLASS` | Surface per variant |
+| `INDICATOR_VARIANT_CLASS` | Indicator color/shape |
+| `CONTROL_SIZE_LAYOUT` | Tab height/padding per size |
+| `TEXT_COLOR_TRANSITION` | Muted → primary hover |
+| `focus-ring-inset` | Keyboard focus на tab/panel |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на `Tabs`** — root layout.
+2. **`classNames` на root** — list, indicator, tab, panel.
+
+`Tabs.Tab` / `Tabs.Panel` — **`className`** поверх слота `tab` / `panel`.
+
+### Слоты `TabsClassNames`
+
+| Слот | DOM | Когда использовать |
+|------|-----|-------------------|
+| `root` | Root wrapper | Max-width, outer border |
+| `list` | `tablist` | Background ring, padding |
+| `indicator` | Sliding span | Custom indicator color/shape |
+| `tab` | Tab button | Font, padding override |
+| `tabText` | Inner Text span | Gap icons, typography |
+| `panel` | `tabpanel` | Content area bg/padding |
+
+### Пример кастомизации
+
+```tsx
+<Tabs
+  defaultValue="a"
+  classNames={{
+    root: "max-w-xl rounded-large border border-info/25 p-base",
+    list: "bg-info/5 ring-1 ring-info/15",
+    indicator: "bg-info/30",
+    tab: "font-medium",
+    tabText: "gap-small",
+    panel: "rounded-small bg-info/5 p-large",
+  }}
+>
+  <Tabs.List>
+    <Tabs.Tab value="a">Вкладка A</Tabs.Tab>
+    <Tabs.Tab value="b">Вкладка B</Tabs.Tab>
+  </Tabs.List>
+  <Tabs.Panel value="a">Контент A</Tabs.Panel>
+  <Tabs.Panel value="b">Контент B</Tabs.Panel>
+</Tabs>
+```
+
+### `asChild` на Tab
+
+```tsx
+<Tabs.Tab value="custom" asChild>
+  <Button variant="ghost" type="button">Кастомный таб</Button>
+</Tabs.Tab>
+```
+
+Handlers и ARIA merge на child. `className` child побеждает `classNames.tab`. Text motion отключён. `Tabs.List` принимает `classNames` и `ref`: слоты List перекрывают карту корня.
+
+### Практические заметки
+
+- Каждый `Tabs.Tab` и `Tabs.Panel` должен иметь уникальный `value`.
+- `disabled` на root блокирует все табы; per-tab — `disabled` на `Tabs.Tab`.
+- Vertical: `orientation="vertical"` + keyboard `ArrowUp`/`ArrowDown`.
+- **Не задавайте `transform` на `indicator`** — GSAP владеет `x/y/scaleX/scaleY` (FLIP); layout `left/top/width/height` ставится мгновенно.
+- **Порядок мержа:** variant/size → `classNames.slot` → `className` tab/panel.
+
+## Интеграции
+
+| Компонент | Сценарий |
+|-----------|----------|
+| `Button` | `asChild` trigger tab |
+| `Badge` | Счётчик на tab label |
+| `Card` | Panel content layout |
+
+## Доступность
+
+- Tab: `role="tab"`, `aria-selected`, `aria-controls`, roving `tabIndex` (одна tab-остановка на выбранном табе)
+- Panel: `role="tabpanel"`, `aria-labelledby`, `hidden` когда не selected
+- List: `role="tablist"`, `aria-orientation`, keyboard `Home`/`End`/arrows (без собственного `tabIndex`)
+- **Имя tablist (APG):** задайте `aria-label` или `aria-labelledby` на `Tabs.List` — например `<Tabs.List aria-label="Settings">`
+- Indicator: `aria-hidden`
+- IDs: `{baseId}-tab-{value}`, `{baseId}-panel-{value}`
+
+## Структура файлов
+
+```
+Tabs/
+├── Tabs.tsx
+├── index.ts
+├── tabsTypes.ts
+├── tabsStyles.ts
+├── tabsAnimations.ts
+├── tabsParts.tsx
+├── useTabsRootState.ts
+├── useSlidingTabIndicator.ts
+├── tabsContext.tsx
+├── tabsA11y.ts
+└── Tabs.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Tabs` — default, vertical, variants, sizes, controlled, disabled, `CustomClassNames`.
+
+## Данные
+
+`items` заполняет список или панели, которых нет среди детей. Совпадение части пишет ошибку в dev и пропускает сгенерированную копию.
+
+## Активация
+
+`activationMode="manual"` стрелками только переносит фокус; выбор — Enter или клик. `automatic` выбирает вкладку сразу. `keepMounted` по умолчанию держит неактивные панели в DOM. `false` на корне или на `Tabs.Panel` снимает неактивную панель.

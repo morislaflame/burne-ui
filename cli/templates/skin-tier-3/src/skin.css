@@ -1,0 +1,11 @@
+@layer ui-kit {
+  .__SKIN_NAME__-surface {
+    --__SKIN_NAME__-tilt: 2deg;
+  }
+}
+
+@media (forced-colors: active) {
+  .__SKIN_NAME__-surface {
+    forced-color-adjust: none;
+  }
+}

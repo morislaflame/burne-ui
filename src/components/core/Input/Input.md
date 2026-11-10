@@ -1,0 +1,299 @@
+# Input
+
+Текстовое поле с оболочкой (shell), affix-слотами, типами `text` / `number` / `password` / `file`. Simple и compound API. Интеграция с `Form`, `ButtonGroup`, `FieldLabelContext`.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Input, type InputControlProps, type InputSimpleProps, type InputProps, type InputVariant, type InputSize, type InputClassNames, type InputMotion, type InputPartMotion } from "burne-ui";
+```
+
+## API
+
+### Compound
+
+```tsx
+<Input label="Email" hint="…" error="Некорректный адрес" required>
+  <Input.Label>Email</Input.Label>
+  <Input.Control type="email" autoComplete="email" />
+  <Input.Hint>Формат: name@domain.tld</Input.Hint>
+  <Input.Error>Некорректный адрес</Input.Error>
+</Input>
+```
+
+| Часть | Назначение |
+|-------|------------|
+| `Input` / `Input.Root` | `Field` + context |
+| `Input.Label` | Алиас `Label` |
+| `Input.Control` | Shell + `<input>` |
+| `Input.Hint` | Подсказка |
+| `Input.Error` | Ошибка (`role="alert"`) |
+
+### Simple API
+
+```tsx
+<Input
+  label="Email"
+  hint="Формат: name@domain.tld"
+  error={showError ? "Укажите корректный адрес." : undefined}
+  required
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>
+```
+
+### `Input.Control` props (ключевые)
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `variant` | `default` | `default` \| `outline` |
+| `invalid` | — | `true` — danger-кольцо, `aria-invalid` и `data-invalid=""` без текста. `error` делает то же и показывает сообщение |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `type` | `text` | Нативный `type` (`email`, `tel`, `url`, `search`, `number`, …). `password` показывает переключатель видимости, `file` — зону файла |
+| `prefix` / `suffix` | — | Affix-слоты (не для `file`) |
+| `groupSegment` | — | Сегмент `ButtonGroup` |
+| `classNames` | — | См. ниже |
+| `motion` | — | Root / simple: карта слотов + `events` / `states`. На `Input.Control` — part motion слота `shell` |
+| `motionController` | — | Simple: форвардится на Control (хост `shell`). Compound: Root chrome; для shell — второй handle на `Input.Control`. Не на DOM |
+| `motionState` / `motionPayload` / `playInitialState` | — | Не DOM-атрибуты. Simple: Root chrome + форвард на Control. Compound: Root — chrome; Control — свой scope. Пара к `motion.states`. Снимок — `createMotionFactory` / `MotionPayload` |
+
+### `InputClassNames`
+
+`root`, `label`, `shell`, `control`, `prefix`, `suffix`, `passwordToggle`, `fileArea`, `fileEmpty`, `fileRow`, `fileGlyph`, `filePreview`, `fileRemove`, `hint`, `error`.
+
+### Типы поля (`type`)
+
+Нативный атрибут `type` уходит на `<input>`: мобильная клавиатура, автозаполнение и проверка браузера (`email`, `tel`, `url`, `search`, `date`).
+
+| `type` | Особенности |
+|--------|-------------|
+| `text` и остальные | Стандартный input с этим `type` |
+| `number` | Числовая клавиатура |
+| `password` | Toggle visibility (`IoEye` / `IoEyeOff`); открытый пароль временно `type="text"` |
+| `file` | Drag-area, preview, multi-file, remove с exit-анимацией |
+
+Preview: `file.type` `image/*`, иначе последнее расширение после `.` (`my photo.jpg` → `jpg`). Имя без точки, с одной ведущей точкой или с точкой в конце не считается картинкой — не `split(".").pop()`.
+
+Remove файла вызывает `onChange` один раз после синхронизации `input.files`, не из `setState` updater (в StrictMode updater может вызваться дважды).
+
+## variant
+
+| variant | Shell |
+|---------|-------|
+| `default` | `bg-surface border-token` |
+| `outline` | прозрачный + `border-token-outline` |
+
+Ошибка — только `invalid` или `error`: нейтральный фон и border, постоянное danger-кольцо (геометрия `--focus-ring-*`). `data-status` на поле нет. Affix: `bg-primary-tint`.
+
+## Размеры
+
+Из `CONTROL_SIZE_LAYOUT`: `min-h-control-*`, `controlPad`, toggle icon/pad для password.
+
+## Анимации
+
+Публичный slot motion. Root передаёт карту `motion`; хост — `Input.Control` (defaults + `play`). File row leave — рецепт `fileRowExit` (scale / y / autoAlpha).
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | — |
+| `control` / `prefix` / `suffix` / `passwordToggle` / `fileRemove` | hover/press | нет |
+| `label` / `hint` / `error` | `enter` / hover/press | нет; Root scope (соседи Control) |
+| `fileRow` | `leave` | `fileRowExit` |
+
+`false` на `fileRow.leave` — строка снимается сразу, без tween. `false` на `shell.hoverIn/Out` — rest-тень остаётся, lift не играет. Не анимируйте layout в публичных MotionVars.
+
+**Где в коде:** типы — `inputTypes.ts`; scope — `inputContext.tsx`; defaults + host — `inputAnimations.ts`; слоты — `inputControlParts.tsx` / `inputAffixParts.tsx`; карта на Root — `Input.tsx`.
+
+```tsx
+<Input
+  label="Email"
+  motion={{
+    shell: { hoverIn: false, hoverOut: false },
+  }}
+/>
+```
+
+Compound: `motion` на `Input.Control` — part motion слота `shell`. На `Input.Label` / `Hint` / `Error` — chrome Root scope (не scope Control).
+
+Слота `root` нет: `play()` ищет `"root"` и skip. Simple API — `playSlot("shell", …)` / `playSlot("prefix", …)`. Compound chrome — handle на Root (`playSlot("label")`); shell-хост — отдельный handle на `Input.Control`. Один handle ≠ два scope.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`input:nudge`, `input:pulse`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("shell", event)` (карта `events` с корня мержится в Control). `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+```tsx
+import { Button, Input, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "input:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("shell", "input:nudge")}>
+        Nudge
+      </Button>
+      <Input label="Email" placeholder="you@example.com" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+**ButtonGroup:** при `groupSegment` shell hover/press выключены.
+
+### Кастомизация
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  hoverLiftScale: 1.025,
+  hoverLiftEase: "sine.inOut",
+  interactiveDuration: 280,
+  enableHoverLift: true,
+  enablePressSqueeze: true,
+});
+```
+
+**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()`.
+
+Resize/file geometry не в публичных vars. Password toggle и file remove — публичные слоты (можно factory на hover).
+
+## Интеграция
+
+| Контекст | Поведение |
+|----------|-----------|
+| `Form` | `error` из `getError(name)`, `size`, `disabled` |
+| `ButtonGroup` | — |
+| `FieldLabelContext` | auto `htmlFor`, `labelId`, `required` |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на root** — дополнительные классы на обёртку `Field` (мержатся с `classNames.root`).
+2. **`classNames` на root** — точечные слоты через `InputClassNamesProvider`; все подчасти читают контекст.
+
+В compound API слоты из root `classNames` применяются ко всем частям. Дополнительно каждая подчасть принимает свой **`className`**, который мержится поверх слота контекста через `cn`.
+
+### Слоты `InputClassNames`
+
+| Слот | DOM / элемент | Когда использовать |
+|------|---------------|-------------------|
+| `root` | `Field` | Отступы, max-width, рамка вокруг всего поля |
+| `label` | `Label` (simple и `Input.Label`) | Типографика, отступ label |
+| `shell` | `[data-slot="input-shell"]` | Оболочка: ring, border, min-height, hover/focus (осторожно с motion-классами) |
+| `control` | `<input>` | Шрифт, placeholder, padding внутри shell |
+| `prefix` / `suffix` | Affix-слоты | Фон иконки, отступы affix |
+| `passwordToggle` | Кнопка показа пароля | Размер hit-area, цвет иконки |
+| `fileArea` | Контейнер file UI | Layout drag-zone / списка |
+| `fileEmpty` | Пустая зона + иконка | Dashed-area, текст «Select file» |
+| `fileRow` | Строка выбранного файла | Gap, padding строки |
+| `filePreview` | `<img>` preview | Размер превью |
+| `fileGlyph` | Иконка файла без preview | Размер glyph |
+| `fileRemove` | Кнопка удаления файла | Hit-area remove |
+| `hint` / `error` | `Field.Hint` / `Field.Error` | Цвет, размер подсказки/ошибки |
+
+`variant` и `size` задают базовые токены в `inputStyles.ts`. `classNames` **дополняют** их, не отменяя variant-логику (кроме явного override Tailwind-классами).
+
+### Simple API
+
+Все props поля и control — на одном `Input`. Стили слотов — через `classNames` на root:
+
+```tsx
+<Input
+  className="max-w-sm"
+  classNames={{
+    root: "rounded-large border border-primary/20 p-base",
+    shell: "ring-1 ring-primary/15",
+    control: "text-primary placeholder:text-primary/50",
+    prefix: "bg-surface-elevated text-muted",
+    hint: "text-foreground/70",
+    error: "font-medium",
+  }}
+  label="Email"
+  placeholder="you@example.com"
+  prefix={<IoSearch aria-hidden />}
+  hint="Мы не передаём адрес третьим лицам."
+  error="Введите корректный email."
+/>
+```
+
+Для `type="file"` дополнительно: `fileArea`, `fileEmpty`, `fileRow`, `filePreview`, `fileRemove`.
+
+### Compound API
+
+`classNames` на root + **`className` на каждой части** для локальных правок. Можно менять порядок и оборачивать части:
+
+```tsx
+<Input
+  required
+  classNames={{
+    root: "max-w-md gap-small",
+    shell: "border-primary/30",
+    hint: "text-xs",
+  }}
+>
+  <Input.Label className="uppercase tracking-wide">
+    Email
+  </Input.Label>
+
+  <div className="relative">
+    <Input.Control
+      className="pr-xlarge"
+      placeholder="you@example.com"
+      prefix={<IoMail aria-hidden />}
+    />
+  </div>
+
+  <Input.Hint>Служебный адрес</Input.Hint>
+  <Input.Error className="text-danger">Некорректный формат</Input.Error>
+</Input>
+```
+
+`Input.Label` также принимает вложенные `classNames` компонента `Label` (`root`, `text`, `required`) — они мержатся с `classNames.label` из контекста Input.
+
+`Input.Control` наследует `variant` и `size` из field context (или props). Affix (`prefix` / `suffix`) — только на `Control`.
+
+### Практические заметки
+
+- **Shell vs control:** тень и hover-lift вешаются на `shell` (`classNames.shell`). `className` и `ref` у `Input.Control` попадают на `<input>` — тот же узел, что `classNames.control`. Текст и caret — на `control`.
+- **ButtonGroup:** при `groupSegment` shell hover отключён; стили сегмента задаёт группа.
+- **Порядок мержа:** `базовые стили` → `classNames.slot` → `className` на подчасти.
+- **Мобильный шрифт контрола:** класс `field-control-mobile-no-zoom` стоит после слота намеренно — iOS зумит поле, если размер шрифта < 16px. Размер текста на `control` этим классом не перебить.
+
+## Доступность
+
+- `joinFieldDescribedBy(hintId, errorId)` на control
+- `error` или `invalid` ставят `aria-invalid` на control, пустой `data-invalid` на корне и danger-кольцо на shell
+- `aria-required` из `required`
+- Password toggle: `aria-label`, `aria-pressed`
+- File remove: `aria-label`
+
+## Структура файлов
+
+```
+Input/
+├── Input.tsx                 # Root: карта motion (без defaults)
+├── index.ts
+├── inputTypes.ts
+├── inputStyles.ts
+├── inputAnimations.ts        # defaults + host play (hover / press / fileRow leave)
+├── inputContext.tsx          # field + classNames + createMotionScope
+├── inputControlParts.tsx     # Control host + nested Provider
+├── inputAffixParts.tsx       # prefix/suffix/passwordToggle/fileRow/fileRemove
+├── inputFieldParts.tsx
+├── inputSimpleParts.tsx
+├── useInputRootState.ts
+├── inputAPI.ts
+├── inputA11y.ts
+└── Input.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Input` — simple/compound, variant, invalid, password, file, ButtonGroup segment, `classNames`, Slot motion, MotionController.

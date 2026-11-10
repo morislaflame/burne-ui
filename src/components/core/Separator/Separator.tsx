@@ -1,45 +1,130 @@
-import { forwardRef, type HTMLAttributes } from "react";
-
-import { cn } from "@/utils/cn";
-
-export type SeparatorOrientation = "horizontal" | "vertical";
-
-export type SeparatorProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "role"
-> & {
-  /** Линия или столбец. По умолчанию горизонтальная линия во всю ширину. */
-  orientation?: SeparatorOrientation;
-};
-
-/**
- * Разделитель списков и блоков — по теме (`border-base`).
- */
-export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
-  function Separator(
-    {
-      orientation = "horizontal",
-      className = "",
-      ...rest
-    },
-    ref,
-  ) {
+import { forwardRef, useMemo, type Ref } from "react";
+ 
+import { separatorAriaOrientation } from "./separatorA11y";
+import { resolveSeparatorMotionDefaults, useSeparatorRootMotion } from "./separatorAnimations";
+import { SeparatorMotionProvider } from "./separatorContext";
+import { separatorRootClass } from "./separatorStyles";
+import type { SeparatorPartMotion, SeparatorProps } from "./separatorTypes";
+ 
+export type {
+  SeparatorOrientation,
+  SeparatorProps,
+  SeparatorMotion,
+  SeparatorPartMotion,
+} from "./separatorTypes";
+ 
+export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separator(
+  {
+    orientation = "horizontal",
+    decorative = false,
+    className = "",
+    motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
+  ref,
+) {
+  const motionDefaults = useMemo(() => resolveSeparatorMotionDefaults(), []);
+ 
+  return (
+    <SeparatorMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
+      <SeparatorSurface
+        orientation={orientation}
+        decorative={decorative}
+        className={className}
+        forwardedRef={ref}
+        rootMotion={motion?.root}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        rest={rest}
+      />
+    </SeparatorMotionProvider>
+  );
+});
+ 
+function SeparatorSurface({
+  orientation,
+  decorative,
+  className,
+  forwardedRef,
+  rootMotion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  rest,
+}: {
+  orientation: NonNullable<SeparatorProps["orientation"]>;
+  decorative: boolean;
+  className: string;
+  forwardedRef: React.ForwardedRef<HTMLElement>;
+  rootMotion?: SeparatorPartMotion;
+  onPointerOver: SeparatorProps["onPointerOver"];
+  onPointerOut: SeparatorProps["onPointerOut"];
+  onPointerDown: SeparatorProps["onPointerDown"];
+  onPointerUp: SeparatorProps["onPointerUp"];
+  rest: Omit<
+    SeparatorProps,
+    | "orientation"
+    | "decorative"
+    | "className"
+    | "motion"
+    | "motionController"
+    | "onPointerOver"
+    | "onPointerOut"
+    | "onPointerDown"
+    | "onPointerUp"
+  >;
+}) {
+  const sharedClassName = separatorRootClass(orientation, className);
+  const part = useSeparatorRootMotion({
+    forwardedRef,
+    motion: rootMotion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+ 
+  if (orientation === "horizontal") {
     return (
-      <div
-        ref={ref}
-        role="separator"
-        aria-orientation={orientation === "vertical" ? "vertical" : undefined}
-        className={cn(
-          "box-border shrink-0 border-solid border-base",
-          orientation === "horizontal"
-            ? "my-xsmall h-0 w-full min-w-0 max-w-full border-t"
-            : "mx-xsmall min-h-[1.5rem] w-0 self-stretch border-l",
-          className,
-        )}
+      <hr
+        ref={part.setRef as Ref<HTMLHRElement>}
+        className={sharedClassName}
         {...rest}
+        {...part.pointerHandlers}
+        role={decorative ? "none" : undefined}
+        aria-hidden={decorative ? true : undefined}
+        data-orientation={orientation}
       />
     );
-  },
-);
-
+  }
+ 
+  return (
+    <div
+      ref={part.setRef as Ref<HTMLDivElement>}
+      role={decorative ? "none" : "separator"}
+      aria-orientation={decorative ? undefined : separatorAriaOrientation(orientation)}
+      aria-hidden={decorative ? true : undefined}
+      className={sharedClassName}
+      {...rest}
+      {...part.pointerHandlers}
+      data-orientation={orientation}
+    />
+  );
+}
+ 
 Separator.displayName = "Separator";
+ 

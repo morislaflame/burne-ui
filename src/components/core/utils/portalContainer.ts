@@ -1,0 +1,75 @@
+/**
+ * Resolve the DOM node for overlay portals (`createPortal`).
+ * Defaults to `document.body` when `container` is omitted.
+ * Returns `null` during SSR (no `document`) — callers must skip the portal.
+ */
+export function resolvePortalContainer(
+  container?: HTMLElement | null,
+): HTMLElement | null {
+  if (container) return container;
+  if (typeof document === "undefined") return null;
+  return document.body;
+}
+ 
+/**
+ * Custom portal hosts (not `document.body`) need non-modal `<dialog>.show()`
+ * and `position: absolute` — `showModal()` promotes to the browser top layer
+ * and always covers the viewport, ignoring the host.
+ */
+export function isContainedPortal(
+  container?: HTMLElement | null,
+): boolean {
+  if (container == null) return false;
+  const body = container.ownerDocument?.body
+    ?? (typeof document === "undefined" ? null : document.body);
+  if (!body) return false;
+  return container !== body;
+}
+ 
+/**
+ * Open a native `<dialog>`. Contained portals use non-modal `show()`.
+ */
+export function openNativeDialog(
+  dialog: HTMLDialogElement,
+  options?: { contained?: boolean },
+): void {
+  if (dialog.open) return;
+  if (options?.contained) dialog.show();
+  else dialog.showModal();
+}
+
+/**
+ * `close` / `cancel` do not bubble, but React still walks fibers and invokes
+ * `onClose` / `onCancel` on ancestor `<dialog>` hosts. Dismiss only the dialog
+ * that actually fired the event.
+ */
+export function isOwnNativeDialogEvent(event: {
+  target: EventTarget | null;
+  currentTarget: EventTarget | null;
+}): boolean {
+  return event.target === event.currentTarget;
+}
+ 
+/**
+ * Place a floating panel from viewport-space coords (`getBoundingClientRect`).
+ * - `document.body` → `position: fixed` with viewport coords
+ * - custom host → `position: absolute` relative to the host box
+ */
+export function applyFloatingPortalPosition(
+  panel: HTMLElement,
+  placement: { left: number; top: number },
+  portalContainer?: HTMLElement | null,
+): void {
+  if (isContainedPortal(portalContainer) && portalContainer) {
+    const hostRect = portalContainer.getBoundingClientRect();
+    panel.style.position = "absolute";
+    panel.style.left = `${placement.left - hostRect.left + portalContainer.scrollLeft}px`;
+    panel.style.top = `${placement.top - hostRect.top + portalContainer.scrollTop}px`;
+    return;
+  }
+ 
+  panel.style.position = "fixed";
+  panel.style.left = `${placement.left}px`;
+  panel.style.top = `${placement.top}px`;
+}
+ 

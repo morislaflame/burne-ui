@@ -1,0 +1,112 @@
+import type { ComponentType } from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+
+import { Input } from "@/components/core/Input";
+import { Label } from "@/components/core/Label";
+import { LabelPartsDemo } from "../../../../playground/showcase/demos/label/LabelParts.demo";
+import { LabelMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/label/motionController/gallery";
+import { LabelSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/label/slotMotion/gallery";
+
+const decorator = [
+  (Story: ComponentType) => (
+    <div
+      className="box-border flex min-h-[10rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <Story />
+    </div>
+  ),
+] as const;
+
+const meta = {
+  title: "Core Components/Label",
+  component: Label,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Form field label. Supports `htmlFor`, `required`, and `FieldLabelContext` from Input/ComboBox. `Label.Text` and `Label.Required` place the text and star. `Label.Slot` renders null.",
+      },
+    },
+  },
+  decorators: [...decorator],
+} satisfies Meta<typeof Label>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  name: "Default",
+  render: () => <Label htmlFor="label-demo">Email</Label>,
+};
+
+export const Required: Story = {
+  name: "Required field",
+  render: () => (
+    <Label htmlFor="label-required" required>
+      Password
+    </Label>
+  ),
+};
+
+export const WithInput: Story = {
+  name: "With Input",
+  render: () => (
+    <Input label="Username" placeholder="ivan" className="max-w-sm" />
+  ),
+};
+
+export const LegendSpan: Story = {
+  name: "Without htmlFor (span)",
+  render: () => <Label id="legend-label">Section title</Label>,
+};
+
+export const Parts: Story = {
+  name: "Text and Required",
+  render: () => <LabelPartsDemo />,
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Label",
+      },
+    },
+  },
+  render: () => (
+    <Label
+      htmlFor="label-custom"
+      required
+      classNames={{
+        root: "rounded-large border border-primary/30 px-base py-xsmall",
+        text: "text-primary font-semibold",
+        required: "text-warning",
+      }}
+    >
+      Email
+    </Label>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <LabelSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot vs playAll, stagger, exclude required, cancel loop, label events.",
+      },
+    },
+  },
+  render: () => <LabelMotionControllerGalleryDemo />,
+};

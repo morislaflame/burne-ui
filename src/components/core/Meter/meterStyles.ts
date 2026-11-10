@@ -1,0 +1,171 @@
+import type { CSSProperties } from "react";
+ 
+import { sliderThicknessToCss } from "@/components/core/Slider/sliderStyles";
+import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
+ 
+import { semanticStatusBgClass } from "@/components/core/utils/semanticStatusSurface";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+
+import type { MeterOrientation, MeterSize } from "./meterTypes";
+ 
+import { cn } from "@/utils/cn";
+ 
+export const METER_RAIL_HEIGHT_CLASS: Record<MeterSize, string> = {
+  small: "h-small",
+  base: "h-base",
+  mid: "h-mid",
+  large: "h-large",
+};
+ 
+export const METER_RAIL_WIDTH_CLASS: Record<MeterSize, string> = {
+  small: "w-small",
+  base: "w-base",
+  mid: "w-mid",
+  large: "w-large",
+};
+ 
+export const METER_TRACK_BASE_CLASS =
+  "relative overflow-hidden rounded-full bg-primary-tint";
+ 
+export const METER_TRACK_HORIZONTAL_CLASS = "w-full";
+ 
+export const METER_TRACK_VERTICAL_CLASS = "h-48";
+ 
+export const METER_FILL_BASE_CLASS = "absolute rounded-full";
+ 
+export const METER_FILL_HORIZONTAL_CLASS =
+  "inset-y-0 start-0 origin-left rtl:origin-right";
+ 
+export const METER_FILL_VERTICAL_CLASS = "inset-x-0 bottom-0";
+ 
+export const METER_FILL_DEFAULT_COLOR_CLASS = "bg-primary";
+ 
+export const METER_HEADER_BASE_CLASS =
+  "flex items-baseline justify-between gap-xsmall";
+ 
+export const METER_HEADER_HORIZONTAL_CLASS = "w-full";
+ 
+export const METER_HEADER_VERTICAL_CLASS = "min-w-[8rem]";
+ 
+export const METER_VALUE_CLASS = "tabular-nums text-muted";
+ 
+export function meterRootClass({
+  orientation,
+  slotClass,
+  className,
+}: {
+  orientation: MeterOrientation;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(
+    scaleFieldRootClassName(orientation),
+    slotClass,
+    className,
+  );
+}
+ 
+export function meterHeaderClass({
+  orientation,
+  slotClass,
+  className,
+}: {
+  orientation: MeterOrientation;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(
+    METER_HEADER_BASE_CLASS,
+    orientation === "horizontal"
+      ? METER_HEADER_HORIZONTAL_CLASS
+      : METER_HEADER_VERTICAL_CLASS,
+    slotClass,
+    className,
+  );
+}
+ 
+export function meterValueClass({
+  slotClass,
+  className,
+}: {
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(METER_VALUE_CLASS, slotClass, className);
+}
+ 
+export function meterTrackClass({
+  isHorizontal,
+  size,
+  thickness,
+  slotClass,
+  className,
+}: {
+  isHorizontal: boolean;
+  size: MeterSize;
+  thickness?: number | string;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(
+    METER_TRACK_BASE_CLASS,
+    isHorizontal ? METER_TRACK_HORIZONTAL_CLASS : METER_TRACK_VERTICAL_CLASS,
+    thickness == null &&
+      (isHorizontal ? METER_RAIL_HEIGHT_CLASS[size] : METER_RAIL_WIDTH_CLASS[size]),
+    slotClass,
+    className,
+  );
+}
+ 
+export function meterFillClass({
+  isHorizontal,
+  hasCustomColor,
+  status,
+  slotClass,
+}: {
+  isHorizontal: boolean;
+  hasCustomColor: boolean;
+  status?: SemanticStatus;
+  slotClass?: string;
+}): string {
+  return cn(
+    METER_FILL_BASE_CLASS,
+    isHorizontal ? METER_FILL_HORIZONTAL_CLASS : METER_FILL_VERTICAL_CLASS,
+    semanticStatusBgClass(status, hasCustomColor) ??
+      (!hasCustomColor && METER_FILL_DEFAULT_COLOR_CLASS),
+    slotClass,
+  );
+}
+ 
+export function meterTrackCrossStyle({
+  isHorizontal,
+  thickness,
+}: {
+  isHorizontal: boolean;
+  thickness?: number | string;
+}): CSSProperties | undefined {
+  if (thickness == null) return undefined;
+  const thicknessCss = sliderThicknessToCss(thickness);
+  return isHorizontal ? { height: thicknessCss } : { width: thicknessCss };
+}
+ 
+export function meterFillColorStyle(color?: string): CSSProperties | undefined {
+  if (!color) return undefined;
+  return { background: color };
+}
+ 
+export function meterDeterminateFillStyle({
+  isHorizontal,
+  fillColorStyle,
+}: {
+  isHorizontal: boolean;
+  fillColorStyle?: CSSProperties;
+}): CSSProperties {
+  return {
+    width: "100%",
+    height: "100%",
+    ...(isHorizontal ? {} : { transformOrigin: "bottom center" }),
+    ...fillColorStyle,
+  };
+}
+ 

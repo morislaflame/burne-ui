@@ -1,0 +1,372 @@
+# Toast
+
+Всплывающие уведомления в портале (`document.body`): стек с peek-эффектом, GSAP enter/leave, imperative API через `useToast`. Компонент **второго уровня** — тень mid в покое (`shadowSize: "mid"`) и рост при наведении (`hoverLiftSecondLevel`) на default variant.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Toast, toast, useToast, type ToastStatus, type ToastVariant, type ToastPlacement, type ToastClassNames, type ToastMotion, type AddToastOpts } from "burne-ui";
+```
+
+## API
+
+Два режима: **imperative** (через Provider + `useToast`) и **декларативный** (`<Toast />` как карточка).
+
+### Provider
+
+```tsx
+<Toast.Provider defaultPlacement="bottom-center" defaultVariant="default" classNames={…}>
+  {app}
+</Toast.Provider>
+```
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `defaultPlacement` | `bottom-center` | Позиция, если не указана в `add()` |
+| `defaultVariant` | `default` | Вариант карточки |
+| `classNames` | — | Слоты viewport / stack / scrim / карточки |
+| `motion` | — | Карта слотов для всех тостов (`root` / `title` / …). Per-toast `add().motion` перекрывает |
+
+### `useToast()`
+
+```tsx
+const { toast } = useToast();
+
+toast.success("Сохранено");
+toast.danger("Ошибка", { description: "…", duration: 6000 });
+toast.show({ status: "info", title: "…", placement: "top-right" });
+toast.show({
+  title: "Bounce",
+  motion: {
+    root: {
+      enter: (ctx) => gsap.fromTo(ctx.el, { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "back.out(1.4)" }),
+      leave: (ctx) => gsap.to(ctx.el, { y: 24, autoAlpha: 0, duration: 0.22 }),
+    },
+  },
+});
+
+const id = toast.promise(save(), {
+  loading: "Сохранение…",
+  success: (data) => `Готово: ${data.id}`,
+  error: (e) => `Ошибка: ${e}`,
+});
+toast.dismiss(id);
+```
+
+| Метод | Описание |
+|-------|----------|
+| `show(opts)` | Добавить toast, вернуть `id` |
+| `success` / `danger` / `info` / `warning` | Шорткаты с `status` |
+| `promise(p, opts)` | loading → success/error |
+| `dismiss(id)` | Запуск dismiss-анимации |
+
+`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `duration` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `loading`, `classNames`, `motion`, `motionController`.
+
+### Toast.Root (карточка)
+
+Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Indicator`, `Toast.Action`, `Toast.Close`.
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `status` | `default` | Семантический тон поверхности |
+| `variant` | `default` | `default` \| `outline` \| `secondary`. Имя скина — строка |
+| `loading` | `false` | Spinner вместо status-иконки |
+| `onClose` | — | Показывает close-кнопку (simple API). **Исключение state-API:** Toast не controlled по `open` — dismiss через Provider/`useToast`; `onClose` только гейтит кнопку и колбэк dismiss. Не путать с `onOpenChange` оверлеев. |
+| `classNames` | — | Слоты карточки |
+| `motion` | — | Карта слотов. Standalone монтирует scope; стек — `add().motion` |
+| `motionController` | — | Standalone: handle карточки (`play()` → `root`). Стек: `toast.show({ motionController })` |
+
+## variant и status
+
+| variant | Поверхность |
+|---------|-------------|
+| `default` \| `outline` \| `secondary` | поверхность варианта + `animate-shadow` (`shadowSize: "mid"`, рост на hover) |
+
+| status | Фон / иконка |
+|--------|--------------|
+| `default` | `bg-surface`, `text-primary` |
+| `success` / `danger` / `info` / `warning` | тот же `bg-surface`; semantic icon + title color |
+
+## Анимации
+
+Хост карточки — `ToastItemWrapper` (`toastAnimations.tsx`): `enter` / `leave` на обёртке слота `root`. Hover (`hoverIn` / `hoverOut`) играет на самой карточке `ToastRoot`: обёртка уже владеет scale enter, `stackItem` — scale peek. Хост рассылает `enter` / `leave` на `indicator` / `title` / `description` / `action` / `close`. `stackItem` играет `enter` и `change` (`toastStackShift`), `scrim` — `enter` / `leave` (`toastScrimFade`). Высота стека — `--toast-stack-height`, без твина. `message` / `content` — `display: contents` (padding, border, background и width не рисуются). Standalone `<Toast />` без viewport не играет `enter`/`leave`, hover карточки остаётся.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `enter` / `leave` на обёртке; `hoverIn` / `hoverOut` на карточке | `toastSurfaceEnter` / `toastSurfaceLeave` (`params.slideDir`); `hoverLiftSecondLevel` (`params.shadowSize` = `mid`) |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
+| `indicator`, `action`, `close` | `enter` / `leave` | нет; хост **рассылает**, если задана |
+
+Nested `enter` — следующий кадр после host, без `offsetHeight` flush. Высота карточки в ResizeObserver — измерение стека, не enter flush.
+
+`leave: false` на `root` — хост сразу ставит закрытое состояние (карточка не висит, пока ждут complete). Factory leave должна скрыть поверхность (`autoAlpha: 0`). Прерывание leave отменяет `MotionRun` без `complete`.
+
+```tsx
+toast.show({
+  title: "Instant",
+  motion: { root: { enter: false, leave: false } },
+});
+```
+
+**Где в коде:** типы — `toastTypes.ts`; scope — `toastContext.tsx`; defaults + host play — `toastAnimations.tsx`; слоты — `toastParts.tsx`. Standalone `<Toast motionController>` монтирует Provider, если нет родительского scope стека.
+
+Проп `motionController` на standalone **`Toast`** (`play()` → `root`) или в `toast.show({ motionController })`. `events` — сосед слотов. playground / Storybook **MotionController**.
+
+Тройка на `<Toast>`, в `toast.show` и в опциях promise-тоста. Стек играет её на карточке. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Toast, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "toast:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("toast:nudge")}>
+        Nudge
+      </Button>
+      <Toast title="Saved" motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+**DOM-структура (viewport):**
+
+```
+<div viewport>                         ← fixed, placement
+  <div scrimRef>                       ← gradient fade (kit-internal)
+  <div containerRef>                   ← animated height (kit-internal)
+    <div stackRef>                     ← peek/scale (kit-internal)
+      <div animRef>                    ← слот `root` enter/exit
+        <ToastRoot ref=cardRef>        ← ResizeObserver height
+```
+
+### 1. Enter карточки (`root`)
+
+Дефолт `toastSurfaceEnter`:
+
+- **from:** `y: ±24px` (`TOAST_ENTRY_OFFSET_PX`), `scale: 0.97`
+- **to:** `y: 0`, `scale: 1`
+- **vars:** `motionInteractive()`
+
+Направление: `top-*` → `y: -24`, `bottom-*` → `y: +24` (`params.slideDir`).
+
+**Reduced motion:** `isReducedModalMotion()` → instant rest.
+
+### 2. Dismiss (`root` leave)
+
+Дефолт `toastSurfaceLeave` — `motionToastDismiss()` + `y: slideDir`. `onComplete` → unmount.
+
+### 3. Стек — reposition (peek + scale)
+
+На `stackRef` при изменении позиции в стеке (**не** публичный слот):
+
+| reverseIdx | scale | y offset | opacity |
+|------------|-------|----------|---------|
+| 0 | 1 | 0 | 1 |
+| 1 | 0.96 | ±8px | 1 |
+| 2 | 0.92 | ±16px | 1 |
+| ≥3 | — | — | 0 (скрыт) |
+
+Константы: `TOAST_STACK_PEEK_PX=8`, `TOAST_STACK_SCALE_STEP=0.04`, `TOAST_MAX_VISIBLE=3`.
+
+Первый mount: доп. fade `opacity: 0 → 1` на stack layer.
+
+`transformOrigin`: `top center` / `bottom center` по placement.
+
+### 4. Высота контейнера стека
+
+`ResizeObserver` на card пишет высоту в **ref-`Map`** (без React state). При изменении front card / глубины стека — сразу `GSAP.to(container, { height })` / `style.height` при reduced motion. Viewport не ре-рендерится от RO.
+
+### 5. Scrim (градиент)
+
+`scrimRef`: fade `opacity 0↔1`. Последний toast dismiss → `motionToastDismiss()` (как exit карточки).
+
+Токены: `--toast-scrim-*` (`tokens/toastScrim.ts`).
+
+### 7. Auto-dismiss
+
+`setTimeout` — не GSAP. `duration: 0` или `loading` — без таймера.
+Пауза при `pointerenter` / `focusin`, возобновление при выходе (WCAG 2.2.1).
+
+#### Кастомизация
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  enableToastStack: true,       // peek/scale/height — мгновенно если false
+  interactiveDuration: 320,     // enter slide, stack reposition, container height, scrim in
+  interactiveEase: "power2.out",
+  toastDismissDuration: 220,    // dismiss slide + last scrim out
+  toastDismissEase: "power2.in",
+});
+```
+
+Константы `TOAST_*` в `toastAPI.ts` — не в config (нужен PR для изменения).
+
+### Сводка: что настраивается где
+
+| Анимация | Элемент | `configureMotion` | Константы / hardcode |
+|----------|---------|-------------------|----------------------|
+| Enter slide | слот `root` | `interactiveDuration`, `interactiveEase` | `ENTRY_OFFSET_PX=24`, `SCALE_FROM=0.97` |
+| Dismiss slide | слот `root` | `toastDismissDuration`, `toastDismissEase` | — |
+| Stack peek/scale | `stackRef` | `enableToastStack`, `interactiveDuration` | `PEEK`, `SCALE_STEP`, `MAX_VISIBLE` |
+| Container height | `containerRef` | `enableToastStack`, `interactiveDuration` | — |
+| Scrim | `scrimRef` | `interactiveDuration` (in), `toastDismissDuration` (out) | — |
+| Hover тени | карточка `ToastRoot` | `interactiveDuration` | `hoverLiftSecondLevel`, `shadowSize: "mid"` |
+| Auto-close | — | — | `duration` prop (default 4000) |
+
+## Токены и CSS
+
+| Элемент | Классы / токены |
+|---------|-----------------|
+| Карточка | padding/radius из `MESSAGE_BANNER_SIZE` (radius как у Button), покой `shadowSize: "mid"` через `animate-shadow` |
+| Viewport | `fixed z-toast` (`--z-toast`), placement offsets (`top-4`, …) |
+| Scrim | `toastScrimToken(gradientTop/Bottom, mask, …)` |
+| Ширина | `360px` (`TOAST_WIDTH_PX`) |
+
+## Стилизация и кастомизация
+
+### Три уровня
+
+1. **`Toast.Provider classNames`** — глобальные слоты viewport, scrim, stack + дефолты карточки.
+2. **Per-toast `classNames`** — в `toast.show({ classNames })` / `toast.success(…, { classNames })`; мержится поверх provider.
+3. **`Toast.Root classNames`** — декларативная карточка (simple/compound), как у Alert.
+
+Подчасти (`Toast.Title`, `Toast.Close`, …) принимают **`className`** поверх слота.
+
+### Слоты `ToastClassNames`
+
+| Слот | DOM / элемент | Когда использовать |
+|------|---------------|-------------------|
+| `viewport` | Fixed region | Позиция (`top-8`). Ширина кита — `--toast-viewport-width`, слот может задать `w-*` |
+| `scrim` | Gradient fade | Прозрачность под стеком |
+| `stack` | Контейнер peek-стека | Gap между карточками в стеке |
+| `stackItem` | Ячейка одной карточки | `z-index` / pointer-events / origin через CSS-переменные, слот их перекрывает |
+| `root` | Карточка toast | Border, ring, max-width |
+| `indicator` | Status / loading icon | Цвет иконки |
+| `message` | Grid сообщения | Layout indicator + content |
+| `content` | Title + description block | Gap внутри текста |
+| `title` | Заголовок | Типографика |
+| `description` | Описание | Muted-тон |
+| `action` | Action button slot | Выравнивание кнопки |
+| `close` | Close button | Стили dismiss |
+
+### Imperative API (основной)
+
+```tsx
+<Toast.Provider
+  classNames={{
+    viewport: "top-8",
+    scrim: "opacity-90",
+    stack: "gap-2",
+    root: "border-primary/30",
+    close: "text-muted",
+  }}
+>
+  {app}
+</Toast.Provider>
+
+// В компоненте:
+toast.show({
+  status: "info",
+  title: "Полная кастомизация",
+  description: "Слоты root, title, description.",
+  classNames: {
+    root: "rounded-large border-info/50 bg-info/10 ring-1 ring-info/20",
+    indicator: "text-info",
+    title: "font-semibold text-info",
+    description: "text-foreground/80",
+  },
+});
+```
+
+Per-toast `classNames` **перекрывают** одноимённые ключи provider для этой карточки.
+
+### Декларативный / compound API
+
+```tsx
+<Toast
+  status="success"
+  onClose={() => {}}
+  classNames={{
+    root: "max-w-sm",
+    title: "font-semibold",
+    close: "opacity-70",
+  }}
+  title="Готово"
+  description="Файл загружен"
+/>
+
+// Compound:
+<Toast status="info" onClose={dismiss}>
+  <Toast.Indicator />
+  <Toast.Message>
+    <Toast.Content>
+      <Toast.Title className="text-info">Обновление</Toast.Title>
+      <Toast.Description>Доступна новая версия.</Toast.Description>
+    </Toast.Content>
+  </Toast.Message>
+  <Toast.Close />
+</Toast>
+```
+
+### Практические заметки
+
+- **Provider vs toast:** viewport/scrim/stack — только на Provider через `classNames` (compound `Toast.Viewport` / `Toast.Stack` не добавляем — слотов достаточно); карточка — provider defaults + per-toast override.
+- **2-й уровень:** тень mid в покое и рост при наведении на карточке (`hoverLiftSecondLevel`). Скин со своим `className` эту тень не получает.
+- **Порядок мержа:** provider → per-toast / Root `classNames` → `className` подчасти.
+
+## Доступность
+
+- Viewport: `role="region"`, `aria-label` по placement.
+- Карточка: `role="group"`; `aria-labelledby` при Title, иначе `aria-label` из title/description string.
+- Анонсы SR: постоянно смонтированный `aria-live` (polite / assertive) в `ToastProvider`, текст вставляется при add/update.
+- Скрытые в стеке (idx ≥ 3): `aria-hidden` на wrapper.
+- Только передний toast: `pointer-events: auto`.
+
+## Структура файлов
+
+```
+Toast/
+├── Toast.tsx
+├── toastProvider.tsx
+├── toastTypes.ts          # ToastMotion
+├── toastContext.tsx       # createMotionScope("Toast")
+├── toastAnimations.tsx    # defaults + host play + стек
+├── toastParts.tsx         # useMotionPart на слотах карточки
+├── toastAPI.ts            # константы стека
+├── toastStyles.ts
+├── useToast.ts
+└── …
+```
+
+## Storybook
+
+`Core Components/Toast` — imperative API, promise, placement, compound, slot motion gallery.
+
+## Закрытие
+
+`toast.dismissAll()` запускает leave у каждого тоста.
+
+## Вне React
+
+`toast` — тот же набор, что у `useToast().toast`, без хука. Нужен смонтированный `Toast.Provider`. Вызов идёт в последний провайдер; его размонтирование возвращает вызовы внешнему. Без провайдера метод в dev пишет предупреждение.
+
+```tsx
+import { toast } from "burne-ui";
+
+toast.success("Сохранено");
+toast.dismissAll();
+```
+
+`dismissAll` запускает leave у каждого тоста текущего провайдера.

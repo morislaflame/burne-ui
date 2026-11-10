@@ -1,12 +1,19 @@
-export {
-  Badge,
-  BadgeAnchor,
-  type BadgeProps,
-  type BadgeTone,
-  type BadgeColor,
-  type BadgeVariant,
-  type BadgeSize,
-  type BadgePlacement,
-  type BadgeIconPosition,
-  type BadgeAnchorProps,
+import { BadgeRoot } from "./Badge";
+import { BadgeAnchor } from "./badgeParts";
+ 
+export const Badge = Object.assign(BadgeRoot, {
+  Anchor: BadgeAnchor,
+});
+ 
+export type {
+  BadgeProps,
+  BadgeVariant,
+  BadgeStatus,
+  BadgeSize,
+  BadgePlacement,
+  BadgeClassNames,
+  BadgeMotion,
+  BadgePartMotion,
 } from "./Badge";
+export type { BadgeAnchorProps } from "./badgeTypes";
+ 

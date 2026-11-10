@@ -1,0 +1,333 @@
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  type HTMLAttributes,
+  type Ref, type ForwardedRef } from "react";
+ 
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import { useSkinVariant } from "@/skins/skinContext";
+import { animateInteractivePressSqueeze, isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
+import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { useOptionalPopoverMotionScope } from "@/components/core/Popover/popoverContext";
+ 
+import { useDropdown, useDropdownClassNames } from "./dropdownContext";
+import { dropdownItemRowClass, resolveDropdownItemIndicatorClassNames } from "./dropdownStyles";
+import type {
+  DropdownItemHintProps,
+  DropdownItemIconProps,
+  DropdownItemIndicatorProps,
+  DropdownItemLabelProps,
+  DropdownItemProps,
+} from "./dropdownTypes";
+import { useDropdownItemState } from "./useDropdownItemState";
+ 
+import { cn } from "@/utils/cn";
+ 
+export const DropdownItemLabel = forwardRef(function DropdownItemLabel({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...props
+}: DropdownItemLabelProps, ref: ForwardedRef<HTMLSpanElement>) {
+  const slotClassNames = useDropdownClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
+    scope: useOptionalPopoverMotionScope(),
+    slot: "itemLabel",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
+ 
+  return (
+    <OptionListItemLabel
+      ref={setRef}
+      className={cn(slotClassNames.itemLabel, className)}
+      {...props}
+      {...pointerHandlers}
+    />
+  );
+});
+ 
+DropdownItemLabel.displayName = "DropdownItemLabel";
+ 
+export const DropdownItemHint = forwardRef(function DropdownItemHint({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...props
+}: DropdownItemHintProps, ref: ForwardedRef<HTMLElement>) {
+  const slotClassNames = useDropdownClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLElement>({
+    forwardedRef: ref,
+    scope: useOptionalPopoverMotionScope(),
+    slot: "itemHint",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
+ 
+  return (
+    <OptionListItemHint
+      ref={setRef}
+      className={cn(slotClassNames.itemHint, className)}
+      {...props}
+      {...pointerHandlers}
+    />
+  );
+});
+ 
+DropdownItemHint.displayName = "DropdownItemHint";
+ 
+export const DropdownItemIcon = forwardRef(function DropdownItemIcon({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...props
+}: DropdownItemIconProps, ref: ForwardedRef<HTMLSpanElement>) {
+  const slotClassNames = useDropdownClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    forwardedRef: ref,
+    scope: useOptionalPopoverMotionScope(),
+    slot: "itemIcon",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
+ 
+  return (
+    <OptionListItemIcon
+      ref={setRef}
+      className={cn(slotClassNames.itemIcon, className)}
+      {...props}
+      {...pointerHandlers}
+    />
+  );
+});
+ 
+DropdownItemIcon.displayName = "DropdownItemIcon";
+ 
+export const DropdownItemIndicator = forwardRef(function DropdownItemIndicator({
+  variant: variantProp,
+  size = "small",
+  check,
+  icon,
+  children,
+  className,
+  classNames: classNamesProp,
+  ...rest
+}: DropdownItemIndicatorProps, ref: ForwardedRef<HTMLSpanElement>) {
+  const variant = useSkinVariant(variantProp);
+  const ctx = useOptionListItemContext("Dropdown.ItemIndicator");
+  const slotClassNames = useDropdownClassNames();
+ 
+  if (!ctx.showIndicatorSlot) return null;
+ 
+  const showCheck = check ?? ctx.indicatorMode === "multi";
+ 
+  return (
+    <OptionListItemIndicatorShell
+      className={cn(
+        slotClassNames.itemIndicator,
+        classNamesProp?.itemIndicator,
+        className,
+      )}
+      {...rest}
+      ref={ref}
+    >
+      <SelectionIndicator
+        variant={variant}
+        size={size}
+        selected={ctx.selected}
+        check={showCheck}
+        icon={icon}
+        classNames={resolveDropdownItemIndicatorClassNames({
+          slotClassNames,
+          classNames: classNamesProp,
+        })}
+      >
+        {children}
+      </SelectionIndicator>
+    </OptionListItemIndicatorShell>
+  );
+});
+ 
+DropdownItemIndicator.displayName = "DropdownItemIndicator";
+ 
+const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
+  function DropdownItem(
+    {
+      children,
+      className,
+      value,
+      href,
+      disabled = false,
+      selection: selectionProp,
+      status = "default",
+      indicator = false,
+      motion,
+      onClick,
+      onPointerDown,
+      onKeyDown,
+      ...rest
+    },
+    ref,
+  ) {
+    const config = useMotionConfig();
+    const slotClassNames = useDropdownClassNames();
+    const { size } = useDropdown();
+    const { setRef: setItemMotionRef } = useMotionPart<HTMLElement>({
+      scope: useOptionalPopoverMotionScope(),
+      slot: "item",
+      motion,
+      forwardedRef: ref,
+    });
+    const {
+      parts,
+      selectItem,
+      setOpen,
+      hasItemIndicator,
+      hasHint,
+      hasIcon,
+      isLink,
+      isSelectionItem,
+      showIndicatorSlot,
+      itemRole,
+      isSelected,
+      itemCtx,
+    } = useDropdownItemState({
+      children,
+      href,
+      selection: selectionProp,
+      value,
+      disabled,
+      status,
+      indicator,
+    });
+ 
+    const setRefs = useCallback(
+      (node: HTMLElement | null) => {
+        setItemMotionRef(node);
+      },
+      [setItemMotionRef],
+    );
+ 
+    const rowClass = dropdownItemRowClass({
+      status,
+      disabled,
+      hasHint,
+      showIndicatorSlot,
+      hasIcon,
+      className,
+      slotClass: slotClassNames.item,
+      size,
+    });
+ 
+    const handlePointerDown = useCallback(
+      (e: React.PointerEvent<HTMLElement>) => {
+        onPointerDown?.(e);
+        if (e.defaultPrevented || disabled) return;
+        const el = e.currentTarget;
+        if (!el || prefersReducedMotion()) return;
+        void animateInteractivePressSqueeze(el, { config });
+      },
+      [config, disabled, onPointerDown],
+    );
+ 
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented || disabled || !isInteractivePressKey(e)) return;
+        const el = e.currentTarget;
+        if (!el || prefersReducedMotion()) return;
+        void animateInteractivePressSqueeze(el, { config });
+      },
+      [config, disabled, onKeyDown],
+    );
+ 
+    const handleClick = useCallback(
+      (e: React.MouseEvent<HTMLElement>) => {
+        onClick?.(e);
+        if (e.defaultPrevented || disabled) return;
+        if (!isSelectionItem) {
+          setOpen(false);
+          return;
+        }
+        if (value == null) return;
+        selectItem(value);
+      },
+      [disabled, isSelectionItem, onClick, selectItem, setOpen, value],
+    );
+ 
+    const itemBody = (
+      <>
+        {parts.indicator}
+        {showIndicatorSlot && !hasItemIndicator ? <DropdownItemIndicator /> : null}
+        {parts.label}
+        {parts.hint}
+        {parts.icon}
+        {parts.rest}
+      </>
+    );
+ 
+    if (isLink) {
+      return (
+        <OptionListItemContextProvider value={itemCtx}>
+          <a
+            ref={setRefs as Ref<HTMLAnchorElement>}
+            role={itemRole}
+            href={disabled ? undefined : href}
+            tabIndex={-1}
+            aria-disabled={disabled || undefined}
+            className={rowClass}
+            onClick={handleClick}
+            onPointerDown={handlePointerDown}
+            onKeyDown={handleKeyDown}
+            {...(rest as HTMLAttributes<HTMLAnchorElement>)}
+            {...dataVariantProps({ status })}
+          >
+            {itemBody}
+          </a>
+        </OptionListItemContextProvider>
+      );
+    }
+ 
+    return (
+      <OptionListItemContextProvider value={itemCtx}>
+        <button
+          ref={setRefs as Ref<HTMLButtonElement>}
+          type="button"
+          role={itemRole}
+          disabled={disabled}
+          tabIndex={-1}
+          aria-checked={showIndicatorSlot ? isSelected : undefined}
+          className={rowClass}
+          onClick={handleClick}
+          onPointerDown={handlePointerDown}
+          onKeyDown={handleKeyDown}
+          {...(rest as HTMLAttributes<HTMLButtonElement>)}
+          {...dataVariantProps({ status })}
+        >
+          {itemBody}
+        </button>
+      </OptionListItemContextProvider>
+    );
+  },
+);
+ 
+export const DropdownItem = memo(DropdownItemInner);
+ 
+DropdownItem.displayName = "Dropdown.Item";
+ 

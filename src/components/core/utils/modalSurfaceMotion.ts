@@ -1,0 +1,215 @@
+/**
+ * Enter/leave motion for modal dialogs and portal surfaces.
+ *
+ * Open: backdrop fades in; panel/surface scales in without opacity on the ancestor
+ * (keeps backdrop-filter on children alive from the first frame).
+ * Close: backdrop fades with opacity; panel/surface fades out (autoAlpha) + exit transform.
+ */
+ 
+import { clearWillChangeOnComplete, gsap as gsapInstance, killMotion, setWillChangeTransform } from "./gsapMotion";
+import { focusElement, focusPanelOnOpen } from "./focusElement";
+import { prefersReducedMotion } from "./reducedMotion";
+import { isMotionFeatureEnabledFor, resolveMotionConfig, type MotionConfig } from "./motionConfig";
+ 
+/** Panel enter scale — intentional visual constant (not in `configureMotion`). */
+export const MODAL_PANEL_SCALE_FROM = 0.97;
+ 
+export type GsapMotionVars = NonNullable<Parameters<typeof gsapInstance.to>[1]>;
+ 
+export function isReducedModalMotion(
+  config?: Readonly<MotionConfig>,
+  reduced?: boolean,
+): boolean {
+  return (
+    (reduced ?? prefersReducedMotion()) ||
+    !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableModalMotion")
+  );
+}
+ 
+/** Initial inline style for modal backdrop overlay before enter animation. */
+export function modalOverlayEnterStyle(): { opacity: number } {
+  return { opacity: isReducedModalMotion() ? 1 : 0 };
+}
+ 
+/** Skip GSAP and show modal surfaces immediately (reduced motion). */
+export function applyReducedModalMotion(
+  overlay: HTMLElement | null,
+  panel: HTMLElement | null,
+  options?: { focusPanel?: boolean; focusVisible?: boolean },
+): void {
+  if (overlay) overlay.style.opacity = "1";
+  if (panel) {
+    panel.style.opacity = "1";
+    panel.style.visibility = "visible";
+    gsapInstance.set(panel, { scale: 1, clearProps: "transform" });
+    if (options?.focusPanel) {
+      focusPanelOnOpen(panel, { focusVisible: options.focusVisible ?? false });
+    }
+  }
+}
+ 
+export function animateModalOpen({
+  overlay,
+  panel,
+  vars,
+  panelFrom = { scale: MODAL_PANEL_SCALE_FROM },
+  panelTo = { scale: 1 },
+}: {
+  overlay: HTMLElement;
+  panel: HTMLElement;
+  vars: GsapMotionVars;
+  panelFrom?: GsapMotionVars;
+  panelTo?: GsapMotionVars;
+}): void {
+  killMotion(overlay, panel);
+  gsapInstance.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
+  setWillChangeTransform(panel, true);
+  gsapInstance.fromTo(panel, panelFrom, {
+    ...panelTo,
+    ...vars,
+    onComplete: clearWillChangeOnComplete(panel, vars.onComplete),
+  });
+}
+ 
+export function animateModalClose({
+  overlay,
+  panel,
+  vars,
+  onComplete,
+  panelExit = { autoAlpha: 0, scale: MODAL_PANEL_SCALE_FROM },
+}: {
+  overlay: HTMLElement;
+  panel: HTMLElement;
+  vars: GsapMotionVars;
+  onComplete: () => void;
+  panelExit?: GsapMotionVars;
+}) {
+  killMotion(overlay, panel);
+  setWillChangeTransform(panel, true);
+  const tl = gsapInstance.timeline({
+    onComplete: () => {
+      setWillChangeTransform(panel, false);
+      onComplete();
+    },
+  });
+  // opacity, not autoAlpha — visibility:hidden on blur backdrop causes flicker at the end
+  tl.to(overlay, { opacity: 0, ...vars }, 0);
+  tl.to(panel, { ...panelExit, ...vars }, 0);
+  return tl;
+}
+ 
+/** Skip GSAP and reset portal surface (reduced motion). */
+export function applyReducedPortalMotion(surface: HTMLElement | null): void {
+  if (!surface) return;
+  surface.style.opacity = "";
+  surface.style.visibility = "";
+  gsapInstance.set(surface, { scale: 1, clearProps: "transform" });
+}
+ 
+/**
+ * Wrapper stays opaque so backdrop-filter works during enter.
+ * Also keeps `visibility` visible so keyboard focus (`:focus-visible`) can
+ * paint on controls inside the surface. Do not start enter with `autoAlpha: 0`
+ * on a surface that contains the focused control — that sets `visibility:
+ * hidden` and UA heuristics skip the ring. Fade with `opacity` instead, or
+ * call this then tween only transform (kit `portalSurfaceEnter`).
+ */
+export function preparePortalSurfaceForEnter(surface: HTMLElement): void {
+  surface.style.opacity = "1";
+  surface.style.visibility = "visible";
+}
+ 
+/**
+ * Flush layout after native `<dialog showModal()>`.
+ * UA goes `display: none` → `[open]`; GSAP `fromTo` must not record while hidden.
+ * Portal nested enter does **not** flush — see `scheduleNestedEnterBroadcast`.
+ */
+export function flushDialogOpenLayout(dialog: HTMLElement): void {
+  void dialog.offsetHeight;
+}
+ 
+export function animatePortalOpen({
+  surface,
+  vars,
+  from = { scale: MODAL_PANEL_SCALE_FROM },
+  to = { scale: 1 },
+}: {
+  surface: HTMLElement;
+  vars: GsapMotionVars;
+  from?: GsapMotionVars;
+  to?: GsapMotionVars;
+}) {
+  killMotion(surface);
+  preparePortalSurfaceForEnter(surface);
+  setWillChangeTransform(surface, true);
+  return gsapInstance.fromTo(surface, from, {
+    ...to,
+    ...vars,
+    onComplete: clearWillChangeOnComplete(surface, vars.onComplete),
+  });
+}
+ 
+export function animatePortalClose({
+  surface,
+  vars,
+  onComplete,
+  exit = {},
+}: {
+  surface: HTMLElement;
+  vars: GsapMotionVars;
+  onComplete?: () => void;
+  exit?: GsapMotionVars;
+}) {
+  killMotion(surface);
+  setWillChangeTransform(surface, true);
+  const startOpacity = Number.parseFloat(getComputedStyle(surface).opacity);
+  const fromAlpha = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
+  return gsapInstance.fromTo(
+    surface,
+    { autoAlpha: fromAlpha },
+    {
+      autoAlpha: 0,
+      ...exit,
+      ...vars,
+      onComplete: clearWillChangeOnComplete(surface, onComplete ?? vars.onComplete),
+    },
+  );
+}
+ 
+/**
+ * Element to restore focus to after the modal closes.
+ * Call before `showModal()` — after that, focus moves into the dialog.
+ */
+export function captureModalFocusReturn(
+  dialog: HTMLDialogElement,
+): HTMLElement | null {
+  const active = typeof document !== "undefined" ? document.activeElement : null;
+  if (!(active instanceof HTMLElement)) return null;
+  if (active === document.body || active === document.documentElement) return null;
+  if (active === dialog || dialog.contains(active)) return null;
+  return active;
+}
+ 
+/**
+ * Close the native dialog before unmounting its portal, then restore focus to
+ * the element that opened it. The dialog stays modal during its exit animation,
+ * so focus cannot legitimately leave it before this point.
+ */
+export function completeModalDialogClose({
+  dialog,
+  focusReturn,
+  unmount,
+}: {
+  dialog: HTMLDialogElement | null;
+  focusReturn: HTMLElement | null;
+  unmount: () => void;
+}): void {
+  if (dialog?.open) {
+    dialog.close();
+  }
+  unmount();
+  if (focusReturn && document.contains(focusReturn)) {
+    focusElement(focusReturn);
+  }
+}
+ 

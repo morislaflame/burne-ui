@@ -1,0 +1,316 @@
+import type {
+  HTMLAttributes,
+  InputHTMLAttributes,
+  KeyboardEvent,
+  LabelHTMLAttributes,
+  PointerEvent,
+  ReactNode,
+  Ref,
+  RefObject,
+} from "react";
+import type { Prettify } from "@/utils/prettify";
+ 
+import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
+import type { LabelProps } from "@/components/core/Label";
+import type { FieldLabelContextValue } from "@/components/core/Label/labelTypes";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+ 
+import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { SwitchSize } from "./switchGeometry";
+ 
+export type { SwitchSize };
+
+export const KIT_SWITCH_VARIANTS = ["default"] as const;
+export type KitSwitchVariant = (typeof KIT_SWITCH_VARIANTS)[number];
+export type SwitchVariant = KitSwitchVariant | (string & {});
+ 
+/** Label on the inline start or end. Default `end` (control first). */
+export type SwitchLabelPosition = IconPosition;
+ 
+export type SwitchClassNames = {
+  root?: string;
+  control?: string;
+  input?: string;
+  track?: string;
+  fill?: string;
+  thumb?: string;
+  thumbShell?: string;
+  /** Glyph inside the thumb when the switch is off. */
+  iconOff?: string;
+  /** Glyph inside the thumb when the switch is on. */
+  iconOn?: string;
+  content?: string;
+  label?: string;
+  labelText?: string;
+  hint?: string;
+  error?: string;
+  simpleLabelWrap?: string;
+  simpleLabelText?: string;
+};
+ 
+export type SwitchPartMotion = {
+  check?: MotionValue;
+  uncheck?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+ 
+export type SwitchMotion = {
+  fill?: SwitchPartMotion;
+  thumb?: SwitchPartMotion;
+  iconOff?: SwitchPartMotion;
+  iconOn?: SwitchPartMotion;
+  track?: SwitchPartMotion;
+  label?: SwitchPartMotion;
+  hint?: SwitchPartMotion;
+  error?: SwitchPartMotion;
+};
+ 
+export type SwitchFieldContextValue = {
+  switchId: string;
+  labelId: string;
+  hintId: string;
+  errorId: string;
+  labelConnected: boolean;
+  size: SwitchSize;
+  labelPosition: SwitchLabelPosition;
+  disabled?: boolean;
+  isCompound: boolean;
+  hasCompoundHint: boolean;
+  hasCompoundError: boolean;
+  hasTextColumn: boolean;
+  hintConnected: boolean;
+  errorConnected: boolean;
+  isInvalid: boolean;
+  useInlineCompoundMotion: boolean;
+  textMotionRef: RefObject<HTMLElement | null>;
+  setSqueezeToken: (fn: (t: number) => number) => void;
+  /** `null` until `Switch.Control` syncs (compound). Chrome `check`/`uncheck` wait for this. */
+  mergedChecked: boolean | null;
+  setMergedChecked: (next: boolean) => void;
+};
+ 
+export type SwitchTrackContextValue = {
+  checked: boolean;
+  disabled?: boolean;
+  size: SwitchSize;
+  color?: string;
+  status?: SemanticStatus;
+  variant: SwitchVariant;
+  trackFillRef: RefObject<HTMLSpanElement | null>;
+  thumbRef: RefObject<HTMLSpanElement | null>;
+  thumbShellRef: RefObject<HTMLSpanElement | null>;
+  iconOffRef: RefObject<HTMLSpanElement | null>;
+  iconOnRef: RefObject<HTMLSpanElement | null>;
+};
+ 
+export type SwitchControlProps = Omit<
+  LabelHTMLAttributes<HTMLLabelElement>,
+  "children" | "htmlFor" | "onChange"
+> &
+  Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "size" | "children" | "className"> & {
+    size?: SwitchSize;
+    thickness?: number | string;
+    iconOff?: ReactNode;
+    iconOn?: ReactNode;
+    /** Kit fill. A custom `color` wins. */
+    status?: SemanticStatus;
+    /** Custom fill. Wins over `status`. */
+    color?: string;
+    variant?: SwitchVariant;
+    className?: string;
+    classNames?: Prettify<
+      Pick<
+        SwitchClassNames,
+        "control" | "input" | "track" | "fill" | "thumb" | "thumbShell" | "iconOff" | "iconOn"
+      >
+    >;
+    children?: ReactNode;
+    /** Native `<input>`. `ref` on `Switch.Control` is the visual control (`span` or compound `label`). */
+    inputRef?: Ref<HTMLInputElement>;
+    /**
+     * Forwarded to an auto-created `Switch.Track` (simple / Control without a Track child).
+     * Explicit `<Switch.Track motionController>` wins on that nested host.
+     */
+    motionController?: MotionController;
+  } & MotionStateHostProps;
+ 
+export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
+  size: SwitchSize;
+  thickness?: number | string;
+  checked?: boolean;
+  disabled?: boolean;
+  status?: SemanticStatus;
+  color?: string;
+  squeezeToken?: number;
+  iconOff?: ReactNode;
+  iconOn?: ReactNode;
+  variant?: SwitchVariant;
+  classNames?: Prettify<
+    Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "iconOff" | "iconOn">
+  >;
+  motion?: Prettify<MotionMapWithEvents<SwitchMotion>>;
+  /**
+   * Handle for this Track nested host (`track` / `fill` / `thumb` / `iconOn` / `iconOff`).
+   * Simple API: pass `motionController` on `Switch` — it is forwarded here.
+   * There is no `root` on this scope — `play()` skips; use `playSlot("track")`.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type SwitchFillProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<SwitchPartMotion>;
+};
+ 
+export type SwitchThumbProps = HTMLAttributes<HTMLSpanElement> & {
+  children?: ReactNode;
+  motion?: Prettify<SwitchPartMotion>;
+};
+ 
+export type SwitchIconWhen = "off" | "on";
+ 
+export type SwitchIconProps = HTMLAttributes<HTMLSpanElement> & {
+  when: SwitchIconWhen;
+  children?: ReactNode;
+  motion?: Prettify<SwitchPartMotion>;
+};
+ 
+export type SwitchProps = Omit<
+  LabelHTMLAttributes<HTMLLabelElement>,
+  "children" | "htmlFor" | "onChange" | "onPointerDown"
+> & {
+  children?: ReactNode;
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  /** `aria-invalid`, `data-invalid`, and a danger label. `error` does the same and shows the message. */
+  invalid?: boolean;
+  labelPosition?: SwitchLabelPosition;
+  /** Kit fill. A custom `color` wins. */
+  status?: SemanticStatus;
+  /** Custom fill. Wins over `status`. */
+  color?: string;
+  size?: SwitchSize;
+  disabled?: boolean;
+  className?: string;
+  classNames?: Prettify<SwitchClassNames>;
+  /** Native `<input role="switch">`. Root `ref` stays on the `<label>` or compound `<fieldset>`. `Switch.Control` `ref` is the same node. */
+  inputRef?: Ref<HTMLInputElement>;
+  /**
+   * Per-slot motion (`track`, `fill`, `thumb`, `iconOn`, `iconOff`, `label`, `hint`, `error`).
+   * Track is the nested fill host. Chrome registers on the Root scope.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Simple API: `motionController` is forwarded to `Switch.Track`.
+   * Compound: this handle attaches to the Root chrome scope; pass another handle on `Track`.
+   */
+  motion?: Prettify<MotionMapWithEvents<SwitchMotion>>;
+  /**
+   * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+   * Simple API: forwarded to the Track nested Provider. Compound: Root chrome scope.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+  onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
+} & MotionStateHostProps;
+ 
+export type SwitchSimpleProps = SwitchProps & SwitchControlProps;
+ 
+/** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
+export type SwitchContentProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+};
+ 
+export type SwitchLabelProps = Omit<LabelProps, "htmlFor" | "motion"> & {
+  motion?: Prettify<SwitchPartMotion>;
+};
+ 
+export type SwitchHintProps = Omit<FieldHintProps, "id" | "as" | "motion" | "status"> & {
+  motion?: Prettify<SwitchPartMotion>;
+};
+ 
+export type SwitchErrorProps = Omit<FieldErrorProps, "id" | "as" | "motion"> & {
+  motion?: Prettify<SwitchPartMotion>;
+};
+ 
+export type SwitchClassNamesProviderProps = {
+  classNames?: Prettify<SwitchClassNames>;
+  children: ReactNode;
+};
+ 
+export type UseSwitchRootStateProps = Omit<
+  SwitchProps,
+  "className" | "classNames" | "onPointerDown" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
+> &
+  Partial<Omit<SwitchControlProps, "motionController">>;
+ 
+export type SwitchRootControlRest = Omit<
+  UseSwitchRootStateProps,
+  | "children"
+  | "label"
+  | "hint"
+  | "error"
+  | "invalid"
+  | "labelPosition"
+  | "size"
+  | "disabled"
+  | "className"
+>;
+
+export type SwitchLayoutMetrics = {
+  track: string;
+  travelPx: number;
+  title: string;
+  desc: string;
+  gap: string;
+};
+
+/** Named so declaration emit does not inline the control rest. */
+export type UseSwitchRootStateResult = {
+  fieldCtx: SwitchFieldContextValue;
+  fieldLabelContext: FieldLabelContextValue;
+  isCompound: boolean;
+  hasTextColumn: boolean;
+  secondaryLines: number;
+  sz: SwitchLayoutMetrics;
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  hasHint: boolean;
+  hasError: boolean;
+  hintId: string;
+  errorId: string;
+  disabled?: boolean;
+  enableTextMotion: boolean;
+  textColRef: RefObject<HTMLElement | null>;
+  labelPosition: SwitchLabelPosition;
+  controlRest: SwitchRootControlRest;
+};
+
+export type UseSwitchAnimationsProps = {
+  isDisabled?: boolean;
+  enableTextMotion: boolean;
+  textMotionRef: RefObject<HTMLElement | null>;
+  onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLElement>) => void;
+};
+ 
+export type UseSwitchTrackAnimationsProps = {
+  checked: boolean;
+  disabled?: boolean;
+  size: SwitchSize;
+  thickness?: number | string;
+  squeezeToken: number;
+  travelPxRef: RefObject<number>;
+  trackRef: RefObject<HTMLSpanElement | null>;
+  trackFillRef: RefObject<HTMLSpanElement | null>;
+  thumbRef: RefObject<HTMLSpanElement | null>;
+  thumbShellRef: RefObject<HTMLSpanElement | null>;
+  iconOffRef: RefObject<HTMLSpanElement | null>;
+  iconOnRef: RefObject<HTMLSpanElement | null>;
+};
+ 

@@ -1,0 +1,106 @@
+import { DisclosureClassNamesFullDemo } from "../demos/disclosure/DisclosureClassNamesFull.demo";
+import disclosureClassNamesFullSource from "../demos/disclosure/DisclosureClassNamesFull.demo.tsx?raw";
+import { DisclosureCardGroupDemo } from "../demos/disclosure/DisclosureCardGroup.demo";
+import disclosureCardGroupSource from "../demos/disclosure/DisclosureCardGroup.demo.tsx?raw";
+import { DisclosureChangelogDemo } from "../demos/disclosure/DisclosureChangelog.demo";
+import disclosureChangelogSource from "../demos/disclosure/DisclosureChangelog.demo.tsx?raw";
+import { DisclosureCheckoutStepsDemo } from "../demos/disclosure/DisclosureCheckoutSteps.demo";
+import disclosureCheckoutStepsSource from "../demos/disclosure/DisclosureCheckoutSteps.demo.tsx?raw";
+import { DisclosureOutlineFaqDemo } from "../demos/disclosure/DisclosureOutlineFaq.demo";
+import disclosureOutlineFaqSource from "../demos/disclosure/DisclosureOutlineFaq.demo.tsx?raw";
+import { DisclosureSettingsGroupDemo } from "../demos/disclosure/DisclosureSettingsGroup.demo";
+import disclosureSettingsGroupSource from "../demos/disclosure/DisclosureSettingsGroup.demo.tsx?raw";
+import { DisclosureSingleDemo } from "../demos/disclosure/DisclosureSingle.demo";
+import disclosureSingleSource from "../demos/disclosure/DisclosureSingle.demo.tsx?raw";
+import { DisclosureSizesDemo } from "../demos/disclosure/DisclosureSizes.demo";
+import disclosureSizesSource from "../demos/disclosure/DisclosureSizes.demo.tsx?raw";
+import { DisclosureMotionControllerGalleryDemo } from "../demos/disclosure/motionController/gallery";
+import { DisclosureSlotMotionGalleryDemo } from "../demos/disclosure/slotMotion/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function DisclosureShowcase() {
+  return (
+    <ShowcasePage
+      title="Disclosure"
+      description="Expanding blocks with height animation - for FAQ and single sections."
+      importPath='import { Disclosure } from "@/components/core/Disclosure";'
+      tags={["core", "disclosure"]}
+    >
+      <ShowcaseSection title="Single" description="One Disclosure without a group.">
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSingleDemo} source={disclosureSingleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSizesDemo} source={disclosureSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Card group" description="Disclosure.Group variant card — general card.">
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureCardGroupDemo} source={disclosureCardGroupSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Outline FAQ" description="Disclosure.Group variant outline with icons.">
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureOutlineFaqDemo} source={disclosureOutlineFaqSource} />
+      </ShowcaseSection>
+<ShowcaseSection title="Slot motion" description="One gallery: instant height, title slot, titleLift tilt, quiet hover, chevron + icon, group chevron snap.">
+        <DisclosureSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot(titleLift), play vs playSlot, stagger, exclude, inside tree, cancel, disclosure events. Card shell hover is the root slot."
+      >
+        <DisclosureMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Slot customization trigger, content and group through classNames."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={DisclosureClassNamesFullDemo}
+          source={disclosureClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Design steps, group of settings and changelog — `demos/disclosure/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureCheckoutStepsDemo} source={disclosureCheckoutStepsSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSettingsGroupDemo} source={disclosureSettingsGroupSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureChangelogDemo} source={disclosureChangelogSource} />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/Disclosure" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Disclosure.Trigger and Disclosure.Content — block slots. Disclosure.Group combines several."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="root, trigger, titleLift, title, content, handle, group."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Groups">
+          <p>
+            <code>variant=&quot;card&quot;</code> and <code>variant=&quot;outline&quot;</code> on Disclosure.Group.
+            <code>defaultValue</code> — open item by default.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization>
+          <p>
+            Slot motion — <code>motion.contentShell</code> / <code>collapsibleHeight</code>. Handle-drag is kit-internal.
+          </p>
+        </ShowcaseDoc.Customization>
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

@@ -1,0 +1,423 @@
+/**
+ * SkinSlot list from `export type *ClassNames` under `src/components`.
+ *
+ *   node scripts/sync-skin-slots.mjs          write the slot list
+ *   node scripts/sync-skin-slots.mjs --check  fail if the list drifted
+ *
+ * Also writes cli/skin-slots.json so `burne-ui skin validate` ships the same
+ * list (the published package does not include src/).
+ */
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const componentsDir = join(root, "src/components");
+const outPath = join(root, "src/skins/skinSlots.generated.ts");
+const livePath = join(root, "src/skins/skinLiveSlots.generated.ts");
+const jsonPath = join(root, "cli/skin-slots.json");
+const liveJsonPath = join(root, "cli/skin-live-slots.json");
+const docsPath = join(root, "docs/SKINS.md");
+const coverageStart = "<!-- skin-coverage:start -->";
+const coverageEnd = "<!-- skin-coverage:end -->";
+
+function walk(dir, acc = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === "node_modules" || entry.name === "__tests__") continue;
+      walk(path, acc);
+      continue;
+    }
+    if (!/\.(ts|tsx)$/.test(entry.name)) continue;
+    if (entry.name.includes(".stories.") || entry.name.includes(".test.")) continue;
+    acc.push(path);
+  }
+  return acc;
+}
+
+function stripComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
+
+function objectKeys(body) {
+  const keys = [];
+  let depth = 0;
+  let i = 0;
+  while (i < body.length) {
+    const ch = body[i];
+    if (ch === "{") {
+      depth += 1;
+      i += 1;
+      continue;
+    }
+    if (ch === "}") {
+      depth -= 1;
+      i += 1;
+      continue;
+    }
+    if (depth === 1) {
+      const slice = body.slice(i);
+      const match = /^([A-Za-z_][\w]*)\s*\??\s*:/.exec(slice);
+      if (match) {
+        keys.push(match[1]);
+        i += match[0].length;
+        continue;
+      }
+    }
+    i += 1;
+  }
+  return keys;
+}
+
+function componentId(typeName) {
+  const base = typeName.replace(/ClassNames$/, "");
+  return base.charAt(0).toLowerCase() + base.slice(1);
+}
+
+function collectTypes() {
+  /** @type {Map<string, { kind: "object", keys: string[] } | { kind: "expr", expr: string }>} */
+  const types = new Map();
+  for (const file of walk(componentsDir)) {
+    const source = stripComments(readFileSync(file, "utf8"));
+    const re = /export type (\w+ClassNames) =/g;
+    let match;
+    while ((match = re.exec(source))) {
+      const name = match[1];
+      if (name.startsWith("Resolved") || name.endsWith("ProviderProps")) continue;
+      const after = source.slice(match.index + match[0].length).trimStart();
+      if (after.startsWith("{")) {
+        const body = readBalanced(after);
+        types.set(name, { kind: "object", keys: objectKeys(body) });
+        continue;
+      }
+      const expr = after.split(";")[0]?.trim();
+      if (!expr) {
+        throw new Error(`Empty ClassNames alias ${name} in ${relative(root, file)}`);
+      }
+      types.set(name, { kind: "expr", expr });
+    }
+  }
+  return types;
+}
+
+function readBalanced(source) {
+  let depth = 0;
+  for (let i = 0; i < source.length; i += 1) {
+    if (source[i] === "{") depth += 1;
+    else if (source[i] === "}") {
+      depth -= 1;
+      if (depth === 0) return source.slice(0, i + 1);
+    }
+  }
+  throw new Error("Unbalanced ClassNames type");
+}
+
+function resolveKeys(name, types, stack = []) {
+  if (stack.includes(name)) {
+    throw new Error(`Cycle in ClassNames: ${stack.join(" -> ")} -> ${name}`);
+  }
+  const decl = types.get(name);
+  if (!decl) throw new Error(`Unknown ClassNames type ${name}`);
+  if (decl.kind === "object") return decl.keys;
+  const keys = new Set();
+  const flat = decl.expr.replace(/\s+/g, " ");
+  const parts = flat.split("&").map((part) => part.trim());
+  for (const part of parts) {
+    const pick = /^Partial<\s*Pick<\s*(\w+)\s*,\s*([^>]+)\s*>\s*>$/.exec(part);
+    if (pick) {
+      for (const key of pick[2].matchAll(/"([^"]+)"/g)) keys.add(key[1]);
+      continue;
+    }
+    const ident = /^(\w+)$/.exec(part);
+    if (ident) {
+      for (const key of resolveKeys(ident[1], types, [...stack, name])) keys.add(key);
+      continue;
+    }
+    throw new Error(`Cannot parse ${name} = ${flat}`);
+  }
+  return [...keys];
+}
+
+export function listSkinSlots() {
+  const types = collectTypes();
+  const slots = [];
+  for (const name of types.keys()) {
+    const id = componentId(name);
+    for (const key of resolveKeys(name, types)) {
+      slots.push(`${id}.${key}`);
+    }
+  }
+  slots.sort();
+  return slots;
+}
+
+function render(slots) {
+  const lines = slots.map((slot) => `  "${slot}",`).join("\n");
+  return `/** Generated by scripts/sync-skin-slots.mjs. Do not edit. */\nexport const SKIN_SLOTS = [\n${lines}\n] as const;\n\nexport type SkinSlot = (typeof SKIN_SLOTS)[number];\n`;
+}
+
+function sourceFiles() {
+  return walk(componentsDir).filter(
+    (file) => !file.includes(".test.") && !file.includes(".stories."),
+  );
+}
+
+function parenBody(source, openIndex) {
+  let depth = 0;
+  for (let i = openIndex; i < source.length; i += 1) {
+    if (source[i] === "(") depth += 1;
+    else if (source[i] === ")") {
+      depth -= 1;
+      if (depth === 0) return source.slice(openIndex + 1, i);
+    }
+  }
+  throw new Error("Unbalanced call");
+}
+
+function findCalls(source, name) {
+  const bodies = [];
+  let from = 0;
+  while (from < source.length) {
+    const idx = source.indexOf(name, from);
+    if (idx < 0) break;
+    const prev = source[idx - 1];
+    if (prev && /[\w$]/.test(prev)) {
+      from = idx + name.length;
+      continue;
+    }
+    let cursor = idx + name.length;
+    while (cursor < source.length && /\s/.test(source[cursor])) cursor += 1;
+    if (source[cursor] !== "(") {
+      from = idx + name.length;
+      continue;
+    }
+    bodies.push(parenBody(source, cursor));
+    from = cursor + 1;
+  }
+  return bodies;
+}
+
+function splitArgs(body) {
+  const args = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < body.length; i += 1) {
+    const ch = body[i];
+    if (ch === "(" || ch === "{" || ch === "[") depth += 1;
+    else if (ch === ")" || ch === "}" || ch === "]") depth -= 1;
+    else if (ch === "," && depth === 0) {
+      args.push(body.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  args.push(body.slice(start).trim());
+  return args;
+}
+
+function quoted(arg) {
+  const match = /^["']([^"']+)["']$/.exec(arg ?? "");
+  return match ? match[1] : null;
+}
+
+function topLevelKeys(objectText) {
+  const keys = [];
+  let depth = 0;
+  for (let i = 0; i < objectText.length; i += 1) {
+    const ch = objectText[i];
+    if (ch === "{" || ch === "(" || ch === "[") {
+      depth += 1;
+      continue;
+    }
+    if (ch === "}" || ch === ")" || ch === "]") {
+      depth -= 1;
+      continue;
+    }
+    if (depth !== 1) continue;
+    const match = /^([A-Za-z_][\w]*)\s*:/.exec(objectText.slice(i));
+    if (!match) continue;
+    keys.push(match[1]);
+    i += match[0].length - 1;
+  }
+  return keys;
+}
+
+function listLiveSlots() {
+  const targets = new Set();
+  const layers = new Set();
+  const motion = new Set();
+  const byDir = new Map();
+
+  for (const file of sourceFiles()) {
+    const source = stripComments(readFileSync(file, "utf8"));
+    const dir = dirname(file);
+    if (!byDir.has(dir)) byDir.set(dir, []);
+    byDir.get(dir).push(source);
+
+    for (const body of findCalls(source, "resolveVariantVisual")) {
+      const slot = quoted(splitArgs(body)[2]);
+      if (slot) targets.add(slot);
+    }
+    for (const body of findCalls(source, "variantSlotClass")) {
+      const slot = quoted(splitArgs(body)[2]);
+      if (slot) targets.add(slot);
+    }
+    for (const body of findCalls(source, "layoutTargetClass")) {
+      const slot = quoted(splitArgs(body)[0]);
+      if (slot) targets.add(slot);
+    }
+    for (const match of source.matchAll(/skinSlot\s*(?:=|:)\s*["']([^"']+)["']/g)) {
+      targets.add(match[1]);
+    }
+    for (const body of findCalls(source, "resolveSkinLayer")) {
+      const slot = quoted(splitArgs(body)[1]);
+      if (slot) layers.add(slot);
+    }
+    for (const match of source.matchAll(/\bpart\s*=\s*["']([a-z][\w]*\.[A-Za-z][\w]*)["']/g)) {
+      layers.add(match[1]);
+    }
+  }
+
+  for (const sources of byDir.values()) {
+    const prefixes = new Set();
+    const locals = new Set();
+    for (const source of sources) {
+      for (const body of findCalls(source, "overlaySkinMotion")) {
+        const args = splitArgs(body).filter((arg) => arg.trim() !== "");
+        const prefix = quoted(args.at(-1));
+        if (prefix) prefixes.add(prefix);
+        const first = args[0] ?? "";
+        if (first.startsWith("{")) {
+          for (const key of topLevelKeys(first)) locals.add(key);
+        }
+      }
+      for (const match of source.matchAll(/\bslot\s*(?:=|:)\s*["']([A-Za-z][\w]*)["']/g)) {
+        locals.add(match[1]);
+      }
+      for (const match of source.matchAll(/registerTarget\(\s*["']([A-Za-z][\w]*)["']/g)) {
+        locals.add(match[1]);
+      }
+      for (const match of source.matchAll(/useOptionalEnterOnMount\(\s*[^,]+,\s*["']([A-Za-z][\w]*)["']/g)) {
+        locals.add(match[1]);
+      }
+      for (const match of source.matchAll(/use\w*SlotMotion(?:<[^>]+>)?\(\s*["']([A-Za-z][\w]*)["']/g)) {
+        locals.add(match[1]);
+      }
+    }
+    for (const prefix of prefixes) {
+      for (const local of locals) motion.add(`${prefix}.${local}`);
+    }
+  }
+
+  const lists = { targets: [...targets].sort(), layers: [...layers].sort(), motion: [...motion].sort() };
+  for (const [name, list] of Object.entries(lists)) {
+    if (list.length === 0) throw new Error(`skin live ${name} list is empty`);
+  }
+  return lists;
+}
+
+function componentTitle(prefix) {
+  return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+}
+
+function slotsByComponent(slots) {
+  const map = new Map();
+  for (const slot of slots) {
+    const dot = slot.indexOf(".");
+    const prefix = slot.slice(0, dot);
+    const local = slot.slice(dot + 1);
+    if (!map.has(prefix)) map.set(prefix, []);
+    map.get(prefix).push(local);
+  }
+  return map;
+}
+
+function renderCoverage(lists) {
+  const targets = slotsByComponent(lists.targets);
+  const layers = slotsByComponent(lists.layers);
+  const motion = slotsByComponent(lists.motion);
+  const names = [...new Set([...targets.keys(), ...layers.keys(), ...motion.keys()])].sort();
+  const cell = (map, prefix) => {
+    const locals = map.get(prefix);
+    return locals && locals.length > 0 ? locals.join(", ") : "—";
+  };
+  const rows = names.map(
+    (prefix) => `| ${componentTitle(prefix)} | ${cell(targets, prefix)} | ${cell(layers, prefix)} | ${cell(motion, prefix)} |`,
+  );
+  return [
+    "| Компонент | Классы (`targets`) | Слои | Motion |",
+    "|---|---|---|---|",
+    ...rows,
+    "",
+  ].join("\n");
+}
+
+function spliceCoverage(markdown, table) {
+  const start = markdown.indexOf(coverageStart);
+  const end = markdown.indexOf(coverageEnd);
+  if (start === -1 || end === -1 || end < start) {
+    throw new Error("docs/SKINS.md is missing skin-coverage markers");
+  }
+  const next = `${markdown.slice(0, start + coverageStart.length)}\n${table}${markdown.slice(end)}`;
+  return next.endsWith("\n") ? next : `${next}\n`;
+}
+
+function renderLive(lists) {
+  const block = (name, typeName, slots) => {
+    const lines = slots.map((slot) => `  "${slot}",`).join("\n");
+    return `export const ${name} = [\n${lines}\n] as const;\n\nexport type ${typeName} = (typeof ${name})[number];`;
+  };
+  return [
+    "/** Generated by scripts/sync-skin-slots.mjs. Do not edit. */",
+    "/** Slots that `resolveVariantVisual` / `variantSlotClass` actually read. */",
+    block("SKIN_TARGET_SLOTS", "SkinTargetSlot", lists.targets),
+    "/** Slots that `SkinShell` / `resolveSkinLayer` actually host. */",
+    block("SKIN_LAYER_SLOTS", "SkinLayerSlot", lists.layers),
+    "/** Slots that `overlaySkinMotion` can reach: prefix plus a `useMotionPart` slot in that component. */",
+    block("SKIN_MOTION_SLOTS", "SkinMotionSlot", lists.motion),
+    "",
+  ].join("\n\n");
+}
+
+const slots = listSkinSlots();
+const live = listLiveSlots();
+const next = render(slots);
+const liveNext = renderLive(live);
+const jsonNext = `${JSON.stringify(slots, null, 2)}\n`;
+const liveJsonNext = `${JSON.stringify(live, null, 2)}\n`;
+const docsCurrent = existsSync(docsPath) ? readFileSync(docsPath, "utf8") : "";
+const docsNext = spliceCoverage(docsCurrent, renderCoverage(live));
+const checkOnly = process.argv.includes("--check");
+const current = existsSync(outPath) ? readFileSync(outPath, "utf8") : "";
+const liveCurrent = existsSync(livePath) ? readFileSync(livePath, "utf8") : "";
+const jsonCurrent = existsSync(jsonPath) ? readFileSync(jsonPath, "utf8") : "";
+const liveJsonCurrent = existsSync(liveJsonPath) ? readFileSync(liveJsonPath, "utf8") : "";
+
+if (
+  current === next &&
+  liveCurrent === liveNext &&
+  jsonCurrent === jsonNext &&
+  liveJsonCurrent === liveJsonNext &&
+  docsCurrent === docsNext
+) {
+  console.log(
+    `skin slots in sync (${slots.length}; targets ${live.targets.length}, layers ${live.layers.length}, motion ${live.motion.length})`,
+  );
+  process.exit(0);
+}
+
+if (checkOnly) {
+  console.error("skin slots out of sync — run: node scripts/sync-skin-slots.mjs");
+  process.exit(1);
+}
+
+mkdirSync(join(root, "src/skins"), { recursive: true });
+mkdirSync(join(root, "cli"), { recursive: true });
+writeFileSync(outPath, next);
+writeFileSync(livePath, liveNext);
+writeFileSync(jsonPath, jsonNext);
+writeFileSync(liveJsonPath, liveJsonNext);
+writeFileSync(docsPath, docsNext);
+console.log(
+  `wrote ${slots.length} skin slots; targets ${live.targets.length}, layers ${live.layers.length}, motion ${live.motion.length}`,
+);

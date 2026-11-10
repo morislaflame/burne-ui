@@ -1,0 +1,32 @@
+import { useState } from "react";
+
+import { ListBox } from "@/components/core/ListBox";
+import { Surface } from "@/components/core/Surface";
+import { Text } from "@/components/core/Text";
+
+const PERMISSIONS = [
+  { value: "read", label: "Reading" },
+  { value: "write", label: "Record" },
+  { value: "admin", label: "Administration" },
+  { value: "billing", label: "Billing" },
+] as const;
+
+export function ListBoxPermissionsDemo() {
+  const [selected, setSelected] = useState<string[]>(["read", "write"]);
+
+  return (
+    <Surface variant="secondary" padding="mid" className="w-full max-w-sm flex flex-col gap-large p-large">
+      <Text as="p" textStyle="small" className="mb-large font-medium">
+        Access rights
+      </Text>
+      <ListBox selectionMode="multiple" values={selected} onValuesChange={setSelected}>
+        {PERMISSIONS.map((perm) => (
+          <ListBox.Item key={perm.value} value={perm.value} label={perm.label} />
+        ))}
+      </ListBox>
+      <Text as="p" textStyle="xsmall" className="mt-large text-muted">
+        Selected: {selected.length > 0 ? selected.join(", ") : "—"}
+      </Text>
+    </Surface>
+  );
+}

@@ -1,0 +1,324 @@
+# Pagination
+
+Навигация по страницам в `<nav>`. Compound API: `Summary`, `Content`, `Item`, `Previous` / `Next`, `Pages`. Кнопки в стиле muted links с press text motion; смена страниц анимируется FLIP-подобным сдвигом.
+
+## Импорт
+
+```tsx
+import { Pagination, type PaginationProps, type PaginationClassNames, type PaginationSummaryProps, type PaginationContentProps, type PaginationPageProps, type PaginationMotion, type PaginationPartMotion, type PaginationSummaryPartMotion } from "burne-ui";
+```
+
+## API
+
+### Compound API
+
+```tsx
+const [page, setPage] = useState(1);
+
+<Pagination
+  page={page}
+  totalPages={10}
+  onPageChange={setPage}
+  siblingCount={1}
+>
+  <Pagination.Summary>
+    Страница {page} из 10
+  </Pagination.Summary>
+  <Pagination.Content>
+    <Pagination.Item>
+      <Pagination.Previous />
+    </Pagination.Item>
+    <Pagination.Pages />
+    <Pagination.Item>
+      <Pagination.Next />
+    </Pagination.Item>
+  </Pagination.Content>
+</Pagination>
+```
+
+### Root props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `page` | — | Controlled: текущая страница (1-based) |
+| `defaultPage` | — | Uncontrolled начальная страница |
+| `totalPages` | — | Всего страниц |
+| `onPageChange` | — | `(page: number) => void` |
+| `siblingCount` | `1` | Соседние страницы вокруг current |
+| `aria-label` | `"Pagination"` | Accessible name `<nav>` |
+| `className` | — | На `<nav>` |
+| `classNames` | — | Слоты |
+| `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не Previous / Next / Page |
+
+### `PaginationClassNames`
+
+`root`, `summary`, `summaryText`, `content`, `item`, `previous`, `next`, `page`, `pageActive`, `pageText`, `ellipsis`, `previousText`, `nextText`, `previousIcon`, `nextIcon`.
+
+### Compound-подчасти
+
+| Часть | Назначение |
+|-------|------------|
+| `Pagination.Summary` | Текстовая сводка (опционально) |
+| `Pagination.Content` | `<ol>` списка controls |
+| `Pagination.Item` | `<li>` wrapper |
+| `Pagination.Previous` / `Next` | Nav buttons с auto disable. Слоты `previous` / `next` |
+| `Pagination.PreviousIcon` / `NextIcon` | Chevron back / forward (кит) |
+| `Pagination.Page` | Неактивная кнопка (`page`) или активный `<span>` (`pageActive`) |
+| `Pagination.Pages` | Auto range из context |
+| `Pagination.Ellipsis` | Декоративное `…` (`children ?? "…"`) |
+
+`Pagination.Pages` требует `page` (или `defaultPage`) и `totalPages` на root.
+
+## Layout / responsive
+
+Root — `flex-wrap` + `min-w-0`. На широком контейнере `Summary` слева, `Content` справа (`ms-auto` / `justify-start`). Если ряд Summary+Content не влезает:
+
+1. `Summary` сжимается (`flex-1`, `basis-component-xsmall`, текст с `truncate`)
+2. `Content` может уйти на следующую строку; внутри `<ol>` кнопки **не переносятся** — `flex-nowrap` + `overflow-x-auto` (горизонтальный скролл)
+3. `Item` — `shrink-0`, чтобы контролы оставались целыми при скролле
+
+Отдельно сужать `siblingCount` API не нужно — на узких контейнерах хватает scroll у Content.
+
+## Поведение range
+
+`getPaginationRange(page, totalPages, siblingCount)`:
+
+- `totalPages <= 7`: все номера
+- иначе: `1`, `…`, siblings, `…`, `last`
+- ellipsis items получают `data-flip-key` для анимации
+
+`Pagination.Previous` disabled при `page <= 1`; `Next` при `page >= totalPages`.
+
+Активная страница — `<span aria-current="page">`, не кнопка.
+
+## Анимации
+
+`paginationAnimations.ts` — FLIP на `<ol>` + shared press motion на кнопках.
+
+**DOM:**
+
+```
+<nav>
+  <Pagination.Summary />
+  <ol ref=olRef>                    ← usePaginationFlip target
+    <li data-flip-key="prev">       ← Previous
+    <li data-flip-key="page-3">     ← Page button
+    <li data-flip-key="ellipsis-1"> ← Ellipsis (fade in/out)
+    <li data-flip-key="page-active"> ← Current span (no button)
+```
+
+Нет portal, нет hover shadow lift — только text press + layout shift.
+
+### 1. Page flip (`usePaginationFlip`)
+
+`useLayoutEffect` с зависимостями `page` / `totalPages` / `siblingCount` / `children` (не на каждый рендер Content):
+
+1. Собирает `data-flip-key` у `<li>` children (или `__keyless_N` fallback)
+2. Сравнивает `getBoundingClientRect()` с предыдущим кадром
+3. **Existing item** (key был): GSAP `fromTo({ x: dx }, { x: 0, ...motionInteractive() })`
+4. **New item** (key новый): `fromTo({ opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1 })`
+5. **First run:** skip animation (инициализация `prevRects`)
+6. **Unmount cleanup:** `killMotion` на всех children
+
+Ellipsis и page numbers получают стабильные `data-flip-key` из `paginationAPI`.
+
+#### Кастомизация FLIP
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  interactiveDuration: 280,
+  interactiveEase: "power2.out",
+  enablePaginationFlip: true,
+});
+```
+
+**Reduced motion / `enablePaginationFlip: false`:** мгновенный layout без GSAP.
+
+### 2. Slot motion (кнопки)
+
+Публичный slot motion. Все слоты регистрируются на корне, на том же узле, что `classNames`. FLIP на `<ol>` (`Pagination.Content`) остаётся kit-internal (`usePaginationFlip`). `content` и `item` — не motion-слоты.
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `previous` / `next` / `page` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
+| `pageActive` | hover/press | нет. Активная страница — `<span>` |
+| `previousIcon` / `nextIcon` | press вместе с кнопкой, внутри которой иконка | нет |
+| `summary` | `change` (смена `page`); hover (opt-in) | нет |
+| `ellipsis` | `enter` / hover (opt-in) | empty |
+
+`false` на `next.pressIn` выключает squeeze только у «Вперёд». `previous` и `page` при этом остаются. Active page — слот `pageActive`.
+
+Слота `root` нет: `play()` skip. `playSlot("previous")` / `playSlot("page")` / `playSlot("pageActive")` / `playAll` играют слоты корня. `Pagination.Previous` `motion` побеждает `motion.previous`. Один handle на корне. FLIP на `<ol>` не слот.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`pagination:nudge`, `pagination:scan`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**. `useMotionController()` в sibling-части (галерея Inside на `Pagination.Summary`) видит те же слоты.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Pagination, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "pagination:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("summary", "pagination:nudge")}>
+        Nudge
+      </Button>
+      <Pagination page={page} totalPages={12} onPageChange={setPage} motionController={controller} motion={{ events }}>
+        <Pagination.Summary>Page {page} of 12</Pagination.Summary>
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.Previous />
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Next />
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination>
+    </>
+  );
+}
+```
+
+Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.Page` / `Pagination.Summary`.
+
+**Где в коде:** типы — `paginationTypes.ts`; scope — `paginationContext.tsx`; defaults — `paginationAnimations.ts`; слот — `paginationParts.tsx`; карта на Root — `Pagination.tsx`.
+
+```tsx
+<Pagination motion={{ next: { pressIn: false } }} page={page} totalPages={12} onPageChange={setPage}>
+  …
+</Pagination>
+```
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `PAGINATION_INTERACTIVE_BUTTON_CLASS` | Muted link-style buttons, `hover:text-foreground` |
+| `PAGINATION_PAGE_ACTIVE_CLASS` | Current page `font-medium text-foreground` |
+| `PAGINATION_PAGE_TEXT_CLASS` | `tabular-nums` на номерах |
+| `PAGINATION_ELLIPSIS_CLASS` | Decorative `…` |
+| `PAGINATION_PREVIOUS_ICON_CLASS` | kit chevron back + `icon-small` |
+| `focus-ring` | Keyboard focus на interactive |
+| `motion-reduce:animate-none` | На buttons |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на `Pagination`** — `<nav>` wrapper.
+2. **`classNames` на root** — summary, content, buttons, icons.
+
+`Pagination.Item` / `Page` / `Previous` — без отдельного `classNames`; стили через слоты root.
+
+### Слоты `PaginationClassNames`
+
+| Слот | DOM | Когда использовать |
+|------|-----|-------------------|
+| `root` | `<nav>` | Border, padding, max-width container |
+| `summary` | Summary div | Layout сводки слева |
+| `summaryText` | Inner `Text` | Color/size «Страница N из M» |
+| `content` | `<ol>` | Gap между page items |
+| `item` | `<li>` | Per-item spacing |
+| `previous` | `Pagination.Previous` `<button>` | Prev button surface |
+| `next` | `Pagination.Next` `<button>` | Next button surface |
+| `page` | Inactive `Pagination.Page` `<button>` | Page button surface |
+| `pageActive` | Active `Pagination.Page` `<span>` | Active typography (не button) |
+| `pageText` | Page number in button | Muted → foreground hover |
+| `ellipsis` | `…` span | Ellipsis color/size |
+| `previousText` / `nextText` | Default Back/Forward labels | Nav typography |
+| `previousIcon` / `nextIcon` | Chevron icons | Icon size/opacity |
+
+### Full compound с summary
+
+```tsx
+<Pagination
+  page={page}
+  totalPages={12}
+  onPageChange={setPage}
+  classNames={{
+    root: "rounded-large border border-primary/20 p-base",
+    summaryText: "text-primary",
+    content: "gap-small",
+    previous: "text-info hover:text-primary",
+    next: "text-info hover:text-primary",
+    page: "text-info hover:text-primary",
+    pageActive: "text-primary font-semibold",
+    previousText: "font-medium",
+    nextText: "font-medium",
+  }}
+>
+  <Pagination.Summary>Страница {page} из 12</Pagination.Summary>
+  <Pagination.Content>
+    <Pagination.Item><Pagination.Previous /></Pagination.Item>
+    <Pagination.Pages />
+    <Pagination.Item><Pagination.Next /></Pagination.Item>
+  </Pagination.Content>
+</Pagination>
+```
+
+### Minimal prev/next only
+
+```tsx
+<Pagination page={page} totalPages={5} onPageChange={setPage}>
+  <Pagination.Content>
+    <Pagination.Item><Pagination.Previous>Назад</Pagination.Previous></Pagination.Item>
+    <Pagination.Item><Pagination.Next>Далее</Pagination.Next></Pagination.Item>
+  </Pagination.Content>
+</Pagination>
+```
+
+Кастомный range: вручную `Pagination.Page` + `Pagination.Ellipsis` с уникальными `data-flip-key`.
+
+### Практические заметки
+
+- Иконки: инлайн-SVG кита (chevron back / forward). Свои глифы — `children` на `Previous` / `Next` или подмена `PreviousIcon` / `NextIcon`.
+- `children` в `Previous` / `Next` — кастомные labels; `aria-label` для a11y.
+- `Pagination.Ellipsis` — `children ?? "…"` (кастомный символ/узел разрыва).
+- `Pagination.Page` принимает `active` override.
+- **Не удаляйте `data-flip-key`** с `<li>` при кастомном range — сломается FLIP.
+- Summary опционален — можно только prev/next/pages.
+- **Не задавайте `transform` на `<li>`** — конфликт с FLIP `x` tween.
+- **Порядок мержа:** base button classes → `classNames.previous` / `next` / `page` → per-button `className`.
+
+## Интеграции
+
+| Контекст | Паттерн |
+|----------|---------|
+| Tables / lists | `page` + `onPageChange` с data fetch |
+| `Breadcrumbs` | Похожий press motion на интерактивных элементах |
+
+## Доступность
+
+- Root: `<nav aria-label="Pagination">`
+- Active page: `aria-current="page"`
+- Page buttons: `aria-label="Page N"` (если children — только число)
+- Previous/Next: default labels `"Back"` / `"Forward"` (кастомизируйте через `aria-label`)
+- Ellipsis / icons: `aria-hidden`
+
+## Структура файлов
+
+```
+Pagination/
+├── Pagination.tsx
+├── index.ts
+├── paginationTypes.ts
+├── paginationStyles.ts
+├── paginationAnimations.ts    # FLIP + slot defaults
+├── paginationParts.tsx
+├── usePaginationRootState.ts
+├── paginationContext.tsx
+├── paginationAPI.ts
+├── paginationA11y.ts
+└── Pagination.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Pagination` — prev/next, full pages, controlled state, light theme, `classNames`, slot motion gallery, MotionController.

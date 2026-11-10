@@ -1,0 +1,96 @@
+import { useCallback, useId, useMemo, useRef, useState } from "react";
+ 
+import { useSkinVariant } from "@/skins/skinContext";
+
+import { disclosurePanelId, disclosureTriggerId } from "./disclosureA11y";
+import { orderDragHandleChildren } from "./disclosureAPI";
+import { useDisclosureGroupContext } from "./disclosureContext";
+import { disclosureGroupedCardShell } from "./disclosureStyles";
+import type {
+  DisclosureContextValue,
+  UseDisclosureRootStateProps,
+} from "./disclosureTypes";
+ 
+export function useDisclosureRootState({
+  children,
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  value,
+  variant: variantProp,
+  size: sizeProp,
+  disabled = false,
+  chevronPosition = "end",
+  dragHandle = false,
+}: UseDisclosureRootStateProps) {
+  const groupCtx = useDisclosureGroupContext();
+ 
+  const isGrouped = groupCtx !== null && value !== undefined;
+  const groupOpen = !isGrouped
+    ? undefined
+    : groupCtx.selectionMode === "multiple"
+      ? groupCtx.values.includes(value)
+      : groupCtx.openValue === value;
+ 
+  const [internal, setInternal] = useState(defaultOpen);
+ 
+  const open = isGrouped ? groupOpen! : openProp !== undefined ? openProp : internal;
+ 
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (isGrouped) {
+        if (groupCtx.selectionMode === "multiple" && value != null) {
+          groupCtx.setItemOpen(value, next);
+        } else {
+          groupCtx.setOpenValue(next ? (value ?? null) : null);
+        }
+      } else {
+        if (openProp === undefined) setInternal(next);
+        onOpenChange?.(next);
+      }
+    },
+    [isGrouped, groupCtx, value, openProp, onOpenChange],
+  );
+ 
+  const autoId = useId();
+  const triggerId = disclosureTriggerId(autoId);
+  const panelId = disclosurePanelId(autoId);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const chevronRef = useRef<HTMLSpanElement>(null);
+  const skipContentAnimRef = useRef(false);
+ 
+  const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
+  const size = sizeProp ?? groupCtx?.size ?? "base";
+  const groupedCardShell = disclosureGroupedCardShell(groupCtx);
+ 
+  const contextValue: DisclosureContextValue = useMemo(
+    () => ({
+      open,
+      setOpen,
+      triggerId,
+      panelId,
+      variant,
+      size,
+      disabled,
+      chevronPosition,
+      dragHandle,
+      shellRef,
+      innerRef,
+      chevronRef,
+      skipContentAnimRef,
+    }),
+    [disabled, dragHandle, chevronPosition, open, panelId, setOpen, size, triggerId, variant],
+  );
+ 
+  const orderedChildren =
+    dragHandle && variant === "card" ? orderDragHandleChildren(children) : children;
+ 
+  return {
+    contextValue,
+    variant,
+    groupedCardShell,
+    orderedChildren,
+  };
+}
+ 

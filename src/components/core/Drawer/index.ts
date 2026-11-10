@@ -1,0 +1,41 @@
+import { DrawerOverlayInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerRoot, DrawerTitle, DrawerTrigger } from "./Drawer";
+ 
+export const Drawer = Object.assign(DrawerRoot, {
+  Trigger: DrawerTrigger,
+  Panel: DrawerPanel,
+  Overlay: DrawerOverlayInner,
+  Handle: DrawerHandleInner,
+  Content: DrawerContent,
+  Header: DrawerHeader,
+  HeadingBlock: DrawerHeadingBlock,
+  Title: DrawerTitle,
+  Description: DrawerDescription,
+  Close: DrawerClose,
+  Body: DrawerBody,
+  Footer: DrawerFooter,
+});
+ 
+export type {
+  DrawerProps,
+  DrawerPanelProps,
+  DrawerTriggerProps,
+  DrawerPlacement,
+  DrawerExtent,
+  DrawerSize,
+  DrawerVariant,
+  DrawerClassNames,
+  DrawerOverlayProps,
+  DrawerHandleProps,
+  DrawerHeaderProps,
+  DrawerHeadingBlockProps,
+  DrawerTitleProps,
+  DrawerDescriptionProps,
+  DrawerBodyProps,
+  DrawerFooterProps,
+  DrawerCloseProps,
+  DrawerContentProps,
+  DrawerMotion,
+  DrawerLifecycleMotion,
+  DrawerPartMotion,
+} from "./drawerTypes";
+ 

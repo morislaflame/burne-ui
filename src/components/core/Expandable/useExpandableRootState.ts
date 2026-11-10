@@ -1,0 +1,59 @@
+import { useCallback, useId, useState } from "react";
+
+import { useSkinVariant } from "@/skins/skinContext";
+ 
+import { hasExpandableCompoundChildren } from "./expandableAPI";
+import type {
+  ExpandableContextValue,
+  UseExpandableRootStateProps,
+} from "./expandableTypes";
+ 
+export function useExpandableRootState({
+  children,
+  defaultOpen = false,
+  open: openProp,
+  onOpenChange,
+  disabled = false,
+  size = "base",
+  variant: variantProp,
+}: UseExpandableRootStateProps) {
+  const variant = useSkinVariant(variantProp);
+  const panelId = useId();
+  const headerId = useId();
+  const controlled = openProp !== undefined;
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const [hasPanel, setHasPanelState] = useState(false);
+ 
+  const setHasPanel = useCallback((value: boolean) => {
+    setHasPanelState(value);
+  }, []);
+ 
+  const open = controlled ? openProp! : internalOpen;
+  const isCompound = hasExpandableCompoundChildren(children);
+
+  const toggle = useCallback(() => {
+    if (disabled || !hasPanel) return;
+    const next = !open;
+    if (!controlled) setInternalOpen(next);
+    onOpenChange?.(next);
+  }, [controlled, disabled, hasPanel, open, onOpenChange]);
+ 
+  const contextValue: ExpandableContextValue = {
+    open,
+    disabled,
+    hasPanel,
+    compound: isCompound,
+    size,
+    variant,
+    toggle,
+    headerId,
+    panelId,
+    setHasPanel,
+  };
+
+  return {
+    contextValue,
+    isCompound,
+  };
+}
+ 

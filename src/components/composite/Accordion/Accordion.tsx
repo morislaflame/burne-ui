@@ -1,76 +1,116 @@
-import { useState, type HTMLAttributes, type ReactNode } from "react";
-
-import { Expandable } from "@/components/core/Expandable";
-import { cn } from "@/utils/cn";
-
-export type AccordionItem = {
-  id: string;
-  title: ReactNode;
-  description?: ReactNode;
-  icon?: ReactNode;
-  /** Узел перед иконкой/контентом триггера (например `<Ripple color="accentMuted" />`). */
-  triggerBefore?: ReactNode;
-  content: ReactNode;
-  disabled?: boolean;
-};
-
-export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  items: readonly AccordionItem[];
-  /** Начально открытый item id (неконтролируемый режим). */
-  defaultOpenId?: string | null;
-  /** Управляемое открытое состояние. */
-  openId?: string | null;
-  onOpenIdChange?: (id: string | null) => void;
-};
-
-export function Accordion({
-  items,
-  defaultOpenId = null,
-  openId: openIdProp,
-  onOpenIdChange,
-  className = "",
-  ...rest
-}: AccordionProps) {
-  const controlled = openIdProp !== undefined;
-  const [internalOpenId, setInternalOpenId] = useState<string | null>(
-    defaultOpenId,
-  );
-  const openId = controlled ? openIdProp : internalOpenId;
-
+import { forwardRef } from "react";
+ 
+import { AccordionClassNamesProvider, AccordionContext } from "./accordionContext";
+import { AccordionBody, AccordionContent, AccordionDescription, AccordionHeading, AccordionIcon, AccordionChevron, AccordionItem, AccordionMessage, AccordionPanel, AccordionTitle, AccordionTrigger } from "./accordionParts";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
+import { accordionRootClass } from "./accordionStyles";
+import type { AccordionProps } from "./accordionTypes";
+import { useAccordionRootState } from "./useAccordionRootState";
+ 
+export type {
+  AccordionProps,
+  AccordionSize,
+  AccordionItemProps,
+  AccordionHeadingProps,
+  AccordionTriggerProps,
+  AccordionMessageProps,
+  AccordionIconProps,
+  AccordionContentProps,
+  AccordionTitleProps,
+  AccordionDescriptionProps,
+  AccordionChevronProps,
+  AccordionPanelProps,
+  AccordionBodyProps,
+  AccordionClassNames,
+  AccordionMotion,
+  AccordionLifecycleMotion,
+  AccordionTriggerLiftMotion,
+  AccordionItemData,
+} from "./accordionTypes";
+ 
+export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function AccordionRoot(
+  {
+    selectionMode = "single",
+    defaultValue = null,
+    value,
+    onValueChange,
+    values,
+    defaultValues,
+    onValuesChange,
+    variant = "default",
+    size = "base",
+    className,
+    classNames,
+    motion,
+    items,
+    children,
+    ...rest
+  },
+  ref,
+) {
+  const { contextValue } = useAccordionRootState({
+    selectionMode,
+    defaultValue,
+    value,
+    onValueChange,
+    values,
+    defaultValues,
+    onValuesChange,
+    variant,
+    size,
+    motion,
+  });
+ 
   return (
-    <div className={cn("flex w-full flex-col text-left", className)} {...rest}>
-      {items.map((item, index) => {
-        const isOpen = openId === item.id;
-        return (
-          <Expandable
-            key={item.id}
-            disabled={item.disabled}
-            open={isOpen}
-            onOpenChange={(next) => {
-              const nextId = next ? item.id : null;
-              if (!controlled) setInternalOpenId(nextId);
-              onOpenIdChange?.(nextId);
-            }}
-            className={cn(
-              "!rounded-none relative",
-              index === 0 ? "!rounded-t-mid" : "-mt-px",
-              index === items.length - 1 ? "!rounded-b-mid" : "",
-            )}
-          >
-            <Expandable.Trigger>
-              {item.triggerBefore}
-              {item.icon ? <Expandable.Icon>{item.icon}</Expandable.Icon> : null}
-              <Expandable.Content>
-                <Expandable.Title>{item.title}</Expandable.Title>
-                {item.description != null ? (
-                  <Expandable.Description>{item.description}</Expandable.Description>
-                ) : null}
-              </Expandable.Content>
-            </Expandable.Trigger>
-            <Expandable.Panel>{item.content}</Expandable.Panel>
-          </Expandable>
-        );
-      })}
-    </div>
+    <AccordionContext.Provider value={contextValue}>
+      <AccordionClassNamesProvider classNames={classNames}>
+        <div
+          ref={ref}
+          className={accordionRootClass({ className, slotClass: classNames?.root })}
+          {...rest}
+          {...dataVariantProps({ size, variant })}
+        >
+          {items && !itemsPartTaken("Accordion", children, "Accordion.Item")
+            ? items.map((item) => (
+            <AccordionItem key={item.value} value={item.value} disabled={item.disabled}>
+              <AccordionHeading>
+                <AccordionTrigger>
+                  <AccordionMessage>
+                    {item.icon ? <AccordionIcon>{item.icon}</AccordionIcon> : null}
+                    <AccordionContent>
+                      <AccordionTitle>{item.title}</AccordionTitle>
+                    </AccordionContent>
+                    <AccordionChevron />
+                  </AccordionMessage>
+                </AccordionTrigger>
+              </AccordionHeading>
+              <AccordionPanel>
+                <AccordionBody>{item.content}</AccordionBody>
+              </AccordionPanel>
+            </AccordionItem>
+          ))
+            : null}
+          {children}
+        </div>
+      </AccordionClassNamesProvider>
+    </AccordionContext.Provider>
   );
-}
+});
+ 
+AccordionRoot.displayName = "Accordion";
+ 
+export {
+  AccordionItem,
+  AccordionHeading,
+  AccordionTrigger,
+  AccordionMessage,
+  AccordionIcon,
+  AccordionContent,
+  AccordionTitle,
+  AccordionDescription,
+  AccordionChevron,
+  AccordionPanel,
+  AccordionBody,
+};
+ 

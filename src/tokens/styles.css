@@ -1,75 +1,655 @@
-/** Burne UI — дизайн-токены (CSS variables) */
+/** Burne UI — design tokens (CSS variables) */
+/**
+ * `:root` holds every token. `<html>` in dark mode has no attribute, so the page reads it.
+ * Mode colors, computed shadows and scrim gradients are repeated on
+ * `:root, [data-theme="dark"]` — the same keys as `[data-theme="light"]`.
+ * A dark island inside a light page matches that block and repaints those keys.
+ * Scale, type, motion, z-index and shadow knobs stay on `:root` only,
+ * so an island inherits overrides written on `<html>`.
+ */
 :root {
-  --color-background: #0c0d10;
-  --color-surface: #15171c;
-  --color-border: #2a2d36;
-  --color-foreground: #f4f5f7;
-  --color-muted: #8b90a0;
-  --color-accent: #ebebef;
-  --color-accent-foreground: #0c0c0e;
-  --color-danger: #dc2626;
-  --color-danger-foreground: #fafafa;
-  --color-success: #22c55e;
-  --color-success-foreground: #fafafa;
-  --color-info: #0ea5e9;
-  --color-info-foreground: #fafafa;
-  --color-warning: #f59e0b;
-  --color-warning-foreground: #0c0c0e;
+  /**
+   * BORDER WIDTH — default surfaces / non-outline variants (`border-token`).
+   * Theme knob may go to 0: kit then keeps layout width and sets `--border-color: transparent`.
+   */
+  --border-width: 1px;
 
   /**
-   * Прозрачные ховеры (outline / ghost / SearchInput): в тёмной теме — лёгкий цветной wash.
-   * В светлой переопределяется: смесь с --color-surface даёт заметное «затемнение» на белом.
+   * OUTLINE BORDER WIDTH — outline surfaces / variants (`border-token-outline`).
+   * Theme knob floors this at 0.5px so outline chrome stays visible when flat.
    */
-  --color-accent-fill-hover: color-mix(
+  --border-width-outline: 1px;
+
+  /** Focus ring width and offset. The paint color is in the mode block. */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 0px;
+
+  /**
+   * MOTION (CSS transitions) — surface / text / shadow / focus-ring utilities in `styles.css`.
+   * Written by `applyMotionFromState` / `configureMotion` / `applyMotionCssTokens` when `surfaceTransitionDuration` differs from default. Theme apply writes this per root; GSAP config is scoped via provider.
+   * GSAP timings live in `motionConfig` (`interactiveDuration`, …) — separate from these CSS transitions.
+   */
+  --motion-surface-duration: 180ms;
+  --motion-surface-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-shadow-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-text-ease: var(--motion-shadow-ease);
+  --motion-focus-ring-ease: var(--motion-shadow-ease);
+
+  /**
+   * OVERLAY BACKDROP — frosted scrim behind Dialog / Drawer / AlertDialog (light UI).
+   * Utility: `overlay-backdrop`. Dark UI uses a solid scrim (`--overlay-backdrop-scrim`) without blur.
+   */
+  --overlay-backdrop-color: color-mix(in oklab, var(--color-foreground) 14%, transparent);
+  --overlay-backdrop-blur: 14px;
+  --overlay-backdrop-saturate: 1.5;
+  --overlay-backdrop-scrim: color-mix(in oklab, black 58%, transparent);
+
+  /**
+   * Z-INDEX SCALE — overlay stacking (low → high) within one stacking context.
+   * Default Dialog/Drawer use `showModal()` (browser top layer) — body-portaled
+   * menus cannot stack above them via z-index; use contained `portalContainer`
+   * (`show()`) or portal into the dialog element for nested overlays.
+   * Utilities: `z-sticky`, `z-dialog`, `z-dropdown`, `z-dropdown-sub`, `z-popover`, `z-toast`, `z-tooltip`.
+   * `z-sticky` is page chrome (a sticky header). It stays under every overlay.
+   * Numbers stay as published. A contained portal host (not `document.body`) adds
+   * `--z-overlay-nested-step` via `.portal-contained`. `showModal()` is the top layer:
+   * z-index cannot lift a body portal above it.
+   */
+  --z-sticky: 10;
+  --z-dialog: 100;
+  --z-dropdown: 200;
+  --z-dropdown-sub: calc(var(--z-dropdown) + 10);
+  --z-popover: 200;
+  --z-toast: 300;
+  --z-tooltip: 400;
+  --z-overlay-nested-step: 10;
+
+
+  /* BEGIN GENERATED:fonts */
+  --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* END GENERATED:fonts */
+
+  /**
+   * Global letter-spacing knob (`--letter-spacing`).
+   * Apply on `html`/`body` (inherits): `letter-spacing: var(--letter-spacing)`.
+   * Theme overrides write `${n}em` via `applyThemeTokens` / `BurneUIProvider`.
+   * Large steps add their own tracking (`--letter-spacing-xlarge` … `-3xlarge`)
+   * on top of this knob (`text-header-*`, `text-accent-header`).
+   */
+  --letter-spacing: 0em;
+  --letter-spacing-xlarge: -0.02em;
+  --letter-spacing-2xlarge: -0.025em;
+  --letter-spacing-3xlarge: -0.03em;
+
+  /**
+   * Base spacing step (gap, padding, margin).
+   * Design tokens: `--space` (knob) + `--space-*` (steps: xsmall…5xlarge).
+   * Default is a fixed 8px. Fluid density is opt-in: `--space: var(--space-fluid)`
+   * or theme `scalePreset: "fluid"` (writes the same clamp, scaled by the knob).
+   * Steps on an 4px grid, with 6px at `small`: 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48.
+   */
+  --space: 0.5rem;
+  --space-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --space-xsmall: calc(var(--space) * 0.5);
+  --space-small: calc(var(--space) * 0.75);
+  --space-base: calc(var(--space) * 1);
+  --space-mid: calc(var(--space) * 1.5);
+  --space-large: calc(var(--space) * 2);
+  --space-xlarge: calc(var(--space) * 2.5);
+  --space-2xlarge: calc(var(--space) * 3);
+  --space-3xlarge: calc(var(--space) * 4);
+  --space-4xlarge: calc(var(--space) * 5);
+  --space-5xlarge: calc(var(--space) * 6);
+
+  /**
+   * Compact chip inset (Badge text/circle + Kbd) — fractions of `--space-*`.
+   * Internal only: not exported from the public token API / `@utility` catalog.
+   * py/px must ascend with size (base never taller than mid).
+   */
+  --chip-px-small: calc(var(--space-xsmall));
+  --chip-py-small: calc(var(--space-xsmall) * 0.35);
+  --chip-px-base: calc(var(--space-small));
+  --chip-py-base: calc(var(--space-small) * 0.5);
+  --chip-px-mid: calc(var(--space-base));
+  --chip-py-mid: calc(var(--space-small) * 0.5);
+  --chip-px-large: calc(var(--space-mid));
+  --chip-py-large: calc(var(--space-base) * 0.5);
+  --chip-gap-small: calc(var(--space-xsmall));
+  --chip-gap-base: calc(var(--space-xsmall));
+  --chip-gap-mid: calc(var(--space-small));
+  --chip-gap-large: var(--space-small);
+  --chip-box-small: calc(var(--space-xsmall) * 0.2);
+  --chip-box-base: calc(var(--space-xsmall) * 0.3);
+  --chip-box-mid: calc(var(--space-small) * 0.5);
+  --chip-box-large: calc(var(--space-small) * 0.55);
+  /**
+   * Equal diameter for circular Badge (digit / icon-only).
+   * Text in Badge uses `leading-none` (line-height 1), so size ≈ font-size — not role line-box.
+   */
+  --chip-size-small: calc(
+    max(var(--icon-size-small), var(--text-xsmall-size)) + var(--chip-box-small) * 2 +
+      var(--border-width) * 2
+  );
+  --chip-size-base: calc(
+    max(var(--icon-size-base), var(--text-small-size)) + var(--chip-box-base) * 2 +
+      var(--border-width) * 2
+  );
+  --chip-size-mid: calc(
+    max(var(--icon-size-base), var(--text-base-size)) + var(--chip-box-mid) * 2 +
+      var(--border-width) * 2
+  );
+  --chip-size-large: calc(
+    max(var(--icon-size-large), var(--text-mid-size)) + var(--chip-box-large) * 2 +
+      var(--border-width) * 2
+  );
+
+  /**
+   * Base border radius knob + step tokens.
+   * Layers: `--radius` (knob) → `--radius-*` (steps) → `@theme` `--radius-*` (Tailwind `rounded-*`).
+   * Default is a fixed 8px. Fluid: `--radius: var(--radius-fluid)` or `scalePreset: "fluid"`.
+   * `mid` is ×1.125 (9px), between `base` and `large`. `2xlarge` / `3xlarge` are 16px / 24px. `none` and `full` are absolute.
+   */
+  --radius: 0.5rem;
+  --radius-fluid: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
+  --radius-none: 0px;
+  --radius-xsmall: calc(var(--radius) * 0.618);
+  --radius-small: calc(var(--radius) * 0.875);
+  --radius-base: calc(var(--radius) * 1);
+  --radius-mid: calc(var(--radius) * 1.125);
+  --radius-large: calc(var(--radius) * 1.25);
+  --radius-2xlarge: calc(var(--radius) * 2);
+  --radius-3xlarge: calc(var(--radius) * 3);
+  --radius-full: 9999px;
+  /**
+   * Concentric inner corner: `max(0, outer − padding)`.
+   * A shell sets `--radius-outer` and `--radius-pad`; the child uses `rounded-nested`.
+   * Defaults: outer is the `--radius` knob, pad is 0 (nested equals the knob until a shell sets the pad).
+   */
+  --radius-outer: var(--radius);
+  --radius-pad: 0px;
+  --radius-nested: max(0px, calc(var(--radius-outer) - var(--radius-pad)));
+
+  /**
+   * Primitive typographic scale (`--text-scale-*`).
+   * Steps: `xsmall`, `small` … `3xlarge` — names match rem sizes.
+   * Semantic UI roles (`text-base`, `text-mid`, …) map 1:1 to the same step names.
+   * line-height = calc(line_height / font-size) — unitless, like Tailwind v4.
+   */
+  /* BEGIN GENERATED:text-scale */
+  --text-scale-xsmall: 0.6875rem;
+  --text-scale-xsmall--line-height: calc(0.875rem / 0.6875rem);
+
+  --text-scale-small: 0.75rem;
+  --text-scale-small--line-height: calc(1rem / 0.75rem);
+
+  --text-scale-base: 0.875rem;
+  --text-scale-base--line-height: calc(1.25rem / 0.875rem);
+
+  --text-scale-mid: 1rem;
+  --text-scale-mid--line-height: calc(1.5rem / 1rem);
+
+  --text-scale-large: 1.125rem;
+  --text-scale-large--line-height: calc(1.75rem / 1.125rem);
+
+  --text-scale-xlarge: 1.5rem;
+  --text-scale-xlarge--line-height: calc(2rem / 1.5rem);
+
+  --text-scale-2xlarge: 1.875rem;
+  --text-scale-2xlarge--line-height: calc(2.25rem / 1.875rem);
+
+  --text-scale-3xlarge: 2.25rem;
+  --text-scale-3xlarge--line-height: calc(2.5rem / 2.25rem);
+  /* END GENERATED:text-scale */
+
+  /**
+   * Primitive font-weight scale (`--font-w-*`).
+   * Semantic text roles reference these tokens.
+   */
+  --font-w-small: 500;
+  --font-w-base: 500;
+  --font-w-mid: 600;
+  --font-w-strong: 700;
+  --font-w-bold: 800;
+
+
+  /**
+   * Semantic UI text roles — 1:1 with `--text-scale-*` of the same name
+   * (`text-base` → `--text-scale-base`, headers → `xlarge` / `2xlarge` / `3xlarge`).
+   */
+  --text-accent-header-size: var(--text-scale-3xlarge);
+  --text-accent-header-line-height: var(--text-scale-3xlarge--line-height);
+  --text-accent-header-weight: var(--font-w-bold);
+
+  --text-header-1-size: var(--text-scale-2xlarge);
+  --text-header-1-line-height: var(--text-scale-2xlarge--line-height);
+  --text-header-1-weight: var(--font-w-strong);
+
+  --text-header-2-size: var(--text-scale-xlarge);
+  --text-header-2-line-height: var(--text-scale-xlarge--line-height);
+  --text-header-2-weight: var(--font-w-strong);
+
+  --text-large-size: var(--text-scale-large);
+  --text-large-line-height: var(--text-scale-large--line-height);
+  --text-large-weight: var(--font-w-mid);
+
+  --text-mid-size: var(--text-scale-mid);
+  --text-mid-line-height: var(--text-scale-mid--line-height);
+  --text-mid-weight: var(--font-w-base);
+
+  --text-base-size: var(--text-scale-base);
+  --text-base-line-height: var(--text-scale-base--line-height);
+  --text-base-weight: var(--font-w-base);
+
+  --text-small-size: var(--text-scale-small);
+  --text-small-line-height: var(--text-scale-small--line-height);
+  --text-small-weight: var(--font-w-small);
+
+  --text-xsmall-size: var(--text-scale-xsmall);
+  --text-xsmall-line-height: var(--text-scale-xsmall--line-height);
+  --text-xsmall-weight: var(--font-w-small);
+
+  /**
+   * Base control size (icons, indicators, button min-width, modal width).
+   * Separate from `--space` (spacing) and `--text-scale-*` (typography).
+   * Default is a fixed 16px. Fluid: `--size: var(--size-fluid)` or `scalePreset: "fluid"`.
+   */
+  --size: 1rem;
+  --size-fluid: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
+
+  /** Primitive control size scale (`--size-scale-*`) */
+  --size-scale-xsmall: calc(var(--size) * 0.675);
+  --size-scale-small: calc(var(--size) * 0.875);
+  --size-scale-base: calc(var(--size) * 1.125);
+  --size-scale-mid: calc(var(--size) * 1.25);
+  --size-scale-large: calc(var(--size) * 1.375);
+  --size-scale-xlarge: calc(var(--size) * 1.75);
+  --size-scale-2xlarge: calc(var(--size) * 2);
+  --size-scale-3xlarge: calc(var(--size) * 2.25);
+
+  /**
+   * Container / panel width scale — `min-w-component-*` / `max-w-component-*`.
+   * Steps (× `--size` ≈ rem): xsmall 12 · small 16 · base 20 · mid 24 ·
+   * large 28 · xlarge 32 · 2xlarge 36.
+   * Dialog/Alert size props map to base→2xlarge (not 1:1 with step names).
+   */
+  --max-component-xsmall: calc(var(--size) * 12);
+  --max-component-small: calc(var(--size) * 16);
+  --max-component-base: calc(var(--size) * 20);
+  --max-component-mid: calc(var(--size) * 24);
+  --max-component-large: calc(var(--size) * 28);
+  --max-component-xlarge: calc(var(--size) * 32);
+  --max-component-2xlarge: calc(var(--size) * 36);
+
+  /**
+   * Page column scale — `max-w-page-*` (Container `maxWidth`) and `w-page-*`
+   * (Sidebar `width`). Not the panel scale `--max-component-*`.
+   * Steps (× `--size` ≈ rem): xsmall 16 · small 20 · base 24 · mid 48 ·
+   * large 80 · xlarge 90 · 2xlarge 112.
+   */
+  --max-page-xsmall: calc(var(--size) * 16);
+  --max-page-small: calc(var(--size) * 20);
+  --max-page-base: calc(var(--size) * 24);
+  --max-page-mid: calc(var(--size) * 48);
+  --max-page-large: calc(var(--size) * 80);
+  --max-page-xlarge: calc(var(--size) * 90);
+  --max-page-2xlarge: calc(var(--size) * 112);
+
+  --button-min-width-small: calc(var(--control-height-small) * 2.5);
+  --button-min-width-base: calc(var(--control-height-base) * 2.5);
+  --button-min-width-mid: calc(var(--control-height-mid) * 2.7);
+  --button-min-width-large: calc(var(--control-height-large) * 2.6);
+
+  /**
+   * Interactive control box size (Button, Input, Selector, SearchInput, square hit targets).
+   * `--control-height-*` — canonical (computed from text + padding + border).
+   * `--control-size-*` — aliases for width utilities (`w-control-*`, `min-w-control-*`, …)
+   * so width does not read a `*-height-*` token by name.
+   */
+  --control-height-xsmall: calc(var(--text-xsmall-size) * var(--text-xsmall-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
+  --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
+  --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + var(--border-width) * 2);
+  --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + var(--border-width) * 2);
+  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-mid) * 2 + var(--border-width) * 2);
+
+  --control-size-xsmall: var(--control-height-xsmall);
+  --control-size-small: var(--control-height-small);
+  --control-size-base: var(--control-height-base);
+  --control-size-mid: var(--control-height-mid);
+  --control-size-large: var(--control-height-large);
+
+  /** Avatar diameter per size step. */
+  --avatar-size-small: calc(var(--size) * 2);
+  --avatar-size-base: calc(var(--size) * 2.5);
+  --avatar-size-mid: calc(var(--size) * 3);
+  --avatar-size-large: calc(var(--size) * 3.5);
+
+  /**
+   * Icons (react-icons, etc.) — 1:1 with `--size-scale-*`; utilities `icon-xsmall` … `icon-3xlarge`.
+   * SelectionIndicator / SelectionThumb marks scale icons further (×0.75) in component tokens.
+   */
+  --icon-size-xsmall: var(--size-scale-xsmall);
+  --icon-size-small: var(--size-scale-small);
+  --icon-size-base: var(--size-scale-base);
+  --icon-size-mid: var(--size-scale-mid);
+  --icon-size-large: var(--size-scale-large);
+  --icon-size-xlarge: var(--size-scale-xlarge);
+  --icon-size-2xlarge: var(--size-scale-2xlarge);
+  --icon-size-3xlarge: var(--size-scale-3xlarge);
+  /** Round sizes beside the step scale (16px / 24px when `--size` is 1rem). */
+  --icon-size-16: var(--size);
+  --icon-size-24: calc(var(--size) * 1.5);
+
+  /**
+   * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
+   * Outer ring diameter (= `--size-scale-*`); fill paints under the border
+   * (`-inset` by `--border-width`) with `rounded-[inherit]` so custom shell radius
+   * needs no extra public API.
+   * Mark icons: `--icon-size-*` × 0.75 (see `SELECTION_INDICATOR_ICON_CLASS`).
+   * Corner radius is `--radius-nested`: a radius step minus `--space-xsmall` (4px),
+   * not a second ×0.618. `xsmall` steps up to `--radius-small` so the inset does not
+   * collapse the corner. `mid` uses `--radius-mid`; `large` uses `--radius-large`
+   * (`--radius-2xlarge` would turn the box into a pill). Not `rounded-full`.
+   */
+  --selection-indicator-xsmall: var(--size-scale-xsmall);
+  --selection-indicator-small: var(--size-scale-small);
+  --selection-indicator-base: var(--size-scale-base);
+  --selection-indicator-mid: var(--size-scale-mid);
+  --selection-indicator-large: var(--size-scale-large);
+
+  --selection-indicator-radius-xsmall: max(0px, calc(var(--radius-small) - var(--space-xsmall)));
+  --selection-indicator-radius-small: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
+  --selection-indicator-radius-base: max(0px, calc(var(--radius-base) - var(--space-xsmall)));
+  --selection-indicator-radius-mid: max(0px, calc(var(--radius-mid) - var(--space-xsmall)));
+  --selection-indicator-radius-large: max(0px, calc(var(--radius-large) - var(--space-xsmall)));
+
+  /** Shadow knobs. Composites live with the mode colors, so a dark island inherits these. */
+  /* BEGIN GENERATED:shadow-knobs */
+  --shadow-opacity: 1;
+  --shadow-blur: 1;
+  --shadow-spread: 1;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 0px;
+  /* END GENERATED:shadow-knobs */
+
+  /**
+   * Toast scrim — soft backdrop behind the notification stack (gradient to transparency).
+   * --toast-scrim-size — height and horizontal inset multiplier.
+   * --toast-scrim-density — color-mix density multiplier (center / mid).
+   */
+  --toast-scrim-size: 1;
+  --toast-scrim-density: 1;
+  --toast-scrim-height: calc(300px * var(--toast-scrim-size));
+  --toast-scrim-inset-x: calc(80px * var(--toast-scrim-size));
+  --toast-scrim-offset-y: calc(24px * var(--toast-scrim-size));
+  --toast-scrim-center-mix: calc(55% * var(--toast-scrim-density));
+  --toast-scrim-mid-mix: calc(25% * var(--toast-scrim-density));
+  --toast-scrim-mask: linear-gradient(
+    to right,
+    transparent 0%,
+    black 18%,
+    black 82%,
+    transparent 100%
+  );
+
+}
+
+/**
+ * Dark mode colors. Same keys as the light block below.
+ * Declared on `:root` (the page) and on `[data-theme="dark"]` (an island).
+ */
+:root,
+[data-theme="dark"] {
+
+  --color-background: #0c0d10;
+  --color-surface: #171717;
+  --color-foreground: #f4f5f7;
+  --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
+  --color-shadow: #000000;
+  --color-shadow-secondary: #000000;
+
+  /**
+   * MUTED surface — soft panel / placeholder (`bg-muted`).
+   * Text on muted surfaces and secondary copy: `--color-muted-foreground`
+   * (utility `text-muted` maps here, not to `--color-muted`).
+   */
+  --color-muted: color-mix(
     in oklab,
-    var(--color-accent) 12%,
+    var(--color-foreground) 6%,
+    var(--color-surface)
+  );
+  --color-muted-foreground: #858994;
+
+  /**
+   * PRIMARY (brand) — primary button fill, links, active text states.
+   * Text color on this fill: `--color-primary-foreground`.
+   */
+  --color-primary: #ebebef;
+  --color-primary-foreground: #0c0c0e;
+
+  /**
+   * FOCUS RING — paint color for focus-ring* utilities. Width and offset stay on `:root`.
+   * Soft by default (60% source + transparent). Status variants for field shells / status controls.
+   * Override independently, or retarget via `[--color-focus-ring:var(--color-focus-ring-danger)]`.
+   */
+  --color-focus-ring: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --color-focus-ring-danger: color-mix(in oklab, var(--color-danger) 60%, transparent);
+  --color-focus-ring-success: color-mix(in oklab, var(--color-success) 60%, transparent);
+  --color-focus-ring-info: color-mix(in oklab, var(--color-info) 60%, transparent);
+  --color-focus-ring-warning: color-mix(in oklab, var(--color-warning) 60%, transparent);
+
+  /**
+   * INDICATOR — fill inside selection indicators (Radio, Checkbox, Switch, Slider track,
+   * Calendar selected, ProgressBar/Meter fill).
+   * Defaults to === primary, but can be overridden independently.
+   */
+  --color-indicator: var(--color-primary);
+
+  /** Text and icons on `--color-indicator` fill (Checkbox checkmark, Switch/Slider in on state). */
+  --color-indicator-foreground: var(--color-primary-foreground);
+
+  /*
+   * STATUS: DANGER
+   * 1) --color-danger                     (base / text / primary fill)
+   * 2) --color-surface-tint-danger        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-danger-hover  (hover over surface-tint-danger)
+   * 4) --color-danger-fill-hover          (hover over bg-danger)
+   *
+   * surface-tint-* / *-fill-hover — status mix with transparent
+   * (15% tint, 25% tint hover, 80% fill hover).
+   */
+  --color-danger: #d73737;
+  --color-danger-foreground: #ffffff;
+  --color-surface-tint-danger: color-mix(
+    in oklab,
+    var(--color-danger) 15%,
+    transparent
+  );
+  --color-surface-tint-danger-hover: color-mix(
+    in oklab,
+    var(--color-danger) 25%,
+    transparent
+  );
+  --color-danger-fill-hover: color-mix(
+    in oklab,
+    var(--color-danger) 80%,
     transparent
   );
 
-  /** Залитый default (Button): непрозрачное затемнение от базового --color-accent */
-  --color-accent-solid-hover: color-mix(
+  /*
+   * STATUS: SUCCESS
+   * 1) --color-success                     (base / text / primary fill)
+   * 2) --color-surface-tint-success        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-success-hover  (hover over surface-tint-success)
+   * 4) --color-success-fill-hover          (hover over bg-success)
+   */
+  --color-success: #35b664;
+  --color-success-foreground: #0c0c0e;
+  --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-accent) 90%,
-    black
+    var(--color-success) 15%,
+    transparent
   );
-
-  /** Залитые семантические кнопки: hover без глобального opacity — тёмнее фон через mix с black */
-  --color-danger-fill-hover: color-mix(
+  --color-surface-tint-success-hover: color-mix(
     in oklab,
-    var(--color-danger) 90%,
-    black
+    var(--color-success) 25%,
+    transparent
   );
   --color-success-fill-hover: color-mix(
     in oklab,
-    var(--color-success) 90%,
-    black
+    var(--color-success) 80%,
+    transparent
+  );
+
+  /*
+   * STATUS: INFO
+   * 1) --color-info                     (base / text / primary fill)
+   * 2) --color-surface-tint-info        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-info-hover  (hover over surface-tint-info)
+   * 4) --color-info-fill-hover          (hover over bg-info)
+   */
+  --color-info: #389dcc;
+  --color-info-foreground: #0c0c0e;
+  --color-surface-tint-info: color-mix(
+    in oklab,
+    var(--color-info) 15%,
+    transparent
+  );
+  --color-surface-tint-info-hover: color-mix(
+    in oklab,
+    var(--color-info) 25%,
+    transparent
   );
   --color-info-fill-hover: color-mix(
     in oklab,
-    var(--color-info) 90%,
-    black
+    var(--color-info) 80%,
+    transparent
+  );
+
+  /*
+   * STATUS: WARNING
+   * 1) --color-warning                     (base / text / primary fill)
+   * 2) --color-surface-tint-warning        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-warning-hover  (hover over surface-tint-warning)
+   * 4) --color-warning-fill-hover          (hover over bg-warning)
+   */
+  --color-warning: #daa13e;
+  --color-warning-foreground: #0c0c0e;
+  --color-surface-tint-warning: color-mix(
+    in oklab,
+    var(--color-warning) 15%,
+    transparent
+  );
+  --color-surface-tint-warning-hover: color-mix(
+    in oklab,
+    var(--color-warning) 25%,
+    transparent
   );
   --color-warning-fill-hover: color-mix(
     in oklab,
-    var(--color-warning) 90%,
-    black
+    var(--color-warning) 80%,
+    transparent
   );
 
-  /** Точка сходимости ripple у Button (`ConvergeRippleLayer` → inline background) */
-  --color-converge-ripple-accent-fill: color-mix(
+  /**
+   * PRIMARY TINT — primary brand tint (highlight, calendar range, Skeleton, etc.).
+   * For menu row hover use `--color-default-hover`.
+   */
+  --color-primary-tint: color-mix(
     in oklab,
-    var(--color-accent-foreground) 38%,
+    var(--color-primary) 20%,
     transparent
   );
-  --color-converge-ripple-accent-soft: color-mix(
+
+  /** PRIMARY TINT STRONG — primary/20 brand tint (enhanced hover, ripple, skeleton wave). */
+  --color-primary-tint-strong: color-mix(
     in oklab,
-    var(--color-accent) 42%,
+    var(--color-primary) 25%,
     transparent
   );
-  /** Широкие триггеры (Expandable и т.п.): мягкий акцент без плотной заливки */
-  --color-converge-ripple-accent-muted: color-mix(
+
+  /** PRIMARY HOVER — filled primary button: slight lightening/muting of the fill */
+  --color-primary-hover: color-mix(
     in oklab,
-    var(--color-accent) 28%,
+    var(--color-primary) 80%,
+    var(--color-surface)
+  );
+
+  /**
+   * DEFAULT HOVER — opaque-ish wash for surfaces that already sit on `bg-surface`
+   * (menu rows, default Button, table hover). Foreground tint over surface.
+   */
+  --color-default-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 8%,
+    var(--color-surface)
+  );
+
+  /**
+   * TRANSPARENT HOVER — hover for outline/ghost (transparent idle).
+   * Muted wash over transparent so the page shows through.
+   */
+  --color-transparent-hover: color-mix(
+    in oklab,
+    var(--color-muted) 70%,
+    transparent
+  );
+
+  /**
+   * SECONDARY surface — background for secondary button, tertiary controls.
+   * Neutral mix of foreground+surface, NOT primary.
+   */
+  --color-secondary: color-mix(
+    in oklab,
+    var(--color-foreground) 12%,
+    var(--color-surface)
+  );
+
+  /** Text color on --color-secondary. Defaults to foreground; override for non-standard backgrounds. */
+  --color-secondary-foreground: var(--color-foreground);
+
+  /** SECONDARY HOVER — neutral surface on secondary button hover (6% foreground over secondary) */
+  --color-secondary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-secondary)
+  );
+
+  /**
+   * TERTIARY surface — third level of nested panels (`Surface variant="tertiary"`).
+   * Richer than secondary (24% foreground wash).
+   */
+  --color-tertiary: color-mix(
+    in oklab,
+    var(--color-foreground) 24%,
+    var(--color-surface)
+  );
+
+  /** Text color on --color-tertiary. Defaults to foreground; override for non-standard backgrounds. */
+  --color-tertiary-foreground: var(--color-foreground);
+
+  /** TERTIARY HOVER — neutral surface on tertiary element hover (6% foreground over tertiary) */
+  --color-tertiary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-tertiary)
+  );
+
+  /**
+   * RIPPLE TOKENS
+   * primary-fill — convergence point on filled primary button (`Button variant="primary"`).
+   * neutral — ripple for default / outline / ghost / secondary / Disclosure / Dropdown.
+   * neutral-muted — wide triggers (Expandable, etc.).
+   */
+  --color-converge-ripple-primary-fill: color-mix(
+    in oklab,
+    var(--color-primary-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-neutral: var(--color-primary-tint-strong);
+  --color-converge-ripple-neutral-muted: color-mix(
+    in oklab,
+    var(--color-primary) 14%,
     transparent
   );
   --color-converge-ripple-danger: color-mix(
@@ -93,275 +673,471 @@
     transparent
   );
 
-  /** Button `secondary`: hover и ripple (чуть насыщеннее `surface-secondary`). */
-  --color-secondary-fill-hover: color-mix(
-    in oklab,
-    var(--color-accent) 26%,
-    var(--color-surface)
-  );
-  --color-converge-ripple-secondary: color-mix(
-    in oklab,
-    var(--color-accent) 34%,
-    transparent
-  );
-
-  --color-surface-tint-danger: color-mix(
-    in oklab,
-    var(--color-danger) 16%,
-    var(--color-surface)
-  );
-  --color-surface-tint-success: color-mix(
-    in oklab,
-    var(--color-success) 16%,
-    var(--color-surface)
-  );
-  --color-surface-tint-info: color-mix(
-    in oklab,
-    var(--color-info) 16%,
-    var(--color-surface)
-  );
-  --color-surface-tint-warning: color-mix(
-    in oklab,
-    var(--color-warning) 16%,
-    var(--color-surface)
-  );
-  --color-surface-tint-accent: color-mix(
-    in oklab,
-    var(--color-accent) 18%,
-    var(--color-surface)
-  );
-  --color-surface-tint-danger-strong: color-mix(
-    in oklab,
-    var(--color-danger) 22%,
-    var(--color-surface)
-  );
-  --color-surface-tint-success-strong: color-mix(
-    in oklab,
-    var(--color-success) 22%,
-    var(--color-surface)
-  );
-  --color-surface-tint-warning-strong: color-mix(
-    in oklab,
-    var(--color-warning) 22%,
-    var(--color-surface)
-  );
-
-  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-family-mono: ui-monospace, monospace;
-
   /**
-   * Ступени отступов (rem), согласованы с плотностью Button / Dialog / Expandable.
-   * Утилиты: gap-mid, p-xsmall, m-plus, …
+   * Component shadows — single layer, bottom only.
+   * Per size: `--shadow-{small|base|mid|large|xlarge}` + `-hover` / `-press` (same family, not cross-tier).
+   * Each token is the full layer list: override `--shadow-mid` (and its `-hover` / `-press`)
+   * with a whole `box-shadow` value. Knobs only tune the generated default.
+   * A custom list must keep the same layer count as hover/press of that level (two layers).
+   * `--shadow-lift` — first-level appear-from-none (Button); independent of sized rest tokens.
+   * Knobs: `--shadow-opacity|blur|spread` (multipliers), `--shadow-offset-x|y` (px nudge).
+   * Colors: `--color-shadow` (key) + `--color-shadow-secondary` (ambient).
+   * none: collapsed `0 0 0 0` / alpha 0 — GSAP morphs into sized / lift shadows.
    */
-  --space-xsmall: 0.25rem;
-  --space-small: 0.375rem;
-  --space-base: 0.5rem;
-  --space-plus: 0.75rem;
-  --space-mid: 1rem;
-  --space-large: 1.25rem;
-  --space-xlarge: 1.5rem;
-
-  /** Сырьё для @theme — радиусы (утилиты `rounded-xsmall` … `rounded-large`) */
-  --radius-value-xsmall: 0.25rem;
-  --radius-value-small: 0.375rem;
-  --radius-value-base: 0.5rem;
-  --radius-value-mid: 0.625rem;
-  --radius-value-large: 0.75rem;
-
-  /** Типографика — размер / межстрочный интервал / насыщенность */
-  --text-accent-header-size: 2.25rem;
-  --text-accent-header-line-height: 1.1;
-  --text-accent-header-weight: 600;
-  /** text-header-1: как text-xl + font-medium + line-height 1.2 */
-  --text-header-1-size: 1.875rem;
-  --text-header-1-line-height: 1.2;
-  --text-header-1-weight: 600;
-  /** text-header-2: как text-lg + font-medium + line-height 1.25 */
-  --text-header-2-size: 1.5rem;
-  --text-header-2-line-height: 1.25;
-  --text-header-2-weight: 600;
-  /** text-large: 1.25rem, semibold, line-height 1.2 */
-  --text-large-size: 1.25rem;
-  --text-large-line-height: 1.2;
-  --text-large-weight: 500;
-  /** text-mid: как text-md + font-medium + line-height 1.2 (text-md = 1rem в шкале Tailwind) */
-  --text-mid-size: 1rem;
-  --text-mid-line-height: 1.2;
-  --text-mid-weight: 400;
-  /** text-base: как text-sm + font-medium + line-height 1.2 */
-  --text-base-size: 0.875rem;
-  --text-base-line-height: 1.2;
-  --text-base-weight: 400;
-  /** text-small: как text-xs + font-medium + line-height 1 */
-  --text-small-size: 0.75rem;
-  --text-small-line-height: 1;
-  --text-small-weight: 400;
-  /** text-tools: как text-xs + font-normal + line-height 1.4 */
-  --text-tools-size: 0.6875rem;
-  --text-tools-line-height: 1;
-  --text-tools-weight: 400; /** 400 → 500 для полноценного @utility text-tools */
-
-  /** Крупность контейнеров (модалки, панели, лэйауты) — max-w-component-* */
-  --max-component-small: 20rem;
-  --max-component-base: 28rem;
-  --max-component-mid: 32rem;
-  --max-component-large: 36rem;
-
-  /** Кнопки — минимальная ширина по размеру */
-  --button-min-width-s: 4.5rem;
-  --button-min-width-m: 5.5rem;
-  --button-min-width-l: 7rem;
-  --button-min-width-xl: 8rem;
-
-  /**
-   * Иконки (react-icons и др.) — единая шкала; утилиты `icon-xsmall` … `icon-2xlarge`.
-   * Переопределяйте переменные в продукте для согласованного масштаба UI.
-   */
-  --icon-size-xsmall: 0.75rem;
-  --icon-size-small: 0.875rem;
-  --icon-size-base: 1rem;
-  --icon-size-mid: 1.125rem;
-  --icon-size-large: 1.375rem;
-  --icon-size-xlarge: 1.5rem;
-  --icon-size-2xlarge: 1.75rem;
-
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-fast: 150ms;
-  --duration-normal: 250ms;
-
-  /**
-   * Тени компонентов — три уровня.
-   * sm: лёгкий рельеф (компоненты «первого уровня» при hover, default-состояние «второго уровня»).
-   * md: чуть сильнее — компоненты второго уровня (Badge, Alert, Tooltip) при hover.
-   * lg: панели / модалки.
-   * none: те же слои/смещения, что у sm, но opacity 0 — для `transition: box-shadow` (с `none` не анимируется).
-   */
-  --shadow-none: 0 1px 3px 0 rgb(0 0 0 / 0), 0 1px 2px -1px rgb(0 0 0 / 0);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.18), 0 1px 2px -1px rgb(0 0 0 / 0.12);
-  --shadow-md: 0 3px 8px -1px rgb(0 0 0 / 0.24), 0 2px 4px -2px rgb(0 0 0 / 0.14);
-  --shadow-lg: 0 8px 20px -4px rgb(0 0 0 / 0.30), 0 4px 8px -4px rgb(0 0 0 / 0.18);
-
-  --glass-blur: 22px;
-  --glass-blur-edge: 52px;
-  --glass-saturate: 1.45;
-  --glass-tint: rgb(255 255 255 / 0.06);
-  --glass-tint-veil: rgb(12 13 16 / 0.42);
-  --glass-border: rgb(255 255 255 / 0.14);
-  --glass-highlight: rgb(255 255 255 / 0.09);
+  /* BEGIN GENERATED:shadows-dark */
+  --shadow-none:
+    0px 0px 0px 0px
+      color-mix(in oklab, var(--color-shadow) 0%, transparent),
+    0px 0px 0px 0px
+      color-mix(in oklab, var(--color-shadow-secondary) 0%, transparent);
+  --shadow-small:
+    calc(0px + var(--shadow-offset-x)) calc(1px + var(--shadow-offset-y))
+      calc(1px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.1 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.045 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-small-hover:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.14 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.063 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-small-press:
+    calc(0px + var(--shadow-offset-x)) calc(1px + var(--shadow-offset-y))
+      calc(1px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.07 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.032 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-base:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.15 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.068 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-base-hover:
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.19 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.086 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-base-press:
+    calc(0px + var(--shadow-offset-x)) calc(1px + var(--shadow-offset-y))
+      calc(1px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.1 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.045 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-mid:
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-mid-hover:
+    calc(0px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.24 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+      calc(8px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.108 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-mid-press:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.14 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.063 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-large:
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+      calc(5px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.24 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(9px + var(--shadow-offset-y))
+      calc(10px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.108 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-large-hover:
+    calc(0px + var(--shadow-offset-x)) calc(7px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.28 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(11px + var(--shadow-offset-y))
+      calc(12px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.126 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-large-press:
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.17 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.077 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge:
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(20px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.28 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(18px + var(--shadow-offset-y))
+      calc(40px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.126 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-hover:
+    calc(0px + var(--shadow-offset-x)) calc(16px + var(--shadow-offset-y))
+      calc(25px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.32 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(24px + var(--shadow-offset-y))
+      calc(50px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.144 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-press:
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+      calc(12px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(24px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-lift:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.15 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.068 * 100% * var(--shadow-opacity)), transparent);
+  /* END GENERATED:shadows-dark */
+  --toast-scrim-gradient-top: radial-gradient(
+    ellipse 90% 60% at 50% 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
+  --toast-scrim-gradient-bottom: radial-gradient(
+    ellipse 90% 60% at 50% 100%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
 }
 
-[data-theme="light"],
-[data-brn-theme="light"] {
-  --color-background: #fafafa;
+[data-theme="light"] {
+  --color-background: #f5f5f5;
   --color-surface: #ffffff;
-  --color-border: #e4e4e7;
   --color-foreground: #18181b;
-  --color-muted: #71717a;
-  --color-accent: #18181b;
-  --color-accent-foreground: #fafafa;
-  --color-danger: #dc2626;
-  --color-danger-foreground: #ffffff;
-  --color-success: #22c55e;
-  --color-success-foreground: #ffffff;
-  --color-info: #0ea5e9;
-  --color-info-foreground: #ffffff;
-  --color-warning: #f59e0b;
-  --color-warning-foreground: #0c0c0e;
-
-  /**
-   * Светлая тема: акцент почти чёрный — wash с transparent почти не виден;
-   * залитый default: 90% + black почти не отличается от bg-accent — усиливаем долю black.
-   */
-  --color-accent-fill-hover: color-mix(
+  --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
+  --color-shadow: #000000;
+  --color-shadow-secondary: #000000;
+  --color-muted: color-mix(
     in oklab,
     var(--color-foreground) 12%,
     var(--color-surface)
   );
-  --color-accent-solid-hover: color-mix(
-    in oklab,
-    var(--color-accent) 72%,
-    black
-  );
+  --color-muted-foreground: #646467;
+  --color-primary: #18181b;
+  --color-primary-foreground: #fafafa;
 
   /**
-   * Converge ripple: как с hover — на белом transparent-wash не читается;
-   * на залитом default смесь foreground+transparent даёт слабый контраст к чёрному accent.
+   * Re-define var()-dependent tokens on this same element; otherwise from :root
+   * the already computed dark-theme value is inherited (nested data-theme).
    */
-  --color-converge-ripple-accent-soft: color-mix(
+  --color-focus-ring: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --color-focus-ring-danger: color-mix(in oklab, var(--color-danger) 60%, transparent);
+  --color-focus-ring-success: color-mix(in oklab, var(--color-success) 60%, transparent);
+  --color-focus-ring-info: color-mix(in oklab, var(--color-info) 60%, transparent);
+  --color-focus-ring-warning: color-mix(in oklab, var(--color-warning) 60%, transparent);
+  /* width / offset are mode-independent; kept on :root only */
+  --color-indicator: var(--color-primary);
+  --color-indicator-foreground: var(--color-primary-foreground);
+
+  --color-primary-tint: color-mix(
     in oklab,
-    var(--color-foreground) 22%,
-    var(--color-surface)
+    var(--color-primary) 20%,
+    transparent
   );
-  --color-converge-ripple-accent-fill: color-mix(
+  --color-primary-tint-strong: color-mix(
     in oklab,
-    var(--color-accent-foreground) 52%,
-    var(--color-accent)
-  );
-  --color-converge-ripple-accent-muted: color-mix(
-    in oklab,
-    var(--color-accent) 26%,
-    var(--color-surface)
+    var(--color-primary) 25%,
+    transparent
   );
 
-  --color-secondary-fill-hover: color-mix(
-    in oklab,
-    var(--color-foreground) 14%,
-    var(--color-surface)
-  );
-  --color-converge-ripple-secondary: color-mix(
-    in oklab,
-    var(--color-foreground) 22%,
-    var(--color-surface)
-  );
-
-  --glass-tint: rgb(0 0 0 / 0.04);
-  --glass-tint-veil: rgb(250 250 250 / 0.72);
-  --glass-border: rgb(0 0 0 / 0.1);
-  --glass-highlight: rgb(0 0 0 / 0.05);
+  --color-danger: #d14143;
+  --color-danger-foreground: #ffffff;
+  --color-success: #00873f;
+  --color-success-foreground: #ffffff;
+  --color-info: #007dac;
+  --color-info-foreground: #ffffff;
+  --color-warning: #e1a53d;
+  --color-warning-foreground: #0c0c0e;
 
   --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--color-danger) 20%,
-    var(--color-surface)
+    var(--color-danger) 15%,
+    transparent
+  );
+  --color-surface-tint-danger-hover: color-mix(
+    in oklab,
+    var(--color-danger) 25%,
+    transparent
+  );
+  --color-danger-fill-hover: color-mix(
+    in oklab,
+    var(--color-danger) 80%,
+    transparent
   );
   --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-success) 27%,
-    var(--color-surface)
+    var(--color-success) 15%,
+    transparent
+  );
+  --color-surface-tint-success-hover: color-mix(
+    in oklab,
+    var(--color-success) 25%,
+    transparent
+  );
+  --color-success-fill-hover: color-mix(
+    in oklab,
+    var(--color-success) 80%,
+    transparent
   );
   --color-surface-tint-info: color-mix(
     in oklab,
-    var(--color-info) 27%,
-    var(--color-surface)
+    var(--color-info) 15%,
+    transparent
+  );
+  --color-surface-tint-info-hover: color-mix(
+    in oklab,
+    var(--color-info) 25%,
+    transparent
+  );
+  --color-info-fill-hover: color-mix(
+    in oklab,
+    var(--color-info) 80%,
+    transparent
   );
   --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--color-warning) 27%,
-    var(--color-surface)
+    var(--color-warning) 15%,
+    transparent
   );
-  --color-surface-tint-accent: color-mix(
+  --color-surface-tint-warning-hover: color-mix(
     in oklab,
-    var(--color-border) 80%,
-    var(--color-surface)
+    var(--color-warning) 25%,
+    transparent
   );
-  --color-surface-tint-danger-strong: color-mix(
+  --color-warning-fill-hover: color-mix(
     in oklab,
-    var(--color-danger) 27%,
-    var(--color-surface)
+    var(--color-warning) 80%,
+    transparent
   );
-  --color-surface-tint-success-strong: color-mix(
+
+  --color-primary-hover: color-mix(
     in oklab,
-    var(--color-success) 27%,
-    var(--color-surface)
-  );
-  --color-surface-tint-warning-strong: color-mix(
-    in oklab,
-    var(--color-warning) 27%,
+    var(--color-primary) 90%,
     var(--color-surface)
   );
 
-  /* В светлой теме тени чуть заметнее (меньше контраста фон/компонент) */
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.07);
-  --shadow-md: 0 3px 8px -1px rgb(0 0 0 / 0.13), 0 2px 4px -2px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 8px 20px -4px rgb(0 0 0 / 0.18), 0 4px 8px -4px rgb(0 0 0 / 0.10);
+  --color-default-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 8%,
+    var(--color-surface)
+  );
+
+  --color-transparent-hover: color-mix(
+    in oklab,
+    var(--color-muted) 70%,
+    transparent
+  );
+
+  --color-secondary: color-mix(
+    in oklab,
+    var(--color-foreground) 12%,
+    var(--color-surface)
+  );
+
+  --color-secondary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-secondary)
+  );
+
+  --color-tertiary: color-mix(
+    in oklab,
+    var(--color-foreground) 24%,
+    var(--color-surface)
+  );
+
+  --color-tertiary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-tertiary)
+  );
+
+  
+
+  /** In light theme foreground is dark (#18181b) — explicitly duplicated for cascade clarity */
+  --color-secondary-foreground: var(--color-foreground);
+  --color-tertiary-foreground: var(--color-foreground);
+
+  --color-converge-ripple-primary-fill: color-mix(
+    in oklab,
+    var(--color-primary-foreground) 52%,
+    var(--color-primary)
+  );
+  --color-converge-ripple-neutral: var(--color-primary-tint-strong);
+  --color-converge-ripple-neutral-muted: color-mix(
+    in oklab,
+    var(--color-primary) 14%,
+    transparent
+  );
+  --color-converge-ripple-danger: color-mix(
+    in oklab,
+    var(--color-danger-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-success: color-mix(
+    in oklab,
+    var(--color-success-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-info: color-mix(
+    in oklab,
+    var(--color-info-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-warning: color-mix(
+    in oklab,
+    var(--color-warning-foreground) 38%,
+    transparent
+  );
+
+  --toast-scrim-gradient-top: radial-gradient(
+    ellipse 90% 60% at 50% 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
+  --toast-scrim-gradient-bottom: radial-gradient(
+    ellipse 90% 60% at 50% 100%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
+
+  /* In light theme shadows are slightly more visible (less background/component contrast) */
+  /* BEGIN GENERATED:shadows-light */
+  --shadow-none:
+    0px 0px 0px 0px
+      color-mix(in oklab, var(--color-shadow) 0%, transparent),
+    0px 0px 0px 0px
+      color-mix(in oklab, var(--color-shadow-secondary) 0%, transparent);
+  --shadow-small:
+    calc(0px + var(--shadow-offset-x)) calc(1px + var(--shadow-offset-y))
+      calc(1px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.05 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.023 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-small-hover:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.08 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.036 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-small-press:
+    calc(0px + var(--shadow-offset-x)) calc(1px + var(--shadow-offset-y))
+      calc(1px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.03 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.014 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-base:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.08 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.036 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-base-hover:
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.11 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.05 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-base-press:
+    calc(0px + var(--shadow-offset-x)) calc(1px + var(--shadow-offset-y))
+      calc(1px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.05 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(0px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.023 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-mid:
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.12 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.054 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-mid-hover:
+    calc(0px + var(--shadow-offset-x)) calc(5px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.15 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+      calc(8px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.068 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-mid-press:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.08 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.036 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-large:
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+      calc(5px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.16 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(9px + var(--shadow-offset-y))
+      calc(10px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.072 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-large-hover:
+    calc(0px + var(--shadow-offset-x)) calc(7px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(11px + var(--shadow-offset-y))
+      calc(12px * var(--shadow-blur)) calc(-3px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-large-press:
+    calc(0px + var(--shadow-offset-x)) calc(4px + var(--shadow-offset-y))
+      calc(3px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.11 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(6px + var(--shadow-offset-y))
+      calc(6px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.05 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge:
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(20px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.20 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(18px + var(--shadow-offset-y))
+      calc(40px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.09 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-hover:
+    calc(0px + var(--shadow-offset-x)) calc(16px + var(--shadow-offset-y))
+      calc(25px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.24 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(24px + var(--shadow-offset-y))
+      calc(50px * var(--shadow-blur)) calc(-4px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.108 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-xlarge-press:
+    calc(0px + var(--shadow-offset-x)) calc(8px + var(--shadow-offset-y))
+      calc(12px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.14 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(12px + var(--shadow-offset-y))
+      calc(24px * var(--shadow-blur)) calc(-2px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.063 * 100% * var(--shadow-opacity)), transparent);
+  --shadow-lift:
+    calc(0px + var(--shadow-offset-x)) calc(2px + var(--shadow-offset-y))
+      calc(2px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow) calc(0.08 * 100% * var(--shadow-opacity)), transparent),
+    calc(0px + var(--shadow-offset-x)) calc(3px + var(--shadow-offset-y))
+      calc(4px * var(--shadow-blur)) calc(-1px * var(--shadow-spread))
+      color-mix(in oklab, var(--color-shadow-secondary) calc(0.036 * 100% * var(--shadow-opacity)), transparent);
+  /* END GENERATED:shadows-light */
 }

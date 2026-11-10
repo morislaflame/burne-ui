@@ -1,0 +1,11 @@
+/*
+ * Joined segment: no own border or shadow. Zero specificity inside
+ * `@layer utilities`, so a consumer `border-*` / `shadow-*` utility wins.
+ * Kit width utilities are removed before that class is merged.
+ */
+@layer utilities {
+  :where(.button-group-segment, [data-group-segment]) {
+    border-width: 0;
+    box-shadow: none;
+  }
+}

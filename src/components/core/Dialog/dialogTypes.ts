@@ -1,0 +1,223 @@
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
+ 
+import type { ButtonSize } from "@/components/core/Button";
+import type { CloseButtonProps } from "@/components/core/CloseButton";
+import type {
+  PanelSize,
+  PanelSizeLayout,
+} from "@/components/core/utils/sizeLayout";
+import type { OverlayDismissEvent, OverlayDismissProps } from "@/components/core/utils/overlayLayer";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+ 
+export const KIT_DIALOG_VARIANTS = ["default", "outline", "secondary"] as const;
+export type KitDialogVariant = (typeof KIT_DIALOG_VARIANTS)[number];
+export type DialogVariant = KitDialogVariant | (string & {});
+ 
+export type DialogSize = PanelSize;
+ 
+/** Size tokens from shared `PANEL_SIZE_LAYOUT` (Dialog slice). */
+export type DialogSizePreset = Pick<
+  PanelSizeLayout,
+  | "rounded"
+  | "panelMax"
+  | "maxHeight"
+  | "headerGap"
+  | "headerPadding"
+  | "bodyPadding"
+  | "footerPadding"
+  | "headingGap"
+  | "titleVariant"
+  | "titleClassName"
+  | "descVariant"
+  | "descClassName"
+  | "bodyVariant"
+  | "footerButtonSize"
+  | "closeButtonSize"
+>;
+ 
+export type DialogClassNames = {
+  trigger?: string;
+  dialog?: string;
+  overlay?: string;
+  panel?: string;
+  content?: string;
+  header?: string;
+  headingBlock?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  footer?: string;
+  close?: string;
+};
+ 
+export type DialogLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+ 
+/** Nested text slots also listen for local pointer phases. */
+export type DialogPartMotion = DialogLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+ 
+export type DialogMotion = {
+  overlay?: DialogLifecycleMotion;
+  panel?: DialogPartMotion;
+  title?: DialogPartMotion;
+  description?: DialogPartMotion;
+  close?: DialogLifecycleMotion;
+  header?: DialogLifecycleMotion;
+  headingBlock?: DialogPartMotion;
+  footer?: DialogLifecycleMotion;
+  content?: DialogLifecycleMotion;
+  body?: DialogLifecycleMotion;
+  /** Open squeeze on `Dialog.Trigger` (Root scope — outside Panel). */
+  trigger?: DialogPartMotion;
+};
+ 
+export type DialogProps = {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: ReactNode;
+  size?: DialogSize;
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
+  classNames?: Prettify<DialogClassNames>;
+  /**
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`) plus `trigger` press on Root.
+   * Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`.
+   * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+   * Root has no portal DOM — portal slots live on `Dialog.Panel`.
+   */
+  motion?: Prettify<MotionMapWithEvents<DialogMotion>>;
+  /**
+   * Handle for the Root trigger scope (`trigger`). Portal slots need a separate handle on `Dialog.Panel`.
+   * Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & OverlayDismissProps & {
+  variant?: DialogVariant;
+  themeAnchor?: HTMLElement | null;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
+  motion?: Prettify<MotionMapWithEvents<DialogMotion>>;
+  /**
+   * Handle for the portal host (`panel`, `overlay`, chrome). `play()` skips — there is no `root`.
+   * Use `playSlot("panel")`. Not placed on the DOM.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type DialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  /** Render trigger as a child element (the child receives all trigger props). */
+  asChild?: boolean;
+  children?: ReactNode;
+  motion?: Prettify<DialogPartMotion>;
+};
+ 
+export type DialogContextValue = {
+  /** Whether the dialog is currently open. */
+  open: boolean;
+  titleId: string;
+  descriptionId: string;
+  hasTitle: boolean;
+  setHasTitle: (value: boolean) => void;
+  hasDescription: boolean;
+  setHasDescription: (value: boolean) => void;
+  onOpenChange: (open: boolean) => void;
+  size: DialogSize;
+  sizePreset: DialogSizePreset;
+  footerButtonSize: ButtonSize;
+  /** Portal mount node from Root; Panel may override via its own prop. */
+  portalContainer?: HTMLElement | null;
+};
+ 
+export type DialogClassNamesProviderProps = {
+  classNames?: Prettify<DialogClassNames>;
+  children: ReactNode;
+};
+ 
+export type DialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<DialogPartMotion>;
+};
+export type DialogDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<DialogPartMotion>;
+};
+export type DialogBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogCloseProps = CloseButtonProps & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogContentProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogPartMotion>;
+};
+ 
+export type UseDialogRootStateProps = Pick<
+  DialogProps,
+  "open" | "defaultOpen" | "onOpenChange" | "size" | "portalContainer"
+>;
+ 
+export type DialogOverlayProps = OverlayDismissProps;
+
+export type UseDialogModalMotionProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  variant: DialogVariant;
+  closeOnInteractOutside: boolean;
+  closeOnEscape?: boolean;
+  onEscapeKeyDown?: OverlayDismissProps["onEscapeKeyDown"];
+  onInteractOutside?: (event: OverlayDismissEvent) => void;
+  initialFocus?: OverlayDismissProps["initialFocus"];
+  /** When true, open with `show()` + absolute positioning inside a custom portal host. */
+  contained?: boolean;
+};
+ 
+export type DialogPortalShellProps = {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  variant: DialogVariant;
+  size: DialogSize;
+  sizePreset: DialogSizePreset;
+  portalTheme: Record<string, string | undefined>;
+  lightUi: boolean;
+  titleId: string;
+  descriptionId: string;
+  hasTitle: boolean;
+  hasDescription: boolean;
+  dialogRef: React.RefObject<HTMLDialogElement | null>;
+  overlayRef: React.RefObject<HTMLDivElement | null>;
+  panelRef: React.RefObject<HTMLDivElement | null>;
+  panelForwardedRef?: React.ForwardedRef<HTMLDivElement>;
+  panelRest?: Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "className" | "style" | "children" | "ref"
+  >;
+  onBackdropMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onDialogClose: () => void;
+  onDialogCancel: (e: React.SyntheticEvent<HTMLDialogElement>) => void;
+  /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
+  contained?: boolean;
+};
+ 
+export type DialogTriggerInternalProps = {
+  triggerRef: React.RefObject<HTMLElement | null>;
+};
+ 

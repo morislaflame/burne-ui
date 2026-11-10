@@ -1,0 +1,22 @@
+import { Select } from "@/components/core/Select";
+
+const options = [
+  { value: "react", label: "React" },
+  { value: "svelte", label: "Svelte" },
+  { value: "vue", label: "Vue" },
+];
+
+export function SelectMotionInstantHoverDemo() {
+  return (
+    <Select
+      className="w-64"
+      label="Instant hover"
+      items={options}
+      defaultValue="react"
+      hint="shell.hoverIn / hoverOut: false"
+      motion={{
+        shell: { hoverIn: false, hoverOut: false },
+      }}
+    />
+  );
+}

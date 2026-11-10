@@ -1,0 +1,407 @@
+# Field
+
+Компоновка полей формы: обёртка одного поля (`Field`) и группировка (`Field.Set`) с legend, hint, error. **Собственных GSAP-анимаций нет** — layout и a11y-связки; motion живёт в дочерних контролах (`Input`, `Checkbox`, …).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Field, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHintId, useFieldSetErrorId, type FieldProps, type FieldSetProps, type FieldClassNames, type FieldSetClassNames, type FieldHintStatus, type FieldSize, type FieldSetSize } from "burne-ui";
+```
+
+## API
+
+### `FieldClassNames`
+
+`root`, `label`, `hint`, `error`.
+
+### `FieldSetClassNames`
+
+`root`, `stack`, `legend`, `legendHeader`, `group`, `actions`.
+
+### `Field` — одно поле
+
+Compound через `Object.assign`:
+
+| Часть | Назначение |
+|-------|------------|
+| `Field` / `Field` | Вертикальный stack: label → control → hint/error |
+| `Field.Label` | Алиас `Label` |
+| `Field.Hint` | Подсказка (`text-muted` или semantic) |
+| `Field.Error` | Ошибка (`role="alert"`, цвет danger) |
+
+```tsx
+<Field classNames={{ root: "max-w-sm" }}>
+  <Field.Label htmlFor="email">Email</Field.Label>
+  <Input>
+    <Input.Control id="email" />
+  </Input>
+  <Field.Hint>Мы не рассылаем спам</Field.Hint>
+  <Field.Error>Некорректный адрес</Field.Error>
+</Field>
+```
+
+#### `Field` props
+
+| Prop | Описание |
+|------|----------|
+| `invalid` | `data-invalid` на корне и у дочерних контролов, без текста ошибки. `Field.Error` делает то же и показывает сообщение |
+| `className` | На root `div` |
+| `classNames.root` | Слот root |
+| `classNames.hint` | Слот hint |
+| `classNames.error` | Слот error |
+| `motion` | Карта слотов `root` / `label` / `hint` / `error` + `events`. Не крадёт motion Input |
+| `motionController` | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM. Не `Field.Set` и не Input |
+
+### `Field.Set` — группа полей
+
+| Часть | Назначение |
+|-------|------------|
+| `Field.Set` | `<fieldset>` с авто-раскладкой детей |
+| `Field.Set.Legend` | `<legend>` |
+| `Field.Set.LegendHeader` | Обёртка заголовка legend |
+| `Field.Set.Group` | Вертикальная группа контролов |
+| `Field.Set.Actions` | Кнопки / actions справа |
+
+```tsx
+<Field.Set size="base" disabled={isPending} classNames={{ stack: "gap-2xlarge" }}>
+  <Field.Set.Legend>
+    <Field.Set.LegendHeader>Контактные данные</Field.Set.LegendHeader>
+  </Field.Set.Legend>
+  <Field.Set.Group>
+    <Field>…</Field>
+    <Field>…</Field>
+  </Field.Set.Group>
+  <Field.Set.Actions>
+    <Button type="submit">Сохранить</Button>
+  </Field.Set.Actions>
+</Field.Set>
+```
+
+#### `Field.Set` props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` — gaps + Label/Hint type (chrome only) |
+| `disabled` | — | На `<fieldset>` |
+| `hintId` / `errorId` | auto | Для `aria-describedby` у дочерних контролов |
+| `classNames` | — | Слоты root, stack, legend, group, actions |
+| `motion` | — | Карта слотов Set + `events`. Отдельный scope от `Field` |
+| `motionController` | — | Handle для scope `Field.Set`, не внутреннего Field / Input |
+
+> **Не стилизуйте поверхность на `Field.Set`:** у нативного `<fieldset>` `<legend>` рендерится **вне** content box. `border` / `rounded` / `padding` / `bg-*` на `className` / `classNames.root` **не оборачивают** legend — «карточки» вокруг всей группы так не сделать. Для рамки оберните Set во внешний `div` / `Card`. Подробнее — [ограничение fieldset](#ограничение-нативного-fieldset).
+
+**Авто-раскладка:** `useFieldSetRootState` парсит children — выносит `Legend`, собирает `Group`, `Actions`, остальное в `loose`.
+
+## Анимации
+
+`Field` / `Field.Set` — layout + a11y и **opt-in** slot motion (пустые defaults). Shell hover живёт на дочерних контролах (`Input`, `Select`, …).
+
+**DOM-структура:**
+
+```
+Field (div, gap-xsmall)
+  Field.Label
+  Input / Select / …     ← shell hover здесь
+  Field.Hint / Field.Error
+
+Field.Set (fieldset)
+  Field.Set.Legend
+  Field.Set.Group → Field × N
+```
+
+### Slot motion
+
+Публичный slot motion с **пустыми** defaults — не перехватывает motion дочернего Input. `enter` на слоте играет при mount, если задан.
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| Field `root` / `label` / `hint` / `error` | `enter` / hover/press | нет |
+| Field.Set `root` / `stack` / `legend` / `legendHeader` / `group` / `actions` | `enter` / hover/press | нет |
+
+**Где в коде:** типы — `fieldTypes.ts`; scope — `fieldContext.tsx`; defaults — `fieldAnimations.ts`; слоты — `fieldParts.tsx`.
+
+`play()` ищет слот `root` у Field. `playSlot("label")` / `playSlot("hint")`. `Field.Set` — другой scope: handle на `Field.Set`, `playSlot("legend")`. Один handle ≠ два scope. Не класть `motionController` на `Field.Label` — это scope Field, не Label. `useMotionController()` в children `Field.Hint` / `Field.Error` попадает в nested `Text`; в sibling-части (галерея Inside) — scope Field.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`field:nudge`, `field:pulse`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на `Field` и отдельно на `Field.Set`. Один набор не играет оба scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Field, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "field:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("field:nudge")}>
+        Nudge
+      </Button>
+      <Field motionController={controller} motion={{ events }}>
+        <Field.Label>Email</Field.Label>
+        <Field.Hint>Field scope, not Input.</Field.Hint>
+      </Field>
+    </>
+  );
+}
+```
+
+```tsx
+<Field
+  motion={{
+    label: {
+      enter: (ctx) => ctx.fromTo({ y: 6, opacity: 0 }, { y: 0, opacity: 1, duration: 0.26 }),
+    },
+    hint: {
+      enter: (ctx) => ctx.fromTo({ y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28, delay: 0.06 }),
+    },
+  }}
+>
+  <Field.Label>Name</Field.Label>
+  <Input><Input.Control /></Input>
+  <Field.Hint>Visible under the control.</Field.Hint>
+</Field>
+```
+
+### Shell hover у дочерних контролов (2-й уровень)
+
+`Input`, `TextArea`, `Select`, `ComboBox`, `TimeField` — публичный slot motion на shell (`hoverLiftFirstLevel` / `pressSqueeze`); в покое тени нет, на hover — `--shadow-lift`. CSS-классы оболочки по-прежнему из `useFieldShellHoverLift.ts`.
+
+Для Select / ComboBox / TimeField (как у Input / TextArea): Root передаёт карту `motion`; хост — `Select.Shell` / `ComboBox.Shell` / `TimeField.Control` (defaults + `play`).
+
+**Hover-фон:** `fieldShellHoverClass` — CSS `hoverVariantBg` по status, не GSAP.
+
+Field **не передаёт** props в контрол для motion — контрол сам читает `motion` на root.
+
+#### Кастомизация shell hover (глобально)
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  hoverLiftScale: 1.025,
+  hoverLiftEase: "sine.inOut",
+  interactiveDuration: 280,
+  enableHoverLift: true,
+});
+```
+
+**Локально на контроле:** `disabled` / read-only — shell hover обычно `enabled: !disabled`.
+
+**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень sm без lift.
+
+### Другие контролы внутри Field.Set
+
+| Контрол | Анимация | Где настраивать |
+|---------|----------|-----------------|
+| `Checkbox` / `Radio` | selection indicator fill | `motionSelectionFill`, `enableToggleButtonFill` |
+| `Switch` | thumb travel | `switchThumbDuration`, `switchThumbEase` |
+| `Button` в `Field.Set.Actions` | 1-й уровень lift/squeeze | см. Button.md |
+
+`Field.Set` передаёт только `size` через context — не motion.
+
+### Кастомная анимация hint/error
+
+Публичный slot motion на `hint` / `error` (`enter` при mount, hover/press если задать). Tailwind-классы на `Field.Error` тоже работают:
+
+```tsx
+<Field
+  motion={{
+    error: {
+      enter: (ctx) => ctx.fromTo({ y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28 }),
+    },
+  }}
+>
+  <Field.Error>Обязательное поле</Field.Error>
+</Field>
+```
+
+### Сводка: что настраивается где
+
+| Анимация | Где живёт | `configureMotion` | Связь с Field |
+|----------|-----------|-------------------|---------------|
+| Shell hover sm→md | slot motion (`Input` / `TextArea` / `Select` / `ComboBox` / `TimeField`) | `enableHoverLift`, `hoverLiftScale` | оболочка поля |
+| Shell hover bg | `fieldShellHoverClass` | — | CSS, status tint |
+| Checkbox/Radio fill | контрол | `selectionFillEase` | child в Field |
+| Switch thumb | Switch | `switchThumbDuration` | child в Field |
+| Hint/Error appear | Field slot motion (`hint` / `error`) | — | opt-in `motion.hint` / `motion.error` |
+
+## Размеры (`Field` / `Field.Set`)
+
+`size` масштабирует **только chrome** (отступы + типографика Label / Hint / Error). Не каскадируется в `Input` / `Button` — у контролов свой `size`.
+
+`FIELD_SIZE_LAYOUT`:
+
+| size | field gap | label | hint | stack | group | actions | legend mt | legendHeader |
+|------|-----------|-------|------|-------|-------|---------|-----------|--------------|
+| `small` | `gap-xsmall` | `small` | `xsmall` | `gap-large` | `gap-base` | `gap-base` | `mt-large` | `gap-xsmall` |
+| `base` | `gap-xsmall` | `base` | `small` | `gap-xlarge` | `gap-mid` | `gap-mid` | `mt-xlarge` | `gap-xsmall` |
+| `mid` | `gap-small` | `mid` | `small` | `gap-2xlarge` | `gap-large` | `gap-large` | `mt-2xlarge` | `gap-small` |
+| `large` | `gap-small` | `mid` | `base` | `gap-2xlarge` | `gap-xlarge` | `gap-xlarge` | `mt-2xlarge` | `gap-small` |
+
+- `Field size` — gap Label↔control↔Hint + варианты текста; внутри Set наследует `Field.Set size`, если не задан явно.
+- `Field.Set size` — stack / group / actions / legend + контекст для `Field.Label` / `Field.Hint` в legend.
+- Legend title: используйте `Field.Label` (не голый `Label`), чтобы типографика шла от size.
+
+## Токены и CSS
+
+| Элемент | Классы |
+|---------|--------|
+| Field root | `flex w-full flex-col` + `fieldGap` |
+| Fieldset | `m-0 min-w-0 border-0 p-0`, `disabled:opacity-55` |
+| Hint default | `text-muted` |
+| Hint danger/success/warning | `text-danger` / `text-success` / `text-warning` |
+| Legend | `m-0 block w-full` |
+
+## Доступность
+
+### Helpers
+
+```tsx
+import { joinFieldDescribedBy, fieldHintId, fieldErrorId } from "burne-ui";
+
+const hintId = fieldHintId("my-field");
+const errId = fieldErrorId("my-field");
+
+<Input.Control
+  aria-describedby={joinFieldDescribedBy(hintId, errId)}
+/>
+```
+
+`joinFieldDescribedBy(...ids)` — склеивает непустые id через пробел.
+
+`useFieldSetHintId()` / `useFieldSetErrorId()` — auto-id для Set.
+
+### Field.Error
+
+По умолчанию `role="alert"` — объявление ошибки screen reader.
+
+### Field.Set
+
+Нативный `<fieldset disabled>` блокирует вложенные контролы.
+
+## Стилизация и кастомизация
+
+Field — layout-примитив: два независимых набора слотов для **`Field`** и **`Field.Set`**.
+
+### `Field` (обёртка одного поля)
+
+#### Два уровня
+
+1. **`className` на root** — мерж с `classNames.root`.
+2. **`classNames`** — `root`, `label`, `hint`, `error` через `FieldClassNamesProvider`.
+
+Используется внутри Input, TextArea, ComboBox и напрямую:
+
+```tsx
+<Field
+  className="max-w-sm"
+  classNames={{
+    root: "rounded-large border-token p-mid gap-small",
+    hint: "text-xs text-muted",
+    error: "font-medium",
+  }}
+>
+  <Label htmlFor="x">Имя</Label>
+  <input id="x" className="…" />
+  <Field.Hint>Подсказка</Field.Hint>
+  <Field.Error>Ошибка</Field.Error>
+</Field>
+```
+
+| Слот | Элемент | Назначение |
+|------|---------|------------|
+| `root` | `Field` div | Gap, max-width, внешняя рамка |
+| `label` | `Field.Label` | Typography подписи |
+| `hint` | `Field.Hint` | Текст подсказки |
+| `error` | `Field.Error` | Текст ошибки (`role="alert"`) |
+
+`Field.Hint` / `Field.Error` принимают свой **`className`** поверх слота.
+
+Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.error` в те же `Field.*` части.
+
+### `Field.Set` (группа полей)
+
+#### Два уровня
+
+1. **`className` на `<fieldset>`** — мерж с `classNames.root`.
+2. **`classNames`** — `root`, `stack`, `legend`, `legendHeader`, `group`, `actions`.
+
+```tsx
+<Field.Set
+  className="max-w-md"
+  size="mid"
+  classNames={{
+    legend: "text-primary font-semibold",
+    legendHeader: "gap-xsmall",
+    stack: "gap-2xlarge",
+    group: "gap-large",
+    actions: "justify-start pt-small",
+  }}
+>
+  <Field.Legend>
+    <Field.LegendHeader>
+      <Field.Label>Контактные данные</Field.Label>
+      <Field.Hint as="span">Слоты через classNames</Field.Hint>
+    </Field.LegendHeader>
+  </Field.Legend>
+  <Field.Group>
+    <Input>…</Input>
+  </Field.Group>
+  <Field.Actions>
+    <Button type="button">Сохранить</Button>
+  </Field.Actions>
+</Field.Set>
+```
+
+| Слот | Элемент | Назначение |
+|------|---------|------------|
+| `root` | `<fieldset>` | Только layout (`max-w-*` и т.п.) — **не** surface (`border` / `p-*` / `bg-*`) |
+| `stack` | Внутренний layout-div | Gap между Group/Actions (без compound-части) |
+| `legend` | `<legend>` | Заголовок группы |
+| `legendHeader` | Обёртка в legend | Label + hint в одной строке |
+| `group` | `Field.Group` | Gap между полями |
+| `actions` | `Field.Actions` | Кнопки внизу группы |
+
+`Field.Legend`, `Field.Group`, `Field.Actions` — свой **`className`** поверх слота.
+
+#### Ограничение нативного `<fieldset>`
+
+`Field.Set` — семантическая группировка, не card-like контейнер. У нативного fieldset `<legend>` рендерится **вне** content box: `border`, `rounded`, `padding`, `background` на `root` / `className` **не оборачивают legend** и не дают «карточку» вокруг всей группы. Между legend и контентом браузер добавляет свой отступ content box (плюс `mt-*` на stack от `size`).
+
+Для визуальной рамки вокруг legend + полей оберните `Field.Set` во внешний `div` / `Card` с border и padding — внутри оставьте fieldset без surface-стилей.
+
+### Практические заметки
+
+- **Размер:** `size` на `Field` / `Field.Set` — chrome (gaps + Label/Hint). Контролы — свой `size`.
+- **Surface на Set:** не используйте `border` / `p-*` / `bg-*` на `root`, если ожидаете обёртку legend — см. ограничение выше.
+- **Не путать с Input:** `Field.classNames` не стилизует shell input — только layout Field; shell — в `Input.classNames.shell`.
+- **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
+
+## Интеграция с Form
+
+`Form` / `Field` `size` **не** каскадируется в `Input`/`Button`. `disabled` / `isSubmitting` — да (через Form binding).
+
+## Структура файлов
+
+```
+Field/
+├── Field.tsx
+├── fieldParts.tsx
+├── fieldTypes.ts
+├── fieldStyles.ts
+├── fieldAPI.ts
+├── fieldA11y.ts
+├── fieldContext.tsx
+├── useFieldSetRootState.ts
+└── Field.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Field` — Field, Field.Set с legend/group/actions, hint/error status, размеры Set.

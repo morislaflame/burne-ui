@@ -1,0 +1,18 @@
+import { Loading } from "@/components/core/Loading";
+import { Text } from "@/components/core/Text";
+
+export function LoadingInlineStatusDemo() {
+  return (
+    <div className="flex w-full max-w-sm items-center gap-large rounded-large border-token bg-secondary px-large py-small">
+      <Loading size="small" color="info" />
+      <div className="min-w-0">
+        <Text as="p" textStyle="small" className="font-medium">
+          Sync Theme
+        </Text>
+        <Text as="p" textStyle="xsmall" className="text-muted">
+          Usually takes a few seconds
+        </Text>
+      </div>
+    </div>
+  );
+}

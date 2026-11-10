@@ -1,175 +1,210 @@
-import { remove } from "animejs";
+import { forwardRef, useMemo, useRef } from "react";
+ 
+ 
 import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useRef,
-  type ButtonHTMLAttributes,
-  type PointerEvent,
-} from "react";
-import { IoClose } from "react-icons/io5";
+  resolveCloseButtonMotionDefaults,
+  resolveCloseButtonMotionParams,
+  useCloseButtonAnimations,
+} from "./closeButtonAnimations";
+import { CloseButtonClassNamesProvider, CloseButtonMotionProvider } from "./closeButtonContext";
+import { CloseButtonIcon, CloseButtonRipple } from "./closeButtonParts";
+import type { CloseButtonProps } from "./closeButtonTypes";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
 
-import { Ripple, type RippleColor } from "@/components/core/Ripple";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  initElementShadow,
-  prefersReducedInteractiveHoverLift,
-  SHADOW_MD,
-  SHADOW_SM,
-  useInteractiveHoverLiftContainerHandlers,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_RIPPLE_DEFAULT_DURATION_MS } from "@/components/core/utils/motionTokens";
-import { cn } from "@/utils/cn";
-
-export type CloseButtonVariant = "default" | "outline";
-
-const VARIANT: Record<
+import { useCloseButtonRootState } from "./useCloseButtonRootState";
+ 
+export type {
+  CloseButtonProps,
+  CloseButtonSize,
   CloseButtonVariant,
-  {
-    root: string;
-    focusOutline: string;
-    hoverIdle: string;
-    ripple: RippleColor;
-  }
-> = {
-  /** Серый фон (не акцентная «default»-кнопка). */
-  default: {
-    root: "border border-base bg-[color-mix(in_oklab,var(--color-border)_30%,var(--color-surface))] text-foreground",
-    focusOutline: "focus-visible:outline-accent",
-    hoverIdle:
-      "hover:bg-[color-mix(in_oklab,var(--color-border)_48%,var(--color-surface))]",
-    ripple: "secondary",
-  },
-  /** Как `Button` outline: `surface-outline` + акцентный крест. */
-  outline: {
-    root: "surface-outline text-accent",
-    focusOutline: "focus-visible:outline-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
-    ripple: "accentSoft",
-  },
-};
-
-const CLOSE_SHADOW = { idle: SHADOW_SM(), hover: SHADOW_MD() };
-
-export type CloseButtonProps = Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  "children"
-> & {
-  /** Поверхность: серая заливка или outline как у `Button`. По умолчанию `default`. */
-  variant?: CloseButtonVariant;
-};
-
+  CloseButtonClassNames,
+  CloseButtonMotion,
+  CloseButtonPartMotion,
+} from "./closeButtonTypes";
+ 
 export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
   function CloseButton(
     {
-      variant = "default",
+      variant,
+      size,
+      ripple,
       className,
+      classNames,
       disabled,
-      type = "button",
-      "aria-label": ariaLabel = "Закрыть",
+      type,
+      "aria-label": ariaLabel,
+      icon,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
       onPointerDown,
+      onPointerUp,
+      onPointerEnter,
+      onPointerLeave,
       onPointerOver,
       onPointerOut,
+      onKeyDown,
       ...rest
     },
     ref,
   ) {
-    const btnRef = useRef<HTMLButtonElement | null>(null);
-    const pointerInsideRef = useRef(false);
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        btnRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
+    const state = useCloseButtonRootState({
+      variant,
+      size,
+      ripple,
+      className,
+      classNames,
+      disabled,
+      type,
+      "aria-label": ariaLabel,
+    });
+    const hoverPointerInsideRef = useRef(false);
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveCloseButtonMotionDefaults({
+        variant: state.variant,
+        disabled: state.disabled,
+      });
+    }, [skinRevision, state.disabled, state.variant]);
+    const motionParams = useMemo(
+      () =>
+        resolveCloseButtonMotionParams({
+          variant: state.variant,
+          disabled: state.disabled,
+          pointerInside: hoverPointerInsideRef,
+        }),
+      [state.disabled, state.variant],
     );
-
-    const vn = VARIANT[variant];
-
-    const liftHandlers = useInteractiveHoverLiftContainerHandlers(
-      btnRef,
-      !disabled,
-      pointerInsideRef,
-      undefined,
-      CLOSE_SHADOW,
-    );
-
-    useEffect(() => {
-      const el = btnRef.current;
-      if (!el || disabled) return;
-      initElementShadow(el, SHADOW_SM());
-    }, [disabled]);
-
-    useEffect(() => {
-      const el = btnRef.current;
-      if (!el) return;
-      if (disabled) {
-        remove(el);
-        pointerInsideRef.current = false;
-        el.style.removeProperty("--el-shadow");
-      }
-    }, [disabled]);
-
-    const handlePointerDown = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        onPointerDown?.(e);
-        if (e.defaultPrevented || disabled) return;
-        if (prefersReducedInteractiveHoverLift()) return;
-        const el = btnRef.current;
-        if (!el) return;
-        void animateInteractivePressSqueeze(el).then(() => {
-          const b = btnRef.current;
-          if (!b || disabled || prefersReducedInteractiveHoverLift()) return;
-          if (pointerInsideRef.current) {
-            animateInteractiveHoverLift(b, true, undefined, CLOSE_SHADOW);
-          }
-        });
-      },
-      [disabled, onPointerDown],
-    );
-
+ 
     return (
-      <button
-        ref={setRefs}
-        type={type}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        className={cn(
-          "relative z-0 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
-          "animate-shadow button-idle-surface-transition motion-reduce:transition-none",
-          "overflow-hidden will-change-transform origin-center",
-          vn.root,
-          vn.hoverIdle,
-          vn.focusOutline,
-          disabled && "cursor-not-allowed opacity-50",
-          className,
-        )}
-        onPointerOver={(e) => {
-          onPointerOver?.(e);
-          if (!e.defaultPrevented && !disabled) liftHandlers.onPointerOver(e);
-        }}
-        onPointerOut={(e) => {
-          onPointerOut?.(e);
-          if (!disabled) liftHandlers.onPointerOut(e);
-        }}
-        onPointerDown={handlePointerDown}
-        {...rest}
-      >
-        <Ripple
-          color={vn.ripple}
-          disabled={Boolean(disabled)}
-          duration={MOTION_RIPPLE_DEFAULT_DURATION_MS}
-        />
-        <IoClose
-          aria-hidden
-          className="relative z-[1] icon-base shrink-0 text-current"
-        />
-      </button>
+      <CloseButtonClassNamesProvider classNames={state.classNames}>
+        <CloseButtonMotionProvider
+          motion={motion}
+          defaults={motionDefaults}
+          params={motionParams}
+          controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+        >
+          <CloseButtonSurface
+            state={state}
+            motion={motion}
+            hoverPointerInsideRef={hoverPointerInsideRef}
+            forwardedRef={ref}
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
+            onKeyDown={onKeyDown}
+            icon={icon}
+            rest={rest}
+          />
+        </CloseButtonMotionProvider>
+      </CloseButtonClassNamesProvider>
     );
   },
 );
-
+ 
 CloseButton.displayName = "CloseButton";
+ 
+function CloseButtonSurface({
+  state,
+  motion,
+  hoverPointerInsideRef,
+  forwardedRef,
+  onPointerDown,
+  onPointerUp,
+  onPointerEnter,
+  onPointerLeave,
+  onPointerOver,
+  onPointerOut,
+  onKeyDown,
+  icon,
+  rest,
+}: {
+  state: ReturnType<typeof useCloseButtonRootState>;
+  motion: CloseButtonProps["motion"];
+  hoverPointerInsideRef: React.MutableRefObject<boolean>;
+  forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  onPointerDown?: CloseButtonProps["onPointerDown"];
+  onPointerUp?: CloseButtonProps["onPointerUp"];
+  onPointerEnter?: CloseButtonProps["onPointerEnter"];
+  onPointerLeave?: CloseButtonProps["onPointerLeave"];
+  onPointerOver?: CloseButtonProps["onPointerOver"];
+  onPointerOut?: CloseButtonProps["onPointerOut"];
+  onKeyDown?: CloseButtonProps["onKeyDown"];
+  icon?: CloseButtonProps["icon"];
+  rest: Omit<
+    CloseButtonProps,
+    | "variant"
+    | "size"
+    | "ripple"
+    | "className"
+    | "classNames"
+    | "disabled"
+    | "type"
+    | "aria-label"
+    | "icon"
+    | "motion"
+    | "motionController"
+    | "onPointerDown"
+    | "onPointerUp"
+    | "onPointerEnter"
+    | "onPointerLeave"
+    | "onPointerOver"
+    | "onPointerOut"
+    | "onKeyDown"
+  >;
+}) {
+  const animations = useCloseButtonAnimations({
+    variant: state.variant,
+    disabled: state.disabled,
+    forwardedRef,
+    motion,
+    hoverPointerInsideRef,
+    onPointerDown,
+    onPointerUp,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerOver,
+    onPointerOut,
+    onKeyDown,
+  });
+  const surfaceStyle = useSkinSurfaceStyle(state.variant);
+ 
+  return (
+    <button
+      ref={animations.setRefs}
+      type={state.type}
+      disabled={state.disabled}
+      aria-label={state.ariaLabel}
+      className={state.buttonClass}
+      {...rest}
+      style={mergeSkinSurfaceStyle(surfaceStyle, rest.style)}
+      onPointerEnter={animations.handlePointerEnter}
+      onPointerLeave={animations.handlePointerLeave}
+      onPointerOver={animations.pointerHandlers.onPointerOver}
+      onPointerOut={animations.pointerHandlers.onPointerOut}
+      onPointerDown={animations.handlePointerDown}
+      onPointerUp={animations.handlePointerUp}
+      onKeyDown={animations.handleKeyDown}
+      {...dataVariantProps({ size: state.size, variant: state.variant })}
+    >
+      {state.ripple ? (
+        <CloseButtonRipple
+          color={state.convergeRippleColor}
+          disabled={state.disabled}
+        />
+      ) : null}
+      <CloseButtonIcon size={state.size} icon={icon} />
+    </button>
+  );
+}
+ 

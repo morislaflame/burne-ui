@@ -1,0 +1,35 @@
+import { IoCopyOutline, IoPencilOutline, IoTrashOutline } from "react-icons/io5";
+
+import { Button } from "@/components/core/Button";
+import { Tooltip } from "@/components/core/Tooltip";
+
+export function TooltipIconToolbarDemo() {
+  return (
+    <div className="flex items-center gap-xsmall rounded-large border-token bg-surface p-xsmall">
+      <Tooltip side="top">
+        <Tooltip.Trigger asChild>
+          <Button variant="ghost" size="small" type="button" aria-label="Edit">
+            <IoPencilOutline aria-hidden className="size-4" />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Edit</Tooltip.Content>
+      </Tooltip>
+      <Tooltip side="top">
+        <Tooltip.Trigger asChild>
+          <Button variant="ghost" size="small" type="button" aria-label="Copy">
+            <IoCopyOutline aria-hidden className="size-4" />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Copy link</Tooltip.Content>
+      </Tooltip>
+      <Tooltip status="danger" side="top">
+        <Tooltip.Trigger asChild>
+          <Button variant="ghost" size="small" type="button" aria-label="Delete">
+            <IoTrashOutline aria-hidden className="size-4" />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Delete</Tooltip.Content>
+      </Tooltip>
+    </div>
+  );
+}

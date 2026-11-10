@@ -1,0 +1,353 @@
+import type {
+  CSSProperties,
+  HTMLAttributes,
+  KeyboardEvent,
+  PointerEvent,
+  ReactNode,
+  RefObject,
+} from "react";
+import type { Prettify } from "@/utils/prettify";
+import type { LabelProps } from "@/components/core/Label";
+import type { MotionController, MotionMapWithEvents, MotionValue, MotionStateHostProps } from "@/components/core/utils/slotMotion";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+ 
+export type SliderOrientation = "horizontal" | "vertical";
+
+export type SliderSize = ComponentSize;
+
+export const KIT_SLIDER_VARIANTS = ["default"] as const;
+export type KitSliderVariant = (typeof KIT_SLIDER_VARIANTS)[number];
+export type SliderVariant = KitSliderVariant | (string & {});
+
+export type SliderThickness = number | string;
+ 
+export type SliderThumbKind = "single" | "start" | "end";
+ 
+export type SliderClassNames = {
+  root?: string;
+  label?: string;
+  header?: string;
+  value?: string;
+  hint?: string;
+  error?: string;
+  track?: string;
+  rail?: string;
+  fill?: string;
+  thumb?: string;
+  thumbShell?: string;
+  /** `Slider.Icon` inside the thumb. */
+  icon?: string;
+  mark?: string;
+};
+ 
+export type SliderPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  /** Plays when value / range identity updates. Fill geometry stays kit-internal. */
+  change?: MotionValue;
+};
+ 
+export type SliderMotion = {
+  track?: SliderPartMotion;
+  rail?: SliderPartMotion;
+  fill?: SliderPartMotion;
+  thumb?: SliderPartMotion;
+  icon?: SliderPartMotion;
+  header?: SliderPartMotion;
+  value?: SliderPartMotion;
+  label?: SliderPartMotion;
+  hint?: SliderPartMotion;
+  error?: SliderPartMotion;
+};
+ 
+export type SliderDisplayState = {
+  valueLabel: string;
+  min: number;
+  max: number;
+  range: boolean;
+  singleValue: number;
+  rangeValue: [number, number];
+  label?: string;
+};
+ 
+export type SliderFieldContextValue = {
+  sliderId: string;
+  labelId: string;
+  hintId: string;
+  errorId: string;
+  hintConnected: boolean;
+  errorConnected: boolean;
+  isInvalid: boolean;
+  labelConnected: boolean;
+  orientation: SliderOrientation;
+  display: SliderDisplayState | null;
+  setDisplay: (next: SliderDisplayState | null) => void;
+};
+ 
+export type SliderThumbA11y = {
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+};
+ 
+export type SliderMarkItem = {
+  value: number;
+  percent: number;
+};
+ 
+export type SliderTrackContextValue = {
+  fillRef: RefObject<HTMLSpanElement | null>;
+  fillClassResolved: string;
+  railClass: string;
+  markSlotClass?: string;
+  markItems: SliderMarkItem[];
+  size: SliderSize;
+  orientation: SliderOrientation;
+  disabled?: boolean;
+  icon?: ReactNode;
+  range: boolean;
+  variant: SliderVariant;
+  activeThumb: SliderThumbKind | null;
+  singleValue: number;
+  rangeValue: [number, number];
+  min: number;
+  max: number;
+  formatValue: (value: number) => string;
+  thumbPercent: (kind: SliderThumbKind) => number;
+  resolveThumbIcon: (children?: ReactNode) => ReactNode;
+  resolveThumbA11y: (kind: SliderThumbKind) => SliderThumbA11y;
+  onThumbPointerDown: (
+    thumb: SliderThumbKind,
+  ) => (e: PointerEvent<HTMLButtonElement>) => void;
+  onThumbKeyDown: (
+    thumb: SliderThumbKind,
+  ) => (e: KeyboardEvent<HTMLButtonElement>) => void;
+};
+ 
+type SliderCommonProps = {
+  orientation?: SliderOrientation;
+  size?: SliderSize;
+  thickness?: number | string;
+  min?: number;
+  max?: number;
+  step?: number;
+  marks?: number[];
+  formatValue?: (value: number) => string;
+  icon?: ReactNode;
+  variant?: SliderVariant;
+  disabled?: boolean;
+  readOnly?: boolean;
+  className?: string;
+  style?: CSSProperties;
+  classNames?: Prettify<
+    Pick<SliderClassNames, "track" | "rail" | "fill" | "thumb" | "thumbShell" | "mark">
+  >;
+  children?: ReactNode;
+} & Omit<
+  HTMLAttributes<HTMLDivElement>,
+  | "children"
+  | "className"
+  | "style"
+  | "defaultValue"
+  | "value"
+  | "dangerouslySetInnerHTML"
+>;
+ 
+export type SliderSingleProps = SliderCommonProps & {
+  range?: false;
+  value?: number;
+  defaultValue?: number;
+  onValueChange?: (value: number) => void;
+  /** Fires when a drag or key press finishes, with the value at that moment. */
+  onValueCommit?: (value: number) => void;
+};
+ 
+export type SliderRangeProps = SliderCommonProps & {
+  range: true;
+  value?: [number, number];
+  defaultValue?: [number, number];
+  onValueChange?: (value: [number, number]) => void;
+  /** Fires when a drag or key press finishes, with the value at that moment. */
+  onValueCommit?: (value: [number, number]) => void;
+};
+ 
+export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
+  motion?: Prettify<MotionMapWithEvents<SliderMotion>>;
+  /**
+   * Deferred handle for a standalone Track (no parent Slider Root).
+   * Inside `<Slider>` the Root handle covers track + chrome — do not pass a second handle here.
+   */
+  motionController?: MotionController;
+} & MotionStateHostProps;
+ 
+export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
+  children?: ReactNode;
+  id?: string;
+  name?: string;
+  orientation?: SliderOrientation;
+  label?: ReactNode;
+  showValue?: boolean;
+  valueText?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  /** `aria-invalid`, `data-invalid`, and a danger label. `error` does the same and shows the message. */
+  invalid?: boolean;
+  classNames?: Prettify<SliderClassNames>;
+    /**
+     * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`, `label`, `hint`, `error`).
+     * Thumb press default: `pressSqueeze` (`pressOut: false`). Fill geometry (`left`/`width`) is kit-internal.
+     * Phase `change` plays on `track` when value updates (broadcast; `fill` excluded).
+     * Chrome and Track share the Root scope (siblings). There is no `root` slot.
+     * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
+     */
+    motion?: Prettify<MotionMapWithEvents<SliderMotion>>;
+    /**
+     * Deferred handle from `createMotionController()` / `useMotionControllerHandle()`.
+     * One handle → Root scope (chrome + track/thumb). Standalone `Slider.Track` uses its own prop.
+     * Not placed on the DOM.
+     */
+    motionController?: MotionController;
+} & MotionStateHostProps & (
+    | Partial<Omit<SliderSingleProps, "orientation" | "className" | "classNames">>
+    | Partial<Omit<SliderRangeProps, "orientation" | "className" | "classNames">>
+  );
+ 
+export type SliderClassNamesProviderProps = {
+  classNames?: Prettify<SliderClassNames>;
+  children: ReactNode;
+};
+ 
+export type SliderHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+};
+ 
+export type SliderValueProps = HTMLAttributes<HTMLSpanElement> & {
+  children?: ReactNode;
+};
+ 
+export type SliderLabelProps = Omit<LabelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
+  motion?: Prettify<SliderPartMotion>;
+};
+ 
+export type SliderHintProps = HTMLAttributes<HTMLParagraphElement> & {
+  children?: ReactNode;
+  motion?: Prettify<SliderPartMotion>;
+};
+ 
+export type SliderErrorProps = HTMLAttributes<HTMLParagraphElement> & {
+  children?: ReactNode;
+  motion?: Prettify<SliderPartMotion>;
+};
+ 
+export type SliderFillProps = HTMLAttributes<HTMLSpanElement>;
+ 
+export type SliderRailProps = HTMLAttributes<HTMLDivElement>;
+ 
+export type SliderCompoundThumbProps = Omit<
+  HTMLAttributes<HTMLButtonElement>,
+  "children"
+> & {
+  thumb?: SliderThumbKind;
+  children?: ReactNode;
+  motion?: Prettify<SliderPartMotion>;
+};
+ 
+export type SliderIconProps = HTMLAttributes<HTMLSpanElement> & {
+  children?: ReactNode;
+};
+ 
+export type SliderThumbProps = SliderCompoundThumbProps;
+ 
+export type SliderThumbButtonProps = {
+  size: SliderSize;
+  icon?: ReactNode;
+  variant?: SliderVariant;
+  className?: string;
+  style?: CSSProperties;
+  percent: number;
+  orientation: SliderOrientation;
+  disabled?: boolean;
+  active: boolean;
+  ariaValueNow: number;
+  ariaValueMin: number;
+  ariaValueMax: number;
+  ariaValueText?: string;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  motion?: SliderPartMotion;
+  onPointerDown: (e: PointerEvent<HTMLButtonElement>) => void;
+  onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
+} & Omit<
+  HTMLAttributes<HTMLButtonElement>,
+  | "children"
+  | "className"
+  | "style"
+  | "disabled"
+  | "onPointerDown"
+  | "onKeyDown"
+  | "role"
+  | "type"
+  | "active"
+>;
+ 
+export type UseSliderRootStateProps = Omit<
+  SliderProps,
+  "className" | "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"
+>;
+ 
+export type FillSpan = { start: number; end: number };
+
+/** DOM rest of `Slider.Track` after the hook reads its own props. */
+export type SliderTrackRestProps = Omit<
+  SliderTrackProps,
+  | "orientation"
+  | "size"
+  | "thickness"
+  | "min"
+  | "max"
+  | "step"
+  | "marks"
+  | "formatValue"
+  | "icon"
+  | "variant"
+  | "disabled"
+  | "readOnly"
+  | "className"
+  | "style"
+  | "classNames"
+  | "aria-label"
+  | "aria-labelledby"
+  | "range"
+  | "children"
+  | "onPointerDown"
+  | "value"
+  | "defaultValue"
+  | "onValueChange"
+  | "motion"
+  | "motionController"
+  | "motionState"
+  | "motionPayload"
+  | "playInitialState"
+>;
+
+/** Named so declaration emit does not inline `CSSProperties`. */
+export type UseSliderTrackStateResult = {
+  setTrackRef: (node: HTMLDivElement | null) => void;
+  trackHitClass: string;
+  trackCrossStyle: CSSProperties;
+  trackRest: SliderTrackRestProps;
+  handleTrackPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
+  trackContextValue: SliderTrackContextValue;
+  compoundBody: ReactNode | null;
+  hasCompoundParts: boolean;
+  range: boolean;
+  icon?: ReactNode;
+  valueIdentity: string;
+  disabled?: boolean;
+};
+ 

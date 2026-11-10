@@ -1,127 +1,121 @@
-import { useLayoutEffect, useRef } from "react";
-
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
-} from "@/components/core/utils/motionTokens";
-import {
-  ConvergeRippleLayer,
-  type RippleDirection,
-} from "@/components/core/utils/pressRipple";
+import { memo, useImperativeHandle, useLayoutEffect, useRef, forwardRef } from "react";
+ 
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
-import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
-
-/**
- * Именованные заливки converge-ripple (токены темы; `accentMuted` — широкие триггеры).
- * В сторибуке и приложении можно передать ключ в `color` или любую произвольную CSS-строку.
- */
-export const RIPPLE_COLOR = {
-  accentSolid: colorToken("converge-ripple-accent-fill"),
-  accentSoft: colorToken("converge-ripple-accent-soft"),
-  secondary: colorToken("converge-ripple-secondary"),
-  danger: colorToken("converge-ripple-danger"),
-  success: colorToken("converge-ripple-success"),
-  info: colorToken("converge-ripple-info"),
-  warning: colorToken("converge-ripple-warning"),
-  accentMuted: colorToken("converge-ripple-accent-muted"),
-} as const;
-
-export type RippleColor = keyof typeof RIPPLE_COLOR;
-
-function resolveRipplePaint(input?: string): string {
-  if (input == null || input === "") return RIPPLE_COLOR.accentSoft;
-  if (Object.hasOwn(RIPPLE_COLOR, input))
-    return RIPPLE_COLOR[input as RippleColor];
-  return input;
-}
-
-/**
- * Элемент для слушателя и геометрии риппла: интерактивный корень (кнопка/ссылка/role=button),
- * иначе непосредственный родитель слоя. Так клики по контенту поверх слоя `pointer-events-none`
- * всё равно доходят до корня по всплытию; overlay сам по себе событий не получает.
- */
-function resolveRippleEventTarget(layer: HTMLElement): HTMLElement | null {
-  const interactive = layer.closest(
-    "button,a[href],[role='button']",
-  ) as HTMLElement | null;
-  return interactive ?? layer.parentElement;
-}
-
-export type RippleProps = {
-  /**
-   * Ключ из `RIPPLE_COLOR` или любая строка цвета для фона круга
-   * (`"#fff"`, `rgb()`, `color-mix`, `var(...)`).
-   */
-  color?: RippleColor | string;
-  /** @deprecated Используйте `color`. */
-  tone?: string;
-  /** Не создавать волны и не вешать слушатель. */
-  disabled?: boolean;
-  /** Длительность анимации точки сходимости, мс. */
-  duration?: number;
-  /** Направление: сжатие к центру (`in`) или расход от точки (`out`). */
-  direction?: RippleDirection;
-  className?: string;
+ 
+import { rippleLayerA11yProps } from "./rippleA11y";
+import { resolveRippleEventTarget, resolveRipplePaint } from "./rippleAPI";
+import { RIPPLE_LAYER_CLASS } from "./rippleStyles";
+import type { RippleProps } from "./rippleTypes";
+ 
+export type { RippleProps, RippleDirection } from "./rippleTypes";
+ 
+type ConvergeRipplePaintHandle = {
+  pushAtClientCoords: (
+    target: HTMLElement,
+    clientX: number,
+    clientY: number,
+  ) => void;
 };
-
-/** Начальная непрозрачность точки задаётся в motion-токенах (не часть публичного API). */
-
+ 
+type ConvergeRipplePaintProps = {
+  tone: string;
+  durationMs: number;
+  opacityFrom: number;
+  direction: NonNullable<RippleProps["direction"]>;
+};
+ 
+/** Owns ripple `useState` so push/dismiss re-render only this leaf, not the host. */
+const ConvergeRipplePaint = memo(
+  forwardRef<ConvergeRipplePaintHandle, ConvergeRipplePaintProps>(
+    function ConvergeRipplePaint(
+      { tone, durationMs, opacityFrom, direction },
+      ref,
+    ) {
+      const { ripples, pushAtClientCoords, dismiss } = useConvergeRipples();
+ 
+      useImperativeHandle(
+        ref,
+        () => ({ pushAtClientCoords }),
+        [pushAtClientCoords],
+      );
+ 
+      return (
+        <ConvergeRippleLayer
+          ripples={ripples}
+          tone={tone}
+          onDone={dismiss}
+          durationMs={durationMs}
+          opacityFrom={opacityFrom}
+          direction={direction}
+        />
+      );
+    },
+  ),
+);
+ 
+ConvergeRipplePaint.displayName = "ConvergeRipplePaint";
+ 
 /**
- * Сходящийся или расходящийся риппл от точки нажатия (anime.js). Слушатель вешается на ближайший
- * интерактивный корень (`button`, ссылка, `[role='button']`) или на родителя слоя. У
- * `Expandable.Trigger` узлы `<Ripple />` выносятся на полный размер кнопки.
+ * Event host without ripple state — parent re-renders do not replay dots;
+ * paint/dismiss stays inside memoized `ConvergeRipplePaint`.
  */
-export function Ripple({
-  color,
-  tone,
-  disabled = false,
-  duration = MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  direction = "in",
-  className = "",
-}: RippleProps) {
+export const Ripple = forwardRef<HTMLSpanElement, RippleProps>(function Ripple(
+  {
+    color,
+    disabled = false,
+    duration,
+    direction = "out",
+    className = "",
+  },
+  ref,
+) {
+  const motion = useMotionConfig();
+  const resolvedDuration = duration ?? motion.rippleDefaultDuration;
   const layerRef = useRef<HTMLSpanElement>(null);
-  const { ripples, pushAtClientCoords, dismiss } = useConvergeRipples();
-  const paint = resolveRipplePaint(color ?? tone);
-
+  const paintRef = useRef<ConvergeRipplePaintHandle>(null);
+  const paint = resolveRipplePaint(color);
+  const opacityFrom = motion.rippleDefaultOpacityFrom;
+ 
   useLayoutEffect(() => {
     const layer = layerRef.current;
     if (!layer || disabled) return;
-
+ 
     const target = resolveRippleEventTarget(layer);
     if (!target) return;
-
+ 
     const handler = (ev: PointerEvent) => {
-      if (disabled || prefersReducedInteractiveHoverLift()) return;
+      if (disabled || prefersReducedMotion() || !isMotionFeatureEnabledFor(motion, "enableRipple")) return;
       if (ev.defaultPrevented) return;
       if (ev.pointerType === "mouse" && ev.button !== 0) return;
-      pushAtClientCoords(target, ev.clientX, ev.clientY);
+      paintRef.current?.pushAtClientCoords(target, ev.clientX, ev.clientY);
     };
-
+ 
     target.addEventListener("pointerdown", handler);
     return () => target.removeEventListener("pointerdown", handler);
-  }, [disabled, pushAtClientCoords]);
-
+  }, [disabled, motion]);
+ 
   return (
     <span
-      ref={layerRef}
-      className={cn(
-        "pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]",
-        className,
-      )}
-      aria-hidden
+      ref={mergeRefs(layerRef, ref)}
+      className={cn(RIPPLE_LAYER_CLASS, className)}
+      {...rippleLayerA11yProps()}
     >
-      <ConvergeRippleLayer
-        ripples={ripples}
+      <ConvergeRipplePaint
+        ref={paintRef}
         tone={paint}
-        onDone={dismiss}
-        durationMs={duration}
-        opacityFrom={MOTION_RIPPLE_DEFAULT_OPACITY_FROM}
+        durationMs={resolvedDuration}
+        opacityFrom={opacityFrom}
         direction={direction}
       />
     </span>
   );
-}
+});
 
-export type { RippleDirection };
+Ripple.displayName = "Ripple";
+ 

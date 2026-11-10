@@ -1,615 +1,376 @@
-import { remove } from "animejs";
-import type {
-  ButtonHTMLAttributes,
-  MouseEvent,
-  PointerEvent,
-  ReactNode,
-} from "react";
 import {
+  Children,
+  cloneElement,
   forwardRef,
-  useCallback,
-  useEffect,
+  isValidElement,
+  useMemo,
   useRef,
-  useState,
-} from "react";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
-} from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_FEEDBACK_EXPAND_MS,
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_EASE_CSS,
-} from "@/components/core/utils/motionTokens";
+  type HTMLAttributes,
+  type MouseEvent,
+  type ReactElement,
+  type ReactNode,
+  type RefObject } from "react";
+ 
 import { Ripple } from "@/components/core/Ripple";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+ 
+import { resolveButtonMotionDefaults, useButtonAnimations } from "./buttonAnimations";
+import { buttonHasCompoundPart } from "./buttonAPI";
 import {
-  buttonGroupOverlapBorderClasses,
-  buttonGroupRoundingClasses,
-} from "@/components/core/utils/buttonGroupSegment";
-import { Text, type TextVariant } from "@/components/core/Text";
-import { colorToken } from "@/tokens";
-import { cn } from "@/utils/cn";
-
-/** Состояние асинхронного сценария после клика. */
-export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
-
-/** Размер кнопки: высота, отступы, типографика, спиннер и иконки результата. */
-export type ButtonSize = "small" | "base" | "large" | "xlarge";
-
-/** Визуальный вариант заливки и обводки. */
-export type ButtonVariant =
-  | "default"
-  | "outline"
-  | "secondary"
-  | "ghost"
-  | "danger"
-  | "success"
-  | "info"
-  | "warning";
-
-type VariantVisual = {
-  root: string;
-  focusOutline: string;
-  convergeBg: string;
-  loaderText: string;
-  hoverIdle: string;
-};
-
-/** Варианты, у которых тень появляется при hover (анимируем shadow-sm). */
-const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
-  "default", "outline", "secondary", "ghost", "danger", "success", "info", "warning",
-]);
-
-const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
-  default: {
-    root: "bg-accent text-accent-foreground border border-base",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-accent-fill"),
-    loaderText: "text-accent-foreground",
-    hoverIdle: "hover:bg-accent-solid-hover",
-  },
-  outline: {
-    root: "surface-outline text-accent",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-accent-soft"),
-    loaderText: "text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
-  },
-  secondary: {
-    root: "surface-secondary text-accent",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-secondary"),
-    loaderText: "text-accent",
-    hoverIdle: "hover:bg-secondary-fill-hover",
-  },
-  ghost: {
-    root: "bg-transparent text-accent border border-transparent",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-accent-soft"),
-    loaderText: "text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
-  },
-  danger: {
-    root: "bg-danger text-danger-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-danger",
-    convergeBg: colorToken("converge-ripple-danger"),
-    loaderText: "text-danger-foreground",
-    hoverIdle: "hover:bg-danger-fill-hover",
-  },
-  success: {
-    root: "bg-success text-success-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-success",
-    convergeBg: colorToken("converge-ripple-success"),
-    loaderText: "text-success-foreground",
-    hoverIdle: "hover:bg-success-fill-hover",
-  },
-  info: {
-    root: "bg-info text-info-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-info",
-    convergeBg: colorToken("converge-ripple-info"),
-    loaderText: "text-info-foreground",
-    hoverIdle: "hover:bg-info-fill-hover",
-  },
-  warning: {
-    root: "bg-warning text-warning-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-warning",
-    convergeBg: colorToken("converge-ripple-warning"),
-    loaderText: "text-warning-foreground",
-    hoverIdle: "hover:bg-warning-fill-hover",
-  },
-};
-
-/** CSS-цвет converge-ripple под вариант кнопки — для собственного `<Ripple color={…} />` без `Button`. */
-export function buttonRippleTone(variant: ButtonVariant): string {
-  return BUTTON_VARIANT[variant].convergeBg;
-}
-
-/** Типографика подписи — через `Text`, без `text-*` на корне кнопки. */
-const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
-  small: "small",
-  base: "base",
-  large: "mid",
-  xlarge: "mid",
-};
-
-const BUTTON_SIZE_CLASSES: Record<
+  ButtonClassNamesProvider,
+  ButtonContextProvider,
+  ButtonMotionProvider,
+} from "./buttonContext";
+import { ButtonContent, ButtonLabel } from "./buttonParts";
+import { ButtonSimpleContent } from "./buttonSimpleContent";
+import type { ButtonMotion, ButtonProps } from "./buttonTypes";
+import { mergeSkinSurfaceStyle, useSkinRegistryRevision } from "@/skins/skinContext";
+import { usesKitElevationMember } from "@/skins/resolveVariantVisual";
+import { KIT_BUTTON_VARIANTS } from "./buttonTypes";
+import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
+import { useButtonRootState } from "./useButtonRootState";
+ 
+export type {
+  ButtonProps,
   ButtonSize,
-  { root: string; rootIconOnly: string; spinner: string; icon: string }
-> = {
-  small: {
-    root: "min-h-7 min-w-button-small px-base py-xsmall",
-    rootIconOnly: "min-h-7 min-w-fit px-base py-xsmall",
-    spinner: "icon-small border-2",
-    icon: "icon-small",
-  },
-  base: {
-    root: "min-h-8 min-w-button-base px-plus py-small",
-    rootIconOnly: "min-h-8 min-w-fit px-plus py-small",
-    spinner: "icon-base border-2",
-    icon: "icon-base",
-  },
-  large: {
-    root: "min-h-10 min-w-button-large px-mid py-base",
-    rootIconOnly: "min-h-10 min-w-fit px-mid py-base",
-    spinner: "icon-large border-2",
-    icon: "icon-large",
-  },
-  xlarge: {
-    root: "min-h-12 min-w-button-xlarge px-large py-base",
-    rootIconOnly: "min-h-12 min-w-fit px-large py-base",
-    spinner: "icon-large border-[2.5px]",
-    icon: "icon-large",
-  },
-};
-
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /**
-   * Склейка с соседями в `ButtonGroup`: без зазора, общий контур скругления только по краям группы.
-   * Задаётся автоматически при использовании внутри `<ButtonGroup>`.
-   */
-  groupSegment?: ButtonGroupSegment;
-  /** Стиль заливки и акцента. По умолчанию `default`. */
-  variant?: ButtonVariant;
-  /** Габариты и типографика. По умолчанию `base`. */
-  size?: ButtonSize;
-  /**
-   * Кнопка только с иконкой: вместо `min-w-button-*` используется `min-w-fit` (узкая обводка по контенту).
-   */
-  iconOnly?: boolean;
-  /** Включить лёгкий scale-пульс при нажатии (anime.js), только в idle. */
-  animated?: boolean;
-  /**
-   * Управляемое состояние: loading → success | error с рябью и иконками.
-   * Без `onAsyncClick` переходы задаёт родитель.
-   */
-  asyncState?: ButtonAsyncState;
-  /** При контроле `asyncState` — уведомление о смене (опционально). */
-  onAsyncStateChange?: (state: ButtonAsyncState) => void;
-  /**
-   * Неконтролируемый режим: `true` из промиса → success + зелёная галочка,
-   * `false` → error + красный крест. Отклонение промиса трактуется как error.
-   */
-  onAsyncClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<boolean>;
-  /** Через сколько вернуться в idle после success/error (неконтролируемый режим). */
-  asyncFeedbackMs?: number;
-  /** Иконка слева от подписи (только в состоянии idle). */
-  leftIcon?: ReactNode;
-  /**
-   * Включить converge-ripple от точки нажатия (`<Ripple />` внутри кнопки, тон под `variant`).
-   * @default false
-   */
-  ripple?: boolean;
-};
-
-type ExpandRipple = {
-  id: number;
-  size: number;
-  tone: "success" | "error";
-};
-
-function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
-  const corners: [number, number][] = [
-    [0, 0],
-    [w, 0],
-    [0, h],
-    [w, h],
-  ];
-  return Math.max(
-    ...corners.map(([cx, cy]) => Math.hypot(cx - px, cy - py)),
-  );
-}
-
-function centerCoverDiameter(w: number, h: number) {
-  return 2 * maxDistanceToCorners(w / 2, h / 2, w, h);
-}
-
-function Spinner({ className }: { className?: string }) {
+  ButtonVariant,
+  ButtonStatus,
+  ButtonClassNames,
+  ButtonMotion,
+  ButtonPartMotion,
+  ButtonContentProps,
+  ButtonLabelProps,
+  ButtonIconProps,
+  ButtonTextProps,
+  ButtonLoaderProps,
+  ButtonSuccessProps,
+  ButtonErrorProps,
+} from "./buttonTypes";
+ 
+export {
+  ButtonContent,
+  ButtonLabel,
+  ButtonIcon,
+  ButtonText,
+  ButtonLoader,
+  ButtonSuccess,
+  ButtonError,
+} from "./buttonParts";
+ 
+function resolveButtonInner({
+  children,
+  isCompound,
+  hasCompoundContent,
+  icon,
+  iconPosition,
+}: {
+  children: ReactNode;
+  isCompound: boolean;
+  hasCompoundContent: boolean;
+  icon?: ReactNode;
+  iconPosition?: ButtonProps["iconPosition"];
+}) {
+  if (isCompound) {
+    if (hasCompoundContent) return children;
+    return <ButtonContent>{children}</ButtonContent>;
+  }
+ 
   return (
-    <span
-      className={`box-border inline-block rounded-full border-current border-t-transparent ${className ?? ""}`}
-      aria-hidden
-    />
+    <ButtonContent>
+      <ButtonLabel>
+        <ButtonSimpleContent icon={icon} iconPosition={iconPosition}>
+          {children}
+        </ButtonSimpleContent>
+      </ButtonLabel>
+    </ButtonContent>
   );
 }
-
-function IconCheck({ className }: { className?: string }) {
-  return (
-    <svg
-      className={`shrink-0 ${className ?? ""}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M20 6L9 17l-5-5" />
-    </svg>
-  );
-}
-
-function IconCross({ className }: { className?: string }) {
-  return (
-    <svg
-      className={`shrink-0 ${className ?? ""}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      aria-hidden
-    >
-      <path d="M18 6L6 18M6 6l12 12" />
-    </svg>
-  );
-}
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button(
-    {
-      className = "",
-      variant = "default",
-      size = "base",
-      type = "button",
-      animated = true,
-      asyncState: asyncStateProp,
-      onAsyncStateChange,
-      onAsyncClick,
-      asyncFeedbackMs = 2000,
-      onPointerDown,
+ 
+type ButtonSurfaceProps = {
+  state: ReturnType<typeof useButtonRootState>;
+  motion?: ButtonMotion;
+  hoverPointerInsideRef: RefObject<boolean>;
+  forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  asChildElement: ReactElement<{ children?: ReactNode }> | null;
+  contentChildren: ReactNode;
+  onPointerEnter?: ButtonProps["onPointerEnter"];
+  onPointerLeave?: ButtonProps["onPointerLeave"];
+  onPointerOver?: ButtonProps["onPointerOver"];
+  onPointerOut?: ButtonProps["onPointerOut"];
+  onPointerDown?: ButtonProps["onPointerDown"];
+  onPointerUp?: ButtonProps["onPointerUp"];
+  onKeyDown?: ButtonProps["onKeyDown"];
+  onMouseDown?: ButtonProps["onMouseDown"];
+  rest: HTMLAttributes<HTMLButtonElement>;
+  motionState?: ButtonProps["motionState"];
+};
+ 
+function ButtonSurface({
+    state,
+    motion,
+    hoverPointerInsideRef,
+    forwardedRef,
+    asChildElement,
+    contentChildren,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    onKeyDown,
+    onMouseDown,
+    rest,
+    motionState,
+  }: ButtonSurfaceProps) {
+    const animations = useButtonAnimations({
+      variant: state.variant,
+      blocked: state.blocked,
+      groupSegment: state.groupSegment,
+      motion,
+      hoverPointerInsideRef,
+      forwardedRef,
       onPointerEnter,
       onPointerLeave,
-      onMouseDown,
-      onClick,
-      disabled: disabledProp,
-      leftIcon,
-      ripple = false,
-      iconOnly = false,
-      groupSegment,
-      children,
-      ...props
-    },
-    ref,
-  ) {
-    const userDisabled = Boolean(disabledProp);
-    const btnRef = useRef<HTMLButtonElement>(null);
-    const hoverPointerInsideRef = useRef(false);
-    const asyncStateRef = useRef<ButtonAsyncState>("idle");
-    const expandId = useRef(0);
-    const prevAsyncRef = useRef<ButtonAsyncState>("idle");
-    const asyncInFlight = useRef(false);
-
-    const [internalAsync, setInternalAsync] =
-      useState<ButtonAsyncState>("idle");
-    const isControlled = asyncStateProp !== undefined;
-    const asyncState: ButtonAsyncState = isControlled
-      ? asyncStateProp!
-      : internalAsync;
-    asyncStateRef.current = asyncState;
-
-    const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        btnRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
-
-    const pushExpandRipple = useCallback((tone: "success" | "error") => {
-      const el = btnRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const size = centerCoverDiameter(r.width, r.height);
-      const id = ++expandId.current;
-      setExpandRipples((prev) => [...prev, { id, size, tone }]);
-    }, []);
-
-    const skipAsyncNotify = useRef(true);
-    useEffect(() => {
-      if (isControlled) return;
-      if (skipAsyncNotify.current) {
-        skipAsyncNotify.current = false;
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      onKeyDown,
+    });
+ 
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+      if (state.blocked) {
+        event.preventDefault();
         return;
       }
-      onAsyncStateChange?.(internalAsync);
-    }, [internalAsync, isControlled, onAsyncStateChange]);
-
-    useEffect(() => {
-      const prev = prevAsyncRef.current;
-      if (
-        (asyncState === "success" || asyncState === "error") &&
-        prev === "loading"
-      ) {
-        pushExpandRipple(asyncState === "success" ? "success" : "error");
-      }
-      prevAsyncRef.current = asyncState;
-    }, [asyncState, pushExpandRipple]);
-
-    useEffect(() => {
-      if (isControlled) return;
-      if (asyncState !== "success" && asyncState !== "error") return;
-      const t = window.setTimeout(() => {
-        setInternalAsync("idle");
-      }, asyncFeedbackMs);
-      return () => window.clearTimeout(t);
-    }, [asyncState, isControlled, asyncFeedbackMs]);
-
-    const busy =
-      asyncState === "loading" ||
-      asyncState === "success" ||
-      asyncState === "error";
-    const blocked = userDisabled || busy;
-
-    useEffect(() => {
-      const el = btnRef.current;
-      if (!blocked || !el) return;
-      hoverPointerInsideRef.current = false;
-      remove(el);
-    }, [blocked]);
-
-    const btnShadow = BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
-      ? { hover: SHADOW_SM() }
-      : undefined;
-
-    const handlePointerEnter = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        onPointerEnter?.(e);
-        if (e.defaultPrevented) return;
-        if (blocked) return;
-        if (prefersReducedInteractiveHoverLift()) return;
-        const el = btnRef.current;
-        if (!el) return;
-        hoverPointerInsideRef.current = true;
-        animateInteractiveHoverLift(el, true, undefined, btnShadow);
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [blocked, onPointerEnter, btnShadow],
+      state.onClick?.(event);
+    };
+ 
+    const contextValue = {
+      size: state.size,
+      variant: state.variant,
+      status: state.status,
+      groupSegment: state.groupSegment,
+      loaderTextClass: state.loaderTextClass,
+      contentMotionRef: animations.contentMotionRef,
+    };
+ 
+    const hasCompoundContent = useMemo(
+      () => buttonHasCompoundPart(contentChildren, "ButtonContent"),
+      [contentChildren],
     );
-
-    const handlePointerLeave = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        onPointerLeave?.(e);
-        hoverPointerInsideRef.current = false;
-        if (prefersReducedInteractiveHoverLift()) return;
-        const el = btnRef.current;
-        if (!el || blocked) return;
-        animateInteractiveHoverLift(el, false, undefined, btnShadow);
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [blocked, onPointerLeave, btnShadow],
-    );
-
-    function onAnimeDown() {
-      if (!animated || !btnRef.current || asyncState !== "idle") return;
-      if (prefersReducedInteractiveHoverLift()) return;
-      const el = btnRef.current;
-      void animateInteractivePressSqueeze(el).then(() => {
-        const btn = btnRef.current;
-        if (
-          !btn ||
-          btn.disabled ||
-          asyncStateRef.current !== "idle" ||
-          prefersReducedInteractiveHoverLift()
-        ) {
-          return;
-        }
-        if (hoverPointerInsideRef.current) {
-          animateInteractiveHoverLift(btn, true, undefined, btnShadow);
-        }
-      });
-    }
-
-    const dismissExpand = useCallback((id: number) => {
-      setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
-    }, []);
-
-    const handleClick = useCallback(
-      (e: MouseEvent<HTMLButtonElement>) => {
-        onClick?.(e);
-        if (isControlled || !onAsyncClick || e.defaultPrevented) return;
-        if (asyncInFlight.current || internalAsync !== "idle") return;
-        asyncInFlight.current = true;
-        setInternalAsync("loading");
-        Promise.resolve(onAsyncClick(e))
-          .then((ok) => {
-            setInternalAsync(ok ? "success" : "error");
-          })
-          .catch(() => {
-            setInternalAsync("error");
-          })
-          .finally(() => {
-            asyncInFlight.current = false;
-          });
-      },
-      [
-        onClick,
-        onAsyncClick,
-        isControlled,
-        internalAsync,
-      ],
-    );
-
-    const baseInteractive =
-      "relative overflow-hidden inline-flex items-center justify-center font-medium outline-none " +
-      "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " +
-      "disabled:pointer-events-none";
-
-    const vn = BUTTON_VARIANT[variant];
-    const labelHidden =
-      asyncState !== "idle"
-        ? "opacity-0 scale-[0.92]"
-        : "opacity-100 scale-100";
-    const successVisible =
-      asyncState === "success"
-        ? "opacity-100 scale-100"
-        : "pointer-events-none opacity-0 scale-[0.85]";
-    const errorVisible =
-      asyncState === "error"
-        ? "opacity-100 scale-100"
-        : "pointer-events-none opacity-0 scale-[0.85]";
-
-    const crossFade =
-      "flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
-
-    const sz = BUTTON_SIZE_CLASSES[size];
-    const sizeRoot = iconOnly ? sz.rootIconOnly : sz.root;
-
-    const idleSurfaceMotion = blocked
-      ? ""
-      : cn("button-idle-surface-transition motion-reduce:transition-none", vn.hoverIdle);
-
-    const roundingClass = groupSegment
-      ? buttonGroupRoundingClasses(groupSegment)
-      : "rounded-base";
-
-    const groupGlue = groupSegment
-      ? cn(
-          buttonGroupOverlapBorderClasses(groupSegment),
-          "z-0 hover:z-[2] focus-visible:z-[2] active:z-[2]",
-        )
-      : "";
-
-    const clipClass = groupSegment
-      ? buttonGroupRoundingClasses(groupSegment)
-      : "rounded-base";
-
-    return (
-      <button
-        ref={setRefs}
-        {...props}
-        type={type}
-        disabled={blocked}
-        aria-busy={asyncState === "loading"}
-        className={cn(
-          baseInteractive,
-          groupGlue,
-          vn.focusOutline,
-          sizeRoot,
-          vn.root,
-          "animate-shadow",
-          userDisabled ? "opacity-50" : "",
-          idleSurfaceMotion,
-          roundingClass,
-          className,
-          "cursor-pointer rounded-base",
-        )}
-        onPointerDown={(e) => {
-          onAnimeDown();
-          onPointerDown?.(e);
-        }}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
-        onMouseDown={onMouseDown}
-        onClick={handleClick}
-      >
-        {ripple ? (
+ 
+    const inner = (
+      <>
+        {state.ripple ? (
           <Ripple
-            color={vn.convergeBg}
-            disabled={blocked || asyncState !== "idle"}
-            duration={MOTION_RIPPLE_DEFAULT_DURATION_MS}
-            className={clipClass}
+            color={state.convergeRippleColor}
+            disabled={state.blocked}
+            className={state.clipClass}
           />
         ) : null}
-        <span
-          className={cn(
-            "pointer-events-none absolute inset-0 z-0 overflow-hidden",
-            clipClass,
-          )}
-          aria-hidden
-        >
-          {expandRipples.map((rp) => (
-            <span
-              key={rp.id}
-              className="pointer-events-none absolute left-1/2 top-1/2 z-0 rounded-full will-change-[transform,opacity]"
-              style={{
-                width: rp.size,
-                height: rp.size,
-                marginLeft: -rp.size / 2,
-                marginTop: -rp.size / 2,
-                background:
-                  rp.tone === "success"
-                    ? "color-mix(in oklab, var(--color-success) 55%, transparent)"
-                    : "color-mix(in oklab, var(--color-danger) 55%, transparent)",
-                animation:
-                  `button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
-              }}
-              onAnimationEnd={() => dismissExpand(rp.id)}
-            />
-          ))}
-        </span>
-
-        <span className="relative z-[1] grid place-items-center">
-          <span
-            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-small`}
-          >
-            {leftIcon != null ? (
-              <span
-                className={`inline-flex shrink-0 items-center justify-center ${sz.icon} [&_svg]:size-full`}
-                aria-hidden
-              >
-                {leftIcon}
-              </span>
-            ) : null}
-            <Text
-              variant={BUTTON_SIZE_TEXT_VARIANT[size]}
-              as="span"
-              inheritColor
-              className="min-w-0 shrink"
-            >
-              {children}
-            </Text>
-          </span>
-          {asyncState === "loading" ? (
-            <span
-              className={`${crossFade} col-start-1 row-start-1 ${vn.loaderText} opacity-100 scale-100`}
-              aria-hidden
-            >
-              <Spinner
-                className={`${sz.spinner} animate-spin motion-reduce:animate-none`}
-              />
-            </span>
-          ) : null}
-          <span
-            className={`${crossFade} col-start-1 row-start-1 text-success ${successVisible}`}
-            aria-hidden={asyncState !== "success"}
-          >
-            <IconCheck className={sz.icon} />
-          </span>
-          <span
-            className={`${crossFade} col-start-1 row-start-1 text-danger ${errorVisible}`}
-            aria-hidden={asyncState !== "error"}
-          >
-            <IconCross className={sz.icon} />
-          </span>
-        </span>
-      </button>
+        {resolveButtonInner({
+          children: contentChildren,
+          isCompound: state.isCompound,
+          hasCompoundContent,
+          icon: state.icon,
+          iconPosition: state.iconPosition,
+        })}
+      </>
     );
+ 
+    return (
+      <ButtonContextProvider value={contextValue}>
+        {asChildElement ? (
+          cloneElement(
+            asChildElement,
+            mergeAsChildProps(
+              asChildElement,
+              {
+                ...rest,
+                style: mergeSkinSurfaceStyle(state.surfaceStyle, rest.style),
+                className: state.buttonClass,
+                "data-group-segment": dataGroupSegment(state.groupSegment != null),
+                "aria-disabled": state.blocked || undefined,
+                tabIndex: state.blocked
+                  ? -1
+                  : (rest as { tabIndex?: number }).tabIndex,
+                onPointerOver: animations.pointerHandlers.onPointerOver,
+                onPointerOut: animations.pointerHandlers.onPointerOut,
+                onPointerDown: animations.handlePointerDown,
+                onPointerUp: animations.handlePointerUp,
+                onPointerEnter: animations.handlePointerEnter,
+                onPointerLeave: animations.handlePointerLeave,
+                onKeyDown: animations.handleKeyDown,
+                onMouseDown,
+                onClick: (event: MouseEvent<HTMLElement>) => {
+                  if (state.blocked) {
+                    event.preventDefault();
+                    return;
+                  }
+                  handleClick(event as MouseEvent<HTMLButtonElement>);
+                },
+                children: inner,
+                ...dataVariantProps({
+                  size: state.size,
+                  variant: state.variant,
+                  status: state.status,
+                }),
+              },
+              animations.setRefs,
+            ),
+          )
+        ) : (
+          <button
+            ref={animations.setRefs}
+            {...rest}
+            style={mergeSkinSurfaceStyle(state.surfaceStyle, rest.style)}
+            type={state.type}
+            disabled={state.blocked}
+            className={state.buttonClass}
+            onPointerOver={animations.pointerHandlers.onPointerOver}
+            onPointerOut={animations.pointerHandlers.onPointerOut}
+            onPointerDown={animations.handlePointerDown}
+            onPointerUp={animations.handlePointerUp}
+            onPointerEnter={animations.handlePointerEnter}
+            onPointerLeave={animations.handlePointerLeave}
+            onKeyDown={animations.handleKeyDown}
+            onMouseDown={onMouseDown}
+            onClick={handleClick}
+            {...dataVariantProps({
+              size: state.size,
+              variant: state.variant,
+              status: state.status,
+            })}
+            data-group-segment={dataGroupSegment(state.groupSegment != null)}
+            data-disabled={state.blocked ? "" : undefined}
+            data-state={
+              motionState === "loading" || motionState === "success" || motionState === "error"
+                ? motionState
+                : (rest as { "data-state"?: string })["data-state"]
+            }
+            aria-busy={motionState === "loading" ? true : undefined}
+          >
+            {inner}
+          </button>
+        )}
+      </ButtonContextProvider>
+    );
+  };
+ 
+ 
+export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    className,
+    classNames,
+    variant,
+    status,
+    size,
+    type,
+    disabled,
+    icon,
+    iconPosition,
+    ripple,
+    iconOnly,
+    groupSegment,
+    motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
+    asChild = false,
+    children,
+    onClick,
+    onPointerDown,
+    onPointerUp,
+    onPointerOver,
+    onPointerOut,
+    onPointerEnter,
+    onPointerLeave,
+    onKeyDown,
+    onMouseDown,
+    ...rest
   },
-);
+  ref,
+) {
+  const asChildElement =
+    asChild && isValidElement(children) && Children.count(children) === 1
+      ? (children as ReactElement<{ children?: ReactNode }>)
+      : null;
+  const contentChildren = asChildElement
+    ? asChildElement.props.children
+    : children;
+ 
+  const state = useButtonRootState({
+    className,
+    classNames,
+    variant,
+    status,
+    size,
+    type,
+    disabled,
+    icon,
+    iconPosition,
+    ripple,
+    iconOnly,
+    groupSegment,
+    children: contentChildren,
+    onClick,
+  });
+ 
+  const hoverPointerInsideRef = useRef(false);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(
+    () => {
+      void skinRevision;
+      return resolveButtonMotionDefaults({ variant: state.variant });
+    },
+    [skinRevision, state.variant],
+  );
+  const motionParams = useMemo(
+    () => ({
+      pointerInside: hoverPointerInsideRef,
+      hasHoverShadow:
+        usesKitElevationMember(state.variant, KIT_BUTTON_VARIANTS, BUTTON_VARIANT_HAS_HOVER_SHADOW) && !state.groupSegment,
+    }),
+    [state.groupSegment, state.variant],
+  );
+ 
+  return (
+    <ButtonClassNamesProvider classNames={state.classNames}>
+      <ButtonMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
+        <ButtonSurface
+          state={state}
+          motion={motion}
+          hoverPointerInsideRef={hoverPointerInsideRef}
+          forwardedRef={ref}
+          asChildElement={asChildElement}
+          contentChildren={contentChildren}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerOver={onPointerOver}
+          onPointerOut={onPointerOut}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          onKeyDown={onKeyDown}
+          onMouseDown={onMouseDown}
+          rest={rest}
+          motionState={motionState}
+        />
+      </ButtonMotionProvider>
+    </ButtonClassNamesProvider>
+  );
+});
+ 
+ButtonRoot.displayName = "ButtonRoot";
+ 

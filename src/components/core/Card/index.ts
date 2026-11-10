@@ -1,11 +1,26 @@
-export {
-  Card,
-  type CardPressEvent,
-  type CardProps,
-  type CardVariant,
-  type CardContentProps,
-  type CardTitleProps,
-  type CardDescriptionProps,
-  type CardBodyProps,
-  type CardFooterProps,
-} from "./Card";
+import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRoot, CardTitle } from "./Card";
+ 
+export const Card = Object.assign(CardRoot, {
+  Header: CardHeader,
+  HeadingBlock: CardHeadingBlock,
+  Title: CardTitle,
+  Description: CardDescription,
+  Body: CardBody,
+  Footer: CardFooter,
+});
+ 
+export type {
+  CardProps,
+  CardSize,
+  CardVariant,
+  CardHeaderProps,
+  CardHeadingBlockProps,
+  CardBodyProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardFooterProps,
+  CardClassNames,
+  CardMotion,
+  CardPartMotion,
+} from "./cardTypes";
+ 

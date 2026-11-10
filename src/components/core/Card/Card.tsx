@@ -1,267 +1,229 @@
-import { remove } from "animejs";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useRef,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
-  type Ref,
-} from "react";
+import { forwardRef, useMemo, useRef, type HTMLAttributes } from "react";
 
-import { Text } from "@/components/core/Text";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
-  useInteractiveHoverLiftContainerHandlers,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { usesKitElevationMember } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
-export type CardVariant = "default" | "outline" | "secondary";
+import { resolveCardMotionDefaults, useCardAnimations } from "./cardAnimations";
+import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRootShell, CardTitle } from "./cardParts";
+import { CardMotionProvider, CardProvider } from "./cardContext";
+import { cardRootClass } from "./cardStyles";
+import type { CardMotion, CardProps, CardVariant } from "./cardTypes";
+import { KIT_CARD_VARIANTS } from "./cardTypes";
+import { useCardRootState } from "./useCardRootState";
 
-/** Событие активации нажимаемой карточки (`pressable`): клик или клавиши Enter / Space. */
-export type CardPressEvent =
-  | MouseEvent<HTMLDivElement>
-  | KeyboardEvent<HTMLDivElement>;
+export type {
+  CardProps,
+  CardSize,
+  CardVariant,
+  CardHeaderProps,
+  CardHeadingBlockProps,
+  CardBodyProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardFooterProps,
+  CardClassNames,
+  CardMotion,
+  CardPartMotion,
+  CardRootMotion,
+  CardPointerMotion,
+} from "./cardTypes";
 
-export type CardProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "onClick" | "onKeyDown"
-> & {
-  /** Поверхность и обводка. По умолчанию `default`. */
-  variant?: CardVariant;
-  /**
-   * Интерактивная карточка: hover-lift, тень и squeeze при нажатии (как у кнопки).
-   * Риппл не встроен — при необходимости передайте `<Ripple />` первым ребёнком и оберните остальной контент в слой с `relative z-[1]`.
-   * Не помещайте внутрь другие кнопки/ссылки без `stopPropagation` на их клик — иначе сработает и `onPress` карточки.
-   */
-  pressable?: boolean;
-  /** Вызывается при активации (`click` или Enter / Space на корне). Имеет смысл только при `pressable`. */
-  onPress?: (event: CardPressEvent) => void;
-  onClick?: HTMLAttributes<HTMLDivElement>["onClick"];
-  onKeyDown?: HTMLAttributes<HTMLDivElement>["onKeyDown"];
-};
+const CARD_VARIANT_HAS_HOVER_SHADOW = new Set<(typeof KIT_CARD_VARIANTS)[number]>([
+  "default",
+  "outline",
+  "secondary",
+]);
 
-const CARD_SURFACE: Record<CardVariant, string> = {
-  default: "bg-surface border border-base",
-  outline: "surface-outline",
-  secondary: "surface-secondary",
-};
-
-export type CardContentProps = HTMLAttributes<HTMLDivElement>;
-export type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
-export type CardBodyProps = HTMLAttributes<HTMLDivElement>;
-export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
-
-function CardContent({ className = "", ...rest }: CardContentProps) {
-  return (
-    <div
-      className={cn(
-        "flex min-w-0 flex-col gap-small py-plus px-mid text-left",
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
-
-const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
-  function CardTitle({ className = "", ...rest }, ref) {
-    return (
-      <Text
-        ref={ref as Ref<HTMLElement>}
-        as="h3"
-        variant="base"
-        className={cn("min-w-0 leading-snug", className)}
-        {...rest}
-      />
-    );
-  },
-);
-
-const CardDescription = forwardRef<
-  HTMLParagraphElement,
-  CardDescriptionProps
->(function CardDescription({ className = "", ...rest }, ref) {
-  return (
-    <Text
-      ref={ref as Ref<HTMLElement>}
-      as="p"
-      variant="base"
-      className={cn("min-w-0 leading-normal text-muted", className)}
-      {...rest}
-    />
-  );
-});
-
-function CardBody({ className = "", children, ...rest }: CardBodyProps) {
-  return (
-    <div
-      className={cn("min-w-0 px-mid pb-mid text-left", className)}
-      {...rest}
-    >
-      <Text variant="base" as="div" className="leading-relaxed">
-        {children}
-      </Text>
-    </div>
-  );
-}
-
-/** Нижняя зона действий / мета с разделителем. */
-function CardFooter({ className = "", ...rest }: CardFooterProps) {
-  return (
-    <div
-      className={cn(
-        "mt-auto border-t border-base py-plus px-mid text-left text-sm text-muted",
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
-
-const CARD_PRESS_SHADOW = { hover: SHADOW_SM() };
-
-const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
+export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   {
     className = "",
-    variant = "default",
+    variant,
+    size = "base",
+    shadow = "base",
     pressable = false,
-    onPress,
+    href,
+    asChild = false,
+    classNames,
+    motion,
+    motionController,
+    motionState,
+    motionPayload,
+    playInitialState,
     onPointerOver: onPointerOverProp,
     onPointerOut: onPointerOutProp,
     onPointerDown: onPointerDownProp,
+    onPointerUp: onPointerUpProp,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,
-    role: roleProp,
-    tabIndex: tabIndexProp,
     children,
     ...rest
   },
-  ref,
-) {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const pointerInsideRef = useRef(false);
+  ref) {
+  const interactive = pressable || href != null || asChild;
+  const state = useCardRootState({
+    variant,
+    size,
+    pressable: interactive,
+    onClick: onClickProp,
+    onKeyDown: onKeyDownProp,
+    onPointerDown: onPointerDownProp,
+  });
 
-  const setRootRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
+  const surfaceStyle = useSkinSurfaceStyle(state.variant);
+  const hoverPointerInsideRef = useRef(false);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(
+    () => {
+      void skinRevision;
+      return resolveCardMotionDefaults({ variant: state.variant, pressable: interactive });
     },
-    [ref],
-  );
-
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
-    rootRef,
-    pressable,
-    pointerInsideRef,
-    undefined,
-    pressable ? CARD_PRESS_SHADOW : undefined,
-  );
-
-  useEffect(() => {
-    if (pressable) return;
-    const el = rootRef.current;
-    if (el) remove(el);
-    pointerInsideRef.current = false;
-  }, [pressable]);
-
-  const handlePointerDown = useCallback(
-    (e: PointerEvent<HTMLDivElement>) => {
-      onPointerDownProp?.(e);
-      if (
-        !pressable ||
-        e.defaultPrevented ||
-        prefersReducedInteractiveHoverLift()
-      ) {
-        return;
-      }
-      const shell = rootRef.current;
-      if (!shell) return;
-      void animateInteractivePressSqueeze(shell).then(() => {
-        const el = rootRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
-        if (pointerInsideRef.current) {
-          animateInteractiveHoverLift(el, true, undefined, CARD_PRESS_SHADOW);
-        }
-      });
-    },
-    [onPointerDownProp, pressable],
-  );
-
-  const handleClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      onClickProp?.(e);
-      if (!pressable || e.defaultPrevented) return;
-      onPress?.(e);
-    },
-    [onClickProp, onPress, pressable],
-  );
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
-      onKeyDownProp?.(e);
-      if (!pressable || e.defaultPrevented) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        (e.currentTarget as HTMLDivElement).click();
-      }
-    },
-    [onKeyDownProp, pressable],
-  );
+    [interactive, skinRevision, state.variant]);
+  const motionParams = useMemo(
+    () => ({
+      pointerInside: hoverPointerInsideRef,
+      hasHoverShadow:
+        interactive &&
+        usesKitElevationMember(state.variant, KIT_CARD_VARIANTS, CARD_VARIANT_HAS_HOVER_SHADOW),
+      shadowSize: shadow,
+    }),
+    [interactive, shadow, state.variant]);
 
   return (
-    <div
-      ref={setRootRef}
-      role={roleProp ?? (pressable ? "button" : undefined)}
-      tabIndex={
-        tabIndexProp ?? (pressable ? 0 : undefined)
-      }
-      className={cn(
-        "flex min-w-0 flex-col overflow-hidden rounded-mid text-left text-foreground outline-none",
-        pressable &&
-          "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-        CARD_SURFACE[variant],
-        pressable && "will-change-transform origin-center",
-        className,
-      )}
-      onPointerOver={(e) => {
-        onPointerOverProp?.(e);
-        if (!e.defaultPrevented && pressable) {
-          liftPointerHandlers.onPointerOver(e);
-        }
-      }}
-      onPointerOut={(e) => {
-        onPointerOutProp?.(e);
-        if (pressable) liftPointerHandlers.onPointerOut(e);
-      }}
-      onPointerDown={handlePointerDown}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      {...rest}
-    >
-      {pressable ? (
-        <div className="relative flex min-w-0 flex-1 flex-col text-left">
+    <CardProvider classNames={classNames} size={state.size}>
+      <CardMotionProvider
+        motion={motion}
+        defaults={motionDefaults}
+        params={motionParams}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
+        <CardSurface
+          pressable={interactive}
+          href={href}
+          asChild={asChild}
+          renderAsButton={state.renderAsButton}
+          variant={state.variant}
+          size={state.size}
+          shadow={shadow}
+          classNames={classNames}
+          className={className}
+          motion={motion}
+          onPointerOver={onPointerOverProp}
+          onPointerOut={onPointerOutProp}
+          onPointerDown={onPointerDownProp}
+          onPointerUp={onPointerUpProp}
+          onClick={onClickProp}
+          onKeyDown={onKeyDownProp}
+          hoverPointerInsideRef={hoverPointerInsideRef}
+          forwardedRef={ref}
+          rest={{ ...rest, style: { ...surfaceStyle, ...rest.style } }}
+        >
           {children}
-        </div>
-      ) : (
-        children
-      )}
-    </div>
+        </CardSurface>
+      </CardMotionProvider>
+    </CardProvider>
   );
 });
 
-/** Карточка: корневой блок с токенами темы; при `pressable` — hover-lift, тень и squeeze (риппл — снаружи через `<Ripple />`). */
-export const Card = Object.assign(CardRoot, {
-  Content: CardContent,
-  Title: CardTitle,
-  Description: CardDescription,
-  Body: CardBody,
-  Footer: CardFooter,
-});
+CardRoot.displayName = "Card";
+
+function CardSurface({
+  pressable,
+  renderAsButton,
+  href,
+  asChild,
+  variant,
+  size,
+  shadow,
+  classNames,
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  onClick,
+  onKeyDown,
+  hoverPointerInsideRef,
+  forwardedRef,
+  rest,
+  children,
+}: {
+  pressable: boolean;
+  renderAsButton: boolean;
+  href?: string;
+  asChild?: boolean;
+  variant: CardVariant;
+  size: ReturnType<typeof useCardRootState>["size"];
+  shadow: NonNullable<CardProps["shadow"]>;
+  classNames: CardProps["classNames"];
+  className: string;
+  motion?: CardMotion;
+  onPointerOver: CardProps["onPointerOver"];
+  onPointerOut: CardProps["onPointerOut"];
+  onPointerDown: CardProps["onPointerDown"];
+  onPointerUp: CardProps["onPointerUp"];
+  onClick: CardProps["onClick"];
+  onKeyDown: CardProps["onKeyDown"];
+  hoverPointerInsideRef: React.RefObject<boolean>;
+  forwardedRef: React.ForwardedRef<HTMLElement>;
+  rest: HTMLAttributes<HTMLElement>;
+  children: CardProps["children"];
+}) {
+  const animations = useCardAnimations({
+    pressable,
+    variant,
+    shadow,
+    motion,
+    onClick,
+    onKeyDown,
+    onPointerDown,
+    onPointerUp,
+    onPointerOver,
+    onPointerOut,
+    hoverPointerInsideRef,
+    forwardedRef,
+  });
+
+  const rootClassName = cardRootClass(
+    variant,
+    pressable,
+    animations.pressableLiftMotionClass,
+    size,
+    shadow,
+    cn(classNames?.root, className));
+
+  return (
+    <CardRootShell
+      pressable={pressable}
+      renderAsButton={renderAsButton && href == null && !asChild}
+      href={href}
+      asChild={asChild}
+      variant={variant}
+      size={size}
+      rootClassName={rootClassName}
+      setRootRef={animations.setRootRef}
+      rest={rest}
+      onPointerOver={animations.onPointerOver}
+      onPointerOut={animations.onPointerOut}
+      onPointerDown={pressable ? animations.handlePointerDown : animations.onPointerDownProp}
+      onPointerUp={pressable ? animations.handlePointerUp : animations.onPointerUpProp}
+      onClick={pressable ? animations.handleClick : animations.onClickProp}
+      onKeyDown={pressable ? animations.handleKeyDown : animations.onKeyDownProp}
+    >
+      {children}
+    </CardRootShell>
+  );
+}
+
+export {
+  CardHeader,
+  CardHeadingBlock,
+  CardBody,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+};

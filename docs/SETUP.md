@@ -1,0 +1,810 @@
+# Начальная настройка Burne UI
+
+Полное руководство по первой интеграции `burne-ui` в приложение: зависимости, стили, Tailwind CSS v4, тема, анимации, провайдеры и типичные проблемы (в том числе SSR в Next.js).
+
+Краткий обзор API и токенов — в [README.md](../README.md).
+
+**Быстрый старт (scaffold):** CLI `create-burne-app` — Next или Vite уже с `BurneUIProvider`:
+
+```bash
+npm create burne-app@latest my-app
+# pnpm create burne-app my-app
+# bunx create-burne-app my-app
+```
+
+В существующий проект:
+
+```bash
+npx burne-ui@latest init
+# pnpm dlx burne-ui init
+# bunx burne-ui init
+```
+
+---
+
+## 1. Установка
+
+```bash
+npm install burne-ui gsap
+# или: pnpm / yarn / bun
+```
+
+`react-icons` не обязателен: дефолтные глифы (chevron, close, check, search, folder, статусы) живут в ките. Ставьте `react-icons`, если прокидываете свои иконки в `icon` / compound-слоты.
+
+Корень `burne-ui` отдаёт весь публичный API. Один компонент — тот же набор имён, отдельным путём:
+
+```tsx
+import { Button } from "burne-ui/Button";
+import { Table } from "burne-ui/Table";
+```
+
+Имя пути совпадает с компонентом (`burne-ui/Accordion` тоже). Стили по-прежнему один раз из `burne-ui/styles.css`.
+
+### Peer-зависимости
+
+В приложении должны быть установлены совместимые версии:
+
+| Пакет | Версия | Обязателен |
+|-------|--------|------------|
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` | да |
+| `gsap` | `^3.12.0` | да |
+| `react-icons` | `^5.0.0` | нет (`peerDependenciesMeta.optional`) |
+
+`gsap` — **peer** (не бандлится в `dist`): одно инстанс в приложении, tree-shaking у потребителя. `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
+
+`CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin`). Kit motion recipes регистрируются лениво из `runMotionPhase` при первом play (нет top-level `registerKitMotionRecipes()`). `sideEffects` — только CSS.
+
+Опубликованный пакет — **только ESM** (`"type": "module"`, без `.cjs`). `engines.node` — `>=22`. `require("burne-ui")` работает в Node 22 через `require(esm)`; иначе — динамический `import()`. Сборка — `preserveModules` (дерево файлов, не один `index.js`). `import { cn } from "burne-ui"` не тянет компоненты и GSAP. `"use client"` стоит на модулях с React/GSAP, не на barrel / `cn` / токенах / `ThemeScript`.
+
+### Браузеры
+
+Кит **не** полифиллит современный CSS/DOM. Поддерживаемые движки:
+
+| Браузер | Мин. версия | Ограничивающая фича |
+|---------|-------------|---------------------|
+| Chrome / Edge / Android Chrome | 111 | `color-mix()` |
+| Safari / iOS Safari | 16.4 | `@property` |
+| Firefox / Firefox for Android | 128 | `@property` |
+
+JS-бандл — `build.target: "es2020"` (нет `.toSorted()` / ES2023). Та же матрица в `package.json` → `browserslist` (`chrome >= 111`, `firefox >= 128`, `safari >= 16.4`, плюс Edge / iOS / Android). Сборка кита **не** даунлевелит CSS по этому списку: `ui.css` уходит как написан.
+
+Фичи, из которых сложена планка: `color-mix()`, `@property`, `:has()`, `dvh`, `inert`. Gloss-бордер: `mask-composite: exclude` плюс `-webkit-mask-composite: xor` (Chrome 111–119; unprefixed — Chrome 120+).
+
+**Progressive enhancement:** `field-sizing: content` (автогрост TextArea) — Chromium 123+. В Safari / Firefox поле просто не растёт с контентом.
+
+Старые браузеры (Safari 15, Firefox 115, Chrome 109) не поддерживаются. Без `color-mix()` ломаются тени и прозрачности, раскладка остаётся. Почему порог не опускаем — [adr/0001-browser-floor.md](./adr/0001-browser-floor.md). Guard `check-browser-floor` сверяет эту таблицу с `browserslist` и со страницей сайта `/docs/browsers`.
+
+---
+
+## 2. Подключение стилей
+
+Стили **не** подтягиваются из JS-barrel (`import { Button } from "burne-ui"`). Подключите собранный CSS **один раз** явно в глобальной точке входа (корневой layout, `main.tsx`, `_app`, или через `@import` в CSS):
+
+```ts
+import "burne-ui/styles.css";
+```
+
+```css
+@import "burne-ui/styles.css";
+```
+
+Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
+
+- **дизайн-токены** — `--color-*`, `--space` / `--space-*` (Tailwind-мост `--spacing-*`), `--size`, `--radius` / `--radius-*`, `--text-scale-*` (роли `text-base`/`text-mid`/… — 1:1 по имени), `--control-height-*` / `--control-size-*`, `--icon-size-*`, `--z-*`, `--overlay-backdrop-*`, шрифты, тени;
+- **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted` (→ `--color-muted-foreground`), `bg-muted` (surface), `gap-large`, `rounded-base`, `z-dialog` / `z-popover` / … и т.д.;
+- **кастомные утилиты** — `border-token`, `text-header-1`, `shadow-token-sm` и др.
+
+Полный перечень имён токенов — экспорт **`designTokenNames`** из `burne-ui`. Исходные значения по умолчанию — `src/tokens/styles.css` в репозитории.
+
+---
+
+## 3. Tailwind CSS v4 в приложении-потребителе
+
+Компоненты используют классы Tailwind, привязанные к токенам пакета. Чтобы **ваши** классы в `className` попали в итоговый CSS, Tailwind должен сканировать исходники приложения.
+
+### Рекомендуемый `globals.css`
+
+```css
+@import "tailwindcss";
+
+/* Сканируем только код приложения — классы из burne-ui уже в ui.css */
+@source "../app/**/*.{tsx,ts}";
+@source "../components/**/*.{tsx,ts}";
+@source "../lib/**/*.{tsx,ts}";
+
+@import "burne-ui/styles.css";
+@import "burne-ui/tailwind.css";
+```
+
+`styles.css` — токены, база и классы, которые кит уже собрал. `tailwind.css` — `@theme inline` и все `@utility` кита, без preflight. Tailwind приложения из этого файла собирает свои классы, в том числе `md:shadow-token-mid` и `divide-x-token`.
+
+### Зачем не сканировать весь `node_modules/burne-ui/dist`
+
+`burne-ui/styles.css` уже включает prebuilt-утилиты для всех классов библиотеки. Повторный `@source` на весь `dist/` (сотни файлов):
+
+- **не обязателен** для корректного отображения компонентов;
+- **заметно нагружает CPU** в dev (Tailwind пересканирует bundle при каждом HMR).
+
+Добавляйте `@source "../node_modules/burne-ui/dist"` только если используете классы из `dist/*.js`, которых **нет** в prebuilt `ui.css`, и они не попадают в scan вашего кода.
+
+### Порядок слоёв
+
+Правила приложения подключайте **после** `@import "burne-ui/styles.css"`, иначе утилиты из `ui.css` (например `.grid-cols-1`) могут перекрыть ваши responsive-классы при одинаковой специфичности.
+
+В `styles.css` есть `@media (forced-colors: active)`: focus-ring → `Highlight`, статусные поверхности сохраняют цвет, выбранные индикаторы (Checkbox / Radio / ToggleButton / Switch) остаются отличимы от невыбранных в Windows High Contrast.
+
+---
+
+## 4. Базовый layout (Next.js App Router)
+
+Сайтовые гайды: SSR / Next.js (`/docs/ssr`), доступность (`/docs/a11y`).
+
+```tsx
+// app/layout.tsx
+import { ThemeScript } from "burne-ui";
+import "./globals.css";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ru" className="min-h-[100dvh] antialiased" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="min-h-[100dvh] bg-background text-foreground">{children}</body>
+    </html>
+  );
+}
+```
+
+`ThemeScript` — блокирующий инлайн-скрипт: читает `localStorage` и ставит `data-theme` **до первой отрисовки**. Без него SSR-HTML всегда тёмный, и у пользователя со светлой темой будет вспышка. Модуль без `"use client"`: его можно импортировать из серверного `layout.tsx`.
+
+`suppressHydrationWarning` на `<html>` нужен, потому что скрипт меняет `data-theme` до гидрации React.
+
+Параметры должны совпадать с провайдером:
+
+```tsx
+<ThemeScript storageKey="burne-ui-theme" defaultTheme="system" />
+// …
+<BurneUIProvider defaultTheme="system" storageKey="burne-ui-theme">
+```
+
+Альтернатива без JSX — строка для `index.html` / CSP:
+
+```ts
+import { getThemeScript } from "burne-ui";
+
+getThemeScript({ storageKey: "burne-ui-theme", defaultTheme: "dark" });
+```
+
+### `"use client"` в пакете
+
+Barrel `burne-ui` / `burne-ui/internal`, `cn`, токены и `ThemeScript` **не** начинаются с `"use client"`. Директива стоит на модулях с React / GSAP и на compound-фасадах (`Object.assign` на клиентский импорт), например `Button/index.js`, `Dialog.js`. `burne-ui/authoring` — клиентский вход: `createMotionScope` (тип `MotionScope` для `.d.ts` пакета), `useMotionPart`, `mergeRefs`, `mergeAsChildProps`, `useControllableState`, `focusOnOpen` / `focusPanelOnOpen` / `focusKeyboard`, хелперы `data-*` и `useSkinSlot`. Типы того же входа: `MotionController`, `MotionMapWithEvents`, `MotionPartPhases`, `MotionStateHostProps`, `MotionScopeValue`, `Prettify`. `MotionRun` и `MotionBroadcastOptions` отдаёт корень `burne-ui`. Снимок рантайм-имён — `docs/authoring-api.snapshot.txt`. Слоты скина стороннего пакета — `SkinSlotRegistry` и `registerSkinSlots` в `burne-ui/skin`. Страница сайта — `/docs/motion-authoring`. `burne-ui/studio` в 2.x экспериментальный до поставки студии: снимок `docs/studio-api.snapshot.txt` фиксирует имена, форма `validateDesign` и литералы контролов схемы остаются свободными. `defineSkin` / `defineSkinRecipe` импортируются из `burne-ui/skin`.
+
+**Simple API** с сериализуемыми пропами можно рендерить из Server Component. Тот же импорт с подпути (`burne-ui/Button`):
+
+```tsx
+// app/page.tsx — без "use client"
+import { Alert, Button, Text } from "burne-ui";
+
+export default function Page() {
+  return (
+    <>
+      <Alert title="Готово" description="Только сериализуемые пропы." />
+      <Button variant="primary">Нажми меня</Button>
+      <Text>Заголовок с сервера</Text>
+    </>
+  );
+}
+```
+
+**Compound** (`Card.Title`, `Dialog.Panel`) и пропы-функции (`onClick`, фабрики в `motion`, `motionController`, render-prop) — только в файле с `"use client"`. React не даёт читать свойство клиентского модуля с сервера:
+
+```text
+Cannot access Card.Title on the server. You cannot dot into a client module from a server component.
+```
+
+Своя компоновка частей на серверной странице — маленькая client-обёртка, серверный контент через `children`:
+
+```tsx
+// components/pricing-card.tsx
+"use client";
+
+import { Card } from "burne-ui";
+
+export function PricingCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>{title}</Card.Title>
+      </Card.Header>
+      {children}
+    </Card>
+  );
+}
+```
+
+```tsx
+// app/page.tsx — без "use client"
+import { Text } from "burne-ui";
+import { PricingCard } from "@/components/pricing-card";
+
+export default function Page() {
+  return (
+    <PricingCard title="Pro">
+      <Text>Этот абзац пришёл с сервера.</Text>
+    </PricingCard>
+  );
+}
+```
+
+`"use client"` в **вашем** файле нужен ещё если там же есть хуки / браузерные API (`useState`, `configureMotion` в `useLayoutEffect`) — как в client-провайдере ниже. Плоские имена вроде `CardTitle` кит не экспортирует.
+
+---
+
+## 5. Рекомендуемая структура провайдеров
+
+```text
+app/
+  globals.css
+  layout.tsx
+  burne-theme.ts          # стартовый конфиг (scaffold / init) или Copy config с сайта
+components/
+  providers/
+    app-providers.tsx
+```
+
+```tsx
+// components/providers/app-providers.tsx
+"use client";
+
+import { BurneUIProvider } from "burne-ui";
+import burneTheme from "@/burne-theme";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider config={burneTheme} defaultTheme="system" toast>
+      {children}
+    </BurneUIProvider>
+  );
+}
+```
+
+`BurneUIProvider` объединяет:
+
+- **ThemeProvider** — `data-theme` (`light` | `dark` | `system`), опционально `localStorage`
+- **токены** — shared `config.tokens` + цвета `config.colors.light` / `colors.dark` (или проп `tokens`)
+- **motion** — overlay `config.motion` на это дерево (`MotionConfigProvider`); `configureMotion()` — app default
+- **labels** — дефолтные accessible / UI-строки (`Close`, `Search`, Pagination…); проп `labels` или `config.labels`
+- **Toast.Provider** — по умолчанию включён (`toast={false}` чтобы отключить)
+
+Локализация дефолтных aria-строк:
+
+```tsx
+import { BurneUIProvider, BURNE_LABELS_RU } from "burne-ui";
+
+<BurneUIProvider config={burneTheme} labels={BURNE_LABELS_RU}>
+  {children}
+</BurneUIProvider>
+
+// или точечно:
+<BurneUIProvider labels={{ close: "Закрыть", openSearch: "Открыть поиск" }}>
+  {children}
+</BurneUIProvider>
+```
+
+Пресет `BURNE_LABELS_RU`, словарь `DEFAULT_BURNE_LABELS`, хуки `useBurneLabels` / `useBurneLabel`. Явный `aria-label` на компоненте всегда побеждает дефолт.
+
+Только тема без тостов/токенов:
+
+```tsx
+import { ThemeProvider, useBurneTheme } from "burne-ui";
+
+<ThemeProvider defaultTheme="dark" storageKey="burne-ui-theme">
+  {children}
+</ThemeProvider>
+```
+
+```tsx
+// app/layout.tsx
+import { ThemeScript } from "burne-ui";
+import { AppProviders } from "@/components/providers/app-providers";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ru" suppressHydrationWarning>
+      <head>
+        <ThemeScript defaultTheme="system" />
+      </head>
+      <body>
+        <AppProviders>{children}</AppProviders>
+      </body>
+    </html>
+  );
+}
+```
+
+### Конфиг с playground сайта
+
+1. Настройте тему в theme builder на сайте (пресеты цветов/шрифтов живут **на сайте**, не в npm-пакете).
+2. **Copy config** — в буфер попадёт файл `burne-theme.ts` (`tokens` + `colors.light` / `colors.dark` + `motion`).
+3. Сохраните его в проект (замените стартовый) и передайте в провайдер:
+
+```tsx
+import { BurneUIProvider } from "burne-ui";
+import burneTheme from "./burne-theme";
+
+<BurneUIProvider config={burneTheme}>{children}</BurneUIProvider>
+```
+
+### Можно ли править «стандартную» тему?
+
+Да. Стартовый `burne-theme.ts` — это **ваш** снимок дефолтных light/dark палитр + shared tokens. Меняйте любые ключи в `colors.dark` / `colors.light` (включая `primary`, `border`, hover, status foregrounds) и поля в `tokens` / `motion`. Частичный объект тоже ок: незаданные ключи берутся из дефолтов кита.
+
+Альтернатива: **Copy CSS** → `burne-theme-overrides.css` (без JS runtime), см. §7.
+
+### Проектные переменные и автоматические контролы
+
+`customTokens` позволяет хранить CSS-переменные приложения рядом с темой. Ключ всегда начинается
+с `--`. Простые значения получают контрол автоматически; объект добавляет подпись, диапазон,
+единицу измерения или отдельные light/dark-значения:
+
+```ts
+import type { BurneThemeConfig } from "burne-ui";
+
+const burneTheme = {
+  theme: "dark",
+  customTokens: {
+    "--app-brand": "#38bdf8",
+    "--app-compact-navigation": false,
+    "--app-sidebar-width": {
+      value: 320,
+      unit: "px",
+      label: "Sidebar width",
+      group: "Application",
+      control: "slider",
+      min: 240,
+      max: 480,
+      step: 4,
+    },
+    "--app-hero-glow": {
+      values: {
+        dark: "oklch(72% 0.16 230)",
+        light: "oklch(58% 0.18 240)",
+      },
+      label: "Hero glow",
+      control: "color",
+    },
+  },
+} satisfies BurneThemeConfig;
+
+export default burneTheme;
+```
+
+`BurneUIProvider` применяет эти значения в production. `burne-ui-devtools` читает тот же конфиг и
+автоматически добавляет соответствующие поля в секцию Custom tokens.
+
+### Devtools темы
+
+Редактор ставится как dev dependency. Для burne-ui 2.0 это `burne-ui-devtools@0.2`. Версии 0.2 в npm ещё нет: опубликованная `0.1.5` собрана под burne-ui 1.x (peer `^1.6.2`) и рядом с 2.0 не устанавливается.
+
+```bash
+npm install -D burne-ui-devtools@0.2
+```
+
+Компонент должен находиться внутри `BurneUIProvider`: он использует runtime preview Provider,
+поэтому не записывает токены параллельно с ним.
+
+Vite:
+
+```tsx
+import { lazy, Suspense } from "react";
+
+const ThemeDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("burne-ui-devtools").then(({ BurneThemeDevtools }) => ({
+        default: BurneThemeDevtools,
+      })),
+    )
+  : null;
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider config={burneTheme}>
+      {children}
+      {ThemeDevtools ? (
+        <Suspense fallback={null}>
+          <ThemeDevtools />
+        </Suspense>
+      ) : null}
+    </BurneUIProvider>
+  );
+}
+```
+
+Next.js App Router (`components/providers/app-providers.tsx`, обязательно client component):
+
+```tsx
+"use client";
+
+import dynamic from "next/dynamic";
+
+const ThemeDevtools =
+  process.env.NODE_ENV === "development"
+    ? dynamic(
+        () => import("burne-ui-devtools").then((module) => module.BurneThemeDevtools),
+        { ssr: false },
+      )
+    : () => null;
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider config={burneTheme}>
+      {children}
+      <ThemeDevtools />
+    </BurneUIProvider>
+  );
+}
+```
+
+В панели доступны live preview, light/dark, пресеты, Shuffle (рандомный цветовой пресет +
+Scale + шрифты, без motion), Reset, Copy CSS, Copy config и Download `burne-theme.ts`.
+Изменения сохраняются только в браузерном devtools storage; исходный файл автоматически не
+перезаписывается.
+
+Диапазоны слайдеров (min / max / step) задаются в пакете `burne-ui-devtools` в файле
+`src/BurneThemeDevtools/burneThemeDevtoolsData.ts` (`SCALE_CONTROLS`, `SHADOW_CONTROLS`,
+`MOTION_*`).
+
+Подключите стили панели рядом с `burne-ui/styles.css`:
+
+```css
+@import "burne-ui/styles.css";
+@import "burne-ui-devtools/styles.css";
+```
+
+#### Шрифты в пресетах
+
+Пресеты sans/mono в редакторе задают только CSS-стек (`--font-family-sans` /
+`--font-family-mono`). Файлы Google Fonts **подгружаются лениво** при выборе
+пресета или при восстановлении снимка из localStorage (`ensureThemeFontLoaded`):
+один stylesheet на семейство, плюс `preconnect` к Google Fonts. Системные
+стеки сеть не трогают.
+
+В production редактор обычно не монтируется — выбранный шрифт нужно подключить
+самим (self-host, `next/font`, или один `<link>` на нужные семейства). Export
+config копирует только строку `fontFamily`, не файлы шрифтов.
+
+Для документации / layout можно взять готовые URL всех пресетов:
+
+```ts
+import { THEME_SANS_FONTS_URL, THEME_MONO_FONTS_URL, ensureThemeFontLoaded } from "burne-ui-devtools";
+```
+
+---
+
+## 6. Светлая и тёмная тема
+
+Светлая тема включается атрибутом на корне (это делает `ThemeProvider` / `BurneUIProvider`):
+
+```html
+<html data-theme="light">
+```
+
+### SSR без вспышки темы
+
+На сервере `localStorage` недоступен — HTML уходит с дефолтной (тёмной) темой. `useLayoutEffect` в провайдере ставит `data-theme` слишком поздно: браузер успевает отрисовать неверный кадр.
+
+Решение — `ThemeScript` / `getThemeScript` в корневом layout **до** контента (см. [§4](#4-базовый-layout-nextjs-app-router)). Провайдер потом синхронизирует React-state с уже выставленным атрибутом.
+
+Runtime-переключатель:
+
+```tsx
+"use client";
+
+import { useBurneTheme } from "burne-ui";
+
+export function ThemeToggle() {
+  const { theme, setTheme, resolvedTheme } = useBurneTheme();
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
+    >
+      {theme}
+    </button>
+  );
+}
+```
+
+Портальные компоненты (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, `Toast`, `Popover`, `Dropdown`) наследуют тему с якоря/триггера или с `<html>`.
+
+---
+
+## 7. Кастомизация дизайн-токенов
+
+Переопределяйте CSS-переменные **после** импорта `burne-ui/styles.css`:
+
+```css
+/* app/burne-theme-overrides.css */
+:root {
+  --color-primary: #6366f1;
+  --color-surface: #121212;
+  --space: 0.5625rem;   /* фиксированный rem — без fluid по viewport */
+  --size: 1.0625rem;
+  --radius: 0.625rem;
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="light"] {
+  --color-primary: #4f46e5;
+}
+```
+
+Ручки `tokens.space` / `size` / `radius` пишут фиксированный `rem`, как лист кита. `applyThemeTokens` и `exportThemeCss` ставят одно и то же значение. Fluid — отдельный opt-in: `--space: var(--space-fluid)`, `--size: var(--size-fluid)`, `--radius: var(--radius-fluid)`. Shadow-knobs (`--shadow-opacity|blur|spread|offset-*`) по-прежнему множители.
+
+`applyThemeTokens` / theme config пишут **инлайн только токены, отличающиеся от дефолтов кита**. Остальные переменные остаются из `styles.css` — точечный CSS-оверрайд (`--color-primary` в файле выше) по-прежнему работает для всего, что не задано в конфиге.
+
+```css
+/* globals.css */
+@import "tailwindcss";
+@source "../app/**/*.{tsx,ts}";
+@source "../components/**/*.{tsx,ts}";
+
+@import "burne-ui/styles.css";
+@import "./burne-theme-overrides.css";
+```
+
+Из JS:
+
+```ts
+import { designTokenNames, colorToken } from "burne-ui";
+
+const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ripple-neutral)
+```
+
+Переменные наследуются по DOM — можно задать их на обёртке виджета вместо `html`.
+
+---
+
+## 8. Конфигурация анимаций (`configureMotion` + scoped overlay)
+
+Burne UI использует **GSAP**. Поведение hover-lift, press-squeeze, ripple, async-кнопок, Loading dots и др. настраивается через overlay на дереве и опциональный app default.
+
+**Канон приложения:** knobs в `burne-theme.ts` (`config.motion`) → `<BurneUIProvider config={burneTheme}>`. Overlay на это дерево (`MotionConfigProvider`); отдельный `configureMotion()` не нужен. Обычное приложение = один провайдер. Два `BurneUIProvider` на странице могут иметь разный motion, как разные цвета. Порталы наследуют config через React context.
+
+`applyThemeTokens` пишет только CSS `--motion-surface-duration` на переданный root и **не** вызывает `configureMotion` (CSS без провайдера **не** меняет GSAP). Theme editor (playground / site) после apply сам зовёт `configureMotion(motionConfigFromThemeState(state))`.
+
+### App default: где вызывать `configureMotion`
+
+| Среда | Место |
+|-------|--------|
+| Vite / CRA | `main.tsx` до `createRoot(...).render(...)` |
+| Next.js | Client-провайдер в `layout.tsx`; предпочтительно **`useLayoutEffect`**, не `useEffect` |
+
+### Пример (Next.js)
+
+```tsx
+"use client";
+
+import { configureMotion } from "burne-ui";
+import { useLayoutEffect } from "react";
+
+export function MotionProvider({ children }: { children: React.ReactNode }) {
+  useLayoutEffect(() => {
+    configureMotion({
+      interactiveDuration: 280,
+      tooltipDuration: 200,
+      expandDuration: 320,
+      modalDuration: 280,
+      enableAnimations: true, // master kill-switch
+      enableHoverLift: true,
+      enablePressSqueeze: true,
+      enableRipple: true,
+      enableProgressFill: true,
+      enableLoadingDots: true,
+      enableModalMotion: true,
+    });
+  }, []);
+
+  return <>{children}</>;
+}
+```
+
+### Основные группы `MotionConfig`
+
+| Группа | Ключи |
+|--------|--------|
+| Тайминги / easing (GSAP) | `interactiveDuration`, `pressSqueezeDurationFactor`, `modalDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `progressIndeterminateDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
+| CSS surface transitions | `surfaceTransitionDuration` → пишет `--motion-surface-duration` (утилиты `surface-color-transition`, `animate-shadow`, …) |
+| Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
+| Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
+| Master kill-switch | `enableAnimations` — `false` отключает все feature-флаги одним ключом (`isMotionFeatureEnabled`) |
+| Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableProgressFill`, `enableLoadingDots`, `enableModalMotion`, `enableSwitchThumb`, `enableTabsIndicator`, `enablePaginationFlip`, `enableSelectionFill` |
+
+Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа). Диапазоны валидации — **`MOTION_CONFIG_LIMITS`**.
+
+`configureMotion` безопасен на SSR (`document` не читается). Невалидные поля пропускаются (dev `console.warn`), finite вне диапазона клампятся; остальные overrides применяются. `*Ease` — GSAP passthrough; `rippleEaseCss` — только `cubic-bezier(...)`.
+
+Библиотека учитывает **`prefers-reduced-motion: reduce`**. Config, overlay и OS reduced-motion читаются на **новом play**; уже идущая фаза (hover / modal enter) доигрывает со снимком старта. Циклы вроде Loading dots / ProgressBar indeterminate пересобираются, потому что их эффект подписан на `useMotionConfig()`.
+
+### Open-after-squeeze
+
+`runOpenAfterSqueeze` (Popover / Dropdown / Dialog / Drawer / Select / ComboBox / AlertDialog) ждёт окончания press-squeeze, затем открывает. Длительность = `interactiveDuration × pressSqueezeDurationFactor` (`motionPressSqueezeTotal()`, дефолт 280 × 1.15 ≈ 322 ms). Механика variant-agnostic (дефолт — standard squeeze); опциональный `runSqueeze` — точка для surface-плагинов (будущий gloss), без ветвления `isGloss` в ядре.
+
+```ts
+configureMotion({
+  interactiveDuration: 280,
+  pressSqueezeDurationFactor: 1.15, // быстрее open → меньше factor
+});
+```
+
+### Intentional motion constants
+
+Эти значения **намеренно не** вынесены в `configureMotion` — это feel/layout-константы кита. Менять только вместе с редизайном motion:
+
+| Константа | Где | Назначение |
+|-----------|-----|------------|
+| Squeeze timeline split (`pressIn = total×0.3`, release `total` / `total×0.5`) | `hoverInteractiveLift.ts`, `glossInteractiveMotion.ts` | Форма press-in / release внутри squeeze |
+| `ADAPTIVE_SQUEEZE_TARGET_PX` / `MIN_DELTA`, `ADAPTIVE_LIFT_TARGET_PX` / `MIN_DELTA` | `hoverInteractiveLift.ts` | Адаптивная амплитуда squeeze/lift в px |
+| `MODAL_PANEL_SCALE_FROM` (`0.97`) | `modalSurfaceMotion.ts` | Стартовый scale панели модалки |
+| `RIPPLE_MIN_SCALE` (`0.12`) | `pressRipple.tsx` | Минимальный «core» converge-ripple |
+| `TOAST_STACK_PEEK_PX` / `SCALE_STEP` / `ENTRY_OFFSET_PX` | `toastAPI.ts` | Геометрия стека тостов |
+| `GLOSS_DECOR` + `GLOSS_SHINE_*` | `glossInteractiveMotion.ts` | Траектории shine/conic gloss |
+
+### Важно при live-theme builder
+
+Если `configureMotion()` вызывается при каждом движении слайдера темы, **дедуплируйте** вызовы с одинаковыми значениями: каждый вызов увеличивает revision и пересоздаёт GSAP-тween'ы у React-подписчиков (Loading dots и др.), что нагружает CPU. Уже идущие slot-фазы (hover-lift, enter диалога) **не** пересобираются — действует следующий play.
+
+---
+
+## 9. Toast
+
+Обёрните приложение в провайдер — иначе `useToast()` не работает:
+
+```tsx
+"use client";
+
+import { Toast } from "burne-ui";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <Toast.Provider defaultPlacement="bottom-center">
+      {children}
+    </Toast.Provider>
+  );
+}
+```
+
+```tsx
+"use client";
+
+import { Button, useToast } from "burne-ui";
+
+export function SaveButton() {
+  const { toast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        toast.success("Сохранено", {
+          description: "Изменения успешно применены",
+        })
+      }
+    >
+      Сохранить
+    </Button>
+  );
+}
+```
+
+API: `toast.show`, `toast.success`, `toast.danger`, `toast.warning`, `toast.info`, `toast.promise`, `toast.dismiss`.
+
+---
+
+## 10. Пакет компонентов
+
+`create-burne-app --template component-package` собирает библиотеку поверх кита: peer `burne-ui@^2.0.0`, сборка `tsc`, Storybook, контракт слотов.
+
+```bash
+npm create burne-app@latest my-notes -- --template component-package
+```
+
+В шаблоне `Callout`: simple `label` и compound `Callout.Title`, `classNames` (`root`, `title`), `motion` и `motionController` через `burne-ui/authoring`. `npm test` проверяет то же, что китовый контракт слотов: слот и часть на одном узле, `ref` на этом узле, `motionController.getTarget` находит слот, пользовательский `className` на `root` стоит после `classNames.root`.
+
+Стили пакета Tailwind видит строкой `@source`. CLI подставляет имя пакета:
+
+```css
+@source "../node_modules/<name>/src/**/*.{tsx,ts}";
+```
+
+Слот скина: `declare module "burne-ui/skin"` (`SkinSlotRegistry`) и `registerSkinSlots(["callout.root", "callout.title"])`. Проверка файла скина: `burne-ui skin validate --slot callout.root --slot callout.title`.
+
+---
+
+## 11. Утилита `cn`
+
+```ts
+import { cn } from "burne-ui";
+
+<div className={cn("flex gap-large", className)} />
+```
+
+`clsx` + `tailwind-merge` уже в зависимостях пакета.
+
+---
+
+## 12. Частые проблемы
+
+### `You cannot dot into a client module`
+
+Next.js пишет `Cannot access Card.Title on the server` (или другое `X.Y`), если compound-часть читают из Server Component. Simple API с сериализуемыми пропами остаётся на сервере. Своя раскладка частей — client-обёртка, контент с сервера через `children`. Разбор и пример `PricingCard` — в [§4](#use-client-в-пакете).
+
+### Стили «сломаны», компонент без оформления
+
+1. Подключён ли `import "burne-ui/styles.css"`?
+2. Tailwind v4 сканирует ваш код (`@source` на `app/`, `components/`)?
+3. Override-токены идут **после** импорта `burne-ui/styles.css`?
+
+### `useToast()` падает или toast не показывается
+
+- Нет `<Toast.Provider>` выше по дереву.
+
+### Тема не переключается
+
+- `data-theme="light"` должен быть на `<html>` (или на предке портала), не на вложенном `div` без наследования.
+
+### Вспышка светлой/тёмной темы при загрузке (SSR)
+
+- Нет `ThemeScript` (или `getThemeScript`) в root layout — добавьте в `<head>` (см. [§4](#4-базовый-layout-nextjs-app-router)).
+- `storageKey` / `defaultTheme` у скрипта и у `BurneUIProvider` / `ThemeProvider` должны совпадать.
+- На `<html>` нужен `suppressHydrationWarning`.
+
+### Overlay-слои кнопки видны вместе с текстом
+
+- Simple API не монтирует `Button.Loader` / `Success` / `Error`. Если вы их ставили сами — CSS rest (`invisible opacity-0`) скрывает до `motion.states`.
+- В каждом режиме `createMotionStates` перечислите все overlay-слоты, иначе поза останется.
+
+### Анимации не меняются после `configureMotion` / темы
+
+- Канон — `config.motion` на `BurneUIProvider`. Голый `applyThemeTokens` без провайдера пишет только CSS `--motion-surface-duration`, GSAP не трогает.
+- Уже идущая фаза (hover / enter) не пересобирается — config действует со **следующего** play.
+- `configureMotion` слишком поздно (`useEffect` после paint) — используйте `useLayoutEffect`.
+- Вызов не в client boundary (`"use client"`).
+- Поле отброшено валидацией (`NaN` / не boolean / пустой ease) — в dev смотрите `console.warn`; диапазоны в `MOTION_CONFIG_LIMITS`.
+
+### Высокая нагрузка CPU в dev (Next.js)
+
+1. Уберите `@source` на весь `node_modules/burne-ui/dist`, если достаточно `burne-ui/styles.css`.
+2. Не вызывайте `configureMotion` на каждый tick theme UI без дедупликации.
+3. Изолируйте тяжёлые theme-панели: не подписывайте весь layout на context темы, если перерисовывается только sidebar.
+
+---
+
+## 13. Checklist первой настройки
+
+- [ ] Целевые браузеры ≥ Chrome 111 / Safari 16.4 / Firefox 128 (см. [Браузеры](#браузеры))
+- [ ] Установлены `burne-ui` и `gsap` (peers); `react-icons` — если нужны свои иконки
+- [ ] Подключён `burne-ui/styles.css`
+- [ ] Tailwind v4: `@source` на код приложения
+- [ ] Актуальный `burne-ui` (gloss blur CSS + Button async first-paint hide); для тяжёлых demo можно `ssr: false`
+- [ ] (SSR / Next.js) `ThemeScript` в root layout + `suppressHydrationWarning` на `<html>`
+- [ ] (SSR / Next.js) Simple API на сервере; compound и обработчики — в client-файле (см. [`"use client"`](#use-client-в-пакете))
+- [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
+- [ ] (Опционально) motion: `config.motion` в `burne-theme.ts` / проп `motion` на `BurneUIProvider`, либо app default `configureMotion(...)` в client-провайдере через `useLayoutEffect`
+- [ ] (Если нужны toast) `Toast.Provider` в корне
+
+После этого библиотека готова к использованию; кастомизация — через CSS-токены на `:root` / `[data-theme="light"]`, `config.motion` на `BurneUIProvider` и при необходимости `configureMotion()`.
+
+---
+
+## 14. Связанные материалы
+
+- [README.md](../README.md) — обзор API, dual API полей, миграция `hint`, **`classNames` / `Prettify`**, **браузеры**
+- [CHANGELOG.md](../CHANGELOG.md) — breaking changes между версиями
+- `playground/` в репозитории — theme builder и каталог компонентов (Vite, client-only)

@@ -1,0 +1,33 @@
+import { useState } from "react";
+
+import { Text } from "@/components/core/Text";
+import { TimeField } from "@/components/core/TimeField";
+
+export function TimeFieldSegmentedRowDemo() {
+  const [start, setStart] = useState("08:00");
+  const [end, setEnd] = useState("17:30");
+
+  return (
+    <div className="flex w-full max-w-lg flex-col gap-large">
+      <Text as="p" textStyle="small" className="font-medium">
+        Delivery interval
+      </Text>
+      <div className="flex flex-wrap items-end gap-large">
+        <TimeField compact>
+          <TimeField.Label>From</TimeField.Label>
+          <TimeField.Control variant="segmented" value={start} onValueChange={setStart} />
+        </TimeField>
+        <Text as="span" textStyle="xsmall" className="pb-small text-muted">
+          —
+        </Text>
+        <TimeField compact>
+          <TimeField.Label>To</TimeField.Label>
+          <TimeField.Control variant="segmented" value={end} onValueChange={setEnd} />
+        </TimeField>
+      </div>
+      <Text as="p" textStyle="xsmall" className="text-muted">
+        Two compact compound TimeField with segmented variant.
+      </Text>
+    </div>
+  );
+}

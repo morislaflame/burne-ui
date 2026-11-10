@@ -1,37 +1,39 @@
-import type { ComponentType, FormEvent } from "react";
+import type { ComponentType } from "react";
 import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
+import { IoSearchOutline } from "react-icons/io5";
 
 import { Checkbox } from "@/components/core/Checkbox";
-import { Button } from "@/components/core/Button/Button";
-import { Input } from "@/components/core/Input/Input";
-import type { SelectorOption } from "@/components/core/Selector";
-import { Selector } from "@/components/core/Selector";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/Input";
+import type { ComboBoxItem } from "@/components/core/ComboBox";
+import { ComboBox } from "@/components/core/ComboBox";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
-import { Form } from "./Form";
+import { Surface } from "@/components/core/Surface";
+import { Text } from "@/components/core/Text";
+import type { FormValues } from "./formTypes";
+import { Form } from "./index";
+import { FormSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/form/slotMotion/gallery";
+import { FormMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/form/motionController/gallery";
+import { Label } from "@/components/core/Label";
 
-const localeOptions: SelectorOption[] = [
-  {
-    value: "ru",
-    label: "Русский",
-    description: "Интерфейс и письма на русском",
-  },
-  {
-    value: "en",
-    label: "English",
-    description: "UI and emails in English",
-  },
-  {
-    value: "de",
-    label: "Deutsch",
-    description: "Oberfläche und E-Mails auf Deutsch",
-  },
+const localeOptions: ComboBoxItem[] = [
+  { value: "ru", label: "Russian", hint: "UI and emails in Russian" },
+  { value: "en", label: "English", hint: "UI and emails in English" },
+  { value: "de", label: "Deutsch", hint: "Oberfläche und E-Mails auf Deutsch" },
+];
+
+const countryOptions: ComboBoxItem[] = [
+  { value: "ru", label: "Russia" },
+  { value: "kz", label: "Kazakhstan" },
+  { value: "by", label: "Belarus" },
 ];
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -54,74 +56,708 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 function ProfileForm() {
-  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
   }, []);
 
-  const [locale, setLocale] = useState("ru");
-
   return (
-    <Form onSubmit={onSubmit} aria-label="Пример формы">
-      <Selector
-        label="Язык интерфейса"
-        hint="В списке видно описание; в поле — только название."
-        placeholder="Выберите язык"
-        options={localeOptions}
-        value={locale}
-        onValueChange={setLocale}
-      />
-      <Input
-        label="Имя"
-        name="name"
-        placeholder="Иван"
-        autoComplete="name"
-        isRequired
-      />
-      <Input
-        label="Email"
-        name="email"
-        inputType="text"
-        placeholder="you@example.com"
-        autoComplete="email"
-        isRequired
-      />
-      
-      <Input
-        label="Пароль"
-        name="password"
-        inputType="password"
-        hint="Не менее 8 символов."
-        autoComplete="new-password"
-        isRequired
-      />
-      <Input
-        label="Аватар"
-        name="avatar"
-        inputType="file"
-        accept="image/*"
-        placeholder="PNG или JPEG"
-      />
-      <CheckboxGroup
-        title="Уведомления"
-        description="Один канал: при выборе другого предыдущий снимается."
-        selection="single"
-        isRequired
-      >
-        <Checkbox name="channels" value="email" label="Email" />
-        <Checkbox name="channels" value="push" label="Push в приложении" />
-      </CheckboxGroup>
-      <div className="flex justify-end gap-plus pt-base">
+    <Form
+      onSubmit={onSubmit}
+      aria-label="Sample form"
+      defaultValues={{ locale: "ru" }}
+      rules={{
+        name: { required: "Enter a name" },
+        email: {
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Enter a valid email",
+          },
+        },
+        password: {
+          required: "Password is required",
+          minLength: { value: 8, message: "At least 8 characters" },
+        },
+      }}
+    >
+      <Form.Header>
+        <Form.Title>Profile</Form.Title>
+        <Form.Description>Account details and notifications.</Form.Description>
+      </Form.Header>
+      <Form.Section>
+        <Form.Field name="locale">
+          <ComboBox name="locale" items={localeOptions}>
+            <ComboBox.Label>Interface language</ComboBox.Label>
+            <ComboBox.Shell>
+              <ComboBox.Input placeholder="Select language" />
+              <ComboBox.Trigger />
+            </ComboBox.Shell>
+            <ComboBox.Popover />
+            <ComboBox.Hint>Description is visible in the list; the field shows only the name.</ComboBox.Hint>
+          </ComboBox>
+        </Form.Field>
+        <Form.Field name="name">
+          <Input required name="name" label="Name" placeholder="Ivan" autoComplete="name" />
+        </Form.Field>
+        <Form.Field name="email">
+          <Input
+            required
+            name="email"
+            label="Email"
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
+        </Form.Field>
+        <Form.Field name="password">
+          <Input
+            required
+            name="password"
+            label="Password"
+            type="password"
+            autoComplete="new-password"
+            hint="At least 8 characters."
+          />
+        </Form.Field>
+        <Input name="avatar" label="Avatar" type="file" accept="image/*" placeholder="PNG or JPEG" />
+      </Form.Section>
+      <Form.Section>
+        <CheckboxGroup selectionMode="single" required>
+          <CheckboxGroup.Legend>
+            <Label>Notifications</Label>
+            <CheckboxGroup.Hint>
+              Single channel: selecting another clears the previous one.
+            </CheckboxGroup.Hint>
+          </CheckboxGroup.Legend>
+          <CheckboxGroup.List>
+            <Checkbox name="channels" value="email" label="Email" />
+            <Checkbox name="channels" value="push" label="In-app push" />
+          </CheckboxGroup.List>
+        </CheckboxGroup>
+      </Form.Section>
+      <Form.Actions>
         <Button type="button" variant="outline" size="base">
-          Отмена
+          Cancel
         </Button>
-        <Button type="submit" variant="default" size="base">
-          Сохранить
+        <Button type="submit" variant="primary" size="base">
+          Save
         </Button>
-      </div>
+      </Form.Actions>
     </Form>
   );
 }
 
 export const Default: Story = {
   render: () => <ProfileForm />,
+};
+
+export const SubmitInteraction: Story = {
+  name: "Interaction: submit",
+  render: () => <ProfileForm />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByPlaceholderText("Ivan"), "Ivan");
+    await userEvent.click(canvas.getByRole("button", { name: "Save" }));
+    await expect(canvas.getByPlaceholderText("Ivan")).toHaveValue("Ivan");
+  },
+};
+
+function ValidationForm() {
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
+  }, []);
+
+  return (
+    <Form
+      onSubmit={onSubmit}
+      validateMode="onBlur"
+      aria-label="Form with validation errors"
+      rules={{
+        email: {
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Enter a valid address.",
+          },
+        },
+        consent: { required: "You must accept the terms." },
+        locale: { required: "Select a language from the list." },
+      }}
+    >
+      <Form.Header>
+        <Form.Title>Contact</Form.Title>
+      </Form.Header>
+      <Form.Section>
+        <Form.Field name="email">
+          <Input
+            required
+            name="email"
+            label="Email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            hint="Format: name@domain.tld"
+          />
+        </Form.Field>
+        <Form.Field name="locale">
+          <ComboBox name="locale" required items={localeOptions}>
+            <ComboBox.Label>Interface language</ComboBox.Label>
+            <ComboBox.Shell>
+              <ComboBox.Input placeholder="Select language" />
+              <ComboBox.Trigger />
+            </ComboBox.Shell>
+            <ComboBox.Popover />
+            <ComboBox.Error />
+          </ComboBox>
+        </Form.Field>
+      </Form.Section>
+      <Form.Section>
+        <Form.Field name="consent">
+          <Checkbox name="consent" label="Consent to data processing" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Actions>
+        <Button type="submit" variant="primary" size="base">
+          Submit
+        </Button>
+      </Form.Actions>
+    </Form>
+  );
+}
+
+export const Validation: Story = {
+  name: "Validation onBlur",
+  render: () => <ValidationForm />,
+};
+
+/** Review 3.9: ErrorSummary render prop lists field errors. */
+export const ErrorSummaryRender: Story = {
+  name: "ErrorSummary render prop",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Form` prop `errorSummary` (or `Form.ErrorSummary` children) accepts `(entries) => ReactNode` for a custom error list.",
+      },
+    },
+  },
+  render: () => (
+    <Form
+      aria-label="Form with custom error summary"
+      validateMode="onSubmit"
+      classNames={{ errorSummary: "not-sr-only mb-base rounded-base border border-danger/30 bg-danger/5 p-base text-danger" }}
+      rules={{
+        email: { required: "Email is required" },
+        name: { required: "Name is required" },
+      }}
+      errorSummary={(entries) => (
+        <ul className="list-disc ps-large">
+          {entries.map(([field, message]) => (
+            <li key={field}>
+              <a href={`#${field}`} className="underline">
+                {message}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      onSubmit={() => undefined}
+    >
+      <Form.Header>
+        <Form.Title>Profile</Form.Title>
+      </Form.Header>
+      <Form.Section>
+        <Form.Field name="name">
+          <Input required name="name" id="name" label="Name" />
+        </Form.Field>
+        <Form.Field name="email">
+          <Input required name="email" id="email" label="Email" autoComplete="email" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Actions>
+        <Button type="submit" variant="primary">
+          Submit
+        </Button>
+      </Form.Actions>
+    </Form>
+  ),
+};
+
+function LoginForm() {
+  return (
+    <Surface variant="secondary" padding="large" className="w-full max-w-sm">
+      <Form
+        aria-label="Sign in"
+        size="mid"
+        rules={{
+          login: { required: "Enter email" },
+          password: { required: "Enter password" },
+        }}
+        onSubmit={(values) => {
+          void values;
+        }}
+      >
+        <Form.Header>
+          <Form.Title>Sign in</Form.Title>
+        </Form.Header>
+        <Form.Section>
+          <Form.Field name="login">
+            <Input required name="login" label="Email" autoComplete="email" />
+          </Form.Field>
+          <Form.Field name="password">
+            <Input
+              required
+              name="password"
+              label="Password"
+              type="password"
+              autoComplete="current-password"
+            />
+          </Form.Field>
+        </Form.Section>
+        <Form.Actions>
+          <Button type="submit" variant="primary" className="w-full">
+            Sign in
+          </Button>
+        </Form.Actions>
+      </Form>
+    </Surface>
+  );
+}
+
+export const Login: Story = {
+  name: "Login (compact)",
+  render: () => <LoginForm />,
+};
+
+function ControlledForm() {
+  const [values, setValues] = useState<FormValues>({ name: "Anna", email: "" });
+
+  return (
+    <div className="flex flex-col gap-large">
+      <Text as="p" textStyle="small" className="text-muted">
+        Current values: {JSON.stringify(values)}
+      </Text>
+      <Form
+        aria-label="Controlled form"
+        values={values}
+        onValuesChange={setValues}
+        onSubmit={(next) => {
+          void next;
+        }}
+      >
+        <Form.Header>
+          <Form.Title>Controlled</Form.Title>
+        </Form.Header>
+        <Form.Section>
+          <Input name="name" label="Name" />
+          <Input name="email" label="Email" placeholder="you@example.com" />
+        </Form.Section>
+        <Form.Actions>
+          <Button type="submit">Save</Button>
+        </Form.Actions>
+      </Form>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  name: "Controlled values",
+  render: () => <ControlledForm />,
+};
+
+function ValidateOnChangeForm() {
+  return (
+    <Form
+      aria-label="Validation on input"
+      validateMode="onChange"
+      defaultValues={{ promo: "" }}
+      rules={{
+        promo: {
+          minLength: { value: 4, message: "Code must be at least 4 characters" },
+          pattern: { value: /^[A-Z0-9]+$/, message: "Uppercase letters and digits only" },
+        },
+      }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Header>
+        <Form.Title>Promo code</Form.Title>
+        <Form.Description>Error appears while typing.</Form.Description>
+      </Form.Header>
+      <Form.Section>
+        <Form.Field name="promo">
+          <Input name="promo" label="Code" placeholder="SALE2026" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Actions>
+        <Button type="submit">Apply</Button>
+      </Form.Actions>
+    </Form>
+  );
+}
+
+export const ValidateOnChange: Story = {
+  name: "Validation onChange",
+  render: () => <ValidateOnChangeForm />,
+};
+
+function AsyncSubmitForm() {
+  const [submitted, setSubmitted] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-large">
+      {submitted ? (
+        <Text as="p" textStyle="small" className="text-success">
+          Submitted (demo)
+        </Text>
+      ) : null}
+      <Form
+        aria-label="Async submit"
+        rules={{ message: { required: "Enter a message" } }}
+        onSubmit={async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+          setSubmitted(true);
+        }}
+      >
+        <Form.Header>
+          <Form.Title>Feedback</Form.Title>
+        </Form.Header>
+        <Form.Section>
+          <Form.Field name="message">
+            <Input name="message" label="Message" placeholder="Text…" />
+          </Form.Field>
+        </Form.Section>
+        <Form.Actions>
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </Form.Actions>
+      </Form>
+    </div>
+  );
+}
+
+export const AsyncSubmit: Story = {
+  name: "Async submit",
+  render: () => <AsyncSubmitForm />,
+};
+
+function SearchToolbarForm() {
+  return (
+    <Form
+      aria-label="Search"
+      className="flex w-full max-w-xl flex-row items-center gap-small rounded-large border-token bg-tertiary p-xsmall"
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Section className="min-w-0 flex-1">
+        <Input name="q" label="Search" placeholder="Search…" className="[&_label]:sr-only" />
+      </Form.Section>
+      <Button type="submit" variant="primary" iconOnly aria-label="Search">
+        <IoSearchOutline aria-hidden />
+      </Button>
+    </Form>
+  );
+}
+
+export const SearchToolbar: Story = {
+  name: "Horizontal search",
+  render: () => <SearchToolbarForm />,
+};
+
+function BillingForm() {
+  return (
+    <Form
+      aria-label="Payment"
+      defaultValues={{ country: "ru" }}
+      rules={{
+        cardName: { required: "Enter name on card" },
+        cardNumber: {
+          required: "Card number is required",
+          pattern: { value: /^\d{16}$/, message: "16 digits without spaces" },
+        },
+        country: { required: "Select a country" },
+      }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Header>
+        <Form.Title>Payment</Form.Title>
+        <Form.Description>Card details and address.</Form.Description>
+      </Form.Header>
+      <Form.Section>
+        <Text as="h3" textStyle="mid" className="font-medium">
+          Card
+        </Text>
+        <Form.Field name="cardName">
+          <Input name="cardName" label="Name on card" autoComplete="cc-name" />
+        </Form.Field>
+        <Form.Field name="cardNumber">
+          <Input name="cardNumber" label="Number" type="text" placeholder="0000000000000000" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Section>
+        <Text as="h3" textStyle="mid" className="font-medium">
+          Address
+        </Text>
+        <Form.Field name="country">
+          <ComboBox name="country" items={countryOptions} required>
+            <ComboBox.Label>Country</ComboBox.Label>
+            <ComboBox.Shell>
+              <ComboBox.Input />
+              <ComboBox.Trigger />
+            </ComboBox.Shell>
+            <ComboBox.Popover />
+            <ComboBox.Error />
+          </ComboBox>
+        </Form.Field>
+        <Input name="city" label="City" />
+        <Input name="zip" label="ZIP code" />
+      </Form.Section>
+      <Form.Actions>
+        <Button type="button" variant="outline">
+          Back
+        </Button>
+        <Button type="submit" variant="primary">
+          Pay
+        </Button>
+      </Form.Actions>
+    </Form>
+  );
+}
+
+export const Billing: Story = {
+  name: "Multi-section (billing)",
+  render: () => <BillingForm />,
+};
+
+function ReadOnlyForm() {
+  return (
+    <Form
+      aria-label="Read only"
+      readOnly
+      defaultValues={{ name: "Ivan", role: "admin" }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Header>
+        <Form.Title>Profile view</Form.Title>
+        <Form.Description>readOnly mode — fields cannot be edited.</Form.Description>
+      </Form.Header>
+      <Form.Section>
+        <Input name="name" label="Name" readOnly />
+        <Input name="role" label="Role" readOnly />
+      </Form.Section>
+    </Form>
+  );
+}
+
+export const ReadOnly: Story = {
+  name: "Read only",
+  render: () => <ReadOnlyForm />,
+};
+
+function ClassNamesForm() {
+  return (
+    <Form
+      aria-label="classNames customization"
+      classNames={{
+        root: "rounded-large border border-primary/20 bg-tertiary/50 p-large",
+        header: "gap-xsmall",
+        title: "text-primary",
+        description: "text-info",
+        section: "gap-small",
+        actions: "justify-start border-t border-token pt-large",
+        field: "rounded-base bg-background/40 p-small",
+        errorSummary: "not-sr-only mb-base rounded-base border border-danger/30 bg-danger/5 p-base text-danger",
+        announce: "not-sr-only mt-small text-small text-info",
+      }}
+      rules={{ topic: { required: "Topic is required" } }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Header>
+        <Form.Title>classNames</Form.Title>
+        <Form.Description>Slots include errorSummary and announce.</Form.Description>
+      </Form.Header>
+      <Form.Section>
+        <Form.Field name="topic" className="bg-primary/10">
+          <Input name="topic" label="Topic" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Actions>
+        <Button type="submit">Submit</Button>
+      </Form.Actions>
+    </Form>
+  );
+}
+
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
+  render: () => <ClassNamesForm />,
+};
+
+function ResolverForm() {
+  return (
+    <Form
+      aria-label="Form with resolver"
+      defaultValues={{ login: "" }}
+      resolver={async (values) => {
+        const errors: Record<string, string> = {};
+        if (typeof values.login !== "string" || values.login.length < 3) {
+          errors.login = "Login must be at least 3 characters";
+        }
+        return Object.keys(errors).length > 0 ? { errors } : { values };
+      }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Header>
+        <Form.Title>Resolver</Form.Title>
+      </Form.Header>
+      <Form.Field name="login">
+        <Input name="login" label="Login" placeholder="user" />
+      </Form.Field>
+      <Form.Actions>
+        <Button type="submit">Verify</Button>
+      </Form.Actions>
+    </Form>
+  );
+}
+
+export const WithResolver: Story = {
+  name: "With resolver",
+  render: () => <ResolverForm />,
+};
+
+function CompoundLayoutForm() {
+  return (
+    <Form
+      aria-label="Compound layout"
+      rules={{ title: { required: "Title is required" } }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Section>
+        <Form.Field name="title">
+          <Input name="title" label="Title" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Actions>
+        <Button type="button" variant="outline">
+          Draft
+        </Button>
+        <Button type="submit" variant="primary">
+          Publish
+        </Button>
+      </Form.Actions>
+      <Form.Description className="text-center text-small">
+        Description and actions can be reordered with compound parts.
+      </Form.Description>
+    </Form>
+  );
+}
+
+export const CompoundLayout: Story = {
+  name: "Compound: part order",
+  render: () => <CompoundLayoutForm />,
+};
+
+function InlineSubscribeForm() {
+  return (
+    <Form
+      aria-label="Inline subscription"
+      className="flex w-full max-w-lg flex-col gap-small sm:flex-row sm:items-end"
+      rules={{
+        email: {
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Invalid email",
+          },
+        },
+      }}
+      onSubmit={(values) => {
+        void values;
+      }}
+    >
+      <Form.Section className="min-w-0 flex-1">
+        <Form.Field name="email">
+          <Input name="email" label="Email" placeholder="you@example.com" autoComplete="email" />
+        </Form.Field>
+      </Form.Section>
+      <Button type="submit" variant="primary" className="w-full shrink-0 sm:w-auto">
+        Subscribe
+      </Button>
+    </Form>
+  );
+}
+
+export const InlineSubscribe: Story = {
+  name: "Inline subscription",
+  render: () => <InlineSubscribeForm />,
+};
+
+function FormSizesStory() {
+  const sizes = ["small", "base", "mid", "large"] as const;
+
+  return (
+    <div className="grid w-full gap-2xlarge lg:grid-cols-2">
+      {sizes.map((size) => (
+        <Form
+          key={size}
+          size={size}
+          aria-label={`Form size ${size}`}
+          className="rounded-large border-token bg-tertiary/40 p-large"
+          onSubmit={() => undefined}
+        >
+          <Form.Header>
+            <Form.Title>size="{size}"</Form.Title>
+            <Form.Description>
+              Chrome scales; Input and Button stay at their own size.
+            </Form.Description>
+          </Form.Header>
+          <Form.Section>
+            <Input name={`name-${size}`} label="Name" placeholder="Ivan" />
+            <Input name={`email-${size}`} label="Email" placeholder="you@example.com" />
+          </Form.Section>
+          <Form.Actions>
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Save
+            </Button>
+          </Form.Actions>
+        </Form>
+      ))}
+    </div>
+  );
+}
+
+export const Sizes: Story = {
+  name: "Sizes",
+  render: () => <FormSizesStory />,
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <FormSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on Form chrome, Form.Field is a nested scope, cancel loop, form events.",
+      },
+    },
+  },
+  render: () => <FormMotionControllerGalleryDemo />,
 };

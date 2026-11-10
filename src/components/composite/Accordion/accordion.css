@@ -1,0 +1,13 @@
+/*
+ * End-cap radius for Accordion items. Zero specificity so
+ * `[--accordion-item-radius:…]` on the group wins.
+ * The same value is `--radius-outer`; `--radius-pad` is `--space-xsmall`,
+ * so a child can use `rounded-nested`.
+ */
+@layer utilities {
+  :where(.accordion-root) {
+    --accordion-item-radius: var(--radius-large);
+    --radius-outer: var(--accordion-item-radius);
+    --radius-pad: var(--space-xsmall);
+  }
+}

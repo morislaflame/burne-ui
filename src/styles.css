@@ -1,6 +1,28 @@
+/* `ui-kit` sits under utilities: a consumer utility overrides kit size classes. */
+@layer theme, base, ui-kit, components, utilities;
+
 @import "./tokens/styles.css";
 
 @import "tailwindcss";
+
+/* Studio state matrix. `data-force-state` is space-separated: hover, focus, press, disabled.
+   Real `:hover` stays inside `@media (hover: hover)`, same as Tailwind's default variant,
+   so a tap on a touch screen does not leave the hover fill stuck. The attribute match
+   sits outside that query: the studio can force hover without a pointing device. */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+  &[data-force-state~="hover"] {
+    @slot;
+  }
+}
+@custom-variant focus (&:focus, &[data-force-state~="focus"]);
+@custom-variant focus-visible (&:focus-visible, &[data-force-state~="focus"]);
+@custom-variant active (&:active, &[data-force-state~="press"]);
+@custom-variant disabled (&:disabled, &[data-force-state~="disabled"]);
 
 p,
 ul,
@@ -12,14 +34,35 @@ p {
   line-height: 1.2;
 }
 
-@keyframes button-ripple-expand {
-  from {
-    transform: scale(0);
-    opacity: 0.5;
-  }
-  to {
-    transform: scale(1);
-    opacity: 0;
+/** Global tracking — theme knob `--letter-spacing` (inherits into the tree). */
+html {
+  letter-spacing: var(--letter-spacing);
+}
+
+/* ─── Skeleton animations ─────────────────────────────────────────────────── */
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.38; }
+}
+
+@keyframes skeleton-wave-slide {
+  0%   { transform: translateX(-150%); }
+  100% { transform: translateX(250%); }
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/**
+ * Marker on bones that set `animation` via inline style.
+ * Inline animation beats a class without `!important`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-animate {
+    animation: none !important;
   }
 }
 
@@ -29,13 +72,61 @@ p {
 
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
+  /* MUTED surface (`bg-muted`); text via muted-foreground — see `@utility text-muted` */
   --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
   --color-surface: var(--color-surface);
-  --color-accent: var(--color-accent);
-  --color-accent-foreground: var(--color-accent-foreground);
-  --color-accent-fill-hover: var(--color-accent-fill-hover);
-  --color-accent-solid-hover: var(--color-accent-solid-hover);
-  --color-secondary-fill-hover: var(--color-secondary-fill-hover);
+  --color-border: var(--color-border);
+  --color-shadow: var(--color-shadow);
+  --color-shadow-secondary: var(--color-shadow-secondary);
+
+  /* OVERLAY — modal, popover, dropdown backgrounds (usually = surface or slightly lighter) */
+  /* PRIMARY (brand): bg-primary, text-primary, border-primary … */
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-primary-hover: var(--color-primary-hover);
+
+  /* DEFAULT HOVER: opaque wash on surface (menus, default Button) */
+  --color-default-hover: var(--color-default-hover);
+
+  /* TRANSPARENT HOVER: outline/ghost hover (muted wash over transparent) */
+  --color-transparent-hover: var(--color-transparent-hover);
+
+  /* INDICATOR (selection fill): Radio, Checkbox, Switch, Slider, Calendar, Progress */
+  --color-indicator: var(--color-indicator);
+  --color-indicator-foreground: var(--color-indicator-foreground);
+
+  /* FOCUS RING: color + geometry for focused interactive elements */
+  --color-focus-ring: var(--color-focus-ring);
+  --color-focus-ring-danger: var(--color-focus-ring-danger);
+  --color-focus-ring-success: var(--color-focus-ring-success);
+  --color-focus-ring-info: var(--color-focus-ring-info);
+  --color-focus-ring-warning: var(--color-focus-ring-warning);
+  --focus-ring-width: var(--focus-ring-width);
+  --focus-ring-offset: var(--focus-ring-offset);
+
+  /* Z-INDEX SCALE: page chrome, then overlay stacking → utilities z-sticky, z-dialog, … */
+  --z-index-sticky: var(--z-sticky);
+  --z-index-dialog: var(--z-dialog);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-dropdown-sub: var(--z-dropdown-sub);
+  --z-index-popover: var(--z-popover);
+  --z-index-toast: var(--z-toast);
+  --z-index-tooltip: var(--z-tooltip);
+
+  /* PRIMARY TINT: bg-primary-tint (10%), bg-primary-tint-strong (20%) */
+  --color-primary-tint: var(--color-primary-tint);
+  --color-primary-tint-strong: var(--color-primary-tint-strong);
+
+  /* SECONDARY surface: bg-secondary / text-secondary-foreground / hover: bg-secondary-hover */
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-secondary-hover: var(--color-secondary-hover);
+  /* TERTIARY surface: bg-tertiary / text-tertiary-foreground / hover: bg-tertiary-hover */
+  --color-tertiary: var(--color-tertiary);
+  --color-tertiary-foreground: var(--color-tertiary-foreground);
+  --color-tertiary-hover: var(--color-tertiary-hover);
+
   --color-danger: var(--color-danger);
   --color-danger-fill-hover: var(--color-danger-fill-hover);
   --color-danger-foreground: var(--color-danger-foreground);
@@ -52,167 +143,475 @@ p {
   --color-surface-tint-success: var(--color-surface-tint-success);
   --color-surface-tint-info: var(--color-surface-tint-info);
   --color-surface-tint-warning: var(--color-surface-tint-warning);
-  --color-surface-tint-accent: var(--color-surface-tint-accent);
-  --color-surface-tint-danger-strong: var(--color-surface-tint-danger-strong);
-  --color-surface-tint-success-strong: var(--color-surface-tint-success-strong);
-  --color-surface-tint-warning-strong: var(--color-surface-tint-warning-strong);
+  --color-surface-tint-danger-hover: var(--color-surface-tint-danger-hover);
+  --color-surface-tint-success-hover: var(--color-surface-tint-success-hover);
+  --color-surface-tint-info-hover: var(--color-surface-tint-info-hover);
+  --color-surface-tint-warning-hover: var(--color-surface-tint-warning-hover);
 
   --spacing-xsmall: var(--space-xsmall);
   --spacing-small: var(--space-small);
   --spacing-base: var(--space-base);
-  --spacing-plus: var(--space-plus);
   --spacing-mid: var(--space-mid);
   --spacing-large: var(--space-large);
   --spacing-xlarge: var(--space-xlarge);
+  --spacing-2xlarge: var(--space-2xlarge);
+  --spacing-3xlarge: var(--space-3xlarge);
+  --spacing-4xlarge: var(--space-4xlarge);
+  --spacing-5xlarge: var(--space-5xlarge);
 
-  --radius-xsmall: var(--radius-value-xsmall);
-  --radius-small: var(--radius-value-small);
-  --radius-base: var(--radius-value-base);
-  --radius-mid: var(--radius-value-mid);
-  --radius-large: var(--radius-value-large);
+  /* Identity bridge: design steps are already `--radius-*` (knob remains `--radius`). */
+  --radius-none: var(--radius-none);
+  --radius-xsmall: var(--radius-xsmall);
+  --radius-small: var(--radius-small);
+  --radius-base: var(--radius-base);
+  --radius-mid: var(--radius-mid);
+  --radius-large: var(--radius-large);
+  --radius-2xlarge: var(--radius-2xlarge);
+  --radius-3xlarge: var(--radius-3xlarge);
+  --radius-full: var(--radius-full);
+  --radius-nested: var(--radius-nested);
 
-  --shadow-token-sm: var(--shadow-sm);
-  --shadow-token-md: var(--shadow-md);
-  --shadow-token-lg: var(--shadow-lg);
+  --shadow-token-small: var(--shadow-small);
+  --shadow-token-base: var(--shadow-base);
+  --shadow-token-mid: var(--shadow-mid);
+  --shadow-token-large: var(--shadow-large);
+  --shadow-token-xlarge: var(--shadow-xlarge);
+
+  /* BEGIN GENERATED:breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  /* END GENERATED:breakpoints */
 
   /**
-   * Единственный источник правды для утилиты `text-base` (без дубля с @utility).
-   * Переопределяет дефолт Tailwind (1rem) на дизайн-токен: sm-размер + medium + leading 1.2.
+   * Single source of truth for the `text-base` utility (no duplicate with @utility).
+   * Overrides Tailwind default (1rem) with kit `text-base` (= `--text-scale-base`, 0.875rem).
    */
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);
   --text-base--font-weight: var(--text-base-weight);
+
+  /**
+   * Border width — make Tailwind's `border` and `border-1` utilities use our token.
+   * Flat themes keep a hairline width + `--border-color: transparent` (see themeDefaults).
+   */
+  --border-width-DEFAULT: var(--border-width, 1px);
+  --border-width-1: var(--border-width, 1px);
 }
 
-/** Тени на токенах — не зависят от Tailwind-дефолтов. */
-@utility shadow-token-sm {
-  box-shadow: var(--shadow-sm);
+/** Token-based shadows — independent of Tailwind defaults. */
+@utility shadow-token-small {
+  box-shadow: var(--shadow-small);
 }
-@utility shadow-token-md {
-  box-shadow: var(--shadow-md);
+@utility shadow-token-base {
+  box-shadow: var(--shadow-base);
 }
-@utility shadow-token-lg {
-  box-shadow: var(--shadow-lg);
+@utility shadow-token-mid {
+  box-shadow: var(--shadow-mid);
+}
+@utility shadow-token-xlarge {
+  box-shadow: var(--shadow-xlarge);
 }
 
 /**
- * Тень через `--el-shadow` (переключается из JS) + плавная смена `box-shadow`.
- * Fallback `--shadow-none` — чтобы transition не «ломался» с/на `none`.
- * На элементах с `button-idle-surface-transition` тень тоже в том же shorthand — правило ниже по файлу перекрывает.
+ * Modal frosted scrim (Dialog / Drawer / AlertDialog — light UI).
+ * Tokens: `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate`.
+ * Webkit-first `backdrop-filter` so Lightning CSS keeps the unprefixed filter.
+ */
+@utility overlay-backdrop {
+  background-color: var(--overlay-backdrop-color);
+  -webkit-backdrop-filter: blur(var(--overlay-backdrop-blur))
+    saturate(var(--overlay-backdrop-saturate));
+  backdrop-filter: blur(var(--overlay-backdrop-blur))
+    saturate(var(--overlay-backdrop-saturate));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-backdrop {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/** Solid dark-UI modal scrim (no blur). */
+@utility overlay-backdrop-scrim {
+  background-color: var(--overlay-backdrop-scrim);
+}
+
+/**
+ * Rest elevation token. The painted shadow lives on `[data-burne-shadow-fade]`
+ * layers (static `box-shadow`); GSAP cross-fades their `opacity`.
+ * Until the host mounts, the element itself paints `--el-shadow`.
  */
 @utility animate-shadow {
-  box-shadow: var(--el-shadow, var(--shadow-none));
-  transition-property: box-shadow;
-  transition-duration: var(--shadow-transition-duration, 280ms);
-  transition-timing-function: ease-out;
+  --el-shadow: var(--shadow-none);
+  position: relative;
+  box-shadow: var(--el-shadow);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-shadow {
-    transition: none;
-  }
+/* Enhancement: drop the host shadow once fade layers mount, so two shadows do not stack.
+   Without :has() the host shadow stays. Layout does not depend on this selector. */
+.animate-shadow:has(> [data-burne-shadow-fade]) {
+  box-shadow: none;
+}
+
+[data-burne-shadow-fade="elevation"] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade] {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade="rest"] {
+  box-shadow: var(--el-shadow);
+  opacity: 1;
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade="hover"] {
+  box-shadow: var(--shadow-fade-hover, none);
+}
+
+[data-burne-shadow-fade="elevation"] > [data-shadow-fade="press"] {
+  box-shadow: var(--shadow-fade-press, var(--el-shadow));
 }
 
 /**
- * Поверхности с hover (кнопка, оболочка SearchInput): один shorthand `transition`.
- * Разрозненные `transition-[…]` + `duration-*` + `ease-*` в Tailwind дают
- * несколько правил на одно свойство — в каскаде теряется `background-color` и ховер «рвётся».
+ * Text and icons: color / fill / stroke only (Link, Tabs, Breadcrumbs, Table headers).
  */
-@utility button-idle-surface-transition {
+@utility text-color-transition {
   transition:
-    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    fill 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    stroke 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 280ms ease-out;
+    color var(--motion-surface-duration) var(--motion-text-ease),
+    fill var(--motion-surface-duration) var(--motion-text-ease),
+    stroke var(--motion-surface-duration) var(--motion-text-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .button-idle-surface-transition {
+  .text-color-transition {
     transition: none;
   }
 }
 
-/** Обводка по умолчанию — `var(--color-border)`; утилита `border-base` (не `--color-base`, чтобы не конфликтовать с `text-base`). */
-@utility border-base {
-  border-color: var(--color-border);
-}
-
 /**
- * Общий вид «outline / glass»: прозрачный фон, размытие подложки, `border-base`.
- * Цвет текста задавайте отдельно (`text-accent`, `text-foreground`, тон статуса).
+ * Interactive surfaces: background, border, text, focus-ring.
+ * Single shorthand — otherwise Tailwind classes conflict in the cascade.
+ * Keep this list identical to the transition on `focus-ring*` / `has-focus-ring`
+ * so either class winning the cascade still animates hover + ring.
+ * Lists must match AND must not contain `box-shadow` — fade layers own elevation.
+ * Color stays here: kit components do not also tween `color` / `background-color`.
  */
-@utility surface-outline {
-  border-style: solid;
-  border-width: 1px;
-  border-color: var(--color-border);
-  box-shadow: none;
-  background-color: transparent;
-  backdrop-filter: blur(14px) saturate(1.5);
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+@utility surface-color-transition {
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .surface-outline {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background-color: var(--color-surface);
+  .surface-color-transition {
+    transition: none;
   }
 }
 
-/** Вторичная заливка: лёгкий accent-wash на surface + `border-base` (кнопки, алерты, бейджи, карточки, тултипы). */
-@utility surface-secondary {
-  border-style: solid;
-  border-width: 1px;
+/** Field shells: background, border, and focus-ring — one shorthand without conflicts. No `box-shadow` (GSAP owns elevation). */
+@utility field-shell-transition {
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-shadow-ease),
+    border-color var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field-shell-transition {
+    transition: none;
+  }
+}
+
+/** Prevent iOS Safari auto-zoom on focused inputs with font-size below 16px. */
+@utility field-control-mobile-no-zoom {
+  /**
+   * Touch / narrow viewports (aligned with `NARROW_VIEWPORT_MAX_PX` / `TOUCH_OR_NARROW_VIEWPORT_MQL_ANY_POINTER` in `tokens/breakpoints.ts`).
+   * `any-pointer: coarse` covers iPad with pointer devices attached.
+   * `!important` beats `text-base` / `text-small` on the same element.
+   */
+  /* BEGIN GENERATED:narrow-viewport */
+  @media (max-width: 1024px), (hover: none), (pointer: coarse), (any-pointer: coarse) {
+  /* END GENERATED:narrow-viewport */
+    font-size: 16px !important;
+  }
+}
+
+/**
+ * focus-ring — standard outline focus ring for interactive elements.
+ * focus-within-ring — same, triggers on focus inside (Input, TextArea, ComboBox shells).
+ * focus-ring-inset — ring inward (buttons inside fields, Table cells).
+ * has-focus-ring — ring on this node when a descendant is `:focus-visible`
+ * (Checkbox controlTrack, Radio/Switch control — not the field root with label).
+ *
+ * Geometry: `--focus-ring-width` / `--focus-ring-offset`.
+ * Color: `--color-focus-ring` (soft token). Status: retarget via
+ * `[--color-focus-ring:var(--color-focus-ring-danger)]` or paint `--color-focus-ring-*` directly.
+ * On `:focus-visible` / `:focus-within` re-assert outline-style/width so the ring wins over
+ * co-located `outline-none` (Tailwind emits `outline-none` later in the stylesheet).
+ * Stay `@utility` (utilities layer). Moving these into `@layer ui-kit` lets `outline-none` win
+ * and the keyboard ring disappears.
+ * Transition list matches `surface-color-transition` (cascade-safe when both are present):
+ * same properties, no `box-shadow`.
+ * Forced colors (Windows HCM): `Highlight` outline — see `@media (forced-colors: active)` below.
+ */
+@utility focus-ring {
+  outline-style: solid;
+  outline-width: var(--focus-ring-width, 2px);
+  outline-color: transparent;
+  outline-offset: var(--focus-ring-offset, 0px);
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+  &:focus-visible,
+  &[data-force-state~="focus"] {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: var(--focus-ring-offset, 0px);
+    outline-color: var(--color-focus-ring);
+  }
+}
+
+@utility focus-within-ring {
+  outline-style: solid;
+  outline-width: var(--focus-ring-width, 2px);
+  outline-color: transparent;
+  outline-offset: var(--focus-ring-offset, 0px);
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+  &:focus-visible,
+  &:focus-within,
+  &[data-force-state~="focus"] {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: var(--focus-ring-offset, 0px);
+    outline-color: var(--color-focus-ring);
+  }
+}
+
+@utility focus-ring-inset {
+  outline-style: solid;
+  outline-width: var(--focus-ring-width, 2px);
+  outline-color: transparent;
+  outline-offset: calc(-1 * var(--focus-ring-width, 2px));
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+  &:focus-visible,
+  &[data-force-state~="focus"] {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: calc(-1 * var(--focus-ring-width, 2px));
+    outline-color: var(--color-focus-ring);
+  }
+}
+
+/** Parent paints the ring when a descendant is keyboard-focused (hidden native inputs). */
+@utility has-focus-ring {
+  outline-style: solid;
+  outline-width: var(--focus-ring-width, 2px);
+  outline-color: transparent;
+  outline-offset: var(--focus-ring-offset, 0px);
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+  /* Enhancement: ring on the shell when a hidden native input inside is keyboard-focused.
+     Without :has() the control still works; the shell ring does not paint. */
+  &:has(:focus-visible),
+  &[data-force-state~="focus"] {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: var(--focus-ring-offset, 0px);
+    outline-color: var(--color-focus-ring);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-ring,
+  .focus-within-ring,
+  .focus-ring-inset,
+  .has-focus-ring {
+    transition: none;
+  }
+}
+
+/**
+ * border-token-* — directional and full borders with width from `--border-width`.
+ * Color: `--border-color` when set (flat theme → transparent), else `--color-border`.
+ * Outline surfaces/variants: `border-token-outline` (+ status) → `--border-width-outline`.
+ * Preflight already sets border-style:solid on all elements — style is not needed.
+ */
+@utility border-token {
+  border-width: var(--border-width, 1px);
+  border-color: var(--border-color, var(--color-border));
+}
+@utility border-token-outline {
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-border);
-  box-shadow: none;
-  background-color: color-mix(in oklab, var(--color-accent) 18%, var(--color-surface));
+}
+@utility border-token-primary {
+  border-width: var(--border-width-outline, 1px);
+  border-color: var(--color-primary);
+}
+@utility border-token-danger {
+  border-width: var(--border-width-outline, 1px);
+  border-color: var(--color-danger);
+}
+@utility border-token-success {
+  border-width: var(--border-width-outline, 1px);
+  border-color: var(--color-success);
+}
+@utility border-token-info {
+  border-width: var(--border-width-outline, 1px);
+  border-color: var(--color-info);
+}
+@utility border-token-warning {
+  border-width: var(--border-width-outline, 1px);
+  border-color: var(--color-warning);
+}
+@utility border-t-token {
+  border-top-width: var(--border-width, 1px);
+  border-top-color: var(--border-color, var(--color-border));
+}
+@utility border-b-token {
+  border-bottom-width: var(--border-width, 1px);
+  border-bottom-color: var(--border-color, var(--color-border));
+}
+@utility border-l-token {
+  border-left-width: var(--border-width, 1px);
+  border-left-color: var(--border-color, var(--color-border));
+}
+@utility border-r-token {
+  border-right-width: var(--border-width, 1px);
+  border-right-color: var(--border-color, var(--color-border));
+}
+@utility border-s-token {
+  border-inline-start-width: var(--border-width, 1px);
+  border-inline-start-color: var(--border-color, var(--color-border));
+}
+@utility border-e-token {
+  border-inline-end-width: var(--border-width, 1px);
+  border-inline-end-color: var(--border-color, var(--color-border));
+}
+
+/**
+ * divide-token — divider between child elements with width from --border-width.
+ * `divide-x-token` uses the inline-start edge so a row flips with `dir`.
+ * Use instead of Tailwind `divide-y` / `divide-x` with the default color.
+ */
+@utility divide-x-token {
+  & > * + * {
+    border-inline-start-width: var(--border-width, 1px);
+    border-inline-start-color: var(--border-color, var(--color-border));
+  }
+}
+@utility divide-y-token {
+  & > * + * {
+    border-top-width: var(--border-width, 1px);
+    border-top-color: var(--border-color, var(--color-border));
+  }
 }
 
 @utility text-accent-header {
   font-size: var(--text-accent-header-size);
-  line-height: var(--text-accent-header-line-height);
-  font-weight: var(--text-accent-header-weight);
+  line-height: var(--tw-leading, var(--text-accent-header-line-height));
+  font-weight: var(--tw-font-weight, var(--text-accent-header-weight));
+  letter-spacing: calc(var(--letter-spacing) + var(--letter-spacing-3xlarge));
 }
 
 @utility text-header-1 {
   font-size: var(--text-header-1-size);
-  line-height: var(--text-header-1-line-height);
-  font-weight: var(--text-header-1-weight);
+  line-height: var(--tw-leading, var(--text-header-1-line-height));
+  font-weight: var(--tw-font-weight, var(--text-header-1-weight));
+  letter-spacing: calc(var(--letter-spacing) + var(--letter-spacing-2xlarge));
 }
 
 @utility text-header-2 {
   font-size: var(--text-header-2-size);
-  line-height: var(--text-header-2-line-height);
-  font-weight: var(--text-header-2-weight);
+  line-height: var(--tw-leading, var(--text-header-2-line-height));
+  font-weight: var(--tw-font-weight, var(--text-header-2-weight));
+  letter-spacing: calc(var(--letter-spacing) + var(--letter-spacing-xlarge));
 }
 
 @utility text-large {
   font-size: var(--text-large-size);
-  line-height: var(--text-large-line-height);
-  font-weight: var(--text-large-weight);
+  line-height: var(--tw-leading, var(--text-large-line-height));
+  font-weight: var(--tw-font-weight, var(--text-large-weight));
 }
 
-/** Мелкий UI-текст: размер как text-xs, medium, межстрочный 1 */
+/** Small UI text: scale xs */
 @utility text-small {
   font-size: var(--text-small-size);
-  line-height: var(--text-small-line-height);
-  font-weight: var(--text-small-weight);
+  line-height: var(--tw-leading, var(--text-small-line-height));
+  font-weight: var(--tw-font-weight, var(--text-small-weight));
 }
 
-/** Средний UI-текст: размер как text-md, medium, межстрочный 1.2 */
+/** Medium UI text: scale md */
 @utility text-mid {
   font-size: var(--text-mid-size);
-  line-height: var(--text-mid-line-height);
-  font-weight: var(--text-mid-weight);
+  line-height: var(--tw-leading, var(--text-mid-line-height));
+  font-weight: var(--tw-font-weight, var(--text-mid-weight));
 }
 
-@utility text-tools {
-  font-size: var(--text-tools-size);
-  line-height: var(--text-tools-line-height);
-  font-weight: var(--text-tools-weight);
+@utility text-xsmall {
+  font-size: var(--text-xsmall-size);
+  line-height: var(--tw-leading, var(--text-xsmall-line-height));
+  font-weight: var(--tw-font-weight, var(--text-xsmall-weight));
+}
+
+/** Font weight from `--font-w-*` tokens (not Tailwind `font-medium`). */
+@utility font-w-small {
+  font-weight: var(--font-w-small);
+}
+@utility font-w-base {
+  font-weight: var(--font-w-base);
+}
+@utility font-w-mid {
+  font-weight: var(--font-w-mid);
+}
+@utility font-w-strong {
+  font-weight: var(--font-w-strong);
+}
+@utility font-w-bold {
+  font-weight: var(--font-w-bold);
+}
+
+@utility max-w-component-xsmall {
+  max-width: var(--max-component-xsmall);
 }
 
 @utility max-w-component-small {
@@ -231,23 +630,296 @@ p {
   max-width: var(--max-component-large);
 }
 
+@utility max-w-component-xlarge {
+  max-width: var(--max-component-xlarge);
+}
+
+@utility max-w-component-2xlarge {
+  max-width: var(--max-component-2xlarge);
+}
+
+@utility min-w-component-xsmall {
+  min-width: var(--max-component-xsmall);
+}
+
+@utility min-w-component-small {
+  min-width: var(--max-component-small);
+}
+
+@utility min-w-component-base {
+  min-width: var(--max-component-base);
+}
+
+@utility min-w-component-mid {
+  min-width: var(--max-component-mid);
+}
+
+@utility min-w-component-large {
+  min-width: var(--max-component-large);
+}
+
+@utility min-w-component-xlarge {
+  min-width: var(--max-component-xlarge);
+}
+
+@utility min-w-component-2xlarge {
+  min-width: var(--max-component-2xlarge);
+}
+
+@utility max-w-page-xsmall {
+  max-width: var(--max-page-xsmall);
+}
+@utility max-w-page-small {
+  max-width: var(--max-page-small);
+}
+@utility max-w-page-base {
+  max-width: var(--max-page-base);
+}
+@utility max-w-page-mid {
+  max-width: var(--max-page-mid);
+}
+@utility max-w-page-large {
+  max-width: var(--max-page-large);
+}
+@utility max-w-page-xlarge {
+  max-width: var(--max-page-xlarge);
+}
+@utility max-w-page-2xlarge {
+  max-width: var(--max-page-2xlarge);
+}
+
+@utility w-page-xsmall {
+  width: var(--max-page-xsmall);
+}
+@utility w-page-small {
+  width: var(--max-page-small);
+}
+@utility w-page-base {
+  width: var(--max-page-base);
+}
+@utility w-page-mid {
+  width: var(--max-page-mid);
+}
+@utility w-page-large {
+  width: var(--max-page-large);
+}
+@utility w-page-xlarge {
+  width: var(--max-page-xlarge);
+}
+@utility w-page-2xlarge {
+  width: var(--max-page-2xlarge);
+}
+
+@utility basis-component-xsmall {
+  flex-basis: var(--max-component-xsmall);
+}
+
 @utility min-w-button-small {
-  min-width: var(--button-min-width-s);
+  min-width: var(--button-min-width-small);
 }
 
 @utility min-w-button-base {
-  min-width: var(--button-min-width-m);
+  min-width: var(--button-min-width-base);
+}
+
+@utility min-w-button-mid {
+  min-width: var(--button-min-width-mid);
 }
 
 @utility min-w-button-large {
-  min-width: var(--button-min-width-l);
+  min-width: var(--button-min-width-large);
 }
 
-@utility min-w-button-xlarge {
-  min-width: var(--button-min-width-xl);
+@utility min-h-control-xsmall {
+  min-height: var(--control-height-xsmall);
 }
 
-/** Иконки: ширина и высота из `--icon-size-*` (см. `tokens/styles.css`). */
+@utility min-h-control-small {
+  min-height: var(--control-height-small);
+}
+
+@utility min-h-control-base {
+  min-height: var(--control-height-base);
+}
+
+@utility min-h-control-mid {
+  min-height: var(--control-height-mid);
+}
+
+@utility min-h-control-large {
+  min-height: var(--control-height-large);
+}
+
+/**
+ * Contained portal host (`.portal-contained`, `portalContainer` other than `document.body`).
+ * Adds `--z-overlay-nested-step` on top of the published layer. Body portals and
+ * `showModal()` keep the published numbers. The browser top layer ignores z-index.
+ */
+@layer utilities {
+  .portal-contained.z-dialog {
+    z-index: calc(var(--z-dialog) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-dropdown {
+    z-index: calc(var(--z-dropdown) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-dropdown-sub {
+    z-index: calc(var(--z-dropdown-sub) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-popover {
+    z-index: calc(var(--z-popover) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-toast {
+    z-index: calc(var(--z-toast) + var(--z-overlay-nested-step));
+  }
+  .portal-contained.z-tooltip {
+    z-index: calc(var(--z-tooltip) + var(--z-overlay-nested-step));
+  }
+}
+
+@utility w-control-xsmall {
+  width: var(--control-size-xsmall);
+}
+
+@utility w-control-small {
+  width: var(--control-size-small);
+}
+
+@utility w-control-base {
+  width: var(--control-size-base);
+}
+
+@utility w-control-mid {
+  width: var(--control-size-mid);
+}
+
+@utility w-control-large {
+  width: var(--control-size-large);
+}
+
+@utility min-w-control-xsmall {
+  min-width: var(--control-size-xsmall);
+}
+
+@utility min-w-control-small {
+  min-width: var(--control-size-small);
+}
+
+@utility min-w-control-base {
+  min-width: var(--control-size-base);
+}
+
+@utility min-w-control-mid {
+  min-width: var(--control-size-mid);
+}
+
+@utility min-w-control-large {
+  min-width: var(--control-size-large);
+}
+
+@utility max-w-control-xsmall {
+  max-width: var(--control-size-xsmall);
+}
+
+@utility max-w-control-small {
+  max-width: var(--control-size-small);
+}
+
+@utility max-w-control-base {
+  max-width: var(--control-size-base);
+}
+
+@utility max-w-control-mid {
+  max-width: var(--control-size-mid);
+}
+
+@utility max-w-control-large {
+  max-width: var(--control-size-large);
+}
+
+/* Plain classes in `ui-kit`: a later utility (`size-*`, `w-*`, `rounded-*`) overrides them. */
+@layer ui-kit {
+.avatar-size-small {
+  width: var(--avatar-size-small);
+  height: var(--avatar-size-small);
+}
+
+.avatar-size-base {
+  width: var(--avatar-size-base);
+  height: var(--avatar-size-base);
+}
+
+.avatar-size-mid {
+  width: var(--avatar-size-mid);
+  height: var(--avatar-size-mid);
+}
+
+.avatar-size-large {
+  width: var(--avatar-size-large);
+  height: var(--avatar-size-large);
+}
+
+/** Selection indicators — diameter + corner radius from `--selection-indicator-*` / `--selection-indicator-radius-*`. */
+.selection-indicator-xsmall {
+  width: var(--selection-indicator-xsmall);
+  height: var(--selection-indicator-xsmall);
+  min-width: var(--selection-indicator-xsmall);
+  min-height: var(--selection-indicator-xsmall);
+  border-radius: var(--selection-indicator-radius-xsmall);
+}
+.selection-indicator-small {
+  width: var(--selection-indicator-small);
+  height: var(--selection-indicator-small);
+  min-width: var(--selection-indicator-small);
+  min-height: var(--selection-indicator-small);
+  border-radius: var(--selection-indicator-radius-small);
+}
+.selection-indicator-base {
+  width: var(--selection-indicator-base);
+  height: var(--selection-indicator-base);
+  min-width: var(--selection-indicator-base);
+  min-height: var(--selection-indicator-base);
+  border-radius: var(--selection-indicator-radius-base);
+}
+.selection-indicator-mid {
+  width: var(--selection-indicator-mid);
+  height: var(--selection-indicator-mid);
+  min-width: var(--selection-indicator-mid);
+  min-height: var(--selection-indicator-mid);
+  border-radius: var(--selection-indicator-radius-mid);
+}
+.selection-indicator-large {
+  width: var(--selection-indicator-large);
+  height: var(--selection-indicator-large);
+  min-width: var(--selection-indicator-large);
+  min-height: var(--selection-indicator-large);
+  border-radius: var(--selection-indicator-radius-large);
+}
+
+/* Invisible hit pad so Checkbox / Radio / Switch reach 24×24 without changing the glyph. */
+.hit-target-24::before {
+  content: "";
+  position: absolute;
+  inset: min(0px, calc((100% - 24px) / 2));
+}
+
+/*
+ * Icon wrap. `initial` blocks an inherited `--icon-size`.
+ * A utility `icon-slot-*` (higher layer) sets the variable.
+ * Without it, the svg fills the wrap (`100%`).
+ * `icon-*` on the svg itself is a utility and wins over this rule.
+ */
+.icon-slot {
+  --icon-size: initial;
+}
+
+.icon-slot > svg {
+  width: var(--icon-size, 100%);
+  height: var(--icon-size, 100%);
+  flex-shrink: 0;
+}
+}
+
+/** Icons: width and height from `--icon-size-*` (1:1 with `--size-scale-*`; see `tokens/styles.css`). */
 @utility icon-xsmall {
   width: var(--icon-size-xsmall);
   height: var(--icon-size-xsmall);
@@ -275,4 +947,216 @@ p {
 @utility icon-2xlarge {
   width: var(--icon-size-2xlarge);
   height: var(--icon-size-2xlarge);
+}
+@utility icon-3xlarge {
+  width: var(--icon-size-3xlarge);
+  height: var(--icon-size-3xlarge);
+}
+/** Round sizes beside the step scale: 16px and 24px at the default `--size` (1rem). */
+@utility icon-16 {
+  width: var(--icon-size-16);
+  height: var(--icon-size-16);
+}
+@utility icon-24 {
+  width: var(--icon-size-24);
+  height: var(--icon-size-24);
+}
+
+/** Icon-wrap size. Sets `--icon-size` for `.icon-slot > svg`. One `cn` group: `icon-slot`. */
+@utility icon-slot-xsmall {
+  --icon-size: var(--icon-size-xsmall);
+}
+@utility icon-slot-small {
+  --icon-size: var(--icon-size-small);
+}
+@utility icon-slot-base {
+  --icon-size: var(--icon-size-base);
+}
+@utility icon-slot-mid {
+  --icon-size: var(--icon-size-mid);
+}
+@utility icon-slot-large {
+  --icon-size: var(--icon-size-large);
+}
+@utility icon-slot-xlarge {
+  --icon-size: var(--icon-size-xlarge);
+}
+@utility icon-slot-2xlarge {
+  --icon-size: var(--icon-size-2xlarge);
+}
+@utility icon-slot-3xlarge {
+  --icon-size: var(--icon-size-3xlarge);
+}
+@utility icon-slot-16 {
+  --icon-size: var(--icon-size-16);
+}
+@utility icon-slot-24 {
+  --icon-size: var(--icon-size-24);
+}
+
+/*
+ * ToggleButton / Calendar cell fill: hide until GSAP marks ready when not pressed.
+ * Pressed + not ready stays visible (correct SSR for selected / pressed).
+ */
+[data-selection-fill]:not([data-selection-fill-ready])[data-pressed="false"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+/*
+ * Windows High Contrast / forced-colors:
+ * UA remaps bg/border and drops translucent `--color-focus-ring` mixes; GSAP fills
+ * stay at scale(0)/opacity 0, so checked == unchecked. System colors + !important
+ * beat inline GSAP. Status surfaces keep author paint (`forced-color-adjust: none`).
+ */
+@media (forced-colors: active) {
+  html {
+    --color-focus-ring: Highlight;
+    --color-focus-ring-danger: Highlight;
+    --color-focus-ring-success: Highlight;
+    --color-focus-ring-info: Highlight;
+    --color-focus-ring-warning: Highlight;
+  }
+
+  .focus-ring:focus-visible,
+  .focus-within-ring:focus-visible,
+  .focus-within-ring:focus-within,
+  /* Same shell ring as .has-focus-ring, in forced-colors. Without :has() the control still works. */
+  .has-focus-ring:has(:focus-visible),
+  .focus-ring-inset:focus-visible {
+    outline-color: Highlight;
+  }
+
+  /*
+   * Skinned surfaces often zero their border and paint with gradients.
+   * Those paints disappear here. A system border at least `--border-width`
+   * (and never under 1px) keeps the edge. Author width above 1px stays.
+   */
+  [data-skin] :is(
+    button,
+    [role="button"],
+    input,
+    textarea,
+    select,
+    [role="checkbox"],
+    [role="radio"],
+    [role="switch"],
+    [role="tab"],
+    [role="dialog"],
+    [role="listbox"],
+    [data-variant]
+  ) {
+    border-style: solid;
+    border-color: ButtonText;
+    border-width: max(1px, var(--border-width, 1px));
+  }
+
+  :is(
+    .bg-danger,
+    .bg-success,
+    .bg-info,
+    .bg-warning,
+    .bg-surface-tint-danger,
+    .bg-surface-tint-success,
+    .bg-surface-tint-info,
+    .bg-surface-tint-warning,
+    .text-danger,
+    .text-success,
+    .text-info,
+    .text-warning,
+    .text-danger-foreground,
+    .text-success-foreground,
+    .text-info-foreground,
+    .text-warning-foreground,
+    .border-token-danger,
+    .border-token-success,
+    .border-token-info,
+    .border-token-warning
+  ) {
+    forced-color-adjust: none;
+  }
+
+  :is(
+    .selection-indicator-xsmall,
+    .selection-indicator-small,
+    .selection-indicator-base,
+    .selection-indicator-mid,
+    .selection-indicator-large
+  )[data-selected] {
+    border-color: Highlight;
+  }
+
+  [data-selected] [data-selection-fill],
+  [data-checked] [data-selection-fill],
+  [aria-selected="true"] [data-selection-fill],
+  [aria-pressed="true"] [data-selection-fill],
+  [data-selection-fill][data-pressed="true"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  [data-selected] [data-selection-mark],
+  [data-checked] [data-selection-mark],
+  [aria-selected="true"] [data-selection-mark],
+  [aria-pressed="true"] [data-selection-mark],
+  [aria-checked="true"] [data-selection-mark] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    color: HighlightText;
+  }
+
+  /* Enhancement: mark uses Highlight when the fill layer is absent (forced-colors only).
+     Without :has() the mark stays HighlightText. The indicator still shows. */
+  :is(
+    .selection-indicator-xsmall,
+    .selection-indicator-small,
+    .selection-indicator-base,
+    .selection-indicator-mid,
+    .selection-indicator-large
+  )[data-selected]:not(:has([data-selection-fill])) [data-selection-mark] {
+    color: Highlight;
+  }
+
+  [role="switch"][aria-checked="true"] + * {
+    background-color: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
+}
+
+/**
+ * Secondary copy / icons: `text-muted` → muted-foreground (`bg-muted` stays surface).
+ * `@layer utilities` at file end so it wins over theme-generated `text-muted`
+ * (`@utility text-muted` conflicts with `--color-muted` and is dropped).
+ */
+@layer utilities {
+  .text-muted {
+    color: var(--color-muted-foreground);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-muted\/80 {
+      color: color-mix(in oklab, var(--color-muted-foreground) 80%, transparent);
+    }
+  }
+
+  .placeholder\:text-muted::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  @media (hover: hover) {
+    .disabled\:hover\:text-muted:disabled:hover {
+      color: var(--color-muted-foreground);
+    }
+  }
+
+  .disabled\:hover\:text-muted[data-force-state~="disabled"][data-force-state~="hover"] {
+    color: var(--color-muted-foreground);
+  }
 }

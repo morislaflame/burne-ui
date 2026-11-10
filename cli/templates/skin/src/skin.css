@@ -1,0 +1,5 @@
+/* Tokens match src/skin.json. `burne-ui skin build` writes dist/styles.css from that file. */
+[data-skin="__SKIN_NAME__"] {
+  --color-surface: #ffffff;
+  --color-foreground: #111111;
+}

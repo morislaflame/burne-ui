@@ -1,0 +1,382 @@
+# Disclosure
+
+Раскрывающийся блок (WAI-ARIA disclosure pattern). **Только compound API:** `Trigger`, `Content`, опционально `Handle` (drag). Контейнер `Disclosure.Group` — `selectionMode` / `separated`.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Disclosure, Disclosure.Group, type DisclosureProps, type DisclosureGroupProps, type DisclosureTriggerProps, type DisclosureContentProps, type DisclosureVariant, type DisclosureSize, type IconPosition, type DisclosureClassNames } from "burne-ui";
+```
+
+## API
+
+### Compound API
+
+```tsx
+<Disclosure defaultOpen variant="outline" size="base">
+  <Disclosure.Trigger>Заголовок</Disclosure.Trigger>
+  <Disclosure.Content>Контент панели</Disclosure.Content>
+</Disclosure>
+```
+
+### Card + drag handle
+
+```tsx
+<Disclosure variant="card" dragHandle defaultOpen>
+  <Disclosure.Trigger>Карточка</Disclosure.Trigger>
+  <Disclosure.Content>Растягиваемый контент</Disclosure.Content>
+  <Disclosure.Handle />
+</Disclosure>
+```
+
+### Disclosure.Group (аккордеон)
+
+```tsx
+<Disclosure.Group defaultValue="faq-1" variant="secondary">
+  <Disclosure value="faq-1">
+    <Disclosure.Trigger>Вопрос 1</Disclosure.Trigger>
+    <Disclosure.Content>Ответ 1</Disclosure.Content>
+  </Disclosure>
+  <Disclosure value="faq-2">
+    <Disclosure.Trigger>Вопрос 2</Disclosure.Trigger>
+    <Disclosure.Content>Ответ 2</Disclosure.Content>
+  </Disclosure>
+</Disclosure.Group>
+```
+
+Simple API нет.
+
+### Root props (`Disclosure`)
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `open` / `defaultOpen` | `false` | Controlled / uncontrolled |
+| `onOpenChange` | — | `(open: boolean) => void` |
+| `value` | — | ID пункта внутри `Disclosure.Group` |
+| `variant` | `default` | `default` \| `outline` \| `secondary` \| `card` \| `ghost` (наследуется от группы) |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `disabled` | `false` | Блокирует trigger |
+| `chevronPosition` | `end` | `start` \| `end` — позиция chevron |
+| `dragHandle` | `false` | Drag-to-expand (`variant="card"` only) |
+| `className` | — | На root |
+| `classNames` | — | Слоты |
+| `motion` | — | Карта `root` / `titleLift` / `title` / `icon` / `chevron` / `contentShell` / `content`. `events` — app-команды `MotionController`. Group `motion` мержится в каждый item |
+| `motionController` | — | Handle: `playSlot` / `playAll` / `set` / `cancel`. Нет слота `root` — `play()` skip. На каждый item, не на `Disclosure.Group` |
+
+### Compound parts
+
+| Part | Описание |
+|------|----------|
+| `Disclosure.Trigger` | Кнопка заголовка |
+| `Disclosure.Icon` | Leading icon слева от title |
+| `Disclosure.Chevron` | Кастомный chevron (compound) |
+| `Disclosure.Content` | Панель контента (`<section>` — слот `content`; `ref` / `className` / `rest` на ней) |
+| `Disclosure.Handle` | Drag handle (`variant="card"`) |
+| `Disclosure.Group` | Аккордеон-контейнер |
+
+### `Disclosure.Trigger` props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `icon` | — | Leading icon слева от title |
+| `chevron` | `IoChevronDown` | Кастомный chevron; `null` — без chevron |
+| `asChild` | `false` | Clone child с ARIA/handlers |
+| `className` | — | На `<button>` |
+
+```tsx
+<Disclosure.Trigger icon={<IoHelp aria-hidden />}>
+  Заголовок с иконкой
+</Disclosure.Trigger>
+
+<Disclosure.Trigger chevron={null}>Без chevron</Disclosure.Trigger>
+
+<Disclosure.Trigger>
+  <Disclosure.Icon><IoHelp aria-hidden /></Disclosure.Icon>
+  Compound icon
+</Disclosure.Trigger>
+```
+
+### `Disclosure.Group` props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `selectionMode` | `single` | `single` — один открытый (`value`). `multiple` — несколько (`values`) |
+| `separated` | `false` | Раздельные блоки vs единая оболочка |
+| `variant` / `size` | `default` / `base` | Наследуются дочерними |
+| `value` / `defaultValue` | — | Открытый `value` в группе |
+| `onValueChange` | — | `(value: string \| null) => void` |
+| `classNames` | — | Слот `group` |
+| `motion` | — | Мержится в каждый item (как Accordion) |
+
+При `selectionMode="multiple"` открытые пункты — `values` / `defaultValues` / `onValuesChange`.
+
+### `DisclosureClassNames`
+
+`root`, `trigger`, `titleLift`, `title`, `icon`, `chevron`, `contentShell`, `contentWrap`, `content`, `handle`, `group`.
+
+## variant и размеры
+
+| variant | Поведение |
+|---------|-----------|
+| `default` | Trigger + content; в группе — `divide-y-token` |
+| `outline` | Рамка только у контента (`FRAMED_PANEL`) |
+| `secondary` | Framed + `bg-secondary` |
+| `card` | Единая карточка; тень только при наведении (`--shadow-lift`); drag handle |
+| `ghost` | Прозрачный trigger, muted content. **Доменное исключение**, не action-`ghost` |
+
+`card` и `ghost` — **доменные исключения** `variant`. `card` — несводимая структура (единая карточка + `dragHandle` / `Disclosure.Handle`); тень появляется при наведении. `ghost` — прозрачный trigger и приглушённый контент. Это не `ghost` из `ActionVariant` (Button, ToggleButton, CloseButton). Канон поверхности — `default` | `outline` | `secondary`. Action-канон — `default` | `outline` | `secondary` | `ghost` (+ `primary` у Button, Badge и CloseButton). Имена скинов в канон не входят.
+
+`status` нет.
+
+| size | Trigger / content padding | Title |
+|------|---------------------------|-------|
+| `small` | `COLLAPSIBLE_SIZE_LAYOUT` (`triggerPadding` / `contentPadding`) | `leading-none` + `titleVariant` |
+| `base` | same | same |
+| `mid` | same | same |
+| `large` | same | same |
+
+Отступы — отдельный `COLLAPSIBLE_SIZE_LAYOUT` (ритм как у panel header/body, не через `PANEL_SIZE_LAYOUT`). Chevron/icon — из `CONTROL_SIZE_LAYOUT`.
+
+## Анимации
+
+Свой scope. Хосты: Trigger (`titleLift` hover/press + `chevron` enter/leave) и Content (`contentShell` height). Handle-drag — kit-internal: ставит `skipContentAnimRef` перед `setOpen`, хосты применяют instant и не играют.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | Только `card`: `hoverLiftFirstLevel`, `params.liftScale` = 1. `motion.root.hoverIn` подменяет hover оболочки |
+| `titleLift` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel`; `pressSqueeze`; `pressOut: false` |
+| `title` | `enter` / `leave` (+ hover/press opt-in) | нет; Trigger **рассылает** при open |
+| `chevron` | `enter` / `leave` | `chevronRotate` |
+| `contentShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target) |
+| `icon` | `enter` / `leave` (+ hover/press opt-in) | нет; Trigger **рассылает** при open |
+| `content` | `enter` / `leave` | нет; Trigger **рассылает** при open |
+
+```tsx
+<Disclosure motion={{ contentShell: { enter: false, leave: false } }}>
+  …
+</Disclosure>
+
+<Disclosure.Chevron
+  motion={{
+    enter: (ctx) => ctx.to({ rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => ctx.to({ rotation: 0, duration: 0.28 }),
+  }}
+/>
+```
+
+`leave: false` на `contentShell` — хост сразу ставит closed height. Factory leave должна свернуть высоту в `0`. После drag skip — instant на chevron и shell. `delay: "expand"` (или `"expandDuration"`) на enter `motion.content` — старт после `collapsibleHeight`, иначе fade/`y` идут внутри `overflow: hidden` и их не видно. На `leave` delay не ставьте.
+
+```tsx
+<Disclosure
+  motion={{
+    content: {
+      enter: (ctx) =>
+        ctx.fromTo(
+          { y: 8, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.28, delay: "expand" },
+        ),
+      leave: { y: 6, autoAlpha: 0, duration: 0.16 },
+    },
+  }}
+>
+  <Disclosure.Trigger>Title</Disclosure.Trigger>
+  <Disclosure.Content>…</Disclosure.Content>
+</Disclosure>
+```
+
+`root` у `card` играет hover оболочки. `playSlot("titleLift", …)` / `playAll`. `Disclosure.Group` без своего scope — handle на каждый item.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`disclosure:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на каждом `Disclosure`, не на `Disclosure.Group`. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Disclosure, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "disclosure:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("titleLift", "disclosure:nudge")}>
+        Nudge
+      </Button>
+      <Disclosure motionController={controller} motion={{ events }}>
+        <Disclosure.Trigger>Title</Disclosure.Trigger>
+        <Disclosure.Content>…</Disclosure.Content>
+      </Disclosure>
+    </>
+  );
+}
+```
+
+**Где в коде:** типы — `disclosureTypes.ts`; scope — `disclosureContext.tsx`; defaults + host play — `disclosureAnimations.ts` (`resolveDisclosureMotionDefaults`); слоты — `disclosureParts.tsx` / `disclosureContentPart.tsx`; Provider — `Disclosure.tsx`. Group карта — `disclosureGroup.tsx`.
+
+**DOM:**
+
+```
+<div class=root>
+  <button class=trigger>
+    <span class=titleLift>           ← slot titleLift
+      <Text class=title />           ← slot `title`
+    <span class=chevron />           ← slot chevron
+  <div class=contentShell>           ← slot contentShell / collapsibleHeight
+    <div class=contentWrap>          ← internal panelInner
+      <section class=content>        ← slot `content` (`Disclosure.Content`)
+  <div class=handle />               ← kit-internal drag, не слот
+```
+
+### 1. Content height (`contentShell`)
+
+Дефолт — рецепт `collapsibleHeight`. См. `Expandable.md`.
+
+### 2. Chevron rotation
+
+Play с Trigger-хоста (`chevronRotate`). Compound `Disclosure.Chevron` регистрирует target. First paint: `createChevronRotationRefCallback`.
+
+### 3. Trigger hover / press
+
+Pointer на кнопке, play на `titleLift`. `asChild` без lift-span — hover/press не вешаются.
+
+### 4. Card drag handle (`useDisclosureContentDrag`)
+
+Только `variant="card"` + `dragHandle`. Live resize + chevron sync. `skipContentAnimRef = true` перед `setOpen`.
+
+### Чего нет
+
+- Portal motion
+- Ripple
+- Постоянная тень в покое. У `card` тень только при наведении (`--shadow-lift`)
+- FLIP в группе
+- Handle как публичный слот
+
+### Сводка: что настраивается где
+
+| Анимация | Слот / рецепт | Ключи `configureMotion` | Локальный prop |
+|----------|---------------|---------------------------|----------------|
+| Height collapse | `contentShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Content / Group |
+| Panel content | `content` (broadcast на open) | `expandDuration` (через `delay: "expand"`) | `motion.content` на Root (узел `Content` `<section>`) |
+| Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
+| Title hover/squeeze | `titleLift` | `hoverLiftScale`, `pressSqueezeScale` | `motion` на Trigger |
+| Drag expand | `useDisclosureContentDrag` | — | `dragHandle`, `variant="card"` |
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `DISCLOSURE_TRIGGER_BASE_CLASS` | Full-width button, `focus-ring` |
+| `DISCLOSURE_CONTENT_SHELL_CLASS` | `overflow-hidden` collapsible |
+| `FRAMED_PANEL` | Border/bg контента outline/secondary |
+| `disclosureGroupClass` | Group divide/gap/shadow |
+| `hoverVariant()` | Trigger hover tint |
+| Open title | `text-primary` inline |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на `Disclosure`** — root.
+2. **`classNames` на root** — trigger, content, handle; `Disclosure.Group` — слот `group`.
+
+`Disclosure.Trigger` — `className` на button.
+
+### Слоты `DisclosureClassNames`
+
+| Слот | DOM | Когда использовать |
+|------|-----|-------------------|
+| `root` | Root div | Outer spacing |
+| `trigger` | `<button>` | Padding, hover bg |
+| `titleLift` | Lift wrapper | Motion target area |
+| `title` | Title Text | Typography |
+| `icon` | Leading icon | Size and color |
+| `chevron` | Chevron span | Icon color/size |
+| `contentShell` | Collapsible shell | Max-height helpers; height motion |
+| `contentWrap` | Inner wrap | Layout-only; padding framed variants |
+| `content` | `<section>` (`Disclosure.Content`) | Typography; `ref` / `className` / `rest`; motion-слот `content` |
+| `handle` | Drag bar | Card drag grip |
+| `group` | `Disclosure.Group` | Accordion container |
+
+### Single disclosure
+
+```tsx
+<Disclosure
+  variant="outline"
+  classNames={{
+    trigger: "font-semibold",
+    content: "text-small text-muted",
+  }}
+>
+  <Disclosure.Trigger>Детали заказа</Disclosure.Trigger>
+  <Disclosure.Content>Состав и сумма</Disclosure.Content>
+</Disclosure>
+```
+
+### Group separated cards
+
+```tsx
+<Disclosure.Group separated variant="card" classNames={{ group: "gap-large" }}>
+  <Disclosure value="a" dragHandle>
+    <Disclosure.Trigger>Шаг 1</Disclosure.Trigger>
+    <Disclosure.Content>...</Disclosure.Content>
+    <Disclosure.Handle />
+  </Disclosure>
+</Disclosure.Group>
+```
+
+### Практические заметки
+
+- `selectionMode="multiple"` — несколько открытых одновременно.
+- `chevron={null}` — trigger без chevron.
+- `asChild` на Trigger — merge ARIA на child button/link.
+- Card в группе без `separated`: shell карточки на `Disclosure.Group`.
+- **Не override `height` на `contentShell`** — GSAP collapsible.
+- Drag children order: Trigger → Content → Handle (`orderDragHandleChildren`).
+
+## Интеграции
+
+| Компонент | Сценарий |
+|-----------|----------|
+| `Expandable` | Shared `useCollapsibleHeight` |
+| `Field` | FAQ в формах |
+| `Card` | Похожий card shell (Disclosure `variant="card"`) |
+
+## Доступность
+
+- Trigger: `aria-expanded`, `aria-controls`, `id={triggerId}`
+- Panel: `id={panelId}`, `aria-labelledby={triggerId}`
+- Shell: `aria-hidden={!open}`
+- Chevron / Handle: `aria-hidden`
+- Keyboard: Enter/Space toggle на trigger
+- `disabled` — нативный на button
+
+## Структура файлов
+
+```
+Disclosure/
+├── Disclosure.tsx                 # MotionProvider + merge Group motion
+├── disclosureGroup.tsx            # карта motion в group context
+├── index.ts
+├── disclosureTypes.ts             # DisclosureMotion / TitleLift / Lifecycle
+├── disclosureStyles.ts
+├── disclosureAnimations.ts        # defaults + host play (skip after drag)
+├── disclosureParts.tsx            # Trigger / Chevron useMotionPart
+├── disclosureContentPart.tsx      # contentShell host
+├── useDisclosureRootState.ts
+├── useDisclosureGroupRootState.ts
+├── useDisclosureContentDrag.ts    # kit-internal, не слот
+├── disclosureContext.tsx          # createMotionScope (без defaults/play)
+├── disclosureAPI.ts
+├── disclosureA11y.ts
+└── Disclosure.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Disclosure` — variants, sizes, chevron position, icon, controlled, disabled, group modes, card drag, `CustomClassNames`.

@@ -1,0 +1,763 @@
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { createPortal } from "react-dom";
+ 
+import { CloseButton } from "@/components/core/CloseButton";
+import { Text } from "@/components/core/Text";
+import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
+import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
+import { SkinShell } from "@/skins/skinShell";
+import { focusElement } from "@/components/core/utils/focusElement";
+import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
+import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
+ 
+import {
+  drawerHandleAriaLabel,
+} from "./drawerA11y";
+import { partitionDrawerChildren, injectFooterButtonSize } from "./drawerAPI";
+import { resolveDrawerMotionDefaults, useDrawerModalMotion } from "./drawerAnimations";
+import { DrawerMotionProvider, DrawerProvider, useDrawer, useDrawerClassNames, useDrawerMotionScope, useOptionalDrawerMotionScope } from "./drawerContext";
+import { DRAWER_CLOSE_CLASS, DRAWER_FOOTER_CLASS, DRAWER_HEADER_CLASS, DRAWER_HEADING_BLOCK_CLASS, DRAWER_PANEL_LAYER_CONTENT_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
+import type {
+  DrawerOverlayProps,
+  DrawerBodyProps,
+  DrawerCloseProps,
+  DrawerContentProps,
+  DrawerContextValue,
+  DrawerDescriptionProps,
+  DrawerFooterProps,
+  DrawerHandleProps,
+  DrawerHeaderProps,
+  DrawerHeadingBlockProps,
+  DrawerPanelProps,
+  DrawerPanelSegment,
+  DrawerPortalShellProps,
+  DrawerTitleProps,
+  DrawerTriggerProps,
+} from "./drawerTypes";
+import { useDrawerHandleDrag } from "./useDrawerHandleDrag";
+ 
+import { cn } from "@/utils/cn";
+ 
+export const DrawerOverlayInner = forwardRef(function DrawerOverlayInner(_props: DrawerOverlayProps, _ref) {
+  return null;
+});
+
+DrawerOverlayInner.displayName = "Drawer.Overlay";
+ 
+export const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
+  function DrawerContent({ className, motion, ...rest }, ref) {
+    const slotClassNames = useDrawerClassNames();
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "content",
+      motion,
+      forwardedRef: ref,
+    });
+ 
+    return (
+      <div
+        ref={setRef}
+        className={drawerContentClass(
+          cn(slotClassNames.content, className),
+        )}
+        {...rest}
+      />
+    );
+  },
+);
+ 
+DrawerContent.displayName = "DrawerContent";
+ 
+function DrawerPanelSegment({
+  segment,
+}: {
+  segment: DrawerPanelSegment;
+}) {
+  if (segment.kind === "handle") {
+    return segment.node;
+  }
+
+  return <DrawerContent>{segment.children}</DrawerContent>;
+}
+
+export const DrawerHandleInner = forwardRef(function DrawerHandleInner({
+  className,
+  onPointerDown,
+  onKeyDown,
+  motion,
+  ...rest
+}: DrawerHandleProps, ref: ForwardedRef<HTMLDivElement>) {
+  const {
+    onOpenChange,
+    placement,
+    overlayRef,
+    panelRef,
+    skipCloseAnimRef,
+  } = useDrawer();
+  const slotClassNames = useDrawerClassNames();
+  const labels = useBurneLabels();
+  const close = () => onOpenChange(false);
+  const { onPointerDown: dragPD } = useDrawerHandleDrag(
+    panelRef,
+    overlayRef,
+    placement,
+    close,
+    false,
+    skipCloseAnimRef,
+  );
+  const { setRef } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
+    scope: useOptionalDrawerMotionScope(),
+    slot: "handle",
+    motion,
+  });
+ 
+  return (
+    <div
+      ref={setRef}
+      className={drawerHandleClass({
+        placement,
+        slotClass: slotClassNames.handle,
+        className,
+      })}
+      onPointerDown={(e) => {
+        onPointerDown?.(e);
+        dragPD(e);
+      }}
+      {...rest}
+    >
+      <button
+        type="button"
+        aria-label={drawerHandleAriaLabel(placement, labels)}
+        className={drawerHandleGripClass({
+          placement,
+          slotClass: slotClassNames.handleGrip,
+        })}
+        onClick={() => {
+          close();
+        }}
+        onKeyDown={onKeyDown}
+      />
+    </div>
+  );
+});
+ 
+DrawerHandleInner.displayName = "DrawerHandle";
+ 
+export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
+  function DrawerHeader({ className, motion, ...rest }, ref) {
+    const { sizePreset } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "header",
+      motion,
+      forwardedRef: ref,
+    });
+ 
+    return (
+      <div
+        ref={setRef}
+        className={cn(
+          DRAWER_HEADER_CLASS,
+          sizePreset.headerGap,
+          sizePreset.headerPadding,
+          slotClassNames.header,
+          className,
+        )}
+        {...rest}
+      />
+    );
+  },
+);
+ 
+DrawerHeader.displayName = "DrawerHeader";
+ 
+export const DrawerHeadingBlock = forwardRef(function DrawerHeadingBlock({
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: DrawerHeadingBlockProps, ref: ForwardedRef<HTMLDivElement>) {
+  const { sizePreset } = useDrawer();
+  const slotClassNames = useDrawerClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    forwardedRef: ref,
+    scope: useOptionalDrawerMotionScope(),
+    slot: "headingBlock",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
+ 
+  return (
+    <div
+      ref={setRef}
+      className={cn(
+        DRAWER_HEADING_BLOCK_CLASS,
+        sizePreset.headingGap,
+        slotClassNames.headingBlock,
+        className,
+      )}
+      {...rest}
+      {...pointerHandlers}
+    />
+  );
+});
+ 
+DrawerHeadingBlock.displayName = "DrawerHeadingBlock";
+ 
+export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
+  function DrawerTitle({ className, id, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
+    const { titleId, setHasTitle, sizePreset } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLHeadingElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "title",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    useLayoutEffect(() => {
+      setHasTitle(true);
+      return () => setHasTitle(false);
+    }, [setHasTitle]);
+ 
+    return (
+      <Text
+        ref={setRef as Ref<HTMLElement>}
+        as="h2"
+        textStyle={sizePreset.titleVariant}
+        id={id ?? titleId}
+        className={cn(
+          DRAWER_TITLE_CLASS,
+          sizePreset.titleClassName,
+          slotClassNames.title,
+          className,
+        )}
+        {...rest}
+        {...pointerHandlers}
+      />
+    );
+  },
+);
+ 
+DrawerTitle.displayName = "DrawerTitle";
+ 
+export const DrawerDescription = forwardRef<HTMLParagraphElement, DrawerDescriptionProps>(
+  function DrawerDescription(
+    { className, id, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest },
+    ref,
+  ) {
+    const { descriptionId, setHasDescription, sizePreset } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLParagraphElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "description",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    useLayoutEffect(() => {
+      setHasDescription(true);
+      return () => setHasDescription(false);
+    }, [setHasDescription]);
+ 
+    return (
+      <Text
+        ref={setRef as Ref<HTMLElement>}
+        as="p"
+        textStyle={sizePreset.descVariant}
+        id={id ?? descriptionId}
+        className={cn(
+          sizePreset.descClassName,
+          slotClassNames.description,
+          className,
+        )}
+        {...rest}
+        {...pointerHandlers}
+      />
+    );
+  },
+);
+ 
+DrawerDescription.displayName = "DrawerDescription";
+ 
+export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
+  function DrawerClose(
+    {
+      className,
+      onClick,
+      size,
+      "aria-label": ariaLabel,
+      motion,
+      ...rest
+    },
+    ref,
+  ) {
+    const { onOpenChange, sizePreset } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const { setRef } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "close",
+      motion,
+      forwardedRef: ref,
+    });
+ 
+    return (
+      <CloseButton
+        ref={setRef}
+        variant="secondary"
+        size={size ?? sizePreset.closeButtonSize}
+        aria-label={ariaLabel}
+        className={cn(
+          DRAWER_CLOSE_CLASS,
+          slotClassNames.close,
+          className,
+        )}
+        onClick={(e) => {
+          onClick?.(e);
+          if (!e.defaultPrevented) onOpenChange(false);
+        }}
+        {...rest}
+      />
+    );
+  },
+);
+ 
+DrawerClose.displayName = "DrawerClose";
+ 
+export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
+  function DrawerBody({ className, motion, onPointerOver, onPointerOut, ...rest }, ref) {
+    const { sizePreset } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "body",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
+ 
+    return (
+      <div
+        ref={setRef}
+        className={drawerBodyClass(
+          sizePreset.bodyPadding,
+          cn(slotClassNames.body, className),
+        )}
+        {...rest}
+        {...pointerHandlers}
+      />
+    );
+  },
+);
+ 
+DrawerBody.displayName = "DrawerBody";
+ 
+export const DrawerFooter = forwardRef<HTMLDivElement, DrawerFooterProps>(
+  function DrawerFooter({ className, children, motion, ...rest }, ref) {
+    const { sizePreset, footerButtonSize } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const sizedChildren = useMemo(
+      () => injectFooterButtonSize(children, footerButtonSize),
+      [children, footerButtonSize],
+    );
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "footer",
+      motion,
+      forwardedRef: ref,
+    });
+ 
+    return (
+      <div
+        ref={setRef}
+        className={cn(
+          DRAWER_FOOTER_CLASS,
+          sizePreset.footerPadding,
+          slotClassNames.footer,
+          className,
+        )}
+        {...rest}
+      >
+        {sizedChildren}
+      </div>
+    );
+  },
+);
+ 
+DrawerFooter.displayName = "DrawerFooter";
+ 
+// ─── Drawer.Trigger ──────────────────────────────────────────────────────────
+ 
+export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
+  function DrawerTrigger(
+    {
+      children,
+      asChild = true,
+      className,
+      motion,
+      onClick,
+      onPointerDown,
+      onPointerOver,
+      onPointerOut,
+      onPointerUp,
+      onKeyDown,
+      ...rest
+    },
+    forwardedRef,
+  ) {
+    const { open, onOpenChange } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
+    const { part, openingRef, openAfterSqueeze } = useOverlayTriggerSlot<HTMLButtonElement>({
+      scope: useOptionalDrawerMotionScope(),
+      slot: "trigger",
+      motion,
+      forwardedRef,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    const handlePointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLElement>) => {
+        if (open || openingRef.current || e.button !== 0) return;
+        e.preventDefault();
+        focusElement(part.targetRef.current);
+        openAfterSqueeze(() => onOpenChange(true));
+      },
+      [open, openingRef, openAfterSqueeze, onOpenChange, part.targetRef],
+    );
+ 
+    const handleKeyDown = useCallback(
+      (e: ReactKeyboardEvent<HTMLElement>) => {
+        onKeyDown?.(e as ReactKeyboardEvent<HTMLButtonElement>);
+        if (e.defaultPrevented || open || openingRef.current) return;
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        openAfterSqueeze(() => onOpenChange(true));
+      },
+      [onKeyDown, open, openingRef, openAfterSqueeze, onOpenChange],
+    );
+ 
+    const handleClick = useCallback(
+      (e: ReactMouseEvent<HTMLElement>) => {
+        onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
+        if (e.defaultPrevented) return;
+        if (!open && !openingRef.current) {
+          onOpenChange(true);
+        }
+      },
+      [onClick, open, openingRef, onOpenChange],
+    );
+ 
+    if (asChild && isValidElement(children)) {
+      const onlyChild = Children.count(children) === 1 ? children : null;
+      if (onlyChild) {
+        const child = onlyChild as ReactElement;
+        return cloneElement(
+          child,
+          mergeAsChildProps(
+            child,
+            {
+              ...rest,
+              className: cn(DRAWER_TRIGGER_BASE_CLASS, slotClassNames.trigger, className),
+              onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+                handlePointerDown(e);
+                part.pointerHandlers.onPointerDown(e as ReactPointerEvent<HTMLButtonElement>);
+              },
+              onPointerOver: part.pointerHandlers.onPointerOver,
+              onPointerOut: part.pointerHandlers.onPointerOut,
+              onPointerUp: part.pointerHandlers.onPointerUp,
+              onKeyDown: handleKeyDown,
+              onClick: handleClick,
+              "aria-haspopup": "dialog",
+              "aria-expanded": open,
+              "data-state": dataOpenState(open),
+            },
+            part.setRef,
+            { runBeforeChild: ["onPointerDown", "onKeyDown"] },
+          ),
+        );
+      }
+    }
+ 
+    return (
+      <button
+        type="button"
+        ref={part.setRef}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        className={cn(DRAWER_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
+        onKeyDown={handleKeyDown}
+        onClick={handleClick}
+        {...rest}
+        {...part.pointerHandlers}
+        onPointerDown={(e) => {
+          part.pointerHandlers.onPointerDown(e);
+          handlePointerDown(e);
+        }}
+        data-state={dataOpenState(open)}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+ 
+DrawerTrigger.displayName = "Drawer.Trigger";
+ 
+// ─── Drawer.Panel ─────────────────────────────────────────────────────────────
+ 
+export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
+  function DrawerPanel({ motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props }, forwardedRef) {
+    const parentScope = useOptionalDrawerMotionScope();
+    const { placement } = useDrawer();
+    const variant = useSkinVariant(variantProp);
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveDrawerMotionDefaults(variant);
+    }, [skinRevision, variant]);
+    const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const siblings = mergeMotionRootSiblings(
+      { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+      motion,
+    );
+    const merged = { ...mergedSlots, ...siblings };
+    return (
+      <DrawerMotionProvider
+        motion={merged}
+        defaults={motionDefaults}
+        params={{ placement }}
+        controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}
+      >
+        <DrawerPanelHost {...props} variant={variant} forwardedRef={forwardedRef} />
+      </DrawerMotionProvider>
+    );
+  },
+);
+ 
+DrawerPanel.displayName = "Drawer.Panel";
+ 
+function DrawerPanelHost({
+  extent = "default",
+  variant: variantProp,
+  closeOnEscape = true,
+  closeOnInteractOutside = true,
+  onEscapeKeyDown,
+  onInteractOutside,
+  initialFocus,
+  className,
+  style,
+  themeAnchor,
+  portalContainer: portalContainerProp,
+  children,
+  forwardedRef,
+  ...rest
+}: Omit<DrawerPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & { forwardedRef?: ForwardedRef<HTMLDivElement> }) {
+  const variant = useSkinVariant(variantProp);
+  const surfaceStyle = useSkinSurfaceStyle(variant);
+  const baseCtx = useDrawer();
+  const {
+    open,
+    onOpenChange,
+    placement,
+    portalContainer: portalContainerFromRoot,
+  } = baseCtx;
+  const motionScope = useDrawerMotionScope();
+ 
+  const { overlayDismiss, panelSegments } = useMemo(
+    () => partitionDrawerChildren(children),
+    [children],
+  );
+  const resolvedCloseOutside = overlayDismiss.closeOnInteractOutside ?? closeOnInteractOutside;
+ 
+  const portalHost = resolvePortalContainer(
+    portalContainerProp ?? portalContainerFromRoot,
+  );
+  const contained = isContainedPortal(portalHost);
+ 
+  const motion = useDrawerModalMotion({
+    open,
+    onOpenChange,
+    variant,
+    placement,
+    closeOnInteractOutside: resolvedCloseOutside,
+    closeOnEscape: overlayDismiss.closeOnEscape ?? closeOnEscape,
+    onEscapeKeyDown: overlayDismiss.onEscapeKeyDown ?? onEscapeKeyDown,
+    onInteractOutside: overlayDismiss.onInteractOutside ?? onInteractOutside,
+    initialFocus: overlayDismiss.initialFocus ?? initialFocus,
+    contained,
+    motionScope,
+  });
+ 
+  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
+  const lightUi = useBurneLightTheme(portalThemeAnchor);
+  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
+ 
+  const fullContextValue: DrawerContextValue = useMemo(
+    () => ({
+      ...baseCtx,
+      overlayRef: motion.overlayRef,
+      panelRef: motion.panelRef,
+      skipCloseAnimRef: motion.skipCloseAnimRef,
+    }),
+    [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
+  );
+ 
+  if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
+ 
+  return createPortal(
+    <DrawerProvider value={fullContextValue}>
+      <DrawerPortalShell
+        open={open}
+        className={className}
+        style={mergeSkinSurfaceStyle(surfaceStyle, style)}
+        variant={variant}
+        placement={placement}
+        extent={extent}
+        portalTheme={portalTheme}
+        lightUi={lightUi}
+        titleId={baseCtx.titleId}
+        descriptionId={baseCtx.descriptionId}
+        hasTitle={baseCtx.hasTitle}
+        hasDescription={baseCtx.hasDescription}
+        backdropIsDismissable={resolvedCloseOutside}
+        panelSegments={panelSegments}
+        dialogRef={motion.dialogRef}
+        overlayRef={motion.overlayRef}
+        panelRef={motion.panelRef}
+        panelForwardedRef={forwardedRef}
+        panelRest={rest}
+        onBackdropMouseDown={motion.handleBackdropMouseDown}
+        onDialogClose={() => onOpenChange(false)}
+        onDialogCancel={(e) => {
+          e.preventDefault();
+          motion.handleDialogCancel(e);
+        }}
+        contained={contained}
+      />
+    </DrawerProvider>,
+    portalHost,
+  );
+}
+ 
+// ─── DrawerPortalShell ───────────────────────────────────────────────────────
+ 
+export function DrawerPortalShell({
+  open,
+  className,
+  style,
+  variant,
+  placement,
+  extent,
+  portalTheme,
+  lightUi,
+  titleId,
+  descriptionId,
+  hasTitle,
+  hasDescription,
+  backdropIsDismissable,
+  panelSegments,
+  dialogRef,
+  overlayRef,
+  panelRef,
+  panelForwardedRef,
+  panelRest,
+  onBackdropMouseDown,
+  onDialogClose,
+  onDialogCancel,
+  contained = false,
+}: DrawerPortalShellProps) {
+  const slotClassNames = useDrawerClassNames();
+  const { size } = useDrawer();
+  const motionScope = useOptionalDrawerMotionScope();
+  useApplySkinPortal(dialogRef);
+ 
+  const panelNodes = panelSegments.map((segment, index) => (
+    <DrawerPanelSegment
+      key={segment.kind === "handle" ? `handle-${index}` : `content-${index}`}
+      segment={segment}
+    />
+  ));
+ 
+  return (
+      <dialog
+      {...portalTheme}
+      ref={dialogRef}
+      data-state={dataOpenState(open)}
+      onClose={(event) => {
+        if (!isOwnNativeDialogEvent(event)) return;
+        onDialogClose();
+      }}
+      onCancel={(event) => {
+        if (!isOwnNativeDialogEvent(event)) return;
+        onDialogCancel(event);
+      }}
+      aria-labelledby={hasTitle ? titleId : undefined}
+      aria-describedby={hasDescription ? descriptionId : undefined}
+      className={cn(drawerNativeClass(contained), slotClassNames.dialog)}
+    >
+      <div
+        ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}
+        className={drawerOverlayClass({
+          lightUi,
+          dismissable: backdropIsDismissable,
+          slotClass: slotClassNames.overlay,
+        })}
+        style={drawerOverlayEnterStyle()}
+        aria-hidden
+        onMouseDown={onBackdropMouseDown}
+      />
+      <SkinShell
+        tabIndex={-1}
+        style={style}
+        {...panelRest}
+        {...dataVariantProps({ size, variant })}
+        part="drawer.panel"
+        variant={variant}
+        scope={motionScope}
+        slot="panel"
+        enterOnMount={false}
+        className={drawerPanelClass({
+          variant,
+          placement,
+          extent,
+          size,
+          className,
+          slotClass: slotClassNames.panel,
+        })}
+        contentClassName={DRAWER_PANEL_LAYER_CONTENT_CLASS}
+        ref={mergeRefs(panelRef, panelForwardedRef)}
+      >
+        {panelNodes}
+      </SkinShell>
+    </dialog>
+  );
+}
+ 
