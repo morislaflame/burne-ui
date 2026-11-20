@@ -118,7 +118,6 @@ const MOTION_STATE_KEYS = [
   "rippleEaseCss",
   "expandDuration",
   "expandOpenEase",
-  "surfaceTransitionDuration",
   "toastDismissDuration",
   "toastDismissEase",
   "progressFillDuration",
@@ -144,7 +143,7 @@ const MOTION_STATE_KEYS = [
   "enablePaginationFlip",
   "enableSelectionFill",
 ] as const satisfies ReadonlyArray<keyof ThemeTokenState>;
-
+ 
 /** Copy accepted motion keys onto a theme snapshot. Invalid values are skipped with a dev warning. */
 function motionConfigToThemeState(
   state: ThemeTokenState,
@@ -162,7 +161,7 @@ function motionConfigToThemeState(
   if (accepted.pressSqueezeScale) next.pressSqueezeMid = accepted.pressSqueezeScale[1];
   return next;
 }
- 
+
 /** Merge shared `tokens` with `colors[mode]` into a full `ThemeTokenState`. */
 export function resolveThemeTokenState(
   config: Pick<BurneThemeConfig, "tokens" | "colors" | "motion">,
@@ -170,7 +169,7 @@ export function resolveThemeTokenState(
 ): ThemeTokenState {
   const base = createDefaultThemeState(mode);
   const shared = config.tokens ?? {};
- 
+
   const darkColors: ThemeColors = config.colors?.dark
     ? { ...base.modePalettes.dark, ...config.colors.dark }
     : base.modePalettes.dark;
@@ -178,7 +177,7 @@ export function resolveThemeTokenState(
     ? { ...base.modePalettes.light, ...config.colors.light }
     : base.modePalettes.light;
   const colors = mode === "light" ? lightColors : darkColors;
- 
+
   return {
     ...motionConfigToThemeState(base, config.motion),
     ...pickDefined({
@@ -482,7 +481,7 @@ export function applyBurneThemeConfig(
   applyThemeTokens(state, target);
   applyCustomThemeTokens(config.customTokens, target, resolvedTheme);
 }
- 
+
 export function resolveTheme(theme: BurneThemeMode | undefined = "system"): ThemeMode {
   if (theme === "light" || theme === "dark") return theme;
   if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches) {
@@ -490,7 +489,7 @@ export function resolveTheme(theme: BurneThemeMode | undefined = "system"): Them
   }
   return "dark";
 }
- 
+
 /** Alias: apply shared token overrides without mode colors. */
 export function applyTokens(
   overrides: ThemeTokenOverrides,

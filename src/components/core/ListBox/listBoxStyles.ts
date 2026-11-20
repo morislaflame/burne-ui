@@ -1,7 +1,7 @@
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { ListBoxSize, ListBoxVariant } from "./listBoxTypes";
@@ -59,7 +59,7 @@ export function listBoxRootClass({
   return cn(
     LISTBOX_ROOT_CLASS,
     virtualized ? LISTBOX_VIRTUAL_ROOT_CLASS : null,
-    visual.className,
+    skinVisualClass(visual),
     slotClass,
     className,
   );

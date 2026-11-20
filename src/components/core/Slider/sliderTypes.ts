@@ -328,6 +328,7 @@ export type SliderTrackRestProps = Omit<
   | "value"
   | "defaultValue"
   | "onValueChange"
+  | "onValueCommit"
   | "motion"
   | "motionController"
   | "motionState"

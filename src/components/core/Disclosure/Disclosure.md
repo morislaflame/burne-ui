@@ -123,7 +123,7 @@ Simple API нет.
 | `default` | Trigger + content; в группе — `divide-y-token` |
 | `outline` | Рамка только у контента (`FRAMED_PANEL`) |
 | `secondary` | Framed + `bg-secondary` |
-| `card` | Единая карточка; тень только при наведении (`--shadow-lift`); drag handle |
+| `card` | Единая карточка; тень только у оболочки при наведении (`--shadow-lift`), заголовок без своей заливки и тени; drag handle |
 | `ghost` | Прозрачный trigger, muted content. **Доменное исключение**, не action-`ghost` |
 
 `card` и `ghost` — **доменные исключения** `variant`. `card` — несводимая структура (единая карточка + `dragHandle` / `Disclosure.Handle`); тень появляется при наведении. `ghost` — прозрачный trigger и приглушённый контент. Это не `ghost` из `ActionVariant` (Button, ToggleButton, CloseButton). Канон поверхности — `default` | `outline` | `secondary`. Action-канон — `default` | `outline` | `secondary` | `ghost` (+ `primary` у Button, Badge и CloseButton). Имена скинов в канон не входят.
@@ -148,7 +148,7 @@ Simple API нет.
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `root` | `hoverIn` / `hoverOut` | Только `card`: `hoverLiftFirstLevel`, `params.liftScale` = 1. `motion.root.hoverIn` подменяет hover оболочки |
-| `titleLift` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel`; `pressSqueeze`; `pressOut: false` |
+| `titleLift` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | hover выключен: спан заголовка не получает тень. `pressSqueeze` без elevation; `pressOut: false`. Тень hover только у оболочки `card` |
 | `title` | `enter` / `leave` (+ hover/press opt-in) | нет; Trigger **рассылает** при open |
 | `chevron` | `enter` / `leave` | `chevronRotate` |
 | `contentShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target) |
@@ -264,7 +264,7 @@ Pointer на кнопке, play на `titleLift`. `asChild` без lift-span —
 | Height collapse | `contentShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Content / Group |
 | Panel content | `content` (broadcast на open) | `expandDuration` (через `delay: "expand"`) | `motion.content` на Root (узел `Content` `<section>`) |
 | Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
-| Title hover/squeeze | `titleLift` | `hoverLiftScale`, `pressSqueezeScale` | `motion` на Trigger |
+| Title press | `titleLift` | `pressSqueezeScale` | `motion` на Trigger. Hover-тени на спане нет |
 | Drag expand | `useDisclosureContentDrag` | — | `dragHandle`, `variant="card"` |
 
 ## Токены и CSS
@@ -275,7 +275,7 @@ Pointer на кнопке, play на `titleLift`. `asChild` без lift-span —
 | `DISCLOSURE_CONTENT_SHELL_CLASS` | `overflow-hidden` collapsible |
 | `FRAMED_PANEL` | Border/bg контента outline/secondary |
 | `disclosureGroupClass` | Group divide/gap/shadow |
-| `hoverVariant()` | Trigger hover tint |
+| `hoverVariant()` | Trigger hover tint. У `card` нет: заголовок не заливается |
 | Open title | `text-primary` inline |
 
 ## Стилизация и кастомизация

@@ -16,7 +16,7 @@ import type {
 } from "./drawerTypes";
 import { KIT_DRAWER_VARIANTS } from "./drawerTypes";
  
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
  
 const PANEL_PLACEMENT_CLASS: Record<DrawerPlacement, string> = {
@@ -116,7 +116,7 @@ export const DRAWER_NATIVE_CLASS =
  
 export const DRAWER_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
  
-export const DRAWER_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-dialog";
+export const DRAWER_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-dialog portal-contained";
  
 export function drawerNativeClass(contained: boolean): string {
   return cn(
@@ -136,7 +136,7 @@ export const DRAWER_PANEL_BASE_CLASS =
  
 export const DRAWER_PANEL_SURFACE: Record<KitDrawerVariant, string> = {
   default: "border-token bg-surface text-foreground shadow-token-large",
-  outline: "bg-transparent border-token-outline text-foreground shadow-token-large",
+  outline: "bg-background border-token-outline text-foreground shadow-token-large",
   secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
 };
 
@@ -228,7 +228,7 @@ export function drawerPanelClass({
   const visual = resolveVariantVisual(variant, KIT_DRAWER_VARIANTS, "drawer.panel");
   return cn(
     DRAWER_PANEL_BASE_CLASS,
-    visual.className !== undefined ? visual.className : DRAWER_PANEL_SURFACE[visual.key],
+    skinVisualClass(visual, DRAWER_PANEL_SURFACE[visual.key]),
     PANEL_PLACEMENT_CLASS[placement],
     drawerExtentClass(placement, extent),
     drawerEdgeRoundedClass(placement, size, extent),

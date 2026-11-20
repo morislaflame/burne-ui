@@ -216,7 +216,7 @@ function Nudge() {
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   interactiveEase: "power2.out",
 });
 ```
@@ -424,4 +424,4 @@ Table/
 
 ## Колонки
 
-`columnResize` ставит на колонку с `id` ручку `role="separator"`. Перетаскивание и стрелки меняют `width` колонки. Это ширина раскладки, не motion-переменная.
+`columnResize` ставит ручку `role="separator"` на каждую колонку с `id`, кроме последней: граница между колонками и по одной короткой черточке с каждой стороны. Перетаскивание и стрелки меняют `width` этой колонки. Это ширина раскладки, не motion-переменная.

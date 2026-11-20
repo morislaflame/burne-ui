@@ -8,7 +8,7 @@ import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons
 import { SEMANTIC_STATUS_TEXT } from "@/components/core/utils/semanticStatusSurface";
 import type { TextVariant } from "@/components/core/Text";
 
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD } from "./tooltipPosition";
@@ -22,7 +22,7 @@ export const TOOLTIP_DEFAULT_OFFSET = 8;
 /** Neutral shell by variant — status accents live on indicator + title (Alert / Toast). */
 export const TOOLTIP_VARIANT_SURFACE_CLASS: Record<KitTooltipVariant, string> = {
   default: "border-token bg-surface text-foreground",
-  outline: "bg-transparent border-token-outline text-foreground",
+  outline: "bg-background border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
 };
 
@@ -86,7 +86,7 @@ export const TOOLTIP_ARROW_BASE_CLASS =
 /** Arrow fill mirrors panel surface (no status tint). */
 export const TOOLTIP_ARROW_FILL_CLASS: Record<KitTooltipVariant, string> = {
   default: "bg-surface",
-  outline: "bg-transparent",
+  outline: "border-token-outline bg-background",
   secondary: "bg-secondary",
 };
 
@@ -101,7 +101,7 @@ export const TOOLTIP_COMPOUND_CONTENTS_CLASS = "contents";
 export const TOOLTIP_PANEL_BASE_CLASS =
   "relative z-[1] w-max min-w-0 rounded-mid text-start";
 
-export const TOOLTIP_PANEL_SHADOW_CLASS = "shadow-token-large";
+export const TOOLTIP_PANEL_SHADOW_CLASS = "shadow-token-mid";
 
 export function tooltipTitleClass(status: SemanticStatus): string {
   return cn(
@@ -147,9 +147,7 @@ export function tooltipPanelClass({
   return cn(
     messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
     TOOLTIP_PANEL_BASE_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : cn(TOOLTIP_PANEL_SHADOW_CLASS, TOOLTIP_VARIANT_SURFACE_CLASS[visual.key]),
+    skinVisualClass(visual, TOOLTIP_PANEL_SHADOW_CLASS, TOOLTIP_VARIANT_SURFACE_CLASS[visual.key]),
     TOOLTIP_TEXT_LAYOUT[size],
     slotClass,
     contentSlot,
@@ -172,9 +170,7 @@ export function tooltipArrowClass({
 
   return cn(
     TOOLTIP_ARROW_BASE_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : TOOLTIP_ARROW_FILL_CLASS[visual.key],
+    skinVisualClass(visual, TOOLTIP_ARROW_FILL_CLASS[visual.key]),
     TOOLTIP_ARROW_CLASS[resolvedSide],
     slotClass,
     className,

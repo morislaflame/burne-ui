@@ -90,10 +90,21 @@ export function ThemeProvider({
   skin,
   skins,
 }: ThemeProviderProps) {
-  const [uncontrolled, setUncontrolled] = useState<BurneThemeMode>(() => {
-    return readStoredTheme(storageKey) ?? defaultTheme;
-  });
+  // First render uses `defaultTheme`, the same value SSR had: the server has no
+  // localStorage. Reading storage here would make hydration see a different tree
+  // and React would keep half of the server markup (dark) under a light page.
+  const [uncontrolled, setUncontrolled] = useState<BurneThemeMode>(defaultTheme);
   const [systemRevision, setSystemRevision] = useState(0);
+
+  // The stored choice is picked up right after mount, before paint. `ThemeScript`
+  // has already set `data-theme` on <html>, so the page does not flash.
+  useLayoutEffect(() => {
+    if (themeProp !== undefined) return;
+    const stored = readStoredTheme(storageKey);
+    if (stored !== null) setUncontrolled(stored);
+    // Only on mount and when the storage key changes: later choices go through `setTheme`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
  
   const theme = themeProp ?? uncontrolled;
   const resolvedTheme = useMemo(() => {

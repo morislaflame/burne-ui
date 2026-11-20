@@ -9,7 +9,7 @@ import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 import type { DialogSize, DialogSizePreset, DialogVariant, KitDialogVariant } from "./dialogTypes";
 import { KIT_DIALOG_VARIANTS } from "./dialogTypes";
 
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const DIALOG_CONTENT_CLASS =
@@ -72,7 +72,7 @@ export const DIALOG_PANEL_LAYOUT_CLASS =
 
 export const DIALOG_PANEL_SURFACE: Record<KitDialogVariant, string> = {
   default: "border-token bg-surface shadow-token-large",
-  outline: "bg-transparent border-token-outline text-foreground shadow-token-large",
+  outline: "bg-background border-token-outline text-foreground shadow-token-large",
   secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
 };
 
@@ -125,7 +125,7 @@ export function dialogPanelClass({
     DIALOG_PANEL_LAYOUT_CLASS,
     sizePreset.panelMax,
     sizePreset.rounded,
-    visual.className !== undefined ? visual.className : DIALOG_PANEL_SURFACE[visual.key],
+    skinVisualClass(visual, DIALOG_PANEL_SURFACE[visual.key]),
     sizePreset.maxHeight,
     slotClass,
     className,

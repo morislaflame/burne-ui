@@ -42,8 +42,9 @@ describe("Э3.4 frame", () => {
     const css = readSrc("src/styles.css");
     expect(css).not.toContain("@utility h-" + "control-");
     expect(css).toContain("@utility focus-ring {");
-    expect(css).toContain("@layer theme, base, ui-kit, components, utilities;");
-    expect(css).toContain("@layer ui-kit {");
+    expect(css).toContain("@layer theme, base, components, utilities;");
+    expect(css).toContain("@layer components {");
+    expect(css).not.toContain("@layer ui-kit");
     expect(css).toContain(".portal-contained.z-dialog");
     expect(css).toContain("var(--z-overlay-nested-step)");
     const styles = [

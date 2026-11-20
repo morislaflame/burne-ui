@@ -304,13 +304,15 @@ export function useDropdownSubPopoverPortal({
     const t = triggerRef.current;
     if (!t) return;
     const r = t.getBoundingClientRect();
-    const gap = 6;
+    const menu = t.closest("[role='menu']");
+    const edge = menu instanceof HTMLElement ? menu.getBoundingClientRect() : r;
+    const gap = 0;
     const minW = Math.max(r.width, 10 * 16);
-    let left = r.right + gap;
+    let left = edge.right + gap;
     let top = r.top;
     const estW = minW;
     if (left + estW > window.innerWidth - 12) {
-      left = Math.max(12, r.left - estW - gap);
+      left = Math.max(12, edge.left - estW - gap);
     }
     const panel = panelRef.current;
     const ph = panel?.offsetHeight ?? 0;

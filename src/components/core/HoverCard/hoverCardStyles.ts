@@ -1,5 +1,3 @@
-import { POPOVER_TRIGGER_CLASS } from "@/components/core/Popover/popoverStyles";
-
 import { cn } from "@/utils/cn";
 
 export function hoverCardTriggerClass({
@@ -9,5 +7,9 @@ export function hoverCardTriggerClass({
   slotClass?: string;
   className?: string;
 }) {
-  return cn(POPOVER_TRIGGER_CLASS, slotClass, className);
+  return cn(
+    "inline-flex shrink-0 border-0 bg-transparent outline-none focus-ring",
+    slotClass,
+    className,
+  );
 }

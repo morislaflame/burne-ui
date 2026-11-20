@@ -10,7 +10,7 @@ import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } f
 import { ExpandableClassNamesProvider, ExpandableMotionProvider, ExpandableProvider, useExpandable, useExpandableMotionScope } from "./expandableContext";
 import { resolveExpandableMotionDefaults } from "./expandableAnimations";
 import { ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableSimpleBody, ExpandableTitle, ExpandableTrigger } from "./expandableParts";
-import { expandableRootClass } from "./expandableStyles";
+import { EXPANDABLE_FACE_CLIP_CLASS, expandableRootClass } from "./expandableStyles";
 import { KIT_EXPANDABLE_VARIANTS, type ExpandableProps } from "./expandableTypes";
 import { useExpandableRootState } from "./useExpandableRootState";
 
@@ -165,7 +165,9 @@ function ExpandableRootSurface({
       {...dataVariantProps({ size, variant })}
       data-state={dataExpandedState(open)}
     >
-      {children}
+      {children ? (
+        <div className={EXPANDABLE_FACE_CLIP_CLASS}>{children}</div>
+      ) : null}
     </div>
   );
 }

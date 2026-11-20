@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-import { primaryButtonVariantForAlertTone } from "@/components/composite/AlertDialog/alertDialogAPI";
+import {
+  primaryButtonStatusForAlertTone,
+  primaryButtonVariantForAlertTone,
+} from "@/components/composite/AlertDialog/alertDialogAPI";
 import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Button } from "@/components/core/Button";
 
@@ -36,6 +39,7 @@ export function AlertDialogStatusDemo() {
           <Button
             type="button"
             variant={primaryButtonVariantForAlertTone("danger")}
+            status={primaryButtonStatusForAlertTone("danger")}
             onClick={() => setDangerOpen(false)}
           >
             Delete
@@ -56,6 +60,7 @@ export function AlertDialogStatusDemo() {
           <Button
             type="button"
             variant={primaryButtonVariantForAlertTone("success")}
+            status={primaryButtonStatusForAlertTone("success")}
             onClick={() => setSuccessOpen(false)}
           >
             Great

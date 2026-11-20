@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **Правила скина на частях:** ключ `rules` принимает части компонента (`card.title`, `button.text`, `tabs.tabText` — список `SKIN_MOTION_SLOTS`) рядом с целевыми слотами. Тип ключа — `SkinRuleSlot`. Целевой слот получает класс `.skin-{name}-{slot}`. Часть красится селектором `:is([data-variant="{name}"], [data-skin="{name}"]) [data-skin-slot~="{slot}"]` и в `targets` не попадает. `renderSkinStylesheet` из `burne-ui/studio` и `burne-ui skin build` различают эти два вида сами.
+- **Правила скина:** свойства с вендорным префиксом (`-webkit-background-clip`, `-webkit-text-fill-color`) проходят проверку декларации.
+
+### Changed
+
+- **`data-skin-slot`:** части с `useMotionPart` и хосты `registerTarget` (корни Button, Card, Surface…) ставят атрибут всегда, не только внутри `StudioModeProvider`. По атрибуту работают правила частей скина и выбор на холсте студии. `StudioModeProvider` включает `useStudioMode()`.
+
+### Fixed
+
+- **Триггер оверлея со скином:** `Dialog.Trigger`, `Popover.Trigger`, `Dropdown.Trigger` и другие с `asChild` над `<Button variant="skin">` играют `pressIn`-рецепт скина и открывают панель после него. Раньше кит играл своё сжатие поверх рецепта скина, и окно открывалось до конца нажатия.
+- **ContextMenu:** точка меню монтирует портал после гидрации. Ошибки гидрации на странице с `ContextMenu` больше нет.
+- **Tabs:** индикатор вкладки со скином меряется по китовой базе варианта. Скин поверх `default` рисует подчёркивание, а не заливку `primary` на всю вкладку.
+- **DatePicker:** клик того же нажатия больше не закрывает календарь. `pointerdown` открывает после сжатия, как у Dialog; `click` только закрывает уже открытое поле или открывает, если `pointerdown` не было. При `prefers-reduced-motion` открытие сразу остаётся открытым.
+
 ## 2.0.0
 
 Что поменять в приложении — таблица [Migration](#migration) в конце этой секции. Числа шкалы — таблица в Breaking.
@@ -39,7 +57,7 @@
 - **NumberInput:** числовое поле со степперами. `value` / `onValueChange`, `min` / `max` / `step`. Пустое плюс ставит `min` или `0`. На blur значение ограничивается и садится на шаг. Кнопки вне tab sequence. Playground и Storybook. Страница сайта — после публикации кита.
 - **DatePicker:** поле с календарём в попапе. `mode` `single` | `range`, `value` / `onValueChange`, `open` / `onOpenChange`. Кнопка — оболочка поля, шеврон крутится при открытии. Попап закрывается, когда значение полное. `name` пишет локальный `YYYY-MM-DD` (диапазон — `start/end`). Playground и Storybook. Страница сайта — после публикации кита.
 - **Скины, редактор:** playground, группа Theme, страница Skin. Токены, `targets` и `layersDeclarative`, превью в своём контейнере (`SkinProvider` + `portalContainer`). Экспорт JSON, CSS и пакета, ссылка `#skin=`. Схема и разбор файла — `parseSkinDocument` / `SKIN_DOCUMENT_SCHEMA` в `burne-ui/internal`.
-- **Скины, CLI:** `burne-ui skin add <name>` собирает пакет из `cli/templates/skin` (копия в `create-burne-app/templates/skin`) с `"license": "MIT"` и файлом `LICENSE`. `renderSkinPackage` пишет ту же лицензию. `burne-ui skin validate` проверяет декларацию токенов, focus ring, `forced-colors`, контраст `--color-foreground` / `--color-surface` (WCAG AA), слоты `SkinSlot`, `ref` у `layers` и два слоя у `--shadow-*`. Peer шаблона — `^2.0.0`.
+- **Скины, CLI:** `burne-ui skin add <name>` собирает пакет из `cli/templates/skin` с `"license": "MIT"` и файлом `LICENSE`. `renderSkinPackage` пишет ту же лицензию. `burne-ui skin validate` проверяет декларацию токенов, focus ring, `forced-colors`, контраст `--color-foreground` / `--color-surface` (WCAG AA), слоты `SkinSlot`, `ref` у `layers` и два слоя у `--shadow-*`. Peer шаблона — `^2.0.0`.
 - **`data-*` контракт:** `data-state` (open/closed, expanded/collapsed, checked/unchecked, on/off, active/inactive, selected, loading/idle/success), флаги `data-disabled` / `data-invalid` / `data-readonly` / `data-required`, `data-orientation`, `data-side` / `data-align`, `data-size` / `data-variant` / `data-status`. Хелперы — `dataContract.ts`. Пример: `Select.Trigger` с `data-[state=open]:rotate-180`.
 - **Слоты `classNames`:** Avatar gloss больше не выбрасывает `className` / `classNames.root`. Новые слоты: `glossShadow`, Tooltip `panelRelative`, Expandable `contentWrap`, Toast `stackItem` (z-index, pointer-events, origin и ширина viewport — CSS-переменные), Badge `splitShell` и `icon`, Select `triggerIconWrap`, Switch `iconOff` / `iconOn`, Slider `icon`, Field `label`, Table `columnButton` (`columnInner` общий), Calendar `navIconWrap`.
 - **`Table.Caption`:** `<caption>` — имя таблицы. Слот `classNames.caption`, motion-слот `caption`. `Table.Label` остаётся текстом заголовка колонки.
@@ -69,6 +87,7 @@
 
 ### Fixed
 
+- **Цели скина `{ extend }`:** класс дописывается после классов кита на всех целевых слотах. Раньше его читали только раскладочные корни, а Button, Card, Input, Badge, Alert, Tabs и остальные поверхности его теряли. Из-за этого правила студии из `bindSkinRuleClasses` не доходили до DOM. `tabs.tab` теперь читает и строковую цель. Общий хелпер — `skinVisualClass` в `skins/resolveVariantVisual.ts`. Регресс — `src/skins/skinTargetExtend.test.tsx`.
 - **Экспорт темы:** `exportThemeCss` пишет шкалу на `:root`, светлые цвета на `[data-theme="light"]`, тёмные цвета следом на `:root:not([data-theme="light"])` и `[data-theme="dark"]`. Светлая страница сохраняет свою палитру, тёмный островок получает тёмные оверрайды. `rules.dark` скина попадает на `<html>` без атрибута и стоит до `:hover`. `skin validate` разбирает документ тем же `parseSkinDocument`, что и студия: имя, `extends`, `rules`, `properties`, `fonts`, массив в `motion.config`. Своя переменная в правиле и `color-mix` в кольце фокуса проходят. Проверки `forced-colors` и `layers.tsx` остаются у CLI.
 - **Документация:** у Header, Sidebar, AppShell, AspectRatio и Resizable есть таблица пропсов, доступность и `motionController`. Toast описывает `toast()` и `dismissAll`. Примеры импорта в markdown сверяются с опубликованными именами.
 - **Авторский вход:** `burne-ui/authoring` отдаёт типы `MotionController`, `MotionMapWithEvents`, `MotionPartPhases`, `MotionStateHostProps`, `MotionScopeValue`, `Prettify`. `MotionRun` и `MotionBroadcastOptions` — с корня `burne-ui`: это результат `play()` и аргумент `playAll`.

@@ -21,7 +21,12 @@ function sameTokenRecord(a, b) {
   return aKeys.every((key) => a[key] === b[key]);
 }
 
-export function renderSkinStylesheet(skin) {
+/**
+ * `options.isTarget(slot)` tells a target slot (class) from a part (`data-skin-slot`).
+ * Without it every rule slot is a target.
+ */
+export function renderSkinStylesheet(skin, options = {}) {
+  const isTarget = typeof options.isTarget === "function" ? options.isTarget : () => true;
   const name = String(skin.name).replace(/"/g, "");
   const dark = mergedSkinTokens(skin.tokens, skin.tokensDark);
   const light = mergedSkinTokens(skin.tokens, skin.tokensLight);
@@ -39,7 +44,7 @@ export function renderSkinStylesheet(skin) {
     lightDiffers ? cssBlock(darkSelector, dark).trimEnd() : "",
     renderSkinFonts(skin),
     renderSkinProperties(skin),
-    renderSkinRules(skin),
+    renderSkinRules(skin, isTarget),
     "",
   ]
     .filter((part) => part !== "")
@@ -58,13 +63,24 @@ function declarationBlock(selector, style) {
   return `${selector} {\n${body}\n}`;
 }
 
-function renderSkinRules(skin) {
+/**
+ * A target slot keeps its `.skin-{name}-{slot}` class. Any other rule slot is a part
+ * (`card.title`) marked by `data-skin-slot`, scoped to a node the skin paints.
+ */
+function ruleSelector(skin, slot, isTarget) {
+  if (isTarget(slot)) return `.${ruleClass(skin.name, slot)}`;
+  const name = String(skin.name).replace(/"/g, "");
+  const part = String(slot).replace(/"/g, "");
+  return `:is([data-variant="${name}"], [data-skin="${name}"]) [data-skin-slot~="${part}"]`;
+}
+
+function renderSkinRules(skin, isTarget) {
   const rules = skin.rules;
   if (!rules || typeof rules !== "object") return "";
   const blocks = [];
   for (const [slot, spec] of Object.entries(rules)) {
     if (!spec || typeof spec !== "object") continue;
-    const selector = `.${ruleClass(skin.name, slot)}`;
+    const selector = ruleSelector(skin, slot, isTarget);
     // Theme branches before :hover. `:where` keeps the dark page rule at class
     // specificity, so a later `:hover` of the same class still wins.
     // `<html>` in the dark theme has no attribute, so the page matches `:root:not([data-theme="light"])`.

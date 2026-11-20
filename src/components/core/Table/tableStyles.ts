@@ -1,5 +1,5 @@
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -26,8 +26,23 @@ export const TABLE_VIRTUAL_SPACER_CELL_CLASS = "border-0 p-0";
 
 export const TABLE_CONTENT_BASE_CLASS = "w-full";
 export const TABLE_CONTENT_FIXED_CLASS = "table-fixed";
+/**
+ * Sits on the column's inline end and shifts halfway across that edge,
+ * so the rule is the boundary with the next column. The last column has
+ * no next column: `in-[th:last-child]` hides its handle.
+ */
 export const TABLE_COLUMN_RESIZE_HANDLE_CLASS =
-  "absolute inset-y-0 end-0 z-10 w-small cursor-col-resize touch-none border-e-token focus-ring";
+  "absolute inset-y-0 end-0 z-10 flex cursor-col-resize touch-none items-center justify-center focus-ring ltr:translate-x-1/2 rtl:-translate-x-1/2 in-[th:last-child]:hidden";
+
+/** Decorative grip: one short mark, the column rule, one short mark. */
+export const TABLE_COLUMN_RESIZE_GRIP_CLASS =
+  "pointer-events-none flex h-full items-center gap-px";
+
+export const TABLE_COLUMN_RESIZE_GRIP_MARK_CLASS =
+  "h-mid w-px shrink-0 rounded-full bg-border";
+
+export const TABLE_COLUMN_RESIZE_GRIP_LINE_CLASS =
+  "h-full w-px shrink-0 self-stretch bg-border";
 export const TABLE_COLUMN_MIN_WIDTH = 64;
 
 export const TABLE_CONTENT_VARIANT_CLASS: Record<KitTableVariant, string> = {
@@ -159,9 +174,7 @@ export function tableRootClass({
   const kitDefault = visual.className === undefined && visual.key === "default";
   return cn(
     TABLE_ROOT_BASE_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : TABLE_ROOT_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, TABLE_ROOT_VARIANT_CLASS[visual.key]),
     kitDefault && !stickyHeader && TABLE_ROOT_CLIP_CLASS,
     slotClass,
     className,
@@ -183,9 +196,7 @@ export function tableContentClass({
   return cn(
     TABLE_CONTENT_BASE_CLASS,
     columnResize && TABLE_CONTENT_FIXED_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : TABLE_CONTENT_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, TABLE_CONTENT_VARIANT_CLASS[visual.key]),
     slotClass,
     className,
   );
@@ -211,9 +222,7 @@ export function tableColumnClass({
   const visual = resolveVariantVisual(variant, KIT_TABLE_VARIANTS, "table.column");
   return cn(
     TABLE_COLUMN_BASE_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : TABLE_COLUMN_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, TABLE_COLUMN_VARIANT_CLASS[visual.key]),
     stickyHeader && TABLE_COLUMN_STICKY_CLASS[visual.key],
     TABLE_SIZE_TEXT_CLASS[size],
     TABLE_SIZE_PAD_CLASS[size],
@@ -267,9 +276,7 @@ export function tableRowClass({
   const visual = resolveVariantVisual(variant, KIT_TABLE_VARIANTS, "table.row");
   return cn(
     TABLE_ROW_BASE_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : TABLE_ROW_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, TABLE_ROW_VARIANT_CLASS[visual.key]),
     isSelectable && TABLE_ROW_SELECTABLE_CLASS,
     !isToned &&
       (isSelected ? TABLE_ROW_SELECTED_CLASS : hoverVariant()),
@@ -300,9 +307,7 @@ export function tableCellClass({
 
   return cn(
     TABLE_CELL_BASE_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : TABLE_CELL_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, TABLE_CELL_VARIANT_CLASS[visual.key]),
     TABLE_SIZE_TEXT_CLASS[size],
     TABLE_SIZE_PAD_CLASS[size],
     isToned && toneSurface,

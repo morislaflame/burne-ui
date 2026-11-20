@@ -3,7 +3,7 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 import { KIT_BUTTON_VARIANTS } from "@/components/core/Button/buttonTypes";
 import type { TextVariant } from "@/components/core/Text";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import type { SkinSlot } from "@/skins/skinTypes";
 import { cn } from "@/utils/cn";
  
@@ -58,16 +58,20 @@ export function buttonGroupRoundingClasses(seg: ButtonGroupSegment | undefined):
 export const BUTTON_GROUP_RADIUS_BRIDGE_CLASS =
   "min-h-0 min-w-0 self-stretch rounded-[inherit]";
  
-/** Remove the double line at the internal joints. */
+/** Drop the segment border that sits against the group separator, so the joint is one line. */
 export function buttonGroupOverlapBorderClasses(
   seg: ButtonGroupSegment | undefined,
 ): string {
   if (seg == null || seg.position === "only") return "";
   const { orientation, position } = seg;
   if (orientation === "horizontal") {
-    return position === "first" ? "" : "border-s-0";
+    if (position === "first") return "button-group-joint-e";
+    if (position === "last") return "button-group-joint-s";
+    return "button-group-joint-s button-group-joint-e";
   }
-  return position === "first" ? "" : "border-t-0";
+  if (position === "first") return "button-group-joint-b";
+  if (position === "last") return "button-group-joint-t";
+  return "button-group-joint-t button-group-joint-b";
 }
  
 /** Surface of the segment inside the joined group: without its own frame. */
@@ -80,6 +84,7 @@ export function buttonGroupTextSurfaceClasses(seg: ButtonGroupSegment | undefine
   return cn(
     "relative inline-flex shrink-0 select-none items-center justify-center border-token bg-surface text-muted",
     buttonGroupRoundingClasses(seg),
+    buttonGroupOverlapBorderClasses(seg),
     seg != null && buttonGroupSegmentSurfaceClasses(seg),
     "z-0",
   );
@@ -112,9 +117,10 @@ export function buttonGroupRootClass({
         // border-color come from the root so `rounded-*` / `border-primary` on
         // classNames.root retarget the visible frame without `after:*` overrides.
         "relative rounded-base border-border",
-        visual.className !== undefined
-          ? visual.className
-          : "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border-solid after:[border-width:var(--border-width,1px)] after:border-inherit after:content-['']",
+        skinVisualClass(
+          visual,
+          "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border-solid after:[border-width:var(--border-width,1px)] after:border-inherit after:content-['']",
+        ),
       ),
     orientation === "horizontal"
       ? cn("flex-row flex-nowrap items-stretch", segmented && "gap-xsmall")

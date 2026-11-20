@@ -7,7 +7,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const PIN_INPUT_ROOT_CLASS = "w-fit max-w-full min-w-0";
@@ -23,6 +23,18 @@ const PIN_INPUT_CELL_BOX: Record<InputSize, string> = {
   large: "w-control-large min-h-control-large",
 };
 
+/**
+ * The cell is the control square. Horizontal `controlPad` grows with `--space`
+ * faster than that square, and the native input clips the glyph to the padding box.
+ * Type size follows the metric the square is built from (`large` uses `text-mid`).
+ */
+const PIN_INPUT_CELL_TEXT: Record<InputSize, string> = {
+  small: "p-0 text-center text-small",
+  base: "p-0 text-center text-base",
+  mid: "p-0 text-center text-mid",
+  large: "p-0 text-center text-mid",
+};
+
 export const PIN_INPUT_DISABLED_CLASS = "cursor-not-allowed opacity-55";
 
 /** Dots without `type="password"`, so the browser does not offer a saved password. */
@@ -30,8 +42,7 @@ export const PIN_INPUT_MASK_CLASS = "[-webkit-text-security:disc] [text-security
 
 export function pinInputFieldSurface(variant: InputVariant): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "pinInput.control");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
 
 export function pinInputGroupClass({
@@ -68,7 +79,7 @@ export function pinInputFieldClass({
     "box-border shrink-0 border-1 text-center text-foreground outline-none tabular-nums placeholder:text-muted",
     PIN_INPUT_CELL_BOX[size],
     CONTROL_SIZE_LAYOUT[size].rounded,
-    CONTROL_SIZE_LAYOUT[size].controlPad,
+    PIN_INPUT_CELL_TEXT[size],
     pinInputFieldSurface(variant),
     fieldShellFocusRingClass(status),
     FIELD_SHELL_TRANSITION_CLASS,

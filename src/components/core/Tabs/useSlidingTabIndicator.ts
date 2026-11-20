@@ -7,7 +7,7 @@ import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
 import { applyTabsIndicatorRest } from "@/components/core/utils/slotMotion/recipes/tabsIndicatorMove";
  
-import type { TabsOrientation, TabsVariant } from "./tabsTypes";
+import type { KitTabsVariant, TabsOrientation } from "./tabsTypes";
  
 type IndicatorMetrics = {
   left: number;
@@ -43,7 +43,7 @@ function readIndicatorMetrics(
   list: HTMLElement,
   tab: HTMLElement,
   orientation: TabsOrientation,
-  variant: TabsVariant,
+  variant: KitTabsVariant,
 ): IndicatorMetrics {
   const listRect = list.getBoundingClientRect();
   const tabRect = tab.getBoundingClientRect();
@@ -93,7 +93,7 @@ export function useSlidingTabIndicator(
   indicatorRef: RefObject<HTMLElement | null>,
   activeValue: string | null,
   orientation: TabsOrientation,
-  variant: TabsVariant,
+  variant: KitTabsVariant,
   tabElementsRef: RefObject<Map<string, HTMLButtonElement>>,
   layoutEpoch: number,
   scope: MotionScopeValue | null,
@@ -103,7 +103,7 @@ export function useSlidingTabIndicator(
   const layoutMetricsRef = useRef<IndicatorMetrics | null>(null);
   const reduceMotionPreferred = usePrefersReducedMotion();
  
-  const updateIndicator = useCallback(() => {
+  const updateIndicator = useCallback((animate = true) => {
     const list = listRef.current;
     const indicator = indicatorRef.current;
     const activeTab = activeValue == null ? undefined : tabElementsRef.current?.get(activeValue);
@@ -125,7 +125,7 @@ export function useSlidingTabIndicator(
     applyIndicatorLayout(indicator, to);
     layoutMetricsRef.current = to;
 
-    if (reduceMotion || firstLayoutRef.current || !scope) {
+    if (!animate || reduceMotion || firstLayoutRef.current || !scope) {
       applyTabsIndicatorRest(indicator);
       return;
     }
@@ -134,6 +134,15 @@ export function useSlidingTabIndicator(
     const dy = from.top - to.top;
     const sx = to.width > 0 ? from.width / to.width : 1;
     const sy = to.height > 0 ? from.height / to.height : 1;
+    if (
+      Math.abs(dx) < 0.5 &&
+      Math.abs(dy) < 0.5 &&
+      Math.abs(sx - 1) < 0.005 &&
+      Math.abs(sy - 1) < 0.005
+    ) {
+      applyTabsIndicatorRest(indicator);
+      return;
+    }
     const value = scope.resolve("indicator", "change");
     if (value === false || value === undefined) {
       applyTabsIndicatorRest(indicator);
@@ -156,7 +165,7 @@ export function useSlidingTabIndicator(
   ]);
  
   useLayoutEffect(() => {
-    updateIndicator();
+    updateIndicator(true);
     firstLayoutRef.current = false;
   }, [updateIndicator]);
  
@@ -164,7 +173,7 @@ export function useSlidingTabIndicator(
     const list = listRef.current;
     if (!list || typeof ResizeObserver === "undefined") return;
  
-    const ro = new ResizeObserver(() => updateIndicator());
+    const ro = new ResizeObserver(() => updateIndicator(false));
     ro.observe(list);
     for (const tab of tabElementsRef.current?.values() ?? []) {
       ro.observe(tab);

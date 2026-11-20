@@ -116,6 +116,7 @@ export function closeButtonRootClass({
     usesKitElevation(variant, KIT_CLOSE_BUTTON_VARIANTS) && SHADOW_LIFT_MOTION_CLASS,
     !disabled && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[visual.key]),
     INTERACTIVE_VARIANT_ROOT[visual.key],
+    visual.extend,
     sizeClasses.root,
     disabled && CLOSE_BUTTON_DISABLED_CLASS,
     slotRoot,

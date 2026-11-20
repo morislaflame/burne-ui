@@ -198,6 +198,8 @@ export const REST_FIXTURES: SlotContractFixture[] = [
       "footer",
       "footerToday",
       "footerClear",
+      // The dot marks the real today, which is only inside OCTOBER during October.
+      "cellTodayDot",
     ],
     render: (ctx) => (
       <Calendar

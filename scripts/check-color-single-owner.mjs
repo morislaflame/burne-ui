@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // D5-10: CSS owns kit surface / text / border color (`surface-color-transition`
 // and the matching lists). Component runtime must not call `tweenCssColor`.
-// The stylesheet default must match `MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration`,
-// because `applyMotionCssTokens` drops the inline var when the value is the default.
+// The stylesheet default must match `interactiveDuration` and the CSS form of
+// `hoverLiftEase`, because `applyMotionCssTokens` drops the inline vars at the kit default.
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

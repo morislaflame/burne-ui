@@ -16,7 +16,7 @@ export const StepperRoot = forwardRef<HTMLOListElement, StepperProps>(function S
         <StepperMotionProvider
           motion={state.motion}
           defaults={motionDefaults}
-          params={{}}
+          params={{ hasHoverShadow: true }}
           controller={state.motionController}
           motionState={state.motionState}
           motionPayload={state.motionPayload}

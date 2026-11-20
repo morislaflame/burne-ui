@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
 import { sliderThicknessToCss } from "@/components/core/Slider/sliderStyles";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 
 import { SWITCH_LAYOUT, type SwitchSize } from "./switchGeometry";
 import { KIT_SWITCH_VARIANTS, type SwitchLabelPosition, type SwitchVariant } from "./switchTypes";
@@ -142,8 +142,7 @@ export function switchTrackClass({
     KIT_SWITCH_VARIANTS,
     "selectionIndicator.root",
   );
-  const surface =
-    visual.className !== undefined ? visual.className : SWITCH_TRACK_DEFAULT_CLASS;
+  const surface = skinVisualClass(visual, SWITCH_TRACK_DEFAULT_CLASS);
 
   return cn(
     SWITCH_TRACK_BASE_CLASS,
@@ -157,8 +156,7 @@ export function switchTrackClass({
 
 export function switchFillSurfaceClass(variant: SwitchVariant = "default"): string {
   const visual = resolveVariantVisual(variant, KIT_SWITCH_VARIANTS, "switch.fill");
-  if (visual.className !== undefined) return visual.className;
-  return SWITCH_FILL_COLOR_CLASS;
+  return skinVisualClass(visual, SWITCH_FILL_COLOR_CLASS);
 }
 
 export function switchTrackCustomStyle(thickness?: number | string): CSSProperties | undefined {

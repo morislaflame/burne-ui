@@ -1,4 +1,4 @@
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import { KIT_SURFACE_VARIANTS, type SurfaceVariant } from "./surfaceTypes";
@@ -48,8 +48,7 @@ export function surfaceRootClass({
 }): string {
   const visual = resolveVariantVisual(variant, KIT_SURFACE_VARIANTS, "surface.root");
   return cn(
-    visual.className !== undefined ? visual.className : SURFACE_BASE_CLASS,
-    visual.className === undefined && SURFACE_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, SURFACE_BASE_CLASS, SURFACE_VARIANT_CLASS[visual.key]),
     SURFACE_RADIUS_CLASS[radius],
     SURFACE_SHADOW_CLASS[shadow],
     SURFACE_PADDING_CLASS[padding],

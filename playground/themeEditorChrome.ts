@@ -22,7 +22,7 @@ export const SCALE_TOKEN_LABELS = {
 } as const;
 
 export const MOTION_DURATION_LABELS = {
-  interactiveDuration: "Interactive duration",
+  interactiveDuration: "Interactive and surface duration",
   tooltipDuration: "Tooltip duration",
   modalDuration: "Modal duration",
   switchThumbDuration: "Switch thumb duration",
@@ -33,7 +33,6 @@ export const MOTION_DURATION_LABELS = {
   progressFillDuration: "Progress fill duration",
   progressIndeterminateDuration: "Progress indeterminate duration",
   loadingDotsDuration: "Loading dots duration",
-  surfaceTransitionDuration: "CSS surface transition",
   toastDismissDuration: "Toast dismiss duration",
 } as const;
 

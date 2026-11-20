@@ -1,5 +1,5 @@
-import { alertSurfaceClass, alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
-import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
+import { alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
+import type { AlertStatus, AlertVariant, KitAlertVariant } from "@/components/core/Alert/alertTypes";
 import { KIT_ALERT_VARIANTS } from "@/components/core/Alert/alertTypes";
 import { dialogOverlayClass, dialogOverlayEnterStyle } from "@/components/core/Dialog/dialogStyles";
 import {
@@ -7,7 +7,7 @@ import {
   panelSizeLayout,
   type PanelSize,
 } from "@/components/core/utils/sizeLayout";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
  
 import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";
@@ -50,7 +50,7 @@ export const ALERT_DIALOG_NATIVE_CLASS =
 export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
  
 export const ALERT_DIALOG_NATIVE_POSITION_CONTAINED_CLASS =
-  "absolute inset-0 z-dialog";
+  "absolute inset-0 z-dialog portal-contained";
  
 export function alertDialogNativeClass(contained: boolean): string {
   return cn(
@@ -64,10 +64,19 @@ export function alertDialogNativeClass(contained: boolean): string {
 export const ALERT_DIALOG_PANEL_SHELL_CLASS = "relative z-10 w-full outline-none";
  
 export const ALERT_DIALOG_PANEL_SURFACE_CLASS =
-  "flex min-h-0 flex-col overflow-hidden text-start";
+  "flex min-h-0 flex-col overflow-hidden text-start text-foreground";
+
+export const ALERT_DIALOG_PANEL_SURFACE: Record<KitAlertVariant, string> = {
+  default: "border-token bg-surface shadow-token-large",
+  outline: "bg-background border-token-outline text-foreground shadow-token-large",
+  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
+};
+
+/** Fills the panel when `SkinShell` wraps children in a declarative content node. */
+export const ALERT_DIALOG_PANEL_LAYER_CONTENT_CLASS = "flex min-h-0 flex-1 flex-col";
 
 export const ALERT_DIALOG_CLOSE_CLASS = "shrink-0";
-
+ 
 export const ALERT_DIALOG_TRIGGER_BASE_CLASS = "outline-none focus-ring";
  
 export const ALERT_DIALOG_INDICATOR_CLASS = "shrink-0 [&_svg]:block";
@@ -85,8 +94,8 @@ export const ALERT_DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
  
 export function alertDialogPanelSurfaceClass(variant: AlertVariant): string {
-  // Panel surface follows variant only; status colors icon/text in the header, not the shell.
-  return cn(alertSurfaceClass(variant, "default"), "shadow-token-large");
+  const visual = resolveVariantVisual(variant, KIT_ALERT_VARIANTS, "alertDialog.panel");
+  return skinVisualClass(visual, ALERT_DIALOG_PANEL_SURFACE[visual.key]);
 }
  
 export function alertDialogOverlayClass(lightUi: boolean, slotClass?: string): string {
@@ -128,9 +137,7 @@ export function alertDialogPanelClass({
     sizePreset.rounded,
     ALERT_DIALOG_PANEL_SURFACE_CLASS,
     sizePreset.maxHeight,
-    visual.className !== undefined
-      ? visual.className
-      : alertDialogPanelSurfaceClass(variant),
+    skinVisualClass(visual, ALERT_DIALOG_PANEL_SURFACE[visual.key]),
     slotClass,
     className,
   );

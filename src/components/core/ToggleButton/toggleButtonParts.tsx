@@ -15,6 +15,7 @@ import {
   toggleButtonFillClass,
   toggleButtonIconClass,
   toggleButtonLabelClass,
+  toggleButtonFillClipClass,
   toggleButtonTextClass,
   TOGGLE_BUTTON_TEXT_VARIANT,
 } from "./toggleButtonStyles";
@@ -42,20 +43,22 @@ export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProp
     if (!ctx) return null;
  
     return (
-      <span
-        ref={mergeRefs(setRef, ctx.bindFillRef)}
-        aria-hidden
-        className={toggleButtonFillClass({
-          fillColor: ctx.fillColor,
-          pressed: ctx.pressed,
-          variant: ctx.variant,
-          roundingClass: ctx.roundingClass,
-          slotClass: cn(slotClassNames.fill, className),
-        })}
-        {...rest}
-        {...{ [SELECTION_FILL_DATA_ATTR]: "" }}
-        data-pressed={ctx.pressed ? "true" : "false"}
-      />
+      <span aria-hidden className={toggleButtonFillClipClass(ctx.groupSegment, ctx.variant)}>
+        <span
+          ref={mergeRefs(setRef, ctx.bindFillRef)}
+          aria-hidden
+          className={toggleButtonFillClass({
+            fillColor: ctx.fillColor,
+            pressed: ctx.pressed,
+            variant: ctx.variant,
+            roundingClass: ctx.roundingClass,
+            slotClass: cn(slotClassNames.fill, className),
+          })}
+          {...rest}
+          {...{ [SELECTION_FILL_DATA_ATTR]: "" }}
+          data-pressed={ctx.pressed ? "true" : "false"}
+        />
+      </span>
     );
   },
 );

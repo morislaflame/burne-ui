@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, MouseEvent, ReactNode } from "react";
+import type { ButtonHTMLAttributes, CSSProperties, ForwardedRef, HTMLAttributes, MouseEvent, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
  
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
@@ -126,8 +126,9 @@ export type AlertDialogClassNamesProviderProps = {
   children?: ReactNode;
 };
  
-export type AlertDialogPanelProps = {
-  className?: string;
+export type AlertDialogPanelProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+  variant?: AlertVariant;
+  style?: CSSProperties;
   /**
    * Anchor for inheriting the light theme from the wrapper (`data-theme`).
    * By default — `document.activeElement` at the moment of opening.
@@ -255,6 +256,7 @@ export type AlertDialogPortalShellProps = {
   open: boolean;
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
   variant: AlertVariant;
   sizePreset: AlertDialogSizePreset;
   portalTheme: Record<string, string | undefined>;
@@ -263,11 +265,14 @@ export type AlertDialogPortalShellProps = {
   descriptionId: string;
   hasTitle: boolean;
   hasDescription: boolean;
+  onDialogClose: () => void;
   onDialogCancel: (event: OverlayDismissEvent) => void;
   onBackdropMouseDown: (event: MouseEvent<HTMLDivElement>) => void;
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
+  panelForwardedRef?: ForwardedRef<HTMLDivElement>;
+  panelRest?: HTMLAttributes<HTMLDivElement>;
   /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
   contained?: boolean;
 };

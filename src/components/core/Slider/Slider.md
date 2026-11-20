@@ -146,7 +146,7 @@ function Nudge() {
 ```
 
 ```ts
-configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
+configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 220 });
 ```
 
 ## Стилизация и кастомизация

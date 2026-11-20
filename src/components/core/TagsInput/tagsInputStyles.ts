@@ -7,7 +7,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const TAGS_INPUT_ROOT_CLASS = "w-full min-w-0";
@@ -28,8 +28,7 @@ const TAG_TEXT: Record<InputSize, string> = {
 
 export function tagsInputShellSurface(variant: InputVariant): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "tagsInput.shell");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
 
 export function tagsInputShellClass({

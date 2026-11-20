@@ -1,11 +1,13 @@
 import { CONTROL_SIZE_LAYOUT, collapsibleSizeLayout, iconSlotSizeClass } from "@/components/core/utils/sizeLayout";
 import { messageBannerGridClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { ExpandableSize, ExpandableVariant, KitExpandableVariant } from "./expandableTypes";
 import { KIT_EXPANDABLE_VARIANTS } from "./expandableTypes";
+
+export const EXPANDABLE_FACE_CLIP_CLASS = "overflow-hidden rounded-[inherit]";
 
 export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-start text-foreground";
 
@@ -37,7 +39,7 @@ export const EXPANDABLE_CHEVRON_SVG_CLASS = "shrink-0";
 export const EXPANDABLE_MESSAGE_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
 export const EXPANDABLE_ICON_BASE_CLASS =
-  "icon-slot shrink-0 text-primary";
+  "icon-slot inline-flex h-[length:var(--icon-size)] w-[length:var(--icon-size)] shrink-0 items-center justify-center text-primary";
 
 export const EXPANDABLE_CONTENT_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
@@ -64,7 +66,7 @@ export function expandableRootClass({
   const visual = resolveVariantVisual(variant, KIT_EXPANDABLE_VARIANTS, "expandable.root");
   return cn(
     EXPANDABLE_ROOT_BASE_CLASS,
-    visual.className !== undefined ? visual.className : EXPANDABLE_VARIANT_SURFACE[visual.key],
+    skinVisualClass(visual, EXPANDABLE_VARIANT_SURFACE[visual.key]),
     slotClass,
     className,
   );

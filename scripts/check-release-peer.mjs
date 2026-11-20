@@ -15,7 +15,6 @@ const kitFiles = [
 ];
 
 const siblingFiles = [
-  "create-burne-app/templates/skin/package.json",
   "create-burne-app/templates/vite/package.json",
   "create-burne-app/templates/next/package.json",
   "burne-ui-skin-gloss/package.json",

@@ -6,7 +6,7 @@ import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/butt
 import type { InputSize, InputVariant } from "@/components/core/Input";
 import { KIT_INPUT_VARIANTS } from "@/components/core/Input/inputTypes";
 import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
  
 export const COMBOBOX_LOADING_CLASS = "px-mid py-small text-muted";
@@ -26,7 +26,7 @@ export const COMBOBOX_CHEVRON_ICON_SLOT: Record<InputSize, string> = {
 };
  
 export const COMBOBOX_INPUT_GROUP_BASE_CLASS =
-  "relative z-0 flex min-w-0 items-stretch border-1 text-start overflow-hidden motion-reduce:transition-none";
+  "relative z-0 flex min-w-0 items-stretch border-1 text-start motion-reduce:transition-none";
  
 export const COMBOBOX_INPUT_BASE_CLASS =
   `min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
@@ -34,7 +34,7 @@ export const COMBOBOX_INPUT_BASE_CLASS =
 export const COMBOBOX_INPUT_MUTED_CLASS = "text-muted";
  
 export const COMBOBOX_TRIGGER_BASE_CLASS =
-  "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset";
+  "flex shrink-0 origin-center cursor-pointer items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset disabled:cursor-not-allowed";
  
 export const COMBOBOX_TRIGGER_DISABLED_CLASS = "pointer-events-none";
  
@@ -55,8 +55,7 @@ export function comboBoxShellSurface({
   variant: InputVariant;
 }): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "comboBox.shell");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
  
 export function comboBoxGroupShellClass(groupSegment?: ButtonGroupSegment): string {

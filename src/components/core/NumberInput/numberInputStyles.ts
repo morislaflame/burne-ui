@@ -9,7 +9,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const NUMBER_INPUT_ROOT_CLASS = "w-fit max-w-full min-w-0";
@@ -50,8 +50,7 @@ export function numberInputIconClass(size: InputSize): string {
 
 export function numberInputShellSurface(variant: InputVariant): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "numberInput.shell");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
 
 export function numberInputShellClass({
@@ -73,7 +72,7 @@ export function numberInputShellClass({
 }): string {
   const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   return cn(
-    "relative flex w-full min-w-0 items-stretch overflow-hidden rounded-base border-1",
+    "relative flex w-full min-w-0 items-stretch rounded-base border-1",
     NUMBER_INPUT_SHELL_MIN[size],
     numberInputShellSurface(variant),
     fieldShellFocusRingClass(status),

@@ -305,7 +305,7 @@ import { configureMotion } from "burne-ui";
 configureMotion({
   hoverLiftScale: 1.025,
   hoverLiftEase: "sine.inOut",
-  interactiveDuration: 280,   // длительность lift
+  interactiveDuration: 220,   // длительность lift
   enableHoverLift: true,
 });
 ```

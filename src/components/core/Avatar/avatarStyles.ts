@@ -1,6 +1,6 @@
 import type { TextVariant } from "@/components/core/Text";
 
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { AvatarSize, AvatarVariant } from "./avatarTypes";
@@ -33,7 +33,7 @@ export function avatarRootClass(
   const visual = resolveVariantVisual(variant, KIT_AVATAR_VARIANTS, "avatar.root");
   return cn(
     "relative inline-flex shrink-0 select-none overflow-hidden text-start",
-    visual.className !== undefined ? visual.className : AVATAR_KIT_SURFACE,
+    skinVisualClass(visual, AVATAR_KIT_SURFACE),
     AVATAR_SIZE_CLASS[size].root,
     className,
   );

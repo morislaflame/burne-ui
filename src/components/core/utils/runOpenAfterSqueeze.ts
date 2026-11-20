@@ -63,8 +63,11 @@ export function runOpenAfterSqueeze({
   }
  
   openingRef.current = true;
+  // The child control reads this and skips its own press while the trigger plays one.
+  el.dataset.overlayOpening = "true";
   void runSqueeze(el).then(() => {
     openingRef.current = false;
+    delete el.dataset.overlayOpening;
     openNow();
   });
 }

@@ -1,11 +1,13 @@
 import {
-  armWillChangeTransform,
-  clearWillChangeOnComplete,
   gsap,
   killMotion,
 } from "@/components/core/utils/gsapMotion";
 import { motionModalFor } from "@/components/core/utils/motionConfig";
-import { MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
+import {
+  isReducedModalMotion,
+  MODAL_PANEL_SCALE_FROM,
+  preparePortalSurfaceForEnter,
+} from "@/components/core/utils/modalSurfaceMotion";
  
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
  
@@ -35,7 +37,7 @@ function modalVars(ctx: MotionContext) {
 }
  
 export function modalOverlayEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     ctx.el.style.opacity = "1";
     return undefined;
   }
@@ -48,7 +50,7 @@ export function modalOverlayEnterRecipe(ctx: MotionContext): MotionAnimation | u
 }
  
 export function modalOverlayLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     ctx.el.style.opacity = "0";
     return undefined;
   }
@@ -60,39 +62,39 @@ export function modalOverlayLeaveRecipe(ctx: MotionContext): MotionAnimation | u
 }
  
 export function modalPanelEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     ctx.el.style.opacity = "1";
     ctx.el.style.visibility = "visible";
     gsap.set(ctx.el, { scale: 1, clearProps: "transform" });
     return undefined;
   }
   killMotion(ctx.el);
-  armWillChangeTransform(ctx.el, ctx.onCleanup);
+  preparePortalSurfaceForEnter(ctx.el);
   const vars = modalVars(ctx);
   return gsap.fromTo(
     ctx.el,
     { scale: MODAL_PANEL_SCALE_FROM },
     {
       scale: 1,
+      force3D: false,
+      clearProps: "transform",
       ...vars,
-      onComplete: clearWillChangeOnComplete(ctx.el),
     },
   ) as unknown as MotionAnimation;
 }
  
 export function modalPanelLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced) {
+  if (isReducedModalMotion(ctx.config, ctx.reduced)) {
     gsap.set(ctx.el, { autoAlpha: 0, scale: MODAL_PANEL_SCALE_FROM });
     return undefined;
   }
   killMotion(ctx.el);
-  armWillChangeTransform(ctx.el, ctx.onCleanup);
   const vars = modalVars(ctx);
   return gsap.to(ctx.el, {
     autoAlpha: 0,
     scale: MODAL_PANEL_SCALE_FROM,
+    force3D: false,
     ...vars,
-    onComplete: clearWillChangeOnComplete(ctx.el),
   }) as unknown as MotionAnimation;
 }
  

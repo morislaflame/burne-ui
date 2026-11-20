@@ -5,7 +5,7 @@ import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInt
 import {
   applyStudioSlotMark,
   studioSlotIds,
-  useStudioSlotCheck,
+  useSkinSlotCheck,
   type StudioSlotMark,
 } from "@/studio/studioModeContext";
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
@@ -104,13 +104,13 @@ export function useMotionPart<T extends HTMLElement>({
     onPointerUp: (e: ReactPointerEvent<T>) => void;
   };
 } {
-  const isLiveSlot = useStudioSlotCheck();
+  const isLiveSlot = useSkinSlotCheck();
   const targetRef = useRef<T | null>(null);
-  const studioMarkRef = useRef<StudioSlotMark | null>(null);
   const motionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   motionRef.current = motion;
   const idRef = useLazyRef(() => Symbol(slot));
+  const studioMarkRef = useRef<StudioSlotMark | null>(null);
  
   const syncRegistration = useCallback(
     (node: T | null, partMotion: MotionPartPhases | undefined) => {
@@ -140,9 +140,7 @@ export function useMotionPart<T extends HTMLElement>({
       targetRef.current = node;
       syncRegistration(node, motionRef.current);
       if (forwardedRef != null) mergeForwardedRef(forwardedRef, node);
-      const ids = node && isLiveSlot
-        ? studioSlotIds(scope?.debugName, slot, studioSlot, isLiveSlot)
-        : [];
+      const ids = node ? studioSlotIds(scope?.debugName, slot, studioSlot, isLiveSlot) : [];
       studioMarkRef.current = applyStudioSlotMark(studioMarkRef.current, node, ids, scope);
     },
     [forwardedRef, isLiveSlot, scope, slot, studioSlot, syncRegistration],

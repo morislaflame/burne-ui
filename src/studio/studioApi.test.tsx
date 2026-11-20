@@ -229,10 +229,12 @@ describe("studio model", () => {
     host.remove();
   });
 
-  it("marks live slots only inside the studio and plays forced hover", () => {
+  it("marks live slots with and without the studio and plays forced hover", () => {
     const plain = render(slotTree());
     fireEvent.pointerEnter(plain.getByText("More"));
-    expect(document.querySelector("[data-skin-slot]")).toBeNull();
+    for (const id of MARKED_SLOTS) {
+      expect(document.querySelector(`[data-skin-slot~="${id}"]`), id).toBeTruthy();
+    }
     plain.unmount();
 
     const view = render(<StudioModeProvider>{slotTree()}</StudioModeProvider>);

@@ -1,4 +1,4 @@
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import {
@@ -43,7 +43,7 @@ export function selectionThumbShellClass({
   const surface =
     visual.className !== undefined
       ? cn(SELECTION_THUMB_SHELL_LAYOUT_CLASS, visual.className)
-      : SELECTION_THUMB_SHELL_DEFAULT_CLASS;
+      : cn(SELECTION_THUMB_SHELL_DEFAULT_CLASS, visual.extend);
 
   return cn(
     SELECTION_INDICATOR_SHELL_CLASS,
@@ -63,8 +63,7 @@ export function selectionThumbIconColorClass(
     KIT_SELECTION_THUMB_VARIANTS,
     "selectionThumbIcon.root",
   );
-  if (visual.className !== undefined) return visual.className;
-  return "text-primary";
+  return skinVisualClass(visual, "text-primary");
 }
 
 export function selectionThumbIconRootClass({

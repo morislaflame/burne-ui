@@ -98,7 +98,6 @@ function useThemeTokensState() {
         | "progressFillDuration"
         | "progressIndeterminateDuration"
         | "loadingDotsDuration"
-        | "surfaceTransitionDuration"
         | "toastDismissDuration"
         | "pressSqueezeDurationFactor",
       value: number,

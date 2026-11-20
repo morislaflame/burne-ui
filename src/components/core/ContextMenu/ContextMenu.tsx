@@ -3,8 +3,10 @@ import {
   forwardRef,
   isValidElement,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   type MouseEvent,
   type ReactElement,
   type KeyboardEvent,
@@ -37,7 +39,10 @@ function ContextMenuPoint() {
     placeContextMenuAnchor(anchor, rect.left, rect.bottom);
   }, [anchorRef, open, triggerRef]);
 
-  if (typeof document === "undefined") return null;
+  // Portal after mount: the server renders nothing here, so the first client render must too.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   return createPortal(
     <span ref={anchorRef} aria-hidden tabIndex={-1} className={CONTEXT_MENU_ANCHOR_CLASS} />,
     document.body,

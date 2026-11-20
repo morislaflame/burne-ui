@@ -70,6 +70,7 @@ export type SkinTargetSlot = (typeof SKIN_TARGET_SLOTS)[number];
 /** Slots that `SkinShell` / `resolveSkinLayer` actually host. */
 
 export const SKIN_LAYER_SLOTS = [
+  "alertDialog.panel",
   "card.root",
   "dialog.panel",
   "drawer.panel",
@@ -86,6 +87,18 @@ export const SKIN_MOTION_SLOTS = [
   "alert.indicator",
   "alert.root",
   "alert.title",
+  "alertDialog.body",
+  "alertDialog.close",
+  "alertDialog.content",
+  "alertDialog.description",
+  "alertDialog.footer",
+  "alertDialog.header",
+  "alertDialog.headingBlock",
+  "alertDialog.indicator",
+  "alertDialog.overlay",
+  "alertDialog.panel",
+  "alertDialog.title",
+  "alertDialog.trigger",
   "avatar.fallback",
   "avatar.groupItem",
   "avatar.image",

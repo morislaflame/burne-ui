@@ -20,6 +20,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { isOverlayTriggerOpening } from "@/components/core/utils/overlayTriggerSqueeze";
 import {
   killStoredMotion,
   mergeMotionPointerHandlers,
@@ -187,7 +188,13 @@ export function useButtonAnimations({
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDown?.(e);
       if (!enabled || e.defaultPrevented) return;
-      playRoot("pressIn");
+      const node = e.currentTarget;
+      // An overlay trigger (`asChild`) runs the press itself and opens after it.
+      // Its handler runs after ours, so decide once both have run.
+      queueMicrotask(() => {
+        if (isOverlayTriggerOpening(node)) return;
+        playRoot("pressIn");
+      });
     },
     [enabled, onPointerDown, playRoot],
   );

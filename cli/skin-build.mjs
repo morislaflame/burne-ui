@@ -18,11 +18,13 @@ function authorCss(css) {
 
 export function buildSkin(dir) {
   const loaded = loadSkinPackage(dir);
-  const errors = validateSkin({ ...loaded, slots: readSkinSlots(), live: readSkinLiveSlots() });
+  const live = readSkinLiveSlots();
+  const errors = validateSkin({ ...loaded, slots: readSkinSlots(), live });
   if (errors.length > 0) {
     throw new Error(errors.join("\n"));
   }
-  const generated = renderSkinStylesheet(loaded.definition).trimEnd();
+  const targets = new Set(live.targets);
+  const generated = renderSkinStylesheet(loaded.definition, { isTarget: (slot) => targets.has(slot) }).trimEnd();
   const extra = authorCss(loaded.css);
   const css = extra ? `${generated}\n\n${extra}\n` : `${generated}\n`;
   const outDir = join(dir, "dist");

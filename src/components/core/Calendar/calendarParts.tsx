@@ -388,16 +388,16 @@ function CalendarInteractiveCellSurface({
         {...textPointerHandlers}
       >
         {children}
+        {isToday && !selected && (
+          <span
+            aria-hidden
+            className={cn(
+              CALENDAR_CELL_TODAY_DOT_CLASS,
+              slotClassNames.cellTodayDot,
+            )}
+          />
+        )}
       </Text>
-      {isToday && !selected && (
-        <span
-          aria-hidden
-          className={cn(
-            CALENDAR_CELL_TODAY_DOT_CLASS,
-            slotClassNames.cellTodayDot,
-          )}
-        />
-      )}
     </button>
   );
 }

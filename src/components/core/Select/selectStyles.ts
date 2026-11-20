@@ -5,7 +5,7 @@ import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/butt
 import type { InputSize, InputVariant } from "@/components/core/Input";
 import { KIT_INPUT_VARIANTS } from "@/components/core/Input/inputTypes";
 import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
  
 export const SELECT_VALUE_CONTROL: Record<InputSize, string> = {
@@ -23,7 +23,7 @@ export const SELECT_CHEVRON_ICON_SLOT: Record<InputSize, string> = {
 };
  
 export const SELECT_TRIGGER_GROUP_BASE_CLASS =
-  "relative z-0 flex min-w-0 items-stretch border-1 text-start overflow-hidden motion-reduce:transition-none";
+  "relative z-0 flex min-w-0 items-stretch border-1 text-start motion-reduce:transition-none";
  
 export const SELECT_CLEAR_CLASS =
   "inline-flex shrink-0 items-center self-center text-muted icon-slot icon-slot-base focus-ring";
@@ -41,12 +41,12 @@ export function selectClearClass(size: InputSize): string {
 }
 
 export const SELECT_VALUE_BASE_CLASS =
-  "min-w-0 flex-1 truncate bg-transparent text-start text-foreground outline-none";
+  "min-w-0 flex-1 cursor-pointer truncate bg-transparent text-start text-foreground outline-none disabled:cursor-not-allowed";
  
 export const SELECT_VALUE_MUTED_CLASS = "text-muted";
  
 export const SELECT_TRIGGER_BASE_CLASS =
-  "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset";
+  "flex shrink-0 origin-center cursor-pointer items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset disabled:cursor-not-allowed";
  
 export const SELECT_TRIGGER_DISABLED_CLASS = "pointer-events-none";
  
@@ -68,8 +68,7 @@ export function selectShellSurface({
   variant: InputVariant;
 }): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "select.shell");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
  
 export function selectGroupShellClass(groupSegment?: ButtonGroupSegment): string {

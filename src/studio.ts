@@ -26,12 +26,9 @@ export {
   type ThemeTokenControlType,
   type ThemeTokenSchemaEntry,
 } from "@/studio/themeTokenSchema";
-export {
-  isLiveSkinSlot,
-  StudioModeProvider,
-  useStudioMode,
-} from "@/studio/studioMode";
-export { skinSlotId, useStudioSlotRef } from "@/studio/studioModeContext";
+export { isLiveSkinSlot } from "@/studio/liveSkinSlots";
+export { StudioModeProvider } from "@/studio/studioMode";
+export { skinSlotId, useStudioMode, useStudioSlotRef } from "@/studio/studioModeContext";
 export { findMotionController } from "@/studio/studioNodes";
 export {
   forceStateAttribute,

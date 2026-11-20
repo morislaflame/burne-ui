@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
+import { resolveAlertDialogMotionDefaults } from "@/components/composite/AlertDialog/alertDialogAnimations";
 import { resolveAvatarMotionDefaults } from "@/components/core/Avatar/avatarAnimations";
 import { resolveCalendarMotionDefaults } from "@/components/core/Calendar/calendarAnimations";
 import { resolveDialogMotionDefaults } from "@/components/core/Dialog/dialogAnimations";
@@ -34,6 +35,7 @@ describe("overlaySkinMotion hosts", () => {
       motion: {
         "surface.root": { mount: "gloss:prepare" },
         "dialog.panel": { mount: "gloss:prepare" },
+        "alertDialog.panel": { mount: "gloss:prepare" },
         "drawer.panel": { mount: "gloss:prepare" },
         "tooltip.content": { mount: "gloss:prepare" },
         "popover.content": { mount: "gloss:prepare" },
@@ -50,6 +52,8 @@ describe("overlaySkinMotion hosts", () => {
     expect(mountOf(resolveSurfaceMotionDefaults(NAME), "root")).toBe("gloss:prepare");
     expect(mountOf(resolveDialogMotionDefaults(NAME), "panel")).toBe("gloss:prepare");
     expect(resolveDialogMotionDefaults(NAME).panel?.enter).toBe("modalPanelEnter");
+    expect(mountOf(resolveAlertDialogMotionDefaults(NAME), "panel")).toBe("gloss:prepare");
+    expect(resolveAlertDialogMotionDefaults(NAME).panel?.enter).toBe("modalPanelEnter");
     expect(mountOf(resolveDrawerMotionDefaults(NAME), "panel")).toBe("gloss:prepare");
     expect(mountOf(resolveTooltipMotionDefaults(NAME), "content")).toBe("gloss:prepare");
     expect(mountOf(resolvePopoverMotionDefaults(NAME), "content")).toBe("gloss:prepare");

@@ -598,7 +598,7 @@ import { useLayoutEffect } from "react";
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   useLayoutEffect(() => {
     configureMotion({
-      interactiveDuration: 280,
+      interactiveDuration: 220,
       tooltipDuration: 200,
       expandDuration: 320,
       modalDuration: 280,
@@ -620,8 +620,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 
 | Группа | Ключи |
 |--------|--------|
-| Тайминги / easing (GSAP) | `interactiveDuration`, `pressSqueezeDurationFactor`, `modalDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `progressIndeterminateDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
-| CSS surface transitions | `surfaceTransitionDuration` → пишет `--motion-surface-duration` (утилиты `surface-color-transition`, `animate-shadow`, …) |
+| Тайминги / easing (GSAP + фон) | `interactiveDuration` пишет и GSAP, и `--motion-surface-duration`. `hoverLiftEase` пишет тень/масштаб и `--motion-surface-ease`. Дальше `pressSqueezeDurationFactor`, `modalDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `progressIndeterminateDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
 | Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
 | Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
 | Master kill-switch | `enableAnimations` — `false` отключает все feature-флаги одним ключом (`isMotionFeatureEnabled`) |
@@ -635,11 +634,11 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 
 ### Open-after-squeeze
 
-`runOpenAfterSqueeze` (Popover / Dropdown / Dialog / Drawer / Select / ComboBox / AlertDialog) ждёт окончания press-squeeze, затем открывает. Длительность = `interactiveDuration × pressSqueezeDurationFactor` (`motionPressSqueezeTotal()`, дефолт 280 × 1.15 ≈ 322 ms). Механика variant-agnostic (дефолт — standard squeeze); опциональный `runSqueeze` — точка для surface-плагинов (будущий gloss), без ветвления `isGloss` в ядре.
+`runOpenAfterSqueeze` (Popover / Dropdown / Dialog / Drawer / Select / ComboBox / AlertDialog) ждёт окончания press-squeeze, затем открывает. Длительность = `interactiveDuration × pressSqueezeDurationFactor` (`motionPressSqueezeTotal()`, дефолт 220 × 1.15 = 253 ms). Механика variant-agnostic (дефолт — standard squeeze); опциональный `runSqueeze` — точка для surface-плагинов (будущий gloss), без ветвления `isGloss` в ядре.
 
 ```ts
 configureMotion({
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   pressSqueezeDurationFactor: 1.15, // быстрее open → меньше factor
 });
 ```

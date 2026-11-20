@@ -7,7 +7,7 @@ export const TOAST_LIVE_REGION_CLASS =
 import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { messageBannerSizePreset } from "@/components/core/utils/sizeLayout";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 
@@ -17,7 +17,7 @@ import { KIT_TOAST_VARIANTS } from "./toastTypes";
 /** Neutral shell for every status — accents live on the indicator icon. */
 export const TOAST_VARIANT_SURFACE: Record<KitToastVariant, string> = {
   default: "bg-surface border-token text-foreground",
-  outline: "bg-transparent border-token-outline text-foreground",
+  outline: "bg-background border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
 };
 
@@ -109,9 +109,7 @@ export function toastRootClass({
   return cn(
     messageBannerGridClass(gridSlots, preset.gridGap),
     `w-full ${preset.shellPadding}`,
-    visual.className !== undefined
-      ? visual.className
-      : cn(TOAST_VARIANT_SURFACE[visual.key], liftClass),
+    skinVisualClass(visual, TOAST_VARIANT_SURFACE[visual.key], liftClass),
     slotClass,
     className,
   );

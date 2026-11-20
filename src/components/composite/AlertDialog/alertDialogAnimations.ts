@@ -23,6 +23,9 @@ import {
   applyModalPanelInstant,
 } from "@/components/core/utils/slotMotion/recipes/modalSurface";
  
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
+import { KIT_ALERT_VARIANTS, type AlertVariant } from "@/components/core/Alert/alertTypes";
+
 import type { AlertDialogMotion, UseAlertDialogModalMotionProps } from "./alertDialogTypes";
 
 import { bindModalRecipes } from "@/components/core/utils/slotMotion/recipes/bindModal";
@@ -35,6 +38,10 @@ export const ALERT_DIALOG_MOTION_DEFAULTS: AlertDialogMotion = {
   overlay: { enter: "modalOverlayEnter", leave: "modalOverlayLeave" },
   panel: { enter: "modalPanelEnter", leave: "modalPanelLeave" },
 };
+
+export function resolveAlertDialogMotionDefaults(variant: AlertVariant): AlertDialogMotion {
+  return overlaySkinMotion(ALERT_DIALOG_MOTION_DEFAULTS, variant, KIT_ALERT_VARIANTS, "alertDialog");
+}
  
 function applyAlertDialogHostInstant(
   slot: ModalHostSlot,
@@ -69,6 +76,7 @@ export function useAlertDialogModalMotion({
     onEscapeKeyDown,
     onInteractOutside,
     initialFocus,
+    enableContainedEscape: true,
     slotMotion,
   });
  

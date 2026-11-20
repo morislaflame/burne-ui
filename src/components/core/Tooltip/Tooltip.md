@@ -73,7 +73,7 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 
 | Surface | Поведение |
 |---------|-----------|
-| `default` | `bg-surface` + `shadow-token-xlarge` |
+| `default` | `bg-surface` + `shadow-token-mid` |
 | `outline` / `secondary` | transparent / secondary shell |
 
 Размер влияет на padding panel, typography (`Text` variants) и icon box.
@@ -218,9 +218,9 @@ configureMotion({
 
 | surface | Поведение |
 |---------|-----------|
-| `default` | `shadow-token-xlarge` — large elevation на bubble |
+| `default` | `shadow-token-mid` — тень на bubble (у `outline` и `secondary` тоже) |
 
-Tooltip — floating overlay с постоянной large-тенью (как Popover / Dialog).
+Tooltip — плавающая панель с постоянной тенью `mid`, как Popover. Большая тень (`shadow-token-large`) только у модалок: Dialog, Drawer, AlertDialog.
 
 ### 3. Reposition on reflow
 
@@ -245,7 +245,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
 | Show delay | `setTimeout` | — | `openDelay` |
-| Rest shadow | `shadow-token-xlarge` | — | `variant="default"` |
+| Rest shadow | `shadow-token-mid` | — | `variant="default"` |
 | Reposition | `computeTooltipPlacement` | — | `side` |
 
 ## Токены и CSS

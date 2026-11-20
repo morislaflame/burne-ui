@@ -30,7 +30,26 @@ import {
   useTableVariant,
   useTableVirtual,
 } from "./tableContext";
-import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_CAPTION_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_COLUMN_MIN_WIDTH, TABLE_COLUMN_RESIZE_HANDLE_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, TABLE_SCROLL_STICKY_CLASS, tableCellClass, tableColumnClass, tableColumnLabelClass, tableColumnSortButtonClass, tableContentClass, tableRowClass } from "./tableStyles";
+import {
+  TABLE_BODY_EMPTY_CELL_CLASS,
+  TABLE_CAPTION_CLASS,
+  TABLE_COLUMN_INNER_CLASS,
+  TABLE_COLUMN_MIN_WIDTH,
+  TABLE_COLUMN_RESIZE_GRIP_CLASS,
+  TABLE_COLUMN_RESIZE_GRIP_LINE_CLASS,
+  TABLE_COLUMN_RESIZE_GRIP_MARK_CLASS,
+  TABLE_COLUMN_RESIZE_HANDLE_CLASS,
+  TABLE_FOOTER_CLASS,
+  TABLE_HEADER_ROW_VARIANT_CLASS,
+  TABLE_SCROLL_CONTAINER_CLASS,
+  TABLE_SCROLL_STICKY_CLASS,
+  tableCellClass,
+  tableColumnClass,
+  tableColumnLabelClass,
+  tableColumnSortButtonClass,
+  tableContentClass,
+  tableRowClass,
+} from "./tableStyles";
 import type {
   TableBodyProps,
   TableCellProps,
@@ -396,6 +415,21 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       ? formatBurneLabel(labels.resizeColumnNamed, { name: headerName })
       : labels.resizeColumn;
     const columnRef = useRef<HTMLTableCellElement | null>(null);
+    // Header cells share `z-10`, so a later column paints over this grip.
+    // Earlier columns sit higher and the marks on both sides of the rule stay visible.
+    useLayoutEffect(() => {
+      const cell = columnRef.current;
+      if (!cell || !columnResize) return;
+      const row = cell.parentElement;
+      if (!row) return;
+      const cells = [...row.children];
+      const index = cells.indexOf(cell);
+      if (index < 0) return;
+      cell.style.zIndex = String(10 + cells.length - index);
+      return () => {
+        cell.style.zIndex = "";
+      };
+    }, [columnResize]);
     const [columnMax, setColumnMax] = useState<number | undefined>();
     useLayoutEffect(() => {
       const table = columnRef.current?.closest("table");
@@ -512,7 +546,13 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
             onPointerCancel={endResize}
             onLostPointerCapture={endResize}
             onKeyDown={onResizeKeyDown}
-          />
+          >
+            <span className={TABLE_COLUMN_RESIZE_GRIP_CLASS} aria-hidden="true">
+              <span className={TABLE_COLUMN_RESIZE_GRIP_MARK_CLASS} />
+              <span className={TABLE_COLUMN_RESIZE_GRIP_LINE_CLASS} />
+              <span className={TABLE_COLUMN_RESIZE_GRIP_MARK_CLASS} />
+            </span>
+          </div>
           /* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
         ) : null}
       </th>

@@ -1,6 +1,6 @@
 import type { TextVariant } from "@/components/core/Text";
 import { hoverVariant, SURFACE_COLOR_TRANSITION, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { CalendarSize, CalendarVariant, KitCalendarVariant } from "./calendarTypes";
@@ -132,9 +132,9 @@ export const CALENDAR_CELL_BUTTON_CLASS =
   "group/calendar-cell relative inline-flex origin-center items-center justify-center overflow-hidden outline-none focus-ring rounded-mid";
  
 export const CALENDAR_CELL_FILL_CLASS = cn(
-  "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
+  "pointer-events-none absolute inset-0 z-0 origin-center rounded-[inherit] bg-primary",
   SURFACE_COLOR_TRANSITION,
-  "motion-reduce:transition-none group-hover/calendar-cell:bg-primary-hover rounded-mid",
+  "motion-reduce:transition-none group-hover/calendar-cell:bg-primary-hover",
 );
  
 export const CALENDAR_HEADER_TITLE_BASE_CLASS = cn(
@@ -144,9 +144,12 @@ export const CALENDAR_HEADER_TITLE_BASE_CLASS = cn(
  
 export const CALENDAR_CELL_TEXT_CLASS = "relative z-[1] min-w-0 shrink-0 leading-none";
  
-/** Today marker — 3× border-width so it stays a hairline dot on the size scale. */
+/**
+ * Today marker, anchored to the numeral (`top-full` of `cellText`).
+ * Size and gap are em, so a text-scale / space / border shuffle cannot park the dot on the digit.
+ */
 export const CALENDAR_CELL_TODAY_DOT_CLASS =
-  "absolute bottom-[length:calc(var(--border-width)*3)] left-1/2 z-[1] h-[length:calc(var(--border-width)*3)] w-[length:calc(var(--border-width)*3)] -translate-x-1/2 rounded-full bg-primary";
+  "pointer-events-none absolute top-full left-1/2 z-[1] mt-[0.1em] size-[0.22em] -translate-x-1/2 rounded-full bg-primary";
  
 export const CALENDAR_NAV_ICON_CLASS = "icon-xsmall";
 export const CALENDAR_NAV_ICON_WRAP_CLASS = "inline-flex items-center justify-center";
@@ -186,9 +189,7 @@ export function calendarRootClass(
   const visual = resolveVariantVisual(variant, KIT_CALENDAR_VARIANTS, "calendar.root");
   return cn(
     CALENDAR_ROOT_SHELL_CLASS,
-    visual.className !== undefined
-      ? visual.className
-      : CALENDAR_ROOT_SURFACE[visual.key],
+    skinVisualClass(visual, CALENDAR_ROOT_SURFACE[visual.key]),
     CALENDAR_ROOT_PAD[size],
     CALENDAR_ROOT_MIN_W[size],
     className,

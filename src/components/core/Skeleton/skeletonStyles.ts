@@ -5,7 +5,7 @@ import type { SkeletonAnimation, SkeletonRadius } from "./skeletonTypes";
 export const SKELETON_BASE_CLASS = "relative overflow-hidden bg-primary-tint skeleton-animate";
  
 export const SKELETON_WAVE_OVERLAY_CLASS =
-  "pointer-events-none absolute inset-0 -translate-x-full skeleton-animate";
+  "pointer-events-none absolute inset-0 -translate-x-full skeleton-animate skeleton-wave";
  
 export const SKELETON_CIRCLE_RADIUS_CLASS = "rounded-full";
  
@@ -52,17 +52,18 @@ export function skeletonShimmerStyle(): CSSProperties {
   };
 }
  
-export function skeletonVariantStyle(variant: SkeletonAnimation): CSSProperties {
-  if (variant === "pulse") return skeletonPulseStyle();
-  if (variant === "shimmer") return skeletonShimmerStyle();
+export function skeletonVariantClass(variant: SkeletonAnimation): string {
+  if (variant === "pulse") return "skeleton-pulse";
+  if (variant === "shimmer") return "skeleton-shimmer";
+  return "";
+}
+
+export function skeletonVariantStyle(_variant: SkeletonAnimation): CSSProperties {
   return {};
 }
  
 export function skeletonWaveOverlayStyle(): CSSProperties {
-  return {
-    animation: SKELETON_WAVE_ANIMATION,
-    background: SKELETON_WAVE_GRADIENT,
-  };
+  return {};
 }
  
 export function skeletonRadiusClass(radius: SkeletonRadius): string {

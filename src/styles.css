@@ -1,9 +1,13 @@
-/* `ui-kit` sits under utilities: a consumer utility overrides kit size classes. */
-@layer theme, base, ui-kit, components, utilities;
+/* Kit class rules live in `components`, under utilities: a consumer utility overrides them.
+   A custom layer name would land after `utilities` in apps that import `tailwindcss` first. */
+@layer theme, base, components, utilities;
 
 @import "./tokens/styles.css";
 
 @import "tailwindcss";
+
+/* End-cap radius for Accordion items (`:where`, so a consumer utility wins). */
+@import "./components/composite/Accordion/accordion.css";
 
 /* Studio state matrix. `data-force-state` is space-separated: hover, focus, press, disabled.
    Real `:hover` stays inside `@media (hover: hover)`, same as Tailwind's default variant,
@@ -56,8 +60,39 @@ html {
   100% { background-position: -200% center; }
 }
 
+@layer components {
+  .skeleton-animate {
+    contain: paint;
+  }
+
+  .skeleton-pulse {
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+  }
+
+  .skeleton-shimmer {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-primary-tint) 0%,
+      var(--color-primary-tint-strong) 50%,
+      var(--color-primary-tint) 100%
+    );
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 2s linear infinite;
+  }
+
+  .skeleton-wave {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-primary-tint-strong) 50%,
+      transparent 100%
+    );
+    animation: skeleton-wave-slide 2s linear 0.2s infinite;
+  }
+}
+
 /**
- * Marker on bones that set `animation` via inline style.
+ * Marker on bones that set `animation` via class or inline style.
  * Inline animation beats a class without `!important`.
  */
 @media (prefers-reduced-motion: reduce) {
@@ -329,8 +364,8 @@ html {
 /** Field shells: background, border, and focus-ring — one shorthand without conflicts. No `box-shadow` (GSAP owns elevation). */
 @utility field-shell-transition {
   transition:
-    background-color var(--motion-surface-duration) var(--motion-shadow-ease),
-    border-color var(--motion-surface-duration) var(--motion-shadow-ease),
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 
@@ -366,7 +401,7 @@ html {
  * `[--color-focus-ring:var(--color-focus-ring-danger)]` or paint `--color-focus-ring-*` directly.
  * On `:focus-visible` / `:focus-within` re-assert outline-style/width so the ring wins over
  * co-located `outline-none` (Tailwind emits `outline-none` later in the stylesheet).
- * Stay `@utility` (utilities layer). Moving these into `@layer ui-kit` lets `outline-none` win
+ * Stay `@utility` (utilities layer). Moving these into `@layer components` lets `outline-none` win
  * and the keyboard ring disappears.
  * Transition list matches `surface-color-transition` (cascade-safe when both are present):
  * same properties, no `box-shadow`.
@@ -836,8 +871,8 @@ html {
   max-width: var(--control-size-large);
 }
 
-/* Plain classes in `ui-kit`: a later utility (`size-*`, `w-*`, `rounded-*`) overrides them. */
-@layer ui-kit {
+/* Plain classes in `components`: a utility (`size-*`, `w-*`, `rounded-*`) overrides them. */
+@layer components {
 .avatar-size-small {
   width: var(--avatar-size-small);
   height: var(--avatar-size-small);
@@ -1158,5 +1193,68 @@ html {
 
   .disabled\:hover\:text-muted[data-force-state~="disabled"][data-force-state~="hover"] {
     color: var(--color-muted-foreground);
+  }
+
+  /* After `border-token` (`border-width`) so the joint stays a single line. */
+  .button-group-joint-s {
+    border-inline-start-width: 0;
+  }
+  .button-group-joint-e {
+    border-inline-end-width: 0;
+  }
+  .button-group-joint-t {
+    border-top-width: 0;
+  }
+  .button-group-joint-b {
+    border-bottom-width: 0;
+  }
+
+  /*
+   * Toggle fill clip sits on the border box. `rounded-[inherit]` on the
+   * padding box uses the outer radius and leaves a gap inside the border.
+   * Flush classes cancel the outset on a joint side that has no border.
+   */
+  .toggle-fill-clip {
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    inset: calc(var(--tb-fill-bw, var(--border-width)) * -1);
+  }
+  .toggle-fill-clip-outline {
+    --tb-fill-bw: var(--border-width-outline);
+  }
+
+  /*
+   * Field affix clip. Same gap as the toggle fill: `rounded-[inherit]` on the
+   * padding box uses the outer radius and stops short of the border.
+   * A transparent border of the shell's width puts the padding edge on the
+   * inner curve, so the tint meets the corners and the stroke stays visible.
+   */
+  .field-radius-clip {
+    box-sizing: border-box;
+    width: calc(100% + 2 * var(--field-clip-bw, var(--border-width, 1px)));
+    margin: calc(var(--field-clip-bw, var(--border-width, 1px)) * -1);
+    border-width: var(--field-clip-bw, var(--border-width, 1px));
+    border-style: solid;
+    border-color: transparent;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+  .field-radius-clip-outline {
+    --field-clip-bw: var(--border-width-outline, 1px);
+  }
+  .toggle-fill-clip-flush-is {
+    inset-inline-start: 0;
+  }
+  .toggle-fill-clip-flush-ie {
+    inset-inline-end: 0;
+  }
+  .toggle-fill-clip-flush-bs {
+    inset-block-start: 0;
+  }
+  .toggle-fill-clip-flush-be {
+    inset-block-end: 0;
   }
 }

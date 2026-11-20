@@ -1,6 +1,6 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { TabsOrientation, TabsSize, TabsVariant, KitTabsVariant } from "./tabsTypes";
@@ -78,12 +78,15 @@ export function tabsListClass({
           "flex flex-col gap-xsmall",
           isSurface ? "items-start" : "items-stretch border-s-token",
         ),
-    visual.className !== undefined
-      ? visual.className
-      : LIST_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, LIST_VARIANT_CLASS[visual.key]),
     slotClass,
     className,
   );
+}
+
+/** Kit base of a skin variant: `useSlidingTabIndicator` measures an underline or a pill by it. */
+export function tabsIndicatorShape(variant: TabsVariant): KitTabsVariant {
+  return resolveVariantVisual(variant, KIT_TABS_VARIANTS, "tabs.indicator").key;
 }
 
 export function tabsIndicatorClass({
@@ -97,9 +100,7 @@ export function tabsIndicatorClass({
   return cn(
     "pointer-events-none absolute z-0 motion-reduce:transition-none",
     visual.key === "default" ? "rounded-full" : tabsSurfaceRadiusClass(visual.key),
-    visual.className !== undefined
-      ? visual.className
-      : INDICATOR_VARIANT_CLASS[visual.key],
+    skinVisualClass(visual, INDICATOR_VARIANT_CLASS[visual.key]),
     slotClass,
   );
 }
@@ -135,6 +136,7 @@ export function tabsTabClass({
     isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
     isSelected ? "text-primary" : "text-muted hover:text-primary",
     !isSelected && !isDisabled && TEXT_COLOR_TRANSITION,
+    skinVisualClass(visual),
     slotClass,
     className,
   );

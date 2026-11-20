@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 
 import {
   KIT_SLIDER_VARIANTS,
@@ -132,8 +132,7 @@ export function sliderFillClass({
   className?: string;
 }): string {
   const visual = resolveVariantVisual(variant, KIT_SLIDER_VARIANTS, "slider.fill");
-  const surface =
-    visual.className !== undefined ? visual.className : SLIDER_FILL_DEFAULT_CLASS;
+  const surface = skinVisualClass(visual, SLIDER_FILL_DEFAULT_CLASS);
 
   return cn(
     SLIDER_FILL_LAYOUT_CLASS,
@@ -173,6 +172,7 @@ export function sliderTrackHitAreaClass({
     skinSurface && SELECTION_INDICATOR_RADIUS_CLASS[size],
     skinSurface && SLIDER_RAIL_SKIN_SHAPE_CLASS,
     visual.className,
+    visual.extend,
     slotClass,
     className,
   );

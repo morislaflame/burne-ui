@@ -203,7 +203,7 @@ function Nudge() {
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   pressSqueezeScale: [1, 0.98, 1],
   enablePressSqueeze: true,
 });
@@ -251,7 +251,7 @@ Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). К�
 
 `leave: false` — панель сразу unmount. Factory leave должна скрыть поверхность (`autoAlpha: 0`). Прерывание leave отменяет `MotionRun` без `complete`.
 
-Rest shadow на default panel — из `Popover` (`shadow-token-xlarge`).
+Тень в покое у панели — из `Popover` (`shadow-token-mid`). У подменю тот же `shadow-token-mid`.
 
 #### Кастомизация portal
 
@@ -331,7 +331,7 @@ animateInteractivePressSqueeze(el);
 | `DROPDOWN_ITEM_BASE_CLASS` | `rounded-large px-base py-small` row |
 | `hoverVariant()` | Semantic hover background на item/sub |
 | `optionListItemGridClass` | Grid: indicator, icon, label, hint |
-| `shadow-token-md` | Submenu default surface |
+| `shadow-token-mid` | Submenu default surface |
 | `z-dropdown` / `z-dropdown-sub` | Main menu / submenu stacking (`--z-dropdown`) |
 
 ## Стилизация и кастомизация
@@ -404,7 +404,7 @@ animateInteractivePressSqueeze(el);
 ### Compound с submenu и semantic items
 
 ```tsx
-<Dropdown classNames={{ item: "rounded-large", subPopover: "shadow-token-lg" }}>
+<Dropdown classNames={{ item: "rounded-large", subPopover: "shadow-token-large" }}>
   <Dropdown.Trigger>Меню</Dropdown.Trigger>
   <Dropdown.Popover bodyClassName="p-small">
     <Dropdown.Item status="danger">

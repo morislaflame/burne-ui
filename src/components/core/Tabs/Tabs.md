@@ -110,7 +110,7 @@ const [tab, setTab] = useState("profile");
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   interactiveEase: "power2.out",
   enableTabsIndicator: true,
 });

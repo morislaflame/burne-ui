@@ -34,7 +34,7 @@
  * - `--color-shadow` / `--color-shadow-secondary` — key + ambient shadow colors (theme palette).
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).
- * - `--motion-surface-duration` — CSS transitions for `surface-color-transition` / `animate-shadow` / field shells (from `surfaceTransitionDuration` in motion config).
+ * - `--motion-surface-duration` / `--motion-surface-ease` — CSS transitions for `surface-color-transition` and field shells. Duration is `interactiveDuration`; ease is the CSS form of `hoverLiftEase`.
  * - `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate` — frosted modal scrim (`overlay-backdrop`); `--overlay-backdrop-scrim` — solid dark-UI scrim.
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
  * - `--max-component-*` — panel widths (`min/max-w-component-*`); Dialog size props map onto base…2xlarge.

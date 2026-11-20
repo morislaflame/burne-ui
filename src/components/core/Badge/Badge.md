@@ -112,11 +112,11 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 ### Status
 
-Как у `Button`: `status` накладывается поверх `variant` через `semanticStatusSurface`.
+`status` накладывается поверх `variant`. У `default` фон остаётся `bg-surface`, статус красит только текст. `primary` / `outline` / `secondary` — как у `Button`.
 
 | variant | status = default | status ≠ default |
 |---------|------------------|------------------|
-| `default` | surface + border | tint (`bg-surface-tint-*`) + `text-*` |
+| `default` | surface + border | тот же `bg-surface` + `border-token`; статус только в `text-*` |
 | `primary` | `bg-primary` | fill (`bg-danger` / … + `*-foreground`) |
 | `outline` | transparent + outline border | `border-token-*` + `text-*` |
 | `secondary` | `bg-secondary` | тот же surface; `text-*` |

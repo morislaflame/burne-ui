@@ -1,4 +1,4 @@
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import {
@@ -151,7 +151,7 @@ export function selectionIndicatorFillClass(variant: SelectionIndicatorVariant):
       ? SELECTION_INDICATOR_FILL_SECONDARY_CLASS
       : SELECTION_INDICATOR_FILL_CLASS;
 
-  return cn(SELECTION_INDICATOR_FILL_BASE_CLASS, surfaceClass);
+  return cn(SELECTION_INDICATOR_FILL_BASE_CLASS, surfaceClass, visual.extend);
 }
 
 export function selectionIndicatorMarkColorClass(
@@ -193,16 +193,8 @@ export function selectionIndicatorVariantClass(
     KIT_SELECTION_INDICATOR_VARIANTS,
     "selectionIndicator.root",
   );
-  if (visual.className !== undefined) return visual.className;
-
-  switch (visual.key) {
-    case "default":
-      return "border border-primary bg-surface";
-    case "secondary":
-      return "border-token bg-secondary";
-    case "outline":
-      return "border border-primary bg-surface";
-    default:
-      return "border border-primary bg-surface";
-  }
+  return skinVisualClass(
+    visual,
+    visual.key === "secondary" ? "border-token bg-secondary" : "border border-primary bg-surface",
+  );
 }

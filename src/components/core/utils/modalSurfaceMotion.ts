@@ -62,12 +62,13 @@ export function animateModalOpen({
   panelTo?: GsapMotionVars;
 }): void {
   killMotion(overlay, panel);
+  preparePortalSurfaceForEnter(panel);
   gsapInstance.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
-  setWillChangeTransform(panel, true);
   gsapInstance.fromTo(panel, panelFrom, {
+    force3D: false,
+    clearProps: "transform",
     ...panelTo,
     ...vars,
-    onComplete: clearWillChangeOnComplete(panel, vars.onComplete),
   });
 }
  

@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-09-21T14:21:12.319Z",
+  "recordedAt": "2026-10-23T18:07:17.385Z",
   "runtime": "happy-dom",
   "platform": "darwin arm64",
   "reducedMotion": true,
@@ -10,84 +10,84 @@
       "name": "table-200",
       "size": 200,
       "mount": {
-        "actualMs": 21.91,
-        "baseMs": 29.68,
-        "wallMs": 25.95,
+        "actualMs": 16.64,
+        "baseMs": 17.12,
+        "wallMs": 22.41,
         "profilerCommits": 2
       },
       "update": {
-        "actualMs": 12.13,
-        "baseMs": 27.05,
-        "wallMs": 14.83,
+        "actualMs": 7.66,
+        "baseMs": 17.79,
+        "wallMs": 10.48,
         "profilerCommits": 2
       },
       "hover": {
         "actualMs": 0,
         "baseMs": 0,
-        "wallMs": 0.13,
+        "wallMs": 0.15,
         "profilerCommits": 0
       },
-      "updateOverMount": 0.55
+      "updateOverMount": 0.46
     },
     {
       "name": "checkbox-group-100",
       "size": 100,
       "mount": {
-        "actualMs": 28.48,
-        "baseMs": 13.28,
-        "wallMs": 159.87,
+        "actualMs": 28.12,
+        "baseMs": 16.34,
+        "wallMs": 153.23,
         "profilerCommits": 1
       },
       "update": {
-        "actualMs": 12.76,
-        "baseMs": 12.59,
-        "wallMs": 17.01,
+        "actualMs": 11.88,
+        "baseMs": 11.77,
+        "wallMs": 17.1,
         "profilerCommits": 1
       },
       "hover": {
         "actualMs": 0,
         "baseMs": 0,
-        "wallMs": 0.12,
+        "wallMs": 0.1,
         "profilerCommits": 0
       },
-      "updateOverMount": 0.45
+      "updateOverMount": 0.42
     },
     {
       "name": "listbox-500",
       "size": 500,
       "mount": {
-        "actualMs": 40.75,
-        "baseMs": 21.88,
-        "wallMs": 50.61,
+        "actualMs": 43.87,
+        "baseMs": 26.04,
+        "wallMs": 61.71,
         "profilerCommits": 1
       },
       "update": {
-        "actualMs": 18.12,
-        "baseMs": 22.52,
-        "wallMs": 26.28,
+        "actualMs": 17.49,
+        "baseMs": 23.38,
+        "wallMs": 33.39,
         "profilerCommits": 1
       },
       "hover": {
-        "actualMs": 18.33,
-        "baseMs": 24.1,
-        "wallMs": 27.11,
+        "actualMs": 18.06,
+        "baseMs": 25,
+        "wallMs": 32.1,
         "profilerCommits": 1
       },
-      "updateOverMount": 0.44
+      "updateOverMount": 0.4
     },
     {
       "name": "toast-stack-20",
       "size": 20,
       "mount": {
-        "actualMs": 4.11,
-        "baseMs": 2.22,
-        "wallMs": 23.6,
+        "actualMs": 10.01,
+        "baseMs": 7.33,
+        "wallMs": 64.96,
         "profilerCommits": 2
       },
       "update": {
-        "actualMs": 4.38,
-        "baseMs": 4.3,
-        "wallMs": 5.75,
+        "actualMs": 7.83,
+        "baseMs": 7.77,
+        "wallMs": 8.84,
         "profilerCommits": 2
       },
       "hover": {
@@ -96,7 +96,7 @@
         "wallMs": 0.08,
         "profilerCommits": 0
       },
-      "updateOverMount": 1.07
+      "updateOverMount": 0.78
     }
   ]
 }

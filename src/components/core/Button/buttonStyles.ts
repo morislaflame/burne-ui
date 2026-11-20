@@ -7,7 +7,7 @@ import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotio
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
  
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 
 import type { ButtonSize, ButtonStatus, ButtonVariant, KitButtonVariant } from "./buttonTypes";
 import { KIT_BUTTON_VARIANTS } from "./buttonTypes";
@@ -373,10 +373,8 @@ export function buttonSurfaceMotionClass(
   blocked: boolean,
 ): string {
   const visual = resolveVariantVisual(variant, KIT_BUTTON_VARIANTS, "button.root");
-  if (visual.className !== undefined) {
-    return visual.className;
-  }
-  return cn(
+  return skinVisualClass(
+    visual,
     buttonVariantRootClass(variant, status),
     buttonStatusClass(variant, status),
     hasGroupSegment && "border-0 shadow-none",

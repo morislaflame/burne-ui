@@ -4,9 +4,16 @@
  * DOM slots: `shell` (host), `control`, `decrement`, `increment`, `label`, `hint`, `error`
  *
  * Root owns the scope (defaults + `play`). The shell is the field surface.
- * Steppers play press. The input and chrome register on the same scope.
+ * Steppers scale on press. Field shadow stays on `shell`: the buttons do not
+ * inherit `hasHoverShadow`, or release paints `--shadow-lift` on the button.
  */
-import { useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler } from "react";
+import {
+  useRef,
+  type ForwardedRef,
+  type MutableRefObject,
+  type PointerEvent as ReactPointerEvent,
+  type PointerEventHandler,
+} from "react";
 
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import {
@@ -14,6 +21,7 @@ import {
   useMotionPart,
   useOptionalEnterOnMount,
   type MotionPartPhases,
+  type MotionRecipeParams,
 } from "@/components/core/utils/slotMotion";
 import { KIT_INPUT_VARIANTS, type InputVariant } from "@/components/core/Input/inputTypes";
 import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
@@ -106,6 +114,26 @@ export function useNumberInputShellMotion() {
   };
 }
 
+/** Press scale only. Shell params would fade a shadow onto the stepper and leave it. */
+const STEPPER_PRESS_PARAMS: MotionRecipeParams = {
+  hasHoverShadow: false,
+  restoreHover: false,
+  shadow: undefined,
+  shadowSize: undefined,
+};
+
+function playStepperPress(
+  scope: ReturnType<typeof useOptionalNumberInputMotionScope>,
+  slot: "decrement" | "increment",
+  motion: NumberInputPartMotion | undefined,
+  event: ReactPointerEvent<HTMLButtonElement>,
+) {
+  if (!scope || event.defaultPrevented) return;
+  const el = event.currentTarget;
+  if (!el) return;
+  scope.play(slot, "pressIn", { el, partMotion: motion, params: STEPPER_PRESS_PARAMS });
+}
+
 export function useNumberInputControlMotion({
   motion,
   forwardedRef,
@@ -162,10 +190,13 @@ export function useNumberInputDecrementMotion({
     slot: "decrement",
     motion,
     forwardedRef,
-    pressPhases: !blocked,
     onPointerOver,
     onPointerOut,
-    onPointerDown,
+    onPointerDown: (event) => {
+      onPointerDown?.(event);
+      if (blocked) return;
+      playStepperPress(scope, "decrement", motion, event);
+    },
     onPointerUp,
   });
   useOptionalEnterOnMount(scope, "decrement", part.targetRef);
@@ -195,10 +226,13 @@ export function useNumberInputIncrementMotion({
     slot: "increment",
     motion,
     forwardedRef,
-    pressPhases: !blocked,
     onPointerOver,
     onPointerOut,
-    onPointerDown,
+    onPointerDown: (event) => {
+      onPointerDown?.(event);
+      if (blocked) return;
+      playStepperPress(scope, "increment", motion, event);
+    },
     onPointerUp,
   });
   useOptionalEnterOnMount(scope, "increment", part.targetRef);

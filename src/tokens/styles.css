@@ -26,11 +26,11 @@
 
   /**
    * MOTION (CSS transitions) — surface / text / shadow / focus-ring utilities in `styles.css`.
-   * Written by `applyMotionFromState` / `configureMotion` / `applyMotionCssTokens` when `surfaceTransitionDuration` differs from default. Theme apply writes this per root; GSAP config is scoped via provider.
-   * GSAP timings live in `motionConfig` (`interactiveDuration`, …) — separate from these CSS transitions.
+   * Written from `interactiveDuration` and `hoverLiftEase` (`applyMotionCssTokens`).
+   * Defaults match `MOTION_CONFIG_DEFAULTS` so the inline override can be cleared.
    */
-  --motion-surface-duration: 180ms;
-  --motion-surface-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-surface-duration: 220ms;
+  --motion-surface-ease: cubic-bezier(0.37, 0, 0.63, 1);
   --motion-shadow-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-text-ease: var(--motion-shadow-ease);
   --motion-focus-ring-ease: var(--motion-shadow-ease);

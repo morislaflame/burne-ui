@@ -1,4 +1,6 @@
 import type { MotionPartPhases, MotionSlotMap } from "@/components/core/utils/slotMotion";
+import type { ClassValue } from "clsx";
+
 import { cn } from "@/utils/cn";
 
 import { lookupSkin } from "./skinLookup";
@@ -105,6 +107,17 @@ export function layoutTargetClass(slot: SkinSlot): string | undefined {
   return visual.extend ?? visual.className;
 }
 
+/**
+ * Slot surface classes: a string / `{ replace }` target swaps the kit classes,
+ * `{ extend }` lands after them.
+ */
+export function skinVisualClass(
+  visual: Pick<ResolvedVariant<string>, "className" | "extend">,
+  ...kitClasses: ClassValue[]): string {
+  if (visual.className !== undefined) return visual.className;
+  return cn(...kitClasses, visual.extend);
+}
+
 /** Skin target for this slot, otherwise the kit class of the resolved key. */
 export function variantSlotClass<K extends string>(
   variant: string,
@@ -113,10 +126,7 @@ export function variantSlotClass<K extends string>(
   kitClass: (key: K) => string,
   fallback?: K): string {
   const resolved = resolveVariantVisual(variant, kit, slot, fallback);
-  const kitClasses = kitClass(resolved.key);
-  if (resolved.extend !== undefined) return cn(kitClasses, resolved.extend);
-  if (resolved.className !== undefined) return resolved.className;
-  return kitClasses;
+  return skinVisualClass(resolved, kitClass(resolved.key));
 }
 
 /**

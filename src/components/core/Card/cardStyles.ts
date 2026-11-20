@@ -85,6 +85,7 @@ export function cardRootClass(
     SURFACE_COLOR_TRANSITION,
     CARD_SURFACE[visual.key],
     !pressable && CARD_STATIC_SHADOW_CLASS[shadow],
+    visual.extend,
     className);
 }
 

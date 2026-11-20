@@ -25,6 +25,12 @@ type AuthorSkinSlot = keyof SkinSlotRegistry & string;
 export type SkinTargetSlot = KitSkinTargetSlot | AuthorSkinSlot;
 export type SkinMotionSlot = KitSkinMotionSlot | AuthorSkinSlot;
 export type SkinLayerSlot = KitSkinLayerSlot | AuthorSkinSlot;
+/**
+ * `rules` key. A target slot gets the `.skin-{name}-{slot}` class through `targets`.
+ * A motion-only part (`card.title`, `button.text`) is matched by its `data-skin-slot`
+ * inside a node painted by the skin.
+ */
+export type SkinRuleSlot = SkinTargetSlot | SkinMotionSlot;
 
 /**
  * Geometry of the focus ring. Color tokens are allowed: the validator requires
@@ -186,10 +192,12 @@ export type SkinDefinition = {
   /** Ярус 2 classes. Only slots `resolveVariantVisual` actually reads. */
   targets?: Partial<Record<SkinTargetSlot, SkinTargetSpec>>;
   /**
-   * Ярус 2 CSS properties. Export writes a class `.skin-{name}-{slot}` and appends
-   * it to `targets`, so the rule works without Tailwind.
+   * Ярус 2 CSS properties. For a target slot export writes a class `.skin-{name}-{slot}`
+   * and appends it to `targets`, so the rule works without Tailwind. A motion-only part
+   * (`card.title`) is matched by `[data-skin-slot~="card.title"]` under
+   * `[data-variant="{name}"]` or `[data-skin="{name}"]`.
    */
-  rules?: Partial<Record<SkinTargetSlot, SkinSlotRules>>;
+  rules?: Partial<Record<SkinRuleSlot, SkinSlotRules>>;
   /** `@property` declarations for variables this skin animates. */
   properties?: Record<string, SkinPropertyDefinition>;
   /** Fonts loaded with the skin stylesheet. */

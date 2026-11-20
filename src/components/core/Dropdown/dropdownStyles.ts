@@ -4,7 +4,7 @@ import { OPTION_CONTROL_SIZE_LAYOUT, type ComponentSize } from "@/components/cor
 import { BUTTON_GROUP_RADIUS_BRIDGE_CLASS } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { PopoverVariant } from "@/components/core/Popover";
 import { KIT_POPOVER_VARIANTS } from "@/components/core/Popover/popoverTypes";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import type { Prettify } from "@/utils/prettify";
 
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
@@ -67,7 +67,7 @@ export const DROPDOWN_SUB_CONTENT_BODY_CLASS =
   "flex max-h-[min(22rem,65dvh)] min-h-0 flex-col gap-xsmall overflow-y-auto overflow-x-hidden p-base text-start";
 
 export const DROPDOWN_SUB_CONTENT_SURFACE_CLASS =
-  "border-token bg-surface shadow-token-large";
+  "border-token bg-surface shadow-token-mid";
 
 export const DROPDOWN_ITEM_BASE_CLASS =
   "w-full min-w-0 origin-center rounded-mid px-base py-small text-start no-underline outline-none text-base";
@@ -159,7 +159,7 @@ export function dropdownSubContentClass({
   return cn(
     DROPDOWN_SUB_CONTENT_BASE_CLASS,
     DROPDOWN_SUB_CONTENT_LAYOUT_CLASS,
-    visual.className !== undefined ? visual.className : DROPDOWN_SUB_CONTENT_SURFACE_CLASS,
+    skinVisualClass(visual, DROPDOWN_SUB_CONTENT_SURFACE_CLASS),
     !subOpen && portalMounted && "pointer-events-none",
     slotClass,
     className,

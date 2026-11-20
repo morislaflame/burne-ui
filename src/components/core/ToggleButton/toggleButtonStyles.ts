@@ -1,4 +1,4 @@
-import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { buttonGroupOverlapBorderClasses, buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { buttonRootClass } from "@/components/core/Button/buttonStyles";
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
@@ -40,7 +40,38 @@ export const TOGGLE_BUTTON_DISABLED_CLASS = "cursor-not-allowed opacity-50";
 export const TOGGLE_BUTTON_ENABLED_CLASS = "cursor-pointer";
  
 export const TOGGLE_BUTTON_FILL_BASE_CLASS =
-  "pointer-events-none absolute -inset-px z-0 origin-center motion-reduce:transition-none";
+  "pointer-events-none absolute inset-0 z-0 origin-center motion-reduce:transition-none";
+
+/**
+ * Clip sits on the border box (see `.toggle-fill-clip`), so inherited radius
+ * meets the outer corners. A joint side has no border — stay flush there.
+ */
+export function toggleButtonFillClipClass(
+  groupSegment: ButtonGroupSegment | undefined,
+  variant: ToggleButtonVariant,
+): string {
+  const visual = resolveVariantVisual(variant, KIT_TOGGLE_BUTTON_VARIANTS, "toggleButton.root");
+  const flush =
+    groupSegment == null || groupSegment.position === "only"
+      ? ""
+      : groupSegment.orientation === "horizontal"
+        ? groupSegment.position === "first"
+          ? "toggle-fill-clip-flush-ie"
+          : groupSegment.position === "last"
+            ? "toggle-fill-clip-flush-is"
+            : "toggle-fill-clip-flush-is toggle-fill-clip-flush-ie"
+        : groupSegment.position === "first"
+          ? "toggle-fill-clip-flush-be"
+          : groupSegment.position === "last"
+            ? "toggle-fill-clip-flush-bs"
+            : "toggle-fill-clip-flush-bs toggle-fill-clip-flush-be";
+
+  return cn(
+    "toggle-fill-clip",
+    visual.key === "outline" && "toggle-fill-clip-outline",
+    flush,
+  );
+}
  
 export const TOGGLE_BUTTON_CONTENT_BASE_CLASS =
   "relative z-[1] inline-flex w-full min-w-0 items-center justify-center gap-xsmall";
@@ -136,7 +167,12 @@ export function toggleButtonRootClass({
   const roundingClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)
     : CONTROL_SIZE_LAYOUT[size].rounded;
-  const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
+  const groupGlue = groupSegment
+    ? cn(
+        buttonGroupSegmentSurfaceClasses(groupSegment),
+        buttonGroupOverlapBorderClasses(groupSegment),
+      )
+    : "";
  
   if (visual.className !== undefined) {
     return cn(
@@ -157,6 +193,7 @@ export function toggleButtonRootClass({
     kitSurface && !groupSegment && SHADOW_LIFT_MOTION_CLASS,
     !pressed && !disabled && hoverVariant(toggleButtonHoverVariant(visual.key)),
     TOGGLE_BUTTON_VARIANT_IDLE[visual.key],
+    visual.extend,
     pressed && TOGGLE_BUTTON_PRESSED_SURFACE_CLASS,
     disabled ? TOGGLE_BUTTON_DISABLED_CLASS : TOGGLE_BUTTON_ENABLED_CLASS,
     buttonRootClass(size, true),

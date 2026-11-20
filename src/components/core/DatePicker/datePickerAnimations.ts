@@ -8,8 +8,11 @@
  * Root owns the scope (defaults + `play`). The trigger button is the field shell.
  * Chevron rotation plays `icon` enter / leave.
  */
-import { useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler } from "react";
+import { useCallback, useRef, type ForwardedRef, type MutableRefObject, type PointerEventHandler } from "react";
 
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { playOverlayTriggerOpenSqueeze } from "@/components/core/utils/overlayTriggerSqueeze";
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import {
@@ -117,7 +120,9 @@ export function useDatePickerTriggerMotion({
     motion,
     forwardedRef,
     pointerPhases: !disabled,
-    pressPhases: !disabled,
+    // Open plays `pressIn` itself and waits for the release. A pointer-down
+    // press would race that timeline and the panel would open mid-squeeze.
+    pressPhases: false,
     onPointerOver: (event) => {
       pointerInsideRef.current = true;
       onPointerOver?.(event);
@@ -131,6 +136,32 @@ export function useDatePickerTriggerMotion({
   });
   useOptionalEnterOnMount(scope, "trigger", part.targetRef);
 
+  const openingRef = useOpeningRef();
+  const config = useMotionConfig();
+  const partMotionRef = useRef(motion);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so the open squeeze sees this render; an effect runs too late
+  partMotionRef.current = motion;
+
+  const openAfterSqueeze = useCallback(
+    (setOpen: (open: boolean) => void) => {
+      runOpenAfterSqueeze({
+        triggerRef,
+        openingRef,
+        setOpen,
+        disabled,
+        config,
+        runSqueeze: (el) =>
+          playOverlayTriggerOpenSqueeze({
+            scope,
+            el,
+            partMotion: partMotionRef.current,
+            config,
+          }),
+      });
+    },
+    [config, disabled, openingRef, scope, triggerRef],
+  );
+
   const setRef = (node: HTMLButtonElement | null) => {
     triggerRef.current = node;
     part.setRef(node);
@@ -138,6 +169,8 @@ export function useDatePickerTriggerMotion({
 
   return {
     setRef,
+    openingRef,
+    openAfterSqueeze,
     pointerHandlers: part.pointerHandlers,
     shellHoverMotionClass: kitSurface ? shadow.motionClass : "",
   };

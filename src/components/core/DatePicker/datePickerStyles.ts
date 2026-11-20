@@ -7,7 +7,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { KIT_INPUT_VARIANTS, type InputSize, type InputVariant } from "@/components/core/Input/inputTypes";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 export const DATE_PICKER_ROOT_CLASS = "w-fit max-w-full min-w-0";
@@ -52,8 +52,7 @@ export function datePickerIconClass(size: InputSize): string {
 
 export function datePickerShellSurface(variant: InputVariant): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "datePicker.trigger");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
 
 export function datePickerTriggerClass({

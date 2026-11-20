@@ -15,7 +15,6 @@
  *   interactiveDuration: 350,
  *   pressSqueezeDurationFactor: 1.15,
  *   modalDuration: 280,
- *   surfaceTransitionDuration: 450,
  *   toastDismissDuration: 220,
  *   progressIndeterminateDuration: 1500,
  *   selectionFillDuration: 400,
@@ -32,7 +31,40 @@ export { MOTION_CONFIG_LIMITS } from "./motionConfigValidation";
 /** CSS custom properties written by `applyMotionCssTokens` / theme apply. */
 export const MOTION_CSS_VAR = {
   surfaceDuration: "--motion-surface-duration",
+  surfaceEase: "--motion-surface-ease",
 } as const;
+
+/**
+ * CSS timing for `sine.inOut`. `--motion-surface-ease` in `tokens/styles.css`
+ * must stay equal to this string (`check-color-single-owner`).
+ */
+export const HOVER_LIFT_EASE_CSS = "cubic-bezier(0.37, 0, 0.63, 1)";
+
+/** Named GSAP eases the theme editor offers, as the closest CSS cubic-bezier. */
+const GSAP_EASE_TO_CSS: Record<string, string> = {
+  "power1.in": "cubic-bezier(0.11, 0, 0.5, 0)",
+  "power1.out": "cubic-bezier(0.5, 1, 0.89, 1)",
+  "power1.inOut": "cubic-bezier(0.45, 0, 0.55, 1)",
+  "power2.in": "cubic-bezier(0.32, 0, 0.67, 0)",
+  "power2.out": "cubic-bezier(0.33, 1, 0.68, 1)",
+  "power2.inOut": "cubic-bezier(0.65, 0, 0.35, 1)",
+  "power3.in": "cubic-bezier(0.5, 0, 0.75, 0)",
+  "power3.out": "cubic-bezier(0.25, 1, 0.5, 1)",
+  "power3.inOut": "cubic-bezier(0.76, 0, 0.24, 1)",
+  "sine.inOut": HOVER_LIFT_EASE_CSS,
+  "expo.inOut": "cubic-bezier(0.87, 0, 0.13, 1)",
+  "back.out(1.4)": "cubic-bezier(0.34, 1.45, 0.64, 1)",
+  "back.out(1.25)": "cubic-bezier(0.34, 1.3, 0.64, 1)",
+};
+
+const CSS_TIMING_FUNCTION = /^(cubic-bezier|linear|steps|ease-in-out|ease-in|ease-out|ease)\b/;
+
+/** CSS timing function for a hover-lift ease. Unknown GSAP names use the sine.inOut bezier. */
+export function hoverLiftEaseToCss(ease: string): string {
+  const trimmed = ease.trim();
+  if (CSS_TIMING_FUNCTION.test(trimmed)) return trimmed;
+  return GSAP_EASE_TO_CSS[trimmed] ?? HOVER_LIFT_EASE_CSS;
+}
  
 /** Per-feature enable flags (AND with `enableAnimations`). */
 export type MotionFeatureFlag =
@@ -53,10 +85,9 @@ export type MotionFeatureFlag =
  
 export interface MotionConfig {
   /**
-   * Duration (ms) for most interactive UI animations:
-   * hover-lift, press-squeeze, checkbox, radio, accordion, tab indicator, etc.
-   * Modals use `modalDuration`.
-   * @default 280
+   * Duration (ms) for hover lift, press, and CSS surface color transitions
+   * (`--motion-surface-duration`). Modals use `modalDuration`.
+   * @default 220
    */
   interactiveDuration: number;
  
@@ -67,8 +98,8 @@ export interface MotionConfig {
   interactiveEase: string;
  
   /**
-   * GSAP easing for hover lift (scale lift).
-   * Softer than `interactiveEase`: same duration, smoother acceleration/deceleration.
+   * GSAP easing for hover lift (scale and shadow). The same curve is written to
+   * `--motion-surface-ease` so the background transition matches.
    * @default "sine.inOut"
    */
   hoverLiftEase: string;
@@ -123,7 +154,7 @@ export interface MotionConfig {
    * Multiplier on `interactiveDuration` for the full press-squeeze timeline.
    * Also sets the open delay in `runOpenAfterSqueeze` (Popover / Dropdown / Dialog /
    * Drawer / Select / ComboBox / AlertDialog) because open waits for squeeze to finish
-   * (~322 ms at defaults: 280 × 1.15).
+   * (~253 ms at defaults: 220 × 1.15).
    * @default 1.15
    */
   pressSqueezeDurationFactor: number;
@@ -158,14 +189,6 @@ export interface MotionConfig {
    * @default "sine.inOut"
    */
   expandOpenEase: string;
- 
-  /**
-   * Duration (ms) for CSS surface / text / shadow / focus-ring transitions
-   * (`--motion-surface-duration` → `surface-color-transition`, `animate-shadow`, …).
-   * Independent from GSAP `interactiveDuration`.
-   * @default 180
-   */
-  surfaceTransitionDuration: number;
  
   /**
    * Duration (ms) for Toast dismiss slide + last-scrim fade-out.
@@ -265,7 +288,7 @@ export interface MotionConfig {
  
 /** Canonical motion defaults — imported by theme `MOTION_DEFAULTS` (single source). */
 export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
   tooltipDuration: 200,
@@ -285,7 +308,6 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   rippleEaseCss: "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
   expandDuration: 200,
   expandOpenEase: "sine.inOut",
-  surfaceTransitionDuration: 180,
   toastDismissDuration: 220,
   toastDismissEase: "power2.in",
   enableAnimations: true,
@@ -336,24 +358,32 @@ export function getMotionConfigRevision(): number {
 }
  
 /**
- * Write / clear `--motion-surface-duration` on a root (diff vs kit defaults).
+ * Write / clear `--motion-surface-duration` and `--motion-surface-ease` on a root.
+ * Duration follows `interactiveDuration`; ease follows `hoverLiftEase`.
+ * Values that match the kit defaults are removed so `tokens/styles.css` wins.
  * Called from `configureMotion` (documentElement) and theme `applyMotionFromState`.
  * Uses `root` when passed; otherwise `document.documentElement` if `document` exists.
  */
 export function applyMotionCssTokens(
   root: HTMLElement | null | undefined,
-  config: Pick<MotionConfig, "surfaceTransitionDuration"> = _config,
+  config: Partial<Pick<MotionConfig, "interactiveDuration" | "hoverLiftEase">> = _config,
 ): void {
   const target =
     root ?? (typeof document !== "undefined" ? document.documentElement : null);
   if (!target?.style) return;
-  const ms = config.surfaceTransitionDuration;
-  if (!Number.isFinite(ms) || ms < 0) return;
-  const name = MOTION_CSS_VAR.surfaceDuration;
-  if (ms === MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration) {
-    target.style.removeProperty(name);
-  } else {
-    target.style.setProperty(name, `${ms}ms`);
+
+  const ms = config.interactiveDuration;
+  if (Number.isFinite(ms) && ms != null && ms >= 0) {
+    const duration = `${ms}ms`;
+    const durationDefault = `${MOTION_CONFIG_DEFAULTS.interactiveDuration}ms`;
+    if (duration === durationDefault) target.style.removeProperty(MOTION_CSS_VAR.surfaceDuration);
+    else target.style.setProperty(MOTION_CSS_VAR.surfaceDuration, duration);
+  }
+
+  if (config.hoverLiftEase) {
+    const ease = hoverLiftEaseToCss(config.hoverLiftEase);
+    if (ease === HOVER_LIFT_EASE_CSS) target.style.removeProperty(MOTION_CSS_VAR.surfaceEase);
+    else target.style.setProperty(MOTION_CSS_VAR.surfaceEase, ease);
   }
 }
  

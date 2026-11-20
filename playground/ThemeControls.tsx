@@ -816,15 +816,6 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             onChange={(v) => setMotionDuration("loadingDotsDuration", v)}
           />
           <ScaleControl
-            label="surfaceTransitionDuration (CSS)"
-            value={state.surfaceTransitionDuration}
-            min={120}
-            max={1200}
-            step={20}
-            unit="ms"
-            onChange={(v) => setMotionDuration("surfaceTransitionDuration", v)}
-          />
-          <ScaleControl
             label="toastDismissDuration"
             value={state.toastDismissDuration}
             min={80}
@@ -853,7 +844,6 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
                 MOTION_DEFAULTS.progressIndeterminateDuration,
               );
               setMotionDuration("loadingDotsDuration", MOTION_DEFAULTS.loadingDotsDuration);
-              setMotionDuration("surfaceTransitionDuration", MOTION_DEFAULTS.surfaceTransitionDuration);
               setMotionDuration("toastDismissDuration", MOTION_DEFAULTS.toastDismissDuration);
             }}
           >

@@ -1,6 +1,6 @@
 import type { TextVariant } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
  
 import type { KitKbdVariant, KbdSize, KbdVariant } from "./kbdTypes";
 import { KIT_KBD_VARIANTS } from "./kbdTypes";
@@ -38,8 +38,7 @@ export const KBD_GROUP_SEPARATOR_CLASS = "select-none text-muted text-xsmall lea
  
 export function kbdSurfaceClass(variant: KbdVariant): string {
   const visual = resolveVariantVisual(variant, KIT_KBD_VARIANTS, "kbd.root");
-  if (visual.className !== undefined) return visual.className;
-  return KBD_VARIANT_SURFACE[visual.key];
+  return skinVisualClass(visual, KBD_VARIANT_SURFACE[visual.key]);
 }
  
 export function kbdRootClass({

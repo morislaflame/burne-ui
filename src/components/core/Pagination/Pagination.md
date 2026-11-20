@@ -128,7 +128,7 @@ Ellipsis и page numbers получают стабильные `data-flip-key` �
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   interactiveEase: "power2.out",
   enablePaginationFlip: true,
 });

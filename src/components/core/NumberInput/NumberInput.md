@@ -72,7 +72,7 @@ import { NumberInput, type NumberInputProps, type NumberInputClassNames, type Nu
 
 ### Slot motion
 
-Хост — `shell` (подъём поля). `decrement` и `increment` сжимаются при нажатии. `control`, `label`, `hint` и `error` на том же scope: у каждого слота свои `hoverIn`, `pressIn` и `enter`. `enter` играет при появлении, если фаза задана.
+Хост — `shell` (подъём поля). Тень при наведении только у оболочки. `decrement` и `increment` сжимаются при нажатии, без своей тени. `control`, `label`, `hint` и `error` на том же scope: у каждого слота свои `hoverIn`, `pressIn` и `enter`. `enter` играет при появлении, если фаза задана.
 
 ## data-*
 

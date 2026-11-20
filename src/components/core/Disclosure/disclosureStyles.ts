@@ -1,6 +1,6 @@
 import { CONTROL_SIZE_LAYOUT, collapsibleSizeLayout, iconSlotSizeClass } from "@/components/core/utils/sizeLayout";
 import { TEXT_COLOR_TRANSITION, hoverVariant } from "@/components/core/utils/hoverVariant";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { DisclosureGroupContextValue, DisclosureSize, DisclosureVariant, KitDisclosureVariant } from "./disclosureTypes";
@@ -32,7 +32,8 @@ const VARIANT_TRIGGER: Record<KitDisclosureVariant, string> = {
   default: cn("rounded-mid", TRIGGER_INTERACTIVE),
   outline: cn("rounded-mid", TRIGGER_INTERACTIVE),
   secondary: cn("rounded-mid", TRIGGER_INTERACTIVE),
-  card: TRIGGER_INTERACTIVE,
+  // Card hover is the shell shadow only. A header wash reads as a second surface.
+  card: "bg-transparent text-foreground",
   ghost: cn("rounded-mid", TRIGGER_INTERACTIVE),
 };
 
@@ -124,9 +125,7 @@ export function disclosureRootClass({
   const rootCls =
     visual.key === "card" && groupedCardShell
       ? ""
-      : visual.className !== undefined
-        ? visual.className
-        : VARIANT_ROOT[visual.key];
+      : skinVisualClass(visual, VARIANT_ROOT[visual.key]);
 
   return cn(rootCls, slotClass, className);
 }
@@ -150,7 +149,7 @@ export function disclosureTriggerClass({
   return cn(
     DISCLOSURE_TRIGGER_BASE_CLASS,
     shell.pad,
-    visual.className !== undefined ? visual.className : VARIANT_TRIGGER[visual.key],
+    skinVisualClass(visual, VARIANT_TRIGGER[visual.key]),
     disabled
       ? DISCLOSURE_TRIGGER_DISABLED_CLASS
       : DISCLOSURE_TRIGGER_ENABLED_CLASS,
@@ -198,6 +197,7 @@ export function disclosureContentClass({
     key === "card" && "border-t-token",
     key === "ghost" && "text-muted",
     key === "default" && "text-muted",
+    visual.extend,
     slotClass,
     className,
   );
@@ -227,6 +227,7 @@ export function disclosureGroupClass({
       (key === "outline" || key === "secondary" || key === "ghost") &&
       "gap-small",
     visual.className,
+    visual.extend,
     slotClass,
     className,
   );

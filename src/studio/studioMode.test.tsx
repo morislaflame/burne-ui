@@ -17,13 +17,13 @@ function Probe() {
 }
 
 describe("studio slot marker", () => {
-  it("marks a live slot only inside StudioModeProvider", () => {
+  it("marks a live slot with and without StudioModeProvider", () => {
     const { rerender, getByRole } = render(
       <MotionScopeProvider>
         <Probe />
       </MotionScopeProvider>,
     );
-    expect(getByRole("button").hasAttribute("data-skin-slot")).toBe(false);
+    expect(getByRole("button").getAttribute("data-skin-slot")).toBe("button.root");
     rerender(
       <StudioModeProvider>
         <MotionScopeProvider>
@@ -32,6 +32,25 @@ describe("studio slot marker", () => {
       </StudioModeProvider>,
     );
     expect(getByRole("button").getAttribute("data-skin-slot")).toBe("button.root");
+  });
+
+  it("marks a host root registered through registerTarget", () => {
+    function Host({ on }: { on: boolean }) {
+      const scope = useMotionScope();
+      return on ? <button ref={(node) => scope.registerTarget("root", node)} type="button">Host</button> : null;
+    }
+    const { rerender, getByRole, queryByRole } = render(
+      <MotionScopeProvider>
+        <Host on />
+      </MotionScopeProvider>,
+    );
+    expect(getByRole("button").getAttribute("data-skin-slot")).toBe("button.root");
+    rerender(
+      <MotionScopeProvider>
+        <Host on={false} />
+      </MotionScopeProvider>,
+    );
+    expect(queryByRole("button")).toBeNull();
   });
 
   it("follows a swapped node", () => {

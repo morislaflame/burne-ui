@@ -13,7 +13,9 @@
  *
  * Handle-drag is kit-internal: it sets `skipContentAnimRef` before `setOpen` so
  * neither host plays (instant apply only). Card `root` hover is `hoverLiftFirstLevel`
- * (`liftScale` 1). Defaults: `resolveDisclosureMotionDefaults`.
+ * (`liftScale` 1). `titleLift` hover is off so the title span inside the button
+ * does not mount elevation layers; press squeezes without a shadow.
+ * Defaults: `resolveDisclosureMotionDefaults`.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
@@ -55,8 +57,10 @@ export function resolveDisclosureMotionDefaults(variant: DisclosureVariant): Dis
           }
         : {}),
       titleLift: {
-        hoverIn: "hoverLiftFirstLevel",
-        hoverOut: "hoverLiftFirstLevel",
+        // Hover lift would mount elevation layers on this span, inside the button.
+        // Card shadow stays on `root`. Press only squeezes the title.
+        hoverIn: false,
+        hoverOut: false,
         pressIn: "pressSqueeze",
         pressOut: false,
       },
@@ -211,7 +215,11 @@ export function useDisclosureTriggerMotion({
       }
       const value = scope.resolve("titleLift", phase, motion);
       if (value === undefined) return;
-      scope.play("titleLift", phase, { partMotion: motion, el });
+      scope.play("titleLift", phase, {
+        partMotion: motion,
+        el,
+        params: { hasHoverShadow: false },
+      });
     },
     [config, disabled, motion, scope],
   );

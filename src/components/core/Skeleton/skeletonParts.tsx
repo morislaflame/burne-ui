@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from "react";
 import { skeletonPresentationProps, skeletonRegionA11yProps } from "./skeletonA11y";
 import { resolveSkeletonMotionDefaults, useSkeletonSlotMotion } from "./skeletonAnimations";
 import { SkeletonMotionProvider, useSkeletonMotionScope } from "./skeletonContext";
-import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantStyle, skeletonWaveOverlayStyle } from "./skeletonStyles";
+import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantClass } from "./skeletonStyles";
 import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
@@ -23,7 +23,7 @@ export function SkeletonWave({ className, style }: SkeletonWaveProps) {
     <span
       aria-hidden
       className={cn(SKELETON_WAVE_OVERLAY_CLASS, className)}
-      style={{ ...skeletonWaveOverlayStyle(), ...style }}
+      style={style}
     />
   );
 }
@@ -127,12 +127,13 @@ function SkeletonCircleSurface({
       ref={part.setRef}
       className={cn(
         SKELETON_BASE_CLASS,
+        skeletonVariantClass(animation),
         SKELETON_CIRCLE_RADIUS_CLASS,
         size,
         classNames?.root,
         className,
       )}
-      style={{ ...skeletonVariantStyle(animation), ...style }}
+      style={style}
       {...skeletonPresentationProps()}
       {...domRest}
       {...part.pointerHandlers}
@@ -236,14 +237,12 @@ function SkeletonTextSurface({
           key={index}
           className={cn(
             SKELETON_BASE_CLASS,
+            skeletonVariantClass(animation),
             SKELETON_TEXT_LINE_CLASS,
             widthClass,
             classNames?.line,
           )}
-          style={{
-            ...skeletonVariantStyle(animation),
-            animationDelay: skeletonLineAnimationDelay(index),
-          }}
+          style={index > 0 ? { animationDelay: skeletonLineAnimationDelay(index) } : undefined}
         >
           {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
         </div>
@@ -317,11 +316,12 @@ function SkeletonBlockSurface({
       ref={part.setRef}
       className={cn(
         SKELETON_BASE_CLASS,
+        skeletonVariantClass(animation),
         SKELETON_BLOCK_CLASS,
         classNames?.root,
         className,
       )}
-      style={{ ...skeletonVariantStyle(animation), ...style }}
+      style={style}
       {...skeletonPresentationProps()}
       {...domRest}
       {...part.pointerHandlers}

@@ -5,6 +5,8 @@ import {
   configureMotion,
   getMotionConfig,
   getMotionConfigRevision,
+  HOVER_LIFT_EASE_CSS,
+  hoverLiftEaseToCss,
   MOTION_CONFIG_DEFAULTS,
   MOTION_CONFIG_LIMITS,
   MOTION_CSS_VAR,
@@ -133,20 +135,19 @@ describe("configureMotion", () => {
     vi.spyOn(console, "warn").mockImplementation(() => {});
     configureMotion({
       rippleEaseCss: "cubic-bezier(.25,.55,.35,.95)",
-      surfaceTransitionDuration: Number.NaN,
+      interactiveDuration: Number.NaN,
     });
     expect(getMotionConfig().rippleEaseCss).toBe("cubic-bezier(.25,.55,.35,.95)");
-    expect(MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration).toBe(180);
-    expect(getMotionConfig().surfaceTransitionDuration).toBe(
-      MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration);
+    expect(getMotionConfig().interactiveDuration).toBe(
+      MOTION_CONFIG_DEFAULTS.interactiveDuration);
 
     const root = fakeRoot();
     applyMotionCssTokens(root as unknown as HTMLElement, {
-      surfaceTransitionDuration: Number.NaN,
+      interactiveDuration: Number.NaN,
     });
     expect(root.props[MOTION_CSS_VAR.surfaceDuration]).toBeUndefined();
 
-    applyMotionCssTokens(root as unknown as HTMLElement, { surfaceTransitionDuration: 450 });
+    applyMotionCssTokens(root as unknown as HTMLElement, { interactiveDuration: 450 });
     expect(root.props[MOTION_CSS_VAR.surfaceDuration]).toBe("450ms");
   });
 
@@ -204,12 +205,26 @@ describe("applyMotionCssTokens two roots", () => {
   it("writes independent --motion-surface-duration on each root", () => {
     const fast = fakeRoot();
     const slow = fakeRoot();
-    applyMotionCssTokens(fast as unknown as HTMLElement, { surfaceTransitionDuration: 120 });
-    applyMotionCssTokens(slow as unknown as HTMLElement, { surfaceTransitionDuration: 800 });
+    applyMotionCssTokens(fast as unknown as HTMLElement, { interactiveDuration: 120 });
+    applyMotionCssTokens(slow as unknown as HTMLElement, { interactiveDuration: 800 });
     expect(fast.props[MOTION_CSS_VAR.surfaceDuration]).toBe("120ms");
     expect(slow.props[MOTION_CSS_VAR.surfaceDuration]).toBe("800ms");
 
-    applyMotionCssTokens(fast as unknown as HTMLElement, { surfaceTransitionDuration: 120 });
+    applyMotionCssTokens(fast as unknown as HTMLElement, { interactiveDuration: 120 });
     expect(slow.props[MOTION_CSS_VAR.surfaceDuration]).toBe("800ms");
+  });
+
+  it("writes the hover-lift ease onto the surface ease and clears the kit default", () => {
+    const root = fakeRoot();
+    applyMotionCssTokens(root as unknown as HTMLElement, {
+      interactiveDuration: MOTION_CONFIG_DEFAULTS.interactiveDuration,
+      hoverLiftEase: "sine.inOut",
+    });
+    expect(root.props[MOTION_CSS_VAR.surfaceDuration]).toBeUndefined();
+    expect(root.props[MOTION_CSS_VAR.surfaceEase]).toBeUndefined();
+    expect(hoverLiftEaseToCss("sine.inOut")).toBe(HOVER_LIFT_EASE_CSS);
+
+    applyMotionCssTokens(root as unknown as HTMLElement, { hoverLiftEase: "power2.out" });
+    expect(root.props[MOTION_CSS_VAR.surfaceEase]).toBe(hoverLiftEaseToCss("power2.out"));
   });
 });

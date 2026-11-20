@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, OlHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, OlHTMLAttributes, ReactNode, RefObject } from "react";
 
 import type {
   MotionController,
@@ -149,4 +149,6 @@ export type StepperItemContextValue = {
   state: StepperStepState;
   selectable: boolean;
   isLast: boolean;
+  /** Step mark. The trigger plays hover / press on it. */
+  indicatorRef: RefObject<HTMLSpanElement | null>;
 };

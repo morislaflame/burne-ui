@@ -131,6 +131,7 @@ export function useSwitchTrackAnimations({
     reduceMotion || !isMotionFeatureEnabledFor(config, "enableSwitchThumb");
   const fallbackTravelPx = resolveFallbackThumbPx(thickness, size);
   const firstLayoutRef = useRef(true);
+  const prevCheckedRef = useRef(checked);
  
   const applyInstant = useCallback(
     (nextChecked: boolean, travelPx: number) => {
@@ -177,13 +178,16 @@ export function useSwitchTrackAnimations({
   );
  
   const syncThumbPosition = useCallback(
-    (nextChecked: boolean, travelPx: number) => {
+    (nextChecked: boolean, travelPx: number, animate = true) => {
       travelPxRef.current = travelPx;
       if (!thumbRef.current && !trackFillRef.current && !iconOffRef.current && !iconOnRef.current) {
         return;
       }
- 
-      if (firstLayoutRef.current || switchMotionOff) {
+
+      const checkedChanged = prevCheckedRef.current !== nextChecked;
+      prevCheckedRef.current = nextChecked;
+
+      if (firstLayoutRef.current || switchMotionOff || !animate || !checkedChanged) {
         firstLayoutRef.current = false;
         applyInstant(nextChecked, travelPx);
         return;
@@ -206,12 +210,12 @@ export function useSwitchTrackAnimations({
     };
  
     measure();
-    syncThumbPosition(checked, travelPxRef.current);
+    syncThumbPosition(checked, travelPxRef.current, true);
  
     if (!track || !shell || typeof ResizeObserver === "undefined") return undefined;
     const ro = new ResizeObserver(() => {
       measure();
-      syncThumbPosition(checked, travelPxRef.current);
+      syncThumbPosition(checked, travelPxRef.current, false);
     });
     ro.observe(track);
     ro.observe(shell);

@@ -4,6 +4,12 @@ import { bindStudioNode, unbindStudioNode } from "./studioNodes";
 
 export type StudioSlotCheck = (id: string) => boolean;
 
+/**
+ * Outside the studio every part id is marked, so skin `rules` reach it.
+ * The slot tables stay out of component bundles.
+ */
+const anySkinSlot: StudioSlotCheck = () => true;
+
 const StudioModeContext = createContext<StudioSlotCheck | null>(null);
 
 export function StudioSlotProvider({
@@ -22,6 +28,11 @@ export function useStudioMode(): boolean {
 
 export function useStudioSlotCheck(): StudioSlotCheck | null {
   return useContext(StudioModeContext);
+}
+
+/** The studio narrows marks to live skin slots. */
+export function useSkinSlotCheck(): StudioSlotCheck {
+  return useContext(StudioModeContext) ?? anySkinSlot;
 }
 
 /** `Button` + `root` → `button.root`, matching the live skin slot list. */
@@ -85,7 +96,7 @@ export function studioSlotIds(
   debugName: string | undefined,
   slot: string,
   studioSlot: string | undefined,
-  isLive: StudioSlotCheck,
+  isLive: StudioSlotCheck = anySkinSlot,
 ): string[] {
   const ids: string[] = [];
   if (debugName) {
@@ -98,18 +109,18 @@ export function studioSlotIds(
 
 /**
  * Marks a node whose motion slot id is not the skin target id
- * (`alertDialog.panel`, `disclosure.trigger`, …). No-op outside `StudioModeProvider`.
+ * (`alertDialog.panel`, `disclosure.trigger`, …).
  * Binding runs in the ref callback, so a swapped node (`asChild`) is marked and the previous one is cleared.
  */
 export function useStudioSlotRef<T extends HTMLElement>(
   slotId: string,
   scope?: object | null,
 ): (node: T | null) => void {
-  const isLive = useStudioSlotCheck();
+  const isLive = useSkinSlotCheck();
   const markRef = useRef<StudioSlotMark | null>(null);
 
   return useCallback((node: T | null) => {
-    const ids = node && isLive?.(slotId) ? [slotId] : [];
+    const ids = node && isLive(slotId) ? [slotId] : [];
     markRef.current = applyStudioSlotMark(markRef.current, node, ids, scope ?? null);
   }, [isLive, scope, slotId]);
 }

@@ -3,6 +3,7 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useRef,
   type OlHTMLAttributes,
   type PointerEventHandler,
   type ReactNode,
@@ -15,7 +16,7 @@ import { KitCheckmarkSharp } from "@/components/core/utils/kitIcons";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 
 import { stepperKeyDelta, stepperCurrent } from "./stepperA11y";
-import { useStepperSlotMotion, useStepperRootMotion } from "./stepperAnimations";
+import { useStepperIndicatorPointer, useStepperSlotMotion, useStepperRootMotion } from "./stepperAnimations";
 import { isStepperItem, isStepperTrigger, stepperStepSelectable, stepperStepState } from "./stepperAPI";
 import {
   StepperItemProvider,
@@ -75,7 +76,9 @@ export const StepperIndicator = forwardRef<HTMLSpanElement, StepperIndicatorProp
 
     return (
       <span
-        ref={part.setRef}
+        ref={mergeRefs(part.setRef, (node) => {
+          item.indicatorRef.current = node;
+        })}
         {...dom}
         {...part.pointerHandlers}
         className={stepperIndicatorClass(orientation, size, slotClass, className)}
@@ -151,10 +154,21 @@ function StepperSeparator() {
 }
 
 export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>(
-  function StepperTrigger({ className, children, onClick, onKeyDown, ...rest }, ref) {
+  function StepperTrigger({
+    className,
+    children,
+    onClick,
+    onKeyDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  }, ref) {
     const root = useStepperContext();
     const item = useStepperItemContext();
     const slotClass = useStepperClassNames().trigger;
+    const mark = useStepperIndicatorPointer(item.indicatorRef, item.selectable);
     const tabStop =
       item.selectable &&
       (item.index === root.currentIndex || (root.currentIndex < 0 && item.index === 0));
@@ -170,6 +184,19 @@ export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>
         {...rest}
         data-value={item.value}
         data-disabled={dataFlag(!item.selectable)}
+        onPointerEnter={(event) => {
+          onPointerEnter?.(event);
+          if (!event.defaultPrevented) mark.onPointerOver();
+        }}
+        onPointerLeave={(event) => {
+          onPointerLeave?.(event);
+          if (!event.defaultPrevented) mark.onPointerOut();
+        }}
+        onPointerDown={(event) => {
+          onPointerDown?.(event);
+          if (!event.defaultPrevented) mark.onPointerDown();
+        }}
+        onPointerUp={onPointerUp}
         onClick={(event) => {
           onClick?.(event);
           if (event.defaultPrevented) return;
@@ -214,6 +241,7 @@ export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
     const slotClass = useStepperClassNames().item;
     const state = stepperStepState(index, root.currentIndex);
     const selectable = stepperStepSelectable(index, root.currentIndex, root.linear);
+    const indicatorRef = useRef<HTMLSpanElement | null>(null);
     const part = useStepperSlotMotion<HTMLLIElement>({
       slot: "item",
       motion,
@@ -235,7 +263,7 @@ export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
         className={stepperItemClass(root.orientation, isLast, slotClass, className)}
         data-state={state}
       >
-        <StepperItemProvider value={{ index, value, state, selectable, isLast }}>
+        <StepperItemProvider value={{ index, value, state, selectable, isLast, indicatorRef }}>
           {Children.toArray(children).some(isStepperTrigger) ? (
             children
           ) : (

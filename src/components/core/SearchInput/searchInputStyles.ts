@@ -45,7 +45,7 @@ export const SEARCH_INPUT_CLEAR_BUTTON_CLASS =
 export const SEARCH_INPUT_CLEAR_ICON_CLASS = "shrink-0";
  
 export const SEARCH_INPUT_ROOT_BASE_CLASS =
-  "relative box-border inline-block overflow-hidden text-start";
+  "relative box-border inline-block text-start";
  
 export const SEARCH_INPUT_ROOT_BORDER_CLASS = "border-1 border-token";
  
@@ -228,6 +228,7 @@ export function searchInputRootClass({
     !expanded && !blocked ? SEARCH_INPUT_CURSOR_POINTER_CLASS : "",
     blocked ? SEARCH_INPUT_BLOCKED_CLASS : "",
     !expanded && !groupSegment && layout.shellWCollapsed,
+    visual.extend,
     slotRoot,
     className,
   );

@@ -3,7 +3,7 @@ import {
   panelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
 import { TOOLTIP_ARROW_SHELL_PAD } from "@/components/core/Tooltip/tooltipPosition";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 
 import type {
   PopoverContentGap,
@@ -53,9 +53,9 @@ export const POPOVER_PANEL_BASE_CLASS =
   "relative z-[1] flex min-w-0 flex-col overflow-hidden text-foreground";
 
 export const POPOVER_PANEL_SURFACE: Record<KitPopoverVariant, string> = {
-  default: "border-token bg-surface shadow-token-large",
-  outline: "bg-transparent border-token-outline text-foreground shadow-token-large",
-  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
+  default: "border-token bg-surface shadow-token-mid",
+  outline: "bg-background border-token-outline text-foreground shadow-token-mid",
+  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-mid",
 };
 
 export const POPOVER_ARROW_BASE_CLASS =
@@ -63,7 +63,7 @@ export const POPOVER_ARROW_BASE_CLASS =
 
 export const POPOVER_ARROW_FILL: Record<KitPopoverVariant, string> = {
   default: "border-token bg-surface",
-  outline: "border-token-outline bg-transparent",
+  outline: "border-token-outline bg-background",
   secondary: "border-token bg-secondary",
 };
 
@@ -153,7 +153,7 @@ export function popoverDefaultPanelClass({
   const visual = resolveVariantVisual(variant, KIT_POPOVER_VARIANTS, "popover.panel");
   return cn(
     POPOVER_PANEL_BASE_CLASS,
-    visual.className !== undefined ? visual.className : POPOVER_PANEL_SURFACE[visual.key],
+    skinVisualClass(visual, POPOVER_PANEL_SURFACE[visual.key]),
     popoverSizedPanelClasses({ size, unstyled, contentGap, gapPropSet }),
     slotClass,
     contentSlot,
@@ -176,7 +176,7 @@ export function popoverArrowClass({
   const visual = resolveVariantVisual(variant, KIT_POPOVER_VARIANTS, "popover.arrow");
   return cn(
     POPOVER_ARROW_BASE_CLASS,
-    visual.className !== undefined ? visual.className : POPOVER_ARROW_FILL[visual.key],
+    skinVisualClass(visual, POPOVER_ARROW_FILL[visual.key]),
     arrowSideClass,
     slotClass,
     className,

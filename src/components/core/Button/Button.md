@@ -300,7 +300,7 @@ function Nudge() {
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
   hoverLiftScale: 1.025,

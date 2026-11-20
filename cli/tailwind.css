@@ -179,8 +179,8 @@
 
 @utility field-shell-transition {
   transition:
-    background-color var(--motion-surface-duration) var(--motion-shadow-ease),
-    border-color var(--motion-surface-duration) var(--motion-shadow-ease),
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
     outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 

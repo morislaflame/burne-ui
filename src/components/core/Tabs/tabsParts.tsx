@@ -11,7 +11,7 @@ import {
   useTabsClassNames,
   useTabsContext,
 } from "./tabsContext";
-import { tabsIndicatorClass, tabsListClass } from "./tabsStyles";
+import { tabsIndicatorClass, tabsIndicatorShape, tabsListClass } from "./tabsStyles";
 import type { TabsListProps } from "./tabsTypes";
 import { useSlidingTabIndicator } from "./useSlidingTabIndicator";
  
@@ -69,7 +69,7 @@ const TabsListSurface = forwardRef<HTMLDivElement, Omit<TabsListProps, "classNam
     indicatorPart.targetRef,
     value,
     orientation,
-    variant,
+    tabsIndicatorShape(variant),
     tabElementsRef,
     layoutEpoch,
     scope,

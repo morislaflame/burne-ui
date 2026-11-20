@@ -8,7 +8,7 @@ import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
  
 import { resolveFieldShellSurfaceClass, type FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
-import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { usesKitElevation, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
  
 import type { InputSize, InputVariant } from "./inputTypes";
 import { KIT_INPUT_VARIANTS } from "./inputTypes";
@@ -17,7 +17,15 @@ import { cn } from "@/utils/cn";
  
 export const INPUT_AFFIX_SURFACE_CLASS = "bg-primary-tint";
  
-export const INPUT_SHELL_BASE_CLASS = "flex items-stretch overflow-hidden";
+export const INPUT_SHELL_BASE_CLASS = "flex items-stretch";
+
+/** Clips prefix/suffix tint to the shell's inner curve. Shadow layers stay on the shell. */
+export function inputShellClipClass(variant: InputVariant): string {
+  return cn(
+    "field-radius-clip flex min-w-0 flex-1 items-stretch",
+    variant === "outline" && "field-radius-clip-outline",
+  );
+}
  
 export const INPUT_CONTROL_BASE_CLASS =
   `min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
@@ -125,8 +133,7 @@ export function inputShellSurfaceClass({
   variant: InputVariant;
 }): string {
   const visual = resolveVariantVisual(variant, KIT_INPUT_VARIANTS, "input.shell");
-  if (visual.className !== undefined) return visual.className;
-  return resolveFieldShellSurfaceClass({ variant });
+  return skinVisualClass(visual, resolveFieldShellSurfaceClass({ variant }));
 }
  
 export function inputShellRoundingClass(

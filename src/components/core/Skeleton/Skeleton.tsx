@@ -10,7 +10,7 @@ import {
   SkeletonText,
   SkeletonWave,
 } from "./skeletonParts";
-import { SKELETON_BASE_CLASS, skeletonRadiusClass, skeletonVariantStyle } from "./skeletonStyles";
+import { SKELETON_BASE_CLASS, skeletonRadiusClass, skeletonVariantClass } from "./skeletonStyles";
 import type { SkeletonPartMotion, SkeletonProps } from "./skeletonTypes";
 import { useSkeletonRootState } from "./useSkeletonRootState";
  
@@ -128,11 +128,12 @@ function SkeletonRootSurface({
       ref={part.setRef}
       className={cn(
         SKELETON_BASE_CLASS,
+        skeletonVariantClass(animation),
         skeletonRadiusClass(radius),
         classNames?.root,
         className,
       )}
-      style={{ ...skeletonVariantStyle(animation), ...style }}
+      style={style}
       {...skeletonPresentationProps()}
       {...domRest}
       {...part.pointerHandlers}

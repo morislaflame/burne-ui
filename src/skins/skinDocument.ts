@@ -10,11 +10,11 @@ import {
   shadowLayerCount,
 } from "../../cli/skin-color.mjs";
 import { skinMotionRecipeError } from "../../cli/skin-recipe.mjs";
-import { renderSkinStylesheet } from "../../cli/skin-stylesheet.mjs";
+import { renderSkinStylesheet as renderSkinStylesheetWith } from "../../cli/skin-stylesheet.mjs";
 
-export { parseCssColor, renderSkinStylesheet, shadowLayerCount };
+export { parseCssColor, shadowLayerCount };
 import { isAcceptedSkinSlot, skinSlotIssue } from "@/skins/skinSlotRegistry";
-import { isForbiddenSkinToken, SKIN_LAYER_SLOTS, SKIN_MOTION_SLOTS, SKIN_SLOTS, SKIN_TARGET_SLOTS, type SkinDeclarativeLayers, type SkinDeclarativeNode, type SkinDefinition, type SkinElevation, type SkinFontFace, type SkinLayerSlot, type SkinMeta, type SkinMotionPhaseValue, type SkinMotionSlot, type SkinPropertyDefinition, type SkinRuleDeclarations, type SkinSlotRules, type SkinTargetSlot, type SkinTargetSpec } from "@/skins/skinTypes";
+import { isForbiddenSkinToken, SKIN_LAYER_SLOTS, SKIN_MOTION_SLOTS, SKIN_SLOTS, SKIN_TARGET_SLOTS, type SkinDeclarativeLayers, type SkinDeclarativeNode, type SkinDefinition, type SkinElevation, type SkinFontFace, type SkinLayerSlot, type SkinMeta, type SkinMotionPhaseValue, type SkinMotionSlot, type SkinPropertyDefinition, type SkinRuleDeclarations, type SkinRuleSlot, type SkinSlotRules, type SkinTargetSlot, type SkinTargetSpec } from "@/skins/skinTypes";
 
 export type SkinDocument = Omit<SkinDefinition, "layers">;
 
@@ -98,6 +98,15 @@ const SLOTS = new Set<string>(SKIN_SLOTS);
 const TARGET_SLOTS = new Set<string>(SKIN_TARGET_SLOTS);
 const MOTION_SLOTS = new Set<string>(SKIN_MOTION_SLOTS);
 const LAYER_SLOTS = new Set<string>(SKIN_LAYER_SLOTS);
+const RULE_SLOTS = new Set<string>([...SKIN_TARGET_SLOTS, ...SKIN_MOTION_SLOTS]);
+
+/**
+ * Token blocks, fonts, `@property`, and `rules`. A target rule matches its
+ * `.skin-{name}-{slot}` class; a part rule (`card.title`) matches `data-skin-slot`.
+ */
+export function renderSkinStylesheet(skin: SkinDocument): string {
+  return renderSkinStylesheetWith(skin, { isTarget: (slot) => isAcceptedSkinSlot(slot, TARGET_SLOTS) });
+}
 
 function slotError(label: string, slot: string, live: Set<string>): string | null {
   const issue = skinSlotIssue(slot, SLOTS, live);
@@ -235,7 +244,7 @@ function readDeclarations(
   }
   const style: SkinRuleDeclarations = {};
   for (const [key, item] of Object.entries(value)) {
-    if (!/^(?:--)?[a-zA-Z_][\w-]*$/.test(key)) errors.push(`${label} property ${key} is not a CSS property`);
+    if (!/^(?:--|-(?:webkit|moz)-)?[a-zA-Z_][\w-]*$/.test(key)) errors.push(`${label} property ${key} is not a CSS property`);
     if (typeof item !== "string" || /[{};]/.test(item)) errors.push(`${label}.${key} has an unsafe value`);
     else style[key] = item;
   }
@@ -282,7 +291,7 @@ function readRules(value: unknown, errors: string[]): SkinDocument["rules"] {
   }
   const rules: NonNullable<SkinDocument["rules"]> = {};
   for (const [slot, spec] of Object.entries(value)) {
-    const slotProblem = slotError("rules", slot, TARGET_SLOTS);
+    const slotProblem = slotError("rules", slot, RULE_SLOTS);
     if (slotProblem) errors.push(slotProblem);
     if (!isRecord(spec)) {
       errors.push(`rules.${slot} must be an object`);
@@ -315,7 +324,7 @@ function readRules(value: unknown, errors: string[]): SkinDocument["rules"] {
       }
       next[branch] = map;
     }
-    if (isAcceptedSkinSlot(slot, TARGET_SLOTS)) rules[slot as SkinTargetSlot] = next;
+    if (isAcceptedSkinSlot(slot, RULE_SLOTS)) rules[slot as SkinRuleSlot] = next;
   }
   return rules;
 }
@@ -543,11 +552,15 @@ function appendClass(current: string, extra: string): string {
   return current.split(/\s+/).includes(extra) ? current : `${current} ${extra}`.trim();
 }
 
-/** Copy the generated rule class onto `targets` so the CSS matches a node. */
+/**
+ * Copy the generated rule class onto `targets` so the CSS matches a node.
+ * Motion-only parts stay out of `targets`: their CSS matches `data-skin-slot`.
+ */
 export function bindSkinRuleClasses(skin: SkinDocument): SkinDocument {
   if (!skin.rules || Object.keys(skin.rules).length === 0) return skin;
   const targets: NonNullable<SkinDocument["targets"]> = { ...skin.targets };
   for (const slot of Object.keys(skin.rules) as SkinTargetSlot[]) {
+    if (!isAcceptedSkinSlot(slot, TARGET_SLOTS)) continue;
     const extra = skinRuleClass(skin.name, slot);
     const current = targets[slot];
     if (current == null) targets[slot] = { extend: extra };
@@ -751,7 +764,7 @@ export const SKIN_DOCUMENT_SCHEMA = {
         },
       ],
     }),
-    rules: slotMapSchema(SKIN_TARGET_SLOTS, { type: "object" }),
+    rules: slotMapSchema([...SKIN_TARGET_SLOTS, ...SKIN_MOTION_SLOTS.filter((slot) => !TARGET_SLOTS.has(slot))], { type: "object" }),
     properties: { type: "object", additionalProperties: { type: "object" } },
     fonts: { type: "array", items: { type: "object" } },
     motion: {

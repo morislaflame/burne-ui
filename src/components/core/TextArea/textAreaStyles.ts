@@ -72,7 +72,7 @@ export function textareaShellClass({
   const kitSurface = usesKitElevation(variant, KIT_TEXT_AREA_VARIANTS);
 
   return cn(
-    "relative w-full overflow-hidden rounded-base",
+    "relative w-full rounded-base",
     kitSurface && "border-1",
     visual.className,
     TEXTAREA_SHELL_LAYOUT_CLASS,
@@ -83,6 +83,7 @@ export function textareaShellClass({
     kitSurface && fieldShellHoverClass(!blocked, status, variant),
     shellHoverMotionClass,
     blocked ? "cursor-not-allowed opacity-55" : "",
+    visual.extend,
     slotClass,
     className,
   );

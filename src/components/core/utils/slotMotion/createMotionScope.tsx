@@ -1,5 +1,10 @@
 import { createContext, useContext, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
  
+import {
+  applyStudioSlotMark,
+  studioSlotIds,
+  type StudioSlotMark,
+} from "@/studio/studioModeContext";
 import { bindStudioController } from "@/studio/studioNodes";
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
@@ -113,6 +118,7 @@ export function createMotionScopeController({
   registry = createMotionRegistry(),
 }: CreateMotionScopeControllerOptions): MotionScopeValue {
   const hostIds = new Map<string, symbol>();
+  const hostMarks = new Map<string, StudioSlotMark | null>();
   const getSlots = () => splitMotionRootMap(getRootMotion()).slots;
   const getEvents = () => splitMotionRootMap(getRootMotion()).events;
   const getStates = () => splitMotionRootMap(getRootMotion()).states;
@@ -147,6 +153,8 @@ export function createMotionScopeController({
       hostIds.set(slot, id);
     }
     register({ id, slot, node });
+    const ids = node ? studioSlotIds(scope.debugName, slot, undefined) : [];
+    hostMarks.set(slot, applyStudioSlotMark(hostMarks.get(slot) ?? null, node, ids, scope));
   };
  
   const resolve = (slot: string, phase: MotionPhaseName, partMotion?: MotionPartPhases) =>

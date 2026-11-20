@@ -1,4 +1,4 @@
-@layer ui-kit {
+@layer components {
   .__SKIN_NAME__-surface {
     --__SKIN_NAME__-tilt: 2deg;
   }

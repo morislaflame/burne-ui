@@ -83,7 +83,7 @@ import { DatePicker, type DatePickerProps, type DatePickerClassNames, type DateP
 
 ### Slot motion
 
-`trigger` — `hoverIn` / `hoverOut` `hoverLiftFirstLevel`, `pressIn` `pressSqueeze`. `icon` — `enter` / `leave` `chevronRotate`. `label`, `hint`, `error` без рецепта по умолчанию: своя карта `hoverIn`, `pressIn` или `enter` играет на этой части. `enter` стартует при появлении, если фаза задана.
+`trigger` — `hoverIn` / `hoverOut` `hoverLiftFirstLevel`, `pressIn` `pressSqueeze`. Панель открывается после полного сжатия и разжима, как у Dropdown. `icon` — `enter` / `leave` `chevronRotate`. `label`, `hint`, `error` без рецепта по умолчанию: своя карта `hoverIn`, `pressIn` или `enter` играет на этой части. `enter` стартует при появлении, если фаза задана.
 
 `popover` — панель. Ключ не регистрируется в scope поля: карта уходит на внутренний Popover `content`. Дефолт `portalSurfaceEnter` / `portalSurfaceLeave`. `DatePicker.Popover` `motion` побеждает карту корня. `playSlot("popover")` на контроллере поля цели не найдёт.
 

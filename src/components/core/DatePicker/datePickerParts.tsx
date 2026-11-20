@@ -1,4 +1,4 @@
-import { forwardRef, useLayoutEffect, useRef, type MouseEvent } from "react";
+import { forwardRef, useLayoutEffect, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 
 import { Calendar } from "@/components/core/Calendar";
 import { Field } from "@/components/core/Field";
@@ -90,6 +90,7 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
       className,
       motion,
       onClick,
+      onKeyDown,
       onPointerOver,
       onPointerOut,
       onPointerDown,
@@ -110,11 +111,38 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
     });
     const icon = useDatePickerIconMotion(field.open);
     const text = field.empty ? field.placeholder : field.display;
+    // The click that follows the opening pointerdown must not toggle closed.
+    // Reduced motion opens in that pointerdown, and React commits before click.
+    const openedByPointerRef = useRef(false);
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
       onClick?.(event);
-      if (event.defaultPrevented || field.disabled) return;
-      field.setOpen(!field.open);
+      if (event.defaultPrevented || field.disabled || field.readOnly) return;
+      if (openedByPointerRef.current) {
+        openedByPointerRef.current = false;
+        return;
+      }
+      // Same split as Dialog.Trigger: pointerdown opens, click is only a fallback.
+      if (field.open) field.setOpen(false);
+      else if (!trigger.openingRef.current) trigger.openAfterSqueeze(() => field.setOpen(true));
+    };
+
+    const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+      trigger.pointerHandlers.onPointerDown?.(event);
+      if (event.defaultPrevented || field.disabled || field.readOnly) return;
+      if (field.open || trigger.openingRef.current || event.button !== 0) return;
+      event.preventDefault();
+      openedByPointerRef.current = true;
+      trigger.openAfterSqueeze(() => field.setOpen(true));
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDown?.(event);
+      if (event.defaultPrevented || field.disabled || field.readOnly) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      if (field.open) field.setOpen(false);
+      else trigger.openAfterSqueeze(() => field.setOpen(true));
     };
 
     return (
@@ -134,8 +162,10 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
           className,
         })}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         {...rest}
         {...trigger.pointerHandlers}
+        onPointerDown={handlePointerDown}
         role="combobox"
         aria-haspopup="dialog"
         aria-expanded={field.open}

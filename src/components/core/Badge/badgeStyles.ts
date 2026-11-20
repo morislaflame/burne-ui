@@ -3,7 +3,6 @@ import type { TextVariant } from "@/components/core/Text";
 import {
   SEMANTIC_STATUS_FILL,
   SEMANTIC_STATUS_OUTLINE_BORDER,
-  SEMANTIC_STATUS_SURFACE_TINT,
   SEMANTIC_STATUS_TEXT,
   type SemanticSurfaceStatus,
 } from "@/components/core/utils/semanticStatusSurface";
@@ -12,7 +11,7 @@ import { cn } from "@/utils/cn";
  
 import type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant, KitBadgeVariant } from "./badgeTypes";
 import { KIT_BADGE_VARIANTS } from "./badgeTypes";
-import { isKitVariant, resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { isKitVariant, resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
  
 export type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant } from "./badgeTypes";
  
@@ -110,7 +109,10 @@ export function dotFillClass(variant: BadgeVariant, status: BadgeStatus): string
 /** Variant root — mirrors `buttonVariantRootClass` (outline drops border when status paints it). */
 export function badgeVariantRootClass(variant: BadgeVariant, status: BadgeStatus): string {
   const visual = resolveVariantVisual(variant, KIT_BADGE_VARIANTS, "badge.root");
-  if (visual.className !== undefined) return visual.className;
+  return skinVisualClass(visual, badgeKitSurfaceClass(variant, status));
+}
+
+function badgeKitSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
   if (variant === "outline" && status !== "default") {
     return "bg-transparent text-foreground";
   }
@@ -120,7 +122,12 @@ export function badgeVariantRootClass(variant: BadgeVariant, status: BadgeStatus
   return BADGE_VARIANT_SURFACE.default;
 }
  
-/** Status overlay — same matrix as `buttonStatusClass`. A skin keeps the glass and colors the text. */
+/**
+ * Status overlay. `default` keeps `bg-surface` and only recolors the text,
+ * same as a default button's surface. `primary` fills, `outline` recolors
+ * the border, `secondary` keeps its surface. A skin keeps its glass and
+ * colors the text.
+ */
 export function badgeStatusClass(variant: BadgeVariant, status: BadgeStatus): string {
   if (status === "default") return "";
   const visual = resolveVariantVisual(variant, KIT_BADGE_VARIANTS, "badge.root");
@@ -128,7 +135,7 @@ export function badgeStatusClass(variant: BadgeVariant, status: BadgeStatus): st
 
   switch (visual.key) {
     case "default":
-      return cn(SEMANTIC_STATUS_SURFACE_TINT[status], SEMANTIC_STATUS_TEXT[status]);
+      return SEMANTIC_STATUS_TEXT[status];
     case "primary":
       return SEMANTIC_STATUS_FILL[status];
     case "outline":
@@ -161,8 +168,7 @@ export function badgeDotSurfaceClass(
   status: BadgeStatus,
 ): string {
   const visual = resolveVariantVisual(variant, KIT_BADGE_VARIANTS, "badge.root");
-  if (visual.className !== undefined) return visual.className;
-  return dotFillClass(variant, status);
+  return skinVisualClass(visual, dotFillClass(variant, status));
 }
  
 /** Icon wrapper in simple/inline API (`icon` prop or `data-icon` on child). */

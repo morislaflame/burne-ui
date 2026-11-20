@@ -22,7 +22,6 @@ const DURATION_KEYS = [
   "rippleDefaultDuration",
   "rippleExpandableDuration",
   "expandDuration",
-  "surfaceTransitionDuration",
   "toastDismissDuration",
   "progressFillDuration",
   "progressIndeterminateDuration",

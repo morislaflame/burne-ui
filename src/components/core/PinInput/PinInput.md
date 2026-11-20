@@ -42,7 +42,7 @@ import { PinInput, type PinInputProps, type PinInputClassNames, type PinInputMot
 | `separator` | — | Узел между половинами |
 | `variant` | `default` | как Input: `default` \| `outline` \| `secondary` |
 | `invalid` | — | Danger-визуал, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
-| `size` | `base` | Сторона ячейки |
+| `size` | `base` | Сторона ячейки. Горизонтального padding нет: при большом `--space` он съедал бы квадрат и нативный input обрезал символ |
 | `name` | — | Скрытый input с собранной строкой |
 | `classNames` | — | см. стилизацию |
 | `motion` | — | Карта слотов + `events`. Хост — корень |

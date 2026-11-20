@@ -5,10 +5,13 @@ import type { MotionConfig } from "./motionConfig";
 import { useMotionConfig } from "./motionConfigContext";
 import { runOpenAfterSqueeze, useOpeningRef } from "./runOpenAfterSqueeze";
 import {
+  runMotionPhase,
   useMotionPart,
   type MotionPartPhases,
   type MotionScopeValue,
 } from "./slotMotion";
+
+import { lookupSkin } from "@/skins/skinLookup";
 
 import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
 
@@ -33,6 +36,22 @@ export async function playOverlayTriggerOpenSqueeze({
   partMotion?: MotionPartPhases;
   config?: Readonly<MotionConfig>;
 }): Promise<void> {
+  // A skinned control (`<Button variant="skin">` under `asChild`) owns its press feel.
+  // Run that recipe once here and open after it, instead of racing it with the kit squeeze.
+  const skinPress = skinPressRecipeFor(el);
+  if (skinPress) {
+    await runMotionPhase({
+      el,
+      phase: "pressIn",
+      value: skinPress,
+      targets: { trigger: el },
+      params: { pointerInside: () => el.matches(":hover") },
+      waitForComplete: false,
+      slot: "trigger",
+      config,
+    }).finished;
+    return;
+  }
   if (!scope) {
     await animateInteractivePressSqueeze(el, { config });
     return;
@@ -44,6 +63,28 @@ export async function playOverlayTriggerOpenSqueeze({
     return;
   }
   await scope.play("trigger", "pressIn", { el, partMotion }).finished;
+}
+
+/** `pressIn` recipe a skin declares for the control under this trigger, if any. */
+function skinPressRecipeFor(el: HTMLElement): string | undefined {
+  const variant = el.dataset.variant;
+  if (!variant) return undefined;
+  const skin = lookupSkin(variant);
+  if (!skin?.motion) return undefined;
+  const slots = (el.dataset.skinSlot ?? "").split(/\s+/).filter(Boolean);
+  for (const slot of slots) {
+    const phases = skin.motion[slot as keyof typeof skin.motion] as
+      | Record<string, unknown>
+      | undefined;
+    const press = phases?.pressIn;
+    if (typeof press === "string") return press;
+  }
+  return undefined;
+}
+
+/** True while the trigger runs its own open press, so the child control skips a second one. */
+export function isOverlayTriggerOpening(el: Element | null): boolean {
+  return el instanceof HTMLElement && el.dataset.overlayOpening === "true";
 }
  
 export function useOverlayTriggerSlot<T extends HTMLElement>({

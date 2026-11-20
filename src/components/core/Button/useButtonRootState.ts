@@ -2,7 +2,7 @@ import { useMemo } from "react";
  
 import { useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { buttonGroupOverlapBorderClasses, buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
@@ -44,7 +44,12 @@ export function useButtonRootState({
     ? buttonGroupRoundingClasses(groupSegment)
     : sizeRounded;
  
-  const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
+  const groupGlue = groupSegment
+    ? cn(
+        buttonGroupSegmentSurfaceClasses(groupSegment),
+        buttonGroupOverlapBorderClasses(groupSegment),
+      )
+    : "";
  
   const clipClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)

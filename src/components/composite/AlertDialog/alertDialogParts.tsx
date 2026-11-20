@@ -9,8 +9,9 @@ import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataCon
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
-import { useApplySkinPortal } from "@/skins/skinContext";
-import { useStudioSlotRef } from "@/studio/studioModeContext";
+import { resolveAlertVariant } from "@/components/core/Alert/alertAPI";
+import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { SkinShell } from "@/skins/skinShell";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
@@ -18,9 +19,9 @@ import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/c
  
 import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
-import { ALERT_DIALOG_MOTION_DEFAULTS, useAlertDialogModalMotion } from "./alertDialogAnimations";
+import { resolveAlertDialogMotionDefaults, useAlertDialogModalMotion } from "./alertDialogAnimations";
 import { AlertDialogHeaderProvider, AlertDialogMotionProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useAlertDialogMotionScope, useOptionalAlertDialogHeaderContext, useOptionalAlertDialogMotionScope } from "./alertDialogContext";
-import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, ALERT_DIALOG_TRIGGER_BASE_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
+import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_PANEL_LAYER_CONTENT_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, ALERT_DIALOG_TRIGGER_BASE_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
 import type {
   AlertDialogActionProps,
   AlertDialogBodyProps,
@@ -565,43 +566,61 @@ AlertDialogTrigger.displayName = "AlertDialog.Trigger";
  
 // ─── AlertDialog.Panel ────────────────────────────────────────────────────────
  
-export function AlertDialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, ...props }: AlertDialogPanelProps) {
-  const parentScope = useOptionalAlertDialogMotionScope();
-  const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
-  const siblings = mergeMotionRootSiblings(
-    { events: parentScope?.getEvents(), states: parentScope?.getStates() },
-    motion,
-  );
-  const merged = { ...mergedSlots, ...siblings };
-  return (
-    <AlertDialogMotionProvider
-      motion={merged}
-      defaults={ALERT_DIALOG_MOTION_DEFAULTS}
-      controller={motionController}
+export const AlertDialogPanel = forwardRef<HTMLDivElement, AlertDialogPanelProps>(
+  function AlertDialogPanel(
+    { motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props },
+    forwardedRef,
+  ) {
+    const { variant: rootVariant } = useAlertDialog();
+    const variant = variantProp !== undefined ? resolveAlertVariant(variantProp) : rootVariant;
+    const parentScope = useOptionalAlertDialogMotionScope();
+    const skinRevision = useSkinRegistryRevision();
+    const motionDefaults = useMemo(() => {
+      void skinRevision;
+      return resolveAlertDialogMotionDefaults(variant);
+    }, [skinRevision, variant]);
+    const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    const siblings = mergeMotionRootSiblings(
+      { events: parentScope?.getEvents(), states: parentScope?.getStates() },
+      motion,
+    );
+    const merged = { ...mergedSlots, ...siblings };
+    return (
+      <AlertDialogMotionProvider
+        motion={merged}
+        defaults={motionDefaults}
+        controller={motionController}
         motionState={motionState}
         motionPayload={motionPayload}
         playInitialState={playInitialState}
-    >
-      <AlertDialogPanelHost {...props} />
-    </AlertDialogMotionProvider>
-  );
-}
+      >
+        <AlertDialogPanelHost {...props} variant={variant} forwardedRef={forwardedRef} />
+      </AlertDialogMotionProvider>
+    );
+  },
+);
  
 AlertDialogPanel.displayName = "AlertDialog.Panel";
  
 function AlertDialogPanelHost({
+  variant: variantProp,
   className,
+  style,
   themeAnchor,
   portalContainer: portalContainerProp,
   children,
-}: Omit<AlertDialogPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState">) {
+  forwardedRef,
+  ...rest
+}: Omit<AlertDialogPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
+  forwardedRef?: ForwardedRef<HTMLDivElement>;
+}) {
   const {
     open,
     titleId,
     descriptionId,
     hasTitle,
     hasDescription,
-    variant,
+    variant: rootVariant,
     sizePreset,
     closeOnEscape,
     closeOnInteractOutside,
@@ -611,6 +630,8 @@ function AlertDialogPanelHost({
     onOpenChange,
     portalContainer: portalContainerFromRoot,
   } = useAlertDialog();
+  const variant = variantProp ?? rootVariant;
+  const surfaceStyle = useSkinSurfaceStyle(variant);
   const motionScope = useAlertDialogMotionScope();
  
   const portalHost = resolvePortalContainer(
@@ -641,6 +662,7 @@ function AlertDialogPanelHost({
     <AlertDialogPortalShell
       open={open}
       className={className}
+      style={mergeSkinSurfaceStyle(surfaceStyle, style)}
       variant={variant}
       sizePreset={sizePreset}
       portalTheme={portalTheme}
@@ -649,11 +671,14 @@ function AlertDialogPanelHost({
       descriptionId={descriptionId}
       hasTitle={hasTitle}
       hasDescription={hasDescription}
+      onDialogClose={() => onOpenChange(false)}
       onDialogCancel={motion.handleDialogCancel}
       onBackdropMouseDown={motion.handleBackdropPointerDown}
       dialogRef={motion.dialogRef}
       overlayRef={motion.overlayRef}
       panelRef={motion.panelRef}
+      panelForwardedRef={forwardedRef}
+      panelRest={rest}
       contained={contained}
     >
       {children}
@@ -668,6 +693,7 @@ export function AlertDialogPortalShell({
   open,
   children,
   className,
+  style,
   variant,
   sizePreset,
   portalTheme,
@@ -676,17 +702,19 @@ export function AlertDialogPortalShell({
   descriptionId,
   hasTitle,
   hasDescription,
+  onDialogClose,
   onDialogCancel,
   onBackdropMouseDown,
   dialogRef,
   overlayRef,
   panelRef,
+  panelForwardedRef,
+  panelRest,
   contained = false,
 }: AlertDialogPortalShellProps) {
   const slotClassNames = useAlertDialogClassNames();
   const { size, status } = useAlertDialog();
   const motionScope = useOptionalAlertDialogMotionScope();
-  const studioPanelRef = useStudioSlotRef<HTMLDivElement>("alertDialog.panel", motionScope);
   useApplySkinPortal(dialogRef);
 
   return (
@@ -695,6 +723,10 @@ export function AlertDialogPortalShell({
       ref={dialogRef}
       data-state={dataOpenState(open)}
       role={ALERT_DIALOG_ROLE}
+      onClose={(e) => {
+        if (!isOwnNativeDialogEvent(e)) return;
+        onDialogClose();
+      }}
       onCancel={(e) => {
         if (!isOwnNativeDialogEvent(e)) return;
         e.preventDefault();
@@ -714,19 +746,27 @@ export function AlertDialogPortalShell({
         aria-hidden
         onMouseDown={onBackdropMouseDown}
       />
-      <div
-        ref={mergeRefs(panelRef, studioPanelRef, (node) => motionScope?.registerTarget("panel", node))}
+      <SkinShell
         tabIndex={-1}
+        style={style}
+        {...panelRest}
+        {...dataVariantProps({ size, variant, status })}
+        part="alertDialog.panel"
+        variant={variant}
+        scope={motionScope}
+        slot="panel"
+        enterOnMount={false}
         className={alertDialogPanelClass({
           variant,
           sizePreset,
           className,
           slotClass: slotClassNames.panel,
         })}
-        {...dataVariantProps({ size, variant, status })}
+        contentClassName={ALERT_DIALOG_PANEL_LAYER_CONTENT_CLASS}
+        ref={mergeRefs(panelRef, panelForwardedRef)}
       >
         <AlertDialogContent>{children}</AlertDialogContent>
-      </div>
+      </SkinShell>
     </dialog>
   );
 }

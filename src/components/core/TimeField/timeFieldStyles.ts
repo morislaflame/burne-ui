@@ -57,9 +57,12 @@ export const TIME_FIELD_SEGMENT_GROUP_CLASS = "inline-flex items-center";
 export const TIME_FIELD_SEGMENTS_BASE_CLASS =
   "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none";
  
-/** Flex row inside `<fieldset>` — flex on fieldset itself breaks height on resize. */
+/**
+ * Flex row inside `<fieldset>` — flex on fieldset itself breaks height on resize.
+ * `field-radius-clip` meets the border corners. Shadow layers stay on the fieldset.
+ */
 export const TIME_FIELD_SHELL_INNER_CLASS =
-  "flex min-w-0 w-full items-stretch";
+  "field-radius-clip flex min-w-0 items-stretch";
  
 export const TIME_FIELD_SEGMENTS_SEGMENTED_CLASS = "gap-xsmall";
  
@@ -127,7 +130,7 @@ export function timeFieldShellClass({
   const kitSurface = usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS);
 
   return cn(
-    "relative m-0 min-w-0 overflow-hidden rounded-base p-0",
+    "relative m-0 min-w-0 rounded-base p-0",
     kitSurface && "border-1",
     visual.className,
     compact ? "w-fit shrink-0" : "w-full min-w-0",
@@ -137,6 +140,7 @@ export function timeFieldShellClass({
     kitSurface && fieldShellHoverClass(!disabled, status, timeFieldShellHoverVariant(variant)),
     shellHoverMotionClass,
     disabled ? "cursor-not-allowed opacity-55" : "",
+    visual.extend,
     slotClass,
     className,
   );
@@ -151,6 +155,7 @@ export function timeFieldShellInnerClass({
 }): string {
   return cn(
     TIME_FIELD_SHELL_INNER_CLASS,
+    variant === "outline" && "field-radius-clip-outline",
     usesKitElevation(variant, KIT_TIME_FIELD_VARIANTS) && "min-h-full",
     slotClass,
   );

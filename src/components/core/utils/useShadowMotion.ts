@@ -9,7 +9,8 @@
  * - Level 1 (Button): `shadowMotionFor("none")` — none → `--shadow-lift` → none
  * - Level 2 (Alert, Badge, Kbd, Calendar, Toast): `shadowMotionFor("small"|"base"|"mid"|"large")`
  * - Fields are level 1: `shadowMotionFor("none")` — no rest shadow, `--shadow-lift` on hover
- * - Static overlays (Dialog, Drawer, Popover, Tooltip): CSS `shadow-token-large`
+ * - Static overlays: modals (Dialog, Drawer, AlertDialog) use CSS `shadow-token-large`.
+ *   Floating panels (Popover and its hosts, Dropdown submenu, Tooltip) use `shadow-token-mid`.
  *
  * At rest the rest layer paints `var(--el-shadow)`. Hover and press cross-fade
  * static layer opacity; GSAP does not tween the shadow string.

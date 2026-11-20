@@ -97,6 +97,7 @@ describe("section 4.8 remainder", () => {
       />,
     );
     await view.user.click(view.getByRole("combobox", { name: "Days" }));
+    await view.findByRole("dialog");
     await view.user.click(view.getByRole("button", { name: "1 January 2026" }));
     expect(onValuesChange).toHaveBeenCalled();
     expect(view.getByRole("combobox", { name: /Days/ })).toHaveTextContent("2026");

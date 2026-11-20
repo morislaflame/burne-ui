@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
+import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Dialog } from "@/components/core/Dialog";
 import { Drawer } from "@/components/core/Drawer";
 import { render } from "@/__tests__/helpers";
@@ -69,6 +70,36 @@ describe("panel SkinShell", () => {
     const panel = baseElement.querySelector(".skin-panel");
     expect(panel).toBeTruthy();
     expect(panel?.className).toContain("flex");
+    expect(panel?.querySelector(".skin-shadow")).toBeTruthy();
+    expect(panel?.querySelector(".skin-content")?.textContent).toContain("pane");
+  });
+
+  it("mounts alertDialog.panel layers when the target is empty", () => {
+    registerSkin({
+      name: NAME,
+      styleUrl: "skin-fixture/styles.css",
+      targets: { "alertDialog.panel": "" },
+      layersDeclarative: {
+        "alertDialog.panel": {
+          wrapper: { className: "skin-panel" },
+          before: [{ className: "skin-shadow" }],
+          content: { className: "skin-content" },
+        },
+      },
+    });
+
+    const { baseElement } = render(
+      <SkinProvider>
+        <AlertDialog defaultOpen variant={NAME}>
+          <AlertDialog.Panel>pane</AlertDialog.Panel>
+        </AlertDialog>
+      </SkinProvider>,
+    );
+
+    const panel = baseElement.querySelector(".skin-panel");
+    expect(panel).toBeTruthy();
+    expect(panel?.className).toContain("flex");
+    expect(panel?.className).not.toContain("bg-surface");
     expect(panel?.querySelector(".skin-shadow")).toBeTruthy();
     expect(panel?.querySelector(".skin-content")?.textContent).toContain("pane");
   });

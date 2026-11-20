@@ -6,6 +6,7 @@
 export { killMotion } from "@/components/core/utils/gsapMotion";
 export {
   getMotionConfig,
+  isMotionFeatureEnabledFor,
   motionPressSqueezeTotalFor,
 } from "@/components/core/utils/motionConfig";
 export {

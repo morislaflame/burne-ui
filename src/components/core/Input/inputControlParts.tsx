@@ -36,6 +36,7 @@ import {
 import {
   INPUT_CONTROL_BASE_CLASS,
   INPUT_CONTROL_PAD,
+  inputShellClipClass,
   INPUT_FILE_EMPTY_ICON_CLASS,
   INPUT_FILE_EMPTY_TEXT_CLASS,
   INPUT_FILE_INPUT_CLASS,
@@ -570,6 +571,7 @@ function InputControlSurface({
       style={mergeSkinSurfaceStyle(surfaceStyle)}
       {...dataVariantProps({ size, variant })}
     >
+      <div className={inputShellClipClass(variant)}>
       {showAffixes && prefix != null ? (
         <AffixSlot side="prefix" controlSize={size}>
           {prefix}
@@ -716,6 +718,7 @@ function InputControlSurface({
           onToggle={onTogglePassword}
         />
       ) : null}
+      </div>
     </div>
   );
 }

@@ -1,27 +1,12 @@
-import { useCallback, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
-import {
-  SKIN_LAYER_SLOTS,
-  SKIN_MOTION_SLOTS,
-  SKIN_TARGET_SLOTS,
-} from "@/skins/skinLiveSlots.generated";
+import { isLiveSkinSlot } from "./liveSkinSlots";
+import { StudioSlotProvider } from "./studioModeContext";
 
-import { skinSlotId, StudioSlotProvider, useStudioMode } from "./studioModeContext";
-
-const LIVE_SKIN_SLOTS = new Set<string>([
-  ...SKIN_TARGET_SLOTS,
-  ...SKIN_LAYER_SLOTS,
-  ...SKIN_MOTION_SLOTS,
-]);
-
-export { skinSlotId, useStudioMode };
-
-/** Studio canvas only. Production trees leave this off, so nodes stay unmarked. */
+/**
+ * Studio canvas root. Kit parts carry `data-skin-slot` everywhere; inside this
+ * provider marks narrow to live skin slots and `useStudioMode()` is true.
+ */
 export function StudioModeProvider({ children }: { children: ReactNode }) {
-  const isLive = useCallback((id: string) => LIVE_SKIN_SLOTS.has(id), []);
-  return <StudioSlotProvider isLive={isLive}>{children}</StudioSlotProvider>;
-}
-
-export function isLiveSkinSlot(id: string): boolean {
-  return LIVE_SKIN_SLOTS.has(id);
+  return <StudioSlotProvider isLive={isLiveSkinSlot}>{children}</StudioSlotProvider>;
 }

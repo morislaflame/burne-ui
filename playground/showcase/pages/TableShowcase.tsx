@@ -48,7 +48,7 @@ export function TableShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TablePagesDemo} source={tablePagesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Column resize" description="columnResize puts a handle on every Column that has an id. Drag or arrow keys set that column width.">
+      <ShowcaseSection title="Column resize" description="columnResize puts a handle between columns that have an id. The last column has none. Drag or arrow keys set the column width.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableColumnResizeDemo} source={tableColumnResizeSource} />
       </ShowcaseSection>
 

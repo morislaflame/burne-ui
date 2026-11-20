@@ -193,7 +193,7 @@ import { configureMotion } from "burne-ui";
 
 configureMotion({
   pressSqueezeScale: [1, 0.98, 1],
-  interactiveDuration: 280,
+  interactiveDuration: 220,
 });
 ```
 

@@ -1,5 +1,5 @@
 import { SEMANTIC_STATUS_TEXT } from "@/components/core/utils/semanticStatusSurface";
-import { resolveVariantVisual } from "@/skins/resolveVariantVisual";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
 import { cn } from "@/utils/cn";
 
 import type { AlertStatus, AlertVariant, KitAlertVariant } from "./alertTypes";
@@ -14,8 +14,7 @@ export const ALERT_VARIANT_SURFACE: Record<KitAlertVariant, string> = {
 /** Panel surface follows variant only; status colors the indicator (and AlertDialog mirrors this). */
 export function alertSurfaceClass(variant: AlertVariant, _status: AlertStatus = "default"): string {
   const visual = resolveVariantVisual(variant, KIT_ALERT_VARIANTS, "alert.root");
-  if (visual.className !== undefined) return visual.className;
-  return ALERT_VARIANT_SURFACE[visual.key];
+  return skinVisualClass(visual, ALERT_VARIANT_SURFACE[visual.key]);
 }
 
 export function alertIndicatorWrapperTextClass(status: AlertStatus): string {

@@ -11,7 +11,7 @@ export type IconSlotStep =
   | "16"
   | "24";
 
-/** Marker on the icon wrap. The child rule lives in `@layer ui-kit`. */
+/** Marker on the icon wrap. The child rule lives in `@layer components`. */
 export const ICON_SLOT_CLASS = "icon-slot";
 
 /** Size utility. `cn` treats every `icon-slot-*` as one group. */

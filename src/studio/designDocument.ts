@@ -4,8 +4,7 @@ import {
   parseCssColor,
   SKIN_CONTRAST_PAIRS,
 } from "../../cli/skin-color.mjs";
-import { renderSkinStylesheet } from "../../cli/skin-stylesheet.mjs";
-import { bindSkinRuleClasses, parseSkinDocument, SKIN_NAME_PATTERN } from "@/skins/skinDocument";
+import { bindSkinRuleClasses, parseSkinDocument, renderSkinStylesheet, SKIN_NAME_PATTERN } from "@/skins/skinDocument";
 import type { SkinDocument } from "@/skins/skinDocument";
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import {

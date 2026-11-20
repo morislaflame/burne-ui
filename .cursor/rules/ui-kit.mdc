@@ -114,7 +114,7 @@ Types → A11y → API → Styles → Context → Parts → Animations → use*R
 
 ## После изменений
 
-`npm run build` + `npx react-doctor@latest --verbose --scope changed`
+`bun run build` + `bunx react-doctor@latest --verbose --scope changed`
 
 
 

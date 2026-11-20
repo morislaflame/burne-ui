@@ -25,7 +25,7 @@ export const METER_RAIL_WIDTH_CLASS: Record<MeterSize, string> = {
 };
  
 export const METER_TRACK_BASE_CLASS =
-  "relative overflow-hidden rounded-full bg-primary-tint";
+  "relative overflow-hidden rounded-full bg-primary-tint [contain:paint]";
  
 export const METER_TRACK_HORIZONTAL_CLASS = "w-full";
  

@@ -175,7 +175,7 @@ function Nudge() {
 | `CALENDAR_RANGE_HALF_FILL_CLASS` | `absolute inset-y-0 bg-default-hover` |
 | `CALENDAR_HEADER_TITLE_INTERACTIVE_CLASS` | Drill-up title hover |
 | `CALENDAR_CELL_FILL_CLASS` | Fill layer под текстом дня |
-| `CALENDAR_CELL_TODAY_DOT_CLASS` | Marker «сегодня» |
+| `CALENDAR_CELL_TODAY_DOT_CLASS` | Marker «сегодня»: под цифрой, размер и отступ от кегля |
 | `max-w-control-*` | Square day/month/year hit targets |
 
 ## Стилизация и кастомизация

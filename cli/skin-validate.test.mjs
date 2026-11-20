@@ -308,7 +308,7 @@ describe("reference focus rings", () => {
     const host = cyber.slice(cyber.indexOf(".cybercore-surface {"), cyber.indexOf(".cybercore-surface::before"));
     assert.equal(host.includes("clip-path"), false);
     assert.match(cyber, /\.cybercore-surface::before[\s\S]*clip-path:\s*polygon/);
-    assert.match(cyber, /@layer ui-kit/);
+    assert.match(cyber, /@layer components/);
   });
 
   it("borders skinned nodes in forced-colors", () => {

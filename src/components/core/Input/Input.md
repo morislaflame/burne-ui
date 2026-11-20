@@ -153,7 +153,7 @@ import { configureMotion } from "burne-ui";
 configureMotion({
   hoverLiftScale: 1.025,
   hoverLiftEase: "sine.inOut",
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   enableHoverLift: true,
   enablePressSqueeze: true,
 });

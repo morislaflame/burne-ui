@@ -1,5 +1,6 @@
 import {
   applyMotionCssTokens,
+  hoverLiftEaseToCss,
   MOTION_CONFIG_DEFAULTS,
   type MotionConfig,
 } from "@/components/core/utils/motionConfig";
@@ -148,8 +149,6 @@ export type ThemeTokenState = {
   loadingDotsDuration: number;
   loadingDotsEaseUp: string;
   loadingDotsEaseDown: string;
-  /** CSS `--motion-surface-duration` (surface / text / shadow transitions), ms. */
-  surfaceTransitionDuration: number;
   /** Toast dismiss + last-scrim out, ms. */
   toastDismissDuration: number;
   toastDismissEase: string;
@@ -502,6 +501,7 @@ const INLINE_TOKEN_VARS = [
   "--focus-ring-width",
   "--focus-ring-offset",
   "--motion-surface-duration",
+  "--motion-surface-ease",
   "--font-family-sans",
   "--font-family-mono",
   "--letter-spacing",
@@ -529,7 +529,7 @@ export function clearThemeInlineTokens(root?: HTMLElement) {
   delete target.dataset.theme;
 }
  
-const lastCssDurationByRoot = new WeakMap<HTMLElement, number>();
+const lastCssMotionByRoot = new WeakMap<HTMLElement, string>();
  
 /**
  * GSAP overlay from a theme-token snapshot (playground / site editor).
@@ -558,7 +558,6 @@ export function motionConfigFromThemeState(state: ThemeTokenState): Partial<Moti
     rippleEaseCss: state.rippleEaseCss,
     expandDuration: state.expandDuration,
     expandOpenEase: state.expandOpenEase,
-    surfaceTransitionDuration: state.surfaceTransitionDuration,
     toastDismissDuration: state.toastDismissDuration,
     toastDismissEase: state.toastDismissEase,
     progressFillDuration: state.progressFillDuration,
@@ -587,10 +586,13 @@ export function motionConfigFromThemeState(state: ThemeTokenState): Partial<Moti
 }
  
 function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
-  const ms = state.surfaceTransitionDuration;
-  if (lastCssDurationByRoot.get(root) === ms) return;
-  lastCssDurationByRoot.set(root, ms);
-  applyMotionCssTokens(root, { surfaceTransitionDuration: ms });
+  const key = `${state.interactiveDuration}|${state.hoverLiftEase}`;
+  if (lastCssMotionByRoot.get(root) === key) return;
+  lastCssMotionByRoot.set(root, key);
+  applyMotionCssTokens(root, {
+    interactiveDuration: state.interactiveDuration,
+    hoverLiftEase: state.hoverLiftEase,
+  });
 }
  
 /**
@@ -762,8 +764,11 @@ export function exportThemeCss(state: ThemeTokenState): string {
     lines.push(`  --toast-scrim-density: ${full.toastScrimDensity};`);
   }
  
-  if (full.surfaceTransitionDuration !== defaults.surfaceTransitionDuration) {
-    lines.push(`  --motion-surface-duration: ${full.surfaceTransitionDuration}ms;`);
+  if (full.interactiveDuration !== defaults.interactiveDuration) {
+    lines.push(`  --motion-surface-duration: ${full.interactiveDuration}ms;`);
+  }
+  if (full.hoverLiftEase !== defaults.hoverLiftEase) {
+    lines.push(`  --motion-surface-ease: ${hoverLiftEaseToCss(full.hoverLiftEase)};`);
   }
  
   if (full.textScale !== defaults.textScale) {

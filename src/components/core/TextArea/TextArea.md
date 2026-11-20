@@ -127,7 +127,7 @@ import { configureMotion } from "burne-ui";
 
 configureMotion({
   hoverLiftScale: 1.025,
-  interactiveDuration: 280,
+  interactiveDuration: 220,
   pressSqueezeScale: [1, 0.98, 1],
   enableHoverLift: true,
   enablePressSqueeze: true,
