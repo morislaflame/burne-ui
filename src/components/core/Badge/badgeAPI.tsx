@@ -1,12 +1,11 @@
 import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
  
 import { Text } from "@/components/core/Text";
-import { cn } from "@/utils/cn";
  
 import { ensureDecorativeIcon } from "./badgeA11y";
 import { BadgeInlineChild } from "./badgeInlineChild";
 import { isInlineIconChild, readBadgeInlineIconPosition } from "./badgeInlineIcon";
-import { badgeIconSlotClass, BADGE_TEXT_CLASS, BADGE_TEXT_VARIANT } from "./badgeStyles";
+import { badgeIconSlotClass, BADGE_SINGLE_DIGIT_TEXT_CLASS, BADGE_TEXT_CLASS, BADGE_TEXT_VARIANT } from "./badgeStyles";
 import type {
   ResolvedBadgeBody,
   ResolveBadgeBodyProps,
@@ -151,7 +150,7 @@ export function resolveBadgeBody({
         as="span"
         textStyle={BADGE_TEXT_VARIANT[size]}
         inheritColor
-        className={cn(BADGE_TEXT_CLASS, "tabular-nums")}
+        className={BADGE_SINGLE_DIGIT_TEXT_CLASS}
       >
         {badgeSingleDigitLabel(children)}
       </Text>
@@ -170,6 +169,7 @@ export function resolveBadgeBody({
       bodyContent,
       iconOnlyBody,
       dataIcon: undefined,
+      singleDigit,
     };
   }
  

@@ -33,6 +33,7 @@ import { Radio } from "@/components/core/Radio";
 import { ScrollArea } from "@/components/core/ScrollArea";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { SelectionThumb } from "@/components/core/SelectionThumb";
+import { Separator } from "@/components/core/Separator";
 import { Skeleton } from "@/components/core/Skeleton";
 import { Slider } from "@/components/core/Slider";
 import { Stepper } from "@/components/core/Stepper";
@@ -48,6 +49,7 @@ import { Surface } from "@/components/core/Surface";
 import { Switch } from "@/components/core/Switch";
 import { Tabs } from "@/components/core/Tabs";
 import { TagsInput } from "@/components/core/TagsInput";
+import { Text } from "@/components/core/Text";
 import { TimeField } from "@/components/core/TimeField";
 import { Toast } from "@/components/core/Toast";
 import { ToggleButton } from "@/components/core/ToggleButton";
@@ -1278,6 +1280,28 @@ export const REST_FIXTURES: SlotContractFixture[] = [
           <Toast.Close {...ctx.part("Close")} />
         </Toast>
       </Toast.Provider>
+    ),
+  },
+  {
+    typeName: "SeparatorClassNames",
+    render: (ctx) => (
+      <Separator
+        classNames={ctx.classNames}
+        className={ctx.className}
+        motionController={ctx.motionController}
+      />
+    ),
+  },
+  {
+    typeName: "TextClassNames",
+    render: (ctx) => (
+      <Text
+        classNames={ctx.classNames}
+        className={ctx.className}
+        motionController={ctx.motionController}
+      >
+        Hello
+      </Text>
     ),
   },
   {

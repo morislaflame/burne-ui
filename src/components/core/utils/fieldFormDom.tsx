@@ -1,6 +1,68 @@
-import { useLayoutEffect, useRef, type HTMLAttributes, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, type HTMLAttributes, type RefObject } from "react";
 
 import { dataFlag } from "./dataContract";
+
+/**
+ * True while an IME composition session is active (CJK / mobile composition).
+ * Checks both `isComposing` and WebKit/Chromium fallback `keyCode === 229`.
+ */
+export function isImeComposingEvent(event: {
+  isComposing?: boolean;
+  keyCode?: number;
+  nativeEvent?: { isComposing?: boolean; keyCode?: number };
+}): boolean {
+  const native = event.nativeEvent ?? event;
+  return Boolean(native.isComposing) || native.keyCode === 229;
+}
+
+/**
+ * True when `target` is inside an interactive descendant (`button`, `a[href]`,
+ * `[role="button"]`, `input`, `textarea`, `select`, `[contenteditable="true"]`),
+ * optionally ignoring the field's own primary `control`.
+ */
+export function isInteractiveDescendantTarget(
+  target: EventTarget | null,
+  ownControl?: Element | null,
+): boolean {
+  if (!(target instanceof Element)) return false;
+  const hit = target.closest(
+    'button, a[href], [role="button"], input, textarea, select, [contenteditable="true"]',
+  );
+  if (!hit) return false;
+  if (ownControl && (hit === ownControl || ownControl.contains(hit))) return false;
+  return true;
+}
+
+/**
+ * Listen for native `<form>` `"reset"` events and invoke `onReset` on the next
+ * microtask (unless `event.defaultPrevented`) so uncontrolled custom controls
+ * revert to their `defaultValue` / `defaultChecked` alongside native inputs.
+ */
+export function useNativeFormReset(
+  elementRef: RefObject<HTMLElement | null>,
+  onReset: () => void,
+  enabled = true,
+): void {
+  const onResetRef = useRef(onReset);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest reset callback without re-subscribing form listener
+  onResetRef.current = onReset;
+
+  useEffect(() => {
+    if (!enabled) return undefined;
+    const form = elementRef.current?.closest("form");
+    if (!form) return undefined;
+    const handleReset = (event: Event) => {
+      if (event.defaultPrevented) return;
+      queueMicrotask(() => {
+        if (!event.defaultPrevented) {
+          onResetRef.current();
+        }
+      });
+    };
+    form.addEventListener("reset", handleReset);
+    return () => form.removeEventListener("reset", handleReset);
+  }, [elementRef, enabled]);
+}
 
 const FIELD_FOCUS_SELECTOR =
   'input:not([type="hidden"]):not([aria-hidden="true"]), button[role="combobox"], button[role="slider"], [role="spinbutton"], [role="combobox"]';

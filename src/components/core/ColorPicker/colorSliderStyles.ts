@@ -62,14 +62,15 @@ export function colorSliderBackgroundStyle(
   channel: ColorChannel,
   color: HSVA,
   orientation: ColorSliderOrientation,
+  rtl = false,
 ): CSSProperties {
   const horizontal = orientation === "horizontal";
  
   if (channel === "alpha") {
-    return alphaSliderGradientStyle(color, horizontal);
+    return alphaSliderGradientStyle(color, horizontal, rtl);
   }
  
-  const dir = horizontal ? "to right" : "to top";
+  const dir = horizontal ? (rtl ? "to left" : "to right") : "to top";
   const { r, g, b } = hsvaToRgba(color);
  
   switch (channel) {

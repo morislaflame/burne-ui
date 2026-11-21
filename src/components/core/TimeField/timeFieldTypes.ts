@@ -69,6 +69,7 @@ export type TimeFieldFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  errorMessage?: ReactNode;
   invalid?: boolean;
   required: boolean;
   size: TimeFieldSize;
@@ -153,6 +154,7 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
 export type UseTimeFieldShellAnimationsProps = {
   shellRef: RefObject<HTMLFieldSetElement | null>;
   disabled: boolean;
+  readOnly?: boolean;
   variant: TimeFieldVariant;
   motion?: TimeFieldPartMotion;
   pointerInsideRef: MutableRefObject<boolean>;

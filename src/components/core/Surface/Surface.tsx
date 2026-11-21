@@ -66,6 +66,7 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
         radius={radius}
         forwardedRef={ref}
         rootMotion={motion?.root}
+        defaultRootMotion={motionDefaults.root}
         onPointerOver={onPointerOver}
         onPointerOut={onPointerOut}
         onPointerDown={onPointerDown}
@@ -88,6 +89,7 @@ function SurfaceSurface({
   children,
   forwardedRef,
   rootMotion,
+  defaultRootMotion,
   onPointerOver,
   onPointerOut,
   onPointerDown,
@@ -103,6 +105,7 @@ function SurfaceSurface({
   children: SurfaceProps["children"];
   forwardedRef: React.ForwardedRef<HTMLDivElement>;
   rootMotion?: SurfacePartMotion;
+  defaultRootMotion?: SurfacePartMotion;
   onPointerOver: SurfaceProps["onPointerOver"];
   onPointerOut: SurfaceProps["onPointerOut"];
   onPointerDown: SurfaceProps["onPointerDown"];
@@ -118,6 +121,9 @@ function SurfaceSurface({
     | "children"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"
@@ -125,7 +131,7 @@ function SurfaceSurface({
   >;
 }) {
   const scope = useSurfaceMotionScope();
-  const pointer = hasPointerPhases(rootMotion);
+  const pointer = hasPointerPhases(rootMotion) || hasPointerPhases(defaultRootMotion);
   const rootClass = surfaceRootClass({
     variant,
     shadow,

@@ -14,8 +14,9 @@ describe("Э1.7 ripple clip is on the inner layer", () => {
     expect(CLOSE_BUTTON_ROOT_BASE_CLASS).not.toMatch(OVERFLOW_HIDDEN);
   });
 
-  it("clips the wave on the Ripple layer", () => {
+  it("clips the wave on the Ripple layer and isolates stacking", () => {
     expect(RIPPLE_LAYER_CLASS).toContain("overflow-hidden");
     expect(RIPPLE_LAYER_CLASS).toContain("rounded-[inherit]");
+    expect(RIPPLE_LAYER_CLASS).toContain("isolate");
   });
 });

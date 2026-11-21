@@ -74,7 +74,7 @@ import { getSkinRevision, subscribeSkins, useSkinRegistryRevision } from "burne-
 | Компонент | Классы (`targets`) | Слои | Motion |
 |---|---|---|---|
 | Alert | root | — | action, description, indicator, root, title |
-| AlertDialog | panel | panel | body, close, content, description, footer, header, headingBlock, indicator, overlay, panel, title, trigger |
+| AlertDialog | panel | panel | body, close, content, description, footer, header, indicator, overlay, panel, title, trigger |
 | AppShell | root | — | — |
 | AspectRatio | root | — | — |
 | Avatar | root | — | fallback, groupItem, image, root |
@@ -106,7 +106,7 @@ import { getSkinRevision, subscribeSkins, useSkinRegistryRevision } from "burne-
 | SelectionIndicator | fill, mark, root | — | fill, mark, root |
 | SelectionThumb | — | — | icon, root |
 | SelectionThumbIcon | root | — | — |
-| Sidebar | root | — | — |
+| Sidebar | root | — | root |
 | Slider | fill | — | fill, header, icon, rail, thumb, track, value |
 | Stack | root | — | — |
 | Surface | root | root | root |

@@ -44,7 +44,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
 };
 
 export const DIALOG_NATIVE_CLASS =
-  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-large open:flex [&::backdrop]:bg-transparent";
+  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center overflow-hidden border-0 bg-transparent p-large open:flex [&::backdrop]:bg-transparent";
 
 export const DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
 
@@ -102,7 +102,7 @@ export function dialogOverlayEnterStyle() {
 
 export function dialogOverlayClass(lightUi: boolean, slotClass?: string): string {
   return cn(
-    "absolute inset-0",
+    "absolute inset-0 touch-none",
     lightUi ? DIALOG_OVERLAY_LIGHT_CLASS : DIALOG_OVERLAY_DARK_CLASS,
     slotClass,
   );

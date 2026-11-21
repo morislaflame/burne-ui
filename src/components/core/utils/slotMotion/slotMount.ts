@@ -21,7 +21,7 @@ import {
   type MotionValue,
 } from "./slotMotionTypes";
 
-const TRANSFORM_KEYS = ["x", "y", "scale", "autoAlpha"] as const;
+const TRANSFORM_KEYS = ["x", "y", "scale", "scaleX", "scaleY", "rotation", "opacity", "autoAlpha"] as const;
 
 type MountBinding = {
   node: HTMLElement;

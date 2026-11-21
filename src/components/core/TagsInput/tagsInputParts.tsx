@@ -1,8 +1,14 @@
-import { forwardRef, useRef, type ReactNode } from "react";
+import { forwardRef, useRef, type AriaAttributes, type ReactNode } from "react";
 
 import { Field } from "@/components/core/Field";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { dataFlag } from "@/components/core/utils/dataContract";
+import {
+  isImeComposingEvent,
+  isInteractiveDescendantTarget,
+} from "@/components/core/utils/fieldFormDom";
 import { KitClose } from "@/components/core/utils/kitIcons";
-import { ariaInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, dataInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { cn } from "@/utils/cn";
 
 import { tagsInputRemoveLabel } from "./tagsInputA11y";
@@ -66,6 +72,11 @@ export const TagsInputTag = forwardRef<HTMLSpanElement, TagsInputTagProps>(funct
 });
 TagsInputTag.displayName = "TagsInputTag";
 
+type ChipInternalProps = {
+  value: string;
+  shellRef: React.RefObject<HTMLDivElement | null>;
+};
+
 export const TagsInputRemove = forwardRef<HTMLButtonElement, TagsInputRemoveProps>(
   function TagsInputRemove(
     {
@@ -74,6 +85,8 @@ export const TagsInputRemove = forwardRef<HTMLButtonElement, TagsInputRemoveProp
       children,
       motion,
       onClick,
+      onBlur,
+      onMouseDown,
       onPointerOver,
       onPointerOut,
       onPointerDown,
@@ -101,6 +114,18 @@ export const TagsInputRemove = forwardRef<HTMLButtonElement, TagsInputRemoveProp
         className={tagsInputRemoveClass(cn(slotClassNames.remove, className))}
         aria-label={tagsInputRemoveLabel(value)}
         disabled={locked}
+        onMouseDown={(event) => {
+          onMouseDown?.(event);
+          if (!event.defaultPrevented) event.preventDefault();
+        }}
+        onBlur={(event) => {
+          onBlur?.(event);
+          const related = event.relatedTarget as Node | null;
+          const shellEl = event.currentTarget.closest('[data-skin-slot*="tagsInput.shell"]');
+          if (!shellEl || !related || !shellEl.contains(related)) {
+            field.notifyBlur?.();
+          }
+        }}
         onClick={(event) => {
           onClick?.(event);
           if (event.defaultPrevented) return;
@@ -116,7 +141,7 @@ export const TagsInputRemove = forwardRef<HTMLButtonElement, TagsInputRemoveProp
 );
 TagsInputRemove.displayName = "TagsInputRemove";
 
-function TagsInputChip({ value }: { value: string }) {
+function TagsInputChip({ value }: Pick<ChipInternalProps, "value">) {
   const slotClassNames = useTagsInputClassNames();
 
   return (
@@ -127,10 +152,16 @@ function TagsInputChip({ value }: { value: string }) {
   );
 }
 
-export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(function TagsInputShell(
+export const TagsInputShell = forwardRef<
+  HTMLDivElement,
+  TagsInputShellProps & {
+    inputAriaProps?: Pick<AriaAttributes, "aria-label" | "aria-labelledby" | "aria-describedby">;
+  }
+>(function TagsInputShell(
   {
     className,
     inputRef,
+    inputAriaProps,
     motion,
     onPointerOver,
     onPointerOut,
@@ -142,7 +173,9 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
 ) {
   const field = useTagsInputContext();
   const slotClassNames = useTagsInputClassNames();
+  const shellLocalRef = useRef<HTMLDivElement | null>(null);
   const draftInputRef = useRef<HTMLInputElement>(null);
+  const composingRef = useRef(false);
   const inputPart = useTagsInputSlotMotion<HTMLInputElement>("control");
   const draft = field.inputValue;
   const setDraft = field.setInputValue;
@@ -153,15 +186,22 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
     onPointerOut,
     onPointerDown: (event) => {
       onPointerDown?.(event);
-      const target = event.target;
-      if (!(target instanceof Element)) return;
-      if (target.closest("button, input")) return;
-      draftInputRef.current?.focus();
+      if (event.defaultPrevented || field.disabled) return;
+      const inputEl = draftInputRef.current;
+      if (!inputEl) return;
+      if (isInteractiveDescendantTarget(event.target, inputEl)) return;
+      if (event.target !== inputEl) {
+        event.preventDefault();
+        if (!field.atMax && document.activeElement !== inputEl) {
+          inputEl.focus();
+        }
+      }
     },
     onPointerUp,
   });
 
   function commit(raw: string) {
+    if (field.disabled || field.readOnly) return;
     const tag = raw.trim();
     if (!tag) {
       setDraft("");
@@ -172,6 +212,7 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
   }
 
   function onDraftChange(value: string) {
+    if (field.disabled || field.readOnly) return;
     const pieces = tagsInputPieces(value);
     if (pieces.committed.length > 0) field.append(pieces.committed);
     setDraft(pieces.rest);
@@ -179,7 +220,11 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
 
   return (
     <div
-      ref={shell.setRef}
+      ref={(node) => {
+        shellLocalRef.current = node;
+        shell.setRef(node);
+        field.registerShellRef?.(node);
+      }}
       className={tagsInputShellClass({
         size: field.size,
         variant: field.variant,
@@ -198,6 +243,7 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
         ref={(node) => {
           draftInputRef.current = node;
           inputPart.setRef(node);
+          field.setInputNodeRef?.(node);
           if (typeof inputRef === "function") inputRef(node);
           else if (inputRef) inputRef.current = node;
         }}
@@ -208,12 +254,41 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
         disabled={field.disabled || field.atMax}
         readOnly={field.readOnly}
         required={field.required && field.values.length === 0}
-        aria-labelledby={field.labelled ? field.labelId : undefined}
-        aria-invalid={ariaInvalidValue(field.isInvalid)}
-        aria-describedby={field.describedBy}
-        onChange={(event) => onDraftChange(event.target.value)}
-        onBlur={() => commit(draft)}
+        aria-label={inputAriaProps?.["aria-label"]}
+        aria-labelledby={
+          inputAriaProps?.["aria-labelledby"] ?? (field.labelled ? field.labelId : undefined)
+        }
+        aria-describedby={joinFieldDescribedBy(
+          field.describedBy,
+          inputAriaProps?.["aria-describedby"],
+        )}
+        onCompositionStart={() => {
+          composingRef.current = true;
+        }}
+        onCompositionEnd={(event) => {
+          composingRef.current = false;
+          onDraftChange(event.currentTarget.value);
+        }}
+        onChange={(event) => {
+          if (composingRef.current) {
+            setDraft(event.target.value);
+            return;
+          }
+          onDraftChange(event.target.value);
+        }}
+        onBlur={(event) => {
+          const shellEl = shellLocalRef.current;
+          const related = event.relatedTarget as Node | null;
+          if (shellEl && related && shellEl.contains(related)) return;
+          if (!composingRef.current) {
+            commit(draft);
+          }
+          field.notifyBlur?.();
+        }}
         onKeyDown={(event) => {
+          if (isImeComposingEvent(event) || composingRef.current || field.disabled || field.readOnly) {
+            return;
+          }
           if (event.key === "Enter") {
             event.preventDefault();
             commit(draft);
@@ -221,6 +296,11 @@ export const TagsInputShell = forwardRef<HTMLDivElement, TagsInputShellProps>(fu
           if (event.key === "Backspace" && draft === "") field.removeLast();
         }}
         {...inputPart.pointerHandlers}
+        aria-invalid={ariaInvalidValue(field.isInvalid)}
+        data-invalid={dataInvalidValue(field.isInvalid)}
+        data-disabled={dataFlag(field.disabled)}
+        data-readonly={dataFlag(field.readOnly)}
+        data-required={dataFlag(field.required && field.values.length === 0)}
       />
       {field.name
         ? field.values.map((value) => (
@@ -353,12 +433,16 @@ export const TagsInputError = forwardRef<HTMLElement, TagsInputErrorProps>(funct
 
 TagsInputError.displayName = "TagsInputError";
 
-export function TagsInputSimpleBody() {
+export function TagsInputSimpleBody({
+  inputAriaProps,
+}: {
+  inputAriaProps?: Pick<AriaAttributes, "aria-label" | "aria-labelledby" | "aria-describedby">;
+} = {}) {
   const field = useTagsInputContext();
   return (
     <>
       {field.label != null ? <TagsInputLabel /> : null}
-      <TagsInputShell />
+      <TagsInputShell inputAriaProps={inputAriaProps} />
       {field.hint != null ? <TagsInputHint /> : null}
       {field.error != null ? <TagsInputError /> : null}
     </>

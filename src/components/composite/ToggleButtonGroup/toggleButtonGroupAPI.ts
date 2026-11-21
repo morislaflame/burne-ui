@@ -24,6 +24,33 @@ export function extractToggleItemValues(children: ReactElement[]): string[] {
   }, []);
 }
  
+export function extractEnabledToggleItemValues(
+  children: ReactElement[],
+  groupDisabled = false,
+): string[] {
+  if (groupDisabled) return [];
+  return children.reduce<string[]>((acc, el) => {
+    if (!isToggleButtonChild(el)) return acc;
+    const props = el.props as { value?: string; disabled?: boolean };
+    if (!props.disabled && typeof props.value === "string") {
+      acc.push(props.value);
+    }
+    return acc;
+  }, []);
+}
+ 
+export function extractDisabledToggleItemValues(children: ReactElement[]): Set<string> {
+  const set = new Set<string>();
+  for (const el of children) {
+    if (!isToggleButtonChild(el)) continue;
+    const props = el.props as { value?: string; disabled?: boolean };
+    if (props.disabled && typeof props.value === "string") {
+      set.add(props.value);
+    }
+  }
+  return set;
+}
+ 
 export function normalizeMultipleDefault(value: string | string[] | null | undefined): string[] {
   if (value == null) return [];
   return Array.isArray(value) ? value : [value];

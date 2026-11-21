@@ -91,7 +91,7 @@ export const TOOLTIP_ARROW_FILL_CLASS: Record<KitTooltipVariant, string> = {
 };
 
 export const TOOLTIP_CONTENT_BASE_CLASS =
-  "pointer-events-none z-tooltip w-max min-w-0 overflow-visible text-start outline-none";
+  "pointer-events-auto fixed top-0 start-0 z-tooltip w-max min-w-0 overflow-visible text-start outline-none";
 
 export const TOOLTIP_CONTENT_INNER_CLASS = "relative overflow-visible";
 

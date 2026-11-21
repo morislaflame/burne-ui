@@ -1,8 +1,9 @@
-import { useCallback, useId, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
  
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
+import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { colorPickerInitialHsva, COLOR_PICKER_DEFAULT_HEX } from "./colorPickerAPI";
 import { hexToHsva, hsvaToHex, normalizeHex, type HSVA } from "./colorUtils";
 import type { ColorPickerContextValue, UseColorPickerRootStateProps } from "./colorPickerTypes";
@@ -19,8 +20,8 @@ export function useColorPickerRootState({
   defaultValue = COLOR_PICKER_DEFAULT_HEX,
   onValueChange,
   size = "base",
-  disabled = false,
-  readOnly = false,
+  disabled: disabledProp,
+  readOnly: readOnlyProp,
   name,
   required = false,
   label,
@@ -35,50 +36,84 @@ export function useColorPickerRootState({
   const formBinding = useFormFieldBinding({
     name,
     value,
-    disabled,
-    readOnly,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
   });
-  const resolvedReadOnly = Boolean(formBinding.readOnly);
-  const resolvedDisabled = Boolean(formBinding.disabled);
+  const formBound = formBinding.bound;
+  const resolvedReadOnly = Boolean(readOnlyProp ?? formBinding.readOnly);
+  const resolvedDisabled = Boolean(disabledProp ?? formBinding.disabled);
   const boundHex =
-    formBinding.bound && formBinding.value != null && formBinding.value !== ""
+    formBound && formBinding.value != null && formBinding.value !== ""
       ? String(formBinding.value)
       : undefined;
-  const isControlled = value !== undefined || boundHex !== undefined;
+  const externalHex = value ?? boundHex;
+  const isControlled = value !== undefined || formBound;
   const autoId = useId();
   const triggerId = idProp ?? `color-picker-${autoId}`;
   const [hsva, setHsvaState] = useState<HSVA>(() =>
-    colorPickerInitialHsva(value ?? boundHex, defaultValue),
+    colorPickerInitialHsva(externalHex, defaultValue),
   );
+  const pendingHsvaRef = useRef<HSVA | null>(null);
  
   useLayoutEffect(() => {
-    const external = value ?? boundHex;
-    if (!isControlled || external == null) return;
+    if (!isControlled) return;
+    const targetHex = externalHex ?? defaultValue;
+    const pending = pendingHsvaRef.current;
+    pendingHsvaRef.current = null;
+    if (pending && normalizeHex(targetHex) === normalizeHex(hsvaToHex(pending))) {
+      setHsvaState(pending);
+      return;
+    }
     setHsvaState((current) => {
-      if (normalizeHex(external) === normalizeHex(hsvaToHex(current))) {
+      if (normalizeHex(targetHex) === normalizeHex(hsvaToHex(current))) {
         return current;
       }
-      return hexToHsva(external) ?? current;
+      return hexToHsva(targetHex) ?? current;
     });
-  }, [boundHex, isControlled, value]);
+  }, [defaultValue, externalHex, isControlled]);
+ 
+  const resetToDefault = useCallback(() => {
+    pendingHsvaRef.current = null;
+    setHsvaState(colorPickerInitialHsva(undefined, defaultValue));
+  }, [defaultValue]);
  
   const setHsva = useCallback(
     (next: HSVA) => {
-      if (resolvedReadOnly) return;
-      setHsvaState(next);
-      const hex = hsvaToHex(next);
-      onValueChange?.(hex);
-      if (formBinding.bound) formBinding.setValue(hex);
+      if (resolvedDisabled || resolvedReadOnly) return;
+      const nextHex = hsvaToHex(next);
+      if (!isControlled) {
+        setHsvaState(next);
+      } else {
+        pendingHsvaRef.current = next;
+        const currentTarget = externalHex ?? defaultValue;
+        if (normalizeHex(nextHex) === normalizeHex(currentTarget)) {
+          setHsvaState(next);
+        }
+      }
+      onValueChange?.(nextHex);
+      if (formBound) formBinding.setValue(nextHex);
     },
-    [formBinding, onValueChange, resolvedReadOnly],
+    [defaultValue, externalHex, formBinding, formBound, isControlled, onValueChange, resolvedDisabled, resolvedReadOnly],
   );
  
   const hex = hsvaToHex(hsva);
  
-  const invalid = resolveFieldInvalid({
-    invalid: invalidProp,
-    error: error != null || ariaInvalid === true || formBinding["aria-invalid"] === true ? true : undefined,
+  const hasCompoundError = useMemo(
+    () => hasCompoundChild(children, "ColorPicker.Error", "ColorPickerError"),
+    [children],
+  );
+  const resolvedError =
+    error ?? (!hasCompoundError && formBound ? formBinding.error : undefined);
+ 
+  const invalid = useResolvedFieldInvalid({
+    invalid: ariaInvalid === true ? true : invalidProp,
+    errorConnected: resolvedError != null || hasCompoundError,
+    formInvalid: Boolean(formBound && formBinding.error),
   });
+ 
+  const registerTriggerRef = formBound ? formBinding.ref : undefined;
+  const onTriggerBlur = formBound ? formBinding.onBlur : undefined;
+ 
   const contextValue: ColorPickerContextValue = useMemo(
     () => ({
       hsva,
@@ -93,15 +128,15 @@ export function useColorPickerRootState({
       required,
       label,
       hint,
-      error: error ?? (typeof formBinding.error === "string" ? formBinding.error : undefined),
+      error: resolvedError,
       name: formBinding.name ?? name,
       autoFocus,
       tabIndex,
+      registerTriggerRef,
+      onTriggerBlur,
     }),
     [
       autoFocus,
-      error,
-      formBinding.error,
       formBinding.name,
       hex,
       hint,
@@ -109,8 +144,11 @@ export function useColorPickerRootState({
       invalid,
       label,
       name,
+      onTriggerBlur,
+      registerTriggerRef,
       required,
       resolvedDisabled,
+      resolvedError,
       resolvedReadOnly,
       setHsva,
       size,
@@ -122,6 +160,8 @@ export function useColorPickerRootState({
   return {
     contextValue,
     isCompound: hasCompoundChildren(children),
+    isControlled,
+    resetToDefault,
   };
 }
  

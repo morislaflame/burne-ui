@@ -45,11 +45,19 @@ export type ResizablePanelProps = HTMLAttributes<HTMLDivElement> & {
   defaultSize?: number;
   /** Smallest share in percent. Default `8`. */
   minSize?: number;
+  /** Largest share in percent. Default `100`. */
+  maxSize?: number;
+  motion?: Prettify<ResizablePartMotion>;
+};
+ 
+export type ResizableHandleProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<ResizablePartMotion>;
 };
 
-export type ResizableHandleProps = HTMLAttributes<HTMLDivElement> & {
-  motion?: Prettify<ResizablePartMotion>;
+export type ResizablePanelConstraints = {
+  defaultSize?: number;
+  minSize: number;
+  maxSize: number;
 };
 
 export type ResizableLayoutValue = {
@@ -58,7 +66,8 @@ export type ResizableLayoutValue = {
   panelClass?: string;
   handleClass?: string;
   commit: (updater: (prev: Record<string, number>) => Record<string, number>) => void;
-  rememberMin: (id: string, min: number) => void;
-  forget: (id: string) => void;
+  registerPanel: (id: string, spec: ResizablePanelConstraints) => void;
+  unregisterPanel: (id: string) => void;
   minOf: (id: string) => number;
+  maxOf: (id: string) => number;
 };

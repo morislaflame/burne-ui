@@ -75,3 +75,63 @@ export function datePickerSelectionComplete(next: DatePickerStoredValue, mode: D
   if (mode === "multiple") return false;
   return next instanceof Date;
 }
+
+export function parseDatePickerIsoDay(raw: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw.trim());
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+  return date;
+}
+
+export function parseDatePickerFormValue(
+  raw: unknown,
+  mode: DatePickerMode,
+): DatePickerStoredValue {
+  if (mode === "range") {
+    if (isDatePickerRangeValue(raw as DatePickerStoredValue)) {
+      return raw as CalendarRangeValue;
+    }
+    if (typeof raw === "string" && raw.includes("/")) {
+      const [startStr = "", endStr = ""] = raw.split("/");
+      return {
+        start: parseDatePickerIsoDay(startStr),
+        end: parseDatePickerIsoDay(endStr),
+      };
+    }
+    return { start: null, end: null };
+  }
+  if (mode === "multiple") {
+    if (Array.isArray(raw)) {
+      return raw
+        .map((item) =>
+          item instanceof Date
+            ? item
+            : typeof item === "string"
+              ? parseDatePickerIsoDay(item)
+              : null,
+        )
+        .filter((item): item is Date => item != null);
+    }
+    if (typeof raw === "string" && raw.trim()) {
+      return raw
+        .split(",")
+        .map((part) => parseDatePickerIsoDay(part))
+        .filter((item): item is Date => item != null);
+    }
+    return [];
+  }
+  if (raw instanceof Date) return raw;
+  if (typeof raw === "string" && raw.trim()) return parseDatePickerIsoDay(raw);
+  return null;
+}

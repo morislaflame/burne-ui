@@ -148,6 +148,7 @@ export type RadioFieldContextValue = {
   variant: RadioVariant;
   mergedChecked: boolean;
   isDisabled: boolean;
+  isReadOnly: boolean;
   isControlled: boolean;
   isCompound: boolean;
   hasCompoundHint: boolean;

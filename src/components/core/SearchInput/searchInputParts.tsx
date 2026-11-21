@@ -10,11 +10,13 @@ import type {
 import { KitClose, KitSearch } from "@/components/core/utils/kitIcons";
  
 import { Ripple } from "@/components/core/Ripple";
+import { dataFlag } from "@/components/core/utils/dataContract";
+import { readOnlyData } from "@/components/core/utils/fieldFormDom";
+import { ariaInvalidValue, dataInvalidValue } from "@/components/core/utils/fieldInvalid";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
- 
-import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
+
 import { searchInputClearA11yLabel } from "./searchInputA11y";
 import { useOptionalSearchInputMotionScope } from "./searchInputContext";
 import {
@@ -116,7 +118,7 @@ export function SearchInputControl({
   layout,
   paddingStyle,
   className,
-  invalid,
+  isInvalid,
   rest,
 }: {
   inputRef: Ref<HTMLInputElement>;
@@ -134,7 +136,7 @@ export function SearchInputControl({
   layout: SearchSizeLayout;
   paddingStyle?: CSSProperties;
   className?: string;
-  invalid?: boolean;
+  isInvalid: boolean;
   rest: Omit<
     InputHTMLAttributes<HTMLInputElement>,
     | "size"
@@ -152,16 +154,24 @@ export function SearchInputControl({
     | "aria-label"
   >;
 }) {
+  const {
+    "aria-invalid": _ariaInvalid,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...inputRest
+  } = rest;
+  void _ariaInvalid;
   const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
     scope: useOptionalSearchInputMotionScope(),
     slot: "input",
     forwardedRef: inputRef,
     pointerPhases: true,
-  });
-  const { "aria-invalid": ariaInvalid, ...inputRest } = rest;
-  const isInvalid = resolveFieldInvalid({
-    invalid,
-    error: ariaInvalid === true || ariaInvalid === "true" ? true : undefined,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   return (
@@ -187,8 +197,10 @@ export function SearchInputControl({
       style={paddingStyle}
       {...inputRest}
       {...pointerHandlers}
-      aria-invalid={isInvalid ? true : undefined}
-      data-invalid={isInvalid ? "" : undefined}
+      aria-invalid={ariaInvalidValue(isInvalid)}
+      data-invalid={dataInvalidValue(isInvalid)}
+      data-disabled={dataFlag(disabled)}
+      data-readonly={readOnlyData(readOnly)}
     />
   );
 }
@@ -215,6 +227,7 @@ export function SearchInputClear({
       ref={setRef}
       type="button"
       aria-label={searchInputClearA11yLabel(clearLabel)}
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       className={searchInputClearClass(className)}
       style={{

@@ -1,7 +1,8 @@
-import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { KitChevronBack, KitChevronForward } from "@/components/core/utils/kitIcons";
  
 import { focusKeyboard } from "@/components/core/utils/focusElement";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeMotionSlotMaps, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
@@ -176,13 +177,14 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
 CalendarNavButton.displayName = "Calendar.NavButton";
  
 export const CalendarNavPrev = forwardRef<HTMLButtonElement, CalendarNavPrevProps>(
-  function CalendarNavPrev({ size: sizeProp, onClick, ...rest }, ref) {
-    const { navigate, size } = useCalendar();
+  function CalendarNavPrev({ size: sizeProp, onClick, disabled: disabledProp, ...rest }, ref) {
+    const { navigate, size, disabled: calendarDisabled, canNavigatePrev } = useCalendar();
     return (
       <CalendarNavButton
         ref={ref}
         direction="prev"
         size={sizeProp ?? size}
+        disabled={disabledProp ?? (calendarDisabled || !canNavigatePrev)}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) navigate(-1);
@@ -196,13 +198,14 @@ export const CalendarNavPrev = forwardRef<HTMLButtonElement, CalendarNavPrevProp
 CalendarNavPrev.displayName = "Calendar.NavPrev";
  
 export const CalendarNavNext = forwardRef<HTMLButtonElement, CalendarNavNextProps>(
-  function CalendarNavNext({ size: sizeProp, onClick, ...rest }, ref) {
-    const { navigate, size } = useCalendar();
+  function CalendarNavNext({ size: sizeProp, onClick, disabled: disabledProp, ...rest }, ref) {
+    const { navigate, size, disabled: calendarDisabled, canNavigateNext } = useCalendar();
     return (
       <CalendarNavButton
         ref={ref}
         direction="next"
         size={sizeProp ?? size}
+        disabled={disabledProp ?? (calendarDisabled || !canNavigateNext)}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) navigate(1);
@@ -421,6 +424,9 @@ function calendarCellPropsEqual(
     prev.children === next.children &&
     prev.motion === next.motion &&
     prev.motionController === next.motionController &&
+    prev.motionState === next.motionState &&
+    prev.motionPayload === next.motionPayload &&
+    prev.playInitialState === next.playInitialState &&
     prev.onClick === next.onClick &&
     prev.onMouseEnter === next.onMouseEnter &&
     prev.onMouseLeave === next.onMouseLeave
@@ -431,14 +437,15 @@ const CalendarInteractiveCell = memo(CalendarInteractiveCellInner, calendarCellP
  
 export const CalendarDay = forwardRef<HTMLButtonElement, CalendarDayProps>(
   function CalendarDay(
-    { size: sizeProp, today = false, current = false, "aria-label": ariaLabel, ...props },
+    { size: sizeProp, today = false, current = false, disabled: disabledProp, "aria-label": ariaLabel, ...props },
     ref,
   ) {
-    const { size } = useCalendar();
+    const { size, disabled: calendarDisabled } = useCalendar();
     return (
       <CalendarInteractiveCell
         ref={ref}
         size={sizeProp ?? size}
+        disabled={calendarDisabled || disabledProp}
         isToday={today}
         isCurrent={current}
         ariaLabel={ariaLabel}
@@ -450,13 +457,19 @@ export const CalendarDay = forwardRef<HTMLButtonElement, CalendarDayProps>(
  
 CalendarDay.displayName = "Calendar.Day";
  
-function CalendarDaysView() {
+function CalendarDaysView({
+  drillDownFocusRef,
+}: {
+  drillDownFocusRef?: MutableRefObject<boolean>;
+}) {
   const slotClassNames = useCalendarClassNames();
   const {
     setHoverDate,
     onDayPress,
     size,
     mode,
+    disabled: calendarDisabled,
+    readOnly,
     locale,
     renderDay,
     focusedDate,
@@ -469,7 +482,6 @@ function CalendarDaysView() {
   const cells = useCalendarDayCellModels();
   const gridRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef(false);
-  const focusedKey = calendarFocusDayKey(focusedDate);
   const rows = useMemo(() => chunkCalendarCells(cells, 7), [cells]);
   const gridLabel = calendarDaysGridLabel(
     viewDate.getMonth(),
@@ -482,59 +494,51 @@ function CalendarDaysView() {
   const fallbackRovingDate = hasFocusedInView
     ? null
     : (cells.find((c) => c.date && !c.disabled)?.date ?? null);
+  const effectiveRovingDate = hasFocusedInView
+    ? focusedDate
+    : (fallbackRovingDate ?? focusedDate);
+  const focusedKey = calendarFocusDayKey(effectiveRovingDate);
  
   useLayoutEffect(() => {
-    if (restoreFocusRef.current) {
-      restoreFocusRef.current = false;
-      const el = gridRef.current?.querySelector<HTMLElement>(
-        `[data-calendar-roving="${focusedKey}"]`,
-      );
-      focusKeyboard(el);
-      return;
-    }
- 
-    // After month/year drill-down the previous cell unmounts and focus falls to
-    // body — reclaim the roving day so keyboard users stay in the grid.
     const grid = gridRef.current;
     if (!grid) return;
-    const active = document.activeElement;
-    if (
-      active &&
-      active !== document.body &&
-      active !== document.documentElement &&
-      grid.contains(active)
-    ) {
+    const fromDrillDown = drillDownFocusRef?.current === true;
+    if (drillDownFocusRef && fromDrillDown) {
+      drillDownFocusRef.current = false;
+    }
+    const active = typeof document !== "undefined" ? document.activeElement : null;
+    const focusInsideGrid = !!active && grid.contains(active);
+    if (!restoreFocusRef.current && !fromDrillDown && !focusInsideGrid) {
       return;
     }
-    if (
-      active &&
-      active !== document.body &&
-      active !== document.documentElement
-    ) {
-      return;
-    }
+    restoreFocusRef.current = false;
     const el = grid.querySelector<HTMLElement>(
       `[data-calendar-roving="${focusedKey}"]`,
     );
-    focusKeyboard(el);
-  }, [focusedKey, viewDate]);
+    if (el && el !== active) {
+      focusKeyboard(el);
+    }
+  }, [drillDownFocusRef, focusedKey, viewDate]);
  
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (calendarDisabled) return;
+      const rtl = isRtlElement(e.currentTarget);
       const next = moveCalendarFocusDate(
-        focusedDate,
+        effectiveRovingDate,
         e.key,
         e.shiftKey,
         minDate,
         maxDate,
         isDateUnavailable,
+        rtl,
       );
       if (!next) return;
       e.preventDefault();
       restoreFocusRef.current = true;
       moveDayFocus(next);
     },
-    [focusedDate, isDateUnavailable, minDate, maxDate, moveDayFocus],
+    [calendarDisabled, effectiveRovingDate, isDateUnavailable, minDate, maxDate, moveDayFocus],
   );
  
   return (
@@ -617,7 +621,7 @@ function CalendarDaysView() {
  
                   <CalendarInteractiveCell
                     selected={!!cell.circleActive}
-                    disabled={cell.disabled}
+                    disabled={calendarDisabled || cell.disabled}
                     isToday={cell.today}
                     size={size}
                     cellKind="day"
@@ -629,11 +633,15 @@ function CalendarDaysView() {
                     onClick={() => cell.date && onDayPress(cell.date)}
                     onMouseEnter={() =>
                       mode === "range" &&
+                      !calendarDisabled &&
+                      !readOnly &&
                       !cell.disabled &&
                       cell.date &&
                       setHoverDate(cell.date)
                     }
-                    onMouseLeave={() => mode === "range" && setHoverDate(null)}
+                    onMouseLeave={() =>
+                      mode === "range" && !calendarDisabled && !readOnly && setHoverDate(null)
+                    }
                     className={CALENDAR_DAY_CELL_LAYER_CLASS}
                   >
                     {dayContent}
@@ -648,40 +656,89 @@ function CalendarDaysView() {
   );
 }
  
-function CalendarMonthsView() {
+function CalendarMonthsView({
+  drillDownFocusRef,
+}: {
+  drillDownFocusRef?: MutableRefObject<boolean>;
+}) {
   const slotClassNames = useCalendarClassNames();
-  const { onMonthPress, size, viewDate, focusedDate } = useCalendar();
+  const { onMonthPress, size, viewDate, focusedDate, disabled: calendarDisabled, readOnly } = useCalendar();
   const months = useCalendarMonthCellModels();
   const gridRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef(false);
-  const [focusedMonth, setFocusedMonth] = useState(() =>
-    Math.min(11, Math.max(0, focusedDate.getMonth())),
-  );
+  const [focusedMonth, setFocusedMonth] = useState(() => {
+    const preferred =
+      focusedDate.getFullYear() === viewDate.getFullYear()
+        ? focusedDate.getMonth()
+        : viewDate.getMonth();
+    return Math.min(11, Math.max(0, preferred));
+  });
+  const effectiveFocusedMonth = useMemo(() => {
+    if (!months[focusedMonth]?.disabled) return focusedMonth;
+    const firstEnabled = months.findIndex((m) => !m.disabled);
+    return firstEnabled >= 0 ? firstEnabled : focusedMonth;
+  }, [focusedMonth, months]);
   const rows = useMemo(() => chunkCalendarCells(months, 3), [months]);
  
   useLayoutEffect(() => {
-    if (!restoreFocusRef.current) return;
+    const fromDrillDown = drillDownFocusRef?.current === true;
+    if (drillDownFocusRef && fromDrillDown) {
+      drillDownFocusRef.current = false;
+    }
+    if (!restoreFocusRef.current && !fromDrillDown) return;
     restoreFocusRef.current = false;
     const el = gridRef.current?.querySelector<HTMLElement>(
-      `[data-calendar-roving="${focusedMonth}"]`,
+      `[data-calendar-roving="${effectiveFocusedMonth}"]`,
     );
     focusKeyboard(el);
-  }, [focusedMonth]);
+  }, [drillDownFocusRef, effectiveFocusedMonth]);
  
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (calendarDisabled) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        onMonthPress(focusedMonth);
+        if (!readOnly && !months[effectiveFocusedMonth]?.disabled) {
+          if (drillDownFocusRef) drillDownFocusRef.current = true;
+          onMonthPress(effectiveFocusedMonth);
+        }
         return;
       }
-      const next = moveCalendarMonthFocusIndex(focusedMonth, e.key);
-      if (next == null) return;
+      const rtl = isRtlElement(e.currentTarget);
+      let candidate = moveCalendarMonthFocusIndex(effectiveFocusedMonth, e.key, rtl);
+      if (candidate == null) return;
+      if (months[candidate]?.disabled) {
+        if (e.key === "Home") {
+          const first = months.findIndex((m) => !m.disabled);
+          candidate = first >= 0 ? first : null;
+        } else if (e.key === "End") {
+          let last = -1;
+          for (let i = months.length - 1; i >= 0; i -= 1) {
+            if (!months[i]?.disabled) {
+              last = i;
+              break;
+            }
+          }
+          candidate = last >= 0 ? last : null;
+        } else {
+          let cur: number | null = candidate;
+          let found: number | null = null;
+          for (let step = 0; step < 12 && cur != null; step += 1) {
+            if (!months[cur]?.disabled) {
+              found = cur;
+              break;
+            }
+            cur = moveCalendarMonthFocusIndex(cur, e.key, rtl);
+          }
+          candidate = found;
+        }
+      }
+      if (candidate == null) return;
       e.preventDefault();
       restoreFocusRef.current = true;
-      setFocusedMonth(next);
+      setFocusedMonth(candidate);
     },
-    [focusedMonth, onMonthPress],
+    [calendarDisabled, drillDownFocusRef, effectiveFocusedMonth, months, onMonthPress, readOnly],
   );
  
   return (
@@ -703,14 +760,16 @@ function CalendarMonthsView() {
             >
               <CalendarInteractiveCell
                 selected={cell.isSelected}
+                disabled={calendarDisabled || cell.disabled}
                 isCurrent={cell.isCurrentMonth}
                 size={size}
                 cellKind="month"
                 rounded="picker"
-                tabIndex={focusedMonth === cell.month ? 0 : -1}
+                tabIndex={effectiveFocusedMonth === cell.month ? 0 : -1}
                 rovingKey={String(cell.month)}
                 ariaLabel={cell.name}
                 onClick={() => {
+                  if (cell.disabled || calendarDisabled || readOnly) return;
                   setFocusedMonth(cell.month);
                   onMonthPress(cell.month);
                 }}
@@ -725,48 +784,90 @@ function CalendarMonthsView() {
   );
 }
  
-function CalendarYearsView() {
+function CalendarYearsView({
+  drillDownFocusRef,
+}: {
+  drillDownFocusRef?: MutableRefObject<boolean>;
+}) {
   const slotClassNames = useCalendarClassNames();
-  const { onYearPress, size, viewDate, focusedDate } = useCalendar();
+  const { onYearPress, size, viewDate, disabled: calendarDisabled, readOnly } = useCalendar();
   const years = useCalendarYearCellModels();
   const gridRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef(false);
-  const initialIndex = Math.max(
-    0,
-    years.findIndex((y) => y.year === focusedDate.getFullYear()),
-  );
+  const initialIndex = years.findIndex((y) => y.year === viewDate.getFullYear());
   const [focusedIndex, setFocusedIndex] = useState(
     initialIndex >= 0 ? initialIndex : 1,
   );
+  const effectiveFocusedIndex = useMemo(() => {
+    if (!years[focusedIndex]?.disabled) return focusedIndex;
+    const activeYearIdx = years.findIndex(
+      (y) => y.year === viewDate.getFullYear() && !y.disabled,
+    );
+    if (activeYearIdx >= 0) return activeYearIdx;
+    const firstEnabled = years.findIndex((y) => !y.disabled);
+    return firstEnabled >= 0 ? firstEnabled : focusedIndex;
+  }, [focusedIndex, viewDate, years]);
   const rows = useMemo(() => chunkCalendarCells(years, 4), [years]);
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
  
   useLayoutEffect(() => {
     if (!restoreFocusRef.current) return;
     restoreFocusRef.current = false;
-    const year = years[focusedIndex]?.year;
+    const year = years[effectiveFocusedIndex]?.year;
     if (year == null) return;
     const el = gridRef.current?.querySelector<HTMLElement>(
       `[data-calendar-roving="${year}"]`,
     );
     focusKeyboard(el);
-  }, [focusedIndex, years]);
+  }, [effectiveFocusedIndex, years]);
  
   const handleGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const year = years[focusedIndex]?.year;
-      if ((e.key === "Enter" || e.key === " ") && year != null) {
+      if (calendarDisabled) return;
+      const currentCell = years[effectiveFocusedIndex];
+      if ((e.key === "Enter" || e.key === " ") && currentCell != null) {
         e.preventDefault();
-        onYearPress(year);
+        if (!readOnly && !currentCell.disabled) {
+          if (drillDownFocusRef) drillDownFocusRef.current = true;
+          onYearPress(currentCell.year);
+        }
         return;
       }
-      const next = moveCalendarYearFocusIndex(focusedIndex, e.key);
-      if (next == null) return;
+      const rtl = isRtlElement(e.currentTarget);
+      let candidate = moveCalendarYearFocusIndex(effectiveFocusedIndex, e.key, rtl);
+      if (candidate == null) return;
+      if (years[candidate]?.disabled) {
+        if (e.key === "Home") {
+          const first = years.findIndex((y) => !y.disabled);
+          candidate = first >= 0 ? first : null;
+        } else if (e.key === "End") {
+          let last = -1;
+          for (let i = years.length - 1; i >= 0; i -= 1) {
+            if (!years[i]?.disabled) {
+              last = i;
+              break;
+            }
+          }
+          candidate = last >= 0 ? last : null;
+        } else {
+          let cur: number | null = candidate;
+          let found: number | null = null;
+          for (let step = 0; step < 12 && cur != null; step += 1) {
+            if (!years[cur]?.disabled) {
+              found = cur;
+              break;
+            }
+            cur = moveCalendarYearFocusIndex(cur, e.key, rtl);
+          }
+          candidate = found;
+        }
+      }
+      if (candidate == null) return;
       e.preventDefault();
       restoreFocusRef.current = true;
-      setFocusedIndex(next);
+      setFocusedIndex(candidate);
     },
-    [focusedIndex, onYearPress, years],
+    [calendarDisabled, drillDownFocusRef, effectiveFocusedIndex, onYearPress, readOnly, years],
   );
  
   return (
@@ -790,14 +891,16 @@ function CalendarYearsView() {
               >
                 <CalendarInteractiveCell
                   selected={cell.isSelected}
+                  disabled={calendarDisabled || cell.disabled}
                   isCurrent={cell.isCurrentYear}
                   size={size}
                   cellKind="year"
                   rounded="picker"
-                  tabIndex={focusedIndex === index ? 0 : -1}
+                  tabIndex={effectiveFocusedIndex === index ? 0 : -1}
                   rovingKey={String(cell.year)}
                   ariaLabel={String(cell.year)}
                   onClick={() => {
+                    if (cell.disabled || calendarDisabled || readOnly) return;
                     setFocusedIndex(index);
                     onYearPress(cell.year);
                   }}
@@ -816,11 +919,11 @@ function CalendarYearsView() {
  
 export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
   function CalendarTitle(
-    { className = "", children, onClick, motion, onPointerOver, onPointerOut, ...rest },
+    { className = "", children, onClick, disabled: disabledProp, motion, onPointerOver, onPointerOut, ...rest },
     ref,
   ) {
     const slotClassNames = useCalendarClassNames();
-    const { view, setView, size } = useCalendar();
+    const { view, setView, size, disabled: calendarDisabled } = useCalendar();
     const title = useCalendarHeaderTitle();
     const scope = useOptionalCalendarMotionScope();
     const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.title);
@@ -828,27 +931,28 @@ export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
       scope,
       slot: "title",
       motion,
-      pointerPhases: pointer,
-      pressPhases: pointer,
+      pointerPhases: pointer && !calendarDisabled,
+      pressPhases: pointer && !calendarDisabled,
       forwardedRef: ref,
       onPointerOver,
       onPointerOut,
     });
     useOptionalEnterOnMount(scope, "title", targetRef);
+    const isDisabled = disabledProp ?? (calendarDisabled || view === "years");
  
     return (
       <button
         ref={setRef}
         type="button"
-        disabled={view === "years"}
+        disabled={isDisabled}
         onClick={(e) => {
           onClick?.(e);
-          if (e.defaultPrevented) return;
+          if (e.defaultPrevented || calendarDisabled) return;
           if (view === "days") setView("months");
           else if (view === "months") setView("years");
         }}
         className={cn(
-          calendarHeaderTitleClass(size, view),
+          calendarHeaderTitleClass(size, view, calendarDisabled),
           slotClassNames.title,
           className,
         )}
@@ -906,6 +1010,7 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
   function CalendarGrid({ className = "", motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
     const { view } = useCalendar();
+    const drillDownFocusRef = useRef(false);
     const scope = useOptionalCalendarMotionScope();
     const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.grid);
     const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLDivElement>({
@@ -927,9 +1032,9 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
         {...rest}
         {...pointerHandlers}
       >
-        {view === "days" && <CalendarDaysView />}
-        {view === "months" && <CalendarMonthsView />}
-        {view === "years" && <CalendarYearsView />}
+        {view === "days" && <CalendarDaysView drillDownFocusRef={drillDownFocusRef} />}
+        {view === "months" && <CalendarMonthsView drillDownFocusRef={drillDownFocusRef} />}
+        {view === "years" && <CalendarYearsView drillDownFocusRef={drillDownFocusRef} />}
       </div>
     );
   },
@@ -938,7 +1043,7 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
 export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   function CalendarFooter({ className = "", motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
-    const { onClear, onToday, locale } = useCalendar();
+    const { onClear, onToday, locale, disabled: calendarDisabled } = useCalendar();
     const scope = useOptionalCalendarMotionScope();
     const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.footer);
     const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLDivElement>({
@@ -966,6 +1071,7 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
           ref={todayPart.setRef}
           variant="ghost"
           size="small"
+          disabled={calendarDisabled}
           className={cn(
             CALENDAR_FOOTER_TODAY_BUTTON_CLASS,
             slotClassNames.footerToday,
@@ -980,6 +1086,7 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
           variant="ghost"
           size="small"
           status="danger"
+          disabled={calendarDisabled}
           className={slotClassNames.footerClear}
           onClick={onClear}
           {...clearPart.pointerHandlers}

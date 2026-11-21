@@ -54,7 +54,6 @@ export type AlertDialogMotion = {
   description?: AlertDialogPartMotion;
   close?: AlertDialogLifecycleMotion;
   header?: AlertDialogLifecycleMotion;
-  headingBlock?: AlertDialogPartMotion;
   footer?: AlertDialogLifecycleMotion;
   content?: AlertDialogLifecycleMotion;
   body?: AlertDialogLifecycleMotion;
@@ -108,7 +107,7 @@ export type AlertDialogProps = {
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<AlertDialogClassNames>;
   /**
-   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator`) plus `trigger` press on Root.
+   * Per-slot enter/leave (`overlay`, `panel`, `title`, `description`, `close`, `header`, `footer`, `content`, `body`, `indicator`) plus `trigger` press on Root.
    * Overlay/panel defaults are kit modal recipes; trigger defaults to `pressSqueeze`.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).
    * Root has no portal DOM — portal slots live on `AlertDialog.Panel`.
@@ -126,7 +125,8 @@ export type AlertDialogClassNamesProviderProps = {
   children?: ReactNode;
 };
  
-export type AlertDialogPanelProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+export type AlertDialogPanelProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> &
+  OverlayDismissProps & {
   variant?: AlertVariant;
   style?: CSSProperties;
   /**
@@ -144,7 +144,7 @@ export type AlertDialogPanelProps = Omit<HTMLAttributes<HTMLDivElement>, "childr
    */
   motionController?: MotionController;
 } & MotionStateHostProps;
- 
+
 export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Render trigger as a child element (the child receives all trigger props). */
   asChild?: boolean;
@@ -152,7 +152,8 @@ export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & 
   motion?: Prettify<AlertDialogPartMotion>;
 };
 
-export type AlertDialogOverlayProps = OverlayDismissProps;
+export type AlertDialogOverlayProps = OverlayDismissProps &
+  Omit<HTMLAttributes<HTMLDivElement>, "children">;
 
 export type AlertDialogActionProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
@@ -175,6 +176,8 @@ export type AlertDialogContextValue = {
   onInteractOutside?: OverlayDismissProps["onInteractOutside"];
   initialFocus?: OverlayDismissProps["initialFocus"];
   variant: AlertVariant;
+  variantProp?: AlertVariant;
+  rootOverlayProps?: AlertDialogOverlayProps;
   status: AlertStatus;
   size: AlertDialogSize;
   sizePreset: AlertDialogSizePreset;
@@ -219,15 +222,14 @@ export type AlertDialogContentProps = HTMLAttributes<HTMLDivElement> & {
   motion?: Prettify<AlertDialogLifecycleMotion>;
 };
 /** `display: contents` — padding, border, background and width do not paint. Not a motion target. */
-export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
-  motion?: Prettify<AlertDialogPartMotion>;
-};
+export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
  
 export type UseAlertDialogRootStateProps = Pick<
   AlertDialogProps,
   | "open"
   | "defaultOpen"
   | "onOpenChange"
+  | "children"
   | "status"
   | "variant"
   | "size"
@@ -273,6 +275,7 @@ export type AlertDialogPortalShellProps = {
   panelRef: React.RefObject<HTMLDivElement | null>;
   panelForwardedRef?: ForwardedRef<HTMLDivElement>;
   panelRest?: HTMLAttributes<HTMLDivElement>;
+  overlayProps?: Omit<AlertDialogOverlayProps, keyof OverlayDismissProps>;
   /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
   contained?: boolean;
 };

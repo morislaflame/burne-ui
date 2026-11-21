@@ -165,18 +165,20 @@ function Nudge() {
 
 Дефолт `toastSurfaceLeave` — `motionToastDismiss()` + `y: slideDir`. `onComplete` → unmount.
 
-### 3. Стек — reposition (peek + scale)
+### 3. Стек — reposition (peek + scale и раскрытие при наведении)
 
-На `stackRef` при изменении позиции в стеке (**не** публичный слот):
+На `stackRef` при изменении позиции в стеке или раскрытии по hover / focus:
 
-| reverseIdx | scale | y offset | opacity |
-|------------|-------|----------|---------|
-| 0 | 1 | 0 | 1 |
-| 1 | 0.96 | ±8px | 1 |
-| 2 | 0.92 | ±16px | 1 |
+| reverseIdx | Свёрнут (peek) | Раскрыт (hover / focus, `> 1` тоста) | opacity |
+|------------|----------------|--------------------------------------|---------|
+| 0 | `scale: 1`, `y: 0` | `scale: 1`, `y: 0` | 1 |
+| 1 | `scale: 0.96`, `y: ±8px` | `scale: 1`, `y: ±(h₀ + 10px)` | 1 |
+| 2 | `scale: 0.92`, `y: ±16px` | `scale: 1`, `y: ±(h₀ + h₁ + 20px)` | 1 |
 | ≥3 | — | — | 0 (скрыт) |
 
-Константы: `TOAST_STACK_PEEK_PX=8`, `TOAST_STACK_SCALE_STEP=0.04`, `TOAST_MAX_VISIBLE=3`.
+Константы: `TOAST_STACK_PEEK_PX=8`, `TOAST_STACK_SCALE_STEP=0.04`, `TOAST_STACK_EXPANDED_GAP_PX=10`, `TOAST_MAX_VISIBLE=3`.
+
+При наведении курсора (не-touch) или фокусе внутри вьюпорта, когда в стеке больше одного активного тоста, карточки разворачиваются друг над другом (`bottom-*`) или друг под другом (`top-*`) с зазором `10px`, `scale: 1` и включённым `pointer-events: auto` на всех видимых карточках и контейнере стека (`data-state="expanded"`).
 
 Первый mount: доп. fade `opacity: 0 → 1` на stack layer.
 
@@ -184,7 +186,7 @@ function Nudge() {
 
 ### 4. Высота контейнера стека
 
-`ResizeObserver` на card пишет высоту в **ref-`Map`** (без React state). При изменении front card / глубины стека — сразу `GSAP.to(container, { height })` / `style.height` при reduced motion. Viewport не ре-рендерится от RO.
+`ResizeObserver` на карточке фиксирует её реальную высоту; при изменении состава стека или раскрытии по hover обновляется CSS-переменная `--toast-stack-height` (в свёрнутом виде — высота передней карточки + peek, в раскрытом — сумма высот видимых карточек и зазоров).
 
 ### 5. Scrim (градиент)
 

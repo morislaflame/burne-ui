@@ -131,6 +131,7 @@ export type UseButtonRootStateProps = Pick<
   | "iconOnly"
   | "groupSegment"
   | "disabled"
+  | "motionState"
   | "className"
   | "classNames"
   | "ripple"
@@ -143,6 +144,7 @@ export type UseButtonRootStateProps = Pick<
  
 export type UseButtonAnimationsProps = {
   variant: ButtonVariant;
+  disabled: boolean;
   blocked: boolean;
   groupSegment: ButtonGroupSegment | undefined;
   motion?: ButtonMotion;

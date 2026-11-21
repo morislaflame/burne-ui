@@ -1,4 +1,6 @@
-import { Children, forwardRef, isValidElement, useMemo, type ForwardedRef, type ReactNode } from "react";
+import { Children, Fragment, forwardRef, isValidElement, useMemo, type ForwardedRef, type ReactNode } from "react";
+
+import { useSkinVariant } from "@/skins/skinContext";
 
 import {
   resolveAppShellMotionDefaults,
@@ -29,19 +31,30 @@ function sidebarEdge(child: ReactNode): "start" | "end" {
   return side === "end" ? "end" : "start";
 }
 
+function flattenShellChildren(children: ReactNode, out: ReactNode[] = []): ReactNode[] {
+  Children.forEach(children, (child) => {
+    if (isValidElement<{ children?: ReactNode }>(child) && child.type === Fragment) {
+      flattenShellChildren(child.props.children, out);
+      return;
+    }
+    out.push(child);
+  });
+  return out;
+}
+
 function splitShell(children: ReactNode) {
   const header: ReactNode[] = [];
   const leading: ReactNode[] = [];
   const trailing: ReactNode[] = [];
   const main: ReactNode[] = [];
-  Children.forEach(children, (child) => {
+  for (const child of flattenShellChildren(children)) {
     const name = partName(child);
     if (name === "Header") header.push(child);
     else if (name === "Sidebar") {
       if (sidebarEdge(child) === "end") trailing.push(child);
       else leading.push(child);
     } else main.push(child);
-  });
+  }
   return { header, leading, trailing, main };
 }
 
@@ -143,6 +156,7 @@ function AppShellSurface({
     | "onPointerUp"
   >;
 }) {
+  const skinVariant = useSkinVariant(undefined);
   const part = useAppShellRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -154,7 +168,7 @@ function AppShellSurface({
   return (
     <div
       ref={part.setRef}
-      className={appShellRootClass({ slotClass: classNames?.root, className })}
+      className={appShellRootClass({ skinVariant, slotClass: classNames?.root, className })}
       {...rest}
       {...part.pointerHandlers}
     >

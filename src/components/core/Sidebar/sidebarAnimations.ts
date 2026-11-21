@@ -14,12 +14,13 @@ import {
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
+import { overlaySkinMotion } from "@/skins/resolveVariantVisual";
 
 import { useSidebarMotionScope } from "./sidebarContext";
-import type { SidebarPartMotion } from "./sidebarTypes";
+import type { SidebarMotion, SidebarPartMotion } from "./sidebarTypes";
 
-export function resolveSidebarMotionDefaults() {
-  return {};
+export function resolveSidebarMotionDefaults(variant = "default"): SidebarMotion {
+  return overlaySkinMotion({}, variant, ["default"], "sidebar");
 }
 
 export function useSidebarRootMotion({
@@ -38,7 +39,10 @@ export function useSidebarRootMotion({
   onPointerUp?: (e: ReactPointerEvent<HTMLElement>) => void;
 }) {
   const scope = useSidebarMotionScope();
-  const pointer = hasPointerPhases(motion);
+  const pointer =
+    hasPointerPhases(motion) ||
+    hasPointerPhases(scope.getRootMotion()?.root) ||
+    hasPointerPhases(scope.getDefaults()?.root);
   const part = useMotionPart<HTMLElement>({
     scope,
     slot: "root",

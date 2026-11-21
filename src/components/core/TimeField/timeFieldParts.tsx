@@ -1,11 +1,12 @@
 import type { PointerEventHandler, ReactNode } from "react";
 import { forwardRef, useMemo, useRef } from "react";
  
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FieldHiddenValues } from "@/components/core/utils/fieldFormDom";
 import { Field } from "@/components/core/Field";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
@@ -93,7 +94,9 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
       playInitialState,
       ...rest
     } = props;
-    const resolvedDisabled = disabled ?? false;
+    const formCtx = useOptionalFormBindingContext();
+    const resolvedDisabled = Boolean(disabled ?? formCtx?.disabled ?? false) || Boolean(formCtx?.isSubmitting);
+    const resolvedReadOnly = Boolean(readOnly ?? formCtx?.readOnly ?? false);
     const fieldCtx = useOptionalTimeFieldContext();
     const resolvedVariant = useSkinVariant(variant ?? fieldCtx?.variant);
     const pointerInsideRef = useRef(false);
@@ -101,8 +104,12 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
     const skinRevision = useSkinRegistryRevision();
     const motionDefaults = useMemo(() => {
       void skinRevision;
-      return resolveTimeFieldMotionDefaults({ variant: resolvedVariant, disabled: resolvedDisabled });
-    }, [resolvedDisabled, resolvedVariant, skinRevision]);
+      return resolveTimeFieldMotionDefaults({
+        variant: resolvedVariant,
+        disabled: resolvedDisabled,
+        readOnly: resolvedReadOnly,
+      });
+    }, [resolvedDisabled, resolvedReadOnly, resolvedVariant, skinRevision]);
     const motionParams = useMemo(
       () =>
         resolveTimeFieldMotionParams({
@@ -231,6 +238,9 @@ function TimeFieldControlSurface({
     | "onPointerLeave"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
 }) {
   const labels = useBurneLabels();
@@ -258,6 +268,7 @@ function TimeFieldControlSurface({
   } = useTimeFieldShellAnimations({
     shellRef: state.shellRef,
     disabled: state.disabled,
+    readOnly: state.readOnly,
     variant: state.variant,
     motion: shellPartMotion,
     pointerInsideRef,
@@ -276,6 +287,7 @@ function TimeFieldControlSurface({
         bindShellRef(node);
       }}
       id={state.controlId}
+      disabled={state.disabled}
       aria-label={state.shellAria["aria-label"]}
       aria-labelledby={state.shellAria["aria-labelledby"]}
       aria-describedby={state.ariaDescribedBy}
@@ -283,7 +295,10 @@ function TimeFieldControlSurface({
       aria-invalid={state.isInvalid ? true : undefined}
       aria-readonly={state.readOnly || undefined}
       data-slot="timefield-shell"
-      onPointerDown={shellPointerDown}
+      onPointerDown={(e) => {
+        state.recordPointerType(e);
+        shellPointerDown(e);
+      }}
       onPointerUp={shellPointerUp}
       onPointerEnter={(e) => {
         onPointerEnter?.(e);
@@ -311,9 +326,12 @@ function TimeFieldControlSurface({
         variant: state.variant,
       })}
       data-invalid={state.isInvalid ? "" : undefined}
+      data-disabled={dataFlag(state.disabled)}
       data-readonly={state.readOnly ? "" : undefined}
+      data-required={dataFlag(state.required)}
     >
       <div
+        role="presentation"
         className={timeFieldShellInnerClass({
           variant: state.variant,
           slotClass: slotClassNames.shellInner,
@@ -347,24 +365,6 @@ function TimeFieldControlSurface({
           className={timeFieldSegmentsMotionClass(slotClassNames.segments)}
           {...segmentsPointer}
         >
-          <input
-            ref={state.keyboardInputRef}
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            autoComplete="off"
-            aria-hidden
-            tabIndex={-1}
-            disabled={state.disabled}
-            className={cn(
-              TIME_FIELD_KEYBOARD_INPUT_CLASS,
-              slotClassNames.keyboardInput,
-              FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
-            )}
-            onInput={state.handleKeyboardInput}
-            onKeyDown={state.handleKeyboardInputKeyDown}
-            onBlur={state.handleFieldBlur}
-          />
           <FieldHiddenValues name={state.name} value={state.text} />
           {state.segments.map((seg, i) => (
             <span
@@ -385,7 +385,7 @@ function TimeFieldControlSurface({
                 </span>
               )}
               <span
-                ref={state.segRefById[seg]}
+                ref={state.bindFirstSegRef(seg)}
                 {...timeFieldSegSpinbuttonA11y({
                   seg,
                   value: state.hms[seg],
@@ -395,6 +395,8 @@ function TimeFieldControlSurface({
                   disabled: state.disabled,
                   segLabel: timeFieldSegLabel(seg, labels),
                 })}
+                role="spinbutton"
+                tabIndex={state.disabled ? -1 : 0}
                 className={timeFieldSegmentClass({
                   variant: state.variant,
                   focused: state.focusedSeg === seg,
@@ -402,6 +404,7 @@ function TimeFieldControlSurface({
                   slotClass: slotClassNames.segment,
                 })}
                 onKeyDown={(e) => state.handleSegKeyDown(e, seg)}
+                onPaste={(e) => state.handlePaste(e, seg)}
                 onFocus={() => state.handleSegFocus(seg)}
                 onBlur={state.handleFieldBlur}
                 onClick={(e) => state.handleSegClick(e, seg)}
@@ -410,6 +413,26 @@ function TimeFieldControlSurface({
               </span>
             </span>
           ))}
+          <input
+            ref={state.keyboardInputRef}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
+            tabIndex={-1}
+            aria-label={timeFieldSegLabel(state.focusedSeg ?? state.segments[0] ?? "h", labels)}
+            disabled={state.disabled || state.readOnly}
+            readOnly={state.readOnly}
+            className={cn(
+              TIME_FIELD_KEYBOARD_INPUT_CLASS,
+              slotClassNames.keyboardInput,
+              FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
+            )}
+            onInput={state.handleKeyboardInput}
+            onPaste={(e) => state.handlePaste(e)}
+            onKeyDown={state.handleKeyboardInputKeyDown}
+            onBlur={state.handleFieldBlur}
+          />
         </div>
         </div>
  
@@ -545,7 +568,7 @@ export const TimeFieldError = forwardRef<HTMLElement, TimeFieldErrorProps>(
         {...rest}
         {...part.pointerHandlers}
       >
-        {children}
+        {children ?? ctx.errorMessage}
       </Field.Error>
     );
   },

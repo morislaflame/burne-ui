@@ -1,8 +1,10 @@
 import { Children, Fragment, createElement, isValidElement, type ReactNode, type Ref } from "react";
+import { getChildRef } from "@/components/core/utils/mergeAsChildProps";
  
 import type {
   LinkIconPlacement,
   LinkIconProps,
+  LinkPartMotion,
   ResolvedLinkCompoundBody,
   ResolvedLinkIconSlot,
   UseLinkRootStateProps,
@@ -24,13 +26,14 @@ export function hasLinkCompoundChildren(children: ReactNode): boolean {
   });
 }
  
-function resolveIconSlot(props: LinkIconProps): ResolvedLinkIconSlot {
+function resolveIconSlot(props: LinkIconProps, elementRef?: Ref<HTMLSpanElement>): ResolvedLinkIconSlot {
   const hasCustomIcon = props.children !== undefined && props.children !== null;
   return {
     node: hasCustomIcon ? props.children! : "default",
     muted: !hasCustomIcon,
     className: props.className,
-    ref: props.ref,
+    motion: props.motion,
+    ref: elementRef ?? props.ref,
   };
 }
  
@@ -42,8 +45,8 @@ export function resolveLinkCompoundBody(children: ReactNode): ResolvedLinkCompou
   Children.forEach(children, (child) => {
     if (isValidElement(child) && elementDisplayName(child) === LINK_ICON_DISPLAY_NAME) {
       const props = child.props as LinkIconProps;
-      const slot = resolveIconSlot(props);
-      const iconPosition = props.iconPosition ?? "end";
+      const slot = resolveIconSlot(props, getChildRef<HTMLSpanElement>(child));
+      const iconPosition = props.position ?? props.iconPosition ?? "end";
       if (iconPosition === "start") startIcon = slot;
       else endIcon = slot;
       return;
@@ -111,6 +114,8 @@ export function resolveLinkBodyIcons({
   endIcon: ReactNode | null;
   startIconClassName?: string;
   endIconClassName?: string;
+  startIconMotion?: LinkPartMotion;
+  endIconMotion?: LinkPartMotion;
   startIconRef?: Ref<HTMLSpanElement>;
   endIconRef?: Ref<HTMLSpanElement>;
   startIconMuted: boolean;
@@ -131,6 +136,8 @@ export function resolveLinkBodyIcons({
       endIcon: end.node,
       startIconClassName: body.startIcon?.className,
       endIconClassName: body.endIcon?.className,
+      startIconMotion: body.startIcon?.motion,
+      endIconMotion: body.endIcon?.motion,
       startIconRef: body.startIcon?.ref,
       endIconRef: body.endIcon?.ref,
       startIconMuted: start.muted,

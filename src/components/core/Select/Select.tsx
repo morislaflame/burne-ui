@@ -120,6 +120,18 @@ export const SelectRoot = forwardRef(function SelectRoot({
   });
   const focusRef = useRef<HTMLDivElement>(null);
   useFieldControlFocus(focusRef, autoFocus, tabIndex);
+  const {
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    ...rootRest
+  } = rest;
+  const simpleAriaProps = {
+    ...(ariaLabel !== undefined ? { "aria-label": ariaLabel } : undefined),
+    ...(ariaLabelledBy !== undefined ? { "aria-labelledby": ariaLabelledBy } : undefined),
+    ...(ariaDescribedBy !== undefined ? { "aria-describedby": ariaDescribedBy } : undefined),
+  };
+
   return (
     <SelectFieldProvider value={state.fieldCtx}>
       <SelectProvider value={state.selectCtx}>
@@ -139,7 +151,7 @@ export const SelectRoot = forwardRef(function SelectRoot({
                 classNames?.root,
                 className,
               )}
-              {...rest}
+              {...(state.isCompound ? rest : rootRest)}
               ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size: resolvedSize,
@@ -155,6 +167,7 @@ export const SelectRoot = forwardRef(function SelectRoot({
                   hint={state.hint}
                   error={state.error}
                   labelId={state.fieldCtx.labelId}
+                  valueProps={simpleAriaProps}
                   motionController={motionController}
                 motionState={motionState}
                 motionPayload={motionPayload}

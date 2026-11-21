@@ -8,9 +8,11 @@ export function clampN(n: number, min: number, max: number): number {
 }
  
 export function hsvaToRgba({ h, s, v, a }: HSVA): RGBA {
-  const S = s / 100;
-  const V = v / 100;
-  const H = ((h % 360) + 360) % 360;
+  const safeH = Number.isFinite(h) ? h : 0;
+  const S = clampN(Number.isFinite(s) ? s : 0, 0, 100) / 100;
+  const V = clampN(Number.isFinite(v) ? v : 0, 0, 100) / 100;
+  const safeA = clampN(Number.isFinite(a) ? a : 100, 0, 100);
+  const H = ((safeH % 360) + 360) % 360;
   const sector = H / 60;
   const i = Math.floor(sector);
   const f = sector - i;
@@ -26,7 +28,7 @@ export function hsvaToRgba({ h, s, v, a }: HSVA): RGBA {
     case 4: r = t; g = p; b = V; break;
     case 5: r = V; g = p; b = q; break;
   }
-  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), a };
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), a: safeA };
 }
  
 export function rgbaToHsva({ r, g, b, a }: RGBA): HSVA {
@@ -61,13 +63,23 @@ export function rgbaToHex({ r, g, b, a }: RGBA): string {
 }
  
 export function hexToRgba(hex: string): RGBA | null {
-  const s = hex.replace(/^#/, "");
+  if (typeof hex !== "string") return null;
+  const s = hex.trim().replace(/^#/, "");
+  if (!s || !/^[0-9a-fA-F]+$/.test(s)) return null;
   if (s.length === 3) {
     return {
       r: parseInt(s[0]! + s[0]!, 16),
       g: parseInt(s[1]! + s[1]!, 16),
       b: parseInt(s[2]! + s[2]!, 16),
       a: 100,
+    };
+  }
+  if (s.length === 4) {
+    return {
+      r: parseInt(s[0]! + s[0]!, 16),
+      g: parseInt(s[1]! + s[1]!, 16),
+      b: parseInt(s[2]! + s[2]!, 16),
+      a: Math.round((parseInt(s[3]! + s[3]!, 16) / 255) * 100),
     };
   }
   if (s.length === 6) {
@@ -99,6 +111,14 @@ export function normalizeHex(hex: string): string {
   if (s.length === 3) {
     return `#${s[0]}${s[0]}${s[1]}${s[1]}${s[2]}${s[2]}`;
   }
+  if (s.length === 4) {
+    const alphaHex = `${s[3]}${s[3]}`;
+    const base = `#${s[0]}${s[0]}${s[1]}${s[1]}${s[2]}${s[2]}`;
+    return alphaHex === "ff" ? base : base + alphaHex;
+  }
+  if (s.length === 8 && s.slice(6, 8) === "ff") {
+    return `#${s.slice(0, 6)}`;
+  }
   return `#${s}`;
 }
  
@@ -109,8 +129,8 @@ export function hexToHsva(hex: string): HSVA | null {
  
 /** CSS color string from HSVA */
 export function hsvaToColorString(hsva: HSVA): string {
-  const { r, g, b } = hsvaToRgba(hsva);
-  if (hsva.a < 100) return `rgba(${r},${g},${b},${(hsva.a / 100).toFixed(2)})`;
+  const { r, g, b, a } = hsvaToRgba(hsva);
+  if (a < 100) return `rgba(${r},${g},${b},${(a / 100).toFixed(2)})`;
   return `rgb(${r},${g},${b})`;
 }
  
@@ -120,11 +140,19 @@ export function hueToRgbString(hue: number): string {
   return `rgb(${r},${g},${b})`;
 }
  
-export function alphaSliderGradientStyle(color: HSVA, horizontal: boolean): React.CSSProperties {
-  const dir = horizontal ? "to right" : "to top";
+export const COLOR_CHECKERBOARD_IMAGE =
+  "repeating-conic-gradient(var(--color-border) 0% 25%, var(--color-surface) 0% 50%)";
+ 
+export function alphaSliderGradientStyle(
+  color: HSVA,
+  horizontal: boolean,
+  rtl = false,
+): React.CSSProperties {
+  const dir = horizontal ? (rtl ? "to left" : "to right") : "to top";
   const { r, g, b } = hsvaToRgba(color);
   return {
-    background: `linear-gradient(${dir}, rgba(${r},${g},${b},0), rgb(${r},${g},${b}))`,
+    backgroundImage: `linear-gradient(${dir}, rgba(${r},${g},${b},0), rgb(${r},${g},${b})), ${COLOR_CHECKERBOARD_IMAGE}`,
+    backgroundSize: "100% 100%, 8px 8px",
   };
 }
  

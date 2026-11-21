@@ -1,10 +1,12 @@
-import { useCallback, useId, useMemo, useRef } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import { EN_LOCALE, resolveCalendarLocale, type CalendarLocale, type CalendarRangeValue, type CalendarView } from "@/components/core/Calendar";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import type { InputSize, InputVariant } from "@/components/core/Input";
 import type { PopoverSide } from "@/components/core/Popover";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
@@ -15,6 +17,7 @@ import { datePickerDescribedBy, datePickerFieldIds } from "./datePickerA11y";
 import {
   datePickerPlaceholder,
   formatDatePickerDisplay,
+  parseDatePickerFormValue,
   serializeDatePickerValue,
 } from "./datePickerAPI";
 import type { DatePickerMode, DatePickerStoredValue } from "./datePickerTypes";
@@ -92,51 +95,91 @@ export function useDatePickerRootState({
   side = "bottom",
 }: UseDatePickerRootStateProps) {
   const form = useOptionalFormBindingContext();
+  const formBinding = useFormFieldBinding({
+    name,
+    value: valueProp,
+    disabled,
+    readOnly: readOnlyProp,
+  });
   const labels = useBurneLabels();
   const reactId = useId();
   const triggerId = id ?? `date-picker-${reactId}`;
   const ids = datePickerFieldIds(triggerId);
   const isCompound = hasCompoundChildren(children);
   const formMessage = name ? form?.getError(name) : undefined;
-  const resolvedError = error ?? formMessage;
-  const formDisabled = form?.disabled === true;
-  const resolvedDisabled = disabled || formDisabled;
-  const resolvedReadOnly = readOnlyProp || form?.readOnly === true;
+  const resolvedError = error ?? formBinding.error ?? formMessage;
+  const resolvedDisabled = Boolean(formBinding.disabled);
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
 
-  const [value, setStoredValue] = useControllableState<DatePickerStoredValue>({
-    value: valueProp,
-    defaultValue: defaultValue ?? (mode === "range" ? EMPTY_RANGE : mode === "multiple" ? EMPTY_DATES : null),
-    onChange: onValueChange,
-  });
+  const fallbackDefault =
+    defaultValue ?? (mode === "range" ? EMPTY_RANGE : mode === "multiple" ? EMPTY_DATES : null);
+  const explicit = valueProp !== undefined;
+  const bound = formBinding.bound;
+  const formParsed = useMemo(
+    () => (bound ? parseDatePickerFormValue(formBinding.value, mode) : undefined),
+    [bound, formBinding.value, mode],
+  );
+  const controlled = explicit ? valueProp : formParsed;
+  const isControlled = controlled !== undefined;
+  const [internalValue, setInternalValue] = useState<DatePickerStoredValue>(fallbackDefault);
+  const value = isControlled ? controlled : internalValue;
 
-  const [open, setOpenState] = useControllableState({
-    value: resolvedReadOnly ? false : openProp,
-    defaultValue: resolvedReadOnly ? false : defaultOpen,
+  const onValueChangeRef = useRef(onValueChange);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest callback without recreating commit
+  onValueChangeRef.current = onValueChange;
+
+  const locked = resolvedDisabled || resolvedReadOnly;
+
+  const [rawOpen, setOpenState] = useControllableState({
+    value: locked ? false : openProp,
+    defaultValue: locked ? false : defaultOpen,
     onChange: onOpenChange,
   });
+  const open = locked ? false : rawOpen;
   const setOpen = useCallback(
     (next: boolean) => {
-      if (resolvedReadOnly) return;
+      if (next && locked) return;
       setOpenState(next);
     },
-    [resolvedReadOnly, setOpenState],
+    [locked, setOpenState],
   );
 
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const pointerInsideRef = useRef(false);
 
+  useNativeFormReset(
+    triggerRef,
+    () => {
+      setInternalValue(fallbackDefault);
+    },
+    !isControlled,
+  );
+
   const commit = useCallback(
     (next: DatePickerStoredValue) => {
-      if (resolvedReadOnly) return;
-      setStoredValue(next);
-      if (name) form?.setValue(name, serializeDatePickerValue(next, mode));
+      if (locked) return;
+      if (!isControlled) setInternalValue(next);
+      onValueChangeRef.current?.(next);
+      const serialized = serializeDatePickerValue(next, mode);
+      if (bound) {
+        formBinding.setValue(serialized);
+      } else if (name && form) {
+        form.setValue(name, serialized, {
+          shouldValidate: form.validateMode === "onChange",
+        });
+      }
     },
-    [form, mode, name, resolvedReadOnly, setStoredValue],
+    [bound, form, formBinding, isControlled, locked, mode, name],
   );
+
+  const setFormTriggerRef = formBinding.ref as (node: HTMLButtonElement | null) => void;
+  const notifyBlur = formBinding.onBlur;
 
   const locale = useMemo(() => resolveCalendarLocale(localeProp), [localeProp]);
   const display = formatDatePickerDisplay(value, mode, locale);
-  const labelConnected = isCompound ? hasCompoundChild(children, "DatePickerLabel") : label != null;
+  const labelConnected = isCompound
+    ? hasCompoundChild(children, "DatePickerLabel") || hasCompoundChild(children, "Label")
+    : label != null;
   const hintConnected = isCompound ? hasCompoundChild(children, "DatePickerHint") : hint != null;
   const errorConnected = isCompound
     ? hasCompoundChild(children, "DatePickerError")
@@ -144,7 +187,7 @@ export function useDatePickerRootState({
   const isInvalid = useResolvedFieldInvalid({
     invalid,
     errorConnected: resolvedError != null || errorConnected,
-    formInvalid: false,
+    formInvalid: formBinding["aria-invalid"] === true || Boolean(formMessage),
   });
   const contextValue = useMemo(
     () => ({
@@ -180,7 +223,7 @@ export function useDatePickerRootState({
       label,
       hint,
       error: resolvedError,
-      name,
+      name: formBinding.name ?? name,
       serialized: serializeDatePickerValue(value, mode),
       required,
       isInvalid,
@@ -195,6 +238,8 @@ export function useDatePickerRootState({
       }),
       triggerRef,
       pointerInsideRef,
+      setFormTriggerRef,
+      notifyBlur,
     }),
     [
       commit,
@@ -207,6 +252,7 @@ export function useDatePickerRootState({
       display.empty,
       display.text,
       errorConnected,
+      formBinding.name,
       hint,
       hintConnected,
       ids.errorId,
@@ -223,12 +269,14 @@ export function useDatePickerRootState({
       minDate,
       mode,
       name,
+      notifyBlur,
       open,
       placeholder,
       required,
       resolvedDisabled,
       resolvedReadOnly,
       resolvedError,
+      setFormTriggerRef,
       setOpen,
       icon,
       side,

@@ -49,7 +49,7 @@ function useAppShellSlot(
   }: AppShellSlotArgs,
 ) {
   const scope = useAppShellMotionScope();
-  const pointer = hasPointerPhases(motion);
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
   const part = useMotionPart<HTMLDivElement>({
     scope,
     slot: APP_SHELL_MOTION_SLOTS[slot].slot,

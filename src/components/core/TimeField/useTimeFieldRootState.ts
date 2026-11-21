@@ -32,7 +32,11 @@ export function useTimeFieldRootState({
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasLabel:
+        label != null ||
+        (compound &&
+          (hasCompoundChild(children, "TimeFieldLabel") ||
+            hasCompoundChild(children, "Label"))),
       hasHint: hint != null || (compound && hasCompoundChild(children, "TimeFieldHint")),
       hasError: error != null || (compound && hasCompoundChild(children, "TimeFieldError")),
     };
@@ -47,6 +51,7 @@ export function useTimeFieldRootState({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      errorMessage: error,
       invalid,
       required,
       size,
@@ -55,6 +60,7 @@ export function useTimeFieldRootState({
     }),
     [
       compact,
+      error,
       errorId,
       fieldId,
       hasError,

@@ -49,6 +49,7 @@ type LinkSharedProps = Omit<
   children?: ReactNode;
   size?: LinkSize;
   underline?: boolean;
+  disabled?: boolean;
   icon?: ReactNode;
   /** @default "start" */
   iconPosition?: IconPosition;
@@ -76,14 +77,21 @@ export type LinkProps =
     })
   | (LinkSharedProps & {
       asChild?: false;
+      disabled: true;
+      href?: string;
+    })
+  | (LinkSharedProps & {
+      asChild?: false;
       href: string;
     });
  
 export type LinkIconProps = {
+  position?: IconPosition;
   iconPosition?: IconPosition;
   children?: ReactNode;
   /** Extra classes on the icon wrapper. */
   className?: string;
+  motion?: Prettify<LinkPartMotion>;
   ref?: Ref<HTMLSpanElement>;
 };
  
@@ -91,6 +99,7 @@ export type ResolvedLinkIconSlot = {
   node: ReactNode | "default";
   muted: boolean;
   className?: string;
+  motion?: LinkPartMotion;
   ref?: Ref<HTMLSpanElement>;
 };
  
@@ -131,6 +140,8 @@ export type LinkBodyContentProps = {
   endIcon: ReactNode | null;
   startIconClassName?: string;
   endIconClassName?: string;
+  startIconMotion?: LinkPartMotion;
+  endIconMotion?: LinkPartMotion;
   startIconRef?: Ref<HTMLSpanElement>;
   endIconRef?: Ref<HTMLSpanElement>;
   startIconMuted: boolean;
@@ -140,7 +151,8 @@ export type LinkBodyContentProps = {
 };
  
 export type LinkAnchorBodyProps = LinkBodyContentProps & {
-  href: string;
+  href?: string;
+  disabled?: boolean;
   className?: string;
   setAnchorRef: (node: HTMLAnchorElement | null) => void;
   handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;
@@ -160,11 +172,13 @@ export type LinkIconSlotProps = {
   muted?: boolean;
   slotClass?: string;
   className?: string;
+  motion?: LinkPartMotion;
   forwardedRef?: Ref<HTMLSpanElement>;
   slot: "iconStart" | "iconEnd";
 };
  
 export type UseLinkAnimationsProps = {
+  disabled?: boolean;
   forwardedRef: ForwardedRef<HTMLAnchorElement>;
   onPointerEnter?: (event: PointerEvent<HTMLAnchorElement>) => void;
   onPointerLeave?: (event: PointerEvent<HTMLAnchorElement>) => void;

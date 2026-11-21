@@ -76,6 +76,13 @@ export function usePaginationFlip(
     const prevRects = prevRectsRef.current;
     const tweens: gsap.core.Tween[] = [];
 
+    if (!firstRunRef.current) {
+      for (const el of items) {
+        killMotion(el);
+        gsap.set(el, { clearProps: "opacity,scale,x,transform" });
+      }
+    }
+
     for (const el of items) {
       const key = keyFor(el);
       const rect = el.getBoundingClientRect();

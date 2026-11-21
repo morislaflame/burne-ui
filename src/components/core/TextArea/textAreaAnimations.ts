@@ -140,9 +140,17 @@ export function useTextAreaShellAnimations({
   const handleShellPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       onPointerDown?.(e);
-      if (e.defaultPrevented || blocked) return;
-      const target = e.target;
-      if (target instanceof HTMLElement && target.closest("[data-textarea-resize-handle]")) {
+      if (
+        e.defaultPrevented ||
+        blocked ||
+        e.pointerType === "touch" ||
+        (e.target instanceof Element &&
+          Boolean(
+            e.target.closest(
+              '[data-textarea-resize-handle], input, textarea, button, a[href], [role="button"]',
+            ),
+          ))
+      ) {
         return;
       }
       const shell = shellRef.current;

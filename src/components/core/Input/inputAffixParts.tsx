@@ -95,6 +95,9 @@ export function PasswordVisibilityAffix({
             : inputPasswordShowAriaLabel(labels.showPassword)
         }
         aria-pressed={visible}
+        onMouseDown={(e) => {
+          e.preventDefault();
+        }}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -157,6 +160,9 @@ export function FileRemoveButton({
       disabled={disabled}
       title={removeLabel}
       aria-label={removeLabel}
+      onMouseDown={(e) => {
+        e.preventDefault();
+      }}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -8,6 +8,7 @@ import { useSwitchClassNames } from "./switchContext";
 import {
   SWITCH_ERROR_DISABLED_CLASS,
   SWITCH_HINT_DISABLED_CLASS,
+  SWITCH_LABEL_TEXT_DANGER_CLASS,
   SWITCH_LABEL_TEXT_DISABLED_CLASS,
   SWITCH_LAYOUT,
   SWITCH_SIMPLE_LABEL_TEXT_CLASS,
@@ -31,6 +32,7 @@ export function SwitchSimpleBody({
   textColRef,
   size,
   disabled,
+  isInvalid,
   labelPosition,
   hintId,
   errorId,
@@ -46,6 +48,7 @@ export function SwitchSimpleBody({
   textColRef: React.RefObject<HTMLElement | null>;
   size: SwitchSize;
   disabled?: boolean;
+  isInvalid?: boolean;
   labelPosition: SwitchLabelPosition;
   hintId: string;
   errorId: string;
@@ -82,6 +85,7 @@ export function SwitchSimpleBody({
               inheritColor
               className={cn(
                 SWITCH_SIMPLE_LABEL_TEXT_CLASS,
+                !disabled && isInvalid && SWITCH_LABEL_TEXT_DANGER_CLASS,
                 disabled && SWITCH_LABEL_TEXT_DISABLED_CLASS,
                 slotClassNames.simpleLabelText,
                 slotClassNames.labelText,

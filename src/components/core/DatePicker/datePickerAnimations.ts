@@ -42,17 +42,20 @@ function datePickerChevronEnabled() {
 export function resolveDatePickerMotionDefaults({
   variant,
   disabled,
+  readOnly = false,
 }: {
   variant: InputVariant;
   disabled: boolean;
+  readOnly?: boolean;
 }): DatePickerMotion {
   const active = !disabled;
+  const pressActive = !disabled && !readOnly;
   return overlaySkinMotion(
     {
       trigger: {
         hoverIn: active ? "hoverLiftFirstLevel" : false,
         hoverOut: active ? "hoverLiftFirstLevel" : false,
-        pressIn: active ? "pressSqueeze" : false,
+        pressIn: pressActive ? "pressSqueeze" : false,
         pressOut: false,
       },
       icon: { enter: "chevronRotate", leave: "chevronRotate" },
@@ -108,7 +111,8 @@ export function useDatePickerTriggerMotion({
   onPointerUp?: PointerEventHandler<HTMLButtonElement>;
 }) {
   const scope = useOptionalDatePickerMotionScope();
-  const { triggerRef, pointerInsideRef, disabled, variant } = useDatePickerContext();
+  const { triggerRef, pointerInsideRef, disabled, readOnly, variant, setFormTriggerRef } =
+    useDatePickerContext();
   const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
   const shadow = useSecondLevelShadow(triggerRef, !disabled && kitSurface, {
     interactive: false,
@@ -141,6 +145,7 @@ export function useDatePickerTriggerMotion({
   const partMotionRef = useRef(motion);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so the open squeeze sees this render; an effect runs too late
   partMotionRef.current = motion;
+  const locked = disabled || readOnly;
 
   const openAfterSqueeze = useCallback(
     (setOpen: (open: boolean) => void) => {
@@ -148,7 +153,7 @@ export function useDatePickerTriggerMotion({
         triggerRef,
         openingRef,
         setOpen,
-        disabled,
+        disabled: locked,
         config,
         runSqueeze: (el) =>
           playOverlayTriggerOpenSqueeze({
@@ -159,11 +164,12 @@ export function useDatePickerTriggerMotion({
           }),
       });
     },
-    [config, disabled, openingRef, scope, triggerRef],
+    [config, locked, openingRef, scope, triggerRef],
   );
 
   const setRef = (node: HTMLButtonElement | null) => {
     triggerRef.current = node;
+    setFormTriggerRef?.(node);
     part.setRef(node);
   };
 

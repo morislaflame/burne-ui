@@ -35,6 +35,7 @@ export function DrawerRoot({
   onOpenChange,
   placement = "right",
   size = "base",
+  variant,
   children,
   classNames,
   motion,
@@ -50,6 +51,7 @@ export function DrawerRoot({
     onOpenChange,
     placement,
     size,
+    variant,
     portalContainer,
   });
  

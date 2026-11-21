@@ -8,7 +8,14 @@ import { lockBodyScroll, unlockBodyScroll } from "./bodyScrollLock";
 import { shouldHandleContainedEscape } from "./containedEscape";
 import { killMotion } from "./gsapMotion";
 import { focusOnOpen, focusPanelOnOpen, isFocusVisibleElement } from "./focusElement";
-import { overlayShouldClose, type OverlayDismissEvent } from "./overlayLayer";
+import {
+  dismissTopmostOverlayAbove,
+  hasOverlayLayerAbove,
+  isEscapeKeydownInFlight,
+  overlayShouldClose,
+  useRegisterOverlayLayer,
+  type OverlayDismissEvent,
+} from "./overlayLayer";
 import {
   animateModalClose,
   animateModalOpen,
@@ -92,6 +99,8 @@ export type UseModalMotionResult = {
   mounted: boolean;
   /** `open || mounted` — keep portal in DOM for exit animation. */
   showPortal: boolean;
+  /** Stable LIFO layer id for `<OverlayLayerProvider>`. */
+  layerId: symbol;
   dialogRef: RefObject<HTMLDialogElement | null>;
   overlayRef: RefObject<HTMLDivElement | null>;
   panelRef: RefObject<HTMLDivElement | null>;
@@ -143,13 +152,19 @@ export function useModalMotion({
  
   const showPortal = open || mounted;
 
+  const layerId = useRegisterOverlayLayer({
+    enabled: open,
+    kind: "modal",
+    containsNode: (node) => Boolean(dialogRef.current?.contains(node)),
+  });
+
   useLayoutEffect(() => {
     if (open) {
       skipCloseAnimRef.current = false;
       setMounted(true);
     }
   }, [open]);
- 
+
   useLayoutEffect(() => {
     if (!showPortal || contained) return;
     lockBodyScroll();
@@ -157,10 +172,12 @@ export function useModalMotion({
       unlockBodyScroll();
     };
   }, [showPortal, contained]);
- 
+
   useEffect(() => {
     if (!open || !contained || !enableContainedEscape || !onOpenChange) return;
     const onKeyDown = (e: KeyboardEvent) => {
+      if (e.isComposing || e.keyCode === 229) return;
+      if (hasOverlayLayerAbove(layerId)) return;
       if (!shouldHandleContainedEscape(e, dialogRef.current)) return;
       e.preventDefault();
       if (!overlayShouldClose(e, onEscapeKeyDown, closeOnEscape)) return;
@@ -168,7 +185,7 @@ export function useModalMotion({
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, contained, enableContainedEscape, closeOnEscape, onEscapeKeyDown, onOpenChange]);
+  }, [open, contained, enableContainedEscape, closeOnEscape, onEscapeKeyDown, onOpenChange, layerId]);
  
   useLayoutEffect(() => {
     if (open || !mounted) return;
@@ -290,6 +307,7 @@ export function useModalMotion({
  
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
+      if ("button" in e && e.button !== 0) return;
       if (e.target !== e.currentTarget) return;
       if (!overlayShouldClose(e, onInteractOutside, closeOnInteractOutside)) return;
       onOpenChange?.(false);
@@ -299,6 +317,13 @@ export function useModalMotion({
 
   const handleDialogCancel = useCallback(
     (event: OverlayDismissEvent) => {
+      if (hasOverlayLayerAbove(layerId)) {
+        event.preventDefault();
+        if (!isEscapeKeydownInFlight()) {
+          dismissTopmostOverlayAbove(layerId, event.target);
+        }
+        return;
+      }
       // The host preventDefault stops the native dialog from closing before leave.
       // Only preventDefault inside onEscapeKeyDown keeps the overlay open.
       let userPrevented = false;
@@ -315,12 +340,13 @@ export function useModalMotion({
       if (!overlayShouldClose(userEvent, onEscapeKeyDown, closeOnEscape)) return;
       onOpenChange?.(false);
     },
-    [closeOnEscape, onEscapeKeyDown, onOpenChange],
+    [closeOnEscape, layerId, onEscapeKeyDown, onOpenChange],
   );
- 
+
   return {
     mounted,
     showPortal,
+    layerId,
     dialogRef,
     overlayRef,
     panelRef,

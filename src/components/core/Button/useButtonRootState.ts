@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupOverlapBorderClasses, buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
-import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+import { useOptionalFormBindingContext, useFormShell } from "@/components/composite/Form/formContext";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
  
@@ -17,6 +17,7 @@ export function useButtonRootState({
   size: sizeProp,
   type = "button",
   disabled: disabledProp,
+  motionState,
   icon,
   iconPosition = "start",
   ripple = false,
@@ -30,14 +31,18 @@ export function useButtonRootState({
   const layoutCtx = useOptionalButtonGroupLayout();
   const groupCtx = useOptionalButtonGroupSegment();
   const formCtx = useOptionalFormBindingContext();
+  const formShell = useFormShell();
   const groupSegment = layoutCtx?.segmented
     ? undefined
     : (groupSegmentProp ?? groupCtx?.segment);
-  const size = sizeProp ?? groupCtx?.size ?? "base";
+  const size = sizeProp ?? groupCtx?.size ?? formShell?.size ?? "base";
   const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
   const surfaceStyle = useSkinSurfaceStyle(variant);
-  const userDisabled = Boolean(disabledProp ?? formCtx?.disabled ?? formCtx?.isSubmitting);
-  const blocked = userDisabled;
+  const userDisabled = Boolean(
+    disabledProp ?? groupCtx?.disabled ?? formCtx?.disabled ?? formCtx?.isSubmitting,
+  );
+  const isLoading = motionState === "loading";
+  const blocked = userDisabled || isLoading;
  
   const sizeRounded = CONTROL_SIZE_LAYOUT[size].rounded;
   const roundingClass = groupSegment
@@ -81,6 +86,7 @@ export function useButtonRootState({
     status,
     ripple,
     blocked,
+    isLoading,
     userDisabled,
     groupSegment,
     clipClass,

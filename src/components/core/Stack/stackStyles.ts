@@ -44,6 +44,7 @@ export function stackRootClass({
   align,
   justify,
   wrap,
+  skinVariant,
   slotClass,
   className,
 }: {
@@ -52,6 +53,7 @@ export function stackRootClass({
   align: StackAlign;
   justify: StackJustify;
   wrap: boolean;
+  skinVariant?: string;
   slotClass?: string;
   className?: string;
 }): string {
@@ -62,7 +64,7 @@ export function stackRootClass({
     STACK_ALIGN_CLASS[align],
     STACK_JUSTIFY_CLASS[justify],
     wrap && STACK_WRAP_CLASS,
-    layoutTargetClass("stack.root"),
+    layoutTargetClass("stack.root", skinVariant),
     slotClass,
     className,
   );

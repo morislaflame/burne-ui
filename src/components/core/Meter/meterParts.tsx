@@ -3,6 +3,7 @@ import { forwardRef, useMemo } from "react";
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
 import {
@@ -263,6 +264,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       size,
       thickness,
       color,
+      status,
       formatValue,
       orientation,
       className,
@@ -293,6 +295,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       size,
       thickness,
       color,
+      status,
       formatValue,
       orientation,
       "aria-describedby": ariaDescribedByProp,
@@ -337,18 +340,22 @@ const MeterTrackHost = forwardRef<
     MeterTrackProps,
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
     | "value"
     | "min"
     | "max"
     | "size"
     | "thickness"
     | "color"
+    | "status"
     | "formatValue"
     | "orientation"
   > & {
     state: ReturnType<typeof useMeterTrackState>;
   }
->(function MeterTrackHost({ className, state, ...rest }, ref) {
+>(function MeterTrackHost({ className, style, state, ...rest }, ref) {
   const slotClassNames = useMeterClassNames();
   const {
     size: resolvedSize,
@@ -399,8 +406,9 @@ const MeterTrackHost = forwardRef<
         slotClass: slotClassNames.track,
         className,
       })}
-      style={trackCrossStyle}
+      style={trackCrossStyle || style ? { ...trackCrossStyle, ...style } : undefined}
       {...rest}
+      {...dataVariantProps({ status })}
     >
       <span
         ref={fillPart.setRef}

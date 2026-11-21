@@ -4,13 +4,13 @@ import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type ReactNode } from "react";
  
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
-import { useFieldInvalid } from "@/components/core/Field/fieldContext";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { checkboxErrorId, checkboxHintId, checkboxInputId, checkboxLabelId } from "./checkboxA11y";
-import { compoundUsesInlineMotion } from "./checkboxAPI";
+import { compoundHasLabel, compoundUsesInlineMotion } from "./checkboxAPI";
 import { CHECKBOX_SIZE_LAYOUT } from "./checkboxStyles";
 import type { CheckboxFieldContextValue, UseCheckboxRootStateProps } from "./checkboxTypes";
  
@@ -20,7 +20,7 @@ export function useCheckboxRootState(
     labelPosition = "end",
     variant: variantProp,
     icon,
-    disabled,
+    disabled: disabledProp,
     checked,
     defaultChecked,
     indeterminate = false,
@@ -32,7 +32,7 @@ export function useCheckboxRootState(
     form,
     autoFocus,
     tabIndex,
-    readOnly,
+    readOnly: readOnlyProp,
     onBlur,
     onFocus,
     inputRef,
@@ -58,8 +58,8 @@ export function useCheckboxRootState(
     value: checked,
     onChange: onChange as ((event: unknown) => void) | undefined,
     onBlur: onBlur as ((event: unknown) => void) | undefined,
-    disabled,
-    readOnly,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
     type: "checkbox",
   });
   const formBound = formBinding.bound && group == null;
@@ -85,23 +85,38 @@ export function useCheckboxRootState(
         ? groupChecked
         : undefined;
  
+  const isStandaloneUncontrolled =
+    !isExplicitlyControlled && !inSingleGroup && !inMultipleGroup && !formBound;
   const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
     value: resolvedChecked,
-    defaultValue: Boolean(
-      inSingleGroup || inMultipleGroup || isExplicitlyControlled || formBound
-        ? undefined
-        : defaultChecked,
-    ),
+    defaultValue: Boolean(isStandaloneUncontrolled ? defaultChecked : undefined),
   });
  
-  const isDisabled = Boolean(disabled ?? group?.disabled ?? formBinding.disabled);
+  const inputElementRef = useRef<HTMLInputElement | null>(null);
+  useNativeFormReset(
+    inputElementRef,
+    () => {
+      setMergedChecked(Boolean(defaultChecked));
+      if (inputElementRef.current) {
+        inputElementRef.current.indeterminate = Boolean(indeterminate);
+      }
+    },
+    isStandaloneUncontrolled,
+  );
+ 
+  const isDisabled = Boolean(disabledProp ?? group?.disabled ?? formBinding.disabled);
+  const isReadOnly = Boolean(readOnlyProp ?? group?.readOnly ?? formBinding.readOnly);
   const { isCompound, hasCompoundLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasCompoundLabel: compound && hasCompoundChild(children, "Label"),
-      hasCompoundHint: compound ? hasCompoundChild(children, "CheckboxHint") : false,
-      hasCompoundError: compound ? hasCompoundChild(children, "CheckboxError") : false,
+      hasCompoundLabel: compound && compoundHasLabel(children),
+      hasCompoundHint: compound
+        ? hasCompoundChild(children, "CheckboxHint", "Checkbox.Hint")
+        : false,
+      hasCompoundError: compound
+        ? hasCompoundChild(children, "CheckboxError", "Checkbox.Error")
+        : false,
     };
   }, [children]);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
@@ -109,12 +124,10 @@ export function useCheckboxRootState(
   const sz = CHECKBOX_SIZE_LAYOUT[size];
   const hasHint = hint != null;
   const hasError = error != null;
-  const inheritedInvalid = useFieldInvalid();
-  const isInvalid = resolveFieldInvalid({
+  const isInvalid = useResolvedFieldInvalid({
     invalid,
-    error: (isCompound ? hasCompoundError : hasError) ? true : undefined,
-    formInvalid: formBound && formBinding["aria-invalid"] === true,
-    inheritedInvalid,
+    errorConnected: isCompound ? hasCompoundError : hasError,
+    formInvalid: Boolean(formBound && formBinding.error),
   });
   const isDanger = isInvalid;
   const secondaryLines = isCompound
@@ -125,12 +138,12 @@ export function useCheckboxRootState(
  
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (formBinding.readOnly || readOnly || group?.readOnly) {
+      if (isReadOnly) {
         e.preventDefault();
         return;
       }
       const next = e.target.checked;
-      if (!isControlled && !inSingleGroup && !inMultipleGroup && !formBound) setMergedChecked(next);
+      if (isStandaloneUncontrolled) setMergedChecked(next);
       onChange?.(e);
       if (e.defaultPrevented) return;
       if (inSingleGroup) {
@@ -147,10 +160,10 @@ export function useCheckboxRootState(
       formBound,
       formBinding,
       group,
-      readOnly,
+      isReadOnly,
       inMultipleGroup,
       inSingleGroup,
-      isControlled,
+      isStandaloneUncontrolled,
       onChange,
       optionValueStr,
       setMergedChecked,
@@ -179,6 +192,8 @@ export function useCheckboxRootState(
       mergedChecked,
       indeterminate,
       isDisabled,
+      isReadOnly,
+      isInvalid,
       isControlled,
       isCompound,
       hasCompoundHint,
@@ -195,16 +210,15 @@ export function useCheckboxRootState(
       inputProps: {
         name: formBinding.name ?? name,
         value,
-        defaultChecked:
-          !isControlled && !formBound && !inSingleGroup && !inMultipleGroup ? defaultChecked : undefined,
+        defaultChecked: isStandaloneUncontrolled ? defaultChecked : undefined,
         required: inputRequired,
         form,
         autoFocus,
         tabIndex,
-        readOnly: formBinding.readOnly ?? readOnly,
+        readOnly: isReadOnly,
         onBlur: handleBlur,
         onFocus,
-        inputRef: mergeRefs(formBound ? formBinding.ref : undefined, inputRef),
+        inputRef: mergeRefs(inputElementRef, formBound ? formBinding.ref : undefined, inputRef),
         ariaInvalid: isInvalid || undefined,
       },
     }),
@@ -228,8 +242,8 @@ export function useCheckboxRootState(
       hasHint,
       isDanger,
       isInvalid,
-      inMultipleGroup,
-      inSingleGroup,
+      isReadOnly,
+      isStandaloneUncontrolled,
       inputId,
       isCompound,
       isControlled,
@@ -240,7 +254,6 @@ export function useCheckboxRootState(
       name,
       onFocus,
       inputRequired,
-      readOnly,
       labelPosition,
       size,
       tabIndex,
@@ -264,6 +277,9 @@ export function useCheckboxRootState(
     fieldLabelContext,
     isCompound,
     isDisabled,
+    isReadOnly,
+    isInvalid,
+    isRequired: Boolean(inputRequired),
     mergedChecked,
     enableTextMotion,
     textColRef,

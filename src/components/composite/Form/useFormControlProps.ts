@@ -19,46 +19,61 @@ export function useFormControlProps({
   const explicitValue = valueProp !== undefined;
   const bound = form != null && name != null && !explicitValue;
  
+  const registerRef = form?.registerRef;
+  const setFormValue = form?.setValue;
+  const setTouched = form?.setTouched;
+  const validateField = form?.validateField;
+  const getFieldRules = form?.getFieldRules;
+  const validateMode = form?.validateMode;
+
+  const onChangeRef = useRef(onChangeProp);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest user onChange without recreating handler
+  onChangeRef.current = onChangeProp;
+
+  const onBlurRef = useRef(onBlurProp);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest user onBlur without recreating handler
+  onBlurRef.current = onBlurProp;
+
   const ref = useRef<HTMLElement | null>(null);
   const setRef = useCallback(
     (node: HTMLElement | null) => {
       ref.current = node;
-      if (bound && name) form.registerRef(name, node);
+      if (bound && name) registerRef?.(name, node);
     },
-    [bound, form, name],
+    [bound, name, registerRef],
   );
  
   const disabled = disabledProp ?? form?.disabled ?? false;
   const readOnly = readOnlyProp ?? form?.readOnly ?? false;
   const formError = bound && name ? form.getError(name) : undefined;
   const rules = useMemo(
-    () => mergeFormFieldRules(name ? form?.getFieldRules(name) : undefined, rulesProp),
-    [form, name, rulesProp],
+    () => mergeFormFieldRules(name ? getFieldRules?.(name) : undefined, rulesProp),
+    [getFieldRules, name, rulesProp],
   );
  
   const rawValue = bound && name ? form.getValue(name) : valueProp;
   const onChange = useCallback(
     (event: unknown) => {
-      onChangeProp?.(event);
-      if (!bound || !name || !form) return;
+      onChangeRef.current?.(event);
+      if (!bound || !name || !setFormValue) return;
       const next = readControlValueFromEvent(event, type);
-      form.setValue(name, next, {
-        shouldValidate: form.validateMode === "onChange",
+      setFormValue(name, next, {
+        shouldValidate: validateMode === "onChange",
       });
     },
-    [bound, form, name, onChangeProp, type],
+    [bound, name, setFormValue, type, validateMode],
   );
  
   const onBlur = useCallback(
     (event: unknown) => {
-      onBlurProp?.(event);
-      if (!bound || !name || !form) return;
-      form.setTouched(name, true);
-      if (form.validateMode === "onBlur") {
-        form.validateField(name);
+      onBlurRef.current?.(event);
+      if (!bound || !name) return;
+      setTouched?.(name, true);
+      if (validateMode === "onBlur") {
+        validateField?.(name);
       }
     },
-    [bound, form, name, onBlurProp],
+    [bound, name, setTouched, validateField, validateMode],
   );
  
   // Form-bound fields must stay controlled from the first render.

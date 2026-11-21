@@ -14,9 +14,15 @@ import { dataFlag } from "@/components/core/utils/dataContract";
 import { focusKeyboard } from "@/components/core/utils/focusElement";
 import { KitCheckmarkSharp } from "@/components/core/utils/kitIcons";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 
 import { stepperKeyDelta, stepperCurrent } from "./stepperA11y";
-import { useStepperIndicatorPointer, useStepperSlotMotion, useStepperRootMotion } from "./stepperAnimations";
+import {
+  useStepperIndicatorPointer,
+  useStepperIndicatorShadow,
+  useStepperSlotMotion,
+  useStepperRootMotion,
+} from "./stepperAnimations";
 import { isStepperItem, isStepperTrigger, stepperStepSelectable, stepperStepState } from "./stepperAPI";
 import {
   StepperItemProvider,
@@ -64,6 +70,7 @@ export const StepperIndicator = forwardRef<HTMLSpanElement, StepperIndicatorProp
       forwardedRef: ref,
       ...pointerProps({ onPointerOver, onPointerOut, onPointerDown, onPointerUp }),
     });
+    useStepperIndicatorShadow(item.indicatorRef, item.selectable);
     const mark = children ?? (
       item.state === "checked" ? (
         <span className={stepperIconClass(size)}>
@@ -153,6 +160,8 @@ function StepperSeparator() {
   );
 }
 
+const STEPPER_TRIGGER_DATA_SLOT = "trigger";
+
 export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>(
   function StepperTrigger({
     className,
@@ -182,8 +191,6 @@ export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>
         aria-current={stepperCurrent(item.state === "active")}
         className={stepperTriggerClass(root.orientation, slotClass, className)}
         {...rest}
-        data-value={item.value}
-        data-disabled={dataFlag(!item.selectable)}
         onPointerEnter={(event) => {
           onPointerEnter?.(event);
           if (!event.defaultPrevented) mark.onPointerOver();
@@ -210,10 +217,14 @@ export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>
           const delta = stepperKeyDelta(
             event.key,
             root.orientation,
-            getComputedStyle(list).direction === "rtl",
+            isRtlElement(list),
           );
           if (delta == null) return;
-          const buttons = [...list.querySelectorAll<HTMLButtonElement>("button:not(:disabled)")];
+          const buttons = [
+            ...list.querySelectorAll<HTMLButtonElement>(
+              `[data-slot="${STEPPER_TRIGGER_DATA_SLOT}"]:not(:disabled):not([aria-disabled="true"])`,
+            ),
+          ];
           const current = buttons.indexOf(event.currentTarget);
           if (current < 0) return;
           const next = delta === "start" ? 0 : delta === "end" ? buttons.length - 1 : current + delta;
@@ -224,6 +235,9 @@ export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>
           const nextValue = button.getAttribute("data-value");
           if (nextValue) root.select(nextValue);
         }}
+        data-slot={STEPPER_TRIGGER_DATA_SLOT}
+        data-value={item.value}
+        data-disabled={dataFlag(!item.selectable)}
       >
         {children}
       </button>
@@ -234,18 +248,38 @@ StepperTrigger.displayName = "StepperTrigger";
 
 export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
   function StepperItem(
-    { value, title, description, className, children, motion, index = 0, isLast = false },
+    {
+      value,
+      title,
+      description,
+      className,
+      children,
+      motion,
+      index = 0,
+      isLast = false,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
     ref,
   ) {
     const root = useStepperContext();
     const slotClass = useStepperClassNames().item;
     const state = stepperStepState(index, root.currentIndex);
-    const selectable = stepperStepSelectable(index, root.currentIndex, root.linear);
+    const selectable = stepperStepSelectable(
+      index,
+      root.currentIndex,
+      root.linear,
+      root.maxReachedIndex,
+    );
     const indicatorRef = useRef<HTMLSpanElement | null>(null);
     const part = useStepperSlotMotion<HTMLLIElement>({
       slot: "item",
       motion,
       forwardedRef: ref,
+      ...pointerProps({ onPointerOver, onPointerOut, onPointerDown, onPointerUp }),
     });
 
     const body = children ?? (
@@ -259,8 +293,9 @@ export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
     return (
       <li
         ref={part.setRef}
-        {...part.pointerHandlers}
         className={stepperItemClass(root.orientation, isLast, slotClass, className)}
+        {...rest}
+        {...part.pointerHandlers}
         data-state={state}
       >
         <StepperItemProvider value={{ index, value, state, selectable, isLast, indicatorRef }}>

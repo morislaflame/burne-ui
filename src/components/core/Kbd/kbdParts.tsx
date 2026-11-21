@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 import { flattenKbdGroupChildren } from "./kbdAPI";
 import { KBD_GROUP_SEPARATOR_ARIA_HIDDEN } from "./kbdA11y";
 import { useKbdGroupSlotMotion } from "./kbdAnimations";
-import { KbdMotionProvider, useKbdClassNames, useOptionalKbdMotionScope } from "./kbdContext";
+import { KbdClassNamesProvider, KbdMotionProvider, useKbdClassNames, useOptionalKbdMotionScope } from "./kbdContext";
 import { kbdGroupClass, kbdGroupSeparatorClass } from "./kbdStyles";
 import type { KbdGroupProps } from "./kbdTypes";
  
@@ -23,24 +23,28 @@ export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(
       playInitialState,
       onPointerOver,
       onPointerOut,
+      onPointerDown,
+      onPointerUp,
       ...rest
     },
     ref,
   ) {
     const parentScope = useOptionalKbdMotionScope();
     const surface = (
-      <KbdGroupSurface
-        className={className}
-        classNames={classNames}
-        separator={separator}
-        motion={motion}
-        forwardedRef={ref}
-        onPointerOver={onPointerOver}
-        onPointerOut={onPointerOut}
-        rest={rest}
-      >
-        {children}
-      </KbdGroupSurface>
+      <KbdClassNamesProvider classNames={classNames}>
+        <KbdGroupSurface
+          className={className}
+          classNames={classNames}
+          separator={separator}
+          motion={motion}
+          forwardedRef={ref}
+          onPointerOver={onPointerOver}
+          onPointerOut={onPointerOut}
+          rest={{ ...rest, onPointerDown, onPointerUp }}
+        >
+          {children}
+        </KbdGroupSurface>
+      </KbdClassNamesProvider>
     );
  
     if (parentScope || (motion == null && motionController == null && motionState == null)) {

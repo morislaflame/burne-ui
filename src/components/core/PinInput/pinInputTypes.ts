@@ -135,4 +135,8 @@ export type PinInputContextValue = {
   required: boolean;
   isInvalid: boolean;
   describedBy?: string;
+  setFirstCellRef?: (node: HTMLInputElement | null) => void;
+  registerShellRef?: (node: HTMLDivElement | null) => void;
+  notifyBlur?: () => void;
+  resetVersion?: number;
 };

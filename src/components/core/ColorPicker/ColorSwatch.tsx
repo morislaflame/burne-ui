@@ -1,6 +1,6 @@
 import { forwardRef, useMemo, useRef, type ButtonHTMLAttributes, type Ref } from "react";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
  
 import {
   resolveColorSwatchMotionDefaults,
@@ -8,7 +8,7 @@ import {
   useColorSwatchAnimations,
 } from "./colorSwatchAnimations";
 import { ColorSwatchMotionProvider } from "./colorSwatchContext";
-import { colorSwatchClass } from "./colorSwatchStyles";
+import { COLOR_SWATCH_FILL_LAYER_CLASS, colorSwatchClass } from "./colorSwatchStyles";
 import type { ColorSwatchClassNames, ColorSwatchProps, ColorSwatchShape, ColorSwatchSize } from "./colorSwatchTypes";
  
 export type {
@@ -75,8 +75,15 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
           })}
           style={{ backgroundColor: color }}
           {...dataVariantProps({ size })}
+          data-disabled={dataFlag(disabled)}
           data-state={selected ? "selected" : undefined}
-        />
+        >
+          <span
+            aria-hidden
+            className={COLOR_SWATCH_FILL_LAYER_CLASS}
+            style={{ backgroundColor: color }}
+          />
+        </span>
       );
     }
  
@@ -303,8 +310,15 @@ function ColorSwatchButtonSurface({
       style={{ backgroundColor: color }}
       {...buttonRest}
       {...dataVariantProps({ size })}
+      data-disabled={dataFlag(disabled)}
       data-state={selected ? "selected" : undefined}
-    />
+    >
+      <span
+        aria-hidden
+        className={COLOR_SWATCH_FILL_LAYER_CLASS}
+        style={{ backgroundColor: color }}
+      />
+    </button>
   );
 }
  

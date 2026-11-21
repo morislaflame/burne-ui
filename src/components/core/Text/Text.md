@@ -32,9 +32,16 @@ Compound API нет: компонент leaf-level и не имеет подча
 | `as` | зависит от `variant` | HTML-тег или React component |
 | `inheritColor` | `false` | Не добавлять `text-foreground` |
 | `className` | — | Дополнительные классы |
+| `classNames` | — | Слоты кастомизации (`root`) |
 | `motion` | — | Per-slot (`root`). `events` — app-команды `MotionController` |
 | `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 | HTML props | — | Все `HTMLAttributes<HTMLElement>` кроме переопределённого `className` |
+
+### `TextClassNames`
+
+| Слот | Элемент |
+|------|---------|
+| `root` | Корневой текстовый элемент |
 
 ### `TextVariant`
 

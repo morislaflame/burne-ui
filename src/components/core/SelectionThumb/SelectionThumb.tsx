@@ -138,7 +138,7 @@ function SelectionThumbShell({
   >;
 }) {
   const scope = useSelectionThumbMotionScope();
-  const pointer = hasPointerPhases(rootMotion);
+  const pointer = hasPointerPhases(rootMotion ?? scope.getRootMotion()?.root);
   const part = useMotionPart<HTMLSpanElement>({
     scope,
     slot: "root",

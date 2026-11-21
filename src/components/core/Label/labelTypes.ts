@@ -27,6 +27,7 @@ export type LabelMotion = {
 export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
   children?: ReactNode;
   required?: boolean;
+  disabled?: boolean;
   /** Typography role for the label copy. Default `base`. */
   textStyle?: TextVariant;
   classNames?: Prettify<LabelClassNames>;
@@ -51,11 +52,12 @@ export type FieldLabelContextValue = {
   controlId?: string;
   labelId?: string;
   required?: boolean;
+  disabled?: boolean;
 };
  
 export type UseLabelRootStateProps = Pick<
   LabelProps,
-  "required" | "htmlFor" | "id"
+  "required" | "disabled" | "htmlFor" | "id"
 >;
  
 export type LabelContentProps = {

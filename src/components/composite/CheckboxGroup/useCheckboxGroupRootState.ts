@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
  
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
-import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptionGroupSingleValue";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
+import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
  
 import { checkboxGroupNextValues, checkboxGroupValuesEqual } from "./checkboxGroupAPI";
 import type {
@@ -21,35 +22,51 @@ export function useCheckboxGroupRootState({
   values: valuesProp,
   defaultValues,
   onValuesChange,
-  disabled = false,
-  readOnly = false,
+  disabled: disabledProp,
+  readOnly: readOnlyProp,
   name,
+  error,
+  children,
+  onBlur: onBlurProp,
   hintId: hintIdProp,
   errorId: errorIdProp,
 }: UseCheckboxGroupRootStateProps) {
   const formBinding = useFormFieldBinding({
     name,
     value: selection === "multiple" ? valuesProp : valueProp,
-    disabled,
-    readOnly,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
   });
-  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const resolvedDisabled = Boolean(disabledProp ?? formBinding.disabled);
+  const resolvedReadOnly = Boolean(readOnlyProp ?? formBinding.readOnly);
   const formBound = formBinding.bound;
+  const formInvalid = Boolean(formBound && formBinding.error);
+  const hasCompoundError = useMemo(
+    () => hasCompoundChild(children, "CheckboxGroup.Error", "CheckboxGroupError"),
+    [children],
+  );
+  const resolvedError =
+    error ?? (!hasCompoundError && formBound ? formBinding.error : undefined);
+
   const hintId = useFieldSetHintId(hintIdProp);
   const errorId = useFieldSetErrorId(errorIdProp);
   const multiple = selection === "multiple";
   const valuesControlled = multiple && valuesProp !== undefined;
+  const singleControlled = !multiple && valueProp !== undefined;
  
   const formSingle =
     formBound && selection === "single" && formBinding.value != null && formBinding.value !== ""
       ? String(formBinding.value)
       : null;
-  const { selectedValue: singleSelectedValue, selectValue } = useOptionGroupSingleValue({
-    value: selection === "single" ? (formBound ? formSingle : valueProp) : undefined,
-    defaultValue: selection === "single" ? defaultValue : undefined,
-    onValueChange: selection === "single" ? onValueChange : undefined,
-    allowClear: true,
-  });
+  const [internalSingle, setInternalSingle] = useState<string | null>(() => defaultValue ?? null);
+  const singleSelectedValue =
+    selection === "single"
+      ? formBound
+        ? formSingle
+        : singleControlled
+          ? (valueProp ?? null)
+          : internalSingle
+      : null;
  
   const [internalValues, setInternalValues] = useState<string[]>(() =>
     defaultValues ? [...defaultValues] : [],
@@ -66,19 +83,54 @@ export function useCheckboxGroupRootState({
  
   const selectedValue = selection === "single" ? singleSelectedValue : null;
  
+  const fieldsetRef = useRef<HTMLFieldSetElement | null>(null);
+  const bindFieldsetRef = useCallback(
+    (node: HTMLFieldSetElement | null) => {
+      fieldsetRef.current = node;
+      if (formBound) {
+        const firstInput = node?.querySelector<HTMLElement>('input[type="checkbox"]:not(:disabled)');
+        formBinding.ref(firstInput ?? node);
+      }
+    },
+    [formBinding, formBound],
+  );
+ 
+  useNativeFormReset(
+    fieldsetRef,
+    () => {
+      if (multiple) {
+        if (!valuesControlled) setInternalValues(defaultValues ? [...defaultValues] : []);
+      } else if (!singleControlled) {
+        setInternalSingle(defaultValue ?? null);
+      }
+    },
+    !formBound && (multiple ? !valuesControlled : !singleControlled),
+  );
+ 
+  const handleBlur = useCallback(
+    (event: React.FocusEvent<HTMLFieldSetElement>) => {
+      onBlurProp?.(event);
+      if (formBound && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
+        formBinding.onBlur();
+      }
+    },
+    [formBinding, formBound, onBlurProp],
+  );
+ 
   const selectSingleValue = useCallback(
     (optionValue: string, checked: boolean) => {
-      if (selection !== "single" || resolvedReadOnly) return;
-      const next = checked ? optionValue : undefined;
-      selectValue(next);
+      if (selection !== "single" || resolvedReadOnly || resolvedDisabled) return;
+      const next = checked ? optionValue : null;
+      if (!singleControlled && !formBound) setInternalSingle(next);
+      onValueChange?.(next);
       if (formBound) formBinding.setValue(next ?? "");
     },
-    [formBinding, formBound, resolvedReadOnly, selectValue, selection],
+    [formBinding, formBound, onValueChange, resolvedDisabled, resolvedReadOnly, selection, singleControlled],
   );
  
   const toggleMultipleValue = useCallback(
     (optionValue: string, checked: boolean) => {
-      if (!multiple || resolvedReadOnly) return;
+      if (!multiple || resolvedReadOnly || resolvedDisabled) return;
       const current = formBound ? formValues : valuesControlled ? (valuesProp ?? EMPTY_VALUES) : internalValues;
       const next = checkboxGroupNextValues(current, optionValue, checked);
       if (checkboxGroupValuesEqual(current, next)) return;
@@ -86,15 +138,15 @@ export function useCheckboxGroupRootState({
       onValuesChange?.(next);
       if (formBound) formBinding.setValue(next);
     },
-    [formBinding, formBound, formValues, internalValues, multiple, onValuesChange, resolvedReadOnly, valuesControlled, valuesProp],
+    [formBinding, formBound, formValues, internalValues, multiple, onValuesChange, resolvedDisabled, resolvedReadOnly, valuesControlled, valuesProp],
   );
  
   const contextValue = useMemo<CheckboxGroupContextValue>(
     () => ({
       selection,
-      disabled: Boolean(formBinding.disabled),
+      disabled: resolvedDisabled,
       readOnly: resolvedReadOnly,
-      name,
+      name: formBinding.name ?? name,
       required,
       hintId,
       errorId,
@@ -105,9 +157,10 @@ export function useCheckboxGroupRootState({
     }),
     [
       errorId,
-      formBinding,
+      formBinding.name,
       hintId,
       name,
+      resolvedDisabled,
       resolvedReadOnly,
       required,
       selectSingleValue,
@@ -120,6 +173,16 @@ export function useCheckboxGroupRootState({
  
   const fieldLabelCtx = useMemo(() => ({ required }), [required]);
  
-  return { contextValue, fieldLabelCtx, hintId, errorId, disabled };
+  return {
+    contextValue,
+    fieldLabelCtx,
+    hintId,
+    errorId,
+    disabled: resolvedDisabled,
+    formInvalid,
+    resolvedError,
+    bindFieldsetRef,
+    handleBlur,
+  };
 }
  

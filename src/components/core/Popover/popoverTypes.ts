@@ -81,6 +81,7 @@ export type PopoverContextValue = {
   triggerRef: RefObject<HTMLElement | null>;
   anchorRef?: RefObject<HTMLElement | null>;
   contentRef: RefObject<HTMLDivElement | null>;
+  layerId: symbol;
   /** Portal mount node from Root; Content may override via its own prop. */
   portalContainer?: HTMLElement | null;
 };

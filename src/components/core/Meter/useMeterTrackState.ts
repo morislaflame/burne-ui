@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo } from "react";
  
 import { clampNumber } from "@/components/core/utils/clampNumber";
  
-import { defaultMeterFormatValue, meterValueToPercent } from "./meterAPI";
+import { defaultMeterFormatValue, meterValueToPercent, resolveMeterBounds } from "./meterAPI";
 import { meterLabelId, resolveMeterDescribedBy, resolveMeterTrackAria } from "./meterA11y";
 import { useOptionalMeterFieldContext } from "./meterContext";
 import { meterFillColorStyle, meterTrackCrossStyle } from "./meterStyles";
@@ -15,26 +15,34 @@ export function useMeterTrackState({
   size = "base",
   thickness,
   color,
-  status,
+  status: statusProp,
   formatValue = defaultMeterFormatValue,
   orientation: orientationProp,
   "aria-describedby": ariaDescribedByProp,
 }: UseMeterTrackStateProps) {
   const fieldCtx = useOptionalMeterFieldContext();
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
+  const status = statusProp ?? fieldCtx?.status;
   const meterId = fieldCtx?.meterId;
   const labelId = meterId != null ? meterLabelId(meterId) : undefined;
   const labelConnected = fieldCtx?.labelConnected ?? false;
   const hintConnected = fieldCtx?.hintConnected ?? false;
   const errorConnected = fieldCtx?.errorConnected ?? false;
  
+  const { safeMin, safeMax } = useMemo(
+    () => resolveMeterBounds(min, max),
+    [max, min],
+  );
   const clampedValue = useMemo(
-    () => clampNumber(value, min, max),
-    [max, min, value],
+    () =>
+      value === Number.POSITIVE_INFINITY
+        ? safeMax
+        : clampNumber(value, safeMin, safeMax),
+    [safeMax, safeMin, value],
   );
   const percent = useMemo(
-    () => meterValueToPercent(clampedValue, min, max),
-    [clampedValue, max, min],
+    () => meterValueToPercent(clampedValue, safeMin, safeMax),
+    [clampedValue, safeMax, safeMin],
   );
  
   const isHorizontal = orientation === "horizontal";
@@ -53,8 +61,8 @@ export function useMeterTrackState({
  
   const aria = resolveMeterTrackAria({
     clampedValue,
-    min,
-    max,
+    min: safeMin,
+    max: safeMax,
     statusText,
     labelConnected,
     labelId,
@@ -71,8 +79,8 @@ export function useMeterTrackState({
   const setDisplay = fieldCtx?.setDisplay;
  
   useLayoutEffect(() => {
-    setDisplay?.({ clampedValue, statusText, min, max });
-  }, [clampedValue, max, min, setDisplay, statusText]);
+    setDisplay?.({ clampedValue, statusText, min: safeMin, max: safeMax });
+  }, [clampedValue, safeMax, safeMin, setDisplay, statusText]);
  
   return {
     size,

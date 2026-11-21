@@ -38,11 +38,12 @@ export function useInputRootState({
       labelId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      errorMessage: error,
       invalid,
       required,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, inputId, invalid, required, labelId, size],
+    [error, errorId, hasError, hasHint, hintId, inputId, invalid, required, labelId, size],
   );
  
   const fieldLabelCtx = useMemo(

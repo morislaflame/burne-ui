@@ -53,7 +53,7 @@ export function breadcrumbStaticClass(className?: string): string {
 }
  
 export function breadcrumbChevronClass(className?: string): string {
-  return cn("shrink-0 text-muted opacity-75 icon-small", className);
+  return cn("shrink-0 text-muted opacity-75 icon-small rtl:rotate-180", className);
 }
  
 export function crumbInteractiveInnerClass(className?: string): string {

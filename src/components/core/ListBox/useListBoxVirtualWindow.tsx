@@ -1,9 +1,9 @@
-import { Children, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
+import { Children, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { useVirtualWindow } from "@/components/core/utils/useVirtualWindow";
 
 import { collectListBoxVirtualOptions, type ListBoxVirtualOption } from "./listBoxAPI";
-import { useListBoxActiveValue } from "./listBoxContext";
+import { useListBox, useListBoxActiveValue } from "./listBoxContext";
 import { LISTBOX_VIRTUAL_FRAME_CLASS, LISTBOX_VIRTUAL_WINDOW_CLASS } from "./listBoxStyles";
 import type { ListBoxSize } from "./listBoxTypes";
 
@@ -28,15 +28,25 @@ export function useListBoxVirtualWindow({
   frame: ReactNode;
   catalog: ListBoxVirtualOption[] | null;
   setScrollNode: (node: HTMLElement | null) => void;
+  rangeKey: string;
 } {
   const activeValue = useListBoxActiveValue();
+  const { activeChangeSourceRef } = useListBox("ListBox");
   const catalog = useMemo(
     () => (enabled ? collectListBoxVirtualOptions(children) : null),
     [children, enabled],
   );
   const active = enabled && catalog != null;
-  const pinIndex =
+  const lastPinnedIndexRef = useRef(-1);
+  const rawPinIndex =
     active && activeValue ? catalog.findIndex((option) => option.value === activeValue) : -1;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- skip virtual scroll jump when activeValue changed from pointer hover
+  if (activeChangeSourceRef.current !== "pointer") {
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- skip virtual scroll jump when activeValue changed from pointer hover
+    lastPinnedIndexRef.current = rawPinIndex;
+  }
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- read pinned index for virtual window
+  const pinIndex = active ? lastPinnedIndexRef.current : -1;
   const [measured, setMeasured] = useState<number | null>(null);
   const itemSize = itemSizeProp ?? measured ?? LISTBOX_ITEM_SIZE_FALLBACK[size];
   const virtual = useVirtualWindow({
@@ -69,5 +79,7 @@ export function useListBoxVirtualWindow({
     );
   }, [active, catalog, children, virtual.range.end, virtual.range.offset, virtual.range.start, virtual.range.total]);
 
-  return { frame, catalog: active ? catalog : null, setScrollNode: virtual.setScrollNode };
+  const rangeKey = active ? `${virtual.range.start}:${virtual.range.end}` : "";
+
+  return { frame, catalog: active ? catalog : null, setScrollNode: virtual.setScrollNode, rangeKey };
 }

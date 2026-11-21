@@ -2,6 +2,7 @@ import { Children, isValidElement, type ReactNode } from "react";
  
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator/selectionIndicatorStyles";
 import { formatLocaleNumber } from "@/components/core/utils/intlFormat";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import type {
   FillSpan,
   SliderDisplayState,
@@ -85,17 +86,40 @@ export function sliderExplicitNames(
 }
 
 export function clampSliderValue(n: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, n));
+  const safeLo = Number.isFinite(lo) ? lo : 0;
+  const safeHi = Number.isFinite(hi) ? hi : safeLo;
+  if (safeLo >= safeHi) return safeLo;
+  if (!Number.isFinite(n)) return safeLo;
+  return Math.min(safeHi, Math.max(safeLo, n));
+}
+ 
+export function sliderDecimalPlaces(n: number): number {
+  if (!Number.isFinite(n)) return 0;
+  const text = String(n);
+  const expMatch = /[eE]-(\d+)$/.exec(text);
+  if (expMatch) {
+    const basePart = text.split(/[eE]/)[0] ?? "";
+    const dotIdx = basePart.indexOf(".");
+    const fracLen = dotIdx >= 0 ? basePart.length - dotIdx - 1 : 0;
+    return fracLen + Number(expMatch[1]);
+  }
+  const dotIdx = text.indexOf(".");
+  return dotIdx >= 0 ? text.length - dotIdx - 1 : 0;
+}
+ 
+export function roundSliderFloat(n: number, decimals: number): number {
+  if (!Number.isFinite(n) || decimals <= 0) return n;
+  return Number(n.toFixed(Math.min(decimals, 20)));
 }
  
 export function sliderValueToPercent(value: number, min: number, max: number): number {
-  if (max <= min) return 0;
-  return ((value - min) / (max - min)) * 100;
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0;
+  return ((clampSliderValue(value, min, max) - min) / (max - min)) * 100;
 }
  
 export function sliderValueToRatio(value: number, min: number, max: number): number {
-  if (max <= min) return 0;
-  return (value - min) / (max - min);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0;
+  return (clampSliderValue(value, min, max) - min) / (max - min);
 }
  
 export function sliderThumbCenterPercent(
@@ -156,18 +180,29 @@ export function sliderFillSpanForValues(
 export function sliderFillStyleFromSpan(
   span: FillSpan,
   orientation: SliderOrientation,
-): { left?: string; width?: string; bottom?: string; height?: string } {
-  const size = span.end - span.start;
+): { insetInlineStart?: string; width?: string; bottom?: string; height?: string } {
+  const size = Math.max(0, span.end - span.start);
   if (orientation === "horizontal") {
-    return { left: `${span.start}%`, width: `${size}%` };
+    return { insetInlineStart: `${span.start}%`, width: `${size}%` };
   }
   return { bottom: `${span.start}%`, height: `${size}%` };
 }
  
 export function snapSliderToStep(value: number, min: number, max: number, step: number): number {
-  if (step <= 0) return clampSliderValue(value, min, max);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min >= max) {
+    return Number.isFinite(min) ? min : 0;
+  }
+  if (!Number.isFinite(value)) return min;
+  if (!Number.isFinite(step) || step <= 0) return clampSliderValue(value, min, max);
+  const decimals = Math.max(
+    sliderDecimalPlaces(step),
+    sliderDecimalPlaces(min),
+    sliderDecimalPlaces(max),
+  );
   const steps = Math.round((value - min) / step);
-  return clampSliderValue(min + steps * step, min, max);
+  const raw = min + steps * step;
+  const rounded = decimals > 0 ? roundSliderFloat(raw, decimals) : raw;
+  return clampSliderValue(rounded, min, max);
 }
  
 export function snapSliderToMarks(value: number, marks: number[]): number {
@@ -203,16 +238,27 @@ export function sliderPointerToValue(
   min: number,
   max: number,
   thumbPx: number,
+  rtl = false,
 ): number {
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+    return Number.isFinite(min) ? min : 0;
+  }
   const span = orientation === "horizontal" ? rect.width : rect.height;
-  const half = thumbPx / 2;
-  const travel = span - thumbPx;
+  const safeThumb = span > thumbPx && thumbPx > 0 ? thumbPx : 0;
+  const half = safeThumb / 2;
+  const travel = span - safeThumb;
  
   if (travel <= 0) return min;
  
   const ratio =
     orientation === "horizontal"
-      ? clampSliderValue((clientX - rect.left - half) / travel, 0, 1)
+      ? clampSliderValue(
+          rtl
+            ? (rect.right - clientX - half) / travel
+            : (clientX - rect.left - half) / travel,
+          0,
+          1,
+        )
       : clampSliderValue(1 - (clientY - rect.top - half) / travel, 0, 1);
  
   return min + ratio * (max - min);
@@ -240,12 +286,13 @@ export function sliderStepDelta(
   step: number,
   key: string,
   orientation: SliderOrientation,
+  rtl = false,
 ): number | "home" | "end" | "mark-prev" | "mark-next" {
-  void orientation;
-  // APG: both axes increase/decrease — horiz uses ←/→ (and ↑/↓ as aliases);
-  // vertical uses ↑/↓ (and →/← as aliases).
-  const increaseKeys = new Set(["ArrowRight", "ArrowUp", "PageUp"]);
-  const decreaseKeys = new Set(["ArrowLeft", "ArrowDown", "PageDown"]);
+  const flipHoriz = orientation === "horizontal" && rtl;
+  const arrowInc = flipHoriz ? "ArrowLeft" : "ArrowRight";
+  const arrowDec = flipHoriz ? "ArrowRight" : "ArrowLeft";
+  const increaseKeys = new Set([arrowInc, "ArrowUp", "PageUp"]);
+  const decreaseKeys = new Set([arrowDec, "ArrowDown", "PageDown"]);
  
   if (marks?.length) {
     if (key === "Home") return "home";
@@ -255,13 +302,14 @@ export function sliderStepDelta(
     return 0;
   }
  
-  const big = step > 0 ? step * 10 : 10;
+  const safeStep = Number.isFinite(step) && step > 0 ? step : 1;
+  const big = safeStep * 10;
   if (key === "Home") return "home";
   if (key === "End") return "end";
   if (key === "PageUp") return big;
   if (key === "PageDown") return -big;
-  if (key === "ArrowRight" || key === "ArrowUp") return step;
-  if (key === "ArrowLeft" || key === "ArrowDown") return -step;
+  if (key === arrowInc || key === "ArrowUp") return safeStep;
+  if (key === arrowDec || key === "ArrowDown") return -safeStep;
   return 0;
 }
 
@@ -314,11 +362,10 @@ export function applySliderPointer(args: {
   snap: (raw: number) => number;
   emitRange: (next: [number, number]) => void;
   emitSingle: (next: number) => void;
-  syncFill: (nextSingle?: number, nextRange?: [number, number]) => void;
 }): void {
   const {
-    track, clientX, clientY, thumb, disabled, readOnly, range, rangeValue, singleValue,
-    min, max, orientation, fallbackThumbPx, snap, emitRange, emitSingle, syncFill,
+    track, clientX, clientY, thumb, disabled, readOnly, range, rangeValue,
+    min, max, orientation, fallbackThumbPx, snap, emitRange, emitSingle,
   } = args;
   if (disabled || readOnly) return;
   const rect = track.getBoundingClientRect();
@@ -331,23 +378,20 @@ export function applySliderPointer(args: {
     min,
     max,
     thumbPx > 0 ? thumbPx : fallbackThumbPx,
+    isRtlElement(track),
   );
   if (range) {
     const [lo, hi] = rangeValue;
     if (thumb === "start") {
       const nextLo = snap(Math.min(raw, hi));
       emitRange([nextLo, hi]);
-      syncFill(singleValue, [nextLo, hi]);
     } else if (thumb === "end") {
       const nextHi = snap(Math.max(raw, lo));
       emitRange([lo, nextHi]);
-      syncFill(singleValue, [lo, nextHi]);
     }
     return;
   }
-  const next = snap(raw);
   emitSingle(raw);
-  syncFill(next, rangeValue);
 }
 
 export function applySliderThumbKey(args: {
@@ -364,35 +408,39 @@ export function applySliderThumbKey(args: {
   commit: () => void;
 }): void {
   const { action, thumb, range, rangeValue, singleValue, min, max, marks, emitRange, emitSingle, commit } = args;
-  const current = thumb === "start" ? rangeValue[0] : thumb === "end" ? rangeValue[1] : singleValue;
-  const emitEnd = (value: number, atStart: boolean) => {
-    if (range) emitRange(atStart ? [value, rangeValue[1]] : [rangeValue[0], value]);
-    else emitSingle(value);
+  const [lo, hi] = rangeValue;
+  const current = thumb === "start" ? lo : thumb === "end" ? hi : singleValue;
+  const clampForThumb = (candidate: number) => {
+    if (!range) return clampSliderValue(candidate, min, max);
+    return thumb === "start"
+      ? clampSliderValue(candidate, min, hi)
+      : clampSliderValue(candidate, lo, max);
+  };
+  const emitClamped = (candidate: number) => {
+    const bounded = clampForThumb(candidate);
+    if (range) {
+      emitRange(thumb === "start" ? [bounded, hi] : [lo, bounded]);
+    } else {
+      emitSingle(bounded);
+    }
     commit();
   };
 
   if (action === "home") {
-    emitEnd(min, thumb === "start");
+    emitClamped(range && thumb === "end" ? lo : min);
     return;
   }
   if (action === "end") {
-    emitEnd(max, thumb === "start");
+    emitClamped(range && thumb === "start" ? hi : max);
     return;
   }
   if (action === "mark-next" || action === "mark-prev") {
     if (!marks?.length) return;
-    emitEnd(sliderAdjacentMark(current, marks, action === "mark-next" ? 1 : -1), thumb === "start");
+    emitClamped(sliderAdjacentMark(current, marks, action === "mark-next" ? 1 : -1));
     return;
   }
   if (typeof action === "number" && action !== 0) {
-    if (range) {
-      const [lo, hi] = rangeValue;
-      if (thumb === "start") emitRange([lo + action, hi]);
-      else emitRange([lo, hi + action]);
-    } else {
-      emitSingle(singleValue + action);
-    }
-    commit();
+    emitClamped(current + action);
   }
 }
  

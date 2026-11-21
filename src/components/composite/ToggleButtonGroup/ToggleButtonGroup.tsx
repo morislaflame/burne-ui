@@ -6,7 +6,7 @@ import { toggleButtonGroupRootClass } from "./toggleButtonGroupStyles";
 import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";
 import { KIT_TOGGLE_BUTTON_VARIANTS } from "@/components/core/ToggleButton/toggleButtonTypes";
 import { isKitVariant } from "@/skins/resolveVariantVisual";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
@@ -210,6 +210,8 @@ function ToggleButtonGroupRootSurface({
       {...rest}
       {...part.pointerHandlers}
       {...dataVariantProps({ size, variant })}
+      data-orientation={orientation}
+      data-disabled={dataFlag(disabled)}
     >
       {children}
     </div>

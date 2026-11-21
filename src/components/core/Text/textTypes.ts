@@ -21,16 +21,21 @@ export type TextPartMotion = {
   leave?: MotionValue;
 };
  
+export type TextClassNames = {
+  root?: string;
+};
+
 export type TextMotion = {
   root?: TextPartMotion;
 };
- 
+
 export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
   /** Typography role. Default `base`. Surface `variant` is not used here. */
   textStyle?: TextVariant;
   as?: ElementType;
   inheritColor?: boolean;
   className?: string;
+  classNames?: Prettify<TextClassNames>;
   /**
    * Per-slot motion (`root`). Defaults are empty — custom factories are opt-in.
    * `enter` runs on mount only when set.

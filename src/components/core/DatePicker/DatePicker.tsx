@@ -3,8 +3,9 @@ import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label/labelContext";
 import { Popover } from "@/components/core/Popover";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { dataInvalidValue } from "@/components/core/utils/fieldInvalid";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinVariant } from "@/skins/skinContext";
 
@@ -123,8 +124,9 @@ export const DatePickerRoot = forwardRef(function DatePickerRoot(props: DatePick
       resolveDatePickerMotionDefaults({
         variant: resolvedVariant,
         disabled: state.contextValue.disabled,
+        readOnly: state.contextValue.readOnly,
       }),
-    [resolvedVariant, state.contextValue.disabled],
+    [resolvedVariant, state.contextValue.disabled, state.contextValue.readOnly],
   );
   const motionParams = useMemo(
     () =>
@@ -158,7 +160,10 @@ export const DatePickerRoot = forwardRef(function DatePickerRoot(props: DatePick
                 size,
                 variant: resolvedVariant,
               })}
+              data-invalid={dataInvalidValue(state.contextValue.isInvalid)}
+              data-disabled={dataFlag(state.contextValue.disabled)}
               data-readonly={readOnlyData(state.contextValue.readOnly)}
+              data-required={dataFlag(state.contextValue.required)}
             >
               <Popover
                 open={state.contextValue.open}

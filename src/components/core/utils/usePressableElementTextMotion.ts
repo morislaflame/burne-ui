@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, type KeyboardEvent, type PointerEvent, type RefObject } from "react";
  
-import { killMotion } from "./gsapMotion";
+import { clearMotionTransform, killMotion } from "./gsapMotion";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -88,14 +88,13 @@ export function usePressableElementTextMotion<
     // intentionally captures the element at mount time for cleanup
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
- 
+
   useEffect(() => {
     const el = textMotionRef.current;
-    if (!el || !isDisabled) return;
+    if (!el || (!isDisabled && enabled)) return;
     hoverInsideRef.current = false;
-    killMotion(el);
-    el.style.transform = "";
-  }, [isDisabled, textMotionRef]);
+    clearMotionTransform(el);
+  }, [enabled, isDisabled, textMotionRef]);
  
   const runPressSqueeze = useCallback(() => {
     if (reduceMotion) return;

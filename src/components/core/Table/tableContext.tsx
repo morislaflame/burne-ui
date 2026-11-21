@@ -25,6 +25,9 @@ const noopStore: TableRowSelectionStore = {
   setSelectedKeys: () => {},
   setFocusedRowKey: () => {},
   claimFocusedRowKey: () => {},
+  registerRowKey: () => () => {},
+  setCatalogKeys: () => {},
+  getAllRowKeys: () => [],
 };
  
 const TableVariantContext = createContext<TableVariant>("default");

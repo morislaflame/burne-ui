@@ -8,6 +8,7 @@
 
 /* End-cap radius for Accordion items (`:where`, so a consumer utility wins). */
 @import "./components/composite/Accordion/accordion.css";
+@import "./components/composite/ButtonGroup/buttonGroup.css";
 
 /* Studio state matrix. `data-force-state` is space-separated: hover, focus, press, disabled.
    Real `:hover` stays inside `@media (hover: hover)`, same as Tailwind's default variant,
@@ -28,19 +29,17 @@
 @custom-variant active (&:active, &[data-force-state~="press"]);
 @custom-variant disabled (&:disabled, &[data-force-state~="disabled"]);
 
-p,
-ul,
-ol {
-  margin: 0;
-}
+@layer base {
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
 
-p {
-  line-height: 1.2;
-}
-
-/** Global tracking — theme knob `--letter-spacing` (inherits into the tree). */
-html {
-  letter-spacing: var(--letter-spacing);
+  /** Global tracking — theme knob `--letter-spacing` (inherits into the tree). */
+  html {
+    letter-spacing: var(--letter-spacing);
+  }
 }
 
 /* ─── Skeleton animations ─────────────────────────────────────────────────── */
@@ -245,6 +244,9 @@ html {
 }
 @utility shadow-token-mid {
   box-shadow: var(--shadow-mid);
+}
+@utility shadow-token-large {
+  box-shadow: var(--shadow-large);
 }
 @utility shadow-token-xlarge {
   box-shadow: var(--shadow-xlarge);

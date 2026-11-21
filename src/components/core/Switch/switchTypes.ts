@@ -80,6 +80,11 @@ export type SwitchFieldContextValue = {
   size: SwitchSize;
   labelPosition: SwitchLabelPosition;
   disabled?: boolean;
+  disabledProp?: boolean;
+  readOnly: boolean;
+  readOnlyProp?: boolean;
+  invalidProp?: boolean;
+  required: boolean;
   isCompound: boolean;
   hasCompoundHint: boolean;
   hasCompoundError: boolean;
@@ -285,6 +290,9 @@ export type UseSwitchRootStateResult = {
   hintId: string;
   errorId: string;
   disabled?: boolean;
+  readOnly: boolean;
+  required: boolean;
+  isChecked: boolean;
   enableTextMotion: boolean;
   textColRef: RefObject<HTMLElement | null>;
   labelPosition: SwitchLabelPosition;

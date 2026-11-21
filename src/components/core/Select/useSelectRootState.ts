@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
  
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import type { InputVariant } from "@/components/core/Input";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
@@ -34,6 +35,7 @@ function useSelectMultipleValues({
   formBound,
   formValue,
   setFormValue,
+  disabled,
   readOnly,
 }: {
   multiple: boolean;
@@ -43,6 +45,7 @@ function useSelectMultipleValues({
   formBound: boolean;
   formValue: unknown;
   setFormValue: (next: unknown) => void;
+  disabled: boolean;
   readOnly: boolean;
 }) {
   const isValuesControlled = multiple && (valuesProp !== undefined || formBound);
@@ -61,14 +64,19 @@ function useSelectMultipleValues({
   });
   const setValues = useCallback(
     (next: string[]) => {
-      if (!multiple || readOnly) return;
+      if (!multiple || disabled || readOnly) return;
       if (!isValuesControlled) setInternalValues(next);
       onValuesChange?.(next);
       if (formBound) setFormValue(next);
     },
-    [formBound, isValuesControlled, multiple, onValuesChange, readOnly, setFormValue],
+    [disabled, formBound, isValuesControlled, multiple, onValuesChange, readOnly, setFormValue],
   );
-  return { values, setValues };
+  const resetInternalValues = useCallback(() => {
+    if (!isValuesControlled) {
+      setInternalValues(defaultValues ?? EMPTY_SELECT_VALUES);
+    }
+  }, [defaultValues, isValuesControlled]);
+  return { values, setValues, isValuesControlled, resetInternalValues };
 }
 
 export function useSelectRootState({
@@ -111,8 +119,8 @@ export function useSelectRootState({
     readOnly: readOnlyProp,
   });
   const formBound = formBinding.bound;
-  const disabled = formBinding.disabled ?? disabledProp;
-  const readOnly = Boolean(formBinding.readOnly);
+  const disabled = Boolean(formBinding.disabled ?? disabledProp);
+  const readOnly = Boolean(formBinding.readOnly ?? readOnlyProp);
   const selectValueLabel = useBurneLabel("selectValue");
   const placeholder = placeholderProp ?? selectValueLabel;
   const autoId = useId();
@@ -130,9 +138,21 @@ export function useSelectRootState({
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
-      hasHint: hint != null || (compound && hasCompoundChild(children, "SelectHint")),
-      hasError: error != null || (compound && hasCompoundChild(children, "SelectError")),
+      hasLabel:
+        label != null ||
+        (compound &&
+          (hasCompoundChild(children, "SelectLabel") ||
+            hasCompoundChild(children, "Label"))),
+      hasHint:
+        hint != null ||
+        (compound &&
+          (hasCompoundChild(children, "SelectHint") ||
+            hasCompoundChild(children, "Select.Hint"))),
+      hasError:
+        error != null ||
+        (compound &&
+          (hasCompoundChild(children, "SelectError") ||
+            hasCompoundChild(children, "Select.Error"))),
     };
   }, [children, error, hint, label]);
  
@@ -149,15 +169,15 @@ export function useSelectRootState({
  
   const setValue = useCallback(
     (next: string) => {
-      if (multiple || readOnly) return;
+      if (multiple || disabled || readOnly) return;
       if (!isControlled) setInternalValue(next);
       onValueChange?.(next === "" ? null : next);
       if (formBound) formBinding.setValue(next);
     },
-    [formBinding, formBound, isControlled, multiple, onValueChange, readOnly],
+    [disabled, formBinding, formBound, isControlled, multiple, onValueChange, readOnly],
   );
 
-  const { values, setValues } = useSelectMultipleValues({
+  const { values, setValues, isValuesControlled, resetInternalValues } = useSelectMultipleValues({
     multiple,
     valuesProp,
     defaultValues,
@@ -165,25 +185,36 @@ export function useSelectRootState({
     formBound,
     formValue: formBinding.value,
     setFormValue: formBinding.setValue,
+    disabled,
     readOnly,
   });
  
-  const [open, setOpenState] = useControllableState({
-    value: openProp,
-    defaultValue: defaultOpen,
+  const [rawOpen, setOpenState] = useControllableState({
+    value: disabled || readOnly ? false : openProp,
+    defaultValue: disabled || readOnly ? false : defaultOpen,
     onChange: onOpenChange,
   });
+  const open = disabled || readOnly ? false : rawOpen;
   const setOpen = useCallback(
     (next: boolean) => {
-      if (readOnly) return;
+      if (next && (disabled || readOnly)) return;
       setOpenState(next);
     },
-    [readOnly, setOpenState],
+    [disabled, readOnly, setOpenState],
   );
   const [activeValue, setActiveValue] = useState<string | null>(null);
  
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const valueRef = useRef<HTMLButtonElement | null>(null);
+
+  useNativeFormReset(
+    anchorRef,
+    () => {
+      if (!isControlled) setInternalValue(defaultValue ?? "");
+      resetInternalValues();
+    },
+    multiple ? !isValuesControlled : !isControlled,
+  );
  
   const optionSections = useMemo(() => selectOptionSections(optionsProp), [optionsProp]);
   const items = useMemo(

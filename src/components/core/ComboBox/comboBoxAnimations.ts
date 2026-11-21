@@ -45,19 +45,22 @@ bindPortalRecipes();
 export function resolveComboBoxMotionDefaults({
   variant,
   disabled,
+  readOnly = false,
   groupSegment,
 }: {
   variant: InputVariant;
   disabled: boolean;
+  readOnly?: boolean;
   groupSegment?: unknown;
 }): ComboBoxMotion {
   const active = !disabled && groupSegment == null;
+  const pressActive = !disabled && !readOnly && groupSegment == null;
   return overlaySkinMotion(
     {
       shell: {
         hoverIn: active ? "hoverLiftFirstLevel" : false,
         hoverOut: active ? "hoverLiftFirstLevel" : false,
-        pressIn: active ? "pressSqueeze" : false,
+        pressIn: pressActive ? "pressSqueeze" : false,
         pressOut: false,
       },
       triggerIconWrap: { enter: "chevronRotate", leave: "chevronRotate" },
@@ -149,6 +152,7 @@ export function useComboBoxOpenAfterSqueeze({
 export function useComboBoxShellAnimations({
   shellRef,
   disabled,
+  readOnly = false,
   variant,
   groupSegment,
   motion,
@@ -175,7 +179,7 @@ export function useComboBoxShellAnimations({
 
   const squeezeThenOpen = useComboBoxOpenAfterSqueeze({
     triggerRef: shellRef,
-    disabled,
+    disabled: disabled || readOnly,
     partMotionRef: shellMotionRef,
   });
 

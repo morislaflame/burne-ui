@@ -17,25 +17,43 @@ import { resizableHandleClass, resizablePanelClass } from "./resizableStyles";
 import type { ResizableHandleProps, ResizablePanelProps } from "./resizableTypes";
 
 const DEFAULT_MIN = 8;
+const DEFAULT_MAX = 100;
+
+function computePairBounds(
+  pairSum: number,
+  minBefore: number,
+  maxBefore: number,
+  minAfter: number,
+  maxAfter: number,
+): { loBefore: number; hiBefore: number } {
+  const loBefore = Math.max(minBefore, pairSum - maxAfter);
+  const hiBefore = Math.min(maxBefore, pairSum - minAfter);
+  if (loBefore > hiBefore) {
+    const mid = Math.min(maxBefore, Math.max(minBefore, pairSum / 2));
+    return { loBefore: mid, hiBefore: mid };
+  }
+  return { loBefore, hiBefore };
+}
 
 function clampPair(
   startBefore: number,
   startAfter: number,
   delta: number,
   minBefore: number,
+  maxBefore: number,
   minAfter: number,
+  maxAfter: number,
 ) {
-  let before = startBefore + delta;
-  let after = startAfter - delta;
-  if (before < minBefore) {
-    after -= minBefore - before;
-    before = minBefore;
-  }
-  if (after < minAfter) {
-    before -= minAfter - after;
-    after = minAfter;
-  }
-  if (before < minBefore || after < minAfter) return null;
+  const pairSum = startBefore + startAfter;
+  const { loBefore, hiBefore } = computePairBounds(
+    pairSum,
+    minBefore,
+    maxBefore,
+    minAfter,
+    maxAfter,
+  );
+  const before = Math.min(hiBefore, Math.max(loBefore, startBefore + delta));
+  const after = Math.max(0, pairSum - before);
   return { before, after };
 }
 
@@ -44,6 +62,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
     id: idProp,
     defaultSize,
     minSize = DEFAULT_MIN,
+    maxSize = DEFAULT_MAX,
     className = "",
     motion,
     onPointerOver,
@@ -59,6 +78,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
   const id = idProp?.trim() ? idProp : generatedId;
   const layout = useResizableLayout();
   const layoutRef = useRef(layout);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest layout callbacks without re-triggering mount/unmount effect
   layoutRef.current = layout;
   const part = useResizablePanelMotion({
     forwardedRef: ref,
@@ -71,17 +91,13 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
   const size = layout.sizes[id];
 
   useLayoutEffect(() => {
-    layoutRef.current.rememberMin(id, minSize);
-  }, [id, minSize]);
+    layoutRef.current.registerPanel(id, { defaultSize, minSize, maxSize });
+  }, [defaultSize, id, maxSize, minSize]);
 
   useLayoutEffect(() => {
-    if (defaultSize == null) return;
-    layoutRef.current.commit((prev) => (id in prev ? prev : { ...prev, [id]: defaultSize }));
-  }, [defaultSize, id]);
-
-  useLayoutEffect(() => {
-    const api = layoutRef.current;
-    return () => api.forget(id);
+    return () => {
+      layoutRef.current.unregisterPanel(id);
+    };
   }, [id]);
 
   return (
@@ -132,6 +148,7 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
 ) {
   const layout = useResizableLayout();
   const layoutRef = useRef(layout);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest layout state for pointer/key handlers
   layoutRef.current = layout;
   const drag = useRef<{
     beforeId: string;
@@ -142,27 +159,42 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
     total: number;
   } | null>(null);
   const [announced, setAnnounced] = useState<number | undefined>();
-  const [bounds, setBounds] = useState({ min: DEFAULT_MIN, max: 100, controls: "" });
+  const [bounds, setBounds] = useState({ min: DEFAULT_MIN, max: 100 - DEFAULT_MIN, controls: "" });
   const resizeLabel = useBurneLabel("resizePanels");
 
   const measure = useCallback((root: HTMLElement) => {
-    const horizontal = layoutRef.current.orientation === "horizontal";
+    const api = layoutRef.current;
+    const horizontal = api.orientation === "horizontal";
     const panels = [...root.children].filter(
       (node): node is HTMLElement =>
         node instanceof HTMLElement && Boolean(node.dataset.value) && node.getAttribute("role") !== "separator",
     );
-    const total = panels.reduce((sum, node) => {
+    const measuredTotal = panels.reduce((sum, node) => {
       const box = node.getBoundingClientRect();
       return sum + (horizontal ? box.width : box.height);
-    }, 0) || 1;
+    }, 0);
+    const allInSizes = panels.length > 0 && panels.every((node) => node.dataset.value && node.dataset.value in api.sizes);
     const next: Record<string, number> = {};
-    for (const node of panels) {
-      const id = node.dataset.value;
-      if (!id) continue;
-      const box = node.getBoundingClientRect();
-      next[id] = ((horizontal ? box.width : box.height) / total) * 100;
+    if (allInSizes) {
+      for (const node of panels) {
+        const id = node.dataset.value!;
+        next[id] = api.sizes[id] ?? 0;
+      }
+    } else if (measuredTotal > 0) {
+      for (const node of panels) {
+        const id = node.dataset.value;
+        if (!id) continue;
+        const box = node.getBoundingClientRect();
+        next[id] = ((horizontal ? box.width : box.height) / measuredTotal) * 100;
+      }
+    } else {
+      const equal = panels.length > 0 ? 100 / panels.length : 100;
+      for (const node of panels) {
+        const id = node.dataset.value;
+        if (id) next[id] = equal;
+      }
     }
-    return { next, total };
+    return { next, total: measuredTotal > 0 ? measuredTotal : 100 };
   }, []);
 
   const applyDelta = useCallback((deltaPercent: number) => {
@@ -174,9 +206,10 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
       current.startAfter,
       deltaPercent,
       api.minOf(current.beforeId),
+      api.maxOf(current.beforeId),
       api.minOf(current.afterId),
+      api.maxOf(current.afterId),
     );
-    if (!pair) return;
     api.commit((prev) => ({
       ...prev,
       [current.beforeId]: pair.before,
@@ -188,17 +221,37 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
   const readBounds = useCallback((handle: HTMLElement) => {
     const before = handle.previousElementSibling;
     const after = handle.nextElementSibling;
-    if (!(before instanceof HTMLElement) || !(after instanceof HTMLElement)) return;
+    const root = handle.parentElement;
+    if (!(before instanceof HTMLElement) || !(after instanceof HTMLElement) || !root) return;
     const beforeId = before.dataset.value;
     const afterId = after.dataset.value;
     if (!beforeId || !afterId) return;
     const api = layoutRef.current;
-    const min = api.minOf(beforeId);
-    const max = Math.max(min, 100 - api.minOf(afterId));
-    const now = api.sizes[beforeId];
-    setBounds({ min, max, controls: `${before.id} ${after.id}` });
-    if (now != null) setAnnounced(Math.round(now));
-  }, []);
+    let beforeVal = api.sizes[beforeId];
+    let afterVal = api.sizes[afterId];
+    if (beforeVal == null || afterVal == null) {
+      const { next } = measure(root);
+      beforeVal = next[beforeId] ?? 50;
+      afterVal = next[afterId] ?? 50;
+    }
+    const pairSum = beforeVal + afterVal;
+    const { loBefore, hiBefore } = computePairBounds(
+      pairSum,
+      api.minOf(beforeId),
+      api.maxOf(beforeId),
+      api.minOf(afterId),
+      api.maxOf(afterId),
+    );
+    const min = Math.round(loBefore);
+    const max = Math.round(Math.max(loBefore, hiBefore));
+    const controls = `${before.id} ${after.id}`;
+    setBounds((prev) =>
+      prev.min === min && prev.max === max && prev.controls === controls
+        ? prev
+        : { min, max, controls },
+    );
+    setAnnounced(Math.round(beforeVal));
+  }, [measure]);
 
   const part = useResizableHandleMotion({
     forwardedRef: ref,
@@ -226,7 +279,13 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
         startPos: layoutRef.current.orientation === "horizontal" ? event.clientX : event.clientY,
         total,
       };
-      handle.setPointerCapture(event.pointerId);
+      if (typeof handle.setPointerCapture === "function") {
+        try {
+          handle.setPointerCapture(event.pointerId);
+        } catch {
+          // Synthetic pointer events in unit tests may lack an active pointerId.
+        }
+      }
     },
     onPointerUp: (event) => {
       onPointerUp?.(event);
@@ -303,16 +362,24 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
         const api = layoutRef.current;
         api.commit(() => next);
         const startBefore = next[beforeId] ?? 0;
+        const startAfter = next[afterId] ?? 0;
+        const { loBefore, hiBefore } = computePairBounds(
+          startBefore + startAfter,
+          api.minOf(beforeId),
+          api.maxOf(beforeId),
+          api.minOf(afterId),
+          api.maxOf(afterId),
+        );
         drag.current = {
           beforeId,
           afterId,
           startBefore,
-          startAfter: next[afterId] ?? 0,
+          startAfter,
           startPos: 0,
           total,
         };
-        if (home) applyDelta(api.minOf(beforeId) - startBefore);
-        else if (end) applyDelta(100 - api.minOf(afterId) - startBefore);
+        if (home) applyDelta(loBefore - startBefore);
+        else if (end) applyDelta(hiBefore - startBefore);
         else applyDelta(grow ? 2 : -2);
         drag.current = null;
       }}

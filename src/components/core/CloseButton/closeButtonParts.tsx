@@ -46,10 +46,9 @@ export function CloseButtonIcon({
   icon?: ReactNode | null;
 }) {
   const slotClassNames = useCloseButtonClassNames();
-  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+  const { setRef } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalCloseButtonMotionScope(),
     slot: "icon",
-    pointerPhases: true,
   });
 
   if (icon === null) return null;
@@ -57,8 +56,8 @@ export function CloseButtonIcon({
   return (
     <span
       ref={setRef}
+      aria-hidden="true"
       className={closeButtonIconSlotClass(size, slotClassNames.icon)}
-      {...pointerHandlers}
     >
       {icon ?? <KitClose aria-hidden className={closeButtonIconClass()} />}
     </span>

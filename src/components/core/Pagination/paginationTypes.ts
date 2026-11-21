@@ -154,6 +154,7 @@ export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement>
   motionSlot: PaginationButtonSlot;
   motion?: Prettify<PaginationPartMotion>;
   href?: string;
+  dataState?: "active" | "inactive";
 };
  
 export type PaginationIconProps = KitIconProps & {

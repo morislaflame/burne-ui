@@ -1,6 +1,7 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { Form } from "@/components/composite/Form";
 import { render, selectValueButton } from "@/__tests__/helpers";
 
 import { Select } from ".";
@@ -101,5 +102,51 @@ describe("Select trigger icon", () => {
     const wrap = svg?.parentElement;
     expect(wrap?.tagName).toBe("SPAN");
     expect(wrap?.className).toContain("icon-slot");
+  });
+
+  it("blocks opening when readOnly, connects Select.Label & Select.Error, and resets on form reset", async () => {
+    const { user } = render(
+      <Form defaultValues={{ fw: "" }} rules={{ fw: { required: "Pick framework" } }}>
+        <Form.Field name="fw">
+          <Select name="fw" items={OPTIONS}>
+            <Select.Label>Framework</Select.Label>
+            <Select.Shell>
+              <Select.Value />
+              <Select.Trigger />
+            </Select.Shell>
+            <Select.Popover />
+            <Select.Error />
+          </Select>
+        </Form.Field>
+        <button type="submit">Submit</button>
+      </Form>,
+    );
+
+    const trigger = screen.getByRole("combobox", { name: "Framework" });
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Pick framework");
+    expect(trigger).toHaveAttribute("aria-invalid", "true");
+
+    const ro = render(<Select label="Locked" items={OPTIONS} defaultValue="react" readOnly />);
+    const roTrigger = ro.getByRole("combobox", { name: "Locked" });
+    fireEvent.pointerDown(roTrigger, { button: 0 });
+    fireEvent.keyDown(roTrigger, { key: "ArrowDown" });
+    expect(ro.queryByRole("listbox")).toBeNull();
+
+    const plain = render(
+      <form>
+        <Select name="fw2" label="Choice" items={OPTIONS} defaultValue="react" />
+      </form>,
+    );
+    const choiceTrigger = plain.getByRole("combobox", { name: "Choice" });
+    choiceTrigger.focus();
+    await plain.user.keyboard("{ArrowDown}");
+    await plain.user.click(await plain.findByRole("option", { name: "Vue" }));
+    expect(choiceTrigger).toHaveTextContent("Vue");
+
+    plain.container.querySelector("form")!.reset();
+    await waitFor(() => {
+      expect(choiceTrigger).toHaveTextContent("React");
+    });
   });
 });

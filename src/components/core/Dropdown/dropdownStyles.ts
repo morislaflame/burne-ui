@@ -55,7 +55,7 @@ export const DROPDOWN_SUB_TRIGGER_CLASS =
 export const DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS = "min-w-0 flex-1";
  
 export const DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS =
-  "shrink-0 text-muted icon-base";
+  "shrink-0 text-muted icon-base rtl:rotate-180";
  
 export const DROPDOWN_SUB_CONTENT_BASE_CLASS =
   "fixed z-dropdown-sub outline-none";

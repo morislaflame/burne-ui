@@ -24,6 +24,27 @@ function toggleButtonHoverVariant(variant: KitToggleButtonVariant): HoverVariant
   return "default";
 }
  
+const TOGGLE_BUTTON_PRESSED_FILL_HOVER_CLASS: Record<string, string> = {
+  "bg-primary-tint": "group-hover/toggle:bg-primary-tint/80",
+  "bg-primary": "group-hover/toggle:bg-primary/80",
+  "bg-secondary": "group-hover/toggle:bg-secondary/80",
+  "bg-tertiary": "group-hover/toggle:bg-tertiary/80",
+  "bg-muted": "group-hover/toggle:bg-muted/80",
+  "bg-surface": "group-hover/toggle:bg-surface/80",
+  "bg-danger": "group-hover/toggle:bg-danger/80",
+  "bg-success": "group-hover/toggle:bg-success/80",
+  "bg-info": "group-hover/toggle:bg-info/80",
+  "bg-warning": "group-hover/toggle:bg-warning/80",
+  "bg-surface-tint-danger": "group-hover/toggle:bg-surface-tint-danger/80",
+  "bg-surface-tint-success": "group-hover/toggle:bg-surface-tint-success/80",
+  "bg-surface-tint-info": "group-hover/toggle:bg-surface-tint-info/80",
+  "bg-surface-tint-warning": "group-hover/toggle:bg-surface-tint-warning/80",
+};
+ 
+function toggleButtonPressedFillHoverClass(fillColor: string): string {
+  return TOGGLE_BUTTON_PRESSED_FILL_HOVER_CLASS[fillColor] ?? "group-hover/toggle:opacity-80";
+}
+ 
 function toggleButtonIdleFillHoverClass(variant: KitToggleButtonVariant): string {
   return variant === "outline" || variant === "ghost"
     ? "group-hover/toggle:bg-transparent-hover"
@@ -76,8 +97,9 @@ export function toggleButtonFillClipClass(
 export const TOGGLE_BUTTON_CONTENT_BASE_CLASS =
   "relative z-[1] inline-flex w-full min-w-0 items-center justify-center gap-xsmall";
  
+/** Marker so overlay press scales this node, not the segment shell that paints the fill. */
 export const TOGGLE_BUTTON_CONTENT_GROUP_MOTION_CLASS =
-  "origin-center";
+  "button-group-motion origin-center";
  
 export const TOGGLE_BUTTON_ICON_SLOT_CLASS =
   "icon-slot inline-flex shrink-0 items-center justify-center";
@@ -131,7 +153,7 @@ export function toggleButtonFillClass({
     TOGGLE_BUTTON_FILL_BASE_CLASS,
     fillColor,
     SURFACE_COLOR_TRANSITION,
-    pressed ? `group-hover/toggle:${fillColor}/80` : toggleButtonIdleFillHoverClass(visual.key),
+    pressed ? toggleButtonPressedFillHoverClass(fillColor) : toggleButtonIdleFillHoverClass(visual.key),
     roundingClass,
     slotClass,
   );

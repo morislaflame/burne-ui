@@ -1,10 +1,10 @@
-import { useCallback, useId, useMemo, type ReactNode } from "react";
+import { useCallback, useId, useMemo, useRef, useState, type ReactNode } from "react";
 
-import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import type { InputSize, InputVariant } from "@/components/core/Input";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 
 import { tagsInputDescribedBy, tagsInputFieldIds } from "./tagsInputA11y";
@@ -56,28 +56,77 @@ export function useTagsInputRootState({
   variant = "default",
   max,
 }: UseTagsInputRootStateProps) {
-  const form = useOptionalFormBindingContext();
+  const formBinding = useFormFieldBinding({
+    name,
+    value: valuesProp,
+    disabled,
+    readOnly,
+  });
   const reactId = useId();
   const inputId = id ?? `tags-input-${reactId}`;
   const ids = tagsInputFieldIds(inputId);
   const isCompound = hasCompoundChildren(children);
   const explicit = valuesProp !== undefined;
-  const bound = form != null && name != null && !explicit;
-  const formRaw = bound && name ? form.getValue(name) : undefined;
-  const controlled = explicit ? valuesProp : bound ? tagsFromFormValue(formRaw) : undefined;
+  const bound = formBinding.bound;
+  const formTags = useMemo(
+    () => (bound ? tagsFromFormValue(formBinding.value) : undefined),
+    [bound, formBinding.value],
+  );
+  const controlled = explicit ? valuesProp : formTags;
+  const isValuesControlled = controlled !== undefined;
 
-  const [values, setValues] = useControllableState<string[]>({
-    value: controlled,
-    defaultValue: defaultValues,
-    onChange: (next) => {
-      onValuesChange?.(next);
-      if (name && form) {
-        form.setValue(name, next, { shouldValidate: form.validateMode === "onChange" });
+  const [internalValues, setInternalValues] = useState<string[]>(defaultValues);
+  const values = isValuesControlled ? controlled : internalValues;
+
+  const onValuesChangeRef = useRef(onValuesChange);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest callback without recreating setter
+  onValuesChangeRef.current = onValuesChange;
+
+  const setValues = useCallback(
+    (next: string[]) => {
+      if (!isValuesControlled) setInternalValues(next);
+      onValuesChangeRef.current?.(next);
+      if (bound) {
+        formBinding.setValue(next);
       }
     },
-  });
+    [bound, formBinding, isValuesControlled],
+  );
 
-  const blocked = disabled || readOnly;
+  const isInputControlled = inputValueProp !== undefined;
+  const [internalInputValue, setInternalInputValue] = useState<string>(defaultInputValue ?? "");
+  const inputValue = isInputControlled ? inputValueProp : internalInputValue;
+
+  const onInputValueChangeRef = useRef(onInputValueChange);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest callback without recreating setter
+  onInputValueChangeRef.current = onInputValueChange;
+
+  const setInputValue = useCallback(
+    (next: string) => {
+      if (!isInputControlled) setInternalInputValue(next);
+      onInputValueChangeRef.current?.(next);
+    },
+    [isInputControlled],
+  );
+
+  const shellNodeRef = useRef<HTMLDivElement | null>(null);
+  const registerShellRef = useCallback((node: HTMLDivElement | null) => {
+    shellNodeRef.current = node;
+  }, []);
+
+  useNativeFormReset(
+    shellNodeRef,
+    () => {
+      if (!isValuesControlled) setInternalValues(defaultValues);
+      if (!isInputControlled) setInternalInputValue(defaultInputValue ?? "");
+    },
+    !isValuesControlled || !isInputControlled,
+  );
+
+  const resolvedDisabled = Boolean(formBinding.disabled);
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const resolvedError = error ?? formBinding.error;
+  const blocked = resolvedDisabled || resolvedReadOnly;
 
   const append = useCallback(
     (incoming: readonly string[]) => {
@@ -102,17 +151,20 @@ export function useTagsInputRootState({
     setValues(tagsInputRemoveLast(values));
   }, [blocked, setValues, values]);
 
-  const [inputValue, setInputValue] = useControllableState({
-    value: inputValueProp,
-    defaultValue: defaultInputValue ?? "",
-    onChange: onInputValueChange,
-  });
-  const labelConnected = isCompound ? hasCompoundChild(children, "TagsInputLabel") : label != null;
+  const setInputNodeRef = formBinding.ref as (node: HTMLInputElement | null) => void;
+  const notifyBlur = formBinding.onBlur;
+
+  const labelConnected = isCompound
+    ? hasCompoundChild(children, "TagsInputLabel") || hasCompoundChild(children, "Label")
+    : label != null;
   const hintConnected = isCompound ? hasCompoundChild(children, "TagsInputHint") : hint != null;
-  const errorConnected = isCompound ? hasCompoundChild(children, "TagsInputError") : error != null;
+  const errorConnected = isCompound
+    ? hasCompoundChild(children, "TagsInputError")
+    : resolvedError != null;
   const isInvalid = useResolvedFieldInvalid({
     invalid,
-    errorConnected: error != null || errorConnected,
+    errorConnected: resolvedError != null || errorConnected,
+    formInvalid: formBinding["aria-invalid"] === true,
   });
   const contextValue: TagsInputContextValue = useMemo(
     () => ({
@@ -120,8 +172,8 @@ export function useTagsInputRootState({
       append,
       remove,
       removeLast,
-      disabled,
-      readOnly,
+      disabled: resolvedDisabled,
+      readOnly: resolvedReadOnly,
       atMax: max != null && values.length >= max,
       size,
       variant,
@@ -134,8 +186,8 @@ export function useTagsInputRootState({
       errorId: ids.errorId,
       label,
       hint,
-      error,
-      name,
+      error: resolvedError,
+      name: formBinding.name ?? name,
       labelled: labelConnected,
       required,
       isInvalid,
@@ -145,12 +197,14 @@ export function useTagsInputRootState({
         hintId: ids.hintId,
         errorId: ids.errorId,
       }),
+      setInputNodeRef,
+      registerShellRef,
+      notifyBlur,
     }),
     [
       append,
-      disabled,
-      error,
       errorConnected,
+      formBinding.name,
       hint,
       hintConnected,
       ids.errorId,
@@ -163,11 +217,16 @@ export function useTagsInputRootState({
       labelConnected,
       max,
       name,
+      notifyBlur,
       placeholder,
-      readOnly,
+      registerShellRef,
       remove,
       removeLast,
       required,
+      resolvedDisabled,
+      resolvedError,
+      resolvedReadOnly,
+      setInputNodeRef,
       setInputValue,
       size,
       values,

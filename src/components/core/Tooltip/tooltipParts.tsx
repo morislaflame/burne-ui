@@ -1,4 +1,4 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type ReactElement, type ReactNode } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type PointerEvent as ReactPointerEvent, type ReactElement, type ReactNode } from "react";
 import { createPortal } from "react-dom";
  
 import { Text } from "@/components/core/Text";
@@ -6,7 +6,9 @@ import { SEMANTIC_STATUS_ICONS, type SemanticStatus } from "@/components/core/ut
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { bindOverlayReflow } from "@/components/core/utils/bindOverlayReflow";
-import { resolvePortalContainer, applyFloatingPortalPosition } from "@/components/core/utils/portalContainer";
+import { OverlayLayerProvider } from "@/components/core/utils/overlayLayer";
+import { resolveFloatingPortalContainer, applyFloatingPortalPosition } from "@/components/core/utils/portalContainer";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { messageBannerDescriptionCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
@@ -359,16 +361,23 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
     ref,
   ) {
     const slotClassNames = useTooltipClassNames();
-    const { scheduleShow, hide, tooltipId, open, triggerRef } = useTooltipContext("Tooltip.Trigger");
+    const { scheduleShow, leaveTrigger, hide, tooltipId, open, triggerRef } =
+      useTooltipContext("Tooltip.Trigger");
  
     const triggerHandlers = useMemo(
       () => ({
-        onPointerEnter: () => scheduleShow(),
-        onPointerLeave: () => hide(),
+        onPointerEnter: (e: ReactPointerEvent<HTMLElement>) => {
+          if (e.pointerType === "touch") return;
+          scheduleShow();
+        },
+        onPointerLeave: (e: ReactPointerEvent<HTMLElement>) => {
+          if (e.pointerType === "touch") return;
+          leaveTrigger();
+        },
         onFocus: () => scheduleShow(),
         onBlur: () => hide(),
       }),
-      [hide, scheduleShow],
+      [hide, leaveTrigger, scheduleShow],
     );
  
     const mergedRef = useCallback(
@@ -402,6 +411,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
             }),
             className: cn(slotClassNames.trigger, className),
             "aria-describedby": mergeDescribedBy(childDescribedBy, tooltipId, open),
+            "data-state": dataOpenState(open),
           },
           mergedRef,
         ),
@@ -425,6 +435,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
           onBlur,
         })}
         {...rest}
+        data-state={dataOpenState(open)}
       >
         {children}
       </span>
@@ -519,6 +530,8 @@ function TooltipContentHost({
       collisionPadding,
       avoidCollisions,
       portalContainer: portalContainerProp,
+      onPointerEnter,
+      onPointerLeave,
       forwardedRef,
       ...rest
     }: Omit<TooltipContentProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
@@ -538,23 +551,72 @@ function TooltipContentHost({
       avoidCollisions: avoidCollisionsFromRoot,
       icon,
       triggerRef,
+      contentRef,
+      layerId,
+      holdContent,
+      leaveContent,
       portalContainer: portalContainerFromRoot,
     } = useTooltipContext("Tooltip.Content");
- 
+
+    const effectiveContainer = portalContainerProp ?? portalContainerFromRoot;
     const tipRef = useRef<HTMLDivElement | null>(null);
     const [portalMounted, setPortalMounted] = useState(false);
     const [resolvedSide, setResolvedSide] = useState(side);
+    const [resolvedHost, setResolvedHost] = useState<HTMLElement | null>(() =>
+      resolveFloatingPortalContainer(effectiveContainer, null),
+    );
+    const [portalMeta, setPortalMeta] = useState<{
+      theme?: "light" | "dark";
+      dir?: "rtl" | "ltr";
+    }>({});
     useApplySkinPortal(tipRef, portalMounted);
  
     if (open && !portalMounted) {
       setPortalMounted(true);
     }
+
+    const syncPortalHost = useCallback(() => {
+      const trigger = triggerRef.current;
+      const next = resolveFloatingPortalContainer(effectiveContainer, trigger);
+      setResolvedHost((prev) => (prev === next ? prev : next));
+      const nextTheme = burneLightThemePortalProps(trigger)["data-theme"];
+      const dirAncestor = trigger?.closest?.("[dir]");
+      const rawDir =
+        dirAncestor && dirAncestor !== document.documentElement
+          ? dirAncestor.getAttribute("dir")
+          : null;
+      const nextDir: "rtl" | "ltr" | undefined =
+        rawDir === "rtl" || rawDir === "ltr"
+          ? rawDir
+          : trigger && isRtlElement(trigger)
+            ? "rtl"
+            : undefined;
+      setPortalMeta((prev) =>
+        prev.theme === nextTheme && prev.dir === nextDir
+          ? prev
+          : { theme: nextTheme, dir: nextDir },
+      );
+    }, [effectiveContainer, triggerRef]);
+
+    useLayoutEffect(() => {
+      if (!open && !portalMounted) return;
+      syncPortalHost();
+    }, [open, portalMounted, syncPortalHost]);
+
+    useEffect(() => {
+      if (!open) return;
+      syncPortalHost();
+    }, [open, syncPortalHost]);
  
     const motionScope = useTooltipMotionScope();
  
-    const setTipRef = useCallback((node: HTMLDivElement | null) => {
-      tipRef.current = node;
-    }, []);
+    const setTipRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        tipRef.current = node;
+        contentRef.current = node;
+      },
+      [contentRef],
+    );
  
     const parts = Children.toArray(children);
     const customArrow = parts.find(
@@ -568,27 +630,31 @@ function TooltipContentHost({
       const trigger = triggerRef.current;
       const tip = tipRef.current;
       if (!trigger || !tip) return;
- 
+
+      const resolvedAlign = align ?? alignFromRoot;
       const placement = computeTooltipPlacement(
         trigger.getBoundingClientRect(),
         tip.getBoundingClientRect(),
         sideProp ?? side,
         offsetProp ?? offsetFromRoot ?? TOOLTIP_DEFAULT_OFFSET,
         {
-          align: align ?? alignFromRoot,
+          align: resolvedAlign,
           collisionPadding: collisionPadding ?? collisionPaddingFromRoot,
           avoidCollisions: avoidCollisions ?? avoidCollisionsFromRoot,
         },
       );
+
+      const activeHost =
+        resolveFloatingPortalContainer(effectiveContainer, trigger) ?? resolvedHost;
  
       setResolvedSide(placement.resolvedSide);
       applyFloatingPortalPosition(
         tip,
         placement,
-        portalContainerProp ?? portalContainerFromRoot,
+        activeHost,
       );
       tip.style.transform = "";
-    }, [align, alignFromRoot, avoidCollisions, avoidCollisionsFromRoot, collisionPadding, collisionPaddingFromRoot, offsetFromRoot, offsetProp, portalContainerFromRoot, portalContainerProp, side, sideProp, triggerRef]);
+    }, [align, alignFromRoot, avoidCollisions, avoidCollisionsFromRoot, collisionPadding, collisionPaddingFromRoot, effectiveContainer, offsetFromRoot, offsetProp, resolvedHost, side, sideProp, triggerRef]);
  
     useLayoutEffect(() => {
       if (!open || !portalMounted) return;
@@ -597,13 +663,10 @@ function TooltipContentHost({
       const unbindReflow = bindOverlayReflow(reposition);
  
       const tip = tipRef.current;
-      const host = resolvePortalContainer(
-        portalContainerProp ?? portalContainerFromRoot,
-      );
       const ro =
         typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => reposition()) : null;
       if (tip && ro) ro.observe(tip);
-      if (host && host !== document.body && ro) ro.observe(host);
+      if (resolvedHost && resolvedHost !== document.body && ro) ro.observe(resolvedHost);
  
       return () => {
         window.cancelAnimationFrame(raf);
@@ -613,8 +676,7 @@ function TooltipContentHost({
     }, [
       open,
       portalMounted,
-      portalContainerFromRoot,
-      portalContainerProp,
+      resolvedHost,
       reposition,
       children,
       showArrow,
@@ -630,12 +692,24 @@ function TooltipContentHost({
     if (!portalMounted) return null;
     if (typeof document === "undefined") return null;
  
-    const portalHost = resolvePortalContainer(
-      portalContainerProp ?? portalContainerFromRoot,
-    );
+    const portalHost =
+      resolveFloatingPortalContainer(effectiveContainer, triggerRef.current) ??
+      resolvedHost;
     if (!portalHost) return null;
  
-    const portalTheme = burneLightThemePortalProps(triggerRef.current);
+    const liveTheme = burneLightThemePortalProps(triggerRef.current)["data-theme"] ?? portalMeta.theme;
+    const portalTheme = liveTheme ? { "data-theme": liveTheme } : {};
+    const triggerDirAncestor = triggerRef.current?.closest?.("[dir]");
+    const rawTriggerDir =
+      triggerDirAncestor && triggerDirAncestor !== document.documentElement
+        ? triggerDirAncestor.getAttribute("dir")
+        : null;
+    const portalDir =
+      rawTriggerDir === "rtl" || rawTriggerDir === "ltr"
+        ? rawTriggerDir
+        : (portalMeta.dir ??
+            (triggerRef.current && isRtlElement(triggerRef.current) ? "rtl" : undefined));
+    const resolvedAlign = align ?? alignFromRoot ?? "center";
  
     const bubble = (
       <TooltipPanel
@@ -651,28 +725,41 @@ function TooltipContentHost({
     );
  
     const node = (
-      <TooltipResolvedSideContext.Provider value={resolvedSide}>
-        <div
-          ref={setTipRef}
-          {...portalTheme}
-          role="tooltip"
-          id={tooltipId}
-          className={tooltipContentClass({
-            resolvedSide,
-            showArrow,
-          })}
-          {...rest}
-          {...dataVariantProps({ size, variant, status })}
-          data-side={resolvedSide}
-          data-align="center"
-          data-state={dataOpenState(open)}
-        >
-          <div className={cn(TOOLTIP_CONTENT_INNER_CLASS, slotClassNames.panelRelative)}>
-            {showArrow ? (customArrow ?? <TooltipArrow />) : null}
-            {bubble}
+      <OverlayLayerProvider layerId={layerId}>
+        <TooltipResolvedSideContext.Provider value={resolvedSide}>
+          <div
+            ref={setTipRef}
+            dir={portalDir}
+            {...portalTheme}
+            role="tooltip"
+            id={tooltipId}
+            className={tooltipContentClass({
+              resolvedSide,
+              showArrow,
+            })}
+            onPointerEnter={(e) => {
+              onPointerEnter?.(e);
+              if (e.defaultPrevented || e.pointerType === "touch") return;
+              holdContent();
+            }}
+            onPointerLeave={(e) => {
+              onPointerLeave?.(e);
+              if (e.defaultPrevented || e.pointerType === "touch") return;
+              leaveContent();
+            }}
+            {...rest}
+            {...dataVariantProps({ size, variant, status })}
+            data-side={resolvedSide}
+            data-align={resolvedAlign}
+            data-state={dataOpenState(open)}
+          >
+            <div className={cn(TOOLTIP_CONTENT_INNER_CLASS, slotClassNames.panelRelative)}>
+              {showArrow ? (customArrow ?? <TooltipArrow />) : null}
+              {bubble}
+            </div>
           </div>
-        </div>
-      </TooltipResolvedSideContext.Provider>
+        </TooltipResolvedSideContext.Provider>
+      </OverlayLayerProvider>
     );
  
     return createPortal(node, portalHost);

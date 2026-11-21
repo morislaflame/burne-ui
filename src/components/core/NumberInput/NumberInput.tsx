@@ -102,6 +102,18 @@ export const NumberInputRoot = forwardRef(function NumberInputRoot({
     [resolvedVariant, state.contextValue.disabled, state.contextValue.pointerInsideRef],
   );
 
+  const {
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    ...rootRest
+  } = rest;
+  const simpleAriaProps = {
+    ...(ariaLabel !== undefined ? { "aria-label": ariaLabel } : undefined),
+    ...(ariaLabelledBy !== undefined ? { "aria-labelledby": ariaLabelledBy } : undefined),
+    ...(ariaDescribedBy !== undefined ? { "aria-describedby": ariaDescribedBy } : undefined),
+  };
+
   return (
     <NumberInputProvider value={state.contextValue}>
       <NumberInputClassNamesProvider classNames={classNames}>
@@ -118,7 +130,7 @@ export const NumberInputRoot = forwardRef(function NumberInputRoot({
             <Field
               size={size}
               className={cn(NUMBER_INPUT_ROOT_CLASS, classNames?.root, className)}
-              {...rest}
+              {...(state.isCompound ? rest : rootRest)}
               ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size,
@@ -132,7 +144,7 @@ export const NumberInputRoot = forwardRef(function NumberInputRoot({
               {state.isCompound ? (
                 <NumberInputCompoundBody>{children}</NumberInputCompoundBody>
               ) : (
-                <NumberInputSimpleBody />
+                <NumberInputSimpleBody controlProps={simpleAriaProps} />
               )}
             </Field>
           </FieldLabelContext.Provider>

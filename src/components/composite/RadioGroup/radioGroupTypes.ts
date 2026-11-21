@@ -41,8 +41,8 @@ export type RadioGroupContextValue = {
   errorId: string;
   selectedValue: string | null;
   selectValue: (value: string | undefined) => void;
-  /** First option in the group claims native `required` when `required`. */
-  claimRequiredAnchor: () => boolean;
+  /** Deterministic check for whether an option carries native `required`. */
+  isOptionRequired: (optionValue: string | undefined, optionDisabled: boolean) => boolean;
 };
  
 export type RadioGroupPartMotion = {

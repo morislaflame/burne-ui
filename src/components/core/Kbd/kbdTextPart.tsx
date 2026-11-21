@@ -1,6 +1,6 @@
 import { forwardRef, type ForwardedRef } from "react";
 import { Text } from "@/components/core/Text";
-import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
  
 import { useKbdClassNames, useOptionalKbdMotionScope } from "./kbdContext";
@@ -17,15 +17,17 @@ export const KbdText = forwardRef(function KbdText({
   ...rest
 }: KbdTextProps, ref: ForwardedRef<HTMLSpanElement>) {
   const slotClassNames = useKbdClassNames();
-  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+  const scope = useOptionalKbdMotionScope();
+  const { setRef, pointerHandlers, targetRef } = useMotionPart<HTMLSpanElement>({
     forwardedRef: ref,
-    scope: useOptionalKbdMotionScope(),
+    scope,
     slot: "text",
     motion,
     pointerPhases: true,
     onPointerOver,
     onPointerOut,
   });
+  useOptionalEnterOnMount(scope, "text", targetRef);
  
   return (
     <Text

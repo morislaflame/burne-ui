@@ -39,4 +39,19 @@ describe("usePaginationFlip", () => {
     view.unmount();
     expect(kill).toHaveBeenCalledTimes(1);
   });
+
+  it("clears interrupted opacity/scale/transform before measuring the next FLIP snapshot", () => {
+    setReducedMotion(false);
+    const view = render(<Pages keys={["a"]} />);
+
+    view.rerender(<Pages keys={["a", "b"]} />);
+    const itemB = view.container.querySelector('[data-flip-key="b"]') as HTMLElement;
+    gsap.set(itemB, { opacity: 0.35, scale: 0.85 });
+    expect(itemB.style.opacity).toBe("0.35");
+
+    // Rapid next click where "b" stays in place (prev exists, dx === 0)
+    view.rerender(<Pages keys={["b", "c"]} />);
+    expect(itemB.style.opacity).toBe("");
+    expect(Number(gsap.getProperty(itemB, "scale"))).toBe(1);
+  });
 });

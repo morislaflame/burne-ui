@@ -28,6 +28,16 @@ export const COLOR_PICKER_PAD: Record<ColorPickerSize, string> = {
  
 export const COLOR_PICKER_AREA_CLASS =
   "relative w-full touch-none select-none rounded-small cursor-crosshair overflow-hidden";
+
+export const COLOR_PICKER_AREA_DISABLED_CLASS = "cursor-not-allowed opacity-48";
+
+export const COLOR_PICKER_AREA_READONLY_CLASS = "cursor-default";
+
+export const COLOR_PICKER_INPUT_DISABLED_CLASS = "cursor-not-allowed opacity-48";
+
+/** Alternating 50% transparency checkerboard using kit tokens (`--color-border` / `--color-surface`). */
+export const COLOR_PICKER_CHECKERBOARD_CLASS =
+  "[background-image:repeating-conic-gradient(var(--color-border)_0%_25%,var(--color-surface)_0%_50%)] [background-size:8px_8px]";
  
 /** Dual ring: theme background inner + foreground hairline — readable on any swatch hue. */
 export const COLOR_PICKER_AREA_THUMB_CLASS =
@@ -77,10 +87,16 @@ export function colorPickerContentPanelClass(
   );
 }
  
-export function colorPickerAreaClass(size: ColorPickerSize, slotArea?: string): string {
+export function colorPickerAreaClass(
+  size: ColorPickerSize,
+  slotArea?: string,
+  options?: { disabled?: boolean; readOnly?: boolean },
+): string {
   return cn(
     COLOR_PICKER_AREA_CLASS,
     COLOR_PICKER_AREA_HEIGHT[size],
+    options?.disabled && COLOR_PICKER_AREA_DISABLED_CLASS,
+    !options?.disabled && options?.readOnly && COLOR_PICKER_AREA_READONLY_CLASS,
     slotArea,
   );
 }

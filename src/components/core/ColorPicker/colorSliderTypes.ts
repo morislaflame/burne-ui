@@ -50,6 +50,7 @@ export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"
   size?: ColorSliderSize;
   orientation?: ColorSliderOrientation;
   disabled?: boolean;
+  readOnly?: boolean;
   /**
    * Per-slot motion for the track (`enter` / `change`). Thumb geometry stays kit-internal.
    * Defaults are empty.
@@ -72,6 +73,7 @@ export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   size?: ColorSliderSize;
   orientation?: ColorSliderOrientation;
   disabled?: boolean;
+  readOnly?: boolean;
   classNames?: Prettify<ColorSliderClassNames>;
   /**
    * Per-slot motion (`root`, `track`). Nested ColorSlider.Track does not inherit defaults.

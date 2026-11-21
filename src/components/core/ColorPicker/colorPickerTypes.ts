@@ -177,17 +177,21 @@ export type ColorPickerContextValue = {
   name?: string;
   autoFocus?: boolean;
   tabIndex?: number;
+  registerTriggerRef?: (node: HTMLElement | null) => void;
+  onTriggerBlur?: () => void;
 };
- 
+
 export type ColorPickerClassNamesProviderProps = {
   classNames?: Prettify<ColorPickerClassNames>;
   children: ReactNode;
 };
- 
+
 export type UseColorPickerRootStateProps = ColorPickerProps;
- 
+
 export type UseColorPickerAreaDragProps = {
   hsva: HSVA;
   setHsva: (next: HSVA) => void;
+  disabled?: boolean;
+  readOnly?: boolean;
 };
  

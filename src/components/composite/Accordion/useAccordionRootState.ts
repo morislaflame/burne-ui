@@ -33,18 +33,22 @@ export function useAccordionRootState({
   const setItemOpen = useCallback(
     (id: string, open: boolean) => {
       if (selectionMode === "multiple") {
+        const hasItem = values.includes(id);
+        if (open === hasItem) return;
         const next = open
-          ? values.includes(id) ? values : [...values, id]
+          ? [...values, id]
           : values.filter((item) => item !== id);
         if (!manyControlled) setInternalValues(next);
         onValuesChange?.(next);
         return;
       }
+      const isCurrentlyOpen = value === id;
+      if (open === isCurrentlyOpen) return;
       const next = open ? id : null;
       if (!singleControlled) setInternalValue(next);
       onValueChange?.(next);
     },
-    [manyControlled, onValueChange, onValuesChange, selectionMode, singleControlled, values],
+    [manyControlled, onValueChange, onValuesChange, selectionMode, singleControlled, value, values],
   );
  
   const contextValue = useMemo<AccordionContextValue>(

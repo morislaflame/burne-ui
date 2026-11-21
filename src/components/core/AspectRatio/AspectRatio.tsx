@@ -1,8 +1,10 @@
 import { forwardRef, useMemo, type ForwardedRef } from "react";
 
+import { useSkinVariant } from "@/skins/skinContext";
+
 import { useAspectRatioContentMotion, useAspectRatioRootMotion, resolveAspectRatioMotionDefaults } from "./aspectRatioAnimations";
 import { AspectRatioMotionProvider } from "./aspectRatioContext";
-import { aspectRatioContentClass, aspectRatioRootClass } from "./aspectRatioStyles";
+import { aspectRatioContentClass, aspectRatioRootClass, resolveSafeAspectRatio } from "./aspectRatioStyles";
 import type { AspectRatioPartMotion, AspectRatioProps } from "./aspectRatioTypes";
 
 export type {
@@ -104,6 +106,8 @@ function AspectRatioSurface({
     | "onPointerUp"
   >;
 }) {
+  const skinVariant = useSkinVariant(undefined);
+  const safeRatio = resolveSafeAspectRatio(ratio);
   const part = useAspectRatioRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -116,10 +120,10 @@ function AspectRatioSurface({
   return (
     <div
       ref={part.setRef}
-      className={aspectRatioRootClass({ slotClass: classNames?.root, className })}
+      className={aspectRatioRootClass({ skinVariant, slotClass: classNames?.root, className })}
       {...rest}
       {...part.pointerHandlers}
-      style={{ ...rest.style, aspectRatio: ratio }}
+      style={{ ...rest.style, aspectRatio: safeRatio }}
     >
       <AspectRatioContent slotClass={classNames?.content} motion={contentMotion}>
         {children}

@@ -85,6 +85,7 @@ export type DialogProps = {
   onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
   size?: DialogSize;
+  variant?: DialogVariant;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DialogClassNames>;
@@ -133,6 +134,7 @@ export type DialogContextValue = {
   setHasDescription: (value: boolean) => void;
   onOpenChange: (open: boolean) => void;
   size: DialogSize;
+  variant?: DialogVariant;
   sizePreset: DialogSizePreset;
   footerButtonSize: ButtonSize;
   /** Portal mount node from Root; Panel may override via its own prop. */
@@ -171,7 +173,7 @@ export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
  
 export type UseDialogRootStateProps = Pick<
   DialogProps,
-  "open" | "defaultOpen" | "onOpenChange" | "size" | "portalContainer"
+  "open" | "defaultOpen" | "onOpenChange" | "size" | "variant" | "portalContainer"
 >;
  
 export type DialogOverlayProps = OverlayDismissProps;
@@ -190,6 +192,7 @@ export type UseDialogModalMotionProps = {
 };
  
 export type DialogPortalShellProps = {
+  open: boolean;
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;

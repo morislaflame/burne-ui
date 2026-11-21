@@ -87,6 +87,7 @@ export function useDrawerModalMotion({
   return {
     showPortal: motion.showPortal,
     mounted: motion.mounted,
+    layerId: motion.layerId,
     dialogRef: motion.dialogRef,
     overlayRef: motion.overlayRef,
     panelRef: motion.panelRef,

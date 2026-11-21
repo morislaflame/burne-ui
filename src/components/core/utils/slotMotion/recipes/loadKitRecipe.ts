@@ -63,10 +63,14 @@ export function loadKitRecipe(name: string): Promise<MotionRecipe | undefined> {
   if (!load) return Promise.resolve(undefined);
   let pending = inflight.get(name);
   if (!pending) {
-    pending = load().then((recipe) => {
-      registerKitMotionRecipe(name as KitRecipeName, recipe);
-      return getMotionRecipe(name) ?? recipe;
-    });
+    pending = load()
+      .then((recipe) => {
+        registerKitMotionRecipe(name as KitRecipeName, recipe);
+        return getMotionRecipe(name) ?? recipe;
+      })
+      .finally(() => {
+        inflight.delete(name);
+      });
     inflight.set(name, pending);
   }
   return pending;

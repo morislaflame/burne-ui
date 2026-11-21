@@ -42,14 +42,17 @@ export function useProgressBarRootState({
     setDisplayState((prev) => (progressBarDisplayEqual(prev, next) ? prev : next));
   }, []);
  
-  const { isCompound, hasHint, hasError } = useMemo(() => {
+  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
+      hasLabel:
+        label != null ||
+        (compound && hasCompoundChild(children, "ProgressBarLabel", "Label")),
       hasHint: hint != null || (compound && hasCompoundChild(children, "ProgressBar.Hint")),
       hasError: error != null || (compound && hasCompoundChild(children, "ProgressBar.Error")),
     };
-  }, [children, error, hint]);
+  }, [children, error, hint, label]);
  
   const fieldCtx = useMemo<ProgressBarFieldContextValue>(
     () => ({
@@ -58,11 +61,13 @@ export function useProgressBarRootState({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      labelConnected: hasLabel,
       orientation,
+      status,
       display,
       setDisplay,
     }),
-    [display, errorId, hasError, hasHint, hintId, orientation, progressId, setDisplay],
+    [display, errorId, hasError, hasHint, hasLabel, hintId, orientation, progressId, setDisplay, status],
   );
  
   const fieldLabelCtx = useMemo(() => ({ labelId }), [labelId]);

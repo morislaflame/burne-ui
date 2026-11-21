@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useMemo, type ForwardedRef, type Ref } from "react";
  
 import { Text } from "@/components/core/Text";
-import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
+import { mergeMotionRootSiblings, mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
 import { useOptionalFormBindingContext } from "./formContext";
  
@@ -39,10 +39,15 @@ import type {
 export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
   function FormSection({ className = "", classNames, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parentScope = useOptionalFormMotionScope();
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { section: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
     const motionDefaults = useMemo(() => ({}), []);
  
     return (
@@ -300,6 +305,7 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
           tabIndex={-1}
           className={formErrorSummaryClass(className, rootClassNames)}
           {...rest}
+          {...part.pointerHandlers}
           aria-live="polite"
         />
       );
@@ -377,10 +383,15 @@ FormAnnounce.displayName = "Form.Announce";
 export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
   function FormField({ name, rules, className = "", classNames, children, motion, motionController, motionState, motionPayload, playInitialState, ...rest }, ref) {
     const parentScope = useOptionalFormMotionScope();
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { field: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
     const motionDefaults = useMemo(() => ({}), []);
  
     return (
@@ -436,11 +447,13 @@ function FormFieldSurface({
     onPointerUp,
   });
  
+  const registerFieldRules = form?.registerFieldRules;
+  const unregisterFieldRules = form?.unregisterFieldRules;
   useEffect(() => {
-    if (!form || !rules) return;
-    form.registerFieldRules(name, rules);
-    return () => form.unregisterFieldRules(name);
-  }, [form, name, rules]);
+    if (!registerFieldRules || !unregisterFieldRules || !rules) return;
+    registerFieldRules(name, rules);
+    return () => unregisterFieldRules(name);
+  }, [name, registerFieldRules, rules, unregisterFieldRules]);
  
   return (
     <div

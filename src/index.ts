@@ -181,6 +181,7 @@ export {
   AlertDialog,
   useAlertDialog,
   type AlertDialogProps,
+  type AlertDialogOverlayProps,
   type AlertDialogPanelProps,
   type AlertDialogTriggerProps,
   type AlertDialogSize,
@@ -582,7 +583,7 @@ export {
   type SearchInputMotion,
   type SearchInputPartMotion,
 } from "@/components/core/SearchInput";
-export { Text, type TextProps, type TextVariant, type TextMotion, type TextPartMotion } from "@/components/core/Text";
+export { Text, type TextClassNames, type TextProps, type TextVariant, type TextMotion, type TextPartMotion } from "@/components/core/Text";
 export {
   Card,
   type CardProps,
@@ -706,6 +707,7 @@ export {
 } from "@/components/core/Stepper";
 export {
   Separator,
+  type SeparatorClassNames,
   type SeparatorProps,
   type SeparatorOrientation,
   type SeparatorMotion,

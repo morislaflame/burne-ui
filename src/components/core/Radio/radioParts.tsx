@@ -6,6 +6,7 @@ import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import { dataFlag } from "@/components/core/utils/dataContract";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
  
 import { radioInputAriaLabel } from "./radioA11y";
@@ -59,12 +60,10 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
           value={ctx.inputProps.value}
           required={ctx.inputProps.required}
           aria-invalid={ctx.isInvalid ? true : undefined}
-          data-invalid={ctx.isInvalid ? "" : undefined}
           form={ctx.inputProps.form}
           autoFocus={ctx.inputProps.autoFocus}
           tabIndex={ctx.inputProps.tabIndex}
           readOnly={ctx.inputProps.readOnly}
-          data-readonly={ctx.inputProps.readOnly ? "" : undefined}
           onClick={(event) => {
             if (ctx.inputProps.readOnly) {
               event.preventDefault();
@@ -81,6 +80,10 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
           )}
           aria-label={radioInputAriaLabel(ctx.inputProps.value, ctx.hasLabel, unnamedLabel)}
           onChange={ctx.onChange}
+          data-disabled={dataFlag(ctx.isDisabled)}
+          data-invalid={dataFlag(ctx.isInvalid)}
+          data-readonly={dataFlag(ctx.isReadOnly)}
+          data-required={dataFlag(Boolean(ctx.inputProps.required))}
         />
         <span
           ref={trackRef}

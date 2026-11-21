@@ -1,4 +1,5 @@
 import { SelectionThumb } from "@/components/core/SelectionThumb";
+import { dataFlag } from "@/components/core/utils/dataContract";
 import { useSkinVariant } from "@/skins/skinContext";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { forwardRef } from "react";
@@ -21,6 +22,8 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       percent,
       orientation,
       disabled,
+      readOnly,
+      isRtl,
       active,
       ariaValueNow,
       ariaValueMin,
@@ -35,6 +38,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       onPointerDown,
       onPointerUp,
       onKeyDown,
+      onBlur,
       ...rest
     },
     forwardedRef,
@@ -49,12 +53,13 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       motion,
       forwardedRef,
       pointerPhases: true,
-      pressPhases: !disabled,
+      pressPhases: !disabled && !readOnly,
       onPointerOver,
       onPointerOut,
       onPointerDown,
       onPointerUp,
     });
+    const isInvalid = Boolean(fieldCtx?.isInvalid);
  
     return (
       <button
@@ -72,7 +77,8 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
         aria-valuenow={ariaValueNow}
         aria-valuetext={ariaValueText}
         aria-orientation={orientation}
-        aria-invalid={fieldCtx?.isInvalid ? true : undefined}
+        aria-invalid={isInvalid ? true : undefined}
+        aria-readonly={readOnly || undefined}
         disabled={disabled}
         tabIndex={disabled ? -1 : 0}
         className={sliderThumbButtonClass({
@@ -82,11 +88,17 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
           active,
           slotClass: cn(slotClassNames.thumb, className),
         })}
-        style={{ ...sliderThumbPositionStyle(percent, orientation), ...style }}
+        style={{ ...sliderThumbPositionStyle(percent, orientation, isRtl), ...style }}
         onKeyDown={onKeyDown}
+        onBlur={(event) => {
+          onBlur?.(event);
+          fieldCtx?.onControlBlur?.();
+        }}
         {...rest}
         {...pointerHandlers}
-        data-invalid={fieldCtx?.isInvalid ? "" : undefined}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
+        data-invalid={dataFlag(isInvalid)}
       >
         <SelectionThumb
           size={size}

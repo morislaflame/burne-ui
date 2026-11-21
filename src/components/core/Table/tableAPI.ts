@@ -42,18 +42,102 @@ export function toggleSelectionKey({
   selectionMode,
   selectedKeys,
   key,
+  allSelectableKeys,
+  disallowEmptySelection = false,
 }: {
   selectionMode: SelectionMode;
   selectedKeys: Selection;
   key: string | number;
+  allSelectableKeys?: readonly (string | number)[];
+  disallowEmptySelection?: boolean;
 }): Selection | null {
   if (selectionMode === "none") return null;
-  if (selectionMode === "single") return new Set([key]);
-  if (selectedKeys === "all") return new Set([key]);
+  if (selectionMode === "single") {
+    if (selectedKeys === "all") return new Set([key]);
+    const alreadySelected =
+      selectedKeys.has(key) ||
+      Array.from(selectedKeys).some((k) => String(k) === String(key));
+    if (alreadySelected) {
+      return disallowEmptySelection ? null : new Set();
+    }
+    return new Set([key]);
+  }
+  if (selectedKeys === "all") {
+    if (!allSelectableKeys) return new Set();
+    const next = new Set(
+      allSelectableKeys.filter((k) => k !== key && String(k) !== String(key)),
+    );
+    if (disallowEmptySelection && next.size === 0) return null;
+    return next;
+  }
   const next = new Set(selectedKeys);
-  if (next.has(key)) next.delete(key);
-  else next.add(key);
+  if (next.has(key)) {
+    if (disallowEmptySelection && next.size <= 1) return null;
+    next.delete(key);
+  } else {
+    next.add(key);
+  }
   return next;
+}
+
+const ROW_INTERACTIVE_DESCENDANT_SELECTOR = [
+  "button",
+  "a[href]",
+  "input",
+  "textarea",
+  "select",
+  "[role='button']",
+  "[role='checkbox']",
+  "[role='switch']",
+  "[role='menuitem']",
+  "[role='option']",
+  "[role='combobox']",
+  "[role='link']",
+  "[contenteditable='true']",
+].join(",");
+
+export function isInteractiveRowDescendant(
+  target: EventTarget | null,
+  rowEl: HTMLElement,
+): boolean {
+  if (!(target instanceof Element) || target === rowEl) return false;
+  const interactive = target.closest(ROW_INTERACTIVE_DESCENDANT_SELECTOR);
+  if (!interactive || interactive === rowEl) return false;
+  return rowEl.contains(interactive);
+}
+
+export function extractTableRowKey(
+  item: unknown,
+  renderItem?: (item: unknown) => ReactNode,
+): string | number | undefined {
+  if (renderItem) {
+    try {
+      const rendered = renderItem(item);
+      if (isValidElement<{ id?: string | number }>(rendered) && rendered.props.id !== undefined) {
+        return rendered.props.id;
+      }
+    } catch {
+      // Fallback to object fields if renderItem relies on runtime context.
+    }
+  }
+  if (typeof item === "object" && item !== null) {
+    const rec = item as { id?: unknown; key?: unknown };
+    if (typeof rec.id === "string" || typeof rec.id === "number") return rec.id;
+    if (typeof rec.key === "string" || typeof rec.key === "number") return rec.key;
+  }
+  return undefined;
+}
+
+export function clampTableColumnWidth(
+  rawWidth: number,
+  minWidth: number,
+  maxWidth: number | undefined,
+): number {
+  const clampedMin = Math.max(minWidth, Math.round(rawWidth));
+  if (maxWidth != null && maxWidth >= minWidth) {
+    return Math.min(maxWidth, clampedMin);
+  }
+  return clampedMin;
 }
  
 export function resolveColumnSortDirection(

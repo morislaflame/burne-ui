@@ -56,21 +56,16 @@ export function useToggleButtonRootState({
   const isCompound = useMemo(() => hasToggleButtonCompoundChildren(children), [children]);
  
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>, queueFillOnClick: (next: boolean) => void) => {
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e);
       if (e.defaultPrevented || disabled) return;
  
       if (inGroup && itemValue != null) {
-        // Single: clicked item ends selected (re-click is no-op). Multiple: toggle.
-        const nextPressed =
-          groupCtx!.type === "single" ? true : !groupCtx!.isSelected(itemValue);
         groupCtx!.select(itemValue);
-        queueFillOnClick(nextPressed);
         return;
       }
  
       const next = !pressed;
-      queueFillOnClick(next);
       setLocalPressed(next);
       onPressedChange?.(next);
     },
@@ -89,10 +84,10 @@ export function useToggleButtonRootState({
   const handleFocus = useCallback(
     (e: FocusEvent<HTMLButtonElement>) => {
       onFocus?.(e);
-      if (e.defaultPrevented || !inGroup || itemValue == null) return;
+      if (e.defaultPrevented || disabled || !inGroup || itemValue == null) return;
       groupCtx!.setRovingValue(itemValue);
     },
-    [groupCtx, inGroup, itemValue, onFocus],
+    [disabled, groupCtx, inGroup, itemValue, onFocus],
   );
  
   return {
@@ -112,7 +107,7 @@ export function useToggleButtonRootState({
     role: toggleButtonRole({ inGroup, isSingleGroup }),
     ariaPressed: toggleButtonAriaPressed({ inGroup, isSingleGroup, pressed }),
     ariaChecked: toggleButtonAriaChecked({ inGroup, isSingleGroup, pressed }),
-    tabIndex: inGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined,
+    tabIndex: disabled ? undefined : inGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined,
     isCompound,
     children,
     handleClick,

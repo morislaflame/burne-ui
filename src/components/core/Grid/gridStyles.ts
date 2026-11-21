@@ -48,6 +48,7 @@ export function gridRootClass({
   minTrack,
   gap,
   align,
+  skinVariant,
   slotClass,
   className,
 }: {
@@ -55,6 +56,7 @@ export function gridRootClass({
   minTrack: GridMinTrack;
   gap: GridGap;
   align: GridAlign;
+  skinVariant?: string;
   slotClass?: string;
   className?: string;
 }): string {
@@ -63,7 +65,7 @@ export function gridRootClass({
     columns === "auto" ? GRID_AUTO_CLASS[minTrack] : GRID_COLUMNS_CLASS[columns],
     GRID_GAP_CLASS[gap],
     GRID_ALIGN_CLASS[align],
-    layoutTargetClass("grid.root"),
+    layoutTargetClass("grid.root", skinVariant),
     slotClass,
     className,
   );

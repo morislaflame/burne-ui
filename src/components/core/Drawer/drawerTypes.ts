@@ -94,6 +94,7 @@ export type DrawerProps = {
   placement?: DrawerPlacement;
   /** Chrome density — padding, type, close/footer button sizes (`PANEL_SIZE_LAYOUT`). */
   size?: DrawerSize;
+  variant?: DrawerVariant;
   children?: ReactNode;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
@@ -145,6 +146,8 @@ export type DrawerContextValue = {
   onOpenChange: (open: boolean) => void;
   placement: DrawerPlacement;
   size: DrawerSize;
+  variant?: DrawerVariant;
+  closeOnInteractOutside?: boolean;
   sizePreset: DrawerSizePreset;
   footerButtonSize: ButtonSize;
   overlayRef: React.RefObject<HTMLDivElement | null>;
@@ -200,7 +203,7 @@ export type DrawerPanelSegment =
  
 export type UseDrawerRootStateProps = Pick<
   DrawerProps,
-  "open" | "defaultOpen" | "onOpenChange" | "size" | "portalContainer"
+  "open" | "defaultOpen" | "onOpenChange" | "size" | "variant" | "portalContainer"
 >;
  
 export type UseDrawerPanelStateProps = {

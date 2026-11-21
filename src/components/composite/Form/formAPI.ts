@@ -3,11 +3,37 @@ import { Children, cloneElement, isValidElement, type ReactElement, type ReactNo
 import type { FormFieldRules, FormValues } from "./formTypes";
  
 export function countFormErrors(errors: Record<string, string>): number {
-  return Object.keys(errors).length;
+  let count = 0;
+  for (const key of Object.keys(errors)) {
+    if (errors[key]) count += 1;
+  }
+  return count;
 }
- 
+
 export function formErrorEntries(errors: Record<string, string>): Array<[string, string]> {
-  return Object.entries(errors);
+  return Object.entries(errors).filter(([, message]) => Boolean(message));
+}
+
+export function cleanFormResolverErrors(
+  errors?: Partial<Record<string, string>>,
+): Record<string, string> {
+  if (!errors) return {};
+  const cleaned: Record<string, string> = {};
+  for (const [key, message] of Object.entries(errors)) {
+    if (typeof message === "string" && message.length > 0) {
+      cleaned[key] = message;
+    }
+  }
+  return cleaned;
+}
+
+export function getFormValueAtPath(values: FormValues, path: string): unknown {
+  if (!path.includes(".")) return values[path];
+  const parts = path.split(".");
+  return parts.reduce<unknown>((acc, key) => {
+    if (acc == null || typeof acc !== "object") return undefined;
+    return (acc as Record<string, unknown>)[key];
+  }, values);
 }
  
 export function setFormValueAtPath(
@@ -116,6 +142,9 @@ export function readControlValueFromEvent(event: unknown, type?: string): unknow
   }
  
   const target = (event as { target: EventTarget | null }).target;
+  if (target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
+    return target.value;
+  }
   if (!(target instanceof HTMLInputElement)) return undefined;
  
   if (type === "checkbox") return target.checked;

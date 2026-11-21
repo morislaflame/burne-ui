@@ -1,6 +1,7 @@
 import type { ForwardedRef, HTMLAttributes, PointerEvent as ReactPointerEvent } from "react";
 import { forwardRef, useMemo } from "react";
- 
+
+import { dataFlag } from "@/components/core/utils/dataContract";
 import { resolveLabelMotionDefaults, useLabelRootMotion } from "./labelAnimations";
 import { LabelClassNamesProvider, LabelMotionProvider, useLabelClassNames, useLabelMotionScope } from "./labelContext";
 import { labelRootClass } from "./labelStyles";
@@ -21,6 +22,7 @@ export function LabelRoot({
   children,
   className,
   required: requiredProp,
+  disabled: disabledProp,
   htmlFor: htmlForProp,
   id: idProp,
   textStyle = "base",
@@ -33,8 +35,9 @@ export function LabelRoot({
 }: Omit<LabelProps, "classNames" | "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   forwardedRef?: ForwardedRef<HTMLElement>;
 }) {
-  const { htmlFor, id, required } = useLabelRootState({
+  const { htmlFor, id, required, disabled } = useLabelRootState({
     required: requiredProp,
+    disabled: disabledProp,
     htmlFor: htmlForProp,
     id: idProp,
   });
@@ -64,6 +67,8 @@ export function LabelRoot({
         className={rootClass}
         {...rest}
         {...part.pointerHandlers}
+        data-required={dataFlag(required)}
+        data-disabled={dataFlag(disabled)}
       >
         {compound ? children : (
           <LabelContent required={required} textStyle={textStyle}>
@@ -83,6 +88,8 @@ export function LabelRoot({
       className={rootClass}
       {...spanRest}
       {...part.pointerHandlers}
+      data-required={dataFlag(required)}
+      data-disabled={dataFlag(disabled)}
     >
       {compound ? children : (
         <LabelContent required={required} textStyle={textStyle}>

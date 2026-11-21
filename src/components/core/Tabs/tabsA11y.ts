@@ -10,17 +10,19 @@ export function tabsPanelId(baseId: string, panelValue: string): string {
  
 export function tabsTabA11y({
   isSelected,
+  isTabStop = isSelected,
   isDisabled,
   panelId,
 }: {
   isSelected: boolean;
+  isTabStop?: boolean;
   isDisabled: boolean | undefined;
   panelId: string;
 }) {
   return {
     "aria-selected": isSelected,
     "aria-controls": panelId,
-    tabIndex: isSelected ? 0 : -1,
+    tabIndex: !isDisabled && isTabStop ? 0 : -1,
     disabled: isDisabled,
   } as const;
 }
@@ -39,10 +41,10 @@ export function tabsPanelA11y({
   } as const;
 }
  
-export function collectTabButtons(list: HTMLElement): HTMLButtonElement[] {
-  return Array.from(list.querySelectorAll('[role="tab"]:not([disabled])')).filter(
-    (el): el is HTMLButtonElement => el instanceof HTMLButtonElement,
-  );
+export function collectTabButtons(list: HTMLElement): HTMLElement[] {
+  return Array.from(
+    list.querySelectorAll('[role="tab"]:not([disabled]):not([aria-disabled="true"])'),
+  ).filter((el): el is HTMLElement => el instanceof HTMLElement);
 }
  
 export function focusTabAt(list: HTMLElement, index: number) {

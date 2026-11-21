@@ -12,6 +12,10 @@
  */
 import { useLayoutEffect, useRef } from "react";
  
+import { killMotion } from "@/components/core/utils/gsapMotion";
+import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   hideNestedEnterSlots,
   invalidateEnterFrame,
@@ -51,6 +55,7 @@ export function useTooltipPortalMotion({
   setPortalMounted: (mounted: boolean) => void;
   scope: MotionScopeValue;
 }) {
+  const config = useMotionConfig();
   const enterFrameRef = useRef(0);
   const enterGenRef = useRef(0);
  
@@ -60,6 +65,18 @@ export function useTooltipPortalMotion({
     if (!el) return undefined;
  
     const cancelEnterFrame = () => invalidateEnterFrame(enterFrameRef, enterGenRef);
+
+    if (isReducedModalMotion(config, prefersReducedMotion())) {
+      killMotion(el);
+      if (open) {
+        applyReducedPortalMotion(el);
+      } else {
+        setPortalMounted(false);
+      }
+      return () => {
+        cancelEnterFrame();
+      };
+    }
  
     if (open) {
       const gen = ++enterGenRef.current;
@@ -97,6 +114,6 @@ export function useTooltipPortalMotion({
     return () => {
       leaveWait.kill();
     };
-  }, [open, portalMounted, scope, setPortalMounted]);
+  }, [config, open, portalMounted, scope, setPortalMounted]);
 }
  

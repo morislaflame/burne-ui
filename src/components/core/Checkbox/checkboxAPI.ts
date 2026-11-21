@@ -61,6 +61,51 @@ export function compoundContentHasExternalLabel(children: ReactNode): boolean {
   return found;
 }
  
+export function compoundHasCheckboxLabel(children: ReactNode): boolean {
+  let found = false;
+ 
+  const walk = (node: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const name = (child.type as { displayName?: string }).displayName;
+      if (name === "CheckboxLabel" || name === "Checkbox.Label" || name === "Label") {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+ 
+  walk(children);
+  return found;
+}
+ 
+export function compoundHasLabel(children: ReactNode): boolean {
+  let found = false;
+ 
+  const walk = (node: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const name = (child.type as { displayName?: string }).displayName;
+      if (
+        name === "CheckboxLabel" ||
+        name === "Checkbox.Label" ||
+        name === "Label" ||
+        name === "CheckboxContent"
+      ) {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+ 
+  walk(children);
+  return found;
+}
+ 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {
   return !/\bflex-col\b/.test(className ?? "");
 }

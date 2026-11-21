@@ -9,7 +9,7 @@ import {
 import { CloseButtonClassNamesProvider, CloseButtonMotionProvider } from "./closeButtonContext";
 import { CloseButtonIcon, CloseButtonRipple } from "./closeButtonParts";
 import type { CloseButtonProps } from "./closeButtonTypes";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
 
 import { useCloseButtonRootState } from "./useCloseButtonRootState";
@@ -196,6 +196,7 @@ function CloseButtonSurface({
       onPointerUp={animations.handlePointerUp}
       onKeyDown={animations.handleKeyDown}
       {...dataVariantProps({ size: state.size, variant: state.variant })}
+      data-disabled={dataFlag(state.disabled)}
     >
       {state.ripple ? (
         <CloseButtonRipple

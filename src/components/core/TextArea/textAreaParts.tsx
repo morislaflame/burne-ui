@@ -1,11 +1,16 @@
-import type { PointerEventHandler } from "react";
-import { forwardRef, useId, useMemo, useRef } from "react";
+import type { MouseEvent, PointerEventHandler } from "react";
+import { forwardRef, useCallback, useId, useLayoutEffect, useMemo, useRef } from "react";
  
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { Field } from "@/components/core/Field";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
+import {
+  isInteractiveDescendantTarget,
+  readOnlyData,
+  useNativeFormReset,
+} from "@/components/core/utils/fieldFormDom";
 import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
@@ -38,6 +43,20 @@ import type {
 import { useTextAreaResize } from "./useTextAreaResize";
  
 import { cn } from "@/utils/cn";
+
+function supportsFieldSizingContent(): boolean {
+  const cssObj =
+    typeof window !== "undefined"
+      ? window.CSS
+      : typeof CSS !== "undefined"
+        ? CSS
+        : undefined;
+  return Boolean(
+    cssObj &&
+      typeof cssObj.supports === "function" &&
+      cssObj.supports("field-sizing", "content"),
+  );
+}
  
 /** Two 1px diagonals: right edge → bottom edge, inside the corner box. */
 function TextAreaResizeGrip() {
@@ -177,6 +196,16 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
     });
     const mergedMotion = { ...mergedSlots, ...siblings };
  
+    const formRef = formBinding.ref;
+    const mergedRef = useCallback(
+      (node: HTMLTextAreaElement | null) => {
+        formRef(node);
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [formRef, ref],
+    );
+
     return (
       <TextAreaMotionProvider
         motion={mergedMotion}
@@ -208,11 +237,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
           defaultValue={formBinding.bound ? undefined : defaultValue}
           onChange={formBinding.onChange}
           onBlur={formBinding.onBlur}
-          forwardedRef={(node) => {
-            formBinding.ref(node);
-            if (typeof ref === "function") ref(node);
-            else if (ref) ref.current = node;
-          }}
+          forwardedRef={mergedRef}
           className={className}
           onPointerDown={onPointerDown}
           required={required}
@@ -306,8 +331,19 @@ function TextAreaControlSurface({
     | "aria-describedby"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
 }) {
+  const {
+    onPointerOver,
+    onPointerOut,
+    onPointerUp,
+    onInput,
+    ...domRest
+  } = rest;
+  const textareaNodeRef = useRef<HTMLTextAreaElement | null>(null);
   const shellSurface = textareaShellSurfaceClass({ variant });
   const shellMotion = useTextAreaShellAnimations({
     shellRef,
@@ -324,17 +360,77 @@ function TextAreaControlSurface({
     blocked,
     size,
   );
+
+  const syncAutoGrowHeight = useCallback(
+    (target?: HTMLTextAreaElement | null) => {
+      if (supportsFieldSizingContent()) return;
+      const el = target ?? textareaNodeRef.current;
+      if (!el) return;
+      if (shellRef.current?.style.height) {
+        el.style.removeProperty("height");
+        return;
+      }
+      el.style.height = "auto";
+      const nextHeight = el.scrollHeight;
+      if (nextHeight > 0) {
+        el.style.height = `${nextHeight}px`;
+      } else {
+        el.style.removeProperty("height");
+      }
+    },
+    [shellRef],
+  );
+
+  useLayoutEffect(() => {
+    syncAutoGrowHeight();
+  }, [defaultValue, rows, syncAutoGrowHeight, value]);
+
+  useNativeFormReset(textareaNodeRef, syncAutoGrowHeight);
+
+  const bindTextareaRef = useCallback(
+    (node: HTMLTextAreaElement | null) => {
+      textareaNodeRef.current = node;
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
+
   const { setRef, pointerHandlers } = useMotionPart<HTMLTextAreaElement>({
     scope: useOptionalTextAreaMotionScope(),
     slot: "control",
-    forwardedRef,
+    forwardedRef: bindTextareaRef,
     pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerUp,
   });
+
+  const handleShellMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    const el = textareaNodeRef.current;
+    if (!el) return;
+    if (!isInteractiveDescendantTarget(e.target, el) && document.activeElement === el) {
+      e.preventDefault();
+    }
+  };
+
+  const handleShellClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    const el = textareaNodeRef.current;
+    if (!el) return;
+    if (!isInteractiveDescendantTarget(e.target, el) && document.activeElement !== el) {
+      el.focus();
+    }
+  };
  
   return (
     <div
       ref={shellMotion.bindShellRef}
+      role="presentation"
       data-slot="textarea-shell"
+      onMouseDown={handleShellMouseDown}
+      onClick={handleShellClick}
       onPointerDown={shellMotion.shellPointerDown}
       onPointerUp={shellMotion.shellPointerUp}
       onPointerEnter={shellMotion.shellPointerEnter}
@@ -359,7 +455,14 @@ function TextAreaControlSurface({
         name={name}
         value={value as string | number | readonly string[] | undefined}
         defaultValue={defaultValue}
-        onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
+        onChange={(e) => {
+          syncAutoGrowHeight(e.currentTarget);
+          (onChange as React.ChangeEventHandler<HTMLTextAreaElement> | undefined)?.(e);
+        }}
+        onInput={(e) => {
+          syncAutoGrowHeight(e.currentTarget);
+          onInput?.(e);
+        }}
         onBlur={onBlur as React.FocusEventHandler<HTMLTextAreaElement>}
         placeholder={placeholder}
         className={textareaControlClassNames({
@@ -368,12 +471,14 @@ function TextAreaControlSurface({
           slotClass: slotClassNames.control,
           className,
         })}
-        {...rest}
+        {...domRest}
         {...pointerHandlers}
         aria-required={required || undefined}
         aria-invalid={ariaInvalidValue(isInvalid)}
         aria-describedby={ariaDescribedBy}
         data-invalid={isInvalid ? "" : undefined}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={readOnlyData(readOnly)}
         data-required={required ? "" : undefined}
       />
       {resizable ? (
@@ -505,7 +610,7 @@ export const TextAreaError = forwardRef<HTMLElement, TextAreaErrorProps>(
         {...rest}
         {...part.pointerHandlers}
       >
-        {children}
+        {children ?? field.errorMessage}
       </Field.Error>
     );
   },

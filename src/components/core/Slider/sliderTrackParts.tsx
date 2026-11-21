@@ -28,7 +28,7 @@ export function SliderTrackMarks() {
           key={item.value}
           aria-hidden
           className={cn(SLIDER_MARK_CLASS, ctx.markSlotClass, slotClassNames.mark)}
-          style={sliderMarkStyle(item.percent, ctx.orientation)}
+          style={sliderMarkStyle(item.percent, ctx.orientation, ctx.isRtl)}
         />
       ))}
     </>
@@ -130,7 +130,7 @@ function SliderTrackThumb({
   if (kind === "start") {
     return (
       <SliderThumbButton
-        ref={forwardedRef}
+        ref={mergeRefs(ctx.getThumbRef("start"), forwardedRef)}
         size={ctx.size}
         icon={icon}
         variant={ctx.variant}
@@ -139,6 +139,8 @@ function SliderTrackThumb({
         percent={ctx.thumbPercent("start")}
         orientation={ctx.orientation}
         disabled={ctx.disabled}
+        readOnly={ctx.readOnly}
+        isRtl={ctx.isRtl}
         active={ctx.activeThumb === "start"}
         ariaValueNow={ctx.rangeValue[0]}
         ariaValueMin={ctx.min}
@@ -156,7 +158,7 @@ function SliderTrackThumb({
   if (kind === "end") {
     return (
       <SliderThumbButton
-        ref={forwardedRef}
+        ref={mergeRefs(ctx.getThumbRef("end"), forwardedRef)}
         size={ctx.size}
         icon={icon}
         variant={ctx.variant}
@@ -165,6 +167,8 @@ function SliderTrackThumb({
         percent={ctx.thumbPercent("end")}
         orientation={ctx.orientation}
         disabled={ctx.disabled}
+        readOnly={ctx.readOnly}
+        isRtl={ctx.isRtl}
         active={ctx.activeThumb === "end"}
         ariaValueNow={ctx.rangeValue[1]}
         ariaValueMin={ctx.rangeValue[0]}
@@ -181,7 +185,7 @@ function SliderTrackThumb({
  
   return (
     <SliderThumbButton
-      ref={forwardedRef}
+      ref={mergeRefs(ctx.getThumbRef("single"), forwardedRef)}
       size={ctx.size}
       icon={icon}
       variant={ctx.variant}
@@ -190,6 +194,8 @@ function SliderTrackThumb({
       percent={ctx.thumbPercent("single")}
       orientation={ctx.orientation}
       disabled={ctx.disabled}
+      readOnly={ctx.readOnly}
+      isRtl={ctx.isRtl}
       active={ctx.activeThumb === "single"}
       ariaValueNow={ctx.singleValue}
       ariaValueMin={ctx.min}

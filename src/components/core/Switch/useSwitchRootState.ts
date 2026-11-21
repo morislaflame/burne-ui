@@ -1,11 +1,16 @@
 import { useId, useMemo, useRef, useState } from "react";
  
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
  
-import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
-import { useFieldInvalid } from "@/components/core/Field/fieldContext";
-import { compoundHasLabel, compoundUsesInlineMotion, countSecondaryLines } from "./switchAPI";
+import {
+  compoundHasLabel,
+  compoundUsesInlineMotion,
+  countSecondaryLines,
+  readSwitchCompoundControlProps,
+} from "./switchAPI";
 import { switchErrorId, switchHintId, switchInputId, switchLabelId } from "./switchA11y";
 import { SWITCH_LAYOUT } from "./switchStyles";
 import type { SwitchFieldContextValue, UseSwitchRootStateProps, UseSwitchRootStateResult } from "./switchTypes";
@@ -24,9 +29,44 @@ export function useSwitchRootState(
     ...controlRest
   }: UseSwitchRootStateProps & { className?: string },
 ): UseSwitchRootStateResult {
+  const compoundControlProps = useMemo(
+    () => readSwitchCompoundControlProps(children),
+    [children],
+  );
+  const resolvedName =
+    typeof controlRest.name === "string"
+      ? controlRest.name
+      : typeof compoundControlProps.name === "string"
+        ? compoundControlProps.name
+        : undefined;
+  const resolvedCheckedProp =
+    controlRest.checked !== undefined ? controlRest.checked : compoundControlProps.checked;
+  const resolvedDefaultCheckedProp =
+    controlRest.defaultChecked !== undefined
+      ? controlRest.defaultChecked
+      : compoundControlProps.defaultChecked;
+  const resolvedReadOnlyProp =
+    controlRest.readOnly !== undefined ? controlRest.readOnly : compoundControlProps.readOnly;
+  const resolvedDisabledProp =
+    disabledRoot !== undefined ? disabledRoot : compoundControlProps.disabled;
+  const resolvedRequiredProp = Boolean(
+    controlRest.required ?? compoundControlProps.required,
+  );
+
+  const formBinding = useFormFieldBinding({
+    name: resolvedName,
+    value: resolvedCheckedProp,
+    disabled: resolvedDisabledProp,
+    readOnly: resolvedReadOnlyProp,
+  });
+
   const autoId = useId();
   const switchId = switchInputId(
-    typeof controlRest.id === "string" ? controlRest.id : undefined,
+    typeof controlRest.id === "string"
+      ? controlRest.id
+      : typeof compoundControlProps.id === "string"
+        ? compoundControlProps.id
+        : undefined,
     autoId,
   );
   const labelId = switchLabelId(switchId);
@@ -34,8 +74,9 @@ export function useSwitchRootState(
   const errorId = switchErrorId(switchId);
   const [, setSqueezeToken] = useState(0);
   const [mergedChecked, setMergedChecked] = useState<boolean | null>(() => {
-    if (typeof controlRest.checked === "boolean") return controlRest.checked;
-    if (controlRest.defaultChecked != null) return Boolean(controlRest.defaultChecked);
+    if (typeof resolvedCheckedProp === "boolean") return resolvedCheckedProp;
+    if (formBinding.bound) return Boolean(formBinding.value);
+    if (resolvedDefaultCheckedProp != null) return Boolean(resolvedDefaultCheckedProp);
     return null;
   });
  
@@ -43,18 +84,24 @@ export function useSwitchRootState(
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasCompoundHint: compound ? hasCompoundChild(children, "Switch.Hint") : false,
-      hasCompoundError: compound ? hasCompoundChild(children, "Switch.Error") : false,
+      hasCompoundHint: compound
+        ? hasCompoundChild(children, "Switch.Hint", "SwitchHint")
+        : false,
+      hasCompoundError: compound
+        ? hasCompoundChild(children, "Switch.Error", "SwitchError")
+        : false,
       hasCompoundLabel: compound ? compoundHasLabel(children) : false,
     };
   }, [children]);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
+  const resolvedError =
+    error ?? (!hasCompoundError && formBinding.bound ? formBinding.error : undefined);
   const hasHint = hint != null;
-  const hasError = error != null;
-  const isInvalid = resolveFieldInvalid({
+  const hasError = resolvedError != null;
+  const isInvalid = useResolvedFieldInvalid({
     invalid,
-    error: (isCompound ? hasCompoundError : hasError) ? true : undefined,
-    inheritedInvalid: useFieldInvalid(),
+    errorConnected: isCompound ? hasCompoundError : hasError,
+    formInvalid: Boolean(formBinding.bound && formBinding.error),
   });
   const secondaryLines = countSecondaryLines(
     isCompound,
@@ -64,9 +111,18 @@ export function useSwitchRootState(
     hasCompoundError,
   );
   const hasTextColumn = isCompound ? hasCompoundLabel : label != null;
-  const disabled = disabledRoot;
+  const disabled = Boolean(resolvedDisabledProp ?? formBinding.disabled);
+  const readOnly = Boolean(resolvedReadOnlyProp ?? formBinding.readOnly);
   const enableTextMotion =
     !disabled && hasTextColumn && (!isCompound || useInlineCompoundMotion);
+ 
+  const isChecked =
+    mergedChecked ??
+    Boolean(
+      formBinding.bound
+        ? formBinding.value
+        : (resolvedCheckedProp ?? resolvedDefaultCheckedProp),
+    );
  
   const textColRef = useRef<HTMLElement>(null);
   const sz = SWITCH_LAYOUT[size];
@@ -81,6 +137,11 @@ export function useSwitchRootState(
       size,
       labelPosition,
       disabled,
+      disabledProp: resolvedDisabledProp,
+      readOnly,
+      readOnlyProp: resolvedReadOnlyProp,
+      invalidProp: invalid,
+      required: resolvedRequiredProp,
       isCompound,
       hasCompoundHint,
       hasCompoundError,
@@ -96,6 +157,11 @@ export function useSwitchRootState(
     }),
     [
       disabled,
+      resolvedDisabledProp,
+      readOnly,
+      resolvedReadOnlyProp,
+      invalid,
+      resolvedRequiredProp,
       hasCompoundHint,
       hasCompoundError,
       hasCompoundLabel,
@@ -119,9 +185,9 @@ export function useSwitchRootState(
     () => ({
       controlId: switchId,
       labelId,
-      required: false,
+      required: resolvedRequiredProp,
     }),
-    [labelId, switchId],
+    [labelId, resolvedRequiredProp, switchId],
   );
  
   return {
@@ -133,12 +199,15 @@ export function useSwitchRootState(
     sz,
     label,
     hint,
-    error,
+    error: resolvedError,
     hasHint,
     hasError,
     hintId,
     errorId,
     disabled,
+    readOnly,
+    required: resolvedRequiredProp,
+    isChecked,
     enableTextMotion,
     textColRef,
     labelPosition,

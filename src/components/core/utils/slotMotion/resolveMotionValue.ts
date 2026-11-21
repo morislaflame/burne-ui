@@ -70,7 +70,7 @@ export function mergeMotionSlotMaps(
   const slots = new Set([...Object.keys(base), ...Object.keys(override)]);
   const merged: MotionSlotMap = {};
   for (const slot of slots) {
-    if (slot === "events") continue;
+    if (slot === "events" || slot === "states") continue;
     merged[slot] = { ...base[slot], ...override[slot] };
   }
   return merged;

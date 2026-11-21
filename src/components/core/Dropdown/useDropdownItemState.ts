@@ -23,7 +23,8 @@ export function useDropdownItemState({
   status?: DropdownItemStatus;
   indicator?: boolean;
 }) {
-  const { selected, selectItem, indicatorMode, setOpen } = useDropdown();
+  const { selected, selectItem, indicatorMode, setOpen, multiple, closeOnSelectProp } =
+    useDropdown();
   const parts = useMemo(
     () => partitionDropdownItemChildren(children),
     [children],
@@ -67,6 +68,8 @@ export function useDropdownItemState({
     parts,
     selectItem,
     indicatorMode,
+    multiple,
+    closeOnSelectProp,
     setOpen,
     hasItemIndicator,
     hasHint,

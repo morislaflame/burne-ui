@@ -91,7 +91,17 @@ export function usePinInputShellMotion({
   return part;
 }
 
-export function usePinInputControlMotion() {
+export function usePinInputControlMotion({
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+}: {
+  onPointerOver?: PointerEventHandler<HTMLInputElement>;
+  onPointerOut?: PointerEventHandler<HTMLInputElement>;
+  onPointerDown?: PointerEventHandler<HTMLInputElement>;
+  onPointerUp?: PointerEventHandler<HTMLInputElement>;
+} = {}) {
   const scope = useOptionalPinInputMotionScope();
   const { disabled, variant } = usePinInputContext();
   const kitSurface = usesKitElevation(variant, KIT_INPUT_VARIANTS);
@@ -107,12 +117,16 @@ export function usePinInputControlMotion() {
     scope,
     slot: "control",
     pointerPhases: !disabled,
-    onPointerOver: () => {
+    onPointerOver: (event) => {
       pointerInsideRef.current = true;
+      onPointerOver?.(event);
     },
-    onPointerOut: () => {
+    onPointerOut: (event) => {
       pointerInsideRef.current = false;
+      onPointerOut?.(event);
     },
+    onPointerDown,
+    onPointerUp,
   });
   useOptionalEnterOnMount(scope, "control", part.targetRef);
 

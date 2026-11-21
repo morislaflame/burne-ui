@@ -4,6 +4,7 @@ import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
 import { applyTabsIndicatorRest } from "@/components/core/utils/slotMotion/recipes/tabsIndicatorMove";
  
@@ -57,7 +58,8 @@ function readIndicatorMetrics(
     if (orientation === "horizontal") {
       return { left, top: top + height - 2, width, height: 2 };
     }
-    return { left, top, width: 2, height };
+    const rtl = isRtlElement(list);
+    return { left: rtl ? left + width - 2 : left, top, width: 2, height };
   }
  
   return readSurfaceIndicatorMetrics(list, tab);
@@ -65,6 +67,8 @@ function readIndicatorMetrics(
  
 /** Instant layout box — motion uses compositor transforms only. */
 function applyIndicatorLayout(indicator: HTMLElement, metrics: IndicatorMetrics) {
+  indicator.style.insetInlineStart = "auto";
+  indicator.style.insetInlineEnd = "auto";
   indicator.style.left = `${metrics.left}px`;
   indicator.style.top = `${metrics.top}px`;
   indicator.style.width = `${metrics.width}px`;
@@ -94,8 +98,8 @@ export function useSlidingTabIndicator(
   activeValue: string | null,
   orientation: TabsOrientation,
   variant: KitTabsVariant,
-  tabElementsRef: RefObject<Map<string, HTMLButtonElement>>,
-  layoutEpoch: number,
+  tabElementsRef: RefObject<Map<string, HTMLElement>>,
+  subscribeTabLayout: (listener: () => void) => () => void,
   scope: MotionScopeValue | null,
 ) {
   const config = useMotionConfig();
@@ -169,17 +173,32 @@ export function useSlidingTabIndicator(
     firstLayoutRef.current = false;
   }, [updateIndicator]);
  
+  // react-doctor-disable-next-line react-doctor/effect-needs-cleanup -- subscribeTabLayout returns the unsubscribe disposer invoked in cleanup
   useLayoutEffect(() => {
     const list = listRef.current;
-    if (!list || typeof ResizeObserver === "undefined") return;
- 
-    const ro = new ResizeObserver(() => updateIndicator(false));
-    ro.observe(list);
-    for (const tab of tabElementsRef.current?.values() ?? []) {
-      ro.observe(tab);
-    }
- 
-    return () => ro.disconnect();
-  }, [activeValue, layoutEpoch, listRef, tabElementsRef, updateIndicator]);
+    const ro =
+      list && typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => updateIndicator(false))
+        : undefined;
+    const syncObservedNodes = () => {
+      if (!ro || !list) return;
+      ro.disconnect();
+      ro.observe(list);
+      for (const tab of tabElementsRef.current?.values() ?? []) {
+        ro.observe(tab);
+      }
+    };
+
+    syncObservedNodes();
+    const unsubscribe = subscribeTabLayout(() => {
+      syncObservedNodes();
+      updateIndicator(false);
+    });
+
+    return () => {
+      unsubscribe();
+      ro?.disconnect();
+    };
+  }, [activeValue, listRef, subscribeTabLayout, tabElementsRef, updateIndicator]);
 }
  

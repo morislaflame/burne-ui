@@ -3,8 +3,11 @@ import { cloneElement, forwardRef, isValidElement, useCallback, type ForwardedRe
 import { createPortal } from "react-dom";
  
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
+import { focusKeyboard } from "@/components/core/utils/focusElement";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { OverlayLayerProvider, useRegisterOverlayLayer } from "@/components/core/utils/overlayLayer";
+import { resolveFloatingPortalContainer } from "@/components/core/utils/portalContainer";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import { useApplySkinPortal } from "@/skins/skinContext";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
  
@@ -99,18 +102,19 @@ export const DropdownSubTrigger = forwardRef<
     onPointerUp,
   });
  
+  const setPartRef = part.setRef;
   const setRowRef = useCallback(
     (node: HTMLDivElement | null) => {
-      part.setRef(node);
+      setPartRef(node);
       mergeForwardedRef(triggerRef, node);
     },
-    [part.setRef, triggerRef],
+    [setPartRef, triggerRef],
   );
  
   const handleEnter = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerEnter?.(e);
-      if (e.defaultPrevented) return;
+      if (e.defaultPrevented || e.pointerType === "touch") return;
       cancelClose();
       setOpen(true);
     },
@@ -120,7 +124,7 @@ export const DropdownSubTrigger = forwardRef<
   const handleLeave = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerLeave?.(e);
-      if (e.defaultPrevented) return;
+      if (e.defaultPrevented || e.pointerType === "touch") return;
       scheduleClose();
     },
     [onPointerLeave, scheduleClose],
@@ -140,18 +144,21 @@ export const DropdownSubTrigger = forwardRef<
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
       if (e.defaultPrevented) return;
-      if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") {
+      const rtl = triggerRef.current ? isRtlElement(triggerRef.current) : false;
+      const openKey = rtl ? "ArrowLeft" : "ArrowRight";
+      const closeKey = rtl ? "ArrowRight" : "ArrowLeft";
+      if (e.key === "Enter" || e.key === " " || e.key === openKey) {
         e.preventDefault();
         cancelClose();
         setOpen(true);
         return;
       }
-      if (e.key === "ArrowLeft" && open) {
+      if (e.key === closeKey && open) {
         e.preventDefault();
         setOpen(false);
       }
     },
-    [cancelClose, onKeyDown, open, setOpen],
+    [cancelClose, onKeyDown, open, setOpen, triggerRef],
   );
  
   const rowClass = dropdownSubTriggerRowClass({
@@ -287,16 +294,32 @@ function DropdownSubPopoverHost({
     slot: "subPopover",
   });
  
+  const effectiveContainer = portalContainerProp ?? portalContainerFromRoot;
   const portal = useDropdownSubPopoverPortal({
     subOpen,
     triggerRef,
     menuTriggerRef,
     subPanelRootsRef,
     popoverVariant,
-    portalContainer: portalContainerProp ?? portalContainerFromRoot,
+    portalContainer: effectiveContainer,
     motionScope,
   });
   useApplySkinPortal(portal.panelRef, portal.portalMounted);
+
+  const layerId = useRegisterOverlayLayer({
+    enabled: subOpen,
+    kind: "floating",
+    onEscape: () => {
+      setOpen(false);
+      focusKeyboard(triggerRef.current);
+      return true;
+    },
+    containsNode: (node) =>
+      Boolean(
+        triggerRef.current?.contains(node) ||
+          portal.panelRef.current?.contains(node),
+      ),
+  });
  
   useDropdownSubmenuKeyboard({
     subOpen,
@@ -304,12 +327,13 @@ function DropdownSubPopoverHost({
     panelRef: portal.panelRef,
     triggerRef,
     setOpen,
+    layerId,
   });
  
   const handleEnter = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerEnterProp?.(e);
-      if (e.defaultPrevented) return;
+      if (e.defaultPrevented || e.pointerType === "touch") return;
       cancelClose();
     },
     [cancelClose, onPointerEnterProp],
@@ -318,7 +342,7 @@ function DropdownSubPopoverHost({
   const handleLeave = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerLeaveProp?.(e);
-      if (e.defaultPrevented) return;
+      if (e.defaultPrevented || e.pointerType === "touch") return;
       scheduleClose();
     },
     [onPointerLeaveProp, scheduleClose],
@@ -326,44 +350,64 @@ function DropdownSubPopoverHost({
  
   if (!portal.portalMounted) return null;
  
-  const portalTheme = burneLightThemePortalProps(menuTriggerRef.current);
+  const dirSource = triggerRef.current ?? menuTriggerRef.current;
+  const dirAncestor = dirSource?.closest?.("[dir]");
+  const rawDir =
+    dirAncestor && dirAncestor !== document.documentElement
+      ? dirAncestor.getAttribute("dir")
+      : null;
+  const portalDir =
+    rawDir === "rtl" || rawDir === "ltr"
+      ? rawDir
+      : dirSource instanceof HTMLElement && isRtlElement(dirSource)
+        ? "rtl"
+        : undefined;
+  const portalTheme = burneLightThemePortalProps(
+    triggerRef.current ?? menuTriggerRef.current,
+  );
  
   const panel = (
-    <div
-      ref={(node) => {
-        mergeForwardedRef(forwardedRef ?? null, node);
-        mergeForwardedRef(portal.panelRef, node);
-        setSubContentPartRef(node);
-      }}
-      {...portalTheme}
-      role="menu"
-      className={dropdownSubContentClass({
-        variant: portal.popoverVariant,
-        subOpen,
-        portalMounted: portal.portalMounted,
-        className,
-        slotClass: slotClassNames.subPopover,
-      })}
-      style={{
-        position: portal.contained ? "absolute" : "fixed",
-        top: portal.pos.top,
-        left: portal.pos.left,
-        minWidth: portal.pos.minW,
-        ...style,
-      }}
-      {...rest}
-      onPointerEnter={handleEnter}
-      onPointerLeave={handleLeave}
-    >
-      <div className={cn(DROPDOWN_SUB_CONTENT_BODY_CLASS, slotClassNames.subPopoverBody)}>
-        {children}
+    <OverlayLayerProvider layerId={layerId}>
+      <div
+        ref={(node) => {
+          mergeForwardedRef(forwardedRef ?? null, node);
+          mergeForwardedRef(portal.panelRef, node);
+          setSubContentPartRef(node);
+        }}
+        dir={portalDir}
+        {...portalTheme}
+        role="menu"
+        className={dropdownSubContentClass({
+          variant: portal.popoverVariant,
+          subOpen,
+          portalMounted: portal.portalMounted,
+          className,
+          slotClass: slotClassNames.subPopover,
+        })}
+        style={{
+          position: portal.contained ? "absolute" : "fixed",
+          top: portal.pos.top,
+          left: portal.pos.left,
+          minWidth: portal.pos.minW,
+          ...style,
+        }}
+        {...rest}
+        onPointerEnter={handleEnter}
+        onPointerLeave={handleLeave}
+      >
+        <div className={cn(DROPDOWN_SUB_CONTENT_BODY_CLASS, slotClassNames.subPopoverBody)}>
+          {children}
+        </div>
       </div>
-    </div>
+    </OverlayLayerProvider>
   );
  
   const portalHost =
     typeof document !== "undefined"
-      ? resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot)
+      ? (resolveFloatingPortalContainer(
+          effectiveContainer,
+          triggerRef.current ?? menuTriggerRef.current,
+        ) ?? portal.portalHost)
       : null;
  
   return portalHost ? createPortal(panel, portalHost) : null;

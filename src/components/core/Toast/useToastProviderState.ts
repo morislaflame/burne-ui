@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
  
 import { createToastId, TOAST_DEFAULT_DURATION_MS } from "./toastAPI";
 import { resolveToastLiveRole, toastAnnouncementText } from "./toastA11y";
@@ -31,17 +31,32 @@ export function useToastProviderState({
   });
   const orderRef = useRef(0);
   const announceNonceRef = useRef(0);
+  const announceRafRef = useRef<number | null>(null);
   const toastsRef = useRef(toasts);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   toastsRef.current = toasts;
+
+  useEffect(() => {
+    return () => {
+      if (announceRafRef.current != null) {
+        cancelAnimationFrame(announceRafRef.current);
+        announceRafRef.current = null;
+      }
+    };
+  }, []);
  
   const announce = useCallback((entry: ToastEntry) => {
     const text = toastAnnouncementText(entry.title, entry.description);
     if (!text) return;
     const assertive = resolveToastLiveRole(entry.status) === "alert";
+    if (announceRafRef.current != null) {
+      cancelAnimationFrame(announceRafRef.current);
+      announceRafRef.current = null;
+    }
     // Clear first so identical messages still get announced by SRs.
     setLiveAnnouncement({ text: "", assertive, nonce: ++announceNonceRef.current });
-    requestAnimationFrame(() => {
+    announceRafRef.current = requestAnimationFrame(() => {
+      announceRafRef.current = null;
       setLiveAnnouncement({
         text,
         assertive,
@@ -53,6 +68,46 @@ export function useToastProviderState({
   const add = useCallback(
     (opts: AddToastOpts): string => {
       const id = opts.id ?? createToastId();
+      const existing = opts.id != null
+        ? toastsRef.current.find((t) => t.id === id)
+        : undefined;
+
+      if (existing) {
+        const updated: ToastEntry = {
+          ...existing,
+          status: opts.status ?? existing.status,
+          variant: opts.variant ?? existing.variant,
+          size: opts.size ?? existing.size,
+          title: opts.title !== undefined ? opts.title : existing.title,
+          description:
+            opts.description !== undefined ? opts.description : existing.description,
+          action: opts.action !== undefined ? opts.action : existing.action,
+          duration: opts.duration ?? existing.duration,
+          onClose: opts.onClose ?? existing.onClose,
+          placement: opts.placement ?? existing.placement,
+          loading: opts.loading ?? false,
+          classNames: opts.classNames
+            ? { ...providerClassNames, ...opts.classNames }
+            : existing.classNames,
+          motion: opts.motion ?? existing.motion,
+          motionController: opts.motionController ?? existing.motionController,
+          motionState: opts.motionState ?? existing.motionState,
+          motionPayload: opts.motionPayload ?? existing.motionPayload,
+          playInitialState: opts.playInitialState ?? existing.playInitialState,
+        };
+        const nextList = toastsRef.current.map((t) => (t.id === id ? updated : t));
+        toastsRef.current = nextList;
+        setToasts(nextList);
+        setDismissingIds((prev) => {
+          if (!prev.has(id)) return prev;
+          const n = new Set(prev);
+          n.delete(id);
+          return n;
+        });
+        announce(updated);
+        return id;
+      }
+
       const entry: ToastEntry = {
         id,
         status: opts.status ?? "default",
@@ -73,7 +128,9 @@ export function useToastProviderState({
         motionPayload: opts.motionPayload,
         playInitialState: opts.playInitialState,
       };
-      setToasts((prev) => [...prev, entry]);
+      const nextList = [...toastsRef.current, entry];
+      toastsRef.current = nextList;
+      setToasts(nextList);
       announce(entry);
       return id;
     },
@@ -85,7 +142,9 @@ export function useToastProviderState({
       const current = toastsRef.current.find((t) => t.id === id);
       if (!current) return;
       const updated: ToastEntry = { ...current, ...patch };
-      setToasts((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      const nextList = toastsRef.current.map((t) => (t.id === id ? updated : t));
+      toastsRef.current = nextList;
+      setToasts(nextList);
       if (
         patch.title !== undefined ||
         patch.description !== undefined ||
@@ -109,13 +168,17 @@ export function useToastProviderState({
   }, []);
  
   const removeFinal = useCallback((id: string) => {
-    toastsRef.current.find((t) => t.id === id)?.onClose?.();
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    const removed = toastsRef.current.find((t) => t.id === id);
+    const nextList = toastsRef.current.filter((t) => t.id !== id);
+    toastsRef.current = nextList;
+    setToasts(nextList);
     setDismissingIds((prev) => {
+      if (!prev.has(id)) return prev;
       const n = new Set(prev);
       n.delete(id);
       return n;
     });
+    removed?.onClose?.();
   }, []);
  
   const placements = useMemo(

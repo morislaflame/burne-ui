@@ -9,7 +9,7 @@ import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 import { cn } from "@/utils/cn";
  
 import { rippleLayerA11yProps } from "./rippleA11y";
-import { resolveRippleEventTarget, resolveRipplePaint } from "./rippleAPI";
+import { isRippleTargetDisabled, resolveRippleEventTarget, resolveRipplePaint } from "./rippleAPI";
 import { RIPPLE_LAYER_CLASS } from "./rippleStyles";
 import type { RippleProps } from "./rippleTypes";
  
@@ -92,7 +92,8 @@ export const Ripple = forwardRef<HTMLSpanElement, RippleProps>(function Ripple(
     const handler = (ev: PointerEvent) => {
       if (disabled || prefersReducedMotion() || !isMotionFeatureEnabledFor(motion, "enableRipple")) return;
       if (ev.defaultPrevented) return;
-      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      if (ev.button !== 0) return;
+      if (isRippleTargetDisabled(ev.currentTarget ?? target)) return;
       paintRef.current?.pushAtClientCoords(target, ev.clientX, ev.clientY);
     };
  

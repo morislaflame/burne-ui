@@ -1,12 +1,16 @@
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 
+import { COLOR_PICKER_CHECKERBOARD_CLASS } from "./colorPickerStyles";
 import type { ColorSwatchClassNames, ColorSwatchShape, ColorSwatchSize } from "./colorSwatchTypes";
 
 export const COLOR_SWATCH_DECORATIVE_CLASS = "relative shrink-0 overflow-hidden";
 
 export const COLOR_SWATCH_BUTTON_CLASS =
   "relative shrink-0 origin-center overflow-hidden focus-ring";
+
+export const COLOR_SWATCH_FILL_LAYER_CLASS =
+  "pointer-events-none absolute inset-0 rounded-[inherit]";
 
 /** Selection ring. Keyboard focus stays on `focus-ring`. */
 export const COLOR_SWATCH_SELECTED_CLASS =
@@ -50,6 +54,7 @@ export function colorSwatchClass({
 }): string {
   return cn(
     interactive ? COLOR_SWATCH_BUTTON_CLASS : COLOR_SWATCH_DECORATIVE_CLASS,
+    COLOR_PICKER_CHECKERBOARD_CLASS,
     interactive && SHADOW_LIFT_MOTION_CLASS,
     COLOR_SWATCH_SIZE_CLASS[size],
     COLOR_SWATCH_SHAPE_CLASS[shape],

@@ -10,6 +10,29 @@ export const SKELETON_WAVE_OVERLAY_CLASS =
 export const SKELETON_CIRCLE_RADIUS_CLASS = "rounded-full";
  
 export const SKELETON_CIRCLE_SIZE_DEFAULT = "min-h-control-base w-control-base";
+
+export const SKELETON_CIRCLE_SIZE_TOKENS = {
+  small: "min-h-control-small w-control-small",
+  base: SKELETON_CIRCLE_SIZE_DEFAULT,
+  mid: "min-h-control-mid w-control-mid",
+  large: "min-h-control-large w-control-large",
+} as const;
+
+export function resolveSkeletonCircleSize(size: string): {
+  sizeClass: string;
+  dataSize?: string;
+} {
+  if (size in SKELETON_CIRCLE_SIZE_TOKENS) {
+    return {
+      sizeClass: SKELETON_CIRCLE_SIZE_TOKENS[size as keyof typeof SKELETON_CIRCLE_SIZE_TOKENS],
+      dataSize: size,
+    };
+  }
+  if (size === SKELETON_CIRCLE_SIZE_DEFAULT) {
+    return { sizeClass: size, dataSize: "base" };
+  }
+  return { sizeClass: size, dataSize: undefined };
+}
  
 export const SKELETON_TEXT_ROOT_CLASS = "flex flex-col gap-small";
  

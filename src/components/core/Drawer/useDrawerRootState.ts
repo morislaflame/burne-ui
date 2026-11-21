@@ -17,6 +17,7 @@ export function useDrawerRootState({
   onOpenChange,
   placement = DEFAULT_PLACEMENT,
   size = "base",
+  variant,
   portalContainer,
 }: UseDrawerRootStateProps & { placement?: DrawerPlacement }) {
   const [open, setOpen] = useControllableState({
@@ -55,6 +56,8 @@ export function useDrawerRootState({
     onOpenChange: setOpen,
     placement,
     size,
+    variant,
+    closeOnInteractOutside: true,
     sizePreset,
     footerButtonSize: footerButtonSizeForDrawer(size),
     overlayRef: placeholderOverlayRef,

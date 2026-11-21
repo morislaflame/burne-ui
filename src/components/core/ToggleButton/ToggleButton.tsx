@@ -1,6 +1,6 @@
 import { forwardRef, useMemo, useRef } from "react";
  
-import { dataGroupSegment, dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataGroupSegment, dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { usesKitElevation } from "@/skins/resolveVariantVisual";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
 
@@ -74,24 +74,33 @@ type ToggleButtonSurfaceProps = {
     | "motionController"
     | "onClick"
     | "onFocus"
+    | "onBlur"
     | "onPointerDown"
     | "onPointerUp"
+    | "onPointerCancel"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerEnter"
     | "onPointerLeave"
     | "onKeyDown"
+    | "onKeyUp"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   hoverPointerInsideRef: React.RefObject<boolean>;
   onReleaseStartRef: React.RefObject<(() => void) | undefined>;
   onPointerDown: ToggleButtonProps["onPointerDown"];
   onPointerUp: ToggleButtonProps["onPointerUp"];
+  onPointerCancel: ToggleButtonProps["onPointerCancel"];
   onPointerOver: ToggleButtonProps["onPointerOver"];
   onPointerOut: ToggleButtonProps["onPointerOut"];
   onPointerEnter: ToggleButtonProps["onPointerEnter"];
   onPointerLeave: ToggleButtonProps["onPointerLeave"];
   onKeyDown: ToggleButtonProps["onKeyDown"];
+  onKeyUp: ToggleButtonProps["onKeyUp"];
+  onBlur: ToggleButtonProps["onBlur"];
 };
  
 function ToggleButtonSurface({
@@ -108,11 +117,14 @@ function ToggleButtonSurface({
   onReleaseStartRef,
   onPointerDown,
   onPointerUp,
+  onPointerCancel,
   onPointerOver,
   onPointerOut,
   onPointerEnter,
   onPointerLeave,
   onKeyDown,
+  onKeyUp,
+  onBlur,
 }: ToggleButtonSurfaceProps) {
   const animations = useToggleButtonAnimations({
     disabled: state.disabled,
@@ -130,7 +142,10 @@ function ToggleButtonSurface({
     onPointerOut,
     onPointerDown,
     onPointerUp,
+    onPointerCancel,
     onKeyDown,
+    onKeyUp,
+    onBlur,
   });
  
   const buttonClass = toggleButtonRootClass({
@@ -174,18 +189,22 @@ function ToggleButtonSurface({
         tabIndex={state.tabIndex}
         className={buttonClass}
         {...rest}
-        {...dataVariantProps({ size: state.size, variant: state.variant })}
-        data-value={state.itemValue}
-        data-group-segment={dataGroupSegment(state.groupSegment != null)}
         onPointerOver={animations.pointerHandlers.onPointerOver}
         onPointerOut={animations.pointerHandlers.onPointerOut}
         onPointerEnter={animations.handlePointerEnter}
         onPointerLeave={animations.handlePointerLeave}
         onPointerDown={animations.handlePointerDown}
         onPointerUp={animations.handlePointerUp}
+        onPointerCancel={animations.handlePointerCancel}
         onKeyDown={animations.handleKeyDown}
-        onClick={(e) => state.handleClick(e, animations.queueFillOnClick)}
+        onKeyUp={animations.handleKeyUp}
+        onClick={state.handleClick}
         onFocus={state.handleFocus}
+        onBlur={animations.handleBlur}
+        {...dataVariantProps({ size: state.size, variant: state.variant })}
+        data-value={state.itemValue}
+        data-group-segment={dataGroupSegment(state.groupSegment != null)}
+        data-disabled={dataFlag(state.disabled)}
         data-state={dataOnState(state.pressed)}
       >
         {!hasCompoundFill ? <ToggleButtonFill /> : null}
@@ -233,13 +252,16 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       playInitialState,
       onClick,
       onFocus,
+      onBlur,
       onPointerDown,
       onPointerUp,
+      onPointerCancel,
       onPointerOver,
       onPointerOut,
       onPointerEnter,
       onPointerLeave,
       onKeyDown,
+      onKeyUp,
       ...rest
     },
     ref,
@@ -302,11 +324,14 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
             onReleaseStartRef={onReleaseStartRef}
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
+            onPointerCancel={onPointerCancel}
             onPointerOver={onPointerOver}
             onPointerOut={onPointerOut}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
             onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            onBlur={onBlur}
           >
             {children}
           </ToggleButtonSurface>

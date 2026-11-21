@@ -70,7 +70,7 @@ export const SLIDER_THUMB_BUTTON_BASE_CLASS =
   "absolute box-border flex shrink-0 origin-center items-center justify-center m-0 appearance-none border-0 bg-transparent p-0 focus-ring";
 
 export const SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS =
-  "top-0 h-full w-auto -translate-x-1/2 aspect-square";
+  "top-0 h-full w-auto -translate-x-1/2 rtl:translate-x-1/2 aspect-square";
 
 export const SLIDER_THUMB_BUTTON_VERTICAL_CLASS =
   "start-0 w-full h-auto -translate-y-1/2 aspect-square";
@@ -209,17 +209,33 @@ export function sliderThumbButtonClass({
 export function sliderThumbPositionStyle(
   percent: number,
   orientation: SliderOrientation,
+  isRtl = false,
 ): CSSProperties {
-  return orientation === "horizontal" ? { left: `${percent}%` } : { top: `${100 - percent}%` };
+  if (orientation === "horizontal") {
+    return isRtl
+      ? { insetInlineStart: `${percent}%`, translate: "50% 0" }
+      : { insetInlineStart: `${percent}%` };
+  }
+  return { top: `${100 - percent}%` };
 }
 
 export function sliderMarkStyle(
   percent: number,
   orientation: SliderOrientation,
+  isRtl = false,
 ): CSSProperties {
   return orientation === "horizontal"
-    ? { left: `${percent}%`, top: "50%", transform: "translate(-50%, -50%)" }
-    : { bottom: `${percent}%`, left: "50%", top: "auto", transform: "translate(-50%, 50%)" };
+    ? {
+        insetInlineStart: `${percent}%`,
+        top: "50%",
+        transform: isRtl ? "translate(50%, -50%)" : "translate(-50%, -50%)",
+      }
+    : {
+        bottom: `${percent}%`,
+        insetInlineStart: "50%",
+        top: "auto",
+        transform: isRtl ? "translate(50%, 50%)" : "translate(-50%, 50%)",
+      };
 }
 
 export function sliderTrackCrossStyle({

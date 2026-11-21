@@ -6,14 +6,15 @@
  * Host: root (`useLinkAnimations`) plays hover/press.
  * Defaults: `hoverLiftFirstLevel` (no hover shadow) + `pressSqueeze` (`pressOut: false`).
  */
-import { useCallback, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
+import { clearMotionTransform } from "@/components/core/utils/gsapMotion";
+import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
  
 import {
   isInteractivePressKey,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
+import { killStoredMotion, mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
  
 import { useLinkMotionScope } from "./linkContext";
 import type { LinkMotion, UseLinkAnimationsProps } from "./linkTypes";
@@ -34,6 +35,7 @@ export function resolveLinkMotionDefaults(): LinkMotion {
 }
  
 export function useLinkAnimations({
+  disabled = false,
   forwardedRef,
   onPointerEnter,
   onPointerLeave,
@@ -43,6 +45,7 @@ export function useLinkAnimations({
   onPointerUp,
   onKeyDown,
 }: UseLinkAnimationsProps) {
+  const enabled = !disabled;
   const anchorRef = useRef<HTMLAnchorElement | null>(null);
   const scope = useLinkMotionScope();
   const rootMotionRef = useRef(scope.getRootMotion()?.root);
@@ -57,21 +60,33 @@ export function useLinkAnimations({
     },
     [forwardedRef, scope],
   );
+
+  useEffect(() => {
+    if (enabled) return;
+    for (const reg of scope.getRegistrations()) {
+      killStoredMotion(reg.node);
+      clearMotionTransform(reg.node);
+    }
+  }, [enabled, scope]);
  
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
+      if (!enabled) return;
       const el = anchorRef.current;
-      if (!el) return;
-      const partMotion = rootMotionRef.current;
-      const value = scope.resolve("root", phase, partMotion);
-      if (value === undefined) return;
-      scope.play("root", phase, { partMotion, el });
+      if (el) {
+        const partMotion = rootMotionRef.current;
+        const value = scope.resolve("root", phase, partMotion);
+        if (value !== undefined) {
+          scope.play("root", phase, { partMotion, el });
+        }
+      }
+      void scope.playBroadcast(phase, { exclude: ["root"] });
     },
-    [scope],
+    [enabled, scope],
   );
  
   const motionPointer = useMotionPointerPhases<HTMLAnchorElement>({
-    enabled: true,
+    enabled,
     targetRef: anchorRef,
     skipHover: shouldSkipInteractiveHoverLift,
     onHoverIn: () => playRoot("hoverIn"),
@@ -92,19 +107,19 @@ export function useLinkAnimations({
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLAnchorElement>) => {
       onPointerDown?.(e);
-      if (e.defaultPrevented) return;
+      if (!enabled || e.defaultPrevented) return;
       playRoot("pressIn");
     },
-    [onPointerDown, playRoot],
+    [enabled, onPointerDown, playRoot],
   );
  
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLAnchorElement>) => {
       onPointerUp?.(e);
-      if (e.defaultPrevented) return;
+      if (!enabled || e.defaultPrevented) return;
       playRoot("pressOut");
     },
-    [onPointerUp, playRoot],
+    [enabled, onPointerUp, playRoot],
   );
  
   const handlePointerEnter = useCallback(
@@ -124,10 +139,10 @@ export function useLinkAnimations({
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLAnchorElement>) => {
       onKeyDown?.(e);
-      if (e.defaultPrevented || !isInteractivePressKey(e)) return;
+      if (!enabled || e.defaultPrevented || !isInteractivePressKey(e)) return;
       playRoot("pressIn");
     },
-    [onKeyDown, playRoot],
+    [enabled, onKeyDown, playRoot],
   );
  
   const pointerHandlers = useMemo(

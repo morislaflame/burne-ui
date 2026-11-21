@@ -98,6 +98,18 @@ export const TagsInputRoot = forwardRef(function TagsInputRoot({
     [resolvedVariant, state.contextValue.disabled],
   );
 
+  const {
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    ...rootRest
+  } = rest;
+  const simpleAriaProps = {
+    ...(ariaLabel !== undefined ? { "aria-label": ariaLabel } : undefined),
+    ...(ariaLabelledBy !== undefined ? { "aria-labelledby": ariaLabelledBy } : undefined),
+    ...(ariaDescribedBy !== undefined ? { "aria-describedby": ariaDescribedBy } : undefined),
+  };
+
   return (
     <TagsInputProvider value={state.contextValue}>
       <TagsInputClassNamesProvider classNames={classNames}>
@@ -114,7 +126,7 @@ export const TagsInputRoot = forwardRef(function TagsInputRoot({
             <Field
               size={size}
               className={cn(TAGS_INPUT_ROOT_CLASS, classNames?.root, className)}
-              {...rest}
+              {...(state.isCompound ? rest : rootRest)}
               ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({
                 size,
@@ -125,7 +137,11 @@ export const TagsInputRoot = forwardRef(function TagsInputRoot({
               data-readonly={dataFlag(state.contextValue.readOnly)}
               data-required={dataFlag(state.contextValue.required)}
             >
-              {state.isCompound ? <TagsInputCompoundBody>{children}</TagsInputCompoundBody> : <TagsInputSimpleBody />}
+              {state.isCompound ? (
+                <TagsInputCompoundBody>{children}</TagsInputCompoundBody>
+              ) : (
+                <TagsInputSimpleBody inputAriaProps={simpleAriaProps} />
+              )}
             </Field>
           </FieldLabelContext.Provider>
         </TagsInputMotionProvider>

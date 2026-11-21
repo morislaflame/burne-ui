@@ -1,4 +1,4 @@
-import { Fragment, forwardRef, useCallback } from "react";
+import { Fragment, forwardRef, useCallback, type AriaAttributes } from "react";
  
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
@@ -202,6 +202,7 @@ export function SelectSimpleBody({
   hint,
   error,
   labelId,
+  valueProps,
   motionController,
   motionState,
   motionPayload,
@@ -211,6 +212,7 @@ export function SelectSimpleBody({
   hint: React.ReactNode;
   error: React.ReactNode;
   labelId: string;
+  valueProps?: Pick<AriaAttributes, "aria-label" | "aria-labelledby" | "aria-describedby">;
   motionController?: MotionController;
 } & MotionStateHostProps) {
   const slotClassNames = useSelectClassNames();
@@ -226,7 +228,7 @@ export function SelectSimpleBody({
                 motionState={motionState}
                 motionPayload={motionPayload}
                 playInitialState={playInitialState}>
-        <SelectValue />
+        <SelectValue {...valueProps} />
         <SelectTrigger />
       </SelectShell>
       <SelectPopover />

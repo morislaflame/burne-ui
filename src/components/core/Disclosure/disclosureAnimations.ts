@@ -236,14 +236,16 @@ export function useDisclosureTriggerMotion({
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
-      if (e.defaultPrevented || disabled) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
+      if (e.defaultPrevented || disabled || e.repeat) return;
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
         playLift("pressIn");
-        setOpen(!open);
+        if (e.currentTarget.tagName !== "BUTTON") {
+          e.preventDefault();
+          e.currentTarget.click();
+        }
       }
     },
-    [disabled, onKeyDown, open, playLift, setOpen],
+    [disabled, onKeyDown, playLift],
   );
  
   const handlePointerEnter = useCallback(

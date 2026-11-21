@@ -5,11 +5,17 @@ import { Text } from "@/components/core/Text";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
-import { dataActiveState } from "@/components/core/utils/dataContract";
+import { dataActiveState, dataFlag } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, resolvePaginationPageAriaLabel } from "./paginationA11y";
-import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
+import {
+  clampPaginationPage,
+  getPaginationRange,
+  normalizePaginationTotalPages,
+  resolvePaginationNextDisabled,
+  resolvePaginationPreviousDisabled,
+} from "./paginationAPI";
 import { playPaginationButtonPhase, usePaginationContentRef, usePaginationEllipsisSlot, usePaginationPageActiveSlot, usePaginationSummarySlot } from "./paginationAnimations";
 import {
   useOptionalPagination,
@@ -72,9 +78,14 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       disabled,
       motionSlot,
       href,
+      dataState,
+      onClick,
+      onAuxClick,
       onPointerDown,
       onPointerUp,
       onKeyDown,
+      tabIndex,
+      "aria-disabled": ariaDisabledProp,
       motion,
       ...rest
     },
@@ -82,6 +93,10 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
   ) {
     const scope = useOptionalPaginationMotionScope();
     const size = useOptionalPagination()?.size ?? "base";
+    const isBlocked =
+      Boolean(disabled) ||
+      ariaDisabledProp === true ||
+      ariaDisabledProp === "true";
     const playPress = useCallback(
       (phase: "pressIn" | "pressOut", el: HTMLElement) => {
         playPaginationButtonPhase(scope, motionSlot, phase, el, motion);
@@ -93,36 +108,69 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       slot: motionSlot,
       motion,
       pressPhases: false,
-      pointerPhases: !disabled,
+      pointerPhases: !isBlocked,
       forwardedRef: ref,
       onPointerDown: (event) => {
         onPointerDown?.(event);
-        if (disabled || event.defaultPrevented) return;
+        if (isBlocked || event.defaultPrevented) return;
         playPress("pressIn", event.currentTarget);
       },
       onPointerUp: (event) => {
         onPointerUp?.(event);
-        if (disabled || event.defaultPrevented) return;
+        if (isBlocked || event.defaultPrevented) return;
         playPress("pressOut", event.currentTarget);
       },
     });
 
     const pressKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+      if (isBlocked && (event.key === "Enter" || event.key === " " || event.key === "Spacebar")) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       onKeyDown?.(event as KeyboardEvent<HTMLButtonElement>);
-      if (disabled || event.defaultPrevented || !isInteractivePressKey(event)) return;
+      if (isBlocked || event.defaultPrevented || !isInteractivePressKey(event)) return;
       playPress("pressIn", event.currentTarget);
     };
 
-    if (href) {
+    if (href != null) {
       return createElement(
         "a",
         {
           ref: setRef,
-          href,
-          className: paginationInteractiveButtonClass({ className, size }),
+          ...(isBlocked ? {} : { href }),
+          "aria-disabled": isBlocked || undefined,
+          ...(isBlocked
+            ? { tabIndex: -1 }
+            : tabIndex !== undefined
+              ? { tabIndex }
+              : {}),
+          className: paginationInteractiveButtonClass({
+            className,
+            disabled: isBlocked,
+            size,
+          }),
           ...rest,
           ...pointerHandlers,
+          onClick: (event: MouseEvent<HTMLAnchorElement>) => {
+            if (isBlocked) {
+              event.preventDefault();
+              event.stopPropagation();
+              return;
+            }
+            onClick?.(event as unknown as MouseEvent<HTMLButtonElement>);
+          },
+          onAuxClick: (event: MouseEvent<HTMLAnchorElement>) => {
+            if (isBlocked) {
+              event.preventDefault();
+              event.stopPropagation();
+              return;
+            }
+            onAuxClick?.(event as unknown as MouseEvent<HTMLButtonElement>);
+          },
           onKeyDown: pressKeyDown,
+          "data-disabled": dataFlag(isBlocked),
+          ...(dataState != null ? { "data-state": dataState } : {}),
         } as never,
         children,
       );
@@ -132,14 +180,20 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       <button
         ref={setRef}
         type="button"
-        disabled={disabled}
+        disabled={isBlocked}
+        tabIndex={tabIndex}
         className={paginationInteractiveButtonClass({
           className,
+          disabled: isBlocked,
           size,
         })}
+        onClick={onClick}
+        onAuxClick={onAuxClick}
         {...rest}
         {...pointerHandlers}
         onKeyDown={pressKeyDown}
+        data-disabled={dataFlag(isBlocked)}
+        data-state={dataState}
       >
         {children}
       </button>
@@ -237,17 +291,31 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
     const ctx = useOptionalPagination();
     const slotClassNames = usePaginationClassNames();
     const page = ctx?.page;
-    const resolvedDisabled = resolvePaginationPreviousDisabled({ disabled, page });
+    const totalPages = ctx?.totalPages;
+    const resolvedDisabled = resolvePaginationPreviousDisabled({
+      disabled,
+      page,
+      totalPages,
+    });
  
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (event.defaultPrevented || resolvedDisabled) return;
-        if (ctx?.onPageChange && page != null && page > 1) {
-          ctx.onPageChange(page - 1);
+        if (ctx?.onPageChange && page != null && Number.isFinite(page)) {
+          const safeTotal =
+            totalPages != null ? normalizePaginationTotalPages(totalPages) : undefined;
+          if (safeTotal != null && safeTotal <= 0) return;
+          const current =
+            safeTotal != null
+              ? clampPaginationPage(page, safeTotal)
+              : Math.max(1, Math.floor(page));
+          if (current > 1) {
+            ctx.onPageChange(current - 1);
+          }
         }
       },
-      [ctx, onClick, page, resolvedDisabled],
+      [ctx, onClick, page, resolvedDisabled, totalPages],
     );
  
     return (
@@ -302,13 +370,13 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
       (event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (event.defaultPrevented || resolvedDisabled) return;
-        if (
-          ctx?.onPageChange &&
-          page != null &&
-          totalPages != null &&
-          page < totalPages
-        ) {
-          ctx.onPageChange(page + 1);
+        if (ctx?.onPageChange && page != null && totalPages != null && Number.isFinite(page)) {
+          const safeTotal = normalizePaginationTotalPages(totalPages);
+          if (safeTotal <= 0) return;
+          const current = clampPaginationPage(page, safeTotal);
+          if (current < safeTotal) {
+            ctx.onPageChange(current + 1);
+          }
         }
       },
       [ctx, onClick, page, resolvedDisabled, totalPages],
@@ -410,6 +478,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     {
       page: pageNumber,
       active: activeProp,
+      disabled,
       href,
       children,
       onClick,
@@ -423,8 +492,13 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     const labels = useBurneLabels();
     const ctx = useOptionalPagination();
     const slotClassNames = usePaginationClassNames();
+    const invalidPage =
+      !Number.isFinite(pageNumber) ||
+      pageNumber < 1 ||
+      (ctx?.totalPages != null && pageNumber > normalizePaginationTotalPages(ctx.totalPages));
+    const resolvedDisabled = Boolean(disabled) || invalidPage;
     const active =
-      activeProp ?? (ctx?.page != null ? ctx.page === pageNumber : false);
+      activeProp ?? (!invalidPage && ctx?.page != null ? ctx.page === pageNumber : false);
     const pageActivePart = usePaginationPageActiveSlot(
       motion,
       ref as ForwardedRef<HTMLElement>,
@@ -434,10 +508,10 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
-        if (event.defaultPrevented || active) return;
-        ctx?.onPageChange?.(pageNumber);
+        if (event.defaultPrevented || active || resolvedDisabled) return;
+        ctx?.onPageChange?.(Math.floor(pageNumber));
       },
-      [active, ctx, onClick, pageNumber],
+      [active, ctx, onClick, pageNumber, resolvedDisabled],
     );
  
     const label = children ?? pageNumber;
@@ -476,13 +550,14 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
       <PaginationInteractive
         ref={ref}
         href={href}
+        disabled={resolvedDisabled}
+        dataState={dataActiveState(active)}
         {...(pageAriaLabel != null ? { "aria-label": pageAriaLabel } : {})}
         onClick={handleClick}
         className={cn(slotClassNames.page, className)}
         motionSlot="page"
         motion={motion}
         {...rest}
-        data-state={dataActiveState(active)}
       >
         <Text
           textStyle="small"

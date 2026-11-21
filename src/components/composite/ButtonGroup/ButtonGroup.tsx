@@ -1,6 +1,6 @@
-import { Fragment, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactNode } from "react";
+import { Fragment, cloneElement, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactElement, type ReactNode } from "react";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
 import { useSkinVariant } from "@/skins/skinContext";
 import { isKitVariant } from "@/skins/resolveVariantVisual";
@@ -8,7 +8,7 @@ import { KIT_BUTTON_VARIANTS } from "@/components/core/Button/buttonTypes";
  
 import { BUTTON_GROUP_ROLE, buttonGroupSeparatorA11yProps } from "./buttonGroupA11y";
 import { resolveButtonGroupMotionDefaults, useButtonGroupSlotMotion } from "./buttonGroupAnimations";
-import { buildButtonGroupSegment, isGroupSegmentSlot, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
+import { buildButtonGroupSegment, isGroupSegmentSlot, isToggleButtonElement, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
 import { ButtonGroupClassNamesProvider, ButtonGroupLayoutProvider, ButtonGroupMotionProvider, ButtonGroupSegmentProvider, useButtonGroupClassNames } from "./buttonGroupContext";
 import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
 import type { ButtonGroupOrientation, ButtonGroupProps } from "./buttonGroupTypes";
@@ -39,6 +39,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
       segmented = false,
       size = "base",
       variant: variantProp,
+      disabled,
       motion,
       motionController,
       motionState,
@@ -76,6 +77,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
               orientation={orientation}
               segmented={segmented}
               variant={variant}
+              disabled={disabled}
               className={cn(classNames?.root, className)}
               onPointerOver={onPointerOver}
               onPointerOut={onPointerOut}
@@ -83,36 +85,78 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
               onPointerUp={onPointerUp}
               rest={rest}
             >
-              {flat.map((child, i) => {
-                if (!isGroupSegmentSlot(child)) {
-                  return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
-                }
+              <ButtonGroupSegmentProvider
+                segment={undefined}
+                size={size}
+                variant={variant}
+                disabled={disabled}
+              >
+                {flat.map((child, i) => {
+                  const childProps = child.props as {
+                    disabled?: boolean;
+                    variant?: string;
+                  };
+                  const extraToggleProps: Record<string, unknown> = {};
+                  if (disabled && childProps.disabled === undefined) {
+                    extraToggleProps.disabled = true;
+                  }
+                  if (
+                    isToggleButtonElement(child) &&
+                    variantProp != null &&
+                    childProps.variant === undefined &&
+                    (variantProp === "default" ||
+                      variantProp === "outline" ||
+                      variantProp === "ghost" ||
+                      !isKitVariant(variantProp, KIT_BUTTON_VARIANTS))
+                  ) {
+                    extraToggleProps.variant = variantProp;
+                  }
+                  const resolvedChild =
+                    Object.keys(extraToggleProps).length > 0
+                      ? cloneElement(child as ReactElement<Record<string, unknown>>, extraToggleProps)
+                      : child;
+
+                  if (!isGroupSegmentSlot(child)) {
+                    return <Fragment key={child.key ?? `bg-wrap-${i}`}>{resolvedChild}</Fragment>;
+                  }
  
-                if (segmented) {
-                  return <Fragment key={child.key ?? `bg-item-${i}`}>{child}</Fragment>;
-                }
+                  if (segmented) {
+                    return (
+                      <ButtonGroupSegmentProvider
+                        key={child.key ?? `bg-item-${i}`}
+                        segment={undefined}
+                        size={size}
+                        variant={variant}
+                        disabled={disabled}
+                      >
+                        {resolvedChild}
+                      </ButtonGroupSegmentProvider>
+                    );
+                  }
  
-                segmentIndex += 1;
-                const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
-                const segment = buildButtonGroupSegment(orientation, position);
+                  segmentIndex += 1;
+                  const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
+                  const segment = buildButtonGroupSegment(orientation, position);
  
-                return (
-                  <Fragment key={child.key ?? `bg-seg-${i}`}>
-                    <ButtonGroupSegmentProvider
-                      segment={segment}
-                      size={size}
-                      variant={variant}
-                    >
-                      {child}
-                    </ButtonGroupSegmentProvider>
-                    {isKitVariant(variant, KIT_BUTTON_VARIANTS) &&
-                    position !== "last" &&
-                    position !== "only" ? (
-                      <ButtonGroupSeparator orientation={orientation} />
-                    ) : null}
-                  </Fragment>
-                );
-              })}
+                  return (
+                    <Fragment key={child.key ?? `bg-seg-${i}`}>
+                      <ButtonGroupSegmentProvider
+                        segment={segment}
+                        size={size}
+                        variant={variant}
+                        disabled={disabled}
+                      >
+                        {resolvedChild}
+                      </ButtonGroupSegmentProvider>
+                      {isKitVariant(variant, KIT_BUTTON_VARIANTS) &&
+                      position !== "last" &&
+                      position !== "only" ? (
+                        <ButtonGroupSeparator orientation={orientation} />
+                      ) : null}
+                    </Fragment>
+                  );
+                })}
+              </ButtonGroupSegmentProvider>
             </ButtonGroupRootSurface>
           </ButtonGroupMotionProvider>
         </ButtonGroupClassNamesProvider>
@@ -128,6 +172,7 @@ function ButtonGroupRootSurface({
   orientation,
   segmented,
   variant,
+  disabled,
   className,
   onPointerOver,
   onPointerOut,
@@ -140,6 +185,7 @@ function ButtonGroupRootSurface({
   orientation: ButtonGroupOrientation;
   segmented: boolean;
   variant: NonNullable<ButtonGroupProps["variant"]>;
+  disabled?: boolean;
   className: string;
   onPointerOver: ButtonGroupProps["onPointerOver"];
   onPointerOut: ButtonGroupProps["onPointerOut"];
@@ -163,6 +209,7 @@ function ButtonGroupRootSurface({
     <div
       ref={part.setRef}
       role={BUTTON_GROUP_ROLE}
+      aria-disabled={disabled || undefined}
       className={buttonGroupRootClass({
         orientation,
         segmented,
@@ -172,6 +219,7 @@ function ButtonGroupRootSurface({
       {...rest}
       {...part.pointerHandlers}
       {...dataVariantProps({ variant })}
+      data-disabled={dataFlag(disabled)}
     >
       {children}
     </div>

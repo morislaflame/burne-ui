@@ -1,4 +1,11 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, OlHTMLAttributes, ReactNode, RefObject } from "react";
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  LiHTMLAttributes,
+  OlHTMLAttributes,
+  ReactNode,
+  RefObject,
+} from "react";
 
 import type {
   MotionController,
@@ -77,7 +84,7 @@ export type StepperProps = Omit<OlHTMLAttributes<HTMLOListElement>, "children" |
   motionController?: MotionController;
 } & MotionStateHostProps;
 
-export type StepperItemProps = {
+export type StepperItemProps = Omit<LiHTMLAttributes<HTMLLIElement>, "value" | "title"> & {
   value: string;
   title?: ReactNode;
   description?: ReactNode;
@@ -108,6 +115,7 @@ export type StepperContextValue = {
   orientation: StepperOrientation;
   size: StepperSize;
   currentIndex: number;
+  maxReachedIndex: number;
   linear: boolean;
   select: (value: string) => void;
 };

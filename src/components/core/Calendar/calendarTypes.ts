@@ -107,6 +107,8 @@ export type CalendarMotion = {
 type CalendarCommonProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   variant?: CalendarVariant;
   size?: CalendarSize;
+  disabled?: boolean;
+  readOnly?: boolean;
   defaultMonth?: Date;
   /** Controlled visible month (day of month is ignored). */
   month?: Date;
@@ -214,6 +216,10 @@ export type CalendarContextValue = {
   onToday: () => void;
   size: CalendarSize;
   variant: CalendarVariant;
+  disabled: boolean;
+  readOnly: boolean;
+  canNavigatePrev: boolean;
+  canNavigateNext: boolean;
   locale: CalendarLocale;
   minDate?: Date;
   maxDate?: Date;
@@ -334,6 +340,7 @@ export type CalendarMonthCellModel = {
   name: string;
   isCurrentMonth: boolean;
   isSelected: boolean;
+  disabled?: boolean;
 };
  
 export type CalendarYearCellModel = {
@@ -341,5 +348,6 @@ export type CalendarYearCellModel = {
   isCurrentYear: boolean;
   isSelected: boolean;
   outOfDecade: boolean;
+  disabled?: boolean;
 };
  

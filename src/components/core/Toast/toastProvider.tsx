@@ -1,7 +1,10 @@
 import { createPortal } from "react-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
  
-import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import {
+  getTopmostOpenModalDialog,
+  resolvePortalContainer,
+} from "@/components/core/utils/portalContainer";
  
 import { TOAST_LIVE_REGION_CLASS } from "./toastA11y";
 import { ToastViewport } from "./toastAnimations";
@@ -63,6 +66,36 @@ export function ToastProviderRoot({
       error: toastError,
     });
   }, [loadingStatus, state.ctx, toastError]);
+
+  const hasToasts = state.toasts.length > 0;
+  const [topModalDialog, setTopModalDialog] = useState<HTMLDialogElement | null>(null);
+
+  useEffect(() => {
+    if (portalContainer || !hasToasts || typeof document === "undefined") {
+      setTopModalDialog(null);
+      return undefined;
+    }
+    const sync = () => {
+      const next = getTopmostOpenModalDialog();
+      setTopModalDialog((prev) => (prev === next ? prev : next));
+    };
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["open", "class"],
+    });
+    return () => observer.disconnect();
+  }, [hasToasts, portalContainer]);
+
+  const activeModalDialog =
+    !portalContainer && hasToasts
+      ? (topModalDialog && topModalDialog.isConnected && topModalDialog.open
+          ? topModalDialog
+          : getTopmostOpenModalDialog())
+      : null;
  
   return (
     <ToastContext.Provider value={state.ctx}>
@@ -70,7 +103,9 @@ export function ToastProviderRoot({
       <ToastLiveRegion announcement={state.liveAnnouncement} />
       {typeof document !== "undefined" &&
         state.placements.map((placement) => {
-          const portalHost = resolvePortalContainer(portalContainer);
+          const portalHost = portalContainer
+            ? resolvePortalContainer(portalContainer)
+            : (activeModalDialog ?? resolvePortalContainer(null));
           if (!portalHost) return null;
           return createPortal(
             <ToastViewport

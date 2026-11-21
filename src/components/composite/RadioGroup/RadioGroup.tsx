@@ -1,10 +1,10 @@
 import { Children, forwardRef, isValidElement, useMemo, type ReactNode } from "react";
  
 import { Radio } from "@/components/core/Radio";
+import { dataFlag } from "@/components/core/utils/dataContract";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
- 
-import { itemsPartTaken } from "@/components/core/utils/itemsBesideChildren";
 
 import { RADIO_GROUP_USES_NATIVE_FIELDSET } from "./radioGroupA11y";
 import { resolveRadioGroupMotionDefaults, useRadioGroupRootMotion } from "./radioGroupAnimations";
@@ -63,7 +63,7 @@ const RadioGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroup
     ref,
   ) {
     const slotClassNames = useRadioGroupClassNames();
-    const { selectedValue, required, readOnly, legendId } = useRadioGroupContext();
+    const { selectedValue, required, readOnly, disabled, legendId } = useRadioGroupContext();
     const part = useRadioGroupRootMotion({
       forwardedRef: ref,
       selectionIdentity: selectedValue ?? "",
@@ -87,7 +87,9 @@ const RadioGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroup
         aria-labelledby={labelledBy}
         aria-required={required || undefined}
         aria-readonly={readOnly || undefined}
-        data-readonly={readOnly ? "" : undefined}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
+        data-required={dataFlag(required)}
       >
         {children}
       </OptionGroupFieldset>
@@ -104,9 +106,12 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       size,
       label,
       hint,
-      error,
-      items,
-      disabled = false,
+      error: _error,
+      items: _items,
+      disabled: _disabled,
+      invalid: invalidProp,
+      onKeyDown: _onKeyDown,
+      onBlur: _onBlur,
       readOnly: _readOnly,
       name: _name,
       required: _required,
@@ -122,15 +127,28 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       playInitialState,
       ...fieldsetProps
     } = props;
-    const { contextValue, fieldLabelCtx, hintId, errorId } = useRadioGroupRootState(props);
+    const {
+      contextValue,
+      fieldLabelCtx,
+      hintId,
+      errorId,
+      disabled,
+      optionList,
+      formInvalid,
+      resolvedError,
+      bindFieldsetRef,
+      handleKeyDown,
+      handleBlur,
+    } = useRadioGroupRootState(props);
     const motionDefaults = useMemo(() => resolveRadioGroupMotionDefaults(), []);
-    const optionList =
-      items && !itemsPartTaken("RadioGroup", children, "RadioRoot", "RadioGroup.List") ? items : undefined;
  
     const fieldset = RADIO_GROUP_USES_NATIVE_FIELDSET ? (
       <RadioGroupFieldsetShell
-        ref={ref}
+        ref={mergeRefs(ref, bindFieldsetRef)}
         disabled={disabled}
+        invalid={formInvalid ? true : invalidProp}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         hintId={hintId}
         errorId={errorId}
         size={size}
@@ -152,7 +170,7 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
           </RadioGroupList>
         ) : null}
         {hint != null ? <RadioGroupHint>{hint}</RadioGroupHint> : null}
-        {error != null ? <RadioGroupError>{error}</RadioGroupError> : null}
+        {resolvedError != null ? <RadioGroupError>{resolvedError}</RadioGroupError> : null}
         {children}
       </RadioGroupFieldsetShell>
     ) : null;

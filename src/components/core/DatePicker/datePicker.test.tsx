@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { Form } from "@/components/composite/Form";
 import { render } from "@/__tests__/helpers";
 
 import { DatePicker } from ".";
@@ -106,5 +107,42 @@ describe("DatePicker", () => {
     await user.click(screen.getByRole("button", { name: "15 October 2026" }));
     const hidden = document.querySelector('input[name="when"]');
     expect(hidden).toHaveValue("2026-10-15");
+  });
+
+  it("integrates with Form defaultValues/validation and resets uncontrolled date on native form reset", async () => {
+    const { user } = render(
+      <Form defaultValues={{ day: "2026-10-15" }} rules={{ day: { required: "Pick date" } }}>
+        <Form.Field name="day">
+          <DatePicker name="day" label="Appointment" defaultMonth={OCTOBER} />
+        </Form.Field>
+        <button type="reset">Reset</button>
+      </Form>,
+    );
+
+    const appt = screen.getByRole("combobox", { name: "Appointment" });
+    expect(appt).toHaveTextContent("15 Oct 2026");
+
+    const plain = render(
+      <form>
+        <DatePicker
+          name="d"
+          label="Departure"
+          defaultMonth={OCTOBER}
+          defaultValue={new Date(2026, 9, 5)}
+        />
+      </form>,
+    );
+    const dep = plain.getByRole("combobox", { name: "Departure" });
+    expect(dep).toHaveTextContent("5 Oct 2026");
+    await plain.user.click(dep);
+    await plain.findByRole("dialog");
+    await plain.user.click(plain.getByRole("button", { name: "20 October 2026" }));
+    expect(dep).toHaveTextContent("20 Oct 2026");
+
+    plain.container.querySelector("form")!.reset();
+    await waitFor(() => {
+      expect(dep).toHaveTextContent("5 Oct 2026");
+    });
+    void user;
   });
 });

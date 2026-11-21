@@ -151,6 +151,8 @@ export type CheckboxFieldContextValue = {
   mergedChecked: boolean;
   indeterminate: boolean;
   isDisabled: boolean;
+  isReadOnly: boolean;
+  isInvalid: boolean;
   isControlled: boolean;
   isCompound: boolean;
   hasCompoundHint: boolean;

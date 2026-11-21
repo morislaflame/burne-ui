@@ -1,6 +1,11 @@
 import { forwardRef, type ForwardedRef } from "react";
  
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { dataActiveState } from "@/components/core/utils/dataContract";
+import {
+  mergeMotionRootSiblings,
+  mergeMotionSlotMaps,
+  useMotionPart,
+} from "@/components/core/utils/slotMotion";
  
 import { tabsPanelA11y, tabsPanelId, tabsTabId } from "./tabsA11y";
 import { useTabsPanelLifecycle } from "./tabsAnimations";
@@ -19,10 +24,15 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function Tab
   ref,
 ) {
   const parentScope = useOptionalTabsMotionScope();
-  const mergedMotion = mergeMotionSlotMaps(
+  const mergedSlots = mergeMotionSlotMaps(
     parentScope?.getRootMotion(),
     motion ? { panel: motion } : undefined,
   );
+  const siblings = mergeMotionRootSiblings({
+    events: parentScope?.getEvents(),
+    states: parentScope?.getStates(),
+  });
+  const mergedMotion = { ...mergedSlots, ...siblings };
  
   return (
     <TabsMotionProvider motion={mergedMotion} defaults={{}} controller={motionController}
@@ -72,12 +82,15 @@ function TabsPanelSurface({
       id={panelId}
       aria-labelledby={a11y["aria-labelledby"]}
       hidden={hidden}
+      inert={!isSelected || undefined}
       tabIndex={a11y.tabIndex}
       className={tabsPanelClass({
+        hidden,
         slotClass: slotClassNames.panel,
         className,
       })}
       {...rest}
+      data-state={dataActiveState(isSelected)}
     >
       {children}
     </div>

@@ -1,8 +1,13 @@
 import type { ChangeEvent, MouseEvent, MutableRefObject, Ref } from "react";
-import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { KitFolderOpen } from "@/components/core/utils/kitIcons";
 import { mergeSkinSurfaceStyle, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
-import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import {
+  isInteractiveDescendantTarget,
+  readOnlyData,
+  useNativeFormReset,
+} from "@/components/core/utils/fieldFormDom";
 import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
  
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
@@ -210,15 +215,13 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
  
     const fileEntries = usePickedFileEntries(pickedFiles);
  
-    useEffect(() => {
-      if (!isFile) return;
-      const el = inputRef.current;
-      const form = el?.form;
-      if (!form) return;
-      const onFormReset = () => commitPickedFiles([]);
-      form.addEventListener("reset", onFormReset);
-      return () => form.removeEventListener("reset", onFormReset);
-    }, [commitPickedFiles, isFile]);
+    useNativeFormReset(
+      inputRef,
+      () => {
+        commitPickedFiles([]);
+      },
+      isFile,
+    );
  
     const handleFileChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
@@ -266,6 +269,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
           className={className}
           slotClassNames={slotClassNames}
           shellRef={shellRef}
+          inputNodeRef={inputRef}
           pointerInsideRef={pointerInsideRef}
           shellPartMotion={motion}
           onPointerDown={onPointerDown}
@@ -275,7 +279,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
           isPassword={isPassword}
           passwordVisible={passwordShown}
           onTogglePassword={() => setPasswordVisible((v) => !v)}
-          disabled={disabled}
+          disabled={resolvedDisabled}
           isFile={isFile}
           fileEntries={fileEntries}
           pickedFilesLength={pickedFiles.length}
@@ -363,15 +367,28 @@ function InputTextControl({
     | "value"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
 }) {
+  const {
+    defaultValue,
+    onPointerOver,
+    onPointerOut,
+    onPointerUp,
+    ...domRest
+  } = rest;
   const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
     scope: useOptionalInputMotionScope(),
     slot: "control",
     forwardedRef: setInputRef as Ref<HTMLInputElement>,
     pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+    onPointerUp,
   });
- 
+
   return (
     <input
       ref={setRef}
@@ -382,6 +399,7 @@ function InputTextControl({
       readOnly={resolvedReadOnly}
       placeholder={placeholder}
       value={resolvedValue as string | number | readonly string[] | undefined}
+      defaultValue={resolvedValue !== undefined ? undefined : defaultValue}
       onChange={resolvedOnChange}
       onBlur={resolvedOnBlur}
       className={cn(
@@ -391,12 +409,14 @@ function InputTextControl({
         FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
         className,
       )}
-      {...rest}
+      {...domRest}
       {...pointerHandlers}
       aria-required={required || undefined}
       aria-invalid={ariaInvalid}
       aria-describedby={ariaDescribedBy}
       data-invalid={ariaInvalid ? "" : undefined}
+      data-disabled={dataFlag(resolvedDisabled)}
+      data-readonly={readOnlyData(resolvedReadOnly)}
       data-required={required ? "" : undefined}
     />
   );
@@ -412,6 +432,7 @@ function InputControlSurface({
   className,
   slotClassNames,
   shellRef,
+  inputNodeRef,
   pointerInsideRef,
   shellPartMotion,
   onPointerDown,
@@ -450,6 +471,7 @@ function InputControlSurface({
   className: string;
   slotClassNames: ReturnType<typeof useInputClassNames>;
   shellRef: React.RefObject<HTMLDivElement | null>;
+  inputNodeRef: React.RefObject<HTMLInputElement | null>;
   pointerInsideRef: MutableRefObject<boolean>;
   shellPartMotion?: InputPartMotion;
   onPointerDown?: InputControlProps["onPointerDown"];
@@ -499,6 +521,9 @@ function InputControlSurface({
     | "value"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
 }) {
   const {
@@ -546,12 +571,32 @@ function InputControlSurface({
     ? inputFileEmptySurfaceClass(shellSurface)
     : null;
  
+  const handleShellMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    if (isFile || resolvedDisabled) return;
+    const inputEl = inputNodeRef.current;
+    if (!inputEl) return;
+    if (!isInteractiveDescendantTarget(e.target, inputEl) && document.activeElement === inputEl) {
+      e.preventDefault();
+    }
+  };
+
+  const handleShellClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (isFile || resolvedDisabled) return;
+    const inputEl = inputNodeRef.current;
+    if (!inputEl) return;
+    if (!isInteractiveDescendantTarget(e.target, inputEl) && document.activeElement !== inputEl) {
+      inputEl.focus();
+    }
+  };
+
   return (
     <div
       ref={bindShellRef}
       data-slot="input-shell"
       data-group-segment={dataGroupSegment(groupSegment != null)}
       role="presentation"
+      onMouseDown={handleShellMouseDown}
+      onClick={handleShellClick}
       onPointerDown={shellPointerDown}
       onPointerUp={shellPointerUp}
       onPointerEnter={shellPointerEnter}
@@ -679,6 +724,8 @@ function InputControlSurface({
             aria-invalid={ariaInvalid}
             aria-describedby={ariaDescribedBy}
             data-invalid={ariaInvalid ? "" : undefined}
+            data-disabled={dataFlag(resolvedDisabled)}
+            data-readonly={readOnlyData(resolvedReadOnly)}
             data-required={required ? "" : undefined}
           />
         </div>

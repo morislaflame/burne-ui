@@ -5,7 +5,7 @@ import type { ScrollAreaOrientation, ScrollAxis } from "./scrollAreaTypes";
 export const SCROLL_AREA_ROOT_CLASS = "relative min-h-0 min-w-0 overflow-hidden";
 
 export const SCROLL_AREA_VIEWPORT_CLASS =
-  "size-full min-h-0 min-w-0 overscroll-contain outline-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden";
+  "size-full min-h-0 min-w-0 overscroll-contain outline-none focus-ring-inset [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden";
 
 export function scrollAreaViewportOverflow(orientation: ScrollAreaOrientation): string {
   if (orientation === "vertical") return "overflow-x-hidden overflow-y-auto";

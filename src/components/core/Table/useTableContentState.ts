@@ -16,6 +16,8 @@ function createRowSelectionStore(
 ): TableRowSelectionStore {
   let selectedKeys = initialSelected;
   let focusedRowKey: string | number | null = null;
+  let catalogKeys: readonly (string | number)[] | null = null;
+  const mountedKeyCounts = new Map<string | number, number>();
   const selectionListeners = new Set<() => void>();
   const focusListeners = new Set<() => void>();
  
@@ -59,11 +61,27 @@ function createRowSelectionStore(
       focusedRowKey = key;
       focusListeners.forEach((listener) => listener());
     },
+    registerRowKey(key) {
+      mountedKeyCounts.set(key, (mountedKeyCounts.get(key) ?? 0) + 1);
+      return () => {
+        const nextCount = (mountedKeyCounts.get(key) ?? 1) - 1;
+        if (nextCount <= 0) mountedKeyCounts.delete(key);
+        else mountedKeyCounts.set(key, nextCount);
+      };
+    },
+    setCatalogKeys(keys) {
+      catalogKeys = keys;
+    },
+    getAllRowKeys() {
+      if (catalogKeys != null) return [...catalogKeys];
+      return Array.from(mountedKeyCounts.keys());
+    },
   };
 }
  
 export function useTableContentState({
   selectionMode = "none",
+  disallowEmptySelection = false,
   selectedKeys: selectedKeysProp,
   defaultSelectedKeys,
   onSelectionChange,
@@ -75,6 +93,7 @@ export function useTableContentState({
   columnResize = false,
 }: {
   selectionMode?: SelectionMode;
+  disallowEmptySelection?: boolean;
   selectedKeys?: Selection;
   defaultSelectedKeys?: Selection;
   onSelectionChange?: (keys: Selection) => void;
@@ -98,7 +117,15 @@ export function useTableContentState({
   const selectionModeRef = useRef(selectionMode);
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   selectionModeRef.current = selectionMode;
+  const disallowEmptySelectionRef = useRef(disallowEmptySelection);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so callbacks stay stable
+  disallowEmptySelectionRef.current = disallowEmptySelection;
  
+  const disabled = useMemo(() => tableDisabledKeySet(disabledKeys), [disabledKeys]);
+  const disabledRef = useRef(disabled);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so callbacks stay stable
+  disabledRef.current = disabled;
+
   // Controlled: keep the external store in sync without putting `selectedKeys`
   // into React context (which would re-render every row).
   useLayoutEffect(() => {
@@ -120,12 +147,18 @@ export function useTableContentState({
  
   const onRowSelect = useCallback(
     (key: string | number) => {
+      const current = store.getSelectedKeys();
+      const allSelectableKeys = store
+        .getAllRowKeys()
+        .filter((k) => !disabledRef.current.has(String(k)));
       const next = toggleSelectionKey({
         selectionMode: selectionModeRef.current,
-        selectedKeys: store.getSelectedKeys(),
+        selectedKeys: current,
         key,
+        allSelectableKeys,
+        disallowEmptySelection: disallowEmptySelectionRef.current,
       });
-      if (!next) return;
+      if (!next || selectionEquals(current, next)) return;
       if (!isControlledSelection) {
         store.setSelectedKeys(next);
       }
@@ -148,7 +181,6 @@ export function useTableContentState({
     [store],
   );
 
-  const disabled = useMemo(() => tableDisabledKeySet(disabledKeys), [disabledKeys]);
   const isRowDisabled = useCallback(
     (key: string | number) => disabled.has(String(key)),
     [disabled],

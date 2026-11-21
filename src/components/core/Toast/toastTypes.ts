@@ -230,12 +230,22 @@ export type ToastSimpleBodyProps = {
   onClose?: () => void;
 };
  
+export type ToastStackItemLayout = {
+  peekY: number;
+  scale: number;
+  opacity: number;
+  hidden: boolean;
+  interactive: boolean;
+};
+
 export type ToastItemWrapperProps = {
   entry: ToastEntry;
   reverseIdx: number;
   total: number;
   isTop: boolean;
   isDismissing: boolean;
+  paused?: boolean;
+  stackLayout?: ToastStackItemLayout;
   onDismiss: (id: string) => void;
   onRemoveFinal: (id: string) => void;
   onHeightChange: (id: string, h: number) => void;

@@ -1,8 +1,10 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { render } from "@/__tests__/helpers";
+import { render, setReducedMotion } from "@/__tests__/helpers";
 import { Accordion } from "@/components/composite/Accordion";
+import { gsap } from "@/components/core/utils/gsapMotion";
 
 import { Expandable } from ".";
 
@@ -12,6 +14,7 @@ function simpleModeErrors(error: { mock: { calls: unknown[][] } }) {
 
 describe("Expandable compound parts inside a wrapper", () => {
   afterEach(() => {
+    setReducedMotion(false);
     vi.restoreAllMocks();
   });
 
@@ -102,5 +105,70 @@ describe("Expandable compound parts inside a wrapper", () => {
     expect(screen.getAllByRole("button")).toHaveLength(1);
     expect(screen.getByRole("button", { name: "How to place an order" })).toBeVisible();
     expect(simpleModeErrors(error)).toEqual([]);
+  });
+
+  it("includes aria-controls and aria-expanded in SSR markup for Expandable and Accordion", () => {
+    const simpleHtml = renderToString(<Expandable title="FAQ">Answer</Expandable>);
+    expect(simpleHtml).toContain("aria-controls=");
+    expect(simpleHtml).toContain('aria-expanded="false"');
+
+    const accordionHtml = renderToString(
+      <Accordion>
+        <Accordion.Item value="1">
+          <Accordion.Heading>
+            <Accordion.Trigger>Section</Accordion.Trigger>
+          </Accordion.Heading>
+          <Accordion.Panel>Details</Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>,
+    );
+    expect(accordionHtml).toContain("aria-controls=");
+    expect(accordionHtml).toContain('aria-expanded="false"');
+  });
+
+  it("registers Expandable.Panel motion on slot panel without overwriting panelShell collapsibleHeight", () => {
+    setReducedMotion(false);
+    const panelEnter = vi.fn();
+    const toSpy = vi.spyOn(gsap, "to");
+    render(
+      <Expandable>
+        <Expandable.Trigger>Open</Expandable.Trigger>
+        <Expandable.Panel motion={{ enter: () => void panelEnter() }}>
+          Panel content
+        </Expandable.Panel>
+      </Expandable>,
+    );
+
+    toSpy.mockClear();
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(panelEnter).toHaveBeenCalledTimes(1);
+    expect(toSpy).toHaveBeenCalled();
+  });
+
+  it("lets native button fire onClick on Enter and handles non-button asChild Enter/Space", async () => {
+    const onClick = vi.fn();
+    const { user, rerender } = render(
+      <Expandable title="Title">
+        Content
+      </Expandable>,
+    );
+    const nativeBtn = screen.getByRole("button", { name: "Title" });
+    expect(fireEvent.keyDown(nativeBtn, { key: " " })).toBe(true);
+
+    rerender(
+      <Expandable>
+        <Expandable.Trigger asChild onClick={onClick}>
+          <div role="button" tabIndex={0}>
+            Custom Trigger
+          </div>
+        </Expandable.Trigger>
+        <Expandable.Panel>Content</Expandable.Panel>
+      </Expandable>,
+    );
+    const custom = screen.getByRole("button", { name: "Custom Trigger" });
+    custom.focus();
+    await user.keyboard(" ");
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(custom).toHaveAttribute("aria-expanded", "true");
   });
 });

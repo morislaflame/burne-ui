@@ -45,7 +45,7 @@ export const POPOVER_TRIGGER_CLASS =
   "inline-flex shrink-0 border-0 bg-transparent p-0 outline-none focus-ring";
 
 export const POPOVER_CONTENT_CLASS =
-  "pointer-events-auto z-popover w-max min-w-0 overflow-visible text-start outline-none";
+  "pointer-events-auto fixed top-0 start-0 z-popover w-max min-w-0 overflow-visible text-start outline-none";
 
 export const POPOVER_PANEL_RELATIVE_CLASS = "relative overflow-visible";
 

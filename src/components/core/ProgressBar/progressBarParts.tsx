@@ -3,6 +3,7 @@ import { forwardRef, useMemo } from "react";
 import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
+import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
 import {
   progressScaleFromPercent,
@@ -261,6 +262,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       size,
       thickness,
       color,
+      status,
       formatValue,
       orientation,
       className,
@@ -292,6 +294,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       size,
       thickness,
       color,
+      status,
       formatValue,
       orientation,
       "aria-describedby": ariaDescribedByProp,
@@ -341,6 +344,9 @@ const ProgressBarTrackHost = forwardRef<
     ProgressBarTrackProps,
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
     | "value"
     | "indeterminate"
     | "min"
@@ -348,12 +354,13 @@ const ProgressBarTrackHost = forwardRef<
     | "size"
     | "thickness"
     | "color"
+    | "status"
     | "formatValue"
     | "orientation"
   > & {
     state: ReturnType<typeof useProgressBarTrackState>;
   }
->(function ProgressBarTrackHost({ className, state, ...rest }, ref) {
+>(function ProgressBarTrackHost({ className, style, state, ...rest }, ref) {
   const slotClassNames = useProgressBarClassNames();
   const {
     size: resolvedSize,
@@ -410,8 +417,9 @@ const ProgressBarTrackHost = forwardRef<
         slotClass: slotClassNames.track,
         className,
       })}
-      style={trackCrossStyle}
+      style={trackCrossStyle || style ? { ...trackCrossStyle, ...style } : undefined}
       {...rest}
+      {...dataVariantProps({ status })}
     >
       {isIndeterminate ? (
         <span

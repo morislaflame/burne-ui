@@ -125,7 +125,7 @@ export const ComboBoxError = forwardRef<HTMLElement, ComboBoxErrorProps>(
         {...rest}
         {...part.pointerHandlers}
       >
-        {children}
+        {children ?? field.errorMessage}
       </Field.Error>
     );
   },

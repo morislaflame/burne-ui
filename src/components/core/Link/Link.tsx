@@ -1,5 +1,6 @@
 import {
   Children,
+  Fragment,
   cloneElement,
   forwardRef,
   isValidElement,
@@ -8,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
  
 import { resolveLinkMotionDefaults, useLinkAnimations } from "./linkAnimations";
@@ -37,6 +38,7 @@ export const LinkRoot = forwardRef<
     {
       href,
       asChild = false,
+      disabled,
       children,
       className = "",
       size: sizeProp,
@@ -57,12 +59,28 @@ export const LinkRoot = forwardRef<
     forwardedRef,
   ) {
     const asChildElement =
-      asChild && isValidElement(children) && Children.count(children) === 1
-        ? (children as ReactElement<{ children?: ReactNode; href?: string }>)
+      asChild &&
+      isValidElement(children) &&
+      children.type !== Fragment &&
+      Children.count(children) === 1
+        ? (children as ReactElement<{
+            children?: ReactNode;
+            href?: string;
+            disabled?: boolean;
+            "aria-disabled"?: boolean | "true" | "false";
+          }>)
         : null;
     const contentChildren = asChildElement
       ? asChildElement.props.children
       : children;
+    const childAriaDisabled = asChildElement?.props?.["aria-disabled"];
+    const isDisabled =
+      Boolean(disabled) ||
+      rest["aria-disabled"] === true ||
+      rest["aria-disabled"] === "true" ||
+      Boolean(asChildElement?.props?.disabled) ||
+      childAriaDisabled === true ||
+      childAriaDisabled === "true";
  
     const state = useLinkRootState({
       size: sizeProp,
@@ -75,6 +93,7 @@ export const LinkRoot = forwardRef<
     });
  
     const animations = useLinkAnimations({
+      disabled: isDisabled,
       forwardedRef,
       onPointerEnter,
       onPointerLeave,
@@ -95,6 +114,8 @@ export const LinkRoot = forwardRef<
       endIcon: state.endIcon,
       startIconClassName: state.startIconClassName,
       endIconClassName: state.endIconClassName,
+      startIconMotion: state.startIconMotion,
+      endIconMotion: state.endIconMotion,
       startIconRef: state.startIconRef,
       endIconRef: state.endIconRef,
       startIconMuted: state.startIconMuted,
@@ -104,35 +125,43 @@ export const LinkRoot = forwardRef<
     };
  
     if (asChildElement) {
-      return cloneElement(
+      const mergedAsChild = mergeAsChildProps(
         asChildElement,
-        mergeAsChildProps(
-          asChildElement,
-          {
-            ...rest,
-            ...(href != null ? { href } : {}),
-            className: linkAnchorClass({
-              slotClass: slotClassNames.root,
-              className,
-            }),
-            onPointerEnter: animations.handlePointerEnter,
-            onPointerLeave: animations.handlePointerLeave,
-            onPointerOver: animations.pointerHandlers.onPointerOver,
-            onPointerOut: animations.pointerHandlers.onPointerOut,
-            onPointerDown: animations.pointerHandlers.onPointerDown,
-            onPointerUp: animations.pointerHandlers.onPointerUp,
-            onKeyDown: animations.handleKeyDown,
-            children: <LinkBodyContent {...bodyProps} />,
-            ...dataVariantProps({ size: state.size }),
-          },
-          animations.setAnchorRef,
-        ),
+        {
+          ...rest,
+          ...(href != null && !isDisabled ? { href } : {}),
+          ...(isDisabled ? { "aria-disabled": true, tabIndex: -1 } : {}),
+          className: linkAnchorClass({
+            disabled: isDisabled,
+            slotClass: slotClassNames.root,
+            className,
+          }),
+          onPointerEnter: animations.handlePointerEnter,
+          onPointerLeave: animations.handlePointerLeave,
+          onPointerOver: animations.pointerHandlers.onPointerOver,
+          onPointerOut: animations.pointerHandlers.onPointerOut,
+          onPointerDown: animations.pointerHandlers.onPointerDown,
+          onPointerUp: animations.pointerHandlers.onPointerUp,
+          onKeyDown: animations.handleKeyDown,
+          children: <LinkBodyContent {...bodyProps} />,
+          ...dataVariantProps({ size: state.size }),
+          "data-disabled": dataFlag(isDisabled),
+        },
+        animations.setAnchorRef,
+        { disabled: isDisabled },
       );
+      if (isDisabled) mergedAsChild.href = undefined;
+      return cloneElement(asChildElement, mergedAsChild);
+    }
+
+    if (asChild && contentChildren == null && href == null) {
+      return null;
     }
  
     return (
       <LinkAnchorBody
-        href={href!}
+        href={href}
+        disabled={isDisabled}
         className={className}
         setAnchorRef={animations.setAnchorRef}
         handlePointerEnter={animations.handlePointerEnter}

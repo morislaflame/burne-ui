@@ -7,7 +7,8 @@ import type {
 } from "react";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
 import { KitChevronDown, KitClose } from "@/components/core/utils/kitIcons";
-import { dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { isImeComposingEvent } from "@/components/core/utils/fieldFormDom";
 import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
  
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
@@ -69,7 +70,7 @@ export const SelectShell = forwardRef<HTMLDivElement, SelectShellProps>(
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
     const ctx = useSelectContext();
-    const { disabled, variant } = ctx;
+    const { disabled, readOnly, variant } = ctx;
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
@@ -78,8 +79,8 @@ export const SelectShell = forwardRef<HTMLDivElement, SelectShellProps>(
     const skinRevision = useSkinRegistryRevision();
     const motionDefaults = useMemo(() => {
       void skinRevision;
-      return resolveSelectMotionDefaults({ variant, disabled, groupSegment });
-    }, [disabled, groupSegment, skinRevision, variant]);
+      return resolveSelectMotionDefaults({ variant, disabled, readOnly, groupSegment });
+    }, [disabled, groupSegment, readOnly, skinRevision, variant]);
     const motionParams = useMemo(
       () =>
         resolveSelectMotionParams({
@@ -157,6 +158,9 @@ function SelectShellSurface({
     | "onPointerLeave"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
 }) {
   const slotClassNames = useSelectClassNames();
@@ -165,6 +169,7 @@ function SelectShellSurface({
     open,
     setOpen,
     disabled,
+    readOnly,
     variant,
     size,
     invalid,
@@ -172,7 +177,9 @@ function SelectShellSurface({
     formInvalid,
     anchorRef,
     valueRef,
+    multiple,
     value,
+    values,
     optionValues,
     setActiveValue,
   } = ctx;
@@ -189,6 +196,7 @@ function SelectShellSurface({
   } = useSelectShellAnimations({
     shellRef: anchorRef,
     disabled,
+    readOnly,
     variant,
     groupSegment,
     motion: shellPartMotion,
@@ -196,19 +204,23 @@ function SelectShellSurface({
   });
  
   const finishOpen = useCallback(() => {
-    const selectedIdx = optionValues.indexOf(value);
-    setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
+    setActiveValue(selectActiveOnOpen({ optionValues, multiple, values, value }));
     requestAnimationFrame(() => focusElement(valueRef.current));
-  }, [optionValues, setActiveValue, value, valueRef]);
+  }, [multiple, optionValues, setActiveValue, value, valueRef, values]);
  
   const handlePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       if (open) return;
       if (e.button !== 0) return;
+      if (e.pointerType === "touch") {
+        setOpen(true);
+        finishOpen();
+        return;
+      }
       squeezeThenOpen({ setOpen, onOpened: finishOpen });
     },
-    [disabled, finishOpen, open, setOpen, squeezeThenOpen],
+    [disabled, finishOpen, open, readOnly, setOpen, squeezeThenOpen],
   );
  
   return (
@@ -300,7 +312,25 @@ function commitSelectItem(
 }
 
 export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
-  function SelectValue({ className, onKeyDown, onBlur, children, placeholder: placeholderProp, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
+  function SelectValue(
+    {
+      className,
+      onKeyDown,
+      onBlur,
+      children,
+      placeholder: placeholderProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      "aria-label": ariaLabelProp,
+      "aria-labelledby": ariaLabelledByProp,
+      "aria-describedby": ariaDescribedByProp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = useSelectClassNames();
     const ctx = useSelectContext();
     const {
@@ -345,7 +375,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
  
     const squeezeThenOpen = useSelectOpenAfterSqueeze({
       triggerRef: anchorRef,
-      disabled,
+      disabled: disabled || readOnly,
       partMotionRef,
     });
  
@@ -412,7 +442,16 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     const handleKeyDown = useCallback(
       (e: ReactKeyboardEvent<HTMLButtonElement>) => {
         onKeyDown?.(e);
-        if (e.defaultPrevented || disabled) return;
+        if (e.defaultPrevented || isImeComposingEvent(e)) return;
+
+        if (open && e.key === "Escape") {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(false);
+          return;
+        }
+
+        if (disabled || readOnly) return;
  
         if (!open) {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -441,11 +480,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           if (activeValue) selectOption(activeValue);
-          return;
-        }
-        if (e.key === "Escape") {
-          e.preventDefault();
-          setOpen(false);
           return;
         }
         if (e.key === "Home") {
@@ -485,6 +519,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         open,
         optionValues,
         optionsByValue,
+        readOnly,
         selectOption,
         setActiveValue,
         setOpen,
@@ -496,9 +531,16 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     const handleBlur = useCallback(
       (e: FocusEvent<HTMLButtonElement>) => {
         onBlur?.(e);
-        formOnBlur?.();
+        const related = e.relatedTarget;
+        const movingIntoPopup =
+          related instanceof Element &&
+          (Boolean(document.getElementById(listId)?.contains(related)) ||
+            Boolean(anchorRef.current?.contains(related)));
+        if (!movingIntoPopup) {
+          formOnBlur?.();
+        }
       },
-      [formOnBlur, onBlur],
+      [anchorRef, formOnBlur, listId, onBlur],
     );
  
     const display = children ?? shown.text;
@@ -525,13 +567,17 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         aria-controls={open ? listId : undefined}
         aria-haspopup="listbox"
         aria-activedescendant={open ? activeOptionId : undefined}
-        aria-labelledby={labelConnected ? labelId : undefined}
-        aria-label={labelConnected ? undefined : placeholder || undefined}
+        aria-labelledby={ariaLabelledByProp ?? (labelConnected ? labelId : undefined)}
+        aria-label={
+          ariaLabelProp ??
+          (ariaLabelledByProp || labelConnected ? undefined : placeholder || undefined)
+        }
         aria-required={required || undefined}
         aria-invalid={ariaInvalidValue(isInvalid)}
-        aria-describedby={ariaDescribedBy}
+        aria-describedby={joinFieldDescribedBy(ariaDescribedBy, ariaDescribedByProp)}
         data-state={dataOpenState(open)}
         data-invalid={isInvalid ? "" : undefined}
+        data-disabled={dataFlag(disabled)}
         data-readonly={readOnly ? "" : undefined}
         data-required={required ? "" : undefined}
       >
@@ -588,10 +634,24 @@ function SelectTriggerIcon({
 }
  
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  function SelectTrigger({ className, onPointerOver, onPointerOut, onPointerDown, onPointerUp, children, motion, ...rest }, ref) {
+  function SelectTrigger({ className, onMouseDown, onPointerOver, onPointerOut, onPointerDown, onPointerUp, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useSelectClassNames();
-    const { open, setOpen, disabled, size, valueRef, icon } = useSelectContext();
+    const {
+      open,
+      setOpen,
+      disabled,
+      readOnly,
+      size,
+      valueRef,
+      icon,
+      multiple,
+      value,
+      values,
+      optionValues,
+      setActiveValue,
+    } = useSelectContext();
+    const locked = disabled || readOnly;
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalSelectMotionScope(),
       slot: "trigger",
@@ -604,12 +664,13 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
       onPointerDown: (e) => {
         onPointerDown?.(e);
         e.stopPropagation();
-        if (disabled) return;
+        if (e.defaultPrevented || locked) return;
         if (open) {
           setOpen(false);
           return;
         }
         if (e.button !== 0) return;
+        setActiveValue(selectActiveOnOpen({ optionValues, multiple, values, value }));
         setOpen(true);
         requestAnimationFrame(() => focusElement(valueRef.current));
       },
@@ -629,10 +690,14 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         type="button"
         ref={setTriggerRef}
         tabIndex={-1}
-        disabled={disabled}
+        disabled={locked}
         aria-label={selectTriggerAriaLabel(open, labels)}
+        onMouseDown={(e) => {
+          onMouseDown?.(e);
+          if (!e.defaultPrevented) e.preventDefault();
+        }}
         className={selectTriggerClass({
-          disabled,
+          disabled: locked,
           className,
           slotClass: slotClassNames.trigger,
         })}

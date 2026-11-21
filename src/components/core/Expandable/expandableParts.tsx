@@ -1,13 +1,14 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useMemo, useLayoutEffect, useRef, type HTMLAttributes, type ReactElement, type Ref } from "react";
+import { Fragment, cloneElement, forwardRef, isValidElement, useCallback, useMemo, useLayoutEffect, useRef, type HTMLAttributes, type ReactElement, type Ref } from "react";
  
 import { Text } from "@/components/core/Text";
-import { dataExpandedState } from "@/components/core/utils/dataContract";
+import { dataExpandedState, dataFlag } from "@/components/core/utils/dataContract";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { messageBannerActionCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
-import { expandableTriggerHasActionSlot, hasExpandableMessage, mergeExpandableRefs, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
+import { expandableTriggerHasActionSlot, hasExpandableMessage, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
 import { ExpandableOwnedTrigger, ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableMotionScope, useExpandableSimpleModeGuard, useExpandableTriggerGrid, useOptionalExpandableMotionScope, useOptionalExpandableTriggerGrid } from "./expandableContext";
 import { EXPANDABLE_CHEVRON_SVG_CLASS, EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableDescriptionVariant, expandableIconClass, expandablePanelClass, expandableTitleClassName, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
 import type {
@@ -162,33 +163,42 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       </>
     );
  
-    if (asChild && isValidElement(children)) {
+    if (asChild && isValidElement(children) && children.type !== Fragment) {
       const child = children as ReactElement<
         HTMLAttributes<HTMLElement> & {
           ref?: Ref<HTMLElement>;
           disabled?: boolean;
+          "aria-disabled"?: boolean | "true" | "false";
           "data-state"?: string;
         }
       >;
+      const childDisabled =
+        Boolean(child.props.disabled) ||
+        child.props["aria-disabled"] === true ||
+        child.props["aria-disabled"] === "true";
+      const isDisabled = disabled || childDisabled;
  
-      return cloneElement(child, {
-        ...props,
-        id: headerId,
-        ref: mergeExpandableRefs(ref, child.props.ref),
-        className: cn(child.props.className, className),
-        disabled: disabled || child.props.disabled,
-        "aria-expanded": hasPanel ? open : undefined,
-        "aria-controls": hasPanel ? panelId : undefined,
-        "data-state": dataExpandedState(open),
-        onClick: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onClick?.(e);
-          triggerMotion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
+      const mergedAsChild = mergeAsChildProps(
+        child,
+        {
+          ...props,
+          id: headerId,
+          className,
+          ...(isDisabled ? { disabled: true, "aria-disabled": true, tabIndex: -1 } : {}),
+          "aria-expanded": hasPanel ? open : undefined,
+          "aria-controls": hasPanel ? panelId : undefined,
+          onClick: triggerMotion.handleClick,
+          onKeyDown: triggerMotion.handleKeyDown,
+          onPointerDown: triggerMotion.handlePointerDown,
+          onPointerUp: triggerMotion.handlePointerUp,
+          "data-disabled": dataFlag(isDisabled),
+          "data-state": dataExpandedState(open),
         },
-        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
-          child.props.onKeyDown?.(e);
-          triggerMotion.handleKeyDown(e as React.KeyboardEvent<HTMLButtonElement>);
-        },
-      });
+        triggerMotion.setTriggerRef,
+        { disabled: isDisabled },
+      );
+      if (isDisabled) mergedAsChild.href = undefined;
+      return cloneElement(child, mergedAsChild);
     }
  
     return (
@@ -210,6 +220,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         onClick={triggerMotion.handleClick}
         onKeyDown={triggerMotion.handleKeyDown}
         {...props}
+        data-disabled={dataFlag(disabled)}
         data-state={dataExpandedState(open)}
       >
         {rippleOverlay}
@@ -401,10 +412,11 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
   function ExpandablePanel({ className, children, motion, ...props }, ref) {
     const { open, headerId, panelId, size, setHasPanel } = useExpandable();
     const slotClassNames = useExpandableClassNames();
-    const panelMotion = useExpandablePanelMotion({ open, motion });
+    const panelMotion = useExpandablePanelMotion({ open });
     const { setRef: setPanelPartRef } = useMotionPart<HTMLElement>({
       scope: useOptionalExpandableMotionScope(),
       slot: "panel",
+      motion,
     });
  
     useLayoutEffect(() => {

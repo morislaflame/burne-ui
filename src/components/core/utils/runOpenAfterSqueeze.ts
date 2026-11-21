@@ -4,6 +4,18 @@ import { animateInteractivePressSqueeze } from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
 import type { MotionConfig } from "./motionConfig";
  
+/**
+ * Joined segment paints its fill on the shell. A non-identity rest scale
+ * (`1.0001`) rasterizes that fill about 1px outside the group frame when
+ * the control height is fractional (theme shuffle). Scale the inner motion
+ * node instead.
+ */
+export function groupSegmentMotionEl(el: HTMLElement): HTMLElement {
+  if (!el.hasAttribute("data-group-segment")) return el;
+  const inner = el.querySelector(":scope .button-group-motion");
+  return inner instanceof HTMLElement ? inner : el;
+}
+
 export type RunOpenAfterSqueezeOptions = {
   triggerRef: RefObject<HTMLElement | null>;
   openingRef: RefObject<boolean>;
@@ -41,7 +53,7 @@ export function runOpenAfterSqueeze({
   disabled = false,
   onOpened,
   config,
-  runSqueeze = (el) => animateInteractivePressSqueeze(el, { config }),
+  runSqueeze = (el) => animateInteractivePressSqueeze(groupSegmentMotionEl(el), { config }),
 }: RunOpenAfterSqueezeOptions): void {
   if (disabled || openingRef.current) return;
  
@@ -65,11 +77,15 @@ export function runOpenAfterSqueeze({
   openingRef.current = true;
   // The child control reads this and skips its own press while the trigger plays one.
   el.dataset.overlayOpening = "true";
-  void runSqueeze(el).then(() => {
-    openingRef.current = false;
-    delete el.dataset.overlayOpening;
-    openNow();
-  });
+  void Promise.resolve()
+    .then(() => runSqueeze(el))
+    .then(() => {
+      openNow();
+    })
+    .finally(() => {
+      openingRef.current = false;
+      delete el.dataset.overlayOpening;
+    });
 }
  
 /** Creates the guard ref used by `runOpenAfterSqueeze`. */

@@ -71,8 +71,8 @@ export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
     const scope = useOptionalButtonMotionScope();
  
     const setRef = (node: HTMLSpanElement | null) => {
-      if (ref != null) mergeForwardedRef(ref, node);
-      else if (ctx?.contentMotionRef) ctx.contentMotionRef.current = node;
+      mergeForwardedRef(ref, node);
+      if (ctx?.contentMotionRef) ctx.contentMotionRef.current = node;
       if (ctx?.groupSegment) scope?.registerTarget("root", node);
     };
  

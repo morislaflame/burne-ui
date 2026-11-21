@@ -138,7 +138,7 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 | `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
 | `panel` | `enter` / `leave` | `modalPanelEnter` / `modalPanelLeave` |
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
-| `close`, `header`, `headingBlock`, `footer`, `content`, `body`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+| `close`, `header`, `footer`, `content`, `body`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана (`headingBlock` — `display: contents`, не motion-слот) |
 | `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
 
 `body` — `AlertDialog.Body` (скролл + `overscroll-contain`), не слот `content`. Body-scroll lock — тот же синглтон, что у Dialog.

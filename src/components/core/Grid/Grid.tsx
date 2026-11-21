@@ -1,5 +1,7 @@
 import { forwardRef, useMemo } from "react";
 
+import { useSkinVariant } from "@/skins/skinContext";
+
 import { resolveGridMotionDefaults, useGridRootMotion } from "./gridAnimations";
 import { GridMotionProvider } from "./gridContext";
 import { gridRootClass } from "./gridStyles";
@@ -120,6 +122,7 @@ function GridSurface({
     | "onPointerUp"
   >;
 }) {
+  const skinVariant = useSkinVariant(undefined);
   const part = useGridRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -137,6 +140,7 @@ function GridSurface({
         minTrack,
         gap,
         align,
+        skinVariant,
         slotClass: classNames?.root,
         className,
       })}

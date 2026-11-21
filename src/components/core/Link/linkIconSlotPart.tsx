@@ -13,13 +13,14 @@ export function LinkIconSlot({
   muted = false,
   slotClass,
   className,
+  motion,
   forwardedRef,
   slot,
 }: LinkIconSlotProps) {
-  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+  const { setRef } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalLinkMotionScope(),
     slot,
-    pointerPhases: true,
+    motion,
   });
  
   return (
@@ -27,7 +28,6 @@ export function LinkIconSlot({
       ref={mergeRefs(forwardedRef, setRef)}
       className={cn(linkIconSlotClass({ size, muted, slotClass }), className)}
       aria-hidden={LINK_ICON_SLOT_ARIA_HIDDEN}
-      {...pointerHandlers}
     >
       {children}
     </span>

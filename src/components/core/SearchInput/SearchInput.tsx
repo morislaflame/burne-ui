@@ -1,6 +1,12 @@
 import { forwardRef, useMemo, useRef, type ForwardedRef, type InputHTMLAttributes, type MutableRefObject } from "react";
 
-import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { readOnlyData } from "@/components/core/utils/fieldFormDom";
+import {
+  dataInvalidValue,
+  fieldPaintStatus,
+  useResolvedFieldInvalid,
+} from "@/components/core/utils/fieldInvalid";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
  
 import {
@@ -115,10 +121,11 @@ export const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
       return resolveSearchInputMotionDefaults({
         variant: state.variant,
         blocked: state.blocked,
+        readOnly: state.readOnly,
         groupSegment: state.groupSegment,
         expanded: state.expanded,
       });
-    }, [skinRevision, state.blocked, state.expanded, state.groupSegment, state.variant]);
+    }, [skinRevision, state.blocked, state.expanded, state.groupSegment, state.readOnly, state.variant]);
     const motionParams = useMemo(
       () =>
         resolveSearchInputMotionParams({
@@ -180,10 +187,19 @@ function SearchInputSurface({
   pointerInsideRef: MutableRefObject<boolean>;
   forwardedRef: ForwardedRef<HTMLDivElement>;
 }) {
+  const ariaInvalid = rest["aria-invalid"];
+  const isInvalid = useResolvedFieldInvalid({
+    invalid,
+    errorConnected: ariaInvalid === true || ariaInvalid === "true",
+    formInvalid: state.formInvalid,
+  });
+  const status = fieldPaintStatus(isInvalid);
+
   const animations = useSearchInputAnimations({
     size: state.size,
     expanded: state.expanded,
     blocked: state.blocked,
+    readOnly: state.readOnly,
     variant: state.variant,
     groupSegment: state.groupSegment,
     layout: state.layout,
@@ -198,6 +214,7 @@ function SearchInputSurface({
   const rootClass = searchInputRootClass({
     size: state.size,
     variant: state.variant,
+    status,
     expanded: state.expanded,
     blocked: state.blocked,
     groupSegment: state.groupSegment,
@@ -210,14 +227,17 @@ function SearchInputSurface({
     <div
       ref={animations.bindRootRef}
       role="search"
-      {...dataVariantProps({ size: state.size, variant: state.variant })}
-      data-state={state.expanded ? "expanded" : "collapsed"}
       data-group-segment={dataGroupSegment(state.groupSegment != null)}
       style={state.expanded ? { width: state.targetW } : undefined}
       className={rootClass}
-      onPointerDown={() => animations.beginPressSqueeze()}
+      onPointerDown={(e) => animations.beginPressSqueeze(e)}
       onPointerEnter={animations.handlePointerEnter}
       onPointerLeave={animations.handlePointerLeave}
+      {...dataVariantProps({ size: state.size, variant: state.variant })}
+      data-state={state.expanded ? "expanded" : "collapsed"}
+      data-invalid={dataInvalidValue(isInvalid)}
+      data-disabled={dataFlag(state.disabled)}
+      data-readonly={readOnlyData(state.readOnly)}
     >
       {!state.expanded ? (
         <SearchInputExpandTrigger
@@ -226,11 +246,11 @@ function SearchInputSurface({
           inputId={state.inputId}
           collapseA11yLabel={state.collapseA11yLabel}
           className={state.classNames?.expandTrigger}
-          onClick={(e) => state.handleRootClick(e, animations.awaitPressSqueeze)}
-          onKeyDown={(e) => state.handleRootKeyDown(e, animations.awaitPressSqueeze)}
+          onClick={state.handleRootClick}
+          onKeyDown={state.handleRootKeyDown}
         />
       ) : null}
-      {state.ripple ? <SearchInputRipple disabled={state.blocked} /> : null}
+      {state.ripple ? <SearchInputRipple disabled={state.blocked || state.readOnly} /> : null}
       <SearchInputIcon
         bindIconRef={animations.bindIconRef}
         layout={state.layout}
@@ -252,7 +272,7 @@ function SearchInputSurface({
         layout={state.layout}
         paddingStyle={state.inputPaddingStyle}
         className={state.classNames?.input}
-        invalid={state.formInvalid ? true : invalid}
+        isInvalid={isInvalid}
         rest={{ ...rest, name: state.name }}
       />
       {state.showClear ? (

@@ -1,5 +1,6 @@
 import { forwardRef, useCallback } from "react";
 
+import { dataOpenState } from "@/components/core/utils/dataContract";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useStudioSlotRef } from "@/studio/studioModeContext";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
@@ -69,6 +70,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
             ref={setSectionRef}
             id={panelId}
             aria-labelledby={triggerId}
+            inert={!open}
             className={disclosureContentClass({
               variant,
               size,
@@ -76,6 +78,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
               slotClass: slotClassNames.content,
             })}
             {...rest}
+            data-state={dataOpenState(open)}
           >
             {children}
           </section>

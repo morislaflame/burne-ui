@@ -30,6 +30,10 @@ export function useAvatarRootState({
   const onImageError = useCallback(() => {
     setImageStatus("error");
   }, []);
+
+  const resetImageStatus = useCallback(() => {
+    setImageStatus("idle");
+  }, []);
  
   const ctx = useMemo(
     () => ({
@@ -38,8 +42,9 @@ export function useAvatarRootState({
       imageStatus,
       onImageLoad,
       onImageError,
+      resetImageStatus,
     }),
-    [size, label, imageStatus, onImageLoad, onImageError],
+    [size, label, imageStatus, onImageLoad, onImageError, resetImageStatus],
   );
  
   const isCompound = useMemo(() => hasCompoundChildren(children), [children]);

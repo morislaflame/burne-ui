@@ -2,12 +2,13 @@ import { useSkinVariant } from "@/skins/skinContext";
 import { useOptionalRadioGroupContext } from "@/components/composite/RadioGroup/radioGroupContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-import { useCallback, useId, useMemo, useRef, type ChangeEvent, type MouseEvent, type ReactNode } from "react";
+import { useCallback, useId, useMemo, useRef, type ChangeEvent, type FocusEvent, type MouseEvent, type ReactNode } from "react";
  
-import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
-import { useFieldInvalid } from "@/components/core/Field/fieldContext";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { radioErrorId, radioHintId, radioInputId } from "./radioA11y";
 import { compoundUsesInlineMotion } from "./radioAPI";
 import { RADIO_SIZE_LAYOUT } from "./radioStyles";
@@ -18,7 +19,7 @@ export function useRadioRootState(
     size = "base",
     labelPosition = "end",
     variant: variantProp,
-    disabled,
+    disabled: disabledProp,
     checked,
     defaultChecked,
     onChange,
@@ -29,7 +30,7 @@ export function useRadioRootState(
     form,
     autoFocus,
     tabIndex,
-    readOnly,
+    readOnly: readOnlyProp,
     onBlur,
     onFocus,
     inputRef,
@@ -46,15 +47,15 @@ export function useRadioRootState(
   const group = useOptionalRadioGroupContext();
   const optionValueStr = value !== undefined && value !== null ? String(value) : undefined;
   const inGroup = group != null && optionValueStr != null;
-  const formBinding = useFormControlProps({
+  const formBinding = useFormFieldBinding({
     name: inGroup ? undefined : typeof name === "string" ? name : undefined,
     value: checked,
-    onChange: onChange as ((event: unknown) => void) | undefined,
-    onBlur: onBlur as ((event: unknown) => void) | undefined,
-    disabled,
-    readOnly: Boolean(readOnly || group?.readOnly),
+    disabled: disabledProp,
+    readOnly: readOnlyProp ?? group?.readOnly,
   });
-  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const formBound = !inGroup && formBinding.bound;
+  const isDisabled = Boolean(disabledProp ?? group?.disabled ?? formBinding.disabled);
+  const isReadOnly = Boolean(readOnlyProp ?? group?.readOnly ?? formBinding.readOnly);
  
   const autoId = useId();
   const inputId = radioInputId(idProp, autoId);
@@ -63,42 +64,62 @@ export function useRadioRootState(
  
   const isExplicitlyControlled = checked !== undefined;
   const groupChecked = inGroup ? group.selectedValue === optionValueStr : undefined;
-  const formChecked =
-    !inGroup && formBinding.bound
-      ? String(formBinding.value ?? "") === String(value ?? "on")
-      : undefined;
+  const formChecked = formBound
+    ? optionValueStr !== undefined
+      ? String(formBinding.value ?? "") === optionValueStr
+      : typeof formBinding.value === "boolean"
+        ? formBinding.value
+        : formBinding.value === "on"
+    : undefined;
   const resolvedChecked = isExplicitlyControlled
     ? checked
     : groupChecked !== undefined
       ? groupChecked
       : formChecked;
  
+  const isStandaloneUncontrolled = !isExplicitlyControlled && !inGroup && !formBound;
   const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
     value: resolvedChecked,
-    defaultValue: Boolean(inGroup || isExplicitlyControlled ? undefined : defaultChecked),
+    defaultValue: Boolean(isStandaloneUncontrolled ? defaultChecked : undefined),
   });
  
-  const inputName = name ?? group?.name;
-  const isDisabled = Boolean(disabled ?? group?.disabled);
+  const inputElementRef = useRef<HTMLInputElement | null>(null);
+  useNativeFormReset(
+    inputElementRef,
+    () => {
+      setMergedChecked(Boolean(defaultChecked));
+    },
+    isStandaloneUncontrolled,
+  );
+ 
+  const inputName = name ?? group?.name ?? formBinding.name;
   const { isCompound, hasCompoundLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasCompoundLabel: compound ? hasCompoundChild(children, "RadioLabel") : false,
-      hasCompoundHint: compound ? hasCompoundChild(children, "RadioHint") : false,
-      hasCompoundError: compound ? hasCompoundChild(children, "RadioError") : false,
+      hasCompoundLabel: compound
+        ? hasCompoundChild(children, "RadioLabel", "Radio.Label", "Label")
+        : false,
+      hasCompoundHint: compound
+        ? hasCompoundChild(children, "RadioHint", "Radio.Hint")
+        : false,
+      hasCompoundError: compound
+        ? hasCompoundChild(children, "RadioError", "Radio.Error")
+        : false,
     };
   }, [children]);
   const hasLabel = isCompound ? hasCompoundLabel : Boolean(label);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
   const enableTextMotion = !isDisabled && (!isCompound || useInlineCompoundMotion);
   const sz = RADIO_SIZE_LAYOUT[size];
+  const resolvedError =
+    error ?? (!hasCompoundError && formBound ? formBinding.error : undefined);
   const hasHint = hint != null;
-  const hasError = error != null;
-  const isInvalid = resolveFieldInvalid({
+  const hasError = resolvedError != null;
+  const isInvalid = useResolvedFieldInvalid({
     invalid,
-    error: (isCompound ? hasCompoundError : hasError) ? true : undefined,
-    inheritedInvalid: useFieldInvalid(),
+    errorConnected: isCompound ? hasCompoundError : hasError,
+    formInvalid: Boolean(formBound && formBinding.error),
   });
   const showDanger = isInvalid;
   const secondaryLines = isCompound
@@ -109,27 +130,48 @@ export function useRadioRootState(
  
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (resolvedReadOnly) {
+      if (isReadOnly || isDisabled) {
         e.preventDefault();
         return;
       }
-      if (!isExplicitlyControlled && !inGroup && !formBinding.bound) setMergedChecked(e.target.checked);
+      if (isStandaloneUncontrolled) setMergedChecked(e.target.checked);
       onChange?.(e);
       if (e.defaultPrevented) return;
       if (inGroup && e.target.checked && optionValueStr != null) {
         group.selectValue(optionValueStr);
         return;
       }
-      if (formBinding.bound) formBinding.onChange(e);
+      if (formBound && e.target.checked) {
+        formBinding.setValue(optionValueStr !== undefined ? optionValueStr : true);
+      }
     },
-    [formBinding, group, inGroup, isExplicitlyControlled, onChange, optionValueStr, resolvedReadOnly, setMergedChecked],
+    [
+      formBinding,
+      formBound,
+      group,
+      inGroup,
+      isDisabled,
+      isReadOnly,
+      isStandaloneUncontrolled,
+      onChange,
+      optionValueStr,
+      setMergedChecked,
+    ],
+  );
+ 
+  const handleBlur = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      onBlur?.(e);
+      if (formBound) formBinding.onBlur();
+    },
+    [formBinding, formBound, onBlur],
   );
  
   const canClearSelection =
-    !isDisabled && !resolvedReadOnly && !required && !(inGroup && group.required);
+    !isDisabled && !isReadOnly && !required && !(inGroup && group.required);
  
   const inputRequired =
-    required ?? (inGroup && group.required ? group.claimRequiredAnchor() : undefined);
+    required ?? (inGroup && group.isOptionRequired(optionValueStr, isDisabled) ? true : undefined);
  
   const handleClick = useCallback(
     (e: MouseEvent<HTMLInputElement>) => {
@@ -143,17 +185,25 @@ export function useRadioRootState(
         return;
       }
  
+      if (formBound) {
+        formBinding.setValue(optionValueStr !== undefined ? "" : false);
+        return;
+      }
+ 
       if (!isExplicitlyControlled) {
         setMergedChecked(false);
       }
     },
     [
       canClearSelection,
+      formBinding,
+      formBound,
       group,
       inGroup,
       isExplicitlyControlled,
       mergedChecked,
       onClick,
+      optionValueStr,
       setMergedChecked,
     ],
   );
@@ -168,6 +218,7 @@ export function useRadioRootState(
       variant,
       mergedChecked,
       isDisabled,
+      isReadOnly,
       isControlled,
       isCompound,
       hasCompoundHint,
@@ -184,15 +235,15 @@ export function useRadioRootState(
       onActivate: handleClick,
       inputProps: {
         value,
-        defaultChecked: !isControlled ? defaultChecked : undefined,
+        defaultChecked: isStandaloneUncontrolled ? defaultChecked : undefined,
         required: inputRequired,
         form,
         autoFocus,
         tabIndex,
-        readOnly: resolvedReadOnly,
-        onBlur,
+        readOnly: isReadOnly,
+        onBlur: handleBlur,
         onFocus,
-        inputRef,
+        inputRef: mergeRefs(inputElementRef, formBound ? formBinding.ref : undefined, inputRef),
       },
     }),
     [
@@ -200,8 +251,11 @@ export function useRadioRootState(
       isInvalid,
       defaultChecked,
       form,
+      formBinding.ref,
+      formBound,
       autoFocus,
       errorId,
+      handleBlur,
       handleChange,
       handleClick,
       hasCompoundError,
@@ -216,12 +270,12 @@ export function useRadioRootState(
       useInlineCompoundMotion,
       isControlled,
       isDisabled,
+      isReadOnly,
+      isStandaloneUncontrolled,
       mergedChecked,
-      onBlur,
       onFocus,
       inputRef,
       inputRequired,
-      resolvedReadOnly,
       labelPosition,
       size,
       tabIndex,
@@ -234,6 +288,9 @@ export function useRadioRootState(
     contextValue,
     isCompound,
     isDisabled,
+    isReadOnly,
+    isInvalid,
+    isRequired: Boolean(inputRequired),
     mergedChecked,
     enableTextMotion,
     textColRef,
@@ -243,7 +300,7 @@ export function useRadioRootState(
     hasError,
     label,
     hint,
-    error,
+    error: resolvedError,
     hintId,
     errorId,
     danger: showDanger,

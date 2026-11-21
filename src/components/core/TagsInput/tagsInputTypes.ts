@@ -130,4 +130,7 @@ export type TagsInputContextValue = {
   required: boolean;
   isInvalid: boolean;
   describedBy?: string;
+  setInputNodeRef?: (node: HTMLInputElement | null) => void;
+  registerShellRef?: (node: HTMLDivElement | null) => void;
+  notifyBlur?: () => void;
 };

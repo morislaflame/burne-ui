@@ -84,6 +84,18 @@ export const MeterRoot = forwardRef(function MeterRoot({
     formatValue,
   });
  
+  const {
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    ...rootDivRest
+  } = divRest;
+  const simpleAriaProps = {
+    ...(ariaLabel !== undefined ? { "aria-label": ariaLabel } : undefined),
+    ...(ariaLabelledBy !== undefined ? { "aria-labelledby": ariaLabelledBy } : undefined),
+    ...(ariaDescribedBy !== undefined ? { "aria-describedby": ariaDescribedBy } : undefined),
+  };
+
   const body = state.isCompound ? (
     children
   ) : (
@@ -93,10 +105,17 @@ export const MeterRoot = forwardRef(function MeterRoot({
       valueText={state.valueText}
       hint={state.hint}
       error={state.error}
-      trackProps={{ ...state.trackProps, motionController, motionState, motionPayload, playInitialState }}
+      trackProps={{
+        ...state.trackProps,
+        ...simpleAriaProps,
+        motionController,
+        motionState,
+        motionPayload,
+        playInitialState,
+      }}
     />
   );
- 
+
   return (
     <MeterFieldProvider value={state.fieldCtx}>
       <MeterClassNamesProvider classNames={classNames}>
@@ -115,9 +134,9 @@ export const MeterRoot = forwardRef(function MeterRoot({
                 slotClass: classNames?.root,
                 className,
               })}
-              {...divRest}
+              {...(state.isCompound ? divRest : rootDivRest)}
               ref={ref}
-              {...dataVariantProps({ size: size ?? "base" })}
+              {...dataVariantProps({ size: size ?? "base", status })}
             >
               {body}
             </Field>

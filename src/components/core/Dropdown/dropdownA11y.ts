@@ -10,7 +10,10 @@ export function getFocusableDropdownMenuItems(root: HTMLElement): HTMLElement[] 
 }
  
 export function focusDropdownMenuItem(items: HTMLElement[], index: number) {
-  focusKeyboard(items[index]);
+  const el = items[index];
+  if (!el) return;
+  focusKeyboard(el);
+  el.scrollIntoView?.({ block: "nearest" });
 }
  
 export function dropdownMenuItemTypeaheadLabel(el: HTMLElement): string {

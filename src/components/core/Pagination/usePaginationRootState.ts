@@ -4,6 +4,7 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
  
 import { resolvePaginationAriaLabel } from "./paginationA11y";
+import { clampPaginationPage, normalizePaginationTotalPages } from "./paginationAPI";
 import type {
   PaginationContextValue,
   UsePaginationRootStateProps,
@@ -11,7 +12,7 @@ import type {
  
 export function usePaginationRootState({
   page: pageProp,
-  defaultPage,
+  defaultPage = 1,
   totalPages,
   onPageChange,
   siblingCount = 1,
@@ -19,7 +20,10 @@ export function usePaginationRootState({
   "aria-label": ariaLabel,
 }: UsePaginationRootStateProps & { "aria-label"?: string }) {
   const paginationLabel = useBurneLabel("pagination");
-  const [page, setPageRaw] = useControllableState<number | undefined>({
+  const safeTotal =
+    totalPages != null ? normalizePaginationTotalPages(totalPages) : undefined;
+
+  const [rawPage, setPageRaw] = useControllableState<number | undefined>({
     value: pageProp,
     defaultValue: defaultPage,
     onChange: onPageChange
@@ -28,23 +32,38 @@ export function usePaginationRootState({
         }
       : undefined,
   });
+
+  const page =
+    rawPage == null
+      ? undefined
+      : safeTotal != null && safeTotal > 0
+        ? clampPaginationPage(rawPage, safeTotal)
+        : Number.isFinite(rawPage)
+          ? Math.max(1, Math.floor(rawPage))
+          : 1;
  
   const setPage = useCallback(
     (next: number) => {
-      setPageRaw(next);
+      if (!Number.isFinite(next)) return;
+      if (safeTotal != null && safeTotal <= 0) return;
+      const clamped =
+        safeTotal != null
+          ? clampPaginationPage(next, safeTotal)
+          : Math.max(1, Math.floor(next));
+      setPageRaw(clamped);
     },
-    [setPageRaw],
+    [safeTotal, setPageRaw],
   );
  
   const contextValue = useMemo<PaginationContextValue>(
     () => ({
       page,
-      totalPages,
+      totalPages: safeTotal,
       onPageChange: setPage,
       siblingCount,
       size,
     }),
-    [page, setPage, siblingCount, size, totalPages],
+    [page, safeTotal, setPage, siblingCount, size],
   );
  
   return {

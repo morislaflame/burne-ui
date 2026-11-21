@@ -151,7 +151,7 @@ export const CALENDAR_CELL_TEXT_CLASS = "relative z-[1] min-w-0 shrink-0 leading
 export const CALENDAR_CELL_TODAY_DOT_CLASS =
   "pointer-events-none absolute top-full left-1/2 z-[1] mt-[0.1em] size-[0.22em] -translate-x-1/2 rounded-full bg-primary";
  
-export const CALENDAR_NAV_ICON_CLASS = "icon-xsmall";
+export const CALENDAR_NAV_ICON_CLASS = "icon-xsmall rtl:rotate-180";
 export const CALENDAR_NAV_ICON_WRAP_CLASS = "inline-flex items-center justify-center";
  
 export const CALENDAR_CELL_SELECTED_CLASS =
@@ -197,7 +197,9 @@ export function calendarRootClass(
 }
  
 export function calendarRangeHalfFillSideClass(side: "left" | "right"): string {
-  return side === "left" ? "left-0 right-1/2" : "left-1/2 right-0";
+  return side === "left"
+    ? "left-0 right-1/2 rtl:left-1/2 rtl:right-0"
+    : "left-1/2 right-0 rtl:left-0 rtl:right-1/2";
 }
  
 export function calendarInteractiveCellSizeClass(
@@ -272,13 +274,16 @@ export function calendarYearCellClass(outOfDecade: boolean, isSelected: boolean)
 export function calendarHeaderTitleClass(
   size: CalendarSize,
   view: "days" | "months" | "years",
+  disabled = false,
 ): string {
   return cn(
     CALENDAR_HEADER_TITLE_BASE_CLASS,
     CALENDAR_HEADER_TEXT[size],
-    view !== "years"
-      ? CALENDAR_HEADER_TITLE_INTERACTIVE_CLASS
-      : CALENDAR_HEADER_TITLE_STATIC_CLASS,
+    disabled
+      ? CALENDAR_CELL_DISABLED_CLASS
+      : view !== "years"
+        ? CALENDAR_HEADER_TITLE_INTERACTIVE_CLASS
+        : CALENDAR_HEADER_TITLE_STATIC_CLASS,
   );
 }
  

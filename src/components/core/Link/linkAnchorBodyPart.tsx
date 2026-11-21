@@ -1,6 +1,6 @@
 import { Text } from "@/components/core/Text";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
  
 import { useLinkClassNames, useOptionalLinkMotionScope } from "./linkContext";
@@ -18,6 +18,8 @@ export function LinkBodyContent({
   endIcon,
   startIconClassName,
   endIconClassName,
+  startIconMotion,
+  endIconMotion,
   startIconRef,
   endIconRef,
   startIconMuted,
@@ -26,10 +28,9 @@ export function LinkBodyContent({
   usesDefaultAtEnd,
 }: LinkBodyContentProps) {
   const slotClassNames = useLinkClassNames();
-  const { setRef: setTextRef, pointerHandlers: textPointer } = useMotionPart<HTMLSpanElement>({
+  const { setRef: setTextRef } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalLinkMotionScope(),
     slot: "text",
-    pointerPhases: true,
   });
  
   const resolvedStart =
@@ -46,24 +47,24 @@ export function LinkBodyContent({
           slot="iconStart"
           slotClass={slotClassNames.iconStart}
           className={startIconClassName}
+          motion={startIconMotion}
           forwardedRef={startIconRef}
         >
           {resolvedStart}
         </LinkIconSlot>
       ) : null}
-      <span ref={setTextRef} className={slotClassNames.text} {...textPointer}>
-        <Text
-          as="span"
-          textStyle={textVariant}
-          inheritColor
-          className={linkTextClass({
-            underline,
-            slotClass: slotClassNames.text,
-          })}
-        >
-          {textChildren}
-        </Text>
-      </span>
+      <Text
+        ref={setTextRef}
+        as="span"
+        textStyle={textVariant}
+        inheritColor
+        className={linkTextClass({
+          underline,
+          slotClass: slotClassNames.text,
+        })}
+      >
+        {textChildren}
+      </Text>
       {resolvedEnd ? (
         <LinkIconSlot
           size={size}
@@ -71,6 +72,7 @@ export function LinkBodyContent({
           slot="iconEnd"
           slotClass={slotClassNames.iconEnd}
           className={endIconClassName}
+          motion={endIconMotion}
           forwardedRef={endIconRef}
         >
           {resolvedEnd}
@@ -82,6 +84,7 @@ export function LinkBodyContent({
  
 export function LinkAnchorBody({
   href,
+  disabled = false,
   size,
   underline,
   textVariant,
@@ -90,6 +93,8 @@ export function LinkAnchorBody({
   endIcon,
   startIconClassName,
   endIconClassName,
+  startIconMotion,
+  endIconMotion,
   startIconRef,
   endIconRef,
   startIconMuted,
@@ -102,6 +107,10 @@ export function LinkAnchorBody({
   handlePointerLeave,
   pointerHandlers,
   handleKeyDown,
+  onClick,
+  onAuxClick,
+  tabIndex,
+  "aria-disabled": ariaDisabledProp,
   ...rest
 }: LinkAnchorBodyProps) {
   const slotClassNames = useLinkClassNames();
@@ -109,17 +118,44 @@ export function LinkAnchorBody({
   return (
     <a
       ref={setAnchorRef}
-      href={href}
+      href={disabled ? undefined : href}
+      aria-disabled={disabled ? true : ariaDisabledProp}
+      tabIndex={disabled ? -1 : tabIndex}
       className={linkAnchorClass({
+        disabled,
         slotClass: slotClassNames.root,
         className,
       })}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      onKeyDown={handleKeyDown}
+      onClick={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onClick?.(event);
+      }}
+      onAuxClick={(event) => {
+        if (disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onAuxClick?.(event);
+      }}
+      onKeyDown={(event) => {
+        if (disabled && (event.key === "Enter" || event.key === " " || event.key === "Spacebar")) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        handleKeyDown(event);
+      }}
       {...rest}
       {...pointerHandlers}
       {...dataVariantProps({ size })}
+      data-disabled={dataFlag(disabled)}
     >
       <LinkBodyContent
         size={size}
@@ -130,6 +166,8 @@ export function LinkAnchorBody({
         endIcon={endIcon}
         startIconClassName={startIconClassName}
         endIconClassName={endIconClassName}
+        startIconMotion={startIconMotion}
+        endIconMotion={endIconMotion}
         startIconRef={startIconRef}
         endIconRef={endIconRef}
         startIconMuted={startIconMuted}

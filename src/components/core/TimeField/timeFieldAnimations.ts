@@ -40,17 +40,20 @@ bindLiftRecipes();
 export function resolveTimeFieldMotionDefaults({
   variant,
   disabled,
+  readOnly = false,
 }: {
   variant: TimeFieldVariant;
   disabled: boolean;
+  readOnly?: boolean;
 }): TimeFieldMotion {
   const active = !disabled;
+  const pressActive = !disabled && !readOnly;
   return overlaySkinMotion(
     {
       shell: {
         hoverIn: active ? "hoverLiftFirstLevel" : false,
         hoverOut: active ? "hoverLiftFirstLevel" : false,
-        pressIn: active ? "pressSqueeze" : false,
+        pressIn: pressActive ? "pressSqueeze" : false,
         pressOut: false,
       },
     },
@@ -79,6 +82,7 @@ export function resolveTimeFieldMotionParams({
 export function useTimeFieldShellAnimations({
   shellRef,
   disabled,
+  readOnly = false,
   variant,
   motion,
   pointerInsideRef,
@@ -141,7 +145,20 @@ export function useTimeFieldShellAnimations({
   const handleShellPointerDown = useCallback(
     (e: PointerEvent<HTMLFieldSetElement>) => {
       onPointerDown?.(e);
-      if (e.defaultPrevented || disabled) return;
+      if (
+        e.defaultPrevented ||
+        disabled ||
+        readOnly ||
+        e.pointerType === "touch" ||
+        (e.target instanceof Element &&
+          Boolean(
+            e.target.closest(
+              'input, textarea, button, a[href], [role="button"], [role="spinbutton"]',
+            ),
+          ))
+      ) {
+        return;
+      }
       const shell = shellRef.current;
       if (!shell || prefersReducedMotion()) return;
       const pressIn = scope.resolve("shell", "pressIn", shellMotionRef.current);
@@ -151,7 +168,7 @@ export function useTimeFieldShellAnimations({
         el: shell,
       }).finished;
     },
-    [disabled, onPointerDown, scope, shellRef],
+    [disabled, onPointerDown, readOnly, scope, shellRef],
   );
 
   return {

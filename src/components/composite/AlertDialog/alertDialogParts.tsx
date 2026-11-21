@@ -9,8 +9,9 @@ import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataCon
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { OverlayLayerProvider } from "@/components/core/utils/overlayLayer";
 import { resolveAlertVariant } from "@/components/core/Alert/alertAPI";
-import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle } from "@/skins/skinContext";
+import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { SkinShell } from "@/skins/skinShell";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
@@ -20,7 +21,7 @@ import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/c
 import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
 import { resolveAlertDialogMotionDefaults, useAlertDialogModalMotion } from "./alertDialogAnimations";
-import { AlertDialogHeaderProvider, AlertDialogMotionProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useAlertDialogMotionScope, useOptionalAlertDialogHeaderContext, useOptionalAlertDialogMotionScope } from "./alertDialogContext";
+import { AlertDialogHeaderProvider, AlertDialogMotionProvider, AlertDialogProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useAlertDialogMotionScope, useOptionalAlertDialogHeaderContext, useOptionalAlertDialogMotionScope } from "./alertDialogContext";
 import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_PANEL_LAYER_CONTENT_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, ALERT_DIALOG_TRIGGER_BASE_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
 import type {
   AlertDialogActionProps,
@@ -305,38 +306,25 @@ AlertDialogDescription.displayName = "AlertDialogDescription";
  
 export const AlertDialogHeadingBlock = forwardRef(function AlertDialogHeadingBlock({
   className,
-  motion,
-  onPointerOver,
-  onPointerOut,
   ...rest
 }: AlertDialogHeadingBlockProps, ref: ForwardedRef<HTMLDivElement>) {
   const slotClassNames = useAlertDialogClassNames();
-  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
-    forwardedRef: ref,
-    scope: useOptionalAlertDialogMotionScope(),
-    slot: "headingBlock",
-    motion,
-    pointerPhases: true,
-    onPointerOver,
-    onPointerOut,
-  });
- 
+
   return (
     <div
-      ref={setRef}
+      ref={ref}
       className={cn(
         ALERT_DIALOG_HEADING_BLOCK_CLASS,
         slotClassNames.headingBlock,
         className,
       )}
       {...rest}
-      {...pointerHandlers}
     />
   );
 });
- 
+
 AlertDialogHeadingBlock.displayName = "AlertDialogHeadingBlock";
- 
+
 export const AlertDialogBody = forwardRef<HTMLDivElement, AlertDialogBodyProps>(
   function AlertDialogBody(
     { className, children, motion, onPointerOver, onPointerOut, ...rest },
@@ -353,20 +341,19 @@ export const AlertDialogBody = forwardRef<HTMLDivElement, AlertDialogBodyProps>(
       onPointerOver,
       onPointerOut,
     });
- 
+
     return (
       <div
         ref={setRef}
         className={alertDialogBodyClass(
           sizePreset.bodyPadding,
+          sizePreset.bodyVariant,
           cn(slotClassNames.body, className),
         )}
         {...rest}
         {...pointerHandlers}
       >
-        <Text textStyle={sizePreset.bodyVariant} as="div">
-          {children}
-        </Text>
+        {children}
       </div>
     );
   },
@@ -571,8 +558,9 @@ export const AlertDialogPanel = forwardRef<HTMLDivElement, AlertDialogPanelProps
     { motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props },
     forwardedRef,
   ) {
-    const { variant: rootVariant } = useAlertDialog();
-    const variant = variantProp !== undefined ? resolveAlertVariant(variantProp) : rootVariant;
+    const { variantProp: rootVariantProp } = useAlertDialog();
+    const skinVariant = useSkinVariant(variantProp ?? rootVariantProp);
+    const variant = resolveAlertVariant(skinVariant);
     const parentScope = useOptionalAlertDialogMotionScope();
     const skinRevision = useSkinRegistryRevision();
     const motionDefaults = useMemo(() => {
@@ -604,6 +592,11 @@ AlertDialogPanel.displayName = "AlertDialog.Panel";
  
 function AlertDialogPanelHost({
   variant: variantProp,
+  closeOnEscape: panelCloseOnEscape,
+  closeOnInteractOutside: panelCloseOnInteractOutside,
+  onEscapeKeyDown: panelOnEscapeKeyDown,
+  onInteractOutside: panelOnInteractOutside,
+  initialFocus: panelInitialFocus,
   className,
   style,
   themeAnchor,
@@ -614,6 +607,7 @@ function AlertDialogPanelHost({
 }: Omit<AlertDialogPanelProps, "motion" | "motionController" | "motionState" | "motionPayload" | "playInitialState"> & {
   forwardedRef?: ForwardedRef<HTMLDivElement>;
 }) {
+  const baseCtx = useAlertDialog();
   const {
     open,
     titleId,
@@ -621,18 +615,71 @@ function AlertDialogPanelHost({
     hasTitle,
     hasDescription,
     variant: rootVariant,
+    rootOverlayProps,
     sizePreset,
-    closeOnEscape,
-    closeOnInteractOutside,
-    onEscapeKeyDown,
-    onInteractOutside,
-    initialFocus,
+    closeOnEscape: rootCloseOnEscape,
+    closeOnInteractOutside: rootCloseOnInteractOutside,
+    onEscapeKeyDown: rootOnEscapeKeyDown,
+    onInteractOutside: rootOnInteractOutside,
+    initialFocus: rootInitialFocus,
     onOpenChange,
     portalContainer: portalContainerFromRoot,
-  } = useAlertDialog();
+  } = baseCtx;
   const variant = variantProp ?? rootVariant;
   const surfaceStyle = useSkinSurfaceStyle(variant);
   const motionScope = useAlertDialogMotionScope();
+
+  let panelOverlayProps: AlertDialogOverlayProps | undefined;
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+    if ((child.type as { displayName?: string }).displayName !== "AlertDialog.Overlay") return;
+    panelOverlayProps = child.props as AlertDialogOverlayProps;
+  });
+
+  const mergedOverlay: AlertDialogOverlayProps = {
+    ...rootOverlayProps,
+    ...panelOverlayProps,
+  };
+  const {
+    closeOnEscape: overlayCloseOnEscape,
+    closeOnInteractOutside: overlayCloseOnInteractOutside,
+    onEscapeKeyDown: overlayOnEscapeKeyDown,
+    onInteractOutside: overlayOnInteractOutside,
+    initialFocus: overlayInitialFocus,
+    ...overlayDomProps
+  } = mergedOverlay;
+
+  const resolvedCloseOnEscape =
+    overlayCloseOnEscape ?? panelCloseOnEscape ?? rootCloseOnEscape;
+  const resolvedCloseOnInteractOutside =
+    overlayCloseOnInteractOutside ?? panelCloseOnInteractOutside ?? rootCloseOnInteractOutside;
+  const resolvedOnEscapeKeyDown =
+    overlayOnEscapeKeyDown ?? panelOnEscapeKeyDown ?? rootOnEscapeKeyDown;
+  const resolvedOnInteractOutside =
+    overlayOnInteractOutside ?? panelOnInteractOutside ?? rootOnInteractOutside;
+  const resolvedInitialFocus =
+    overlayInitialFocus ?? panelInitialFocus ?? rootInitialFocus;
+
+  const panelContextValue = useMemo(
+    () => ({
+      ...baseCtx,
+      variant,
+      closeOnEscape: resolvedCloseOnEscape,
+      closeOnInteractOutside: resolvedCloseOnInteractOutside,
+      onEscapeKeyDown: resolvedOnEscapeKeyDown,
+      onInteractOutside: resolvedOnInteractOutside,
+      initialFocus: resolvedInitialFocus,
+    }),
+    [
+      baseCtx,
+      resolvedCloseOnEscape,
+      resolvedCloseOnInteractOutside,
+      resolvedInitialFocus,
+      resolvedOnEscapeKeyDown,
+      resolvedOnInteractOutside,
+      variant,
+    ],
+  );
  
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
@@ -643,11 +690,11 @@ function AlertDialogPanelHost({
     open,
     onOpenChange,
     variant,
-    closeOnEscape,
-    closeOnInteractOutside,
-    onEscapeKeyDown,
-    onInteractOutside,
-    initialFocus,
+    closeOnEscape: resolvedCloseOnEscape,
+    closeOnInteractOutside: resolvedCloseOnInteractOutside,
+    onEscapeKeyDown: resolvedOnEscapeKeyDown,
+    onInteractOutside: resolvedOnInteractOutside,
+    initialFocus: resolvedInitialFocus,
     contained,
     motionScope,
   });
@@ -659,30 +706,35 @@ function AlertDialogPanelHost({
   if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
  
   return createPortal(
-    <AlertDialogPortalShell
-      open={open}
-      className={className}
-      style={mergeSkinSurfaceStyle(surfaceStyle, style)}
-      variant={variant}
-      sizePreset={sizePreset}
-      portalTheme={portalTheme}
-      lightUi={lightUi}
-      titleId={titleId}
-      descriptionId={descriptionId}
-      hasTitle={hasTitle}
-      hasDescription={hasDescription}
-      onDialogClose={() => onOpenChange(false)}
-      onDialogCancel={motion.handleDialogCancel}
-      onBackdropMouseDown={motion.handleBackdropPointerDown}
-      dialogRef={motion.dialogRef}
-      overlayRef={motion.overlayRef}
-      panelRef={motion.panelRef}
-      panelForwardedRef={forwardedRef}
-      panelRest={rest}
-      contained={contained}
-    >
-      {children}
-    </AlertDialogPortalShell>,
+    <OverlayLayerProvider layerId={motion.layerId}>
+      <AlertDialogProvider value={panelContextValue}>
+        <AlertDialogPortalShell
+          open={open}
+          className={className}
+          style={mergeSkinSurfaceStyle(surfaceStyle, style)}
+          variant={variant}
+          sizePreset={sizePreset}
+          portalTheme={portalTheme}
+          lightUi={lightUi}
+          titleId={titleId}
+          descriptionId={descriptionId}
+          hasTitle={hasTitle}
+          hasDescription={hasDescription}
+          onDialogClose={() => onOpenChange(false)}
+          onDialogCancel={motion.handleDialogCancel}
+          onBackdropMouseDown={motion.handleBackdropPointerDown}
+          dialogRef={motion.dialogRef}
+          overlayRef={motion.overlayRef}
+          panelRef={motion.panelRef}
+          panelForwardedRef={forwardedRef}
+          panelRest={rest}
+          overlayProps={overlayDomProps}
+          contained={contained}
+        >
+          {children}
+        </AlertDialogPortalShell>
+      </AlertDialogProvider>
+    </OverlayLayerProvider>,
     portalHost,
   );
 }
@@ -710,18 +762,24 @@ export function AlertDialogPortalShell({
   panelRef,
   panelForwardedRef,
   panelRest,
+  overlayProps,
   contained = false,
 }: AlertDialogPortalShellProps) {
   const slotClassNames = useAlertDialogClassNames();
   const { size, status } = useAlertDialog();
   const motionScope = useOptionalAlertDialogMotionScope();
   useApplySkinPortal(dialogRef);
+  const {
+    className: overlayClassName,
+    style: overlayStyle,
+    onMouseDown: overlayOnMouseDown,
+    ...overlayRest
+  } = overlayProps ?? {};
 
   return (
     <dialog
       {...portalTheme}
       ref={dialogRef}
-      data-state={dataOpenState(open)}
       role={ALERT_DIALOG_ROLE}
       onClose={(e) => {
         if (!isOwnNativeDialogEvent(e)) return;
@@ -738,13 +796,21 @@ export function AlertDialogPortalShell({
         alertDialogNativeClass(contained),
         slotClassNames.dialog,
       )}
+      data-state={dataOpenState(open)}
     >
       <div
         ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}
-        className={alertDialogOverlayClass(lightUi, slotClassNames.overlay)}
-        style={alertDialogOverlayEnterStyle()}
+        {...overlayRest}
+        className={alertDialogOverlayClass(
+          lightUi,
+          cn(slotClassNames.overlay, overlayClassName),
+        )}
+        style={{ ...alertDialogOverlayEnterStyle(), ...overlayStyle }}
         aria-hidden
-        onMouseDown={onBackdropMouseDown}
+        onMouseDown={(event) => {
+          overlayOnMouseDown?.(event);
+          if (!event.defaultPrevented) onBackdropMouseDown(event);
+        }}
       />
       <SkinShell
         tabIndex={-1}

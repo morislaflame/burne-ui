@@ -45,12 +45,15 @@ describe("PinInput", () => {
     expect(digits().map((cell) => (cell as HTMLInputElement).value)).toEqual(["1", "", "", ""]);
   });
 
-  it("hides a masked value without a password field", () => {
-    render(<PinInput label="PIN" mask length={4} />);
-    for (const cell of digits()) {
-      expect(cell).toHaveAttribute("type", "text");
-      expect(cell.className).toContain("text-security:disc");
-    }
+  it("renders password inputs with one-time-code autocomplete when masked", () => {
+    const { container } = render(<PinInput label="PIN" mask length={4} />);
+    const cells = Array.from(container.querySelectorAll<HTMLInputElement>('input:not([type="hidden"])'));
+    expect(cells).toHaveLength(4);
+    cells.forEach((cell, index) => {
+      expect(cell).toHaveAttribute("type", "password");
+      expect(cell).toHaveAttribute("inputmode", "numeric");
+      expect(cell).toHaveAttribute("autocomplete", index === 0 ? "one-time-code" : "off");
+    });
   });
 
   it("puts className on one cell", () => {
@@ -75,5 +78,35 @@ describe("PinInput", () => {
     render(<PinInput label="Code" error="Wrong code" />);
     expect(digits()[0]).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByText("Wrong code")).toBeInTheDocument();
+  });
+
+  it("links Label htmlFor to cell 0 and edits an already-filled cell without overwriting the next cell", () => {
+    render(<PinInput label="OTP" length={4} defaultValue="1234" />);
+    const label = screen.getByText("OTP").closest("label")!;
+    expect(label.getAttribute("for")).toBe(digits()[0]!.id);
+
+    // Typing "9" into cell 0 when cell 0 already has "1" produces "19" or "91"
+    fireEvent.change(digits()[0]!, { target: { value: "19" } });
+    expect(digits().map((cell) => (cell as HTMLInputElement).value)).toEqual(["9", "2", "3", "4"]);
+    expect(digits()[1]).toHaveFocus();
+  });
+
+  it("keeps focus on an empty cell for mobile Paste callout and pastes from cell 0 when earlier cells are empty", async () => {
+    const { container } = render(
+      <form>
+        <PinInput name="otp" label="Code" length={4} defaultValue="" />
+      </form>,
+    );
+    const cells = digits();
+    cells[2]!.focus();
+    expect(cells[2]).toHaveFocus();
+
+    fireEvent.paste(cells[2]!, { clipboardData: { getData: () => "5678" } });
+    expect(digits().map((cell) => (cell as HTMLInputElement).value)).toEqual(["5", "6", "7", "8"]);
+
+    container.querySelector("form")!.reset();
+    await vi.waitFor(() => {
+      expect(digits().map((cell) => (cell as HTMLInputElement).value)).toEqual(["", "", "", ""]);
+    });
   });
 });

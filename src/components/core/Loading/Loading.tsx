@@ -155,7 +155,7 @@ function LoadingSurface({
       className={cn(LOADING_ROOT_CLASS, classNames?.root, className)}
       {...rest}
       {...part.pointerHandlers}
-      {...dataVariantProps({ size })}
+      {...dataVariantProps({ size, status })}
     >
       {indicator === "dots" ? (
         <LoadingDots

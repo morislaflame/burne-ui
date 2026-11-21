@@ -1,5 +1,7 @@
 import { Children, isValidElement, type ReactNode } from "react";
 
+import { isRtlElement } from "@/components/core/utils/readingDirection";
+
 import type {
   RtlScrollType,
   ScrollAreaOrientation,
@@ -38,6 +40,28 @@ export function scrollAreaHasPart(children: ReactNode, displayName: string): boo
 
 export function scrollAreaIsCompound(children: ReactNode): boolean {
   return scrollAreaHasPart(children, SCROLL_AREA_VIEWPORT_DISPLAY_NAME);
+}
+
+export function detectCompoundScrollAxes(children: ReactNode): {
+  vertical: boolean;
+  horizontal: boolean;
+} {
+  let vertical = false;
+  let horizontal = false;
+  const walk = (nodes: ReactNode) => {
+    Children.forEach(nodes, (node) => {
+      if (!isValidElement<{ orientation?: ScrollAxis; children?: ReactNode }>(node)) return;
+      if (childDisplayName(node) === SCROLL_AREA_SCROLLBAR_DISPLAY_NAME) {
+        const axis = node.props.orientation ?? "vertical";
+        if (axis === "horizontal") horizontal = true;
+        else vertical = true;
+        return;
+      }
+      if (node.props.children) walk(node.props.children);
+    });
+  };
+  walk(children);
+  return { vertical, horizontal };
 }
 
 export function scrollAxisMetrics(
@@ -196,13 +220,13 @@ export function rtlScrollType(): RtlScrollType {
 
 export function readInlineScroll(element: HTMLElement): number {
   const max = Math.max(0, element.scrollWidth - element.clientWidth);
-  const direction = getComputedStyle(element).direction === "rtl" ? "rtl" : "ltr";
+  const direction = isRtlElement(element) ? "rtl" : "ltr";
   return inlineScrollOffset(element.scrollLeft, max, direction, rtlScrollType());
 }
 
 export function writeInlineScroll(element: HTMLElement, offset: number): void {
   const max = Math.max(0, element.scrollWidth - element.clientWidth);
-  const direction = getComputedStyle(element).direction === "rtl" ? "rtl" : "ltr";
+  const direction = isRtlElement(element) ? "rtl" : "ltr";
   element.scrollLeft = inlineScrollLeft(offset, max, direction, rtlScrollType());
 }
 
@@ -232,20 +256,28 @@ export function bindScrollAreaThumbDrag(
     metrics: ScrollMetrics;
     onDragging: (dragging: boolean) => void;
   },
-): void {
-  if (event.button !== 0 || !options.metrics.overflowing) return;
+): (() => void) | undefined {
+  if (event.button !== 0 || !options.metrics.overflowing) return undefined;
   event.preventDefault();
   event.stopPropagation();
-  thumb.setPointerCapture(event.pointerId);
+  if (typeof thumb.setPointerCapture === "function") {
+    try {
+      thumb.setPointerCapture(event.pointerId);
+    } catch {
+      // Synthetic pointer events in unit tests may not have an active pointerId.
+    }
+  }
   const { axis, viewport, metrics, onDragging } = options;
-  const rtl = axis === "horizontal" && getComputedStyle(viewport).direction === "rtl";
+  const rtl = axis === "horizontal" && isRtlElement(viewport);
   const sign = rtl ? -1 : 1;
   const startClient = axis === "vertical" ? event.clientY : event.clientX;
   const startScroll = axis === "vertical" ? viewport.scrollTop : readInlineScroll(viewport);
   const maxOffset = Math.max(1, metrics.track - metrics.thumbSize);
+  let ended = false;
   onDragging(true);
 
   const move = (ev: PointerEvent) => {
+    if (ended) return;
     const client = axis === "vertical" ? ev.clientY : ev.clientX;
     const delta = (client - startClient) * sign;
     const next = startScroll + (delta / maxOffset) * metrics.maxScroll;
@@ -253,14 +285,49 @@ export function bindScrollAreaThumbDrag(
     else writeInlineScroll(viewport, next);
   };
   const end = () => {
+    if (ended) return;
+    ended = true;
     thumb.removeEventListener("pointermove", move);
     thumb.removeEventListener("pointerup", end);
     thumb.removeEventListener("pointercancel", end);
+    thumb.removeEventListener("lostpointercapture", end);
     onDragging(false);
   };
   thumb.addEventListener("pointermove", move);
   thumb.addEventListener("pointerup", end);
   thumb.addEventListener("pointercancel", end);
+  thumb.addEventListener("lostpointercapture", end);
+  return end;
+}
+
+export function applyScrollAreaWheel(
+  viewport: HTMLElement,
+  axis: ScrollAxis,
+  metrics: ScrollMetrics,
+  event: { deltaX: number; deltaY: number; deltaMode: number },
+): boolean {
+  if (!metrics.overflowing || metrics.maxScroll <= 0) return false;
+  const pageSize = (axis === "vertical" ? viewport.clientHeight : viewport.clientWidth) || 16;
+  const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? pageSize : 1;
+  const raw = axis === "vertical" ? event.deltaY : event.deltaX !== 0 ? event.deltaX : event.deltaY;
+  const delta = raw * scale;
+  if (delta === 0) return false;
+
+  if (axis === "vertical") {
+    const before = viewport.scrollTop;
+    const next = Math.min(metrics.maxScroll, Math.max(0, before + delta));
+    if (Math.abs(next - before) < 0.5) return false;
+    viewport.scrollTop = next;
+    return true;
+  }
+
+  const rtl = isRtlElement(viewport);
+  const inlineDelta = event.deltaX !== 0 && rtl ? -delta : delta;
+  const before = readInlineScroll(viewport);
+  const next = Math.min(metrics.maxScroll, Math.max(0, before + inlineDelta));
+  if (Math.abs(next - before) < 0.5) return false;
+  writeInlineScroll(viewport, next);
+  return true;
 }
 
 export function jumpScrollAreaToPointer(
@@ -272,7 +339,7 @@ export function jumpScrollAreaToPointer(
   const { axis, viewport, metrics } = options;
   if (!metrics.overflowing) return;
   const rect = bar.getBoundingClientRect();
-  const rtl = axis === "horizontal" && getComputedStyle(viewport).direction === "rtl";
+  const rtl = axis === "horizontal" && isRtlElement(viewport);
   const local = axis === "vertical" ? event.clientY - rect.top : event.clientX - rect.left;
   const along = rtl ? rect.width - local : local;
   const next = scrollFromThumbOffset(along - metrics.thumbSize / 2, metrics);
@@ -286,7 +353,7 @@ export function applyScrollAreaKey(
   metrics: ScrollMetrics,
   key: string,
 ): boolean {
-  const rtl = axis === "horizontal" && getComputedStyle(viewport).direction === "rtl";
+  const rtl = axis === "horizontal" && isRtlElement(viewport);
   const delta = scrollAreaKeyDelta(key, axis, metrics.viewport, rtl);
   if (delta == null || !metrics.overflowing) return false;
   const current = axis === "vertical" ? viewport.scrollTop : readInlineScroll(viewport);
@@ -296,7 +363,12 @@ export function applyScrollAreaKey(
   return true;
 }
 
-export function paintScrollThumb(bar: HTMLElement, metrics: ScrollMetrics): void {
+export function paintScrollThumb(
+  bar: HTMLElement,
+  metrics: ScrollMetrics,
+  rtl = false,
+): void {
+  const signedOffset = rtl && metrics.thumbOffset !== 0 ? -metrics.thumbOffset : metrics.thumbOffset;
   bar.style.setProperty("--scroll-thumb-size", `${metrics.thumbSize}px`);
-  bar.style.setProperty("--scroll-thumb-offset", `${metrics.thumbOffset}px`);
+  bar.style.setProperty("--scroll-thumb-offset", `${signedOffset}px`);
 }

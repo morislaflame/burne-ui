@@ -89,6 +89,7 @@ export type InputFieldContextValue = {
   labelId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  errorMessage?: ReactNode;
   invalid?: boolean;
   required: boolean;
   size: InputSize;

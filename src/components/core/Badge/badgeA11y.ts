@@ -11,6 +11,12 @@ export function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): 
 export function badgeRootA11yProps(
   props: HTMLAttributes<HTMLSpanElement>,
 ): Pick<HTMLAttributes<HTMLSpanElement>, "aria-hidden" | "role"> {
+  if (props["aria-hidden"] !== undefined) {
+    return {
+      "aria-hidden": props["aria-hidden"],
+      role: badgeHasAccessibleName(props) ? "img" : undefined,
+    };
+  }
   if (badgeHasAccessibleName(props)) {
     return { role: "img" };
   }

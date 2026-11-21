@@ -12,7 +12,7 @@ import { calendarRootClass } from "./calendarStyles";
 import type { CalendarProps, UseCalendarRootStateProps } from "./calendarTypes";
 import { KIT_CALENDAR_VARIANTS } from "./calendarTypes";
 import { useCalendarRootState } from "./useCalendarRootState";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
 
 export type {
@@ -45,6 +45,8 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       selectionMode: _selectionMode,
       variant: _variant,
       size: _size,
+      disabled: _disabled,
+      readOnly: _readOnly,
       defaultMonth: _defaultMonth,
       month: _month,
       onMonthChange: _onMonthChange,
@@ -108,6 +110,8 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
             rest={rest}
             size={contextValue.size}
             variant={contextValue.variant}
+            disabled={contextValue.disabled}
+            readOnly={contextValue.readOnly}
           >
             {content}
           </CalendarRootSurface>
@@ -126,6 +130,8 @@ function CalendarRootSurface({
   rest,
   size,
   variant,
+  disabled,
+  readOnly,
   children,
 }: {
   forwardedRef: ForwardedRef<HTMLDivElement>;
@@ -133,17 +139,21 @@ function CalendarRootSurface({
   rest: HTMLAttributes<HTMLDivElement>;
   size: CalendarProps["size"];
   variant: string;
+  disabled: boolean;
+  readOnly: boolean;
   children: CalendarProps["children"];
 }) {
-  const { onPointerOver, onPointerOut, ...domRest } = rest;
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...domRest } = rest;
   const scope = useCalendarMotionScope();
   const part = useMotionPart<HTMLDivElement>({
     scope,
     slot: "root",
     forwardedRef,
-    pointerPhases: true,
+    pointerPhases: !disabled,
     onPointerOver,
     onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
   useOptionalEnterOnMount(scope, "root", part.targetRef);
   const shadow = useSecondLevelShadow(part.targetRef, usesKitElevation(variant, KIT_CALENDAR_VARIANTS), {
@@ -156,9 +166,12 @@ function CalendarRootSurface({
     <div
       ref={part.setRef}
       className={cn(className, shadow.motionClass)}
+      aria-disabled={disabled || undefined}
       {...domRest}
       {...part.pointerHandlers}
       {...dataVariantProps({ size, variant })}
+      data-disabled={dataFlag(disabled)}
+      data-readonly={dataFlag(readOnly)}
     >
       {children}
     </div>

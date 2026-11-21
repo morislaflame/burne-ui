@@ -2,7 +2,7 @@ import { useCallback, useId, useState } from "react";
 
 import { useSkinVariant } from "@/skins/skinContext";
  
-import { hasExpandableCompoundChildren } from "./expandableAPI";
+import { hasExpandableCompoundChildren, hasExpandablePanelChildren } from "./expandableAPI";
 import type {
   ExpandableContextValue,
   UseExpandableRootStateProps,
@@ -22,14 +22,18 @@ export function useExpandableRootState({
   const headerId = useId();
   const controlled = openProp !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const [hasPanel, setHasPanelState] = useState(false);
+  const isCompound = hasExpandableCompoundChildren(children);
+  const childrenHasPanel = isCompound
+    ? hasExpandablePanelChildren(children)
+    : children != null;
+  const [mountedHasPanel, setHasPanelState] = useState<boolean | null>(null);
+  const hasPanel = childrenHasPanel || Boolean(mountedHasPanel);
  
   const setHasPanel = useCallback((value: boolean) => {
     setHasPanelState(value);
   }, []);
  
   const open = controlled ? openProp! : internalOpen;
-  const isCompound = hasExpandableCompoundChildren(children);
 
   const toggle = useCallback(() => {
     if (disabled || !hasPanel) return;

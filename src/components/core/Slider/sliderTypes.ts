@@ -4,6 +4,7 @@ import type {
   KeyboardEvent,
   PointerEvent,
   ReactNode,
+  Ref,
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
@@ -86,6 +87,9 @@ export type SliderFieldContextValue = {
   orientation: SliderOrientation;
   display: SliderDisplayState | null;
   setDisplay: (next: SliderDisplayState | null) => void;
+  trackProps?: SliderTrackProps;
+  registerControlRef?: (node: HTMLElement | null) => void;
+  onControlBlur?: () => void;
 };
  
 export type SliderThumbA11y = {
@@ -108,6 +112,8 @@ export type SliderTrackContextValue = {
   size: SliderSize;
   orientation: SliderOrientation;
   disabled?: boolean;
+  readOnly?: boolean;
+  isRtl?: boolean;
   icon?: ReactNode;
   range: boolean;
   variant: SliderVariant;
@@ -118,6 +124,7 @@ export type SliderTrackContextValue = {
   max: number;
   formatValue: (value: number) => string;
   thumbPercent: (kind: SliderThumbKind) => number;
+  getThumbRef: (kind: SliderThumbKind) => Ref<HTMLButtonElement>;
   resolveThumbIcon: (children?: ReactNode) => ReactNode;
   resolveThumbA11y: (kind: SliderThumbKind) => SliderThumbA11y;
   onThumbPointerDown: (
@@ -271,6 +278,8 @@ export type SliderThumbButtonProps = {
   percent: number;
   orientation: SliderOrientation;
   disabled?: boolean;
+  readOnly?: boolean;
+  isRtl?: boolean;
   active: boolean;
   ariaValueNow: number;
   ariaValueMin: number;

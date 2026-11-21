@@ -2,7 +2,7 @@ import { Children, isValidElement, type ReactNode, type Ref, type RefObject } fr
  
 import { Ripple } from "@/components/core/Ripple";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import { EXPANDABLE_ACTION_DISPLAY_NAMES, EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES, EXPANDABLE_DESCRIPTION_DISPLAY_NAMES, EXPANDABLE_MESSAGE_DISPLAY_NAMES, EXPANDABLE_TITLE_DISPLAY_NAMES, EXPANDABLE_ICON_DISPLAY_NAMES } from "./expandableA11y";
+import { EXPANDABLE_ACTION_DISPLAY_NAMES, EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES, EXPANDABLE_DESCRIPTION_DISPLAY_NAMES, EXPANDABLE_MESSAGE_DISPLAY_NAMES, EXPANDABLE_PANEL_DISPLAY_NAMES, EXPANDABLE_TITLE_DISPLAY_NAMES, EXPANDABLE_ICON_DISPLAY_NAMES } from "./expandableA11y";
  
 export function mergeExpandableRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
@@ -66,6 +66,26 @@ export function hasExpandableCompoundChildren(children: ReactNode): boolean {
     }
   };
  
+  walk(children);
+  return found;
+}
+
+export function hasExpandablePanelChildren(children: ReactNode): boolean {
+  let found = false;
+
+  const walk = (node: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const name = readExpandablePartDisplayName(child.type);
+      if (name != null && EXPANDABLE_PANEL_DISPLAY_NAMES.has(name)) {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+
   walk(children);
   return found;
 }

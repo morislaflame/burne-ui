@@ -42,7 +42,10 @@ export const CARD_ROOT_CLIP_CLASS = "overflow-hidden";
 
 export const CARD_PRESSABLE_ROOT_CLASS = "relative cursor-pointer focus-ring";
 
-export const CARD_BUTTON_SHELL_CLASS = "w-full border-0 p-0 text-start";
+export const CARD_PRESSABLE_DISABLED_ROOT_CLASS =
+  "relative cursor-not-allowed opacity-50 focus-ring";
+
+export const CARD_BUTTON_SHELL_CLASS = "w-full border-0 p-0 text-start focus-ring";
 
 export const CARD_PRESSABLE_CONTENT_CLASS =
   "relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit]";
@@ -66,14 +69,18 @@ export function cardRootClass(
   pressableMotionClass: string,
   size: CardSize,
   shadow: ShadowLevel = "base",
-  className?: string): string {
+  className?: string,
+  disabled = false): string {
   const visual = resolveVariantVisual(variant, KIT_CARD_VARIANTS, "card.root");
+  const interactiveRootClass = disabled
+    ? CARD_PRESSABLE_DISABLED_ROOT_CLASS
+    : CARD_PRESSABLE_ROOT_CLASS;
   if (visual.className !== undefined) {
     return cn(
       CARD_ROOT_BASE_CLASS,
       panelSizeLayout(size).rounded,
       !pressable && CARD_ROOT_CLIP_CLASS,
-      pressable && cn(CARD_PRESSABLE_ROOT_CLASS, pressableMotionClass),
+      pressable && cn(interactiveRootClass, pressableMotionClass),
       visual.className,
       className);
   }
@@ -81,7 +88,7 @@ export function cardRootClass(
     CARD_ROOT_BASE_CLASS,
     panelSizeLayout(size).rounded,
     !pressable && CARD_ROOT_CLIP_CLASS,
-    pressable && cn(CARD_PRESSABLE_ROOT_CLASS, pressableMotionClass),
+    pressable && cn(interactiveRootClass, pressableMotionClass),
     SURFACE_COLOR_TRANSITION,
     CARD_SURFACE[visual.key],
     !pressable && CARD_STATIC_SHADOW_CLASS[shadow],

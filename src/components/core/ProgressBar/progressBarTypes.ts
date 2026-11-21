@@ -64,7 +64,9 @@ export type ProgressBarFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  labelConnected: boolean;
   orientation: ProgressBarOrientation;
+  status?: SemanticStatus;
   display: ProgressBarDisplayState | null;
   setDisplay: (next: ProgressBarDisplayState | null) => void;
 };
@@ -176,6 +178,7 @@ export type ProgressBarTrackAriaProps = {
   max: number;
   statusText: string;
   indeterminate: boolean;
+  labelConnected: boolean;
   labelId?: string;
   ariaDescribedBy?: string;
 };

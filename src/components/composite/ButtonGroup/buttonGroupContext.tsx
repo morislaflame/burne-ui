@@ -40,16 +40,18 @@ export function ButtonGroupSegmentProvider({
   segment,
   size,
   variant,
+  disabled,
   children,
 }: {
-  segment: ButtonGroupSegment;
+  segment?: ButtonGroupSegment;
   size: ButtonSize;
   variant?: ButtonVariant;
+  disabled?: boolean;
   children: ReactNode;
 }) {
   const value = useMemo(
-    () => ({ segment, size, variant }),
-    [size, segment, variant],
+    () => ({ segment, size, variant, disabled }),
+    [disabled, size, segment, variant],
   );
  
   return (
@@ -71,7 +73,7 @@ export function useOptionalButtonGroupLayout() {
 export function useInJoinedButtonGroup(): boolean {
   const layoutCtx = useOptionalButtonGroupLayout();
   const groupCtx = useOptionalButtonGroupSegment();
-  return Boolean(groupCtx && !layoutCtx?.segmented);
+  return Boolean(groupCtx?.segment && !layoutCtx?.segmented);
 }
  
 export function ButtonGroupClassNamesProvider({

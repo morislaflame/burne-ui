@@ -18,6 +18,7 @@ import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
 import { listBoxActiveOptionId, listBoxOptionId } from "./listBoxA11y";
 import {
+  listBoxCatalogEdge,
   listBoxCatalogTypeahead,
   listBoxPreferredInitialActiveValue,
   listBoxTypeaheadLabels,
@@ -86,6 +87,8 @@ export const ListBoxRootShell = forwardRef<HTMLDivElement, ListBoxRootShellProps
   const motionScope = useListBoxMotionScope();
   const {
     setActiveValue,
+    activeChangeSourceRef,
+    selected,
     selectItem,
     multiple,
     disabled,
@@ -93,7 +96,7 @@ export const ListBoxRootShell = forwardRef<HTMLDivElement, ListBoxRootShellProps
     size,
   } = useListBox("ListBox");
   const activeValue = useListBoxActiveValue();
-  const { frame, catalog, setScrollNode } = useListBoxVirtualWindow({
+  const { frame, catalog, setScrollNode, rangeKey } = useListBoxVirtualWindow({
     enabled: virtualized,
     itemSizeProp: virtualItemSize,
     size,
@@ -107,7 +110,13 @@ export const ListBoxRootShell = forwardRef<HTMLDivElement, ListBoxRootShellProps
     },
     [setScrollNode],
   );
-  useListBoxActiveOptionHighlight({ listId, activeValue, rootRef });
+  useListBoxActiveOptionHighlight({
+    listId,
+    activeValue,
+    rootRef,
+    activeChangeSourceRef,
+    virtualRangeKey: rangeKey,
+  });
   const typeaheadRef = useLazyRef(createTypeaheadBufferState);
  
   const handleKeyDown = useCallback(
@@ -194,10 +203,18 @@ export const ListBoxRootShell = forwardRef<HTMLDivElement, ListBoxRootShellProps
       onFocus?.(event);
       if (event.defaultPrevented || !standaloneKeyboard || disabled) return;
       if (activeValue) return;
+      if (catalog) {
+        const selectedMatch = catalog.find(
+          (opt) => !opt.disabled && selected.has(opt.value),
+        );
+        const initial = selectedMatch?.value ?? listBoxCatalogEdge(catalog, "start");
+        if (initial) setActiveValue(initial);
+        return;
+      }
       const initial = listBoxPreferredInitialActiveValue(event.currentTarget);
       if (initial) setActiveValue(initial);
     },
-    [activeValue, disabled, onFocus, setActiveValue, standaloneKeyboard],
+    [activeValue, catalog, disabled, onFocus, selected, setActiveValue, standaloneKeyboard],
   );
  
   const tabIndex =
@@ -579,7 +596,7 @@ function ListBoxItemSurface({
       (event: React.PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(event);
         if (disabled) return;
-        setActiveValue(value);
+        setActiveValue(value, "pointer");
       },
       [disabled, onPointerEnter, setActiveValue, value],
     );

@@ -1,4 +1,4 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useId, useState, type PointerEvent as ReactPointerEvent, type ReactElement, type ForwardedRef } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useEffect, useLayoutEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactElement, type ForwardedRef } from "react";
  
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -53,7 +53,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
     },
     forwardedRef,
   ) {
-    const { open, setOpen, triggerRef, contentId } = useDropdown();
+    const { open, setOpen, triggerRef, contentId, openInitialFocusRef } = useDropdown();
     const slotClassNames = useDropdownClassNames();
     const { part, openingRef, openAfterSqueeze } = useOverlayTriggerSlot<HTMLElement>({
       scope: useOptionalDropdownMotionScope(),
@@ -66,33 +66,46 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
       onPointerUp,
     });
  
+    const setPartRef = part.setRef;
     const mergedRef = useCallback(
       (node: HTMLElement | null) => {
-        part.setRef(node);
+        setPartRef(node);
         triggerRef.current = node;
       },
-      [part.setRef, triggerRef],
+      [setPartRef, triggerRef],
     );
  
+    const openedFromPointerDownRef = useRef(false);
+
+    useEffect(() => {
+      if (!open) openedFromPointerDownRef.current = false;
+    }, [open]);
+
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         // Prevent child Button's own squeeze so Trigger drives the animation.
         e.preventDefault();
+        openedFromPointerDownRef.current = true;
+        openInitialFocusRef.current = "first";
         openAfterSqueeze(() => setOpen(true));
       },
-      [open, openingRef, openAfterSqueeze, setOpen],
+      [open, openInitialFocusRef, openingRef, openAfterSqueeze, setOpen],
     );
  
     const handleClick = useCallback(
       (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
         if (e.defaultPrevented) return;
+        if (openedFromPointerDownRef.current) {
+          openedFromPointerDownRef.current = false;
+          return;
+        }
         // When open, close immediately (no squeeze animation needed for closing).
         if (open) setOpen(false);
-        // When closed, opening was already kicked off by pointerDown.
+        else if (!openingRef.current) setOpen(true);
       },
-      [onClick, open, setOpen],
+      [onClick, open, openingRef, setOpen],
     );
  
     const handleKeyDown = useCallback(
@@ -103,11 +116,18 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
           e.preventDefault();
           if (open) setOpen(false);
           else {
+            openInitialFocusRef.current = "first";
             openAfterSqueeze(() => setOpen(true));
           }
+          return;
+        }
+        if (!open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+          e.preventDefault();
+          openInitialFocusRef.current = e.key === "ArrowUp" ? "last" : "first";
+          openAfterSqueeze(() => setOpen(true));
         }
       },
-      [onKeyDown, open, openAfterSqueeze, setOpen],
+      [onKeyDown, open, openAfterSqueeze, openInitialFocusRef, setOpen],
     );
  
     if (asChild && isValidElement(children)) {
@@ -202,6 +222,8 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       contentRef,
       contentId,
       subPanelRootsRef,
+      openInitialFocusRef,
+      skipTriggerRestoreRef,
       popoverVariant,
       size,
       portalContainer: portalContainerFromRoot,
@@ -220,10 +242,21 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         const target = event.target;
         if (!(target instanceof Node)) return;
         for (const root of subPanelRootsRef.current) {
-          if (root.contains(target)) event.preventDefault();
+          if (root.contains(target)) {
+            event.preventDefault();
+            return;
+          }
+        }
+        if (
+          target instanceof Element &&
+          target.closest(
+            'button:not([disabled]), a[href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"]), label',
+          )
+        ) {
+          skipTriggerRestoreRef.current = true;
         }
       },
-      [subPanelRootsRef],
+      [skipTriggerRestoreRef, subPanelRootsRef],
     );
  
     useDropdownPopoverMenu({
@@ -231,6 +264,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       setOpen,
       contentRef,
       triggerRef,
+      openInitialFocusRef,
     });
  
     return (

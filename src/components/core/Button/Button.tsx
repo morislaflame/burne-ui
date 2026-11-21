@@ -1,18 +1,20 @@
 import {
   Children,
+  Fragment,
   cloneElement,
   forwardRef,
   isValidElement,
   useMemo,
   useRef,
   type HTMLAttributes,
+  type KeyboardEvent,
   type MouseEvent,
   type ReactElement,
   type ReactNode,
   type RefObject } from "react";
  
 import { Ripple } from "@/components/core/Ripple";
-import { dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataGroupSegment, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
  
 import { resolveButtonMotionDefaults, useButtonAnimations } from "./buttonAnimations";
@@ -126,6 +128,7 @@ function ButtonSurface({
   }: ButtonSurfaceProps) {
     const animations = useButtonAnimations({
       variant: state.variant,
+      disabled: state.userDisabled,
       blocked: state.blocked,
       groupSegment: state.groupSegment,
       motion,
@@ -147,6 +150,23 @@ function ButtonSurface({
       }
       state.onClick?.(event);
     };
+
+    const rawDataState = (rest as { "data-state"?: string })["data-state"];
+    const buttonDataState = state.isLoading
+      ? "loading"
+      : motionState === "success"
+        ? "success"
+        : motionState === "error"
+          ? "error"
+          : motionState === "idle"
+            ? "idle"
+            : rawDataState === "loading" ||
+                rawDataState === "success" ||
+                rawDataState === "error" ||
+                rawDataState === "idle"
+              ? rawDataState
+              : undefined;
+    const restTabIndex = (rest as { tabIndex?: number }).tabIndex;
  
     const contextValue = {
       size: state.size,
@@ -184,26 +204,39 @@ function ButtonSurface({
     return (
       <ButtonContextProvider value={contextValue}>
         {asChildElement ? (
-          cloneElement(
-            asChildElement,
-            mergeAsChildProps(
+          (() => {
+            const mergedAsChild = mergeAsChildProps(
               asChildElement,
               {
                 ...rest,
                 style: mergeSkinSurfaceStyle(state.surfaceStyle, rest.style),
                 className: state.buttonClass,
-                "data-group-segment": dataGroupSegment(state.groupSegment != null),
                 "aria-disabled": state.blocked || undefined,
-                tabIndex: state.blocked
-                  ? -1
-                  : (rest as { tabIndex?: number }).tabIndex,
+                "aria-busy": state.isLoading || undefined,
+                ...(state.blocked
+                  ? { tabIndex: -1 }
+                  : restTabIndex !== undefined
+                    ? { tabIndex: restTabIndex }
+                    : {}),
                 onPointerOver: animations.pointerHandlers.onPointerOver,
                 onPointerOut: animations.pointerHandlers.onPointerOut,
                 onPointerDown: animations.handlePointerDown,
                 onPointerUp: animations.handlePointerUp,
                 onPointerEnter: animations.handlePointerEnter,
                 onPointerLeave: animations.handlePointerLeave,
-                onKeyDown: animations.handleKeyDown,
+                onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+                  animations.handleKeyDown(event as KeyboardEvent<HTMLButtonElement>);
+                  if (
+                    !state.blocked &&
+                    !event.defaultPrevented &&
+                    !event.repeat &&
+                    (event.key === " " || event.key === "Spacebar") &&
+                    event.currentTarget.tagName !== "BUTTON"
+                  ) {
+                    event.preventDefault();
+                    event.currentTarget.click();
+                  }
+                },
                 onMouseDown,
                 onClick: (event: MouseEvent<HTMLElement>) => {
                   if (state.blocked) {
@@ -218,10 +251,16 @@ function ButtonSurface({
                   variant: state.variant,
                   status: state.status,
                 }),
+                "data-group-segment": dataGroupSegment(state.groupSegment != null),
+                "data-disabled": dataFlag(state.blocked),
+                "data-state": buttonDataState,
               },
               animations.setRefs,
-            ),
-          )
+              { disabled: state.blocked },
+            );
+            if (state.blocked) mergedAsChild.href = undefined;
+            return cloneElement(asChildElement, mergedAsChild);
+          })()
         ) : (
           <button
             ref={animations.setRefs}
@@ -245,13 +284,9 @@ function ButtonSurface({
               status: state.status,
             })}
             data-group-segment={dataGroupSegment(state.groupSegment != null)}
-            data-disabled={state.blocked ? "" : undefined}
-            data-state={
-              motionState === "loading" || motionState === "success" || motionState === "error"
-                ? motionState
-                : (rest as { "data-state"?: string })["data-state"]
-            }
-            aria-busy={motionState === "loading" ? true : undefined}
+            data-disabled={dataFlag(state.blocked)}
+            data-state={buttonDataState}
+            aria-busy={state.isLoading || undefined}
           >
             {inner}
           </button>
@@ -296,7 +331,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
   ref,
 ) {
   const asChildElement =
-    asChild && isValidElement(children) && Children.count(children) === 1
+    asChild && isValidElement(children) && children.type !== Fragment && Children.count(children) === 1
       ? (children as ReactElement<{ children?: ReactNode }>)
       : null;
   const contentChildren = asChildElement
@@ -311,6 +346,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     size,
     type,
     disabled,
+    motionState,
     icon,
     iconPosition,
     ripple,

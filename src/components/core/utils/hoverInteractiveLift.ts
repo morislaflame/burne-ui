@@ -36,6 +36,27 @@ import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
 const INTERACTIVE_TRANSFORM_VARS = { force3D: false } as const;
 
 /**
+ * Non-identity 2D rest scale for controls that scale on hover/press.
+ * Blink/Chromium switches from layout pixel-snapping (`IsIdentityOr2DTranslation()`)
+ * to local rasterization as soon as `scale !== 1`, shifting fractional heights
+ * (e.g. 34.8px after theme shuffle) by 1px on frame 1 of `hoverIn` / `hoverOut`
+ * and at the end of `pressSqueeze`. Keeping rest at `1.0001` (~0.003px) holds one
+ * consistent rasterization path without `will-change` layer promotion.
+ */
+export const INTERACTIVE_REST_SCALE = 1.0001;
+
+export function isKitHoverLiftRecipe(value: unknown): boolean {
+  if (typeof value === "string") {
+    return value === "hoverLiftFirstLevel" || value === "hoverLiftSecondLevel";
+  }
+  if (value != null && typeof value === "object" && "recipe" in value) {
+    const recipe = (value as { recipe?: unknown }).recipe;
+    return recipe === "hoverLiftFirstLevel" || recipe === "hoverLiftSecondLevel";
+  }
+  return false;
+}
+
+/**
  * Shadow tiers for lift / press. Values are live `var(--shadow-*)` refs.
  *
  * **SSOT = CSS cascade** (`--shadow-*` + knobs in `tokens/styles.css` / theme).
@@ -143,6 +164,24 @@ export function resetInteractiveLiftScale(element: HTMLElement | null): void {
   if (!element) return;
   gsap.set(element, { scale: 1, force3D: false, overwrite: "auto" });
 }
+
+/** Primes `INTERACTIVE_REST_SCALE` on active desktop scale-lifting controls before first hover. */
+export function primeInteractiveScaleRest(
+  element: HTMLElement | null,
+  config?: Readonly<MotionConfig>,
+  reduced?: boolean,
+): void {
+  if (!element || shouldSkipInteractiveHoverLift(config, reduced)) return;
+  const currentScaleX = Number(gsap.getProperty(element, "scaleX"));
+  if (Number.isFinite(currentScaleX) && Math.abs(currentScaleX - 1) > 1e-6) {
+    return;
+  }
+  gsap.set(element, {
+    scale: INTERACTIVE_REST_SCALE,
+    overwrite: "auto",
+    ...INTERACTIVE_TRANSFORM_VARS,
+  });
+}
  
 function isTouchOrNarrowViewport(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -236,9 +275,6 @@ export function animateInteractiveHoverLift(
     return undefined;
   }
 
-  const resolvedScale = lifted
-    ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element, config))
-    : 1;
   const cfg = resolveMotionConfig(config);
   const duration = cfg.interactiveDuration / 1000;
 
@@ -255,6 +291,28 @@ export function animateInteractiveHoverLift(
       ease: cfg.hoverLiftEase,
     });
   }
+
+  if (liftScale === 1) {
+    const currentScaleX = Number(gsap.getProperty(element, "scaleX"));
+    const currentScaleY = Number(gsap.getProperty(element, "scaleY"));
+    if (
+      (!Number.isFinite(currentScaleX) || currentScaleX === 1) &&
+      (!Number.isFinite(currentScaleY) || currentScaleY === 1)
+    ) {
+      return undefined;
+    }
+    return gsap.to(element, {
+      scale: 1,
+      duration,
+      ease: cfg.hoverLiftEase,
+      ...INTERACTIVE_TRANSFORM_VARS,
+      overwrite: "auto",
+    });
+  }
+
+  const resolvedScale = lifted
+    ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element, config))
+    : INTERACTIVE_REST_SCALE;
 
   return gsap.to(element, {
     scale: resolvedScale,
@@ -374,11 +432,17 @@ export function animateInteractivePressSqueeze(
         options?.restoreHover !== false &&
         resolvePointerInside(options?.pointerInside) &&
         canHoverLift;
+      const keepsRestScale =
+        options?.restoreHover !== false &&
+        options?.liftScale !== 1 &&
+        canHoverLift;
       const releaseScale = releaseToHover
         ? options?.liftScale !== undefined
           ? options.liftScale
           : adaptiveHoverLiftScale(element, cfg)
-        : 1;
+        : keepsRestScale
+          ? INTERACTIVE_REST_SCALE
+          : 1;
       const releaseOut = releaseToHover ? total : total * 0.5;
       const releaseEase = releaseToHover ? cfg.hoverLiftEase : "sine.inOut";
       options?.onReleaseStart?.();

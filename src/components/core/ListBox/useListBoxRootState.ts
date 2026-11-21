@@ -3,7 +3,11 @@ import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
  
 import { normalizeListBoxValues } from "./listBoxAPI";
-import type { ListBoxContextValue, UseListBoxRootStateProps } from "./listBoxTypes";
+import type {
+  ListBoxActiveSource,
+  ListBoxContextValue,
+  UseListBoxRootStateProps,
+} from "./listBoxTypes";
  
 export function useListBoxRootState({
   size = "base",
@@ -14,6 +18,7 @@ export function useListBoxRootState({
   values: valuesProp,
   defaultValues,
   onValuesChange,
+  disallowEmptySelection,
   disabled = false,
   activeValue: activeValueProp,
   onActiveValueChange,
@@ -39,10 +44,13 @@ export function useListBoxRootState({
  
   const [internalActive, setInternalActive] = useState<string | null>(null);
   const isControlledActive = activeValueProp !== undefined;
+  const standaloneKeyboard = !isControlledActive;
   const activeValue = isControlledActive ? activeValueProp : internalActive;
+  const activeChangeSourceRef = useRef<ListBoxActiveSource>("keyboard");
  
   const setActiveValue = useCallback(
-    (next: string | null) => {
+    (next: string | null, source: ListBoxActiveSource = "keyboard") => {
+      activeChangeSourceRef.current = source;
       if (!isControlledActive) setInternalActive(next);
       onActiveValueChange?.(next);
     },
@@ -58,17 +66,40 @@ export function useListBoxRootState({
     [isControlledValue, multiple, onValueChange, onValuesChange],
   );
  
+  const preventEmptySingle = disallowEmptySelection ?? !standaloneKeyboard;
+
   const selectItem = useCallback(
     (itemValue: string) => {
+      if (multiple) {
+        const next = toggleOptionListSelection(
+          latestSelectedRef.current,
+          itemValue,
+          true,
+        );
+        if (disallowEmptySelection && next.length === 0) return;
+        latestSelectedRef.current = next;
+        setSelectedArr(next);
+        return;
+      }
+
+      if (preventEmptySingle && latestSelectedRef.current.includes(itemValue)) {
+        const next = [itemValue];
+        latestSelectedRef.current = next;
+        if (!standaloneKeyboard) {
+          setSelectedArr(next);
+        }
+        return;
+      }
+
       const next = toggleOptionListSelection(
         latestSelectedRef.current,
         itemValue,
-        multiple,
+        false,
       );
       latestSelectedRef.current = next;
       setSelectedArr(next);
     },
-    [multiple, setSelectedArr],
+    [disallowEmptySelection, multiple, preventEmptySingle, setSelectedArr, standaloneKeyboard],
   );
  
   // `activeValue` lives in a separate context so arrow/hover highlight does not
@@ -81,19 +112,20 @@ export function useListBoxRootState({
       selected,
       selectItem,
       setActiveValue,
+      activeChangeSourceRef,
       indicatorMode: multiple ? "multi" : "radio",
       disabled,
-      standaloneKeyboard: !isControlledActive,
+      standaloneKeyboard,
     }),
     [
       disabled,
-      isControlledActive,
       listId,
       multiple,
       selectItem,
       selected,
       setActiveValue,
       size,
+      standaloneKeyboard,
     ],
   );
  

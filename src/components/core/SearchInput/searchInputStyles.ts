@@ -8,10 +8,11 @@ import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fiel
 import { FIELD_SHELL_VARIANT_BG_CLASS, type FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import {
-  FIELD_SHELL_FOCUS_CLASS,
   FIELD_SHELL_TRANSITION_CLASS,
+  fieldShellFocusRingClass,
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
+import type { FieldShellStatus } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
 import { usesKitElevation, resolveVariantVisual } from "@/skins/resolveVariantVisual";
 import { KIT_SEARCH_INPUT_VARIANTS } from "./searchInputTypes";
@@ -187,6 +188,7 @@ export function searchInputGroupShellClass(segment: ButtonGroupSegment): string 
 export function searchInputRootClass({
   size,
   variant,
+  status = "default",
   expanded,
   blocked,
   groupSegment,
@@ -196,6 +198,7 @@ export function searchInputRootClass({
 }: {
   size: SearchInputSize;
   variant: SearchInputVariant;
+  status?: FieldShellStatus;
   expanded: boolean;
   blocked: boolean;
   groupSegment?: ButtonGroupSegment;
@@ -221,8 +224,8 @@ export function searchInputRootClass({
     visual.className,
     kitSurface && cn(SEARCH_INPUT_ROOT_BORDER_CLASS, FIELD_SHELL_VARIANT_BG_CLASS[filledVariant]),
     FIELD_SHELL_TRANSITION_CLASS,
-    FIELD_SHELL_FOCUS_CLASS,
-    kitSurface && fieldShellHoverClass(!blocked, "default", filledVariant),
+    fieldShellFocusRingClass(status),
+    kitSurface && fieldShellHoverClass(!blocked, status, filledVariant),
     shellHoverMotionClass,
     expanded ? SEARCH_INPUT_CURSOR_TEXT_CLASS : "",
     !expanded && !blocked ? SEARCH_INPUT_CURSOR_POINTER_CLASS : "",

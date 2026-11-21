@@ -1,4 +1,5 @@
 import { forwardRef, useRef, type ForwardedRef } from "react";
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
@@ -61,11 +62,15 @@ export const TimeFieldRoot = forwardRef(function TimeFieldRoot({
 }: TimeFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   const focusRef = useRef<HTMLDivElement>(null);
   useFieldControlFocus(focusRef, autoFocus, tabIndex);
+  const formCtx = useOptionalFormBindingContext();
+  const fieldName = typeof name === "string" ? name : undefined;
+  const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
+  const resolvedError = error ?? formError;
   const state = useTimeFieldRootState({
     children,
     label,
     hint,
-    error,
+    error: resolvedError,
     invalid,
     id: idProp,
     required,

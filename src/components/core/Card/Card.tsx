@@ -42,6 +42,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     size = "base",
     shadow = "base",
     pressable = false,
+    disabled = false,
     href,
     asChild = false,
     classNames,
@@ -76,9 +77,12 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const motionDefaults = useMemo(
     () => {
       void skinRevision;
-      return resolveCardMotionDefaults({ variant: state.variant, pressable: interactive });
+      return resolveCardMotionDefaults({
+        variant: state.variant,
+        pressable: interactive && !disabled,
+      });
     },
-    [interactive, skinRevision, state.variant]);
+    [disabled, interactive, skinRevision, state.variant]);
   const motionParams = useMemo(
     () => ({
       pointerInside: hoverPointerInsideRef,
@@ -102,6 +106,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
       >
         <CardSurface
           pressable={interactive}
+          disabled={disabled}
           href={href}
           asChild={asChild}
           renderAsButton={state.renderAsButton}
@@ -132,6 +137,7 @@ CardRoot.displayName = "Card";
 
 function CardSurface({
   pressable,
+  disabled,
   renderAsButton,
   href,
   asChild,
@@ -153,6 +159,7 @@ function CardSurface({
   children,
 }: {
   pressable: boolean;
+  disabled: boolean;
   renderAsButton: boolean;
   href?: string;
   asChild?: boolean;
@@ -175,6 +182,7 @@ function CardSurface({
 }) {
   const animations = useCardAnimations({
     pressable,
+    disabled,
     variant,
     shadow,
     motion,
@@ -194,11 +202,15 @@ function CardSurface({
     animations.pressableLiftMotionClass,
     size,
     shadow,
-    cn(classNames?.root, className));
+    cn(classNames?.root, className),
+    disabled);
+
+  const guardHandlers = pressable || renderAsButton || disabled;
 
   return (
     <CardRootShell
       pressable={pressable}
+      disabled={disabled}
       renderAsButton={renderAsButton && href == null && !asChild}
       href={href}
       asChild={asChild}
@@ -209,10 +221,10 @@ function CardSurface({
       rest={rest}
       onPointerOver={animations.onPointerOver}
       onPointerOut={animations.onPointerOut}
-      onPointerDown={pressable ? animations.handlePointerDown : animations.onPointerDownProp}
-      onPointerUp={pressable ? animations.handlePointerUp : animations.onPointerUpProp}
-      onClick={pressable ? animations.handleClick : animations.onClickProp}
-      onKeyDown={pressable ? animations.handleKeyDown : animations.onKeyDownProp}
+      onPointerDown={guardHandlers ? animations.handlePointerDown : animations.onPointerDownProp}
+      onPointerUp={guardHandlers ? animations.handlePointerUp : animations.onPointerUpProp}
+      onClick={guardHandlers ? animations.handleClick : animations.onClickProp}
+      onKeyDown={guardHandlers ? animations.handleKeyDown : animations.onKeyDownProp}
     >
       {children}
     </CardRootShell>

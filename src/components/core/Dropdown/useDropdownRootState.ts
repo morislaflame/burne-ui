@@ -31,6 +31,8 @@ export function useDropdownRootState({
   const triggerRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const subPanelRootsRef = useRef<Set<HTMLElement>>(new Set());
+  const openInitialFocusRef = useRef<"first" | "last">("first");
+  const skipTriggerRestoreRef = useRef(false);
   const contentId = useId();
  
   const setOpen = useCallback(
@@ -38,9 +40,15 @@ export function useDropdownRootState({
       if (!isControlledOpen) setInternalOpen(next);
       onOpenChange?.(next);
       if (!next) {
-        requestAnimationFrame(() => {
-          focusElement(triggerRef.current);
-        });
+        const skipRestore = skipTriggerRestoreRef.current;
+        skipTriggerRestoreRef.current = false;
+        if (!skipRestore) {
+          requestAnimationFrame(() => {
+            focusElement(triggerRef.current);
+          });
+        }
+      } else {
+        skipTriggerRestoreRef.current = false;
       }
     },
     [isControlledOpen, onOpenChange],
@@ -72,7 +80,7 @@ export function useDropdownRootState({
   );
  
   const selectItem = useCallback(
-    (itemValue: string) => {
+    (itemValue: string, options?: { close?: boolean }) => {
       const next = toggleOptionListSelection(
         latestSelectedRef.current,
         itemValue,
@@ -80,7 +88,7 @@ export function useDropdownRootState({
       );
       latestSelectedRef.current = next;
       setSelectedArr(next);
-      const close = closeOnSelectProp ?? !multiple;
+      const close = options?.close ?? closeOnSelectProp ?? !multiple;
       if (close) setOpen(false);
     },
     [closeOnSelectProp, multiple, setOpen, setSelectedArr],
@@ -97,12 +105,15 @@ export function useDropdownRootState({
       selectItem,
       indicatorMode,
       closeOnSelect: closeOnSelectProp ?? !multiple,
+      closeOnSelectProp,
       size,
       popoverVariant,
       triggerRef,
       contentRef,
       contentId,
       subPanelRootsRef,
+      openInitialFocusRef,
+      skipTriggerRestoreRef,
       portalContainer,
     }),
     [

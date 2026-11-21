@@ -1,5 +1,7 @@
 import { forwardRef, useMemo, type ForwardedRef } from "react";
 
+import { useSkinVariant } from "@/skins/skinContext";
+
 import { resolveHeaderMotionDefaults, useHeaderRootMotion } from "./headerAnimations";
 import { HeaderMotionProvider } from "./headerContext";
 import { headerRootClass } from "./headerStyles";
@@ -100,6 +102,7 @@ function HeaderSurface({
     | "onPointerUp"
   >;
 }) {
+  const skinVariant = useSkinVariant(undefined);
   const part = useHeaderRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -112,7 +115,7 @@ function HeaderSurface({
   return (
     <header
       ref={part.setRef}
-      className={headerRootClass({ sticky, slotClass: classNames?.root, className })}
+      className={headerRootClass({ sticky, skinVariant, slotClass: classNames?.root, className })}
       {...rest}
       {...part.pointerHandlers}
     >

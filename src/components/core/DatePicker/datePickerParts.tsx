@@ -1,8 +1,9 @@
-import { forwardRef, useLayoutEffect, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
+import { forwardRef, useLayoutEffect, useRef, type FocusEvent, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 
 import { Calendar } from "@/components/core/Calendar";
 import { Field } from "@/components/core/Field";
 import { Popover } from "@/components/core/Popover";
+import { isImeComposingEvent } from "@/components/core/utils/fieldFormDom";
 import { KitChevronDown } from "@/components/core/utils/kitIcons";
 import { dataOpenState, dataFlag } from "@/components/core/utils/dataContract";
 import { ariaInvalidValue, dataInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
@@ -90,6 +91,7 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
       className,
       motion,
       onClick,
+      onBlur,
       onKeyDown,
       onPointerOver,
       onPointerOut,
@@ -133,16 +135,38 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
       if (field.open || trigger.openingRef.current || event.button !== 0) return;
       event.preventDefault();
       openedByPointerRef.current = true;
+      if (event.pointerType === "touch") {
+        field.setOpen(true);
+        return;
+      }
       trigger.openAfterSqueeze(() => field.setOpen(true));
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(event);
-      if (event.defaultPrevented || field.disabled || field.readOnly) return;
-      if (event.key !== "Enter" && event.key !== " ") return;
+      if (
+        event.defaultPrevented ||
+        isImeComposingEvent(event) ||
+        field.disabled ||
+        field.readOnly
+      ) {
+        return;
+      }
+      if (event.key !== "Enter" && event.key !== " " && event.key !== "ArrowDown") return;
       event.preventDefault();
-      if (field.open) field.setOpen(false);
-      else trigger.openAfterSqueeze(() => field.setOpen(true));
+      if (field.open && event.key !== "ArrowDown") field.setOpen(false);
+      else if (!field.open) trigger.openAfterSqueeze(() => field.setOpen(true));
+    };
+
+    const handleBlur = (event: FocusEvent<HTMLButtonElement>) => {
+      onBlur?.(event);
+      const related = event.relatedTarget;
+      const movingIntoPanel =
+        related instanceof Element &&
+        Boolean(document.getElementById(field.panelId)?.contains(related));
+      if (!movingIntoPanel && !field.open) {
+        field.notifyBlur?.();
+      }
     };
 
     return (
@@ -162,6 +186,7 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
           className,
         })}
         onClick={handleClick}
+        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         {...rest}
         {...trigger.pointerHandlers}
@@ -211,7 +236,7 @@ export const DatePickerTrigger = forwardRef<HTMLButtonElement, DatePickerTrigger
 DatePickerTrigger.displayName = "DatePickerTrigger";
 
 export const DatePickerPopover = forwardRef<HTMLDivElement, DatePickerPopoverProps>(
-  function DatePickerPopover({ children, className, motion, ...rest }, ref) {
+  function DatePickerPopover({ children, className, onBlur, motion, ...rest }, ref) {
     const field = useDatePickerContext();
     const slotClassNames = useDatePickerClassNames();
     const fieldMotion = useOptionalDatePickerMotionScope();
@@ -250,6 +275,17 @@ export const DatePickerPopover = forwardRef<HTMLDivElement, DatePickerPopoverPro
         align="start"
         className={cn(DATE_PICKER_POPOVER_CLASS, slotClassNames.popover, className)}
         motion={{ content: panelMotion }}
+        onBlur={(event) => {
+          onBlur?.(event);
+          const related = event.relatedTarget as Node | null;
+          if (
+            !event.currentTarget.contains(related) &&
+            related !== field.triggerRef.current &&
+            !field.triggerRef.current?.contains(related)
+          ) {
+            field.notifyBlur?.();
+          }
+        }}
         {...rest}
         id={field.panelId}
       >

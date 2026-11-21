@@ -30,6 +30,7 @@ import {
   type HoverShadowConfig,
 } from "./hoverInteractiveLift";
 import { useMotionConfig } from "./motionConfigContext";
+import { removeShadowFadeHost } from "./shadowFade";
 import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
 import type { ShadowSize } from "@/tokens/shadows";
  
@@ -67,8 +68,14 @@ export function usePersistentElShadow(
   syncKey?: unknown,
 ): void {
   useLayoutEffect(() => {
-    if (!enabled) return;
-    initElementShadow(ref.current, resolveShadow());
+    const el = ref.current;
+    if (!el) return;
+    if (!enabled) {
+      el.style.removeProperty("--el-shadow");
+      removeShadowFadeHost(el);
+      return;
+    }
+    initElementShadow(el, resolveShadow());
   }, [enabled, ref, resolveShadow, syncKey]);
 }
  
@@ -114,8 +121,15 @@ export function useSecondLevelShadow(
   const config = useMotionConfig();
  
   useLayoutEffect(() => {
-    if (!enabled) return;
-    initElementShadow(targetRef.current, idleShadow);
+    const el = targetRef.current;
+    if (!el) return;
+    if (!enabled) {
+      resetInteractiveLiftScale(el);
+      el.style.removeProperty("--el-shadow");
+      removeShadowFadeHost(el);
+      return;
+    }
+    initElementShadow(el, idleShadow);
   }, [enabled, targetRef, idleShadow, options?.idleSyncKey]);
  
   useLayoutEffect(() => {
@@ -175,8 +189,15 @@ export function useSecondLevelShadowContainer(
   const idleShadow = options?.resolveIdle?.() ?? shadow.idle ?? shadowNone();
  
   useLayoutEffect(() => {
-    if (!enabled) return;
-    initElementShadow(liftedRef.current, idleShadow);
+    const el = liftedRef.current;
+    if (!el) return;
+    if (!enabled) {
+      resetInteractiveLiftScale(el);
+      el.style.removeProperty("--el-shadow");
+      removeShadowFadeHost(el);
+      return;
+    }
+    initElementShadow(el, idleShadow);
   }, [enabled, liftedRef, idleShadow, options?.idleSyncKey]);
  
   useLayoutEffect(() => {

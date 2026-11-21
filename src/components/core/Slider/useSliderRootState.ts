@@ -4,9 +4,8 @@ import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBin
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
  
-import { resolveFieldInvalid } from "@/components/core/utils/fieldInvalid";
-import { useFieldInvalid } from "@/components/core/Field/fieldContext";
 import { sliderDisplayEqual, sliderDisplayFromProps } from "./sliderAPI";
 import { sliderLabelId } from "./sliderA11y";
 import type {
@@ -40,8 +39,8 @@ export function useSliderRootState({
   thickness,
   formatValue,
   icon,
-  disabled,
-  readOnly = false,
+  disabled: disabledProp,
+  readOnly: readOnlyProp,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   variant,
@@ -49,13 +48,14 @@ export function useSliderRootState({
   const formBinding = useFormFieldBinding({
     name,
     value,
-    disabled,
-    readOnly,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
   });
-  const resolvedReadOnly = Boolean(formBinding.readOnly);
-  const resolvedDisabled = Boolean(formBinding.disabled);
+  const formBound = formBinding.bound;
+  const resolvedReadOnly = Boolean(readOnlyProp ?? formBinding.readOnly);
+  const resolvedDisabled = Boolean(disabledProp ?? formBinding.disabled);
   const boundValue =
-    formBinding.bound && formBinding.value !== "" && formBinding.value != null
+    formBound && formBinding.value !== "" && formBinding.value != null
       ? (formBinding.value as number | [number, number])
       : undefined;
   const autoId = useId();
@@ -82,22 +82,98 @@ export function useSliderRootState({
     setDisplayState((prev) => (sliderDisplayEqual(prev, next) ? prev : next));
   }, []);
  
-  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
+  const { isCompound, hasLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
-      hasHint: hint != null || (compound && hasCompoundChild(children, "Slider.Hint")),
-      hasError: error != null || (compound && hasCompoundChild(children, "Slider.Error")),
+      hasLabel:
+        label != null ||
+        (compound && hasCompoundChild(children, "SliderLabel", "Slider.Label", "Label")),
+      hasCompoundHint:
+        compound && hasCompoundChild(children, "Slider.Hint", "SliderHint"),
+      hasCompoundError:
+        compound && hasCompoundChild(children, "Slider.Error", "SliderError"),
     };
-  }, [children, error, hint, label]);
+  }, [children, label]);
  
-  const inheritedInvalid = useFieldInvalid();
-  const isInvalid = resolveFieldInvalid({
+  const resolvedError =
+    error ?? (!hasCompoundError && formBound ? formBinding.error : undefined);
+  const hasHint = hint != null || hasCompoundHint;
+  const hasError = resolvedError != null || hasCompoundError;
+ 
+  const isInvalid = useResolvedFieldInvalid({
     invalid,
-    error: hasError ? true : undefined,
-    inheritedInvalid,
+    errorConnected: hasError,
+    formInvalid: Boolean(formBound && formBinding.error),
   });
+ 
+  const handleRootValueChange = useCallback(
+    (next: number | [number, number]) => {
+      if (resolvedReadOnly || resolvedDisabled) return;
+      onValueChange?.(next as never);
+      if (formBound) formBinding.setValue(next);
+    },
+    [formBinding, formBound, onValueChange, resolvedDisabled, resolvedReadOnly],
+  );
+ 
+  const handleRootValueCommit = useCallback(
+    (next: number | [number, number]) => {
+      if (resolvedReadOnly || resolvedDisabled) return;
+      onValueCommit?.(next as never);
+    },
+    [onValueCommit, resolvedDisabled, resolvedReadOnly],
+  );
+ 
+  const trackProps = useMemo(
+    () =>
+      ({
+        range,
+        value: boundValue ?? value,
+        defaultValue,
+        onValueChange: handleRootValueChange as UseSliderRootStateProps["onValueChange"],
+        onValueCommit: handleRootValueCommit as UseSliderRootStateProps["onValueCommit"],
+        min,
+        max,
+        step,
+        marks,
+        size,
+        thickness,
+        formatValue,
+        icon,
+        disabled: resolvedDisabled,
+        readOnly: resolvedReadOnly,
+        "aria-label": ariaLabel,
+        "aria-labelledby": ariaLabelledBy,
+        variant,
+        orientation,
+      }) as SliderTrackProps,
+    [
+      ariaLabel,
+      ariaLabelledBy,
+      boundValue,
+      defaultValue,
+      formatValue,
+      handleRootValueChange,
+      handleRootValueCommit,
+      icon,
+      marks,
+      max,
+      min,
+      orientation,
+      range,
+      resolvedDisabled,
+      resolvedReadOnly,
+      size,
+      step,
+      thickness,
+      value,
+      variant,
+    ],
+  );
+ 
+  const registerControlRef = formBound ? formBinding.ref : undefined;
+  const onControlBlur = formBound ? formBinding.onBlur : undefined;
+ 
   const fieldCtx = useMemo<SliderFieldContextValue>(
     () => ({
       sliderId,
@@ -111,8 +187,26 @@ export function useSliderRootState({
       orientation,
       display,
       setDisplay,
+      trackProps,
+      registerControlRef,
+      onControlBlur,
     }),
-    [display, errorId, hasError, hasHint, hasLabel, hintId, isInvalid, labelId, orientation, setDisplay, sliderId],
+    [
+      display,
+      errorId,
+      hasError,
+      hasHint,
+      hasLabel,
+      hintId,
+      isInvalid,
+      labelId,
+      onControlBlur,
+      orientation,
+      registerControlRef,
+      setDisplay,
+      sliderId,
+      trackProps,
+    ],
   );
  
   const fieldLabelCtx = useMemo(
@@ -120,48 +214,20 @@ export function useSliderRootState({
     [labelId],
   );
  
-  const trackProps = {
-    range,
-    value: boundValue ?? value,
-    defaultValue,
-    onValueChange: ((next: number | [number, number]) => {
-      if (resolvedReadOnly) return;
-      onValueChange?.(next as never);
-      if (formBinding.bound) formBinding.setValue(next);
-    }) as UseSliderRootStateProps["onValueChange"],
-    onValueCommit: ((next: number | [number, number]) => {
-      if (resolvedReadOnly) return;
-      onValueCommit?.(next as never);
-    }) as UseSliderRootStateProps["onValueCommit"],
-    min,
-    max,
-    step,
-    marks,
-    size,
-    thickness,
-    formatValue,
-    icon,
-    disabled: resolvedDisabled,
-    readOnly: resolvedReadOnly,
-    "aria-label": ariaLabel,
-    "aria-labelledby": ariaLabelledBy,
-    variant,
-    orientation,
-  } as SliderTrackProps;
- 
   return {
     sliderId,
     isCompound,
     fieldCtx,
     fieldLabelCtx,
     trackProps,
+    disabled: resolvedDisabled,
     readOnly: resolvedReadOnly,
     name: formBinding.name ?? name,
     label,
     showValue,
     valueText,
     hint,
-    error,
+    error: resolvedError,
     hasHint,
     hasError,
     hintId,

@@ -52,16 +52,26 @@ export function useSelectionIndicatorAnimation(
   const config = useMotionConfig();
   const scope = useOptionalSelectionIndicatorMotionScope();
   const firstLayoutRef = useRef(true);
+  const prevActiveRef = useRef(active);
+  const prevFillElRef = useRef<HTMLElement | null>(null);
+  const prevIconElRef = useRef<HTMLElement | null>(null);
   const reduceMotion =
     usePrefersReducedMotion() ||
     !isMotionFeatureEnabledFor(config, "enableSelectionFill");
  
   useLayoutEffect(() => {
-    const fill = fillRef?.current;
-    const icon = iconRef?.current;
+    const fill = fillRef?.current ?? null;
+    const icon = iconRef?.current ?? null;
  
     // Refs attach in the same commit — don't consume firstLayout if Fill/Mark aren't in the DOM yet.
     if (!fill && !icon) return;
+ 
+    const activeChanged = prevActiveRef.current !== active;
+    const fillMounted = fill != null && prevFillElRef.current !== fill;
+    const iconMounted = icon != null && prevIconElRef.current !== icon;
+    prevActiveRef.current = active;
+    prevFillElRef.current = fill;
+    prevIconElRef.current = icon;
  
     if (firstLayoutRef.current) {
       firstLayoutRef.current = false;
@@ -70,6 +80,18 @@ export function useSelectionIndicatorAnimation(
         snapSelectionFill(fill, active);
       }
       if (icon) {
+        killMotion(icon);
+        snapSelectionMark(icon, active);
+      }
+      return;
+    }
+ 
+    if (!activeChanged) {
+      if (fillMounted && fill) {
+        killMotion(fill);
+        snapSelectionFill(fill, active);
+      }
+      if (iconMounted && icon) {
         killMotion(icon);
         snapSelectionMark(icon, active);
       }
@@ -107,7 +129,7 @@ export function useSelectionIndicatorAnimation(
       killMotion(icon);
       playSelectionMark(icon, active, config);
     }
-  }, [active, config, fillRef, iconRef, reduceMotion, scope]);
+  });
 }
  
 export function SelectionIndicatorMotionSync({

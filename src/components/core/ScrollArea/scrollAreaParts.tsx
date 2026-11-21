@@ -1,4 +1,4 @@
-import { createContext, forwardRef, useContext, useLayoutEffect, type ReactNode } from "react";
+import { createContext, forwardRef, useContext, useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 
 import { dataActiveState } from "@/components/core/utils/dataContract";
 
@@ -8,6 +8,7 @@ import {
   SCROLL_AREA_THUMB_DISPLAY_NAME,
   SCROLL_AREA_VIEWPORT_DISPLAY_NAME,
   applyScrollAreaKey,
+  applyScrollAreaWheel,
   bindScrollAreaThumbDrag,
   jumpScrollAreaToPointer,
   scrollAreaHasPart,
@@ -169,9 +170,13 @@ export const ScrollAreaScrollbar = forwardRef<HTMLDivElement, ScrollAreaScrollba
           onWheel?.(event);
           const viewport = viewportRef.current;
           if (!viewport || event.defaultPrevented) return;
-          if (orientation === "vertical") viewport.scrollTop += event.deltaY;
-          else viewport.scrollLeft += event.deltaX || event.deltaY;
-          event.preventDefault();
+          const handled = applyScrollAreaWheel(
+            viewport,
+            orientation,
+            axesRef.current[orientation],
+            event,
+          );
+          if (handled) event.preventDefault();
         }}
         onKeyDown={(event) => {
           onKeyDown?.(event);
@@ -200,6 +205,7 @@ export const ScrollAreaThumb = forwardRef<HTMLDivElement, ScrollAreaThumbProps>(
       onPointerOut,
       onPointerDown,
       onPointerUp,
+      onLostPointerCapture,
       ...rest
     },
     ref,
@@ -207,6 +213,16 @@ export const ScrollAreaThumb = forwardRef<HTMLDivElement, ScrollAreaThumbProps>(
   const axis = useScrollAreaAxis();
   const { viewportRef, axesRef, setDragging } = useScrollAreaContext();
   const classNames = useScrollAreaClassNames();
+  const dragCleanupRef = useRef<(() => void) | undefined>(undefined);
+
+  useEffect(
+    () => () => {
+      dragCleanupRef.current?.();
+      dragCleanupRef.current = undefined;
+    },
+    [],
+  );
+
   const part = useScrollAreaSlotMotion<HTMLDivElement>({
     slot: "thumb",
     motion,
@@ -216,9 +232,11 @@ export const ScrollAreaThumb = forwardRef<HTMLDivElement, ScrollAreaThumbProps>(
     onPointerUp,
     onPointerDown: (event) => {
       onPointerDown?.(event);
+      if (event.defaultPrevented) return;
       const viewport = viewportRef.current;
       if (!viewport) return;
-      bindScrollAreaThumbDrag(event.currentTarget, event, {
+      dragCleanupRef.current?.();
+      dragCleanupRef.current = bindScrollAreaThumbDrag(event.currentTarget, event, {
         axis,
         viewport,
         metrics: axesRef.current[axis],
@@ -237,6 +255,11 @@ export const ScrollAreaThumb = forwardRef<HTMLDivElement, ScrollAreaThumbProps>(
       {...rest}
       {...part.pointerHandlers}
       ref={part.setRef}
+      onLostPointerCapture={(event) => {
+        onLostPointerCapture?.(event);
+        dragCleanupRef.current?.();
+        dragCleanupRef.current = undefined;
+      }}
       className={scrollAreaThumbClass({ axis, slotClass: classNames.thumb, className })}
       style={{ ...style, ...geometry }}
     />
@@ -259,7 +282,7 @@ export const ScrollAreaCorner = forwardRef<HTMLDivElement, ScrollAreaCornerProps
     },
     ref,
   ) {
-  const { overflow } = useScrollAreaContext();
+  const { hasBars, barActive } = useScrollAreaContext();
   const classNames = useScrollAreaClassNames();
   const part = useScrollAreaSlotMotion<HTMLDivElement>({
     slot: "corner",
@@ -270,7 +293,8 @@ export const ScrollAreaCorner = forwardRef<HTMLDivElement, ScrollAreaCornerProps
     onPointerDown,
     onPointerUp,
   });
-  const both = overflow.vertical && overflow.horizontal;
+  const bothVisible =
+    hasBars.vertical && hasBars.horizontal && barActive.vertical && barActive.horizontal;
 
   return (
     <div
@@ -278,8 +302,9 @@ export const ScrollAreaCorner = forwardRef<HTMLDivElement, ScrollAreaCornerProps
       {...part.pointerHandlers}
       ref={part.setRef}
       aria-hidden="true"
-      hidden={both ? undefined : true}
+      hidden={bothVisible ? undefined : true}
       className={scrollAreaCornerClass({ slotClass: classNames.corner, className })}
+      data-state={dataActiveState(bothVisible)}
     />
   );
 },

@@ -7,16 +7,20 @@
  * Defaults: first-level lift + squeeze. A skin overlays its own recipes.
  * Ripple stays kit-internal.
  */
-import { useCallback, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
+import { clearMotionTransform } from "@/components/core/utils/gsapMotion";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from "react";
  
 import {
   initElementShadow,
   isInteractivePressKey,
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
   shadowNone,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import { killStoredMotion, mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
 import { overlaySkinMotion, usesKitElevationMember } from "@/skins/resolveVariantVisual";
  
@@ -108,24 +112,51 @@ export function useCloseButtonAnimations({
     [forwardedRef, scope],
   );
  
+  const config = useMotionConfig();
   const btnShadow = useMemo(
     () => (hasHoverShadow ? shadowMotionFor("none") : undefined),
     [hasHoverShadow],
   );
  
   useLayoutEffect(() => {
-    if (!enabled || !btnShadow) return;
-    initElementShadow(btnRef.current, shadowNone());
-  }, [btnShadow, enabled]);
+    if (!enabled) return;
+    if (hoverPointerInsideRef.current) return;
+    const el = btnRef.current;
+    if (btnShadow) initElementShadow(el, shadowNone());
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(el, config);
+    }
+  }, [btnShadow, config, enabled, hoverPointerInsideRef, scope, variant]);
+
+  useEffect(() => {
+    if (enabled) return;
+    hoverPointerInsideRef.current = false;
+    const el = btnRef.current;
+    if (el) {
+      killStoredMotion(el);
+      el.style.removeProperty("--el-shadow");
+      el.style.removeProperty("box-shadow");
+      clearMotionTransform(el);
+    }
+    for (const iconEl of scope.getTargets("icon")) {
+      killStoredMotion(iconEl);
+      clearMotionTransform(iconEl);
+    }
+  }, [enabled, hoverPointerInsideRef, scope]);
  
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
       if (!enabled) return;
       const el = btnRef.current;
-      if (!el) return;
-      const value = scope.resolve("root", phase, rootMotionRef.current);
-      if (value === undefined) return;
-      scope.play("root", phase, { partMotion: rootMotionRef.current, el });
+      if (el) {
+        const value = scope.resolve("root", phase, rootMotionRef.current);
+        if (value !== undefined) {
+          scope.play("root", phase, { partMotion: rootMotionRef.current, el });
+        }
+      }
+      void scope.playBroadcast(phase, { exclude: ["root"] });
     },
     [enabled, scope],
   );

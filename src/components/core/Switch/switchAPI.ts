@@ -135,6 +135,23 @@ export function partitionSwitchControlChildren(children: ReactNode): {
   return { track, content: rest };
 }
  
+export function readSwitchCompoundControlProps(children: ReactNode): Partial<SwitchControlProps> {
+  let found: Partial<SwitchControlProps> = {};
+  const walk = (node: ReactNode) => {
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const name = (child.type as { displayName?: string }).displayName;
+      if (name === "SwitchControl") {
+        found = child.props as Partial<SwitchControlProps>;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+  walk(children);
+  return found;
+}
+
 export function hasSwitchThumbChild(children: ReactNode): boolean {
   let found = false;
   const walk = (node: ReactNode) => {

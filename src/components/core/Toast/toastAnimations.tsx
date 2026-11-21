@@ -1,3 +1,4 @@
+import { dataExpandedState } from "@/components/core/utils/dataContract";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
@@ -18,10 +19,10 @@ import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { isKitVariant } from "@/skins/resolveVariantVisual";
 import { useApplySkinPortal, useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
  
 import {
-  resolveToastStackContainerHeight,
+  resolveToastStackLayout,
   TOAST_ENTRY_OFFSET_PX,
   TOAST_MAX_VISIBLE,
   TOAST_STACK_PEEK_PX,
@@ -75,6 +76,8 @@ function ToastItemMotionHost({
   total,
   isTop,
   isDismissing,
+  paused = false,
+  stackLayout,
   onDismiss,
   onRemoveFinal,
   onHeightChange,
@@ -114,13 +117,17 @@ function ToastItemMotionHost({
   );
  
   const capped = Math.min(reverseIdx, TOAST_MAX_VISIBLE - 1);
-  const stackScale = 1 - capped * TOAST_STACK_SCALE_STEP;
-  const peekY = isTop ? capped * TOAST_STACK_PEEK_PX : -capped * TOAST_STACK_PEEK_PX;
-  const stackOpacity = reverseIdx >= TOAST_MAX_VISIBLE ? 0 : 1;
+  const stackScale = stackLayout?.scale ?? 1 - capped * TOAST_STACK_SCALE_STEP;
+  const peekY =
+    stackLayout?.peekY ?? (isTop ? capped * TOAST_STACK_PEEK_PX : -capped * TOAST_STACK_PEEK_PX);
+  const stackOpacity = stackLayout?.opacity ?? (reverseIdx >= TOAST_MAX_VISIBLE ? 0 : 1);
+  const isHiddenInStack = stackLayout?.hidden ?? reverseIdx >= TOAST_MAX_VISIBLE;
+  const interactive = stackLayout?.interactive ?? reverseIdx === 0;
  
   useLayoutEffect(() => {
     const el = stackRef.current;
     if (!el) return;
+    if (isDismissing && isMountedRef.current) return;
 
     const stack = { peekY, scale: stackScale, opacity: stackOpacity };
     const isFirstMount = !isMountedRef.current;
@@ -133,19 +140,24 @@ function ToastItemMotionHost({
       return;
     }
     scope.play("stackItem", phase, { el, params: { toastStack: stack } });
-  }, [entry.variant, peekY, scope, stackOpacity, stackScale]);
+  }, [entry.variant, isDismissing, peekY, scope, stackOpacity, stackScale]);
  
   useLayoutEffect(() => {
     const el = cardRef.current;
     if (!el) return;
     // Measured stack geometry (peek / viewport height), not an enter-layout flush.
     onHeightChange(entry.id, el.offsetHeight);
-    if (typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => {
-      onHeightChange(entry.id, el.offsetHeight);
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
+    const ro =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            onHeightChange(entry.id, el.offsetHeight);
+          })
+        : undefined;
+    ro?.observe(el);
+    return () => {
+      ro?.disconnect();
+      onHeightChange(entry.id, 0);
+    };
   }, [entry.id, onHeightChange]);
  
   useLayoutEffect(() => {
@@ -191,86 +203,51 @@ function ToastItemMotionHost({
     };
   }, [config, entry.id, isDismissing, onRemoveFinal, scope, slideDir]);
  
+  const remainingRef = useRef(entry.duration);
+  const timerKeyRef = useRef("");
+  const timerKey = `${entry.id}:${entry.duration}:${entry.loading}`;
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- reset remaining duration when toast config changes
+  if (timerKeyRef.current !== timerKey) {
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- reset remaining duration when toast config changes
+    timerKeyRef.current = timerKey;
+    // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- reset remaining duration when toast config changes
+    remainingRef.current = entry.duration;
+  }
+
   useEffect(() => {
-    if (entry.duration === 0 || isDismissing || entry.loading) return;
- 
-    let remaining = entry.duration;
-    let startedAt: number | null = Date.now();
-    let timerId: number | undefined;
-    let paused = false;
- 
-    const clear = () => {
-      if (timerId != null) {
-        window.clearTimeout(timerId);
-        timerId = undefined;
-      }
-    };
- 
-    const arm = () => {
-      clear();
-      startedAt = Date.now();
-      timerId = window.setTimeout(() => onDismiss(entry.id), remaining);
-    };
- 
-    const pause = () => {
-      if (paused || startedAt == null) return;
-      paused = true;
-      remaining = Math.max(0, remaining - (Date.now() - startedAt));
-      startedAt = null;
-      clear();
-    };
- 
-    const resume = () => {
-      if (!paused) return;
-      paused = false;
-      if (remaining <= 0) {
-        onDismiss(entry.id);
-        return;
-      }
-      arm();
-    };
- 
-    arm();
- 
-    const node = stackRef.current;
-    const onPointerEnter = () => pause();
-    const onPointerLeave = () => resume();
-    const onFocusIn = () => pause();
-    const onFocusOut = (e: FocusEvent) => {
-      if (node && e.relatedTarget instanceof Node && node.contains(e.relatedTarget)) {
-        return;
-      }
-      resume();
-    };
- 
-    node?.addEventListener("pointerenter", onPointerEnter);
-    node?.addEventListener("pointerleave", onPointerLeave);
-    node?.addEventListener("focusin", onFocusIn);
-    node?.addEventListener("focusout", onFocusOut);
- 
+    if (entry.duration === 0 || isDismissing || entry.loading || paused) return;
+
+    if (remainingRef.current <= 0) {
+      onDismiss(entry.id);
+      return;
+    }
+
+    const startedAt = Date.now();
+    const timerId = window.setTimeout(() => {
+      remainingRef.current = 0;
+      onDismiss(entry.id);
+    }, remainingRef.current);
+
     return () => {
-      clear();
-      node?.removeEventListener("pointerenter", onPointerEnter);
-      node?.removeEventListener("pointerleave", onPointerLeave);
-      node?.removeEventListener("focusin", onFocusIn);
-      node?.removeEventListener("focusout", onFocusOut);
+      window.clearTimeout(timerId);
+      remainingRef.current = Math.max(0, remainingRef.current - (Date.now() - startedAt));
     };
-  }, [entry.id, entry.duration, isDismissing, entry.loading, onDismiss]);
+  }, [entry.id, entry.duration, isDismissing, entry.loading, onDismiss, paused]);
  
   const dismiss = useCallback(() => onDismiss(entry.id), [entry.id, onDismiss]);
  
-  const isVisible = reverseIdx < total;
   const mergedClassNames = { ...providerClassNames, ...entry.classNames };
  
   return (
     <div
       ref={setStackRef}
-      aria-hidden={!isVisible || undefined}
+      aria-hidden={isHiddenInStack || undefined}
+      inert={isHiddenInStack ? true : undefined}
       className={toastStackItemClass(mergedClassNames.stackItem)}
       style={toastStackItemStyle({
         origin: isTop ? "top center" : "bottom center",
-        zIndex: TOAST_MAX_VISIBLE + 1 - reverseIdx,
-        pointerEvents: reverseIdx === 0 ? "auto" : "none",
+        zIndex: Math.max(total, TOAST_MAX_VISIBLE) + 1 - reverseIdx,
+        pointerEvents: !isDismissing && interactive ? "auto" : "none",
       })}
     >
       <div ref={setAnimRef}>
@@ -298,6 +275,8 @@ export function ToastItemWrapper({
   total,
   isTop,
   isDismissing,
+  paused,
+  stackLayout,
   onDismiss,
   onRemoveFinal,
   onHeightChange,
@@ -336,6 +315,8 @@ export function ToastItemWrapper({
         total={total}
         isTop={isTop}
         isDismissing={isDismissing}
+        paused={paused}
+        stackLayout={stackLayout}
         onDismiss={onDismiss}
         onRemoveFinal={onRemoveFinal}
         onHeightChange={onHeightChange}
@@ -420,51 +401,53 @@ export function ToastViewport({
 }: ToastViewportProps) {
   const isTop = placement.startsWith("top");
   const toastNotificationsLabel = useBurneLabel("toastNotifications");
-  const heightsRef = useRef<Map<string, number>>(null!);
-  if (!heightsRef.current) heightsRef.current = new Map();
+  const [heights, setHeights] = useState<Record<string, number>>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const hoveredRef = useRef(false);
+  const focusedRef = useRef(false);
+  const [stackPaused, setStackPaused] = useState(false);
   useApplySkinPortal(containerRef);
   const prevContainerHRef = useRef(0);
-  const stackMetaRef = useRef({
-    frontId: sorted[0]?.id as string | undefined,
-    count: sorted.length,
-  });
-  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
-  stackMetaRef.current = { frontId: sorted[0]?.id, count: sorted.length };
- 
-  const syncContainerHeight = useCallback(() => {
+  const effectivePaused = sorted.length > 0 && stackPaused;
+
+  useEffect(() => {
+    if (sorted.length === 0) {
+      hoveredRef.current = false;
+      focusedRef.current = false;
+    }
+  }, [sorted.length]);
+
+  const onHeightChange = useCallback((id: string, h: number) => {
+    setHeights((prev) => {
+      if (h <= 0) {
+        if (!(id in prev)) return prev;
+        const { [id]: _removed, ...rest } = prev;
+        return rest;
+      }
+      return prev[id] === h ? prev : { ...prev, [id]: h };
+    });
+  }, []);
+
+  const stackLayout = useMemo(
+    () =>
+      resolveToastStackLayout({
+        sorted,
+        dismissingIds,
+        heights,
+        isTop,
+        paused: effectivePaused,
+      }),
+    [dismissingIds, effectivePaused, heights, isTop, sorted],
+  );
+
+  useLayoutEffect(() => {
     const el = containerRef.current;
     if (!el) return;
- 
-    const { frontId, count } = stackMetaRef.current;
-    const frontHeight =
-      frontId != null ? (heightsRef.current.get(frontId) ?? 0) : 0;
-    const raw = resolveToastStackContainerHeight(frontHeight, count);
+    const raw = stackLayout.containerHeight;
     const containerH = raw > 0 ? raw : prevContainerHRef.current;
     if (raw > 0) prevContainerHRef.current = raw;
- 
     applyToastStackContainerHeight(el, containerH);
-  }, []);
- 
-  const onHeightChange = useCallback(
-    (id: string, h: number) => {
-      if (heightsRef.current.get(id) === h) return;
-      heightsRef.current.set(id, h);
-      // Container height depends only on the front card + stack depth.
-      if (id === stackMetaRef.current.frontId) {
-        syncContainerHeight();
-      }
-    },
-    [syncContainerHeight],
-  );
- 
-  useLayoutEffect(() => {
-    const liveIds = new Set(sorted.map((entry) => entry.id));
-    for (const id of heightsRef.current.keys()) {
-      if (!liveIds.has(id)) heightsRef.current.delete(id);
-    }
-    syncContainerHeight();
-  }, [sorted, syncContainerHeight]);
+  }, [stackLayout.containerHeight]);
 
   return (
     <ToastMotionProvider motion={motion} defaults={TOAST_VIEWPORT_MOTION_DEFAULTS}>
@@ -473,6 +456,27 @@ export function ToastViewport({
       aria-label={toastViewportAriaLabel(placement, toastNotificationsLabel)}
       className={toastViewportClass({ placement, slotClass: classNames?.viewport })}
       style={toastViewportWidthStyle(toastViewportWidthPx(sorted, defaultSize))}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "touch") return;
+        hoveredRef.current = true;
+        setStackPaused(true);
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType === "touch") return;
+        hoveredRef.current = false;
+        if (!focusedRef.current) setStackPaused(false);
+      }}
+      onFocus={() => {
+        focusedRef.current = true;
+        setStackPaused(true);
+      }}
+      onBlur={(e) => {
+        if (e.relatedTarget instanceof Node && e.currentTarget.contains(e.relatedTarget)) {
+          return;
+        }
+        focusedRef.current = false;
+        if (!hoveredRef.current) setStackPaused(false);
+      }}
     >
       <ToastScrim
         isTop={isTop}
@@ -482,10 +486,11 @@ export function ToastViewport({
       />
       <div
         ref={containerRef}
-        className={toastStackClass(classNames?.stack)}
+        className={toastStackClass(classNames?.stack, stackLayout.expanded)}
         style={{
           alignItems: isTop ? "start" : "end",
         }}
+        data-state={dataExpandedState(stackLayout.expanded)}
       >
         {sorted.map((entry, reverseIdx) => (
           <ToastItemWrapper
@@ -495,6 +500,8 @@ export function ToastViewport({
             total={sorted.length}
             isTop={isTop}
             isDismissing={dismissingIds.has(entry.id)}
+            paused={effectivePaused}
+            stackLayout={stackLayout.items.get(entry.id)}
             onDismiss={onDismiss}
             onRemoveFinal={onRemoveFinal}
             onHeightChange={onHeightChange}

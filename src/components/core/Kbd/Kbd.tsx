@@ -36,6 +36,8 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     playInitialState,
     onPointerOver,
     onPointerOut,
+    onPointerDown,
+    onPointerUp,
     ...rest
   },
   ref,
@@ -78,7 +80,7 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
           forwardedRef={ref}
           onPointerOver={onPointerOver}
           onPointerOut={onPointerOut}
-          rest={rest}
+          rest={{ ...rest, onPointerDown, onPointerUp }}
         >
           {children}
         </KbdSurface>

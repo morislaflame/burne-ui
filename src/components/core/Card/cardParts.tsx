@@ -1,7 +1,8 @@
 import { cloneElement, forwardRef, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
+import { getChildRef, mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { resolveSkinLayer } from "@/skins/resolveSkinLayer";
 import { SkinShell } from "@/skins/skinShell";
@@ -205,6 +206,7 @@ export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
 export function CardRootShell({
   pressable,
   renderAsButton,
+  disabled = false,
   href,
   asChild = false,
   rootClassName,
@@ -237,15 +239,31 @@ export function CardRootShell({
     : null;
   const content = child ? child.props.children : children;
   const fallback = child
-    ? cloneElement(child, {
-        className: cn(shellClass, child.props.className),
-      })
+    ? cloneElement(
+        child,
+        {
+          ...mergeAsChildProps(
+            child,
+            {
+              className: shellClass,
+              onClick,
+              onKeyDown,
+              ...(disabled ? { "aria-disabled": true, tabIndex: -1 } : {}),
+            },
+            getChildRef(child),
+            { disabled },
+          ),
+          ...(disabled ? { href: undefined } : {}),
+        } as Partial<typeof child.props>,
+      )
     : href != null
       ? (
-          /* eslint-disable jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label -- body is injected by SkinShell */
+          /* eslint-disable jsx-a11y/anchor-has-content, jsx-a11y/anchor-is-valid, jsx-a11y/control-has-associated-label -- body is injected by SkinShell */
           // react-doctor-disable-next-line react-doctor/anchor-has-content, react-doctor/control-has-associated-label -- body is injected by SkinShell
           <a
-            href={href}
+            href={disabled ? undefined : href}
+            aria-disabled={disabled || undefined}
+            tabIndex={disabled ? -1 : undefined}
             className={shellClass}
             onClick={onClick}
             onKeyDown={onKeyDown}
@@ -256,6 +274,7 @@ export function CardRootShell({
             // react-doctor-disable-next-line react-doctor/control-has-associated-label -- body is injected by SkinShell
             <button
               type="button"
+              disabled={disabled || undefined}
               className={shellClass}
               onClick={onClick}
               onKeyDown={onKeyDown}
@@ -264,12 +283,13 @@ export function CardRootShell({
         : (
             <div className={rootClassName} />
           );
-  /* eslint-enable jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label */
+  /* eslint-enable jsx-a11y/anchor-has-content, jsx-a11y/anchor-is-valid, jsx-a11y/control-has-associated-label */
 
   return (
     <SkinShell
       {...rest}
       {...dataVariantProps({ size, variant })}
+      data-disabled={dataFlag(disabled)}
       part="card.root"
       variant={variant}
       scope={scope}

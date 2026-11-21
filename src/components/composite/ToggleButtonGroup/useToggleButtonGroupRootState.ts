@@ -5,7 +5,16 @@ import { useSkinVariant } from "@/skins/skinContext";
 import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
  
 import { createToggleButtonGroupKeyDownHandler, resolveToggleButtonTabIndex } from "./toggleButtonGroupA11y";
-import { countToggleButtonChildren, extractToggleItemValues, flattenFragmentChildren, isToggleButtonGroupItemSelected, normalizeMultipleDefault, normalizeSingleDefault, resolveToggleButtonGroupSelectionChange } from "./toggleButtonGroupAPI";
+import {
+  countToggleButtonChildren,
+  extractDisabledToggleItemValues,
+  extractEnabledToggleItemValues,
+  flattenFragmentChildren,
+  isToggleButtonGroupItemSelected,
+  normalizeMultipleDefault,
+  normalizeSingleDefault,
+  resolveToggleButtonGroupSelectionChange,
+} from "./toggleButtonGroupAPI";
 import type {
   ToggleButtonGroupContextValue,
   UseToggleButtonGroupRootStateProps,
@@ -61,12 +70,26 @@ export function useToggleButtonGroupRootState({
  
   const flat = useMemo(() => flattenFragmentChildren(children), [children]);
   const segmentCount = useMemo(() => countToggleButtonChildren(flat), [flat]);
-  const firstToggleValue = useMemo(() => extractToggleItemValues(flat)[0], [flat]);
+  const enabledToggleValues = useMemo(
+    () => extractEnabledToggleItemValues(flat, disabled),
+    [disabled, flat],
+  );
+  const disabledToggleValues = useMemo(
+    () => extractDisabledToggleItemValues(flat),
+    [flat],
+  );
+  const enabledSet = useMemo(() => new Set(enabledToggleValues), [enabledToggleValues]);
+  const firstEnabledToggleValue = enabledToggleValues[0];
  
   // Roving tab stop — independent of selection (arrows move focus only).
   const [rovingValue, setRovingValue] = useState<string | undefined>(undefined);
+  const candidateRoving =
+    rovingValue ??
+    (isSingle ? singleValue : multipleValues.find((v) => enabledSet.has(v)));
   const resolvedRovingValue =
-    rovingValue ?? (isSingle ? singleValue : undefined) ?? firstToggleValue;
+    candidateRoving != null && enabledSet.has(candidateRoving)
+      ? candidateRoving
+      : firstEnabledToggleValue;
  
   const isSelected = useCallback(
     (itemValue: string) =>
@@ -76,7 +99,7 @@ export function useToggleButtonGroupRootState({
  
   const select = useCallback(
     (itemValue: string) => {
-      if (disabled) return;
+      if (disabled || disabledToggleValues.has(itemValue)) return;
  
       if (isSingle) {
         const change = resolveToggleButtonGroupSelectionChange(
@@ -96,13 +119,15 @@ export function useToggleButtonGroupRootState({
       if (!isControlled) setInternalMultiple(next);
       onValuesChange?.(next);
     },
-    [disabled, isControlled, isSingle, multipleValues, onValueChange, onValuesChange, singleValue, type],
+    [disabled, disabledToggleValues, isControlled, isSingle, multipleValues, onValueChange, onValuesChange, singleValue, type],
   );
  
   const tabIndexFor = useCallback(
-    (itemValue: string) =>
-      resolveToggleButtonTabIndex(itemValue, resolvedRovingValue, firstToggleValue),
-    [firstToggleValue, resolvedRovingValue],
+    (itemValue: string) => {
+      if (disabled || disabledToggleValues.has(itemValue)) return -1;
+      return resolveToggleButtonTabIndex(itemValue, resolvedRovingValue, firstEnabledToggleValue);
+    },
+    [disabled, disabledToggleValues, firstEnabledToggleValue, resolvedRovingValue],
   );
  
   const contextValue = useMemo<ToggleButtonGroupContextValue>(

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
  
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import type { InputVariant } from "@/components/core/Input";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
@@ -11,7 +12,7 @@ import { useSkinVariant } from "@/skins/skinContext";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
  
 import { comboBoxFieldIds } from "./comboBoxA11y";
-import { comboBoxFilteredValues, EMPTY_COMBOBOX_OPTIONS } from "./comboBoxAPI";
+import { comboBoxFilteredValues, comboBoxOptionsByValue, EMPTY_COMBOBOX_OPTIONS } from "./comboBoxAPI";
 import type {
   ComboBoxContextValue,
   ComboBoxFieldContextValue,
@@ -57,8 +58,8 @@ export function useComboBoxRootState({
     readOnly: readOnlyProp,
   });
   const formBound = formBinding.bound;
-  const disabled = formBinding.disabled ?? disabledProp;
-  const readOnly = Boolean(formBinding.readOnly);
+  const disabled = Boolean(formBinding.disabled ?? disabledProp);
+  const readOnly = Boolean(formBinding.readOnly ?? readOnlyProp);
   const selectValueLabel = useBurneLabel("selectValue");
   const placeholder = placeholderProp ?? selectValueLabel;
   const autoId = useId();
@@ -76,7 +77,11 @@ export function useComboBoxRootState({
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasLabel:
+        label != null ||
+        (compound &&
+          (hasCompoundChild(children, "ComboBoxLabel") ||
+            hasCompoundChild(children, "Label"))),
       hasHint: hint != null || (compound && hasCompoundChild(children, "ComboBoxHint")),
       hasError: error != null || (compound && hasCompoundChild(children, "ComboBoxError")),
     };
@@ -92,31 +97,39 @@ export function useComboBoxRootState({
  
   const setValue = useCallback(
     (next: string) => {
-      if (readOnly) return;
+      if (disabled || readOnly) return;
       if (!isControlled) setInternalValue(next);
       onValueChange?.(next === "" ? null : next);
       if (formBound) formBinding.setValue(next);
     },
-    [formBound, formBinding, isControlled, onValueChange, readOnly],
+    [disabled, formBound, formBinding, isControlled, onValueChange, readOnly],
   );
- 
-  const [open, setOpenState] = useControllableState({
-    value: openProp,
-    defaultValue: defaultOpen,
-    onChange: onOpenChange,
-  });
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (readOnly) return;
-      setOpenState(next);
-    },
-    [readOnly, setOpenState],
-  );
+
+  const isInputControlled = inputValue !== undefined;
+  const [isFiltering, setIsFiltering] = useState(() => Boolean(defaultInputValue));
   const [filterQuery, setFilterQuery] = useControllableState({
     value: inputValue,
     defaultValue: defaultInputValue ?? "",
     onChange: onInputValueChange,
   });
+
+  const [rawOpen, setOpenState] = useControllableState({
+    value: disabled || readOnly ? false : openProp,
+    defaultValue: disabled || readOnly ? false : defaultOpen,
+    onChange: onOpenChange,
+  });
+  const open = disabled || readOnly ? false : rawOpen;
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (next && (disabled || readOnly)) return;
+      if (!next) {
+        setIsFiltering(false);
+        if (!isInputControlled) setFilterQuery("");
+      }
+      setOpenState(next);
+    },
+    [disabled, isInputControlled, readOnly, setFilterQuery, setOpenState],
+  );
   const [activeValue, setActiveValue] = useState<string | null>(null);
   const blurGeneration = useRef(0);
   const cancelBlurCommit = useCallback(() => {
@@ -125,15 +138,27 @@ export function useComboBoxRootState({
  
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useNativeFormReset(
+    anchorRef,
+    () => {
+      if (!isControlled) setInternalValue(defaultValue ?? "");
+      setIsFiltering(Boolean(defaultInputValue));
+      if (!isInputControlled) setFilterQuery(defaultInputValue ?? "");
+    },
+    !isControlled || !isInputControlled,
+  );
  
   useEffect(() => {
     if (!open || !activeValue) return;
     document.getElementById(`${listId}-opt-${activeValue}`)?.scrollIntoView({ block: "nearest" });
   }, [activeValue, listId, open]);
  
+  const optionsByValue = useMemo(() => comboBoxOptionsByValue(items), [items]);
+  const effectiveFilterQuery = isInputControlled || isFiltering ? filterQuery : "";
   const filteredValues = useMemo(
-    () => comboBoxFilteredValues(items, filterQuery, filter),
-    [filter, filterQuery, items],
+    () => comboBoxFilteredValues(items, effectiveFilterQuery, filter),
+    [effectiveFilterQuery, filter, items],
   );
  
   const formInvalid = formBinding["aria-invalid"] === true;
@@ -164,6 +189,10 @@ export function useComboBoxRootState({
       setValue,
       filterQuery,
       setFilterQuery,
+      isFiltering,
+      setIsFiltering,
+      isInputControlled,
+      optionsByValue,
       listId,
       activeValue,
       setActiveValue,
@@ -209,6 +238,9 @@ export function useComboBoxRootState({
       open,
       setOpen,
       items,
+      optionsByValue,
+      isFiltering,
+      isInputControlled,
       placeholder,
       setFilterQuery,
       setValue,

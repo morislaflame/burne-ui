@@ -11,7 +11,9 @@ import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/cor
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { bindOverlayReflow } from "@/components/core/utils/bindOverlayReflow";
-import { isContainedPortal } from "@/components/core/utils/portalContainer";
+import { isTopmostOverlayLayer } from "@/components/core/utils/overlayLayer";
+import { isContainedPortal, resolveFloatingPortalContainer } from "@/components/core/utils/portalContainer";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import type { PopoverMotion } from "@/components/core/Popover";
 import { useOptionalPopoverMotionScope } from "@/components/core/Popover/popoverContext";
 import {
@@ -150,9 +152,9 @@ function handleDropdownTypeaheadKey(
  
 export function useDropdownPopoverMenu({
   open,
-  setOpen,
   contentRef,
   triggerRef,
+  openInitialFocusRef,
 }: UseDropdownPopoverMenuProps) {
   const typeaheadRef = useLazyRef(createTypeaheadBufferState);
 
@@ -161,8 +163,12 @@ export function useDropdownPopoverMenu({
     const panel = contentRef.current;
     if (!panel) return;
     const items = getFocusableDropdownMenuItems(panel);
-    focusOnOpen(items[0], { from: triggerRef.current });
-  }, [contentRef, open, triggerRef]);
+    const edge = openInitialFocusRef?.current ?? "first";
+    if (openInitialFocusRef) openInitialFocusRef.current = "first";
+    const target = edge === "last" ? items[items.length - 1] : items[0];
+    focusOnOpen(target, { from: triggerRef.current });
+    target?.scrollIntoView?.({ block: "nearest" });
+  }, [contentRef, open, openInitialFocusRef, triggerRef]);
  
   useEffect(() => {
     if (!open) return;
@@ -171,13 +177,6 @@ export function useDropdownPopoverMenu({
     const buffer = typeaheadRef.current;
  
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        // setOpen restores focus on the trigger (browser decides ring from last input).
-        setOpen(false);
-        return;
-      }
- 
       const items = getFocusableDropdownMenuItems(panel);
       if (items.length === 0) return;
  
@@ -209,7 +208,7 @@ export function useDropdownPopoverMenu({
  
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [contentRef, open, setOpen, typeaheadRef]);
+  }, [contentRef, open, typeaheadRef]);
 }
  
 /** Keyboard nav inside an open submenu panel (APG menu). */
@@ -219,6 +218,7 @@ export function useDropdownSubmenuKeyboard({
   panelRef,
   triggerRef,
   setOpen,
+  layerId,
 }: UseDropdownSubmenuKeyboardProps) {
   const typeaheadRef = useLazyRef(createTypeaheadBufferState);
 
@@ -231,6 +231,7 @@ export function useDropdownSubmenuKeyboard({
     if (document.activeElement !== trigger) return;
     const items = getFocusableDropdownMenuItems(panel);
     focusOnOpen(items[0], { from: trigger });
+    items[0]?.scrollIntoView?.({ block: "nearest" });
   }, [panelRef, portalMounted, subOpen, triggerRef]);
  
   useEffect(() => {
@@ -240,7 +241,9 @@ export function useDropdownSubmenuKeyboard({
     const buffer = typeaheadRef.current;
  
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === "ArrowLeft") {
+      const rtl = isRtlElement(panel);
+      const closeKey = rtl ? "ArrowRight" : "ArrowLeft";
+      if (e.key === closeKey || (e.key === "Escape" && isTopmostOverlayLayer(layerId))) {
         e.preventDefault();
         e.stopPropagation();
         setOpen(false);
@@ -279,7 +282,7 @@ export function useDropdownSubmenuKeyboard({
  
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [panelRef, portalMounted, setOpen, subOpen, triggerRef, typeaheadRef]);
+  }, [layerId, panelRef, portalMounted, setOpen, subOpen, triggerRef, typeaheadRef]);
 }
  
 export function useDropdownSubPopoverPortal({
@@ -295,10 +298,32 @@ export function useDropdownSubPopoverPortal({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
   const [portalMounted, setPortalMounted] = useState(false);
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(() =>
+    resolveFloatingPortalContainer(portalContainer, null),
+  );
  
   if (subOpen && !portalMounted) {
     setPortalMounted(true);
   }
+
+  const syncPortalHost = useCallback(() => {
+    const next = resolveFloatingPortalContainer(
+      portalContainer,
+      triggerRef.current ?? menuTriggerRef.current,
+    );
+    setPortalHost((prev) => (prev === next ? prev : next));
+    return next;
+  }, [menuTriggerRef, portalContainer, triggerRef]);
+
+  useLayoutEffect(() => {
+    if (!subOpen && !portalMounted) return;
+    syncPortalHost();
+  }, [portalMounted, subOpen, syncPortalHost]);
+
+  useEffect(() => {
+    if (!subOpen) return;
+    syncPortalHost();
+  }, [subOpen, syncPortalHost]);
  
   const updatePosition = useCallback(() => {
     const t = triggerRef.current;
@@ -308,30 +333,57 @@ export function useDropdownSubPopoverPortal({
     const edge = menu instanceof HTMLElement ? menu.getBoundingClientRect() : r;
     const gap = 0;
     const minW = Math.max(r.width, 10 * 16);
-    let left = edge.right + gap;
-    let top = r.top;
-    const estW = minW;
-    if (left + estW > window.innerWidth - 12) {
-      left = Math.max(12, edge.left - estW - gap);
-    }
     const panel = panelRef.current;
-    const ph = panel?.offsetHeight ?? 0;
-    if (ph > 0 && top + ph > window.innerHeight - 8) {
-      top = Math.max(8, window.innerHeight - ph - 8);
+    const rawW = panel ? (panel.offsetWidth || panel.getBoundingClientRect().width) : 0;
+    const pw = Math.max(rawW, minW);
+    const ph = panel ? (panel.offsetHeight || panel.getBoundingClientRect().height) : 0;
+
+    const vv = typeof window !== "undefined" ? window.visualViewport : null;
+    const vpLeft = vv ? (vv.offsetLeft ?? 0) : 0;
+    const vpTop = vv ? (vv.offsetTop ?? 0) : 0;
+    const vpRight = vpLeft + (vv ? vv.width : window.innerWidth);
+    const vpBottom = vpTop + (vv ? vv.height : window.innerHeight);
+
+    const rtl = isRtlElement(t);
+    let left: number;
+    if (rtl) {
+      left = edge.left - pw - gap;
+      if (left < vpLeft + 12) {
+        left = edge.right + gap;
+      }
+    } else {
+      left = edge.right + gap;
+      if (left + pw > vpRight - 12) {
+        left = edge.left - pw - gap;
+      }
     }
+    const maxLeft = Math.max(vpLeft + 8, vpRight - pw - 8);
+    left = Math.max(vpLeft + 8, Math.min(left, maxLeft));
+
+    let top = r.top;
+    if (ph > 0) {
+      const maxTop = Math.max(vpTop + 8, vpBottom - ph - 8);
+      top = Math.max(vpTop + 8, Math.min(top, maxTop));
+    } else {
+      top = Math.max(vpTop + 8, top);
+    }
+
+    const activeHost =
+      resolveFloatingPortalContainer(portalContainer, t ?? menuTriggerRef.current) ??
+      portalHost;
  
-    if (isContainedPortal(portalContainer) && portalContainer) {
-      const hostRect = portalContainer.getBoundingClientRect();
+    if (isContainedPortal(activeHost) && activeHost) {
+      const hostRect = activeHost.getBoundingClientRect();
       setPos({
-        top: top - hostRect.top + portalContainer.scrollTop,
-        left: left - hostRect.left + portalContainer.scrollLeft,
+        top: top - hostRect.top - activeHost.clientTop + activeHost.scrollTop,
+        left: left - hostRect.left - activeHost.clientLeft + activeHost.scrollLeft,
         minW,
       });
       return;
     }
  
     setPos({ top, left, minW });
-  }, [portalContainer, triggerRef]);
+  }, [menuTriggerRef, portalContainer, portalHost, triggerRef]);
  
   useLayoutEffect(() => {
     if (!subOpen || !portalMounted) return;
@@ -399,12 +451,19 @@ export function useDropdownSubPopoverPortal({
     };
   }, [config, subOpen, portalMounted, motionScope]);
  
+  const activeHost =
+    resolveFloatingPortalContainer(
+      portalContainer,
+      triggerRef.current ?? menuTriggerRef.current,
+    ) ?? portalHost;
+
   return {
     panelRef,
     pos,
     portalMounted,
+    portalHost: activeHost,
     menuTriggerRef,
-    contained: isContainedPortal(portalContainer),
+    contained: isContainedPortal(activeHost),
     popoverVariant,
   };
 }

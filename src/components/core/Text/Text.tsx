@@ -1,19 +1,22 @@
 import { createElement, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes } from "react";
  
+import { cn } from "@/utils/cn";
+
 import { resolveTextAs } from "./textA11y";
 import { resolveTextMotionDefaults, useTextRootMotion } from "./textAnimations";
 import { TextMotionProvider } from "./textContext";
 import { TEXT_VARIANT_DEFAULT_AS, textRootClass } from "./textStyles";
 import type { TextPartMotion, TextProps } from "./textTypes";
- 
-export type { TextProps, TextVariant, TextMotion, TextPartMotion } from "./textTypes";
- 
+
+export type { TextClassNames, TextProps, TextVariant, TextMotion, TextPartMotion } from "./textTypes";
+
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   {
     textStyle = "base",
     as,
     inheritColor,
     className,
+    classNames,
     children,
     motion,
     motionController,
@@ -29,7 +32,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveTextMotionDefaults(), []);
- 
+
   return (
     <TextMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -39,7 +42,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
         textStyle={textStyle}
         as={as}
         inheritColor={inheritColor}
-        className={className}
+        className={cn(classNames?.root, className)}
         forwardedRef={ref}
         rootMotion={motion?.root}
         onPointerOver={onPointerOver}

@@ -17,7 +17,7 @@ export const TABLE_ROOT_VARIANT_CLASS: Record<KitTableVariant, string> = {
 export const TABLE_ROOT_CLIP_CLASS = "overflow-clip";
 
 export const TABLE_SCROLL_CONTAINER_CLASS =
-  "w-full overflow-x-auto overscroll-none outline-none focus-ring";
+  "w-full overflow-x-auto outline-none focus-ring";
 
 export const TABLE_SCROLL_STICKY_CLASS =
   "overflow-y-auto max-h-[var(--max-component-2xlarge)]";
@@ -51,6 +51,8 @@ export const TABLE_CONTENT_VARIANT_CLASS: Record<KitTableVariant, string> = {
   toned: "border-separate border-spacing-y-xsmall",
 };
 
+export const TABLE_HEADER_STICKY_CLASS = "sticky top-0 z-sticky";
+
 export const TABLE_HEADER_ROW_VARIANT_CLASS: Record<KitTableVariant, string> = {
   default: "border-b-token",
   secondary: "border-b-token",
@@ -80,6 +82,34 @@ export const TABLE_COLUMN_SORT_BUTTON_CLASS =
 /** Full-width row so `text-center` / `text-end` on the `<th>` moves the label with the cells. */
 export const TABLE_COLUMN_INNER_CLASS =
   "inline-flex w-full items-center justify-start gap-xsmall group-[.text-center]/col:justify-center group-[.text-end]/col:justify-end";
+
+export const TABLE_COLUMN_INNER_RESIZE_CLASS = "overflow-hidden";
+
+export function tableHeaderClass({
+  stickyHeader = false,
+  slotClass,
+  className,
+}: {
+  stickyHeader?: boolean;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(stickyHeader && TABLE_HEADER_STICKY_CLASS, slotClass, className);
+}
+
+export function tableColumnInnerClass({
+  resizable = false,
+  slotClass,
+}: {
+  resizable?: boolean;
+  slotClass?: string;
+}): string {
+  return cn(
+    TABLE_COLUMN_INNER_CLASS,
+    resizable && TABLE_COLUMN_INNER_RESIZE_CLASS,
+    slotClass,
+  );
+}
 
 export const TABLE_COLUMN_LABEL_CLASS = "min-w-0 text-small text-start font-w-mid";
 

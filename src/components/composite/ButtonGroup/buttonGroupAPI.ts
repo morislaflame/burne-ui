@@ -26,7 +26,13 @@ export function flattenFragmentChildren(children: ReactNode): ReactElement[] {
   return out;
 }
  
+export function isToggleButtonElement(child: ReactElement): boolean {
+  const displayName = (child.type as { displayName?: string }).displayName;
+  return displayName === "ToggleButtonRoot" || displayName === "ToggleButton";
+}
+
 export function isGroupSegmentSlot(child: ReactElement): boolean {
+  const displayName = (child.type as { displayName?: string }).displayName;
   return (
     child.type === Button ||
     child.type === Input.Control ||
@@ -34,7 +40,8 @@ export function isGroupSegmentSlot(child: ReactElement): boolean {
     child.type === Select ||
     child.type === SearchInput ||
     child.type === Dropdown ||
-    (child.type as { displayName?: string }).displayName === "ButtonGroupText"
+    displayName === "ButtonGroupText" ||
+    isToggleButtonElement(child)
   );
 }
  

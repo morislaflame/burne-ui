@@ -23,7 +23,7 @@ export const PAGINATION_SIZE_CLASS: Record<ComponentSize, string> = {
 };
 
 export const PAGINATION_INTERACTIVE_BUTTON_CLASS =
-  "inline-flex min-w-0 origin-center cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted disabled:hover:bg-transparent motion-reduce:animate-none";
+  "inline-flex min-w-0 origin-center cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted disabled:hover:bg-transparent aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-48 aria-disabled:hover:text-muted aria-disabled:hover:bg-transparent motion-reduce:animate-none";
  
 /** Page digit column — `--size-scale-2xlarge` (≈1.75rem), not panel max-width. */
 export const PAGINATION_PAGE_ACTIVE_CLASS =
@@ -37,9 +37,11 @@ export const PAGINATION_ELLIPSIS_CLASS =
  
 export const PAGINATION_NAV_TEXT_CLASS = "";
  
-export const PAGINATION_PREVIOUS_ICON_CLASS = "shrink-0 icon-small opacity-75";
+export const PAGINATION_PREVIOUS_ICON_CLASS =
+  "shrink-0 icon-small opacity-75 rtl:rotate-180";
  
-export const PAGINATION_NEXT_ICON_CLASS = "shrink-0 icon-small opacity-75";
+export const PAGINATION_NEXT_ICON_CLASS =
+  "shrink-0 icon-small opacity-75 rtl:rotate-180";
  
 export function paginationRootClass({
   slotClass,
@@ -97,17 +99,19 @@ export function paginationItemClass({
  
 export function paginationInteractiveButtonClass({
   size = "base",
+  disabled,
   slotClass,
   className,
 }: {
   size?: ComponentSize;
+  disabled?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
   return cn(
     PAGINATION_INTERACTIVE_BUTTON_CLASS,
     PAGINATION_SIZE_CLASS[size],
-    hoverVariant(),
+    !disabled && hoverVariant(),
     slotClass,
     className,
   );

@@ -1,11 +1,11 @@
 import { forwardRef, useCallback, useState, type HTMLAttributes } from "react";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { Field } from "@/components/core/Field";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
  
 import {
@@ -31,6 +31,7 @@ import {
   COLOR_PICKER_HEX_FIELD_CLASS,
   COLOR_PICKER_HEX_INPUT_CLASS,
   COLOR_PICKER_HEX_PREFIX_CLASS,
+  COLOR_PICKER_INPUT_DISABLED_CLASS,
   COLOR_PICKER_INPUTS_ROW_CLASS,
   COLOR_PICKER_PRESETS_CLASS,
   COLOR_PICKER_PREVIEW_SWATCH_CLASS,
@@ -70,10 +71,10 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
     ref,
   ) {
     const labels = useBurneLabels();
-    const { hsva, setHsva, hex, size } = useColorPicker();
+    const { hsva, setHsva, hex, size, disabled, readOnly } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
     const { areaRef, thumbRef, handlePointerDown, handleThumbKeyDown } =
-      useColorPickerAreaDrag({ hsva, setHsva });
+      useColorPickerAreaDrag({ hsva, setHsva, disabled, readOnly });
     const areaPart = useColorPickerSlotMotion<HTMLDivElement>("area", {
       motion,
       playEnter: false,
@@ -90,20 +91,22 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
     });
     useColorPickerAreaChange(hex);
  
+    const { setRef: setAreaPartRef } = areaPart;
+    const { setRef: setThumbPartRef } = thumbPart;
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
         areaRef.current = node;
-        areaPart.setRef(node);
+        setAreaPartRef(node);
         mergeForwardedRef(ref, node);
       },
-      [areaPart.setRef, areaRef, ref],
+      [areaRef, ref, setAreaPartRef],
     );
     const setThumbRef = useCallback(
       (node: HTMLButtonElement | null) => {
         thumbRef.current = node;
-        thumbPart.setRef(node);
+        setThumbPartRef(node);
       },
-      [thumbPart.setRef, thumbRef],
+      [setThumbPartRef, thumbRef],
     );
  
     const hueColor = hueToRgbString(hsva.h);
@@ -113,9 +116,11 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
       <div
         ref={setRefs}
         role="group"
+        aria-disabled={disabled || undefined}
         className={colorPickerAreaClass(
           size,
           cn(slotClassNames.area, className),
+          { disabled, readOnly },
         )}
         style={{
           /* HSV area physics: fixed #000/#fff endpoints (not theme tokens). */
@@ -128,12 +133,16 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
           areaPart.pointerHandlers.onPointerDown?.(e);
           if (!e.defaultPrevented) handlePointerDown(e);
         }}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
       >
         <button
           ref={setThumbRef}
           type="button"
           role="slider"
-          tabIndex={0}
+          disabled={disabled}
+          tabIndex={disabled ? -1 : 0}
+          aria-readonly={readOnly || undefined}
           aria-label={colorPickerAreaAriaLabel(labels.colorPickerArea)}
           aria-valuemin={0}
           aria-valuemax={100}
@@ -158,6 +167,8 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
             thumbPart.pointerHandlers.onPointerDown?.(e);
             if (!e.defaultPrevented) handlePointerDown(e);
           }}
+          data-disabled={dataFlag(disabled)}
+          data-readonly={dataFlag(readOnly)}
         />
       </div>
     );
@@ -180,7 +191,8 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
     ref,
   ) {
     const labels = useBurneLabels();
-    const { hex, setHsva } = useColorPicker();
+    const { hex, setHsva, disabled, readOnly } = useColorPicker();
+    const blocked = disabled || readOnly;
     const slotClassNames = useColorPickerClassNames();
     const part = useColorPickerSlotMotion<HTMLDivElement>("hexInput", {
       motion,
@@ -195,25 +207,29 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
  
     const commit = useCallback(
       (draft: string) => {
+        if (blocked) return;
         const candidate = `#${draft}`;
         const parsed = hexToHsva(candidate);
         if (parsed) setHsva(parsed);
       },
-      [setHsva],
+      [blocked, setHsva],
     );
  
-    const displayValue = isEditing ? editDraft : hex.slice(1);
+    const displayValue = isEditing && !blocked ? editDraft : hex.slice(1);
  
     return (
       <div
         ref={part.setRef}
         className={cn(
           COLOR_PICKER_HEX_INPUT_CLASS,
+          disabled && COLOR_PICKER_INPUT_DISABLED_CLASS,
           slotClassNames.hexInput,
           className,
         )}
         {...rest}
         {...part.pointerHandlers}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
       >
         <span
           className={cn(
@@ -227,6 +243,8 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
           type="text"
           value={displayValue}
           maxLength={8}
+          disabled={disabled}
+          readOnly={readOnly}
           spellCheck={false}
           aria-label={colorPickerHexInputAriaLabel(labels.colorPickerHex)}
           className={cn(
@@ -235,22 +253,26 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
             FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
           )}
           onFocus={() => {
+            if (blocked) return;
             setIsEditing(true);
             setEditDraft(hex.slice(1));
           }}
-          onChange={(e) =>
-            setEditDraft(e.target.value.replace(/[^0-9a-fA-F]/g, "").toUpperCase())
-          }
+          onChange={(e) => {
+            if (blocked) return;
+            setEditDraft(e.target.value.replace(/[^0-9a-fA-F]/g, "").toUpperCase());
+          }}
           onBlur={() => {
-            commit(editDraft);
+            if (!blocked) commit(editDraft);
             setIsEditing(false);
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              commit(editDraft);
+              if (!blocked) commit(editDraft);
               setIsEditing(false);
             }
           }}
+          data-disabled={dataFlag(disabled)}
+          data-readonly={dataFlag(readOnly)}
         />
       </div>
     );
@@ -273,7 +295,8 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
     ref,
   ) {
     const labels = useBurneLabels();
-    const { hsva, setHsva } = useColorPicker();
+    const { hsva, setHsva, disabled, readOnly } = useColorPicker();
+    const blocked = disabled || readOnly;
     const slotClassNames = useColorPickerClassNames();
     const part = useColorPickerSlotMotion<HTMLDivElement>("alphaInput", {
       motion,
@@ -283,31 +306,77 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
       onPointerDown,
       onPointerUp,
     });
+    const [isEditing, setIsEditing] = useState(false);
+    const [editDraft, setEditDraft] = useState("");
+ 
+    const commitAlpha = useCallback(
+      (draft: string) => {
+        if (blocked || draft === "") return;
+        const n = parseInt(draft, 10);
+        if (!Number.isNaN(n)) {
+          setHsva({ ...hsva, a: clampN(n, 0, 100) });
+        }
+      },
+      [blocked, hsva, setHsva],
+    );
+ 
+    const displayValue = isEditing && !blocked ? editDraft : String(Math.round(hsva.a));
  
     return (
       <div
         ref={part.setRef}
         className={cn(
           COLOR_PICKER_ALPHA_INPUT_CLASS,
+          disabled && COLOR_PICKER_INPUT_DISABLED_CLASS,
           slotClassNames.alphaInput,
           className,
         )}
         {...rest}
         {...part.pointerHandlers}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
       >
         <input
           type="text"
-          value={Math.round(hsva.a)}
+          inputMode="numeric"
+          maxLength={3}
+          disabled={disabled}
+          readOnly={readOnly}
+          value={displayValue}
           aria-label={colorPickerAlphaInputAriaLabel(labels.colorPickerAlpha)}
           className={cn(
             COLOR_PICKER_ALPHA_FIELD_CLASS,
             slotClassNames.alphaInputField,
             FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
           )}
-          onChange={(e) => {
-            const n = parseInt(e.target.value, 10);
-            if (!Number.isNaN(n)) setHsva({ ...hsva, a: clampN(n, 0, 100) });
+          onFocus={() => {
+            if (blocked) return;
+            setIsEditing(true);
+            setEditDraft(String(Math.round(hsva.a)));
           }}
+          onChange={(e) => {
+            if (blocked) return;
+            const digits = e.target.value.replace(/[^0-9]/g, "");
+            setEditDraft(digits);
+            if (digits !== "") {
+              const n = parseInt(digits, 10);
+              if (!Number.isNaN(n)) {
+                setHsva({ ...hsva, a: clampN(n, 0, 100) });
+              }
+            }
+          }}
+          onBlur={() => {
+            commitAlpha(editDraft);
+            setIsEditing(false);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              commitAlpha(editDraft);
+              setIsEditing(false);
+            }
+          }}
+          data-disabled={dataFlag(disabled)}
+          data-readonly={dataFlag(readOnly)}
         />
         <span
           className={cn(
@@ -338,7 +407,8 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
     },
     ref,
   ) {
-    const { hex, setHsva, size } = useColorPicker();
+    const { hex, setHsva, size, disabled, readOnly } = useColorPicker();
+    const blocked = disabled || readOnly;
     const slotClassNames = useColorPickerClassNames();
     const part = useColorPickerSlotMotion<HTMLDivElement>("presets", {
       motion,
@@ -359,6 +429,8 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
         )}
         {...rest}
         {...part.pointerHandlers}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
       >
         {presets.map((preset) => (
           <ColorSwatch
@@ -366,9 +438,12 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
             color={preset}
             size={COLOR_PICKER_SWATCH_SIZE_MAP[size]}
             shape="rounded"
+            disabled={disabled}
+            aria-disabled={readOnly || undefined}
             selected={hex.toLowerCase() === preset.toLowerCase()}
             className={slotClassNames.presetSwatch}
             onClick={() => {
+              if (blocked) return;
               const parsed = hexToHsva(preset);
               if (parsed) setHsva(parsed);
             }}
@@ -435,7 +510,7 @@ function ColorPickerDefaultLayout({
   showAlpha: boolean;
   presets?: string[];
 }) {
-  const { hsva, setHsva, size } = useColorPicker();
+  const { hsva, setHsva, size, disabled, readOnly } = useColorPicker();
   const slotClassNames = useColorPickerClassNames();
   const sliderSize = COLOR_PICKER_SLIDER_SIZE_MAP[size];
   const pickerMotion = useOptionalColorPickerMotionScope()?.getRootMotion();
@@ -463,6 +538,8 @@ function ColorPickerDefaultLayout({
             color={hsva}
             value={hsva.h}
             size={sliderSize}
+            disabled={disabled}
+            readOnly={readOnly}
             className={slotClassNames.hueSlider}
             motion={pickerMotion?.hueSlider}
             onValueChange={(h) => setHsva({ ...hsva, h })}
@@ -474,6 +551,8 @@ function ColorPickerDefaultLayout({
               color={hsva}
               value={hsva.a}
               size={sliderSize}
+              disabled={disabled}
+              readOnly={readOnly}
               className={slotClassNames.alphaSlider}
               motion={pickerMotion?.alphaSlider}
               onValueChange={(a) => setHsva({ ...hsva, a })}
@@ -501,7 +580,7 @@ function ColorPickerDefaultLayout({
  
 export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger(
-    { swatchSize, className, children, asChild = true, motion, autoFocus, tabIndex, ...rest },
+    { swatchSize, className, children, asChild = true, motion, autoFocus, tabIndex, onBlur, onClick, ...rest },
     ref,
   ) {
     const labels = useBurneLabels();
@@ -511,19 +590,34 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
  
     return (
       <Popover.Trigger
-        ref={ref}
+        ref={mergeRefs(ref, field.registerTriggerRef)}
         id={field.triggerId}
         asChild={asChild}
+        disabled={disabled}
         motion={motion}
         className={cn(slotClassNames.trigger, className)}
+        onBlur={(e) => {
+          onBlur?.(e);
+          field.onTriggerBlur?.();
+        }}
+        onClick={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            return;
+          }
+          onClick?.(e);
+        }}
         {...rest}
-        {...dataVariantProps({ size })}
         {...((autoFocus ?? field.autoFocus) ? { autoFocus: true } : {})}
-        tabIndex={tabIndex ?? field.tabIndex}
+        {...dataVariantProps({ size })}
+        tabIndex={disabled ? -1 : (tabIndex ?? field.tabIndex)}
         aria-invalid={invalid ? true : undefined}
         aria-readonly={field.readOnly || undefined}
-        data-readonly={field.readOnly ? "" : undefined}
-        data-invalid={invalid ? "" : undefined}
+        aria-required={field.required || undefined}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(field.readOnly)}
+        data-invalid={dataFlag(invalid)}
+        data-required={dataFlag(field.required)}
       >
         {children ?? (
           <ColorSwatch

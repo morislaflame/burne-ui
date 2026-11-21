@@ -25,6 +25,8 @@ export function useConvergeRipples(): {
     setRipples((prev) => prev.filter((rp) => rp.id !== id));
   }, []);
  
+const MAX_CONCURRENT_RIPPLES = 8;
+
   const pushAtClientCoords = useCallback(
     (target: HTMLElement, clientX: number, clientY: number) => {
       const id = ++idRef.current;
@@ -34,7 +36,11 @@ export function useConvergeRipples(): {
         clientY,
         id,
       );
-      setRipples((prev) => [...prev, ripple]);
+      setRipples((prev) =>
+        prev.length >= MAX_CONCURRENT_RIPPLES
+          ? [...prev.slice(prev.length - MAX_CONCURRENT_RIPPLES + 1), ripple]
+          : [...prev, ripple],
+      );
     },
     [],
   );

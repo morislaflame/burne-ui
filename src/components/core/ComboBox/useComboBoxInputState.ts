@@ -1,14 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, type ChangeEvent, type FocusEvent, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  type ChangeEvent,
+  type FocusEvent,
+  type ForwardedRef,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
  
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { isImeComposingEvent } from "@/components/core/utils/fieldFormDom";
 import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
  
 import { focusElement } from "@/components/core/utils/focusElement";
  
-import { useComboBoxOpenAfterSqueeze } from "./comboBoxAnimations";
 import { comboBoxActiveOptionId } from "./comboBoxA11y";
-import { comboBoxBumpActiveValue, comboBoxFilteredValues, comboBoxFirstEnabledValue, comboBoxLastEnabledValue, comboBoxOptionDisplayString, comboBoxOptionsByValue } from "./comboBoxAPI";
+import {
+  comboBoxBumpActiveValue,
+  comboBoxFilteredValues,
+  comboBoxFirstEnabledValue,
+  comboBoxLastEnabledValue,
+  comboBoxOptionDisplayString,
+} from "./comboBoxAPI";
 import { useComboBoxContext } from "./comboBoxContext";
 import type { ComboBoxInputProps } from "./comboBoxTypes";
  
@@ -17,7 +32,8 @@ export function useComboBoxInputState(
     onKeyDown,
     onChange,
     onBlur,
-  }: Pick<ComboBoxInputProps, "onKeyDown" | "onChange" | "onBlur">,
+    onClick,
+  }: Pick<ComboBoxInputProps, "onKeyDown" | "onChange" | "onBlur" | "onClick">,
   forwardedRef: ForwardedRef<HTMLInputElement>,
 ) {
   const ctx = useComboBoxContext();
@@ -29,6 +45,10 @@ export function useComboBoxInputState(
     setValue,
     filterQuery,
     setFilterQuery,
+    isFiltering,
+    setIsFiltering,
+    isInputControlled,
+    optionsByValue,
     listId,
     activeValue,
     setActiveValue,
@@ -57,12 +77,6 @@ export function useComboBoxInputState(
   } = ctx;
   const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
  
-  const openingSqueeze = useComboBoxOpenAfterSqueeze({
-    triggerRef: anchorRef,
-    disabled,
-  });
-  const queuedFilterCharRef = useRef<string | null>(null);
-  const optionsByValue = useMemo(() => comboBoxOptionsByValue(items), [items]);
   const selectedOption = useMemo(
     () => optionsByValue.get(value),
     [optionsByValue, value],
@@ -78,33 +92,52 @@ export function useComboBoxInputState(
     hintConnected ? hintId : undefined,
     errorConnected ? errorId : undefined,
   );
- 
-  const finishOpen = useCallback(() => {
-    const append = queuedFilterCharRef.current;
-    queuedFilterCharRef.current = null;
-    const nextQ = append ?? "";
-    setFilterQuery(nextQ);
- 
-    if (loading) {
-      setActiveValue(null);
-    } else {
-      const fi = comboBoxFilteredValues(items, nextQ, filter);
-      const selectedIdx = fi.indexOf(value);
-      setActiveValue(selectedIdx >= 0 ? value : fi[0] ?? null);
-    }
- 
-    requestAnimationFrame(() => {
-      const el = inputRef.current;
-      if (!el) return;
-      focusElement(el);
-      const len = nextQ.length;
-      el.setSelectionRange(len, len);
-    });
-  }, [filter, inputRef, items, loading, setActiveValue, setFilterQuery, value]);
- 
-  const openAfterSqueeze = useCallback(() => {
-    openingSqueeze({ setOpen, onOpened: finishOpen });
-  }, [finishOpen, openingSqueeze, setOpen]);
+
+  const openCombo = useCallback(
+    (edge: "first" | "last" = "first") => {
+      if (disabled || readOnly) return;
+      const query = isInputControlled ? filterQuery : "";
+      if (!isInputControlled) {
+        setIsFiltering(false);
+        setFilterQuery("");
+      }
+      setOpen(true);
+      if (loading) {
+        setActiveValue(null);
+      } else {
+        const fi = comboBoxFilteredValues(items, query, filter);
+        const selectedIdx = value ? fi.indexOf(value) : -1;
+        if (selectedIdx >= 0) {
+          setActiveValue(value);
+        } else {
+          setActiveValue(
+            edge === "last"
+              ? comboBoxLastEnabledValue(fi, optionsByValue)
+              : comboBoxFirstEnabledValue(fi, optionsByValue),
+          );
+        }
+      }
+    },
+    [
+      disabled,
+      filter,
+      filterQuery,
+      isInputControlled,
+      items,
+      loading,
+      optionsByValue,
+      readOnly,
+      setActiveValue,
+      setFilterQuery,
+      setIsFiltering,
+      setOpen,
+      value,
+    ],
+  );
+
+  const closeCombo = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
  
   const bumpActive = useCallback(
     (delta: number) => {
@@ -124,50 +157,84 @@ export function useComboBoxInputState(
       const opt = optionsByValue.get(next);
       if (!opt || opt.disabled) return;
       cancelBlurCommit();
+      setIsFiltering(false);
       setValue(next);
       setOpen(false);
       setFilterQuery("");
       focusElement(inputRef.current);
     },
-    [cancelBlurCommit, inputRef, optionsByValue, setFilterQuery, setOpen, setValue],
+    [cancelBlurCommit, inputRef, optionsByValue, setFilterQuery, setIsFiltering, setOpen, setValue],
   );
  
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       onChange?.(event);
-      if (!open) return;
-      setFilterQuery(event.target.value);
+      if (disabled || readOnly) return;
+      const nextQuery = event.target.value;
+      setIsFiltering(true);
+      setFilterQuery(nextQuery);
+      if (!open) {
+        setOpen(true);
+      }
+      if (loading) {
+        setActiveValue(null);
+      } else {
+        const fi = comboBoxFilteredValues(items, nextQuery, filter);
+        const selectedIdx = value ? fi.indexOf(value) : -1;
+        setActiveValue(selectedIdx >= 0 ? value : comboBoxFirstEnabledValue(fi, optionsByValue));
+      }
     },
-    [onChange, open, setFilterQuery],
+    [
+      disabled,
+      filter,
+      items,
+      loading,
+      onChange,
+      open,
+      optionsByValue,
+      readOnly,
+      setActiveValue,
+      setFilterQuery,
+      setIsFiltering,
+      setOpen,
+      value,
+    ],
+  );
+
+  const handleClick = useCallback(
+    (event: ReactMouseEvent<HTMLInputElement>) => {
+      onClick?.(event);
+      if (event.defaultPrevented || disabled || readOnly) return;
+      if (!open) {
+        openCombo("first");
+      }
+    },
+    [disabled, onClick, open, openCombo, readOnly],
   );
  
   const handleKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(event);
-      if (event.defaultPrevented || disabled) return;
-      if (event.nativeEvent.isComposing) return;
+      if (event.defaultPrevented || isImeComposingEvent(event)) return;
+ 
+      if (open && event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        closeCombo();
+        return;
+      }
+
+      if (disabled || readOnly) return;
  
       if (!open) {
-        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        if (event.key === "ArrowDown") {
           event.preventDefault();
-          openAfterSqueeze();
+          openCombo("first");
           return;
         }
-        if (event.key === "Enter" || event.key === " ") {
+        if (event.key === "ArrowUp") {
           event.preventDefault();
-          openAfterSqueeze();
-          return;
-        }
-        if (
-          event.key.length === 1 &&
-          !event.ctrlKey &&
-          !event.metaKey &&
-          !event.altKey &&
-          event.key !== "Tab"
-        ) {
-          event.preventDefault();
-          queuedFilterCharRef.current = event.key;
-          openAfterSqueeze();
+          openCombo("last");
         }
         return;
       }
@@ -189,9 +256,10 @@ export function useComboBoxInputState(
           selectValue(activeValue);
           return;
         }
-        const custom = filterQuery.trim();
+        const custom = (isInputControlled || isFiltering ? filterQuery : "").trim();
         if (allowsCustomValue && custom) {
           cancelBlurCommit();
+          setIsFiltering(false);
           setValue(custom);
           setOpen(false);
           setFilterQuery("");
@@ -215,29 +283,29 @@ export function useComboBoxInputState(
       activeValue,
       allowsCustomValue,
       bumpActive,
-      disabled,
-      filteredValues,
       cancelBlurCommit,
+      closeCombo,
+      disabled,
       filterQuery,
+      filteredValues,
       inputRef,
+      isFiltering,
+      isInputControlled,
       loading,
       onKeyDown,
       open,
-      openAfterSqueeze,
+      openCombo,
       optionsByValue,
+      readOnly,
       selectValue,
       setActiveValue,
       setFilterQuery,
+      setIsFiltering,
       setOpen,
       setValue,
     ],
   );
  
-  useEffect(() => {
-    if (open) return;
-    setFilterQuery("");
-  }, [open, setFilterQuery]);
-
   useEffect(() => {
     if (loading) setActiveValue(null);
   }, [loading, setActiveValue]);
@@ -245,16 +313,24 @@ export function useComboBoxInputState(
   const handleBlur = useCallback(
     (event: FocusEvent<HTMLInputElement>) => {
       onBlur?.(event);
-      formOnBlur?.();
+      const related = event.relatedTarget;
+      const movingIntoPopup =
+        related instanceof Element &&
+        (Boolean(document.getElementById(listId)?.contains(related)) ||
+          Boolean(anchorRef.current?.contains(related)));
+      if (!movingIntoPopup) {
+        formOnBlur?.();
+      }
       if (event.defaultPrevented || disabled || readOnly || !allowsCustomValue) return;
+      if (!isFiltering && !isInputControlled) return;
       const custom = event.currentTarget.value.trim();
       if (!custom) return;
-      const related = event.relatedTarget;
-      if (related instanceof Element && document.getElementById(listId)?.contains(related)) return;
+      if (movingIntoPopup) return;
       const generation = blurGeneration.current;
       queueMicrotask(() => {
         if (blurGeneration.current !== generation) return;
         cancelBlurCommit();
+        setIsFiltering(false);
         setValue(custom);
         setOpen(false);
         setFilterQuery("");
@@ -262,14 +338,18 @@ export function useComboBoxInputState(
     },
     [
       allowsCustomValue,
+      anchorRef,
       blurGeneration,
       cancelBlurCommit,
       disabled,
       formOnBlur,
+      isFiltering,
+      isInputControlled,
       listId,
       onBlur,
       readOnly,
       setFilterQuery,
+      setIsFiltering,
       setOpen,
       setValue,
     ],
@@ -283,6 +363,14 @@ export function useComboBoxInputState(
     },
     [formInputRef, forwardedRef, inputRef],
   );
+
+  const displayedInputValue = isInputControlled
+    ? filterQuery
+    : open
+      ? isFiltering
+        ? filterQuery
+        : selectedDisplayString
+      : selectedDisplayString;
  
   return {
     comboBoxId,
@@ -297,10 +385,11 @@ export function useComboBoxInputState(
     isInvalid,
     activeOptionId,
     ariaDescribedBy,
-    inputValue: open ? filterQuery : selectedDisplayString,
-    isMuted: !open && !selectedOption,
+    inputValue: displayedInputValue,
+    isMuted: !open && !selectedOption && !displayedInputValue,
     setRefs,
     handleChange,
+    handleClick,
     handleKeyDown,
     handleBlur,
   };

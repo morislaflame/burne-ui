@@ -9,11 +9,16 @@
  * scope when used standalone with `motion`.
  * Defaults: `resolveKbdMotionDefaults` (second-level lift). A skin overlays its own recipes.
  */
-import { useCallback, useMemo, useRef, type ForwardedRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, type ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
  
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import {
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
 import { mergeMotionPointerHandlers, useMotionPointerPhases, hasPointerPhases, useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { usesKitElevation, overlaySkinMotion } from "@/skins/resolveVariantVisual";
@@ -57,9 +62,20 @@ export function useKbdAnimations({
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest value so child layout effects see this render; an effect runs too late
   rootMotionRef.current = motion?.root;
  
+  const config = useMotionConfig();
   const secondLevelLift = useSecondLevelShadow(rootRef, kitSurface, {
     interactive: false,
+    killMotionOnUnmount: false,
   });
+
+  useLayoutEffect(() => {
+    if (!kitSurface) return;
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(rootRef.current, config);
+    }
+  }, [config, kitSurface, scope, variant]);
  
   const setMergedRef = useCallback(
     (node: HTMLElement | null) => {
@@ -69,6 +85,8 @@ export function useKbdAnimations({
     },
     [forwardedRef, scope],
   );
+
+  useOptionalEnterOnMount(scope, "root", rootRef);
  
   const motionPointer = useMotionPointerPhases<HTMLElement>({
     enabled: true,

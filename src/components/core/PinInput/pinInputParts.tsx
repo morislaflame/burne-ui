@@ -16,8 +16,10 @@ import {
 } from "react";
 
 import { Field } from "@/components/core/Field";
+import { dataFlag } from "@/components/core/utils/dataContract";
+import { isImeComposingEvent } from "@/components/core/utils/fieldFormDom";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { ariaInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
+import { ariaInvalidValue, dataInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { cn } from "@/utils/cn";
 
 import { pinInputCellLabel } from "./pinInputA11y";
@@ -51,13 +53,31 @@ function isPinInputControl(child: ReactNode): child is ReactElement<PinInputCont
 }
 
 export const PinInputControl = forwardRef<HTMLInputElement, PinInputControlProps>(function PinInputControl(
-  { index: indexProp = 0, className, ...rest },
+  {
+    index: indexProp = 0,
+    className,
+    id: idProp,
+    autoComplete,
+    onFocus,
+    onPaste,
+    onKeyDown,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
   ref,
 ) {
   const field = usePinInputContext();
   const host = useContext(PinFieldHostContext);
   const slotClassNames = usePinInputClassNames();
-  const motion = usePinInputControlMotion();
+  const motion = usePinInputControlMotion({
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
   const index = indexProp;
   const chars = pinInputChars(field.value, field.length);
   const value = chars[index] ?? "";
@@ -67,8 +87,9 @@ export const PinInputControl = forwardRef<HTMLInputElement, PinInputControlProps
     <input
       ref={mergeRefs(ref, motion.setRef, (node: HTMLInputElement | null) => {
         host?.register(index, node);
+        if (index === 0) field.setFirstCellRef?.(node);
       })}
-      {...rest}
+      id={idProp ?? (index === 0 ? field.inputId : undefined)}
       className={pinInputFieldClass({
         size: field.size,
         variant: field.variant,
@@ -85,23 +106,41 @@ export const PinInputControl = forwardRef<HTMLInputElement, PinInputControlProps
       readOnly={field.readOnly}
       required={field.required && index === 0}
       inputMode={field.type === "number" ? "numeric" : "text"}
-      autoComplete={index === 0 ? "one-time-code" : "off"}
-      type="text"
+      autoComplete={index === 0 ? (autoComplete ?? "one-time-code") : "off"}
+      type={field.mask ? "password" : "text"}
       tabIndex={focused ? 0 : -1}
       aria-label={pinInputCellLabel(index, field.length, field.type)}
-      aria-invalid={ariaInvalidValue(field.isInvalid)}
       aria-describedby={field.describedBy}
-      onFocus={() => {
-        if (host == null) return;
-        if (index > field.value.length) {
-          host.move(field.value.length);
-          return;
-        }
+      onFocus={(event) => {
+        onFocus?.(event);
+        if (event.defaultPrevented || host == null) return;
         host.setFocusedIndex(index);
       }}
       onChange={(event) => {
-        if (host == null) return;
-        const incoming = [...event.target.value]
+        if (host == null || field.disabled || field.readOnly) return;
+        const raw = event.target.value;
+        if (raw === "") {
+          if (value !== "") {
+            host.move(field.remove(index));
+          }
+          return;
+        }
+        const rawChars = [...raw];
+        if (value !== "" && rawChars.length === 2) {
+          let typedChar: string | undefined;
+          if (rawChars[0] === value) {
+            typedChar = rawChars[1];
+          } else if (rawChars[1] === value) {
+            typedChar = rawChars[0];
+          }
+          if (typedChar !== undefined) {
+            const valid = pinInputChar(typedChar, field.type);
+            if (!valid) return;
+            host.move(field.write(index, valid));
+            return;
+          }
+        }
+        const incoming = rawChars
           .map((char) => pinInputChar(char, field.type))
           .filter(Boolean);
         if (incoming.length === 0) return;
@@ -112,19 +151,35 @@ export const PinInputControl = forwardRef<HTMLInputElement, PinInputControlProps
         host.move(field.paste(index, incoming.join("")));
       }}
       onPaste={(event) => {
-        if (host == null) return;
+        onPaste?.(event);
+        if (event.defaultPrevented || host == null || field.disabled || field.readOnly) return;
         event.preventDefault();
         host.move(field.paste(index, event.clipboardData.getData("text")));
       }}
       onKeyDown={(event) => {
-        if (host == null) return;
+        onKeyDown?.(event);
+        if (
+          event.defaultPrevented ||
+          isImeComposingEvent(event) ||
+          host == null ||
+          field.disabled ||
+          field.readOnly
+        ) {
+          return;
+        }
         const action = pinInputKeyAction(event.key, index, field.length, field.value);
         if (action.type === "none") return;
         event.preventDefault();
         if (action.type === "move") host.move(action.index);
         if (action.type === "delete") host.move(field.remove(index));
       }}
+      {...rest}
       {...motion.pointerHandlers}
+      aria-invalid={ariaInvalidValue(field.isInvalid)}
+      data-invalid={dataInvalidValue(field.isInvalid)}
+      data-disabled={dataFlag(field.disabled)}
+      data-readonly={dataFlag(field.readOnly)}
+      data-required={dataFlag(field.required && index === 0)}
     />
   );
 });
@@ -144,6 +199,7 @@ export const PinInputShell = forwardRef<HTMLDivElement, PinInputShellProps>(func
     children,
     className,
     motion,
+    onBlur,
     onPointerOver,
     onPointerOut,
     onPointerDown,
@@ -166,6 +222,12 @@ export const PinInputShell = forwardRef<HTMLDivElement, PinInputShellProps>(func
   const [focusIndex, setFocusIndex] = useState(0);
   const separatorAt = field.separator != null ? pinInputSeparatorIndex(field.length) : -1;
   const fieldCount = pinInputFieldCount(children);
+
+  useEffect(() => {
+    if (field.resetVersion) {
+      setFocusIndex(0);
+    }
+  }, [field.resetVersion]);
 
   const register = useCallback((index: number, node: HTMLInputElement | null) => {
     cells.current[index] = node;
@@ -227,10 +289,19 @@ export const PinInputShell = forwardRef<HTMLDivElement, PinInputShellProps>(func
   return (
     <PinFieldHostContext.Provider value={host}>
       <div
-        ref={part.setRef}
+        ref={(node) => {
+          part.setRef(node);
+          field.registerShellRef?.(node);
+        }}
         role="group"
         aria-labelledby={field.labelled ? field.labelId : undefined}
         className={pinInputGroupClass({ slotClass: slotClassNames.shell, className })}
+        onBlur={(event) => {
+          onBlur?.(event);
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            field.notifyBlur?.();
+          }
+        }}
         {...rest}
         {...part.pointerHandlers}
       >

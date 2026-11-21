@@ -89,17 +89,23 @@ export function tabsIndicatorShape(variant: TabsVariant): KitTabsVariant {
   return resolveVariantVisual(variant, KIT_TABS_VARIANTS, "tabs.indicator").key;
 }
 
+export const TABS_PANEL_HIDDEN_CLASS = "hidden";
+
 export function tabsIndicatorClass({
   variant,
+  orientation = "horizontal",
   slotClass,
 }: {
   variant: TabsVariant;
+  orientation?: TabsOrientation;
   slotClass?: string;
 }) {
   const visual = resolveVariantVisual(variant, KIT_TABS_VARIANTS, "tabs.indicator");
   return cn(
     "pointer-events-none absolute z-0 motion-reduce:transition-none",
-    visual.key === "default" ? "rounded-full" : tabsSurfaceRadiusClass(visual.key),
+    visual.key === "default"
+      ? cn("rounded-full", orientation === "vertical" ? "start-0" : "start-0")
+      : tabsSurfaceRadiusClass(visual.key),
     skinVisualClass(visual, INDICATOR_VARIANT_CLASS[visual.key]),
     slotClass,
   );
@@ -128,7 +134,7 @@ export function tabsTabClass({
     visual.key === "secondary";
 
   return cn(
-    "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
+    "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent no-underline outline-none aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-45",
     layout.padX,
     layout.padY,
     isSurface && tabsSurfaceRadiusClass(visual.key),
@@ -154,11 +160,18 @@ export function tabTextVariant(size: TabsSize) {
 }
 
 export function tabsPanelClass({
+  hidden,
   slotClass,
   className,
 }: {
+  hidden?: boolean;
   slotClass?: string;
   className?: string;
 }) {
-  return cn("min-w-0 outline-none focus-ring-inset", slotClass, className);
+  return cn(
+    "min-w-0 outline-none focus-ring-inset",
+    slotClass,
+    className,
+    hidden && TABS_PANEL_HIDDEN_CLASS,
+  );
 }

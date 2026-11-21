@@ -107,15 +107,18 @@ export function SkinProvider({ skin, skins: skinsProp, root = null, children }: 
   useSyncExternalStore(subscribeSkins, getSkinRevision, getSkinRevision);
 
   const mode = islandMode ?? theme?.resolvedTheme ?? domMode;
-  const resolved = resolveNamed(skin, skinsProp);
+  const rawResolved = resolveNamed(skin, skinsProp);
   const catalog = useMemo<SkinCatalog>(() => {
     const map = new Map(parentCatalog?.skins);
     for (const item of skinsProp ?? []) map.set(item.name, item);
-    if (resolved) map.set(resolved.name, resolved);
+    if (rawResolved) map.set(rawResolved.name, rawResolved);
     return { skins: map, registryFallback: true };
-  }, [parentCatalog, skinsProp, resolved]);
-  const motionConfig = resolved?.motion?.config;
+  }, [parentCatalog, skinsProp, rawResolved]);
   bindSkinLookup(catalog);
+  const resolved = rawResolved
+    ? (lookupSkin(rawResolved.name) ?? rawResolved)
+    : rawResolved;
+  const motionConfig = resolved?.motion?.config;
   const own = useMemo(
     () => (resolved ? resolveSkinTokens(resolved, mode) : {}),
     [resolved, mode]);

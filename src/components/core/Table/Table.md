@@ -374,7 +374,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 - **`rowHeader`** на первой колонке — screen reader row headers.
 - **`renderEmptyState` на `Table.Body`** — кастом empty UI. Для motion слота `empty` верните `<Table.Empty>` (CSS — `classNames.emptyCell`).
 - **`virtualized` на `Table.Body`** — вместе с `items` и render-функцией. Скролл — ближайший предок с `overflow-y: auto` (`Table.ScrollContainer` + max-height). Строки одной высоты. Заголовок колонок остаётся сверху (`sticky`).
-- **Края при скролле:** `Table.ScrollContainer` не тянется elastic overscroll (`overscroll-none`), ячейки не отрываются от рамки на macOS и iOS.
+- **Скролл страницы:** `Table.ScrollContainer` не ставит `overscroll-none`, чтобы вертикальный скролл колёсиком/трекпадом свободно передавался общей странице, когда курсор над таблицей.
 - **Не задавайте `transform` на `columnSortIcon`** — конфликт с GSAP rotate.
 - **Порядок мержа:** variant styles → `classNames.slot` → `className` подчасти.
 

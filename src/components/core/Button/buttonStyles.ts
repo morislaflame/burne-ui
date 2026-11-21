@@ -100,13 +100,14 @@ export const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
 };
  
 export const BUTTON_BASE_INTERACTIVE_CLASS =
-  "relative inline-flex items-center justify-center outline-none focus-ring disabled:pointer-events-none";
+  "relative inline-flex items-center justify-center outline-none focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50";
  
  
 export const BUTTON_CONTENT_MOTION_CLASS =
   "relative z-[1] grid w-full min-w-0 place-items-center";
  
-export const BUTTON_CONTENT_MOTION_GROUP_CLASS = "origin-center";
+/** Marker so overlay press scales this node, not the segment shell that paints the fill. */
+export const BUTTON_CONTENT_MOTION_GROUP_CLASS = "button-group-motion origin-center";
  
 export const BUTTON_LABEL_LAYER_CLASS =
   "col-start-1 row-start-1 inline-flex w-full min-w-0 items-center justify-center gap-xsmall";

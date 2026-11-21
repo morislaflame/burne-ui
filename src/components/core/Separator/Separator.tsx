@@ -1,23 +1,27 @@
 import { forwardRef, useMemo, type Ref } from "react";
  
+import { cn } from "@/utils/cn";
+
 import { separatorAriaOrientation } from "./separatorA11y";
 import { resolveSeparatorMotionDefaults, useSeparatorRootMotion } from "./separatorAnimations";
 import { SeparatorMotionProvider } from "./separatorContext";
 import { separatorRootClass } from "./separatorStyles";
 import type { SeparatorPartMotion, SeparatorProps } from "./separatorTypes";
- 
+
 export type {
+  SeparatorClassNames,
   SeparatorOrientation,
   SeparatorProps,
   SeparatorMotion,
   SeparatorPartMotion,
 } from "./separatorTypes";
- 
+
 export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separator(
   {
     orientation = "horizontal",
     decorative = false,
     className = "",
+    classNames,
     motion,
     motionController,
     motionState,
@@ -32,7 +36,7 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
   ref,
 ) {
   const motionDefaults = useMemo(() => resolveSeparatorMotionDefaults(), []);
- 
+
   return (
     <SeparatorMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
         motionState={motionState}
@@ -41,7 +45,7 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separa
       <SeparatorSurface
         orientation={orientation}
         decorative={decorative}
-        className={className}
+        className={cn(classNames?.root, className)}
         forwardedRef={ref}
         rootMotion={motion?.root}
         onPointerOver={onPointerOver}
@@ -80,6 +84,7 @@ function SeparatorSurface({
     | "orientation"
     | "decorative"
     | "className"
+    | "classNames"
     | "motion"
     | "motionController"
     | "onPointerOver"

@@ -44,6 +44,7 @@ export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "ch
   segmented?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
+  disabled?: boolean;
   classNames?: Prettify<ButtonGroupClassNames>;
   children: ReactNode;
   /**
@@ -71,9 +72,10 @@ export type ButtonGroupClassNamesProviderProps = {
 };
  
 export type ButtonGroupSegmentContextValue = {
-  segment: ButtonGroupSegment;
+  segment?: ButtonGroupSegment;
   size: ButtonSize;
   variant?: ButtonVariant;
+  disabled?: boolean;
 };
  
 export type ButtonGroupLayoutContextValue = {

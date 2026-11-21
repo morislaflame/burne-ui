@@ -3,6 +3,7 @@ import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { render } from "@/__tests__/helpers";
+import { Form } from "@/components/composite/Form";
 import { Checkbox } from "@/components/core/Checkbox";
 
 import { CheckboxGroup } from ".";
@@ -93,5 +94,95 @@ describe("CheckboxGroup", () => {
     fireEvent.click(screen.getByRole("checkbox", { name: "B" }));
     expect(screen.getByRole("checkbox", { name: "B" })).not.toBeChecked();
     expect(onValueChange).toHaveBeenLastCalledWith(null);
+  });
+
+  it("cascades readOnly to child checkboxes and preserves indeterminate on click", async () => {
+    const onValuesChange = vi.fn();
+    const { user } = render(
+      <CheckboxGroup readOnly defaultValues={["a"]} onValuesChange={onValuesChange}>
+        <CheckboxGroup.List>
+          <Checkbox value="a" label="A" />
+          <Checkbox value="b" label="B" indeterminate />
+        </CheckboxGroup.List>
+      </CheckboxGroup>,
+    );
+
+    const boxA = screen.getByRole("checkbox", { name: "A" }) as HTMLInputElement;
+    const boxB = screen.getByRole("checkbox", { name: "B" }) as HTMLInputElement;
+    expect(boxA.readOnly).toBe(true);
+    expect(boxB.readOnly).toBe(true);
+    expect(boxB.indeterminate).toBe(true);
+
+    await user.click(boxA);
+    await user.click(boxB);
+    expect(onValuesChange).not.toHaveBeenCalled();
+    expect(boxA.checked).toBe(true);
+    expect(boxB.checked).toBe(false);
+    expect(boxB.indeterminate).toBe(true);
+  });
+
+  it("cascades disabled, readOnly, and validation error from Form", async () => {
+    const { user, rerender } = render(
+      <Form disabled aria-label="Form">
+        <CheckboxGroup name="topics" label="Topics" items={[{ value: "a", label: "A" }]} />
+      </Form>,
+    );
+    expect(screen.getByRole("group", { name: "Topics" })).toBeDisabled();
+    expect(screen.getByRole("checkbox", { name: "A" })).toBeDisabled();
+
+    rerender(
+      <Form readOnly defaultValues={{ topics: ["a"] }} aria-label="Form">
+        <CheckboxGroup name="topics" label="Topics" items={[{ value: "a", label: "A" }, { value: "b", label: "B" }]} />
+      </Form>,
+    );
+    await user.click(screen.getByRole("checkbox", { name: "B" }));
+    expect(screen.getByRole("checkbox", { name: "B" })).not.toBeChecked();
+
+    rerender(
+      <Form
+        defaultValues={{ topics: [] }}
+        rules={{ topics: { required: "Pick at least one" } }}
+        aria-label="Form"
+      >
+        <CheckboxGroup name="topics" label="Topics" items={[{ value: "a", label: "A" }]} />
+        <button type="submit">Submit</button>
+      </Form>,
+    );
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Pick at least one");
+    expect(screen.getByRole("group", { name: "Topics" })).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("restores defaultValues and defaultValue on native form reset", async () => {
+    const { unmount } = render(
+      <form>
+        <Group name="multi" defaultValues={["a"]} />
+        <button type="reset">Reset</button>
+      </form>,
+    );
+    fireEvent.click(screen.getByRole("checkbox", { name: "B" }));
+    expect(screen.getByRole("checkbox", { name: "B" })).toBeChecked();
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset" }));
+    await vi.waitFor(() => {
+      expect(screen.getByRole("checkbox", { name: "A" })).toBeChecked();
+      expect(screen.getByRole("checkbox", { name: "B" })).not.toBeChecked();
+    });
+    unmount();
+
+    render(
+      <form>
+        <Group name="single" selectionMode="single" defaultValue="b" />
+        <button type="reset">Reset</button>
+      </form>,
+    );
+    fireEvent.click(screen.getByRole("checkbox", { name: "A" }));
+    expect(screen.getByRole("checkbox", { name: "A" })).toBeChecked();
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset" }));
+    await vi.waitFor(() => {
+      expect(screen.getByRole("checkbox", { name: "B" })).toBeChecked();
+      expect(screen.getByRole("checkbox", { name: "A" })).not.toBeChecked();
+    });
   });
 });

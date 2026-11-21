@@ -15,6 +15,10 @@ import { usePopoverClassNames, usePopoverContext } from "@/components/core/Popov
 import { dataOpenState } from "@/components/core/utils/dataContract";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import {
+  isNodeInChildOverlayLayer,
+  isTopmostOverlayLayer,
+} from "@/components/core/utils/overlayLayer";
 import { hoverCardTriggerA11y } from "./hoverCardA11y";
 import { useHoverCardTriggerMotion } from "./hoverCardAnimations";
 import { HOVER_CARD_TRIGGER_NAME } from "./hoverCardAPI";
@@ -23,18 +27,19 @@ import { hoverCardTriggerClass } from "./hoverCardStyles";
 import type { HoverCardContentProps, HoverCardTriggerProps } from "./hoverCardTypes";
 
 export function HoverCardEscapeFocus() {
-  const { open, contentRef, triggerRef } = usePopoverContext("HoverCard");
+  const { open, contentRef, triggerRef, layerId } = usePopoverContext("HoverCard");
 
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
+      if (!isTopmostOverlayLayer(layerId)) return;
       const active = document.activeElement;
       if (active && contentRef.current?.contains(active)) focusElement(triggerRef.current);
     };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [contentRef, open, triggerRef]);
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => document.removeEventListener("keydown", onKeyDown, true);
+  }, [contentRef, layerId, open, triggerRef]);
 
   return null;
 }
@@ -58,7 +63,8 @@ export const HoverCardTrigger = forwardRef<HTMLButtonElement, HoverCardTriggerPr
     },
     forwardedRef,
   ) {
-    const { open, popoverId, triggerRef, contentRef } = usePopoverContext("HoverCard.Trigger");
+    const { open, popoverId, triggerRef, contentRef, layerId } =
+      usePopoverContext("HoverCard.Trigger");
     const slotClassNames = usePopoverClassNames();
     const { hold, release } = useHoverCardHost();
     const { setRef, pointerHandlers } = useHoverCardTriggerMotion({
@@ -82,7 +88,8 @@ export const HoverCardTrigger = forwardRef<HTMLButtonElement, HoverCardTriggerPr
     const handleEnter = useCallback(
       (event: PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(event);
-        if (!event.defaultPrevented) hold();
+        if (event.defaultPrevented || event.pointerType === "touch") return;
+        hold();
       },
       [hold, onPointerEnter],
     );
@@ -90,7 +97,8 @@ export const HoverCardTrigger = forwardRef<HTMLButtonElement, HoverCardTriggerPr
     const handleLeave = useCallback(
       (event: PointerEvent<HTMLButtonElement>) => {
         onPointerLeave?.(event);
-        if (!event.defaultPrevented) release();
+        if (event.defaultPrevented || event.pointerType === "touch") return;
+        release();
       },
       [onPointerLeave, release],
     );
@@ -108,10 +116,15 @@ export const HoverCardTrigger = forwardRef<HTMLButtonElement, HoverCardTriggerPr
         onBlur?.(event);
         if (event.defaultPrevented) return;
         const next = event.relatedTarget;
-        if (next instanceof Node && contentRef.current?.contains(next)) return;
+        if (
+          next instanceof Node &&
+          (contentRef.current?.contains(next) || isNodeInChildOverlayLayer(layerId, next))
+        ) {
+          return;
+        }
         release();
       },
-      [contentRef, onBlur, release],
+      [contentRef, layerId, onBlur, release],
     );
 
     const shared = {
@@ -181,6 +194,7 @@ export const HoverCardContent = forwardRef<HTMLDivElement, HoverCardContentProps
     forwardedRef,
   ) {
     const host = useHoverCardHost();
+    const { layerId } = usePopoverContext("HoverCard.Content");
 
     return (
       <Popover.Content
@@ -194,11 +208,19 @@ export const HoverCardContent = forwardRef<HTMLDivElement, HoverCardContentProps
         {...rest}
         onPointerEnter={(event) => {
           onPointerEnter?.(event);
-          if (!event.defaultPrevented) host.hold();
+          if (event.defaultPrevented || event.pointerType === "touch") return;
+          host.hold();
         }}
         onPointerLeave={(event) => {
           onPointerLeave?.(event);
-          if (!event.defaultPrevented) host.release();
+          if (event.defaultPrevented || event.pointerType === "touch") return;
+          if (
+            event.relatedTarget instanceof Node &&
+            isNodeInChildOverlayLayer(layerId, event.relatedTarget)
+          ) {
+            return;
+          }
+          host.release();
         }}
       />
     );

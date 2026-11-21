@@ -82,8 +82,9 @@ export function resolveRangeStart(
   resolvedValue: unknown,
 ): Date | null {
   if (mode !== "range") return null;
-  if (rangePending) return rangePending;
-  return (resolvedValue as CalendarRangeValue)?.start ?? null;
+  if (rangePending) return startOfDay(rangePending);
+  const start = (resolvedValue as CalendarRangeValue)?.start ?? null;
+  return start ? startOfDay(start) : null;
 }
  
 export function resolveRangeEnd(
@@ -93,7 +94,8 @@ export function resolveRangeEnd(
 ): Date | null {
   if (mode !== "range") return null;
   if (rangePending) return null;
-  return (resolvedValue as CalendarRangeValue)?.end ?? null;
+  const end = (resolvedValue as CalendarRangeValue)?.end ?? null;
+  return end ? startOfDay(end) : null;
 }
  
 export function navigateViewDate(
@@ -136,19 +138,23 @@ export function buildDayCellModels({
   const daysInMonth = getDaysInMonth(year, month);
   const offset = getMonthStartOffset(year, month);
  
-  const effectiveRangeEnd = rangeEnd ?? (rangeStart && hoverDate ? hoverDate : null);
+  const normalizedStart = rangeStart ? startOfDay(rangeStart) : null;
+  const normalizedEnd = rangeEnd ? startOfDay(rangeEnd) : null;
+  const normalizedHover = hoverDate ? startOfDay(hoverDate) : null;
+  const effectiveRangeEnd =
+    normalizedEnd ?? (normalizedStart && normalizedHover ? normalizedHover : null);
  
   const rLow =
-    rangeStart && effectiveRangeEnd
-      ? rangeStart <= effectiveRangeEnd
-        ? rangeStart
+    normalizedStart && effectiveRangeEnd
+      ? normalizedStart <= effectiveRangeEnd
+        ? normalizedStart
         : effectiveRangeEnd
       : null;
   const rHigh =
-    rangeStart && effectiveRangeEnd
-      ? rangeStart <= effectiveRangeEnd
+    normalizedStart && effectiveRangeEnd
+      ? normalizedStart <= effectiveRangeEnd
         ? effectiveRangeEnd
-        : rangeStart
+        : normalizedStart
       : null;
  
   const rawCells: (number | null)[] = [
@@ -203,11 +209,77 @@ export function buildDayCellModels({
   });
 }
  
+export function isCalendarMonthDisabled(
+  year: number,
+  month: number,
+  minDate?: Date,
+  maxDate?: Date,
+): boolean {
+  const monthStart = new Date(year, month, 1);
+  const monthEnd = new Date(year, month, getDaysInMonth(year, month));
+  const min = minDate ? startOfDay(minDate) : undefined;
+  const max = maxDate ? startOfDay(maxDate) : undefined;
+  return (!!min && monthEnd < min) || (!!max && monthStart > max);
+}
+
+export function isCalendarYearDisabled(
+  year: number,
+  minDate?: Date,
+  maxDate?: Date,
+): boolean {
+  const yearStart = new Date(year, 0, 1);
+  const yearEnd = new Date(year, 11, 31);
+  const min = minDate ? startOfDay(minDate) : undefined;
+  const max = maxDate ? startOfDay(maxDate) : undefined;
+  return (!!min && yearEnd < min) || (!!max && yearStart > max);
+}
+
+export function canCalendarNavigate(
+  view: CalendarView,
+  viewDate: Date,
+  direction: -1 | 1,
+  minDate?: Date,
+  maxDate?: Date,
+): boolean {
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  if (direction < 0) {
+    if (!minDate) return true;
+    const min = startOfDay(minDate);
+    if (view === "days") {
+      const prevMonthEnd = new Date(year, month, 0);
+      return prevMonthEnd >= min;
+    }
+    if (view === "months") {
+      const prevYearEnd = new Date(year - 1, 11, 31);
+      return prevYearEnd >= min;
+    }
+    const decadeStart = Math.floor(year / 10) * 10;
+    const prevDecadeEnd = new Date(decadeStart - 1, 11, 31);
+    return prevDecadeEnd >= min;
+  }
+  if (!maxDate) return true;
+  const max = startOfDay(maxDate);
+  if (view === "days") {
+    const nextMonthStart = new Date(year, month + 1, 1);
+    return nextMonthStart <= max;
+  }
+  if (view === "months") {
+    const nextYearStart = new Date(year + 1, 0, 1);
+    return nextYearStart <= max;
+  }
+  const decadeStart = Math.floor(year / 10) * 10;
+  const nextDecadeStart = new Date(decadeStart + 10, 0, 1);
+  return nextDecadeStart <= max;
+}
+
 export function buildMonthCellModels(
   viewDate: Date,
   selectedDates: Date[],
   locale: CalendarLocale,
   today: Date,
+  minDate?: Date,
+  maxDate?: Date,
 ): CalendarMonthCellModel[] {
   const year = viewDate.getFullYear();
  
@@ -218,6 +290,7 @@ export function buildMonthCellModels(
     isSelected: selectedDates.some(
       (d) => d.getFullYear() === year && d.getMonth() === month,
     ),
+    disabled: isCalendarMonthDisabled(year, month, minDate, maxDate),
   }));
 }
  
@@ -225,6 +298,8 @@ export function buildYearCellModels(
   viewDate: Date,
   selectedDates: Date[],
   today: Date,
+  minDate?: Date,
+  maxDate?: Date,
 ): CalendarYearCellModel[] {
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
   const years = Array.from({ length: 12 }, (_, i) => decadeStart - 1 + i);
@@ -234,6 +309,7 @@ export function buildYearCellModels(
     isCurrentYear: today.getFullYear() === year,
     isSelected: selectedDates.some((d) => d.getFullYear() === year),
     outOfDecade: year < decadeStart || year > decadeStart + 9,
+    disabled: isCalendarYearDisabled(year, minDate, maxDate),
   }));
 }
  
@@ -293,7 +369,10 @@ export function isCalendarDateDisabled(
   maxDate?: Date,
   isDateUnavailable?: (date: Date) => boolean,
 ): boolean {
-  return (!!minDate && date < minDate) || (!!maxDate && date > maxDate) || !!isDateUnavailable?.(date);
+  const day = startOfDay(date);
+  const min = minDate ? startOfDay(minDate) : undefined;
+  const max = maxDate ? startOfDay(maxDate) : undefined;
+  return (!!min && day < min) || (!!max && day > max) || !!isDateUnavailable?.(day);
 }
  
 export function clampCalendarDate(
@@ -302,35 +381,59 @@ export function clampCalendarDate(
   maxDate?: Date,
 ): Date {
   let next = startOfDay(date);
-  if (minDate && next < minDate) next = startOfDay(minDate);
-  if (maxDate && next > maxDate) next = startOfDay(maxDate);
+  const min = minDate ? startOfDay(minDate) : undefined;
+  const max = maxDate ? startOfDay(maxDate) : undefined;
+  if (min && next < min) next = min;
+  if (max && next > max) next = max;
   return next;
 }
  
 export function resolveInitialFocusDate({
   mode,
   resolvedValue,
+  initialMonth,
   today,
   minDate,
   maxDate,
 }: {
   mode: CalendarMode;
   resolvedValue: unknown;
+  initialMonth?: Date;
   today: Date;
   minDate?: Date;
   maxDate?: Date;
 }): Date {
-  const selected = resolveSelectedDates(mode, resolvedValue)[0];
-  if (selected) return clampCalendarDate(selected, minDate, maxDate);
- 
-  if (mode === "range") {
-    const start = resolveRangeStart(mode, null, resolvedValue);
-    if (start) return clampCalendarDate(start, minDate, maxDate);
+  const candidateFromValue =
+    resolveSelectedDates(mode, resolvedValue)[0] ??
+    (mode === "range" ? resolveRangeStart(mode, null, resolvedValue) : null);
+
+  if (initialMonth) {
+    const mYear = initialMonth.getFullYear();
+    const mMonth = initialMonth.getMonth();
+    if (
+      candidateFromValue &&
+      candidateFromValue.getFullYear() === mYear &&
+      candidateFromValue.getMonth() === mMonth
+    ) {
+      return clampCalendarDate(candidateFromValue, minDate, maxDate);
+    }
+    if (today.getFullYear() === mYear && today.getMonth() === mMonth) {
+      return clampCalendarDate(today, minDate, maxDate);
+    }
+    return clampCalendarDate(new Date(mYear, mMonth, 1), minDate, maxDate);
   }
- 
+
+  if (candidateFromValue) return clampCalendarDate(candidateFromValue, minDate, maxDate);
   return clampCalendarDate(today, minDate, maxDate);
 }
  
+function resolveRtlHorizontalKey(key: string, rtl: boolean): string {
+  if (!rtl) return key;
+  if (key === "ArrowLeft") return "ArrowRight";
+  if (key === "ArrowRight") return "ArrowLeft";
+  return key;
+}
+
 /**
  * APG Date Picker day-grid keyboard move.
  * Arrow ±day / ±week, Home/End week bounds, PageUp/Down ±month (Shift = ±year).
@@ -342,10 +445,12 @@ export function moveCalendarFocusDate(
   minDate?: Date,
   maxDate?: Date,
   isDateUnavailable?: (date: Date) => boolean,
+  rtl = false,
 ): Date | null {
+  const effectiveKey = resolveRtlHorizontalKey(key, rtl);
   let next: Date | null = null;
  
-  switch (key) {
+  switch (effectiveKey) {
     case "ArrowLeft":
       next = addCalendarDays(current, -1);
       break;
@@ -382,21 +487,26 @@ export function moveCalendarFocusDate(
       return null;
   }
  
-  next = clampCalendarDate(next, minDate, maxDate);
+  const min = minDate ? startOfDay(minDate) : undefined;
+  const max = maxDate ? startOfDay(maxDate) : undefined;
+  next = clampCalendarDate(next, min, max);
  
-  if (isCalendarDateDisabled(next, minDate, maxDate, isDateUnavailable)) {
+  if (isCalendarDateDisabled(next, min, max, isDateUnavailable)) {
     const direction =
-      key === "ArrowLeft" || key === "ArrowUp" || key === "Home" || key === "PageUp"
+      effectiveKey === "ArrowLeft" ||
+      effectiveKey === "ArrowUp" ||
+      effectiveKey === "Home" ||
+      effectiveKey === "PageUp"
         ? -1
         : 1;
     let cursor = next;
     for (let i = 0; i < 366; i++) {
       cursor = addCalendarDays(cursor, direction);
-      cursor = clampCalendarDate(cursor, minDate, maxDate);
-      if (!isCalendarDateDisabled(cursor, minDate, maxDate, isDateUnavailable)) return cursor;
+      cursor = clampCalendarDate(cursor, min, max);
+      if (!isCalendarDateDisabled(cursor, min, max, isDateUnavailable)) return cursor;
       if (
-        (direction < 0 && minDate && isSameDay(cursor, minDate)) ||
-        (direction > 0 && maxDate && isSameDay(cursor, maxDate))
+        (direction < 0 && min && isSameDay(cursor, min)) ||
+        (direction > 0 && max && isSameDay(cursor, max))
       ) {
         break;
       }
@@ -411,8 +521,10 @@ export function moveCalendarFocusDate(
 export function moveCalendarMonthFocusIndex(
   current: number,
   key: string,
+  rtl = false,
 ): number | null {
-  switch (key) {
+  const effectiveKey = resolveRtlHorizontalKey(key, rtl);
+  switch (effectiveKey) {
     case "ArrowLeft":
       return current > 0 ? current - 1 : 11;
     case "ArrowRight":
@@ -434,8 +546,10 @@ export function moveCalendarMonthFocusIndex(
 export function moveCalendarYearFocusIndex(
   current: number,
   key: string,
+  rtl = false,
 ): number | null {
-  switch (key) {
+  const effectiveKey = resolveRtlHorizontalKey(key, rtl);
+  switch (effectiveKey) {
     case "ArrowLeft":
       return current > 0 ? current - 1 : 11;
     case "ArrowRight":

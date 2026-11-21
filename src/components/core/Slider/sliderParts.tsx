@@ -297,17 +297,26 @@ function SliderTrackHost({
   const state = useSliderTrackState(props, forwardedRef ?? null);
   const scope = useOptionalSliderMotionScope();
   useSliderTrackSlotMotion(scope, state.valueIdentity, state.disabled);
+  const {
+    onPointerOver,
+    onPointerOut,
+    onPointerUp,
+    ...domTrackRest
+  } = state.trackRest;
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "track",
     forwardedRef: state.setTrackRef,
     pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
     onPointerDown: state.handleTrackPointerDown,
+    onPointerUp,
   });
  
   return (
     <div
-      {...state.trackRest}
+      {...domTrackRest}
       ref={setRef}
       role="presentation"
       className={state.trackHitClass}

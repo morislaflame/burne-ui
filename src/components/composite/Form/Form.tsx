@@ -45,6 +45,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     disabled,
     onSubmit,
     onSubmitError,
+    onReset,
     errorSummary,
     motion,
     motionController,
@@ -64,6 +65,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     shellIds,
     bindingValue,
     handleSubmit,
+    handleReset,
     hasErrors,
     announce,
   } = useFormRootState({
@@ -77,6 +79,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     disabled,
     onSubmit,
     onSubmitError,
+    onReset,
     classNames,
   });
   const motionDefaults = useMemo(() => resolveFormMotionDefaults(), []);
@@ -92,6 +95,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
             <FormRootSurface
               forwardedRef={ref}
               handleSubmit={handleSubmit}
+              handleReset={handleReset}
               titleId={shellIds.titleId}
               descriptionId={shellIds.descriptionId}
               errorSummaryId={shellIds.errorSummaryId}
@@ -121,6 +125,7 @@ FormRoot.displayName = "Form";
 function FormRootSurface({
   forwardedRef,
   handleSubmit,
+  handleReset,
   titleId,
   descriptionId,
   errorSummaryId,
@@ -139,6 +144,7 @@ function FormRootSurface({
 }: {
   forwardedRef: ForwardedRef<HTMLFormElement>;
   handleSubmit: FormEventHandler<HTMLFormElement>;
+  handleReset: FormEventHandler<HTMLFormElement>;
   titleId: string;
   descriptionId: string;
   errorSummaryId: string;
@@ -168,9 +174,13 @@ function FormRootSurface({
     | "disabled"
     | "onSubmit"
     | "onSubmitError"
+    | "onReset"
     | "errorSummary"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
     | "onPointerOver"
     | "onPointerOut"
     | "onPointerDown"
@@ -192,6 +202,7 @@ function FormRootSurface({
       ref={part.setRef}
       noValidate
       onSubmit={handleSubmit}
+      onReset={handleReset}
       aria-labelledby={formRootLabelledBy(titleId)}
       aria-describedby={formRootDescribedBy({
         descriptionId,

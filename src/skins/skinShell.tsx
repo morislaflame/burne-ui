@@ -1,5 +1,6 @@
 import { cloneElement, createElement, forwardRef, isValidElement, type CSSProperties, type HTMLAttributes, type PointerEventHandler, type ReactElement, type ReactNode } from "react";
 
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import {
   useMotionPart,
   useOptionalEnterOnMount,
@@ -152,15 +153,19 @@ export const SkinShell = forwardRef<HTMLElement, SkinShellProps>(function SkinSh
 
   if (fallback && isValidElement(fallback)) {
     const fallbackStyle = (fallback.props as { style?: CSSProperties }).style;
-    return cloneElement(
+    const mergedFallbackProps = mergeAsChildProps(
       fallback,
       {
-        className: cn(fallback.props.className, shellClass),
+        className: shellClass,
         ...(domRest as HTMLAttributes<HTMLElement>),
         style: mergeStyle(declarative?.wrapper?.style, fallbackStyle, restStyle),
         ...pointer,
-        ref: partMotion.setRef,
-      } as Partial<typeof fallback.props>,
+      },
+      partMotion.setRef,
+    );
+    return cloneElement(
+      fallback,
+      mergedFallbackProps as Partial<typeof fallback.props>,
       before,
       body,
       after,

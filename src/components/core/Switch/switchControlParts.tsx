@@ -1,20 +1,22 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useId, useLayoutEffect, useMemo, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent, type ReactNode, type Ref } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type FocusEvent, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactNode, type Ref } from "react";
  
-import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { useSkinVariant } from "@/skins/skinContext";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
+import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { useControllableState } from "@/components/core/utils/useControllableState";
  
 import { hasSwitchThumbChild, partitionSwitchControlChildren } from "./switchAPI";
 import { switchFallbackAriaLabel, switchInputId } from "./switchA11y";
 import { useOptionalSwitchFieldContext, useSwitchClassNames } from "./switchContext";
 import { SWITCH_INPUT_VISUALLY_HIDDEN_CLASS, switchControlCellClass, switchControlClass } from "./switchStyles";
-import type { SwitchControlProps } from "./switchTypes";
+import type { SwitchControlProps, SwitchTrackProps } from "./switchTypes";
 import { SwitchFill, SwitchTrack } from "./switchTrackParts";
  
-import { dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
@@ -29,18 +31,19 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
       thickness,
       className,
       classNames: controlClassNames,
-      disabled,
+      disabled: disabledProp,
       checked,
       defaultChecked,
       onChange,
+      onClick,
       id: idProp,
       name,
       value,
-      required,
+      required: requiredProp,
       form,
       autoFocus,
       tabIndex,
-      readOnly,
+      readOnly: readOnlyProp,
       onBlur,
       onFocus,
       onPointerDown,
@@ -70,40 +73,77 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
     const hintId = fieldCtx?.hintId ?? `${inputId}-hint`;
     const errorId = fieldCtx?.errorId ?? `${inputId}-error`;
     const size = sizeProp ?? fieldCtx?.size ?? "base";
+    const resolvedDisabledInput = disabledProp ?? fieldCtx?.disabledProp;
+    const resolvedReadOnlyInput = readOnlyProp ?? fieldCtx?.readOnlyProp;
+    const resolvedRequired = Boolean(requiredProp ?? fieldCtx?.required);
  
-    const formBinding = useFormControlProps({
+    const formBinding = useFormFieldBinding({
       name: typeof name === "string" ? name : undefined,
       value: checked,
-      onChange: onChange as ((event: unknown) => void) | undefined,
-      onBlur: onBlur as ((event: unknown) => void) | undefined,
-      disabled,
-      readOnly,
-      type: "checkbox",
+      disabled: resolvedDisabledInput,
+      readOnly: resolvedReadOnlyInput,
     });
-    const resolvedReadOnly = Boolean(formBinding.readOnly);
-    const resolvedDisabled = formBinding.disabled ?? disabled;
-    const formChecked = formBinding.bound ? Boolean(formBinding.checked) : undefined;
+    const formBound = formBinding.bound;
+    const resolvedReadOnly = Boolean(resolvedReadOnlyInput ?? formBinding.readOnly);
+    const resolvedDisabled = Boolean(resolvedDisabledInput ?? formBinding.disabled);
+    const formChecked = formBound ? Boolean(formBinding.value) : undefined;
     const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
       value: formChecked ?? checked,
       defaultValue: Boolean(defaultChecked),
     });
     const [squeezeToken, setSqueezeToken] = useState(0);
+    const inputElementRef = useRef<HTMLInputElement | null>(null);
+ 
+    useNativeFormReset(
+      inputElementRef,
+      () => {
+        setMergedChecked(Boolean(defaultChecked));
+      },
+      !isControlled && !formBound,
+    );
  
     useLayoutEffect(() => {
       fieldCtx?.setMergedChecked(mergedChecked);
     }, [fieldCtx, mergedChecked]);
  
+    const isInvalid = useResolvedFieldInvalid({
+      invalid: fieldCtx?.invalidProp,
+      errorConnected: fieldCtx?.errorConnected ?? false,
+      formInvalid: Boolean(formBound && formBinding.error),
+    });
+ 
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
-        if (resolvedReadOnly) {
+        if (resolvedReadOnly || resolvedDisabled) {
           e.preventDefault();
           return;
         }
         const next = e.target.checked;
         if (!isControlled) setMergedChecked(next);
-        formBinding.onChange(e);
+        onChange?.(e);
+        if (e.defaultPrevented) return;
+        if (formBound) formBinding.setValue(next);
       },
-      [formBinding, isControlled, resolvedReadOnly, setMergedChecked],
+      [formBinding, formBound, isControlled, onChange, resolvedDisabled, resolvedReadOnly, setMergedChecked],
+    );
+ 
+    const handleClick = useCallback(
+      (event: MouseEvent<HTMLInputElement>) => {
+        if (resolvedReadOnly) {
+          event.preventDefault();
+          return;
+        }
+        onClick?.(event);
+      },
+      [onClick, resolvedReadOnly],
+    );
+ 
+    const handleBlur = useCallback(
+      (event: FocusEvent<HTMLInputElement>) => {
+        onBlur?.(event);
+        if (formBound) formBinding.onBlur();
+      },
+      [formBinding, formBound, onBlur],
     );
  
     const handlePointerDown = useCallback(
@@ -128,7 +168,7 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
  
     const { "aria-label": ariaLabelProp, ...inputRest } = rest;
  
-    const trackDefaults = {
+    const trackDefaults: SwitchTrackProps = {
       size,
       thickness,
       checked: mergedChecked,
@@ -159,9 +199,28 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
     let trackVisual: ReactNode;
  
     if (compoundTrack != null) {
-      trackVisual = isValidElement(compoundTrack)
-        ? cloneElement(compoundTrack, trackDefaults)
-        : compoundTrack;
+      if (isValidElement<SwitchTrackProps>(compoundTrack)) {
+        const childProps = compoundTrack.props;
+        trackVisual = cloneElement(compoundTrack, {
+          ...trackDefaults,
+          ...childProps,
+          size: childProps.size ?? trackDefaults.size,
+          checked: childProps.checked ?? trackDefaults.checked,
+          disabled: childProps.disabled ?? trackDefaults.disabled,
+          variant: childProps.variant ?? trackDefaults.variant,
+          squeezeToken: childProps.squeezeToken ?? trackDefaults.squeezeToken,
+          classNames: {
+            ...trackDefaults.classNames,
+            ...childProps.classNames,
+          },
+          motionController: childProps.motionController ?? motionController,
+          motionState: childProps.motionState ?? motionState,
+          motionPayload: childProps.motionPayload ?? motionPayload,
+          playInitialState: childProps.playInitialState ?? playInitialState,
+        });
+      } else {
+        trackVisual = compoundTrack;
+      }
     } else if (hasThumbChild) {
       trackVisual = (
         <SwitchTrack {...trackDefaults} motionController={motionController}
@@ -192,9 +251,16 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
           slotClassNames.control,
           className,
         )}
+        data-state={dataOnState(mergedChecked)}
+        data-disabled={dataFlag(resolvedDisabled)}
+        data-readonly={dataFlag(resolvedReadOnly)}
+        data-invalid={dataFlag(isInvalid)}
+        data-required={dataFlag(resolvedRequired)}
       >
         <input
+          {...inputRest}
           ref={(node) => {
+            inputElementRef.current = node;
             formBinding.ref(node);
             if (typeof inputRef === "function") inputRef(node);
             else if (inputRef) inputRef.current = node;
@@ -210,18 +276,16 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
           disabled={resolvedDisabled}
           name={formBinding.name ?? name}
           {...(value != null ? { value } : null)}
-          required={required}
-          aria-required={required || undefined}
-          aria-invalid={fieldCtx?.isInvalid || formBinding["aria-invalid"] ? true : undefined}
+          required={resolvedRequired || undefined}
+          aria-required={resolvedRequired || undefined}
+          aria-invalid={isInvalid ? true : undefined}
           aria-readonly={resolvedReadOnly || undefined}
           form={form}
           autoFocus={autoFocus}
           tabIndex={tabIndex}
-          readOnly={resolvedReadOnly || (isControlled && onChange === undefined && !formBinding.bound)}
-          onClick={(event) => {
-            if (resolvedReadOnly) event.preventDefault();
-          }}
-          onBlur={formBinding.onBlur}
+          readOnly={resolvedReadOnly || (isControlled && onChange === undefined && !formBound)}
+          onClick={handleClick}
+          onBlur={handleBlur}
           onFocus={onFocus}
           aria-describedby={joinFieldDescribedBy(
             fieldCtx?.hintConnected ? hintId : undefined,
@@ -236,11 +300,12 @@ export const SwitchControl = forwardRef<HTMLElement, SwitchControlProps>(
           {...(isControlled
             ? { checked: mergedChecked, onChange: handleChange }
             : { defaultChecked, onChange: handleChange })}
-          {...inputRest}
           {...dataVariantProps({ size, variant })}
-          data-invalid={fieldCtx?.isInvalid ? "" : undefined}
           data-state={dataOnState(mergedChecked)}
-          data-readonly={resolvedReadOnly ? "" : undefined}
+          data-disabled={dataFlag(resolvedDisabled)}
+          data-readonly={dataFlag(resolvedReadOnly)}
+          data-invalid={dataFlag(isInvalid)}
+          data-required={dataFlag(resolvedRequired)}
         />
         {trackVisual}
       </ControlTag>

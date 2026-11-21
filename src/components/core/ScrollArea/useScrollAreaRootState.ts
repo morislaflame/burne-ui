@@ -1,8 +1,11 @@
-import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 
 import {
   EMPTY_SCROLL_METRICS,
   SCROLL_AREA_HIDE_DELAY,
+  detectCompoundScrollAxes,
   paintScrollThumb,
   scrollAreaBarActive,
   scrollAreaIsCompound,
@@ -12,6 +15,7 @@ import {
 import type {
   ScrollAreaBarRegistration,
   ScrollAreaContextValue,
+  ScrollAreaOrientation,
   ScrollAreaProps,
   ScrollAxis,
 } from "./scrollAreaTypes";
@@ -20,7 +24,7 @@ export function useScrollAreaRootState({
   children,
   id,
   visibility = "hover",
-  orientation = "vertical",
+  orientation: orientationProp,
   scrollHideDelay = SCROLL_AREA_HIDE_DELAY,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
@@ -41,6 +45,7 @@ export function useScrollAreaRootState({
   const hideTimer = useRef(0);
   const draggingRef = useRef({ vertical: false, horizontal: false });
   const [overflow, setOverflow] = useState({ vertical: false, horizontal: false });
+  const [hasBars, setHasBars] = useState({ vertical: false, horizontal: false });
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [scrolling, setScrolling] = useState(false);
@@ -49,6 +54,27 @@ export function useScrollAreaRootState({
     vertical: { now: 0, max: 0 },
     horizontal: { now: 0, max: 0 },
   });
+
+  const isCompound = useMemo(() => scrollAreaIsCompound(children), [children]);
+  const compoundAxes = useMemo(
+    () => (isCompound ? detectCompoundScrollAxes(children) : { vertical: false, horizontal: false }),
+    [children, isCompound],
+  );
+  const orientation: ScrollAreaOrientation = useMemo(() => {
+    if (!isCompound) return orientationProp ?? "vertical";
+    const allowVertical =
+      (orientationProp ? orientationProp !== "horizontal" : false) ||
+      compoundAxes.vertical ||
+      hasBars.vertical ||
+      (!compoundAxes.horizontal && !hasBars.horizontal && orientationProp === undefined);
+    const allowHorizontal =
+      (orientationProp ? orientationProp !== "vertical" : false) ||
+      compoundAxes.horizontal ||
+      hasBars.horizontal;
+    if (allowVertical && allowHorizontal) return "both";
+    if (allowHorizontal) return "horizontal";
+    return "vertical";
+  }, [compoundAxes.horizontal, compoundAxes.vertical, hasBars.horizontal, hasBars.vertical, isCompound, orientationProp]);
 
   const paint = useCallback(() => {
     const viewport = viewportRef.current;
@@ -77,8 +103,8 @@ export function useScrollAreaRootState({
       xTrack,
     );
     axesRef.current = { vertical, horizontal };
-    if (verticalBar) paintScrollThumb(verticalBar, vertical);
-    if (horizontalBar) paintScrollThumb(horizontalBar, horizontal);
+    if (verticalBar) paintScrollThumb(verticalBar, vertical, false);
+    if (horizontalBar) paintScrollThumb(horizontalBar, horizontal, isRtlElement(viewport));
     setOverflow((prev) =>
       prev.vertical === vertical.overflowing && prev.horizontal === horizontal.overflowing
         ? prev
@@ -133,19 +159,44 @@ export function useScrollAreaRootState({
     paint();
   }, [overflow.vertical, overflow.horizontal, paint]);
 
+  useEffect(
+    () => () => {
+      window.clearTimeout(hideTimer.current);
+      hideTimer.current = 0;
+    },
+    [],
+  );
+
+  const syncHasBars = useCallback(() => {
+    let v = false;
+    let h = false;
+    for (const item of barsRef.current) {
+      if (item.axis === "vertical") v = true;
+      if (item.axis === "horizontal") h = true;
+    }
+    setHasBars((prev) => (prev.vertical === v && prev.horizontal === h ? prev : { vertical: v, horizontal: h }));
+  }, []);
+
   const registerBar = useCallback((bar: ScrollAreaBarRegistration) => {
     barsRef.current.add(bar);
+    syncHasBars();
     paint();
     return () => {
       barsRef.current.delete(bar);
+      syncHasBars();
     };
-  }, [paint]);
+  }, [paint, syncHasBars]);
 
   const setDragging = useCallback((axis: ScrollAxis, next: boolean) => {
     draggingRef.current = { ...draggingRef.current, [axis]: next };
     setDraggingState({ ...draggingRef.current });
-    if (next) setScrolling(true);
-  }, []);
+    if (next) {
+      window.clearTimeout(hideTimer.current);
+      setScrolling(true);
+    } else if (!draggingRef.current.vertical && !draggingRef.current.horizontal) {
+      markScrolling();
+    }
+  }, [markScrolling]);
 
   const setHoveredStable = useCallback((next: boolean) => {
     setHovered(next);
@@ -187,17 +238,18 @@ export function useScrollAreaRootState({
       viewportRef,
       axesRef,
       overflow,
+      hasBars,
       aria,
       barActive,
       registerBar,
       setDragging,
     }),
-    [aria, ariaLabel, ariaLabelledBy, barActive, orientation, overflow, registerBar, setDragging, viewportId, visibility],
+    [aria, ariaLabel, ariaLabelledBy, barActive, hasBars, orientation, overflow, registerBar, setDragging, viewportId, visibility],
   );
 
   return {
     contextValue,
-    isCompound: scrollAreaIsCompound(children),
+    isCompound,
     setHovered: setHoveredStable,
     setFocused: setFocusedStable,
   };

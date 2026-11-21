@@ -24,11 +24,13 @@ export const SIDEBAR_EDGE_CLASS = {
 export function sidebarRootClass({
   width,
   side,
+  variant = "default",
   slotClass,
   className,
 }: {
   width: SidebarWidth;
   side: SidebarSide;
+  variant?: string;
   slotClass?: string;
   className?: string;
 }): string {
@@ -36,7 +38,7 @@ export function sidebarRootClass({
     SIDEBAR_BASE_CLASS,
     SIDEBAR_WIDTH_CLASS[width],
     SIDEBAR_EDGE_CLASS[side],
-    layoutTargetClass("sidebar.root"),
+    layoutTargetClass("sidebar.root", variant),
     slotClass,
     className,
   );

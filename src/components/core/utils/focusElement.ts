@@ -32,7 +32,7 @@ type FocusOptionsWithVisible = FocusOptions & { focusVisible?: boolean };
 const FOCUSABLE_SELECTOR = [
   "button:not([disabled])",
   "[href]",
-  "input:not([disabled])",
+  'input:not([type="hidden"]):not([disabled])',
   "select:not([disabled])",
   "textarea:not([disabled])",
   '[tabindex]:not([tabindex="-1"])',
@@ -71,7 +71,7 @@ export function isFocusVisibleElement(el: Element | null | undefined): boolean {
 export function getFirstFocusable(root: HTMLElement): HTMLElement | null {
   const nodes = root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
   for (const el of nodes) {
-    if (el.closest("[aria-hidden='true']")) continue;
+    if (el.closest("[aria-hidden='true'], [inert], [hidden]")) continue;
     return el;
   }
   return null;

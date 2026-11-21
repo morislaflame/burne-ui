@@ -1,10 +1,12 @@
-import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
+import { forwardRef, useCallback, useMemo, useRef, type ForwardedRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { Popover } from "@/components/core/Popover";
-import { FieldHiddenValues, readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
+import { dataFlag } from "@/components/core/utils/dataContract";
+import { FieldHiddenValues, readOnlyData, useFieldControlFocus, useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 import { cn } from "@/utils/cn";
  
 import { resolveColorPickerMotionDefaults } from "./colorPickerAnimations";
@@ -65,7 +67,7 @@ export const ColorPickerRoot = forwardRef(function ColorPickerRoot({
   collisionPadding,
   avoidCollisions,
   portalContainer,
-  disabled = false,
+  disabled: disabledProp,
   autoFocus,
   tabIndex,
   "aria-invalid": ariaInvalid,
@@ -79,7 +81,7 @@ export const ColorPickerRoot = forwardRef(function ColorPickerRoot({
   playInitialState,
   ...rest
 }: ColorPickerProps, ref: ForwardedRef<HTMLDivElement>) {
-  const { contextValue, isCompound } = useColorPickerRootState({
+  const { contextValue, isCompound, isControlled, resetToDefault } = useColorPickerRootState({
     children,
     label,
     hint,
@@ -92,15 +94,29 @@ export const ColorPickerRoot = forwardRef(function ColorPickerRoot({
     defaultValue,
     onValueChange,
     size,
-    disabled,
+    disabled: disabledProp,
     autoFocus,
     tabIndex,
     invalid,
     "aria-invalid": ariaInvalid,
   });
+  const [openState, setOpenState] = useControllableState({
+    value: openProp,
+    defaultValue: Boolean(defaultOpen),
+  });
+  const effectiveOpen = contextValue.disabled ? false : openState;
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (contextValue.disabled && nextOpen) return;
+      setOpenState(nextOpen);
+      onOpenChange?.(nextOpen);
+    },
+    [contextValue.disabled, onOpenChange, setOpenState],
+  );
   const motionDefaults = useMemo(() => resolveColorPickerMotionDefaults(), []);
   const focusRef = useRef<HTMLDivElement>(null);
   useFieldControlFocus(focusRef, autoFocus, tabIndex);
+  useNativeFormReset(focusRef, resetToDefault, !isControlled);
   const fieldLabel = useMemo(
     () => ({
       controlId: contextValue.triggerId,
@@ -120,14 +136,17 @@ export const ColorPickerRoot = forwardRef(function ColorPickerRoot({
           <FieldLabelContext.Provider value={fieldLabel}>
             <Field
               ref={mergeRefs(ref, focusRef)}
+              invalid={contextValue.invalid}
               className={cn(classNames?.root, className)}
               {...rest}
+              data-disabled={dataFlag(contextValue.disabled)}
               data-readonly={readOnlyData(contextValue.readOnly)}
+              data-invalid={dataFlag(contextValue.invalid)}
+              data-required={dataFlag(contextValue.required)}
             >
               <Popover
-                open={openProp}
-                defaultOpen={defaultOpen}
-                onOpenChange={onOpenChange}
+                open={effectiveOpen}
+                onOpenChange={handleOpenChange}
                 size={size}
                 side={side}
                 align={align}

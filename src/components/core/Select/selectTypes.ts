@@ -211,6 +211,7 @@ export type SelectTriggerProps = HTMLAttributes<HTMLButtonElement> & {
 export type UseSelectShellAnimationsProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   disabled: boolean;
+  readOnly?: boolean;
   variant: InputVariant;
   groupSegment: unknown;
   motion?: SelectPartMotion;

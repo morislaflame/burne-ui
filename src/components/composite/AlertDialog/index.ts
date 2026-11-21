@@ -21,6 +21,7 @@ export { useAlertDialog, type AlertDialogContextValue } from "./useAlertDialog";
  
 export type {
   AlertDialogProps,
+  AlertDialogOverlayProps,
   AlertDialogPanelProps,
   AlertDialogTriggerProps,
   AlertDialogSize,

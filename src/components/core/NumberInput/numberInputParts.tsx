@@ -1,7 +1,12 @@
 import { Children, forwardRef, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 
 import { Field } from "@/components/core/Field";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { dataFlag } from "@/components/core/utils/dataContract";
+import {
+  isImeComposingEvent,
+  isInteractiveDescendantTarget,
+} from "@/components/core/utils/fieldFormDom";
 import { ariaInvalidValue, dataInvalidValue, fieldPaintStatus } from "@/components/core/utils/fieldInvalid";
 import { KitAdd, KitRemove } from "@/components/core/utils/kitIcons";
 import { cn } from "@/utils/cn";
@@ -35,9 +40,30 @@ function NumberInputShell({ children }: { children?: ReactNode }) {
   const slotClassNames = useNumberInputClassNames();
   const shell = useNumberInputShellMotion();
 
+  const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    if (field.disabled) return;
+    const inputEl = field.inputRef.current;
+    if (!inputEl) return;
+    if (!isInteractiveDescendantTarget(event.target, inputEl) && document.activeElement === inputEl) {
+      event.preventDefault();
+    }
+  };
+
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (field.disabled) return;
+    const inputEl = field.inputRef.current;
+    if (!inputEl) return;
+    if (!isInteractiveDescendantTarget(event.target, inputEl) && document.activeElement !== inputEl) {
+      inputEl.focus();
+    }
+  };
+
   return (
     <div
       ref={shell.setRef}
+      role="presentation"
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
       className={numberInputShellClass({
         size: field.size,
         variant: field.variant,
@@ -124,6 +150,7 @@ export const NumberInputControl = forwardRef<HTMLInputElement, NumberInputContro
       onPointerOut,
       onPointerDown,
       onPointerUp,
+      "aria-describedby": ariaDescribedByProp,
       ...rest
     },
     ref,
@@ -146,7 +173,14 @@ export const NumberInputControl = forwardRef<HTMLInputElement, NumberInputContro
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(event);
-      if (event.defaultPrevented || field.disabled || field.readOnly) return;
+      if (
+        event.defaultPrevented ||
+        isImeComposingEvent(event) ||
+        field.disabled ||
+        field.readOnly
+      ) {
+        return;
+      }
       if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
       event.preventDefault();
       field.nudge(event.key === "ArrowUp" ? 1 : -1);
@@ -178,7 +212,7 @@ export const NumberInputControl = forwardRef<HTMLInputElement, NumberInputContro
         aria-valuetext={field.valueText}
         aria-valuemin={field.min}
         aria-valuemax={field.max}
-        aria-describedby={field.describedBy}
+        aria-describedby={joinFieldDescribedBy(field.describedBy, ariaDescribedByProp)}
         data-invalid={dataInvalidValue(field.isInvalid)}
         data-disabled={dataFlag(field.disabled)}
         data-readonly={dataFlag(field.readOnly)}
@@ -422,14 +456,18 @@ export const NumberInputError = forwardRef<HTMLElement, NumberInputErrorProps>(
 
 NumberInputError.displayName = "NumberInputError";
 
-export function NumberInputSimpleBody() {
+export function NumberInputSimpleBody({
+  controlProps,
+}: {
+  controlProps?: Pick<NumberInputControlProps, "aria-label" | "aria-labelledby" | "aria-describedby">;
+} = {}) {
   const field = useNumberInputContext();
   return (
     <>
       {field.label != null ? <NumberInputLabel /> : null}
       <NumberInputShell>
         <NumberInputDecrement />
-        <NumberInputControl />
+        <NumberInputControl {...controlProps} />
         <NumberInputIncrement />
       </NumberInputShell>
       {field.hint != null ? <NumberInputHint /> : null}

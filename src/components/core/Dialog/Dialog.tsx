@@ -31,6 +31,7 @@ export function DialogRoot({
   defaultOpen = false,
   onOpenChange,
   size = "base",
+  variant,
   children,
   classNames,
   motion,
@@ -45,6 +46,7 @@ export function DialogRoot({
     defaultOpen,
     onOpenChange,
     size,
+    variant,
     portalContainer,
   });
  

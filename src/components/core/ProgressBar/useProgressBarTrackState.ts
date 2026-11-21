@@ -4,7 +4,11 @@ import { clampNumber } from "@/components/core/utils/clampNumber";
  
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
-import { defaultProgressBarFormatValue, progressBarValueToPercent } from "./progressBarAPI";
+import {
+  defaultProgressBarFormatValue,
+  progressBarValueToPercent,
+  resolveProgressBarBounds,
+} from "./progressBarAPI";
 import { progressBarLabelId, resolveProgressBarDescribedBy, resolveProgressBarTrackAria } from "./progressBarA11y";
 import { useOptionalProgressBarFieldContext } from "./progressBarContext";
 import { progressBarFillColorStyle, progressBarTrackCrossStyle } from "./progressBarStyles";
@@ -18,7 +22,7 @@ export function useProgressBarTrackState({
   size = "base",
   thickness,
   color,
-  status,
+  status: statusProp,
   formatValue = defaultProgressBarFormatValue,
   orientation: orientationProp,
   "aria-describedby": ariaDescribedByProp,
@@ -26,18 +30,27 @@ export function useProgressBarTrackState({
   const fieldCtx = useOptionalProgressBarFieldContext();
   const loadingStatus = useBurneLabel("loadingStatus");
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
+  const status = statusProp ?? fieldCtx?.status;
   const progressId = fieldCtx?.progressId;
   const labelId = progressId != null ? progressBarLabelId(progressId) : undefined;
+  const labelConnected = fieldCtx?.labelConnected ?? false;
   const hintConnected = fieldCtx?.hintConnected ?? false;
   const errorConnected = fieldCtx?.errorConnected ?? false;
  
+  const { safeMin, safeMax } = useMemo(
+    () => resolveProgressBarBounds(min, max),
+    [max, min],
+  );
   const clampedValue = useMemo(
-    () => clampNumber(value, min, max),
-    [max, min, value],
+    () =>
+      value === Number.POSITIVE_INFINITY
+        ? safeMax
+        : clampNumber(value, safeMin, safeMax),
+    [safeMax, safeMin, value],
   );
   const percent = useMemo(
-    () => progressBarValueToPercent(clampedValue, min, max),
-    [clampedValue, max, min],
+    () => progressBarValueToPercent(clampedValue, safeMin, safeMax),
+    [clampedValue, safeMax, safeMin],
   );
  
   const isHorizontal = orientation === "horizontal";
@@ -56,10 +69,11 @@ export function useProgressBarTrackState({
  
   const aria = resolveProgressBarTrackAria({
     clampedValue,
-    min,
-    max,
+    min: safeMin,
+    max: safeMax,
     statusText,
     indeterminate,
+    labelConnected,
     labelId,
     ariaDescribedBy,
   });
@@ -77,11 +91,11 @@ export function useProgressBarTrackState({
     setDisplay?.({
       clampedValue,
       statusText,
-      min,
-      max,
+      min: safeMin,
+      max: safeMax,
       indeterminate,
     });
-  }, [clampedValue, indeterminate, max, min, setDisplay, statusText]);
+  }, [clampedValue, indeterminate, safeMax, safeMin, setDisplay, statusText]);
  
   return {
     size,

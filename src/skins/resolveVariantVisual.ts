@@ -102,8 +102,8 @@ export function resolveVariantVisual<K extends string>(
  * Layout roots (`header.root` and the other shells) read the live target list.
  * The kit variant `default` keeps the kit classes; a skin may extend or replace them.
  */
-export function layoutTargetClass(slot: SkinSlot): string | undefined {
-  const visual = resolveVariantVisual("default", ["default"], slot);
+export function layoutTargetClass(slot: SkinSlot, variant = "default"): string | undefined {
+  const visual = resolveVariantVisual(variant, ["default"], slot);
   return visual.extend ?? visual.className;
 }
 

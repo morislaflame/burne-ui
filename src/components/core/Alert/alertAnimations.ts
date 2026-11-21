@@ -7,10 +7,15 @@
  * Host: root (`useAlertAnimations`) plays pointer `hoverIn` / `hoverOut`.
  * Defaults: `resolveAlertMotionDefaults` (hoverLift + second-level). A skin overlays its own recipes.
  */
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import {
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   mergeMotionPointerHandlers,
   useMotionPointerPhases,
@@ -73,10 +78,21 @@ export function useAlertAnimations({
 
   useOptionalEnterOnMount(scope, "root", rootRef);
 
+  const config = useMotionConfig();
   const secondLevelLift = useSecondLevelShadow(rootRef, kitSurface, {
     shadowSize: shadow,
     interactive: false,
+    killMotionOnUnmount: false,
   });
+
+  useLayoutEffect(() => {
+    if (!kitSurface) return;
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(rootRef.current, config);
+    }
+  }, [config, kitSurface, scope, variant]);
 
   const motionPointer = useMotionPointerPhases<HTMLDivElement>({
     enabled: true,

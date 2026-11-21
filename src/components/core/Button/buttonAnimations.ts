@@ -16,10 +16,13 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type Keyboard
 import {
   initElementShadow,
   isInteractivePressKey,
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
   shadowNone,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { isOverlayTriggerOpening } from "@/components/core/utils/overlayTriggerSqueeze";
 import {
   killStoredMotion,
@@ -69,6 +72,7 @@ export function resolveButtonMotionDefaults({
  
 export function useButtonAnimations({
   variant,
+  disabled,
   blocked,
   groupSegment,
   motion,
@@ -114,20 +118,29 @@ export function useButtonAnimations({
     btnRef,
   );
 
+  const config = useMotionConfig();
   const btnShadow = useMemo(
     () => (hasHoverShadow ? shadowMotionFor("none") : undefined),
     [hasHoverShadow],
   );
  
   useLayoutEffect(() => {
-    if (!enabled || !btnShadow || useContentRef) return;
+    if (!enabled || useContentRef) return;
     if (hoverPointerInsideRef.current) return;
-    initElementShadow(btnRef.current, shadowNone());
-  }, [btnShadow, enabled, hoverPointerInsideRef, useContentRef, variant]);
+    const el = btnRef.current;
+    if (btnShadow) initElementShadow(el, shadowNone());
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(el, config);
+    }
+  }, [btnShadow, config, enabled, hoverPointerInsideRef, scope, useContentRef, variant]);
  
   useEffect(() => {
-    if (enabled) return;
-    hoverPointerInsideRef.current = false;
+    if (!enabled) {
+      hoverPointerInsideRef.current = false;
+    }
+    if (!disabled) return;
     const el = btnRef.current;
     const content = contentMotionRef.current;
     if (el) {
@@ -140,7 +153,7 @@ export function useButtonAnimations({
       killMotion(content);
       content.style.transform = "";
     }
-  }, [enabled, hoverPointerInsideRef]);
+  }, [disabled, enabled, hoverPointerInsideRef]);
  
   useEffect(() => {
     const contentRef = contentMotionRef;

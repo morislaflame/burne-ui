@@ -1,3 +1,5 @@
+import { isValidElement, type ReactNode } from "react";
+
 import { DEFAULT_BURNE_LABELS, formatBurneLabel, type BurneLabels } from "@/theme/burneLabels";
  
 import type { ToastLiveRole, ToastPlacement, ToastStatus } from "./toastTypes";
@@ -15,6 +17,18 @@ export function toastViewportAriaLabel(
 ): string {
   return formatBurneLabel(template, { placement });
 }
+
+function extractNodeText(node: unknown): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) {
+    return node.map(extractNodeText).join("");
+  }
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return extractNodeText(node.props.children);
+  }
+  return "";
+}
  
 /** Plain-text announcement for the permanent aria-live region. */
 export function toastAnnouncementText(
@@ -22,13 +36,10 @@ export function toastAnnouncementText(
   description: unknown,
 ): string {
   const parts: string[] = [];
-  if (typeof title === "string" && title.trim()) parts.push(title.trim());
-  else if (typeof title === "number") parts.push(String(title));
-  if (typeof description === "string" && description.trim()) {
-    parts.push(description.trim());
-  } else if (typeof description === "number") {
-    parts.push(String(description));
-  }
+  const titleText = extractNodeText(title).replace(/\s+/g, " ").trim();
+  const descText = extractNodeText(description).replace(/\s+/g, " ").trim();
+  if (titleText) parts.push(titleText);
+  if (descText) parts.push(descText);
   return parts.join(". ");
 }
  

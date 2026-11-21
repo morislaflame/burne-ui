@@ -1,6 +1,7 @@
 import type { KeyboardEvent } from "react";
  
 import { focusKeyboard } from "@/components/core/utils/focusElement";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
  
 import type { ToggleButtonGroupOrientation } from "./toggleButtonGroupTypes";
  
@@ -20,7 +21,7 @@ export function resolveToggleButtonTabIndex(
   firstItemValue: string | undefined,
 ): 0 | -1 {
   const active = rovingValue ?? firstItemValue;
-  return itemValue === active ? 0 : -1;
+  return active !== undefined && itemValue === active ? 0 : -1;
 }
  
 export function resolveToggleButtonArrowTargetIndex(
@@ -28,20 +29,24 @@ export function resolveToggleButtonArrowTargetIndex(
   orientation: ToggleButtonGroupOrientation,
   currentIndex: number,
   itemCount: number,
+  rtl = false,
 ): number | null {
   if (itemCount === 0) return null;
  
   const horizontal = orientation === "horizontal";
+  const nextKey = rtl ? "ArrowLeft" : "ArrowRight";
+  const prevKey = rtl ? "ArrowRight" : "ArrowLeft";
+ 
+  if (horizontal && key === nextKey) {
+    return currentIndex < 0 ? 0 : (currentIndex + 1) % itemCount;
+  }
+  if (horizontal && key === prevKey) {
+    return currentIndex < 0
+      ? itemCount - 1
+      : (currentIndex - 1 + itemCount) % itemCount;
+  }
  
   switch (key) {
-    case "ArrowRight":
-      return horizontal ? (currentIndex < 0 ? 0 : (currentIndex + 1) % itemCount) : null;
-    case "ArrowLeft":
-      return horizontal
-        ? currentIndex < 0
-          ? itemCount - 1
-          : (currentIndex - 1 + itemCount) % itemCount
-        : null;
     case "ArrowDown":
       return !horizontal ? (currentIndex < 0 ? 0 : (currentIndex + 1) % itemCount) : null;
     case "ArrowUp":
@@ -87,6 +92,7 @@ export function createToggleButtonGroupKeyDownHandler({
       orientation,
       currentIndex,
       items.length,
+      isRtlElement(event.currentTarget),
     );
  
     if (nextIndex == null) return;

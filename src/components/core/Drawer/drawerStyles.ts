@@ -112,7 +112,7 @@ export const DRAWER_CONTENT_CLASS =
   "flex min-h-0 flex-1 flex-col text-start";
  
 export const DRAWER_NATIVE_CLASS =
-  "m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
+  "m-0 h-full w-full max-h-none max-w-none overflow-hidden border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
  
 export const DRAWER_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
  
@@ -203,7 +203,7 @@ export function drawerOverlayClass({
   slotClass?: string;
 }): string {
   return cn(
-    "absolute inset-0",
+    "absolute inset-0 touch-none",
     lightUi ? DRAWER_OVERLAY_LIGHT_CLASS : DRAWER_OVERLAY_DARK_CLASS,
     dismissable ? "cursor-pointer" : "cursor-default",
     slotClass,

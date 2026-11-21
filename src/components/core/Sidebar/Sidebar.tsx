@@ -1,5 +1,7 @@
 import { forwardRef, useEffect, useMemo, type ForwardedRef } from "react";
 
+import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
+
 import { resolveSidebarMotionDefaults, useSidebarRootMotion } from "./sidebarAnimations";
 import { SidebarMotionProvider } from "./sidebarContext";
 import { sidebarRootClass } from "./sidebarStyles";
@@ -34,7 +36,12 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(function Sidebar(
   },
   ref,
 ) {
-  const motionDefaults = useMemo(() => resolveSidebarMotionDefaults(), []);
+  const skinVariant = useSkinVariant(undefined);
+  const skinRevision = useSkinRegistryRevision();
+  const motionDefaults = useMemo(() => {
+    void skinRevision;
+    return resolveSidebarMotionDefaults(skinVariant);
+  }, [skinRevision, skinVariant]);
 
   return (
     <SidebarMotionProvider
@@ -48,6 +55,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(function Sidebar(
       <SidebarSurface
         width={width}
         side={side}
+        variant={skinVariant}
         className={className}
         classNames={classNames}
         forwardedRef={ref}
@@ -67,6 +75,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(function Sidebar(
 function SidebarSurface({
   width,
   side,
+  variant,
   className,
   classNames,
   children,
@@ -80,6 +89,7 @@ function SidebarSurface({
 }: {
   width: NonNullable<SidebarProps["width"]>;
   side: SidebarSide;
+  variant: string;
   className: string;
   classNames: SidebarProps["classNames"];
   children: SidebarProps["children"];
@@ -127,7 +137,13 @@ function SidebarSurface({
   return (
     <aside
       ref={part.setRef}
-      className={sidebarRootClass({ width, side, slotClass: classNames?.root, className })}
+      className={sidebarRootClass({
+        width,
+        side,
+        variant,
+        slotClass: classNames?.root,
+        className,
+      })}
       {...rest}
       {...part.pointerHandlers}
       data-side={side}

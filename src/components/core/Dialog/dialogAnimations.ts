@@ -76,6 +76,7 @@ export function useDialogModalMotion({
   return {
     mounted: motion.mounted,
     showPortal: motion.showPortal,
+    layerId: motion.layerId,
     dialogRef: motion.dialogRef,
     overlayRef: motion.overlayRef,
     panelRef: motion.panelRef,

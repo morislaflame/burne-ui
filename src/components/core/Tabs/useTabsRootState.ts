@@ -1,4 +1,4 @@
-import { useCallback, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo, useRef } from "react";
  
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useSkinVariant } from "@/skins/skinContext";
@@ -22,8 +22,8 @@ export function useTabsRootState({
     value: valueProp,
     defaultValue: defaultValue ?? null,
   });
-  const tabElementsRef = useRef<Map<string, HTMLButtonElement>>(new Map());
-  const [layoutEpoch, setLayoutEpoch] = useState(0);
+  const tabElementsRef = useRef<Map<string, HTMLElement>>(new Map());
+  const layoutListenersRef = useRef<Set<() => void>>(new Set());
  
   const setValue = useCallback(
     (next: string) => {
@@ -33,8 +33,17 @@ export function useTabsRootState({
     [onValueChange, setInternalValue],
   );
  
+  const subscribeTabLayout = useCallback((listener: () => void) => {
+    layoutListenersRef.current.add(listener);
+    return () => {
+      layoutListenersRef.current.delete(listener);
+    };
+  }, []);
+
   const notifyTabLayout = useCallback(() => {
-    setLayoutEpoch((epoch) => epoch + 1);
+    for (const listener of layoutListenersRef.current) {
+      listener();
+    }
   }, []);
  
   const contextValue = useMemo<TabsContextValue>(
@@ -49,7 +58,7 @@ export function useTabsRootState({
       activationMode,
       keepMounted,
       tabElementsRef,
-      layoutEpoch,
+      subscribeTabLayout,
       notifyTabLayout,
     }),
     [
@@ -63,7 +72,7 @@ export function useTabsRootState({
       activationMode,
       keepMounted,
       tabElementsRef,
-      layoutEpoch,
+      subscribeTabLayout,
       notifyTabLayout,
     ],
   );

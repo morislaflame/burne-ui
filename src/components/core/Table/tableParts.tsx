@@ -14,7 +14,7 @@ import {
   tableIsSelectableGrid,
   tableRowRole,
 } from "./tableA11y";
-import { hasTableLabel, isTableEmptyElement, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, TABLE_VIRTUAL_INDEX_ATTR, moveVirtualTableRow, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
+import { clampTableColumnWidth, extractTableRowKey, hasTableLabel, isInteractiveRowDescendant, isTableEmptyElement, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, TABLE_VIRTUAL_INDEX_ATTR, moveVirtualTableRow, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
 import { TableSortChevron, useTableRowSelectionMotion, useTableSlotMotion } from "./tableAnimations";
 import {
   TableMotionProvider,
@@ -33,7 +33,6 @@ import {
 import {
   TABLE_BODY_EMPTY_CELL_CLASS,
   TABLE_CAPTION_CLASS,
-  TABLE_COLUMN_INNER_CLASS,
   TABLE_COLUMN_MIN_WIDTH,
   TABLE_COLUMN_RESIZE_GRIP_CLASS,
   TABLE_COLUMN_RESIZE_GRIP_LINE_CLASS,
@@ -45,9 +44,11 @@ import {
   TABLE_SCROLL_STICKY_CLASS,
   tableCellClass,
   tableColumnClass,
+  tableColumnInnerClass,
   tableColumnLabelClass,
   tableColumnSortButtonClass,
   tableContentClass,
+  tableHeaderClass,
   tableRowClass,
 } from "./tableStyles";
 import type {
@@ -232,6 +233,7 @@ const TableHeaderForward = forwardRef<HTMLTableSectionElement, TableHeaderProps>
     ref,
   ) {
     const slotClassNames = useTableClassNames();
+    const { stickyHeader } = useTableContent();
     const part = useTableSlotMotion<HTMLTableSectionElement>("header", {
       motion,
       forwardedRef: ref,
@@ -255,7 +257,11 @@ const TableHeaderForward = forwardRef<HTMLTableSectionElement, TableHeaderProps>
     return (
       <thead
         ref={part.setRef}
-        className={cn(slotClassNames.header, className)}
+        className={tableHeaderClass({
+          stickyHeader,
+          slotClass: slotClassNames.header,
+          className,
+        })}
         {...rest}
         {...part.pointerHandlers}
       >
@@ -358,10 +364,12 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       (e: KeyboardEvent<HTMLButtonElement>) => {
         if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
         const buttons = tableSortButtons(e.currentTarget);
+        const rtl = isRtlElement(e.currentTarget);
+        const delta = e.key === "ArrowRight" ? (rtl ? -1 : 1) : rtl ? 1 : -1;
         const next = tableBumpSortButton(
           buttons,
           e.currentTarget,
-          e.key === "ArrowRight" ? 1 : -1,
+          delta,
         );
         if (!next || next === e.currentTarget) return;
         e.preventDefault();
@@ -455,13 +463,14 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         if (!dragRef.current || !id) return;
         const host = event.currentTarget.parentElement;
         const sign = host && isRtlElement(host) ? -1 : 1;
-        const next = Math.max(
+        const next = clampTableColumnWidth(
+          dragRef.current.width + sign * (event.clientX - dragRef.current.x),
           TABLE_COLUMN_MIN_WIDTH,
-          Math.round(dragRef.current.width + sign * (event.clientX - dragRef.current.x)),
+          columnMax,
         );
         setColumnWidth(id, next);
       },
-      [id, setColumnWidth],
+      [columnMax, id, setColumnWidth],
     );
     const endResize = useCallback(() => {
       dragRef.current = null;
@@ -477,9 +486,12 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         event.preventDefault();
         event.stopPropagation();
         const start = width ?? host?.getBoundingClientRect().width ?? TABLE_COLUMN_MIN_WIDTH;
-        setColumnWidth(id, Math.max(TABLE_COLUMN_MIN_WIDTH, Math.round(start + delta)));
+        setColumnWidth(
+          id,
+          clampTableColumnWidth(start + delta, TABLE_COLUMN_MIN_WIDTH, columnMax),
+        );
       },
-      [id, setColumnWidth, width],
+      [columnMax, id, setColumnWidth, width],
     );
  
     return (
@@ -514,16 +526,21 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
             onClick={handleSortClick}
             onKeyDown={handleSortKeyDown}
           >
-            <span className={cn(TABLE_COLUMN_INNER_CLASS, slotClassNames.columnInner)}>
+            <span
+              className={tableColumnInnerClass({
+                resizable: columnResize,
+                slotClass: slotClassNames.columnInner,
+              })}
+            >
               {inner}
             </span>
           </button>
         ) : (
           <span
-            className={cn(
-              TABLE_COLUMN_INNER_CLASS,
-              slotClassNames.columnInner,
-            )}
+            className={tableColumnInnerClass({
+              resizable: columnResize,
+              slotClass: slotClassNames.columnInner,
+            })}
           >
             {inner}
           </span>
@@ -581,7 +598,7 @@ const TableBodyForward = forwardRef<HTMLTableSectionElement, TableBodyProps>(
     ref,
   ) {
     const slotClassNames = useTableClassNames();
-    const { selectionMode } = useTableContent();
+    const { selectionMode, rowStore } = useTableContent();
     const isGrid = tableIsSelectableGrid(selectionMode);
     const bodyRef = useRef<HTMLTableSectionElement | null>(null);
     const part = useTableSlotMotion<HTMLTableSectionElement>("body", {
@@ -600,10 +617,53 @@ const TableBodyForward = forwardRef<HTMLTableSectionElement, TableBodyProps>(
       },
       [setSlotRef],
     );
-    const virtualOn = virtualized && items !== undefined && typeof children === "function";
+
+    const catalogKeys = useMemo(() => {
+      if (items === undefined || typeof children !== "function") return null;
+      const fn = children as (item: unknown) => ReactNode;
+      const keys: (string | number)[] = [];
+      for (const item of items) {
+        const k = extractTableRowKey(item, fn);
+        if (k !== undefined) keys.push(k);
+      }
+      return keys;
+    }, [children, items]);
+
+    useLayoutEffect(() => {
+      rowStore.setCatalogKeys(catalogKeys);
+      return () => {
+        rowStore.setCatalogKeys(null);
+      };
+    }, [catalogKeys, rowStore]);
+
+    const virtualOn =
+      virtualized &&
+      items !== undefined &&
+      items.length > 0 &&
+      typeof children === "function";
     let content: ReactNode;
 
-    if (virtualOn) {
+    if (items !== undefined && items.length === 0 && renderEmptyState) {
+      const emptyState = renderEmptyState();
+      content = (
+        <tr role={tableRowRole(isGrid)}>
+          {isTableEmptyElement(emptyState) ? (
+            emptyState
+          ) : (
+            <td
+              role={tableCellRole(isGrid)}
+              colSpan={9999}
+              className={cn(
+                TABLE_BODY_EMPTY_CELL_CLASS,
+                slotClassNames.emptyCell,
+              )}
+            >
+              {emptyState}
+            </td>
+          )}
+        </tr>
+      );
+    } else if (virtualOn) {
       content = (
         <TableVirtualRows
           items={items}
@@ -613,27 +673,7 @@ const TableBodyForward = forwardRef<HTMLTableSectionElement, TableBodyProps>(
         />
       );
     } else if (items !== undefined) {
-      if (items.length === 0 && renderEmptyState) {
-        const emptyState = renderEmptyState();
-        content = (
-          <tr role={tableRowRole(isGrid)}>
-            {isTableEmptyElement(emptyState) ? (
-              emptyState
-            ) : (
-              <td
-                role={tableCellRole(isGrid)}
-                colSpan={9999}
-                className={cn(
-                  TABLE_BODY_EMPTY_CELL_CLASS,
-                  slotClassNames.emptyCell,
-                )}
-              >
-                {emptyState}
-              </td>
-            )}
-          </tr>
-        );
-      } else if (typeof children === "function") {
+      if (typeof children === "function") {
         content = items.map(children as (item: unknown) => ReactNode);
       }
     } else {
@@ -764,6 +804,7 @@ function TableRowSurface({
     setFocusedRowKey,
     claimFocusedRowKey,
     isRowDisabled,
+    rowStore,
   } = useTableContent();
   const scope = useTableMotionScope();
   const {
@@ -793,6 +834,11 @@ function TableRowSurface({
   useTableRowSelectionMotion(scope, isSelected, part.targetRef);
  
   useLayoutEffect(() => {
+    if (id === undefined) return;
+    return rowStore.registerRowKey(id);
+  }, [id, rowStore]);
+
+  useLayoutEffect(() => {
     if (!isSelectable || id === undefined) return;
     claimFocusedRowKey(id);
   }, [claimFocusedRowKey, id, isSelectable]);
@@ -809,6 +855,7 @@ function TableRowSurface({
     (e: MouseEvent<HTMLTableRowElement>) => {
       onClick?.(e);
       if (e.defaultPrevented || !isSelectable || id === undefined) return;
+      if (isInteractiveRowDescendant(e.target, e.currentTarget)) return;
       setFocusedRowKey(id);
       onRowSelect(id);
     },
@@ -819,6 +866,7 @@ function TableRowSurface({
     (e: KeyboardEvent<HTMLTableRowElement>) => {
       onKeyDown?.(e);
       if (e.defaultPrevented || !isSelectable || id === undefined) return;
+      if (isInteractiveRowDescendant(e.target, e.currentTarget)) return;
  
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();

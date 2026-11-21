@@ -73,6 +73,7 @@ export type TextAreaFieldContextValue = {
   labelId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  errorMessage?: ReactNode;
   invalid?: boolean;
   required: boolean;
   size: TextAreaSize;

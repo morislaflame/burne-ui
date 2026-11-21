@@ -158,7 +158,16 @@ export function useInputShellAnimations({
   const handleShellPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       onPointerDown?.(e);
-      if (e.defaultPrevented || blocked || groupSegment != null) return;
+      if (
+        e.defaultPrevented ||
+        blocked ||
+        groupSegment != null ||
+        e.pointerType === "touch" ||
+        (e.target instanceof Element &&
+          Boolean(e.target.closest('input, textarea, button, a[href], [role="button"]')))
+      ) {
+        return;
+      }
       const shell = shellRef.current;
       if (!shell || prefersReducedMotion()) return;
       const pressIn = scope.resolve("shell", "pressIn", shellMotionRef.current);

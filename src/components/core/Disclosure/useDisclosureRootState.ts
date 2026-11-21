@@ -36,29 +36,30 @@ export function useDisclosureRootState({
  
   const open = isGrouped ? groupOpen! : openProp !== undefined ? openProp : internal;
  
+  const shellRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const chevronRef = useRef<HTMLSpanElement>(null);
+  const skipContentAnimRef = useRef(false);
+
   const setOpen = useCallback(
     (next: boolean) => {
-      if (isGrouped) {
-        if (groupCtx.selectionMode === "multiple" && value != null) {
-          groupCtx.setItemOpen(value, next);
-        } else {
-          groupCtx.setOpenValue(next ? (value ?? null) : null);
-        }
+      if (next === open) {
+        skipContentAnimRef.current = false;
+        return;
+      }
+      if (isGrouped && value != null) {
+        groupCtx.setItemOpen(value, next);
       } else {
         if (openProp === undefined) setInternal(next);
         onOpenChange?.(next);
       }
     },
-    [isGrouped, groupCtx, value, openProp, onOpenChange],
+    [isGrouped, groupCtx, open, value, openProp, onOpenChange],
   );
  
   const autoId = useId();
   const triggerId = disclosureTriggerId(autoId);
   const panelId = disclosurePanelId(autoId);
-  const shellRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const chevronRef = useRef<HTMLSpanElement>(null);
-  const skipContentAnimRef = useRef(false);
  
   const variant = useSkinVariant(variantProp ?? groupCtx?.variant);
   const size = sizeProp ?? groupCtx?.size ?? "base";

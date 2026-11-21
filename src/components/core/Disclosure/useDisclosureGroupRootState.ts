@@ -31,22 +31,32 @@ export function useDisclosureGroupRootState({
  
   const setOpenValue = useCallback(
     (val: string | null) => {
-      const next = val === openValue ? null : val;
-      if (!singleControlled) setInternal(next);
-      onValueChange?.(next);
+      if (val === openValue) return;
+      if (!singleControlled) setInternal(val);
+      onValueChange?.(val);
     },
     [onValueChange, openValue, singleControlled],
   );
 
   const setItemOpen = useCallback(
     (id: string, open: boolean) => {
-      const next = open
-        ? values.includes(id) ? values : [...values, id]
-        : values.filter((item) => item !== id);
-      if (!manyControlled) setInternalValues(next);
-      onValuesChange?.(next);
+      if (selectionMode === "multiple") {
+        const hasItem = values.includes(id);
+        if (open === hasItem) return;
+        const next = open
+          ? [...values, id]
+          : values.filter((item) => item !== id);
+        if (!manyControlled) setInternalValues(next);
+        onValuesChange?.(next);
+        return;
+      }
+      const isCurrentlyOpen = openValue === id;
+      if (open === isCurrentlyOpen) return;
+      const next = open ? id : null;
+      if (!singleControlled) setInternal(next);
+      onValueChange?.(next);
     },
-    [manyControlled, onValuesChange, values],
+    [manyControlled, onValueChange, onValuesChange, openValue, selectionMode, singleControlled, values],
   );
  
   const contextValue: DisclosureGroupContextValue = useMemo(

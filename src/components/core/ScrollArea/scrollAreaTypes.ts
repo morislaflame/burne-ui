@@ -72,6 +72,7 @@ export type ScrollAreaContextValue = {
   viewportRef: RefObject<HTMLDivElement | null>;
   axesRef: RefObject<{ vertical: ScrollMetrics; horizontal: ScrollMetrics }>;
   overflow: { vertical: boolean; horizontal: boolean };
+  hasBars: { vertical: boolean; horizontal: boolean };
   aria: { vertical: { now: number; max: number }; horizontal: { now: number; max: number } };
   barActive: { vertical: boolean; horizontal: boolean };
   registerBar: (bar: ScrollAreaBarRegistration) => () => void;

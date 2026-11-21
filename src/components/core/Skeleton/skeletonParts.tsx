@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from "react";
 import { skeletonPresentationProps, skeletonRegionA11yProps } from "./skeletonA11y";
 import { resolveSkeletonMotionDefaults, useSkeletonSlotMotion } from "./skeletonAnimations";
 import { SkeletonMotionProvider, useSkeletonMotionScope } from "./skeletonContext";
-import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantClass } from "./skeletonStyles";
+import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, resolveSkeletonCircleSize, skeletonLineAnimationDelay, skeletonVariantClass } from "./skeletonStyles";
 import type { MotionController, MotionMapWithEvents, MotionStateHostProps } from "@/components/core/utils/slotMotion";
 import { dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
@@ -122,6 +122,8 @@ function SkeletonCircleSurface({
     onPointerUp,
   });
  
+  const { sizeClass, dataSize } = resolveSkeletonCircleSize(size);
+ 
   return (
     <div
       ref={part.setRef}
@@ -129,7 +131,7 @@ function SkeletonCircleSurface({
         SKELETON_BASE_CLASS,
         skeletonVariantClass(animation),
         SKELETON_CIRCLE_RADIUS_CLASS,
-        size,
+        sizeClass,
         classNames?.root,
         className,
       )}
@@ -137,7 +139,7 @@ function SkeletonCircleSurface({
       {...skeletonPresentationProps()}
       {...domRest}
       {...part.pointerHandlers}
-      {...dataVariantProps({ size })}
+      {...dataVariantProps({ size: dataSize })}
     >
       {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
     </div>
@@ -218,8 +220,9 @@ function SkeletonTextSurface({
     onPointerDown,
     onPointerUp,
   });
-  const lineWidths = Array.from({ length: lines }, (_, index) => {
-    if (lastShort && index === lines - 1) return SKELETON_TEXT_LINE_LAST_SHORT_CLASS;
+  const safeLines = Number.isFinite(lines) && lines > 0 ? Math.floor(lines) : 0;
+  const lineWidths = Array.from({ length: safeLines }, (_, index) => {
+    if (lastShort && index === safeLines - 1) return SKELETON_TEXT_LINE_LAST_SHORT_CLASS;
     return SKELETON_TEXT_LINE_FULL_CLASS;
   });
  
@@ -398,6 +401,7 @@ function SkeletonRegionSurface({
       {...skeletonRegionA11yProps(busy)}
       {...domRest}
       {...part.pointerHandlers}
+      data-state={busy ? "loading" : "idle"}
     >
       {children}
     </div>

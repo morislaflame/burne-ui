@@ -20,11 +20,17 @@ export function stepperStepState(index: number, currentIndex: number): StepperSt
   return "checked";
 }
 
-/** Linear steppers only accept the current step and the ones already passed. */
-export function stepperStepSelectable(index: number, currentIndex: number, linear: boolean): boolean {
+/** Linear steppers accept the current step and any step already reached. */
+export function stepperStepSelectable(
+  index: number,
+  currentIndex: number,
+  linear: boolean,
+  maxReachedIndex = currentIndex,
+): boolean {
   if (!linear) return true;
-  if (currentIndex < 0) return index === 0;
-  return index <= currentIndex;
+  const reached = Math.max(currentIndex, maxReachedIndex);
+  if (reached < 0) return index === 0;
+  return index <= reached;
 }
 
 export function readStepperValues(children: ReactNode): string[] {

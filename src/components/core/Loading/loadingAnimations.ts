@@ -8,18 +8,19 @@
  */
 import { useLayoutEffect } from "react";
 
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
 import { applyLoadingDotInstant } from "@/components/core/utils/slotMotion/recipes/loadingDots";
 
-import type { LoadingMotion } from "./loadingTypes";
+import type { LoadingMotion, LoadingSize } from "./loadingTypes";
 
 import { bindLoadingRecipe } from "@/components/core/utils/slotMotion/recipes/bindLoading";
 
 bindLoadingRecipe();
 
-export function useLoadingDotsAnimation(scope: MotionScopeValue | null) {
+export function useLoadingDotsAnimation(scope: MotionScopeValue | null, size?: LoadingSize) {
   const config = useMotionConfig();
   const reduceMotion = usePrefersReducedMotion();
 
@@ -34,10 +35,16 @@ export function useLoadingDotsAnimation(scope: MotionScopeValue | null) {
       return;
     }
 
-    for (const dot of dots) {
-      scope.play("dot", "enter", { el: dot });
-    }
-  }, [config, reduceMotion, scope]);
+    const runs = dots.map((dot) => scope.play("dot", "enter", { el: dot }));
+    return () => {
+      for (const run of runs) {
+        run.cancel("unmount");
+      }
+      for (const dot of dots) {
+        killMotion(dot);
+      }
+    };
+  }, [config, reduceMotion, scope, size]);
 }
 
 export function resolveLoadingMotionDefaults(): LoadingMotion {

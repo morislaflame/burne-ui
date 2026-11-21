@@ -1,10 +1,22 @@
-import { useCallback, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, type MouseEvent, type RefObject } from "react";
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type ClipboardEvent,
+  type FocusEvent,
+  type FormEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+  type RefObject,
+} from "react";
  
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { isImeComposingEvent, useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
-import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useSkinVariant } from "@/skins/skinContext";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
  
@@ -45,6 +57,7 @@ export function useTimeFieldControlState({
   const isInvalid = useResolvedFieldInvalid({
     invalid: ctx?.invalid,
     errorConnected: ctx?.errorConnected ?? false,
+    formInvalid: formBinding["aria-invalid"] === true,
   });
   const status = fieldPaintStatus(isInvalid);
   const variant = useSkinVariant(variantProp ?? ctx?.variant);
@@ -53,26 +66,45 @@ export function useTimeFieldControlState({
   const labelId = ctx?.labelId ?? "";
   const labelConnected = ctx?.labelConnected ?? false;
   const required = ctx?.required ?? false;
- 
-  const [hms, setHms] = useControllableState({
-    value:
-      valueProp !== undefined
-        ? parseTime(valueProp)
-        : boundText !== undefined
-          ? parseTime(boundText || defaultValue)
-          : undefined,
-    defaultValue: () => parseTime(defaultValue),
-    onChange: (next) => {
+
+  const controlledHms =
+    valueProp !== undefined
+      ? parseTime(valueProp)
+      : boundText !== undefined
+        ? parseTime(boundText || defaultValue)
+        : undefined;
+  const isControlled = controlledHms !== undefined;
+  const [internalHms, setInternalHms] = useState(() => parseTime(defaultValue));
+  const hms = isControlled ? controlledHms : internalHms;
+
+  const onValueChangeRef = useRef(onValueChange);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest callback without recreating setter
+  onValueChangeRef.current = onValueChange;
+
+  const setHms = useCallback(
+    (next: ReturnType<typeof parseTime>) => {
+      if (!isControlled) setInternalHms(next);
       const text = formatTime(next, format);
-      onValueChange?.(text);
+      onValueChangeRef.current?.(text);
       if (formBinding.bound) formBinding.setValue(text);
     },
-  });
+    [formBinding, format, isControlled],
+  );
  
   const pendingRef = useRef<{ seg: TimeFieldSegId; digit: number } | null>(null);
+  const lastPointerTypeRef = useRef<string>("");
   const [focusedSeg, setFocusedSeg] = useState<TimeFieldSegId | null>(null);
   const shellRef = useRef<HTMLFieldSetElement>(null);
   const keyboardInputRef = useRef<HTMLInputElement>(null);
+
+  useNativeFormReset(
+    shellRef,
+    () => {
+      pendingRef.current = null;
+      setInternalHms(parseTime(defaultValue));
+    },
+    !isControlled,
+  );
  
   const hSegRef = useRef<HTMLSpanElement>(null);
   const mSegRef = useRef<HTMLSpanElement>(null);
@@ -95,19 +127,39 @@ export function useTimeFieldControlState({
     },
     [],
   );
+
+  const formRef = formBinding.ref;
+  const bindFirstSegRef = useCallback(
+    (seg: TimeFieldSegId) => (node: HTMLSpanElement | null) => {
+      segRefById[seg].current = node;
+      if (seg === segments[0]) {
+        formRef(node);
+      }
+    },
+    [formRef, segRefById, segments],
+  );
  
-  const focusSeg = useCallback((seg: TimeFieldSegId) => {
-    pendingRef.current = null;
-    setFocusedSeg(seg);
-    shellRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
-    focusElement(keyboardInputRef.current);
-  }, []);
+  const focusSeg = useCallback(
+    (seg: TimeFieldSegId, viaTouch = false) => {
+      if (resolvedDisabled) return;
+      pendingRef.current = null;
+      setFocusedSeg(seg);
+      shellRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
+      if (viaTouch && !resolvedReadOnly) {
+        focusElement(keyboardInputRef.current);
+      } else {
+        focusElement(segRefById[seg].current);
+      }
+    },
+    [resolvedDisabled, resolvedReadOnly, segRefById],
+  );
  
   const navigate = useCallback(
     (from: TimeFieldSegId, dir: "prev" | "next") => {
       const idx = segments.indexOf(from);
-      if (dir === "next" && idx < segments.length - 1) focusSeg(segments[idx + 1]!);
-      if (dir === "prev" && idx > 0) focusSeg(segments[idx - 1]!);
+      const viaTouch = document.activeElement === keyboardInputRef.current;
+      if (dir === "next" && idx < segments.length - 1) focusSeg(segments[idx + 1]!, viaTouch);
+      if (dir === "prev" && idx > 0) focusSeg(segments[idx - 1]!, viaTouch);
     },
     [segments, focusSeg],
   );
@@ -115,12 +167,17 @@ export function useTimeFieldControlState({
   const commitPending = useCallback(() => {
     const p = pendingRef.current;
     if (!p) return;
+    if (resolvedDisabled || resolvedReadOnly) {
+      pendingRef.current = null;
+      return;
+    }
     setHms(withSeg(hms, p.seg, p.digit));
     pendingRef.current = null;
-  }, [hms, setHms]);
+  }, [hms, resolvedDisabled, resolvedReadOnly, setHms]);
  
   const applyDigit = useCallback(
     (seg: TimeFieldSegId, digit: number) => {
+      if (resolvedDisabled || resolvedReadOnly) return;
       const max = TIME_FIELD_SEG_MAX[seg];
       const pending = pendingRef.current;
  
@@ -149,12 +206,41 @@ export function useTimeFieldControlState({
         setHms(withSeg(hms, seg, digit));
       }
     },
-    [hms, navigate, setHms],
+    [hms, navigate, resolvedDisabled, resolvedReadOnly, setHms],
   );
  
   const handleSegKeyDown = useCallback(
     (e: KeyboardEvent<HTMLSpanElement | HTMLInputElement>, seg: TimeFieldSegId) => {
-      if (resolvedDisabled || resolvedReadOnly) return;
+      if (isImeComposingEvent(e) || resolvedDisabled) return;
+      if (e.key === "Tab") {
+        commitPending();
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        commitPending();
+        navigate(seg, "prev");
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        commitPending();
+        navigate(seg, "next");
+        return;
+      }
+      if (resolvedReadOnly) {
+        if (
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown" ||
+          e.key === "Backspace" ||
+          e.key === "Delete" ||
+          !Number.isNaN(parseInt(e.key, 10))
+        ) {
+          e.preventDefault();
+        }
+        return;
+      }
+
       const max = TIME_FIELD_SEG_MAX[seg];
       const digit = parseInt(e.key, 10);
  
@@ -171,21 +257,53 @@ export function useTimeFieldControlState({
         pendingRef.current = null;
         const cur = segValue(hms, seg);
         setHms(withSeg(hms, seg, cur <= 0 ? max : cur - 1));
-      } else if (e.key === "ArrowLeft" || e.key === "Backspace") {
+      } else if (e.key === "Backspace") {
         e.preventDefault();
-        commitPending();
-        navigate(seg, "prev");
-      } else if (e.key === "ArrowRight") {
+        if (pendingRef.current != null || segValue(hms, seg) !== 0) {
+          pendingRef.current = null;
+          setHms(withSeg(hms, seg, 0));
+        } else {
+          navigate(seg, "prev");
+        }
+      } else if (e.key === "Delete") {
         e.preventDefault();
-        commitPending();
-        navigate(seg, "next");
-      } else if (e.key === "Tab") {
-        commitPending();
+        pendingRef.current = null;
+        setHms(withSeg(hms, seg, 0));
       }
     },
     [applyDigit, commitPending, hms, navigate, resolvedDisabled, resolvedReadOnly, setHms],
   );
+
+  const handlePaste = useCallback(
+    (e: ClipboardEvent<HTMLElement>, seg?: TimeFieldSegId) => {
+      e.preventDefault();
+      if (resolvedDisabled || resolvedReadOnly) return;
+      const raw = e.clipboardData.getData("text").trim();
+      if (!raw) return;
+      if (raw.includes(":")) {
+        pendingRef.current = null;
+        setHms(parseTime(raw));
+        return;
+      }
+      const digits = [...raw].filter((ch) => ch >= "0" && ch <= "9");
+      if (digits.length >= 4) {
+        const hh = digits.slice(0, 2).join("");
+        const mm = digits.slice(2, 4).join("");
+        const ss = digits.slice(4, 6).join("");
+        pendingRef.current = null;
+        setHms(parseTime(ss ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`));
+        return;
+      }
+      const targetSeg = seg ?? focusedSeg ?? segments[0];
+      if (!targetSeg) return;
+      for (const ch of digits) {
+        applyDigit(targetSeg, Number(ch));
+      }
+    },
+    [applyDigit, focusedSeg, resolvedDisabled, resolvedReadOnly, segments, setHms],
+  );
  
+  const formOnBlur = formBinding.onBlur;
   const handleFieldBlur = useCallback(
     (e: FocusEvent<HTMLSpanElement | HTMLInputElement>) => {
       const shell = shellRef.current;
@@ -198,14 +316,16 @@ export function useTimeFieldControlState({
           if (shell.contains(active)) return;
           commitPending();
           setFocusedSeg(null);
+          formOnBlur();
         });
         return;
       }
  
       commitPending();
       setFocusedSeg(null);
+      formOnBlur();
     },
-    [commitPending],
+    [commitPending, formOnBlur],
   );
  
   const handleSegFocus = useCallback((seg: TimeFieldSegId) => {
@@ -217,40 +337,45 @@ export function useTimeFieldControlState({
     (e: FormEvent<HTMLInputElement>) => {
       const raw = e.currentTarget.value;
       e.currentTarget.value = "";
-      if (disabled || !focusedSeg) return;
+      if (resolvedDisabled || resolvedReadOnly || !focusedSeg) return;
       for (const ch of raw) {
         const digit = parseInt(ch, 10);
         if (!Number.isNaN(digit)) applyDigit(focusedSeg, digit);
       }
     },
-    [applyDigit, disabled, focusedSeg],
+    [applyDigit, focusedSeg, resolvedDisabled, resolvedReadOnly],
   );
  
   const handleKeyboardInputKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (resolvedDisabled || resolvedReadOnly || !focusedSeg) return;
+      if (resolvedDisabled || !focusedSeg) return;
       handleSegKeyDown(e, focusedSeg);
     },
-    [focusedSeg, handleSegKeyDown, resolvedDisabled, resolvedReadOnly],
+    [focusedSeg, handleSegKeyDown, resolvedDisabled],
   );
+
+  const recordPointerType = useCallback((e: PointerEvent<HTMLElement>) => {
+    lastPointerTypeRef.current = e.pointerType;
+  }, []);
  
   const handleSegClick = useCallback(
     (e: MouseEvent, seg: TimeFieldSegId) => {
       e.stopPropagation();
-      focusSeg(seg);
+      if (resolvedDisabled) return;
+      focusSeg(seg, lastPointerTypeRef.current === "touch");
     },
-    [focusSeg],
+    [focusSeg, resolvedDisabled],
   );
  
   const handleShellClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
-      if (resolvedDisabled || resolvedReadOnly) return;
+      if (resolvedDisabled) return;
       const firstSeg = segments[0];
       if (!firstSeg) return;
       if (e.target instanceof Element && e.target.closest('[role="spinbutton"]')) return;
-      focusSeg(firstSeg);
+      focusSeg(firstSeg, lastPointerTypeRef.current === "touch");
     },
-    [focusSeg, resolvedDisabled, resolvedReadOnly, segments],
+    [focusSeg, resolvedDisabled, segments],
   );
  
   const isPending = (seg: TimeFieldSegId) =>
@@ -294,12 +419,15 @@ export function useTimeFieldControlState({
     hms,
     segments,
     segRefById,
+    bindFirstSegRef,
     keyboardInputRef,
     shellRef,
     bindShellRef: setShellRef,
     shellSurface,
     focusedSeg,
+    recordPointerType,
     handleSegKeyDown,
+    handlePaste,
     handleFieldBlur,
     handleSegFocus,
     handleKeyboardInput,

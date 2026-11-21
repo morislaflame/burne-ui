@@ -1,4 +1,5 @@
 import {
+  Fragment,
   cloneElement,
   forwardRef,
   isValidElement,
@@ -6,13 +7,14 @@ import {
   useMemo,
   useRef,
   type HTMLAttributes,
-  type KeyboardEvent,
   type ReactElement,
   type Ref,
 } from "react";
 import { KitChevronDown } from "@/components/core/utils/kitIcons";
  
 import { Text } from "@/components/core/Text";
+import { dataExpandedState, dataFlag } from "@/components/core/utils/dataContract";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { hasPointerPhases, useMotionPart } from "@/components/core/utils/slotMotion";
  
@@ -228,33 +230,43 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
  
     const titleNode = body.title ?? children;
  
-    if (asChild && isValidElement(children)) {
+    if (asChild && isValidElement(children) && children.type !== Fragment) {
       const child = children as ReactElement<
         HTMLAttributes<HTMLElement> & {
           ref?: Ref<HTMLElement>;
           disabled?: boolean;
+          "aria-disabled"?: boolean | "true" | "false";
           "data-state"?: string;
         }
       >;
+      const childDisabled =
+        Boolean(child.props.disabled) ||
+        child.props["aria-disabled"] === true ||
+        child.props["aria-disabled"] === "true";
+      const isDisabled = disabled || childDisabled;
  
-      return cloneElement(child, {
-        ...rest,
-        id: triggerId,
-        ref: triggerMotion.mergeRefs(ref, triggerMotion.setRefs, child.props.ref, studioTriggerRef),
-        className: cn(child.props.className, className),
-        disabled: disabled || child.props.disabled,
-        "aria-expanded": open,
-        "aria-controls": panelId,
-        "data-state": open ? "expanded" : "collapsed",
-        onClick: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onClick?.(e);
-          triggerMotion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
+      const mergedAsChild = mergeAsChildProps(
+        child,
+        {
+          ...rest,
+          id: triggerId,
+          className,
+          ...(isDisabled ? { disabled: true, "aria-disabled": true, tabIndex: -1 } : {}),
+          "aria-expanded": open,
+          "aria-controls": panelId,
+          onClick: triggerMotion.handleClick,
+          onKeyDown: triggerMotion.handleKeyDown,
+          onPointerEnter: triggerMotion.handlePointerEnter,
+          onPointerLeave: triggerMotion.handlePointerLeave,
+          onPointerDown: triggerMotion.handlePointerDown,
+          "data-disabled": dataFlag(isDisabled),
+          "data-state": dataExpandedState(open),
         },
-        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
-          child.props.onKeyDown?.(e);
-          triggerMotion.handleKeyDown(e as KeyboardEvent<HTMLButtonElement>);
-        },
-      });
+        triggerMotion.mergeRefs(triggerMotion.setRefs, studioTriggerRef),
+        { disabled: isDisabled },
+      );
+      if (isDisabled) mergedAsChild.href = undefined;
+      return cloneElement(child, mergedAsChild);
     }
  
     return (
@@ -278,7 +290,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         onPointerLeave={triggerMotion.handlePointerLeave}
         onPointerDown={triggerMotion.handlePointerDown}
         {...rest}
-        data-state={open ? "expanded" : "collapsed"}
+        data-disabled={dataFlag(disabled)}
+        data-state={dataExpandedState(open)}
       >
         {resolvedIcon}
         {chevronPosition === "start" && chevronNode}

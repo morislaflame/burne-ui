@@ -78,6 +78,7 @@ export type TableProps = HTMLAttributes<HTMLDivElement> & {
   /** Cell scale. Default `base` keeps the current padding and `text-small`. */
   size?: TableSize;
   selectionMode?: SelectionMode;
+  disallowEmptySelection?: boolean;
   selectedKeys?: Selection;
   defaultSelectedKeys?: Selection;
   onSelectionChange?: (keys: Selection) => void;
@@ -231,6 +232,9 @@ export type TableRowSelectionStore = {
   setSelectedKeys: (next: Selection) => void;
   setFocusedRowKey: (key: string | number) => void;
   claimFocusedRowKey: (key: string | number) => void;
+  registerRowKey: (key: string | number) => () => void;
+  setCatalogKeys: (keys: readonly (string | number)[] | null) => void;
+  getAllRowKeys: () => (string | number)[];
 };
  
 export type TableRowContextValue = {

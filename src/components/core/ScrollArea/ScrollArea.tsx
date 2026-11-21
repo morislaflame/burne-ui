@@ -98,7 +98,7 @@ export const ScrollAreaRoot = forwardRef<HTMLDivElement, ScrollAreaProps>(functi
   classNames,
   id,
   visibility = "hover",
-  orientation = "vertical",
+  orientation,
   scrollHideDelay,
   motion,
   motionController,

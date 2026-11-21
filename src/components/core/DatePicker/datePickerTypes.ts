@@ -205,4 +205,6 @@ export type DatePickerContextValue = {
   describedBy?: string;
   triggerRef: RefObject<HTMLButtonElement | null>;
   pointerInsideRef: RefObject<boolean>;
+  setFormTriggerRef?: (node: HTMLButtonElement | null) => void;
+  notifyBlur?: () => void;
 };

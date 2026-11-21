@@ -2,7 +2,7 @@ import { forwardRef, useMemo, useRef, type ForwardedRef } from "react";
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { FieldHiddenValues, readOnlyData, useFieldControlFocus } from "@/components/core/utils/fieldFormDom";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useSkinRegistryRevision, useSkinVariant } from "@/skins/skinContext";
@@ -146,8 +146,11 @@ export const SliderRoot = forwardRef(function SliderRoot({
   const skinRevision = useSkinRegistryRevision();
   const motionDefaults = useMemo(() => {
     void skinRevision;
-    return resolveSliderMotionDefaults({ disabled, variant });
-  }, [disabled, skinRevision, variant]);
+    return resolveSliderMotionDefaults({
+      disabled: state.disabled || state.readOnly,
+      variant,
+    });
+  }, [skinRevision, state.disabled, state.readOnly, variant]);
  
   return (
     <SliderFieldProvider value={state.fieldCtx}>
@@ -163,6 +166,7 @@ export const SliderRoot = forwardRef(function SliderRoot({
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               id={state.sliderId}
+              invalid={state.fieldCtx.isInvalid}
               className={sliderRootClass({
                 orientation: state.fieldCtx.orientation,
                 slotClass: classNames?.root,
@@ -172,7 +176,9 @@ export const SliderRoot = forwardRef(function SliderRoot({
               ref={mergeRefs(ref, focusRef)}
               {...dataVariantProps({ size: size ?? "base", variant: resolvedVariant })}
               data-orientation={state.fieldCtx.orientation}
+              data-disabled={dataFlag(state.disabled)}
               data-readonly={readOnlyData(state.readOnly)}
+              data-invalid={dataFlag(state.fieldCtx.isInvalid)}
             >
               {body}
               <FieldHiddenValues

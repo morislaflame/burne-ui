@@ -1,5 +1,13 @@
 /** Used writing direction. Missing `getComputedStyle` (unit tests) counts as LTR. */
 export function isRtlElement(el: HTMLElement): boolean {
+  if (typeof el.closest === "function") {
+    const dirHost = el.closest("[dir]");
+    if (dirHost) {
+      const dirAttr = dirHost.getAttribute("dir")?.trim().toLowerCase();
+      if (dirAttr === "rtl") return true;
+      if (dirAttr === "ltr") return false;
+    }
+  }
   if (typeof getComputedStyle !== "function") return false;
   try {
     return getComputedStyle(el).direction === "rtl";

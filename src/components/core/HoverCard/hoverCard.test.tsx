@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { render } from "@/__tests__/helpers";
+import { Select } from "@/components/core/Select";
 
 import { HoverCard } from ".";
 
@@ -79,5 +80,50 @@ describe("HoverCard", () => {
       setTimeout(resolve, 120);
     });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("ignores touch pointerenter so tapping on mobile does not stick a HoverCard open", async () => {
+    render(card({ openDelay: 0 }));
+    const trigger = screen.getByRole("button", { name: "Ada" });
+    fireEvent.pointerEnter(trigger, { pointerType: "touch" });
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("stays open when selecting an option in a nested Select inside HoverCard", async () => {
+    const { user } = render(
+      <HoverCard
+        openDelay={0}
+        closeDelay={50}
+        trigger={<button type="button">Profile</button>}
+        title="Team settings"
+      >
+        <Select
+          label="Role"
+          items={[
+            { value: "owner", label: "Owner" },
+            { value: "member", label: "Member" },
+          ]}
+        />
+      </HoverCard>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Profile" });
+    fireEvent.pointerEnter(trigger, { pointerType: "mouse" });
+    const hoverDialog = await screen.findByRole("dialog", { name: "Team settings" });
+
+    const combo = screen.getByRole("combobox", { name: "Role" });
+    combo.focus();
+    await user.keyboard("{ArrowDown}");
+    const memberOpt = await screen.findByRole("option", { name: "Member" });
+
+    // Moving pointer from HoverCard onto portaled Select.Popover must not close HoverCard
+    fireEvent.pointerLeave(hoverDialog, { pointerType: "mouse", relatedTarget: memberOpt });
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    expect(screen.getByRole("dialog", { name: "Team settings" })).toBeInTheDocument();
+
+    await user.click(memberOpt);
+    expect(combo).toHaveTextContent("Member");
+    expect(screen.getByRole("dialog", { name: "Team settings" })).toBeInTheDocument();
   });
 });

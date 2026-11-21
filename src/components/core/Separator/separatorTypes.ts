@@ -13,10 +13,14 @@ export type SeparatorPartMotion = {
   leave?: MotionValue;
 };
  
+export type SeparatorClassNames = {
+  root?: string;
+};
+
 export type SeparatorMotion = {
   root?: SeparatorPartMotion;
 };
- 
+
 export type SeparatorProps = Omit<HTMLAttributes<HTMLElement>, "role"> & {
   orientation?: SeparatorOrientation;
   /**
@@ -24,6 +28,7 @@ export type SeparatorProps = Omit<HTMLAttributes<HTMLElement>, "role"> & {
    * Omitted or `false` keeps separator semantics.
    */
   decorative?: boolean;
+  classNames?: Prettify<SeparatorClassNames>;
   /**
    * Per-slot motion (`root`). Defaults are empty — custom factories are opt-in.
    * `events` — namespaced app commands for `MotionController.play` (not a DOM slot).

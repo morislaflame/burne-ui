@@ -49,7 +49,7 @@ import type {
   UseFieldSetRootStateResult,
 } from "./fieldTypes";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 export const FieldRootShell = forwardRef<
@@ -522,6 +522,7 @@ export const FieldSetRootInner = forwardRef<
       {...dataVariantProps({ size })}
       aria-invalid={isInvalid ? true : undefined}
       data-invalid={isInvalid ? "" : undefined}
+      data-disabled={dataFlag(disabled)}
     >
       {state.legend}
       <FieldSetStack {...state} />

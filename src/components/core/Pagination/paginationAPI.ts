@@ -1,39 +1,82 @@
+export function normalizePaginationTotalPages(totalPages: number | undefined): number {
+  if (totalPages == null || !Number.isFinite(totalPages)) return 0;
+  return Math.max(0, Math.floor(totalPages));
+}
+
+export function clampPaginationPage(page: number, safeTotal: number): number {
+  if (!Number.isFinite(page)) return safeTotal > 0 ? 1 : 0;
+  const floored = Math.floor(page);
+  if (safeTotal <= 0) return Math.max(1, floored);
+  return Math.min(Math.max(1, floored), safeTotal);
+}
+
+function buildPageSpan(start: number, end: number): number[] {
+  const length = Math.max(0, end - start + 1);
+  return Array.from({ length }, (_, idx) => start + idx);
+}
+
 export function getPaginationRange(
   page: number,
   totalPages: number,
   siblingCount: number,
 ): (number | "ellipsis")[] {
-  if (totalPages <= 0) return [];
-  if (totalPages === 1) return [1];
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  const safeTotal = normalizePaginationTotalPages(totalPages);
+  if (safeTotal <= 0) return [];
+  if (safeTotal === 1) return [1];
+
+  const safeSibling = Number.isFinite(siblingCount)
+    ? Math.max(0, Math.floor(siblingCount))
+    : 1;
+  const totalPageNumbers = safeSibling * 2 + 5;
+
+  if (safeTotal <= totalPageNumbers) {
+    return buildPageSpan(1, safeTotal);
   }
- 
-  const leftSibling = Math.max(page - siblingCount, 2);
-  const rightSibling = Math.min(page + siblingCount, totalPages - 1);
- 
-  const items: (number | "ellipsis")[] = [1];
- 
-  if (leftSibling > 2) items.push("ellipsis");
-  else for (let i = 2; i < leftSibling; i++) items.push(i);
- 
-  for (let i = leftSibling; i <= rightSibling; i++) items.push(i);
- 
-  if (rightSibling < totalPages - 1) items.push("ellipsis");
-  else for (let i = rightSibling + 1; i < totalPages; i++) items.push(i);
- 
-  items.push(totalPages);
-  return items;
+
+  const safePage = clampPaginationPage(page, safeTotal);
+  const leftSiblingIndex = Math.max(safePage - safeSibling, 1);
+  const rightSiblingIndex = Math.min(safePage + safeSibling, safeTotal);
+
+  const shouldShowLeftDots = leftSiblingIndex > 3;
+  const shouldShowRightDots = rightSiblingIndex < safeTotal - 2;
+
+  if (!shouldShowLeftDots && shouldShowRightDots) {
+    const leftItemCount = 3 + 2 * safeSibling;
+    return [...buildPageSpan(1, leftItemCount), "ellipsis", safeTotal];
+  }
+
+  if (shouldShowLeftDots && !shouldShowRightDots) {
+    const rightItemCount = 3 + 2 * safeSibling;
+    return [1, "ellipsis", ...buildPageSpan(safeTotal - rightItemCount + 1, safeTotal)];
+  }
+
+  if (shouldShowLeftDots && shouldShowRightDots) {
+    return [
+      1,
+      "ellipsis",
+      ...buildPageSpan(leftSiblingIndex, rightSiblingIndex),
+      "ellipsis",
+      safeTotal,
+    ];
+  }
+
+  return buildPageSpan(1, safeTotal);
 }
  
 export function resolvePaginationPreviousDisabled({
   disabled,
   page,
+  totalPages,
 }: {
   disabled?: boolean;
   page?: number;
+  totalPages?: number;
 }): boolean {
-  return disabled ?? (page != null ? page <= 1 : false);
+  if (disabled != null) return disabled;
+  if (totalPages != null && normalizePaginationTotalPages(totalPages) <= 0) {
+    return true;
+  }
+  return page != null ? !Number.isFinite(page) || page <= 1 : false;
 }
  
 export function resolvePaginationNextDisabled({
@@ -45,9 +88,12 @@ export function resolvePaginationNextDisabled({
   page?: number;
   totalPages?: number;
 }): boolean {
-  return (
-    disabled ??
-    (page != null && totalPages != null ? page >= totalPages : false)
-  );
+  if (disabled != null) return disabled;
+  if (totalPages != null) {
+    const safeTotal = normalizePaginationTotalPages(totalPages);
+    if (safeTotal <= 0) return true;
+    return page != null ? !Number.isFinite(page) || page >= safeTotal : false;
+  }
+  return false;
 }
  

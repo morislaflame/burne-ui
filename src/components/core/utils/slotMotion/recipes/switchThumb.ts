@@ -16,6 +16,9 @@ function travelOf(ctx: MotionContext): number {
 export function applySwitchThumbInstant(el: HTMLElement, checked: boolean, travelPx: number): void {
   killMotion(el);
   const x = inlineEndTravel(el, checked ? travelPx : 0);
+  if (typeof Element !== "undefined" && el instanceof Element) {
+    gsap.set(el, { x, y: 0, force3D: false });
+  }
   el.style.transform = `translate(${x}px, 0)`;
 }
  

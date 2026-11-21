@@ -147,8 +147,8 @@ export type TabsContextValue = {
   disabled: boolean;
   activationMode: TabsActivationMode;
   keepMounted: boolean;
-  tabElementsRef: RefObject<Map<string, HTMLButtonElement>>;
-  layoutEpoch: number;
+  tabElementsRef: RefObject<Map<string, HTMLElement>>;
+  subscribeTabLayout: (listener: () => void) => () => void;
   notifyTabLayout: () => void;
 };
  

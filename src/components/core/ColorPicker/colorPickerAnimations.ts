@@ -12,7 +12,7 @@
  * Pointer → motion press → drag (`useColorPickerAreaDrag`) unless `defaultPrevented`.
  * Defaults: empty.
  */
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import type { ForwardedRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
  
@@ -86,28 +86,51 @@ export function useColorPickerAreaChange(hex: string) {
   });
 }
  
-export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDragProps) {
+export function useColorPickerAreaDrag({
+  hsva,
+  setHsva,
+  disabled = false,
+  readOnly = false,
+}: UseColorPickerAreaDragProps) {
   const areaRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLButtonElement>(null);
   const dragging = useRef(false);
+  const activePointerIdRef = useRef<number | null>(null);
+  const blocked = disabled || readOnly;
  
   const update = useCallback(
     (clientX: number, clientY: number) => {
+      if (blocked) return;
       const el = areaRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
       const s = clampN(((clientX - rect.left) / rect.width) * 100, 0, 100);
       const v = clampN(100 - ((clientY - rect.top) / rect.height) * 100, 0, 100);
       setHsva({ ...hsva, s: Math.round(s), v: Math.round(v) });
     },
-    [hsva, setHsva],
+    [blocked, hsva, setHsva],
   );
+ 
+  const updateRef = useRef(update);
+  useLayoutEffect(() => {
+    updateRef.current = update;
+  }, [update]);
  
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
-      if (dragging.current) update(e.clientX, e.clientY);
+      if (!dragging.current) return;
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) {
+        return;
+      }
+      updateRef.current(e.clientX, e.clientY);
     };
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
+      if (!dragging.current) return;
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) {
+        return;
+      }
+      activePointerIdRef.current = null;
       dragging.current = false;
     };
     window.addEventListener("pointermove", onMove);
@@ -118,20 +141,23 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
     };
-  }, [update]);
+  }, []);
  
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
+      if (blocked || e.button !== 0) return;
       e.preventDefault();
+      activePointerIdRef.current = e.pointerId;
       dragging.current = true;
       update(e.clientX, e.clientY);
       focusElement(thumbRef.current);
     },
-    [update],
+    [blocked, update],
   );
  
   const handleThumbKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (blocked) return;
       const large = e.shiftKey;
       const step = large
         ? COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE
@@ -175,7 +201,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
         v: Math.round(clampN(nextV, 0, 100)),
       });
     },
-    [hsva, setHsva],
+    [blocked, hsva, setHsva],
   );
  
   return {

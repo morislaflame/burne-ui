@@ -3,6 +3,7 @@ import {
   forwardRef,
   isValidElement,
   useCallback,
+  useLayoutEffect,
   useMemo,
   useRef,
   type ReactElement,
@@ -47,8 +48,8 @@ import type {
 } from "./avatarTypes";
  
 export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
-  function AvatarImage({ className = "", motion, onLoad, onError, ...rest }, ref) {
-    const { imageStatus, onImageLoad, onImageError } = useAvatarContext("Avatar.Image");
+  function AvatarImage({ className = "", motion, onLoad, onError, alt, src, ...rest }, ref) {
+    const { imageStatus, onImageLoad, onImageError, resetImageStatus } = useAvatarContext("Avatar.Image");
     const slotClassNames = useAvatarClassNames();
     const scope = useOptionalAvatarMotionScope();
     const imgRef = useRef<HTMLImageElement | null>(null);
@@ -66,6 +67,26 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       },
       [setRef],
     );
+
+    useLayoutEffect(() => {
+      if (!src) {
+        resetImageStatus();
+        return;
+      }
+      const img = imgRef.current;
+      if (img && img.complete) {
+        if (img.naturalWidth > 0) {
+          onImageLoad();
+        } else {
+          onImageError();
+        }
+      } else {
+        resetImageStatus();
+      }
+      return () => {
+        resetImageStatus();
+      };
+    }, [src, onImageLoad, onImageError, resetImageStatus]);
  
     const mergedOnLoad = useCallback(
       (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -83,17 +104,18 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       [onError, onImageError],
     );
  
-    const visible = imageStatus === "loaded";
+    const visible = Boolean(src) && imageStatus === "loaded";
     useAvatarImageMotion(scope, visible, imgRef);
  
     return (
       <img
         ref={bindRef}
+        src={src}
         className={avatarImageClass(visible, cn(slotClassNames.image, className))}
-        alt={rest.alt ?? ""}
         onLoad={mergedOnLoad}
         onError={mergedOnError}
         {...rest}
+        alt={alt ?? ""}
       />
     );
   },

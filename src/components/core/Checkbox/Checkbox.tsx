@@ -10,7 +10,7 @@ import { CHECKBOX_COMPOUND_FIELDSET_CLASS, CHECKBOX_ROOT_DISABLED_CLASS, checkbo
 import type { CheckboxProps } from "./checkboxTypes";
 import { useCheckboxRootState } from "./useCheckboxRootState";
  
-import { dataCheckedState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataCheckedState, dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 export type {
@@ -149,6 +149,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
                 })}
                 data-state={dataCheckedState(state.mergedChecked, state.contextValue.indeterminate)}
                 data-checked={state.mergedChecked ? "true" : undefined}
+                data-disabled={dataFlag(state.isDisabled)}
+                data-readonly={dataFlag(state.isReadOnly)}
+                data-invalid={dataFlag(state.isInvalid)}
+                data-required={dataFlag(state.isRequired)}
               >
                 {children}
               </fieldset>
@@ -181,6 +185,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
             })}
             data-state={dataCheckedState(state.mergedChecked, state.contextValue.indeterminate)}
             data-checked={state.mergedChecked ? "true" : undefined}
+            data-disabled={dataFlag(state.isDisabled)}
+            data-readonly={dataFlag(state.isReadOnly)}
+            data-invalid={dataFlag(state.isInvalid)}
+            data-required={dataFlag(state.isRequired)}
           >
             <CheckboxSimpleBody
               label={state.label}

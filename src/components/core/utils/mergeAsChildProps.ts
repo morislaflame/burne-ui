@@ -14,13 +14,19 @@ export type MergeAsChildPropsOptions = {
    * child Button sees the event (e.g. squeeze-open triggers).
    */
   runBeforeChild?: readonly string[];
+  /**
+   * When true, blocks pointer/keyboard activation (`onClick`, `onAuxClick`, and
+   * `Enter`/`Space` on `onKeyDown`) with `preventDefault()` + `stopPropagation()`
+   * before any child handler runs — critical for `<Button asChild disabled><a>`.
+   */
+  disabled?: boolean;
 };
- 
+
 function isEventHandlerProp(key: string): boolean {
   return /^on[A-Z]/.test(key);
 }
- 
-function getChildRef<T>(child: ReactElement): Ref<T> | undefined {
+
+export function getChildRef<T>(child: ReactElement): Ref<T> | undefined {
   const propsRef = (child.props as { ref?: Ref<T> }).ref;
   if (propsRef != null) return propsRef;
   // React 18: ref may live on the element instance, not in props.
@@ -52,7 +58,7 @@ export function mergeAsChildProps<T extends Element = Element>(
   options?: MergeAsChildPropsOptions,
 ): AnyProps {
   const childProps = child.props as AnyProps;
-  const runBefore = options?.runBeforeChild;
+  const runBeforeSet = options?.runBeforeChild ? new Set(options.runBeforeChild) : undefined;
   const merged: AnyProps = { ...childProps };
  
   for (const [key, value] of Object.entries(ownProps)) {
@@ -66,7 +72,7 @@ export function mergeAsChildProps<T extends Element = Element>(
       const ownHandler = value as (...args: unknown[]) => void;
       const childHandler = childProps[key] as (...args: unknown[]) => void;
       merged[key] =
-        runBefore?.includes(key) === true
+        runBeforeSet?.has(key) === true
           ? chainHandlers(ownHandler, childHandler)
           : chainHandlers(childHandler, ownHandler);
       continue;
@@ -91,8 +97,29 @@ export function mergeAsChildProps<T extends Element = Element>(
         : (ownStyle ?? childStyle);
   }
  
+  if (options?.disabled) {
+    delete merged.href;
+    merged.onClick = (event: { preventDefault?: () => void; stopPropagation?: () => void }) => {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+    };
+    merged.onAuxClick = (event: { preventDefault?: () => void; stopPropagation?: () => void }) => {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+    };
+    const prevKeyDown = merged.onKeyDown as ((event: KeyboardEvent) => void) | undefined;
+    merged.onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter" || event.key === " " || event.key === "Spacebar") {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      prevKeyDown?.(event);
+    };
+  }
+
   merged.ref = mergeRefs(getChildRef<T>(child), forwardedRef);
- 
+
   return merged;
 }
  

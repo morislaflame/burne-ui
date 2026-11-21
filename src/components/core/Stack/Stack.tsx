@@ -1,5 +1,7 @@
 import { forwardRef, useMemo } from "react";
 
+import { useSkinVariant } from "@/skins/skinContext";
+
 import { resolveStackMotionDefaults, useStackRootMotion } from "./stackAnimations";
 import { StackMotionProvider } from "./stackContext";
 import { stackRootClass } from "./stackStyles";
@@ -124,6 +126,7 @@ function StackSurface({
     | "onPointerUp"
   >;
 }) {
+  const skinVariant = useSkinVariant(undefined);
   const part = useStackRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -142,6 +145,7 @@ function StackSurface({
         align,
         justify,
         wrap,
+        skinVariant,
         slotClass: classNames?.root,
         className,
       })}

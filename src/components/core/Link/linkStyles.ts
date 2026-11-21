@@ -7,7 +7,10 @@ import { cn } from "@/utils/cn";
 import type { LinkSize } from "./linkTypes";
  
 export const LINK_ANCHOR_CLASS =
-  "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-foreground focus-ring";
+  "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-foreground focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-disabled:cursor-not-allowed";
+
+export const LINK_DISABLED_CLASS =
+  "pointer-events-none opacity-50 cursor-not-allowed";
  
 export const LINK_TEXT_BASE_CLASS = "min-w-0 truncate font-w-mid";
  
@@ -36,13 +39,15 @@ export const LINK_ICON_SIZE_CLASS: Record<LinkSize, string> = {
 };
  
 export function linkAnchorClass({
+  disabled,
   slotClass,
   className,
 }: {
+  disabled?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
-  return cn(LINK_ANCHOR_CLASS, slotClass, className);
+  return cn(LINK_ANCHOR_CLASS, disabled && LINK_DISABLED_CLASS, slotClass, className);
 }
  
 export function linkTextClass({

@@ -45,7 +45,7 @@ export function useMeterRootState({
     const compound = hasCompoundChildren(children);
     return {
       isCompound: compound,
-      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasLabel: label != null || (compound && hasCompoundChild(children, "MeterLabel", "Label")),
       hasHint: hint != null || (compound && hasCompoundChild(children, "Meter.Hint")),
       hasError: error != null || (compound && hasCompoundChild(children, "Meter.Error")),
     };
@@ -60,10 +60,11 @@ export function useMeterRootState({
       errorConnected: hasError,
       labelConnected: hasLabel,
       orientation,
+      status,
       display,
       setDisplay,
     }),
-    [display, errorId, hasError, hasHint, hasLabel, hintId, meterId, orientation, setDisplay],
+    [display, errorId, hasError, hasHint, hasLabel, hintId, meterId, orientation, setDisplay, status],
   );
  
   const fieldLabelCtx = useMemo(() => ({ labelId }), [labelId]);

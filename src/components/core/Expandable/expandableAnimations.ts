@@ -191,14 +191,16 @@ export function useExpandableTriggerMotion({
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
-      if (e.defaultPrevented || disabled) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
+      if (e.defaultPrevented || disabled || e.repeat) return;
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
         playLiftPress("pressIn");
-        toggle();
+        if (e.currentTarget.tagName !== "BUTTON") {
+          e.preventDefault();
+          e.currentTarget.click();
+        }
       }
     },
-    [disabled, onKeyDown, playLiftPress, toggle],
+    [disabled, onKeyDown, playLiftPress],
   );
  
   const handlePointerDown = useCallback(
@@ -231,7 +233,6 @@ export function useExpandableTriggerMotion({
  
 export function useExpandablePanelMotion({
   open,
-  motion,
 }: UseExpandablePanelMotionProps) {
   const scope = useExpandableMotionScope();
   const shellRef = useRef<HTMLDivElement | null>(null);
@@ -241,7 +242,6 @@ export function useExpandablePanelMotion({
   const { setRef: setShellPartRef } = useMotionPart<HTMLDivElement>({
     scope,
     slot: "panelShell",
-    motion,
   });
  
   const setShellRef = useCallback(

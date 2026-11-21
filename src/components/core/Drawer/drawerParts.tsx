@@ -8,6 +8,7 @@ import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataCon
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { OverlayLayerProvider } from "@/components/core/utils/overlayLayer";
 import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
 import { SkinShell } from "@/skins/skinShell";
 import { focusElement } from "@/components/core/utils/focusElement";
@@ -98,16 +99,17 @@ export const DrawerHandleInner = forwardRef(function DrawerHandleInner({
     overlayRef,
     panelRef,
     skipCloseAnimRef,
+    closeOnInteractOutside,
   } = useDrawer();
   const slotClassNames = useDrawerClassNames();
   const labels = useBurneLabels();
   const close = () => onOpenChange(false);
-  const { onPointerDown: dragPD } = useDrawerHandleDrag(
+  const { onPointerDown: dragPD, consumeDragClick } = useDrawerHandleDrag(
     panelRef,
     overlayRef,
     placement,
     close,
-    false,
+    closeOnInteractOutside === false,
     skipCloseAnimRef,
   );
   const { setRef } = useMotionPart<HTMLDivElement>({
@@ -116,7 +118,7 @@ export const DrawerHandleInner = forwardRef(function DrawerHandleInner({
     slot: "handle",
     motion,
   });
- 
+
   return (
     <div
       ref={setRef}
@@ -127,7 +129,7 @@ export const DrawerHandleInner = forwardRef(function DrawerHandleInner({
       })}
       onPointerDown={(e) => {
         onPointerDown?.(e);
-        dragPD(e);
+        if (!e.defaultPrevented) dragPD(e);
       }}
       {...rest}
     >
@@ -139,6 +141,7 @@ export const DrawerHandleInner = forwardRef(function DrawerHandleInner({
           slotClass: slotClassNames.handleGrip,
         })}
         onClick={() => {
+          if (consumeDragClick()) return;
           close();
         }}
         onKeyDown={onKeyDown}
@@ -533,8 +536,8 @@ DrawerTrigger.displayName = "Drawer.Trigger";
 export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
   function DrawerPanel({ motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props }, forwardedRef) {
     const parentScope = useOptionalDrawerMotionScope();
-    const { placement } = useDrawer();
-    const variant = useSkinVariant(variantProp);
+    const { placement, variant: rootVariant } = useDrawer();
+    const variant = useSkinVariant(variantProp ?? rootVariant);
     const skinRevision = useSkinRegistryRevision();
     const motionDefaults = useMemo(() => {
       void skinRevision;
@@ -623,46 +626,50 @@ function DrawerPanelHost({
   const fullContextValue: DrawerContextValue = useMemo(
     () => ({
       ...baseCtx,
+      variant,
+      closeOnInteractOutside: resolvedCloseOutside,
       overlayRef: motion.overlayRef,
       panelRef: motion.panelRef,
       skipCloseAnimRef: motion.skipCloseAnimRef,
     }),
-    [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
+    [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef, resolvedCloseOutside, variant],
   );
  
   if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
  
   return createPortal(
-    <DrawerProvider value={fullContextValue}>
-      <DrawerPortalShell
-        open={open}
-        className={className}
-        style={mergeSkinSurfaceStyle(surfaceStyle, style)}
-        variant={variant}
-        placement={placement}
-        extent={extent}
-        portalTheme={portalTheme}
-        lightUi={lightUi}
-        titleId={baseCtx.titleId}
-        descriptionId={baseCtx.descriptionId}
-        hasTitle={baseCtx.hasTitle}
-        hasDescription={baseCtx.hasDescription}
-        backdropIsDismissable={resolvedCloseOutside}
-        panelSegments={panelSegments}
-        dialogRef={motion.dialogRef}
-        overlayRef={motion.overlayRef}
-        panelRef={motion.panelRef}
-        panelForwardedRef={forwardedRef}
-        panelRest={rest}
-        onBackdropMouseDown={motion.handleBackdropMouseDown}
-        onDialogClose={() => onOpenChange(false)}
-        onDialogCancel={(e) => {
-          e.preventDefault();
-          motion.handleDialogCancel(e);
-        }}
-        contained={contained}
-      />
-    </DrawerProvider>,
+    <OverlayLayerProvider layerId={motion.layerId}>
+      <DrawerProvider value={fullContextValue}>
+        <DrawerPortalShell
+          open={open}
+          className={className}
+          style={mergeSkinSurfaceStyle(surfaceStyle, style)}
+          variant={variant}
+          placement={placement}
+          extent={extent}
+          portalTheme={portalTheme}
+          lightUi={lightUi}
+          titleId={baseCtx.titleId}
+          descriptionId={baseCtx.descriptionId}
+          hasTitle={baseCtx.hasTitle}
+          hasDescription={baseCtx.hasDescription}
+          backdropIsDismissable={resolvedCloseOutside}
+          panelSegments={panelSegments}
+          dialogRef={motion.dialogRef}
+          overlayRef={motion.overlayRef}
+          panelRef={motion.panelRef}
+          panelForwardedRef={forwardedRef}
+          panelRest={rest}
+          onBackdropMouseDown={motion.handleBackdropMouseDown}
+          onDialogClose={() => onOpenChange(false)}
+          onDialogCancel={(e) => {
+            e.preventDefault();
+            motion.handleDialogCancel(e);
+          }}
+          contained={contained}
+        />
+      </DrawerProvider>
+    </OverlayLayerProvider>,
     portalHost,
   );
 }

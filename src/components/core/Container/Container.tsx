@@ -1,5 +1,7 @@
 import { forwardRef, useMemo } from "react";
 
+import { useSkinVariant } from "@/skins/skinContext";
+
 import { resolveContainerMotionDefaults, useContainerRootMotion } from "./containerAnimations";
 import { ContainerMotionProvider } from "./containerContext";
 import { containerRootClass } from "./containerStyles";
@@ -107,6 +109,7 @@ function ContainerSurface({
     | "onPointerUp"
   >;
 }) {
+  const skinVariant = useSkinVariant(undefined);
   const part = useContainerRootMotion({
     forwardedRef,
     motion: rootMotion,
@@ -122,6 +125,7 @@ function ContainerSurface({
       className={containerRootClass({
         maxWidth,
         padding,
+        skinVariant,
         slotClass: classNames?.root,
         className,
       })}

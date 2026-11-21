@@ -65,6 +65,8 @@ export type CardProps = Omit<
    * Do not place other buttons/links inside without `stopPropagation` on their click — otherwise the card `onClick` will also trigger.
    */
   pressable?: boolean;
+  /** Disables interaction on a pressable card. */
+  disabled?: boolean;
   /** Renders the pressable shell as a link. */
   href?: string;
   /**
@@ -128,6 +130,7 @@ export type UseCardRootStateProps = Pick<
 
 export type UseCardAnimationsProps = {
   pressable: boolean;
+  disabled?: boolean;
   variant: CardVariant;
   shadow?: ShadowLevel;
   motion?: CardMotion;
@@ -144,6 +147,7 @@ export type UseCardAnimationsProps = {
 export type CardRootShellProps = {
   pressable: boolean;
   renderAsButton: boolean;
+  disabled?: boolean;
   href?: string;
   asChild?: boolean;
   rootClassName: string;

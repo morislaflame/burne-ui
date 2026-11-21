@@ -5,6 +5,8 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   initElementShadow,
+  INTERACTIVE_REST_SCALE,
+  primeInteractiveScaleRest,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { createMotionScopeController } from "@/components/core/utils/slotMotion/createMotionScope";
 import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
@@ -251,5 +253,30 @@ describe("shadow fade layers", () => {
     animateInteractivePressSqueeze(el, { pointerInside: false });
     await firstPress;
     expect(gsap.getTweensOf(el)).toContain(leave);
+  });
+
+  it("keeps scale-lifting controls at INTERACTIVE_REST_SCALE (never snapping back to 1) while leaving liftScale=1 untouched", async () => {
+    vi.stubGlobal("matchMedia", () => ({
+      matches: false,
+      addEventListener() {},
+      removeEventListener() {},
+      addListener() {},
+      removeListener() {},
+    }));
+
+    const btn = host();
+    primeInteractiveScaleRest(btn);
+    expect(Number(gsap.getProperty(btn, "scaleX"))).toBeCloseTo(INTERACTIVE_REST_SCALE, 6);
+
+    const outTween = animateInteractiveHoverLift(btn, false, 1.02, shadowMotionFor("none"));
+    outTween?.progress(1);
+    expect(Number(gsap.getProperty(btn, "scaleX"))).toBeCloseTo(INTERACTIVE_REST_SCALE, 6);
+
+    // Shadow-only host (`liftScale: 1`) does not tween scale when already at 1
+    const panel = host();
+    initElementShadow(panel, "var(--shadow-none)");
+    const panelTween = animateInteractiveHoverLift(panel, true, 1, shadowMotionFor("none"));
+    expect(panelTween).toBeUndefined();
+    expect(panel.style.transform).toBe("");
   });
 });

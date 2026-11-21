@@ -3,7 +3,11 @@ import { cloneElement, forwardRef, useCallback, useMemo, type ReactElement } fro
  
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import {
+  mergeMotionRootSiblings,
+  mergeMotionSlotMaps,
+  useMotionPart,
+} from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
  
 import { Dropdown } from "@/components/core/Dropdown";
@@ -209,7 +213,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
     );
   }
  
-  if (item.href || item.onClick) {
+  if (item.href || item.onClick || item.link) {
     return (
       <InteractiveCrumb
         href={item.href}
@@ -220,6 +224,9 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
         textClassName={slotClassNames.itemLinkText}
         motion={item.motion}
         motionController={item.motionController}
+        motionState={item.motionState}
+        motionPayload={item.motionPayload}
+        playInitialState={item.playInitialState}
       >
         {item.label}
       </InteractiveCrumb>
@@ -279,10 +286,15 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
   ) {
     const parentScope = useOptionalBreadcrumbsMotionScope();
     const motionDefaults = useMemo(() => resolveBreadcrumbsItemMotionDefaults(), []);
-    const mergedMotion = mergeMotionSlotMaps(
+    const mergedSlots = mergeMotionSlotMaps(
       parentScope?.getRootMotion(),
       motion ? { itemLink: motion } : undefined,
     );
+    const siblings = mergeMotionRootSiblings({
+      events: parentScope?.getEvents(),
+      states: parentScope?.getStates(),
+    });
+    const mergedMotion = { ...mergedSlots, ...siblings };
  
     return (
       <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
@@ -427,7 +439,12 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
   const count = hiddenItems.length;
   const parentScope = useOptionalBreadcrumbsMotionScope();
   const motionDefaults = useMemo(() => resolveBreadcrumbsEllipsisMotionDefaults(), []);
-  const mergedMotion = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
+  const mergedSlots = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
+  const siblings = mergeMotionRootSiblings({
+    events: parentScope?.getEvents(),
+    states: parentScope?.getStates(),
+  });
+  const mergedMotion = { ...mergedSlots, ...siblings };
  
   if (count === 0) return null;
  
@@ -487,12 +504,13 @@ function BreadcrumbsEllipsisMenuSurface({
           popoverBody: breadcrumbsEllipsisPopoverBodyClass(slotClassNames.ellipsisPopover),
         }}
       >
-        {hiddenItems.map((item) => {
-          const itemKey = item.href ?? `hidden-${String(item.label)}`;
+        {hiddenItems.map((item, idx) => {
+          const itemKey = `hidden-${idx}-${item.href ?? (typeof item.label === "string" ? item.label : idx)}`;
           return (
             <BreadcrumbsEllipsisDropdownItem
               key={itemKey}
               item={item}
+              itemKey={itemKey}
               className={breadcrumbsDropdownItemClass(
                 cn("", slotClassNames.dropdownItem, item.className),
               )}
@@ -506,10 +524,9 @@ function BreadcrumbsEllipsisMenuSurface({
  
 function BreadcrumbsEllipsisDropdownItem({
   item,
+  itemKey,
   className,
-}: BreadcrumbsEllipsisDropdownItemProps) {
-  const itemKey = item.href ?? `hidden-${String(item.label)}`;
- 
+}: BreadcrumbsEllipsisDropdownItemProps & { itemKey: string }) {
   if (item.href) {
     return (
       <Dropdown.Item

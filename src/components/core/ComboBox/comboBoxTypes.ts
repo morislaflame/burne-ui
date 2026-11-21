@@ -149,6 +149,10 @@ export type ComboBoxContextValue = ComboBoxFieldContextValue & {
   setValue: (value: string) => void;
   filterQuery: string;
   setFilterQuery: (query: string) => void;
+  isFiltering: boolean;
+  setIsFiltering: (filtering: boolean) => void;
+  isInputControlled: boolean;
+  optionsByValue: Map<string, ComboBoxItem>;
   listId: string;
   activeValue: string | null;
   setActiveValue: (value: string | null) => void;
@@ -204,6 +208,7 @@ export type ComboBoxTriggerProps = HTMLAttributes<HTMLButtonElement> & {
 export type UseComboBoxShellAnimationsProps = {
   shellRef: RefObject<HTMLDivElement | null>;
   disabled: boolean;
+  readOnly?: boolean;
   variant: InputVariant;
   groupSegment: unknown;
   motion?: ComboBoxPartMotion;

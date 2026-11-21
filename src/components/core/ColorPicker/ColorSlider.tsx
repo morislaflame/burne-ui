@@ -1,10 +1,12 @@
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type KeyboardEvent, type PointerEvent } from "react";
  
 import { Text } from "@/components/core/Text";
-import { readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderPointerToValue, sliderThumbCenterPercent } from "@/components/core/Slider/sliderAPI";
+import { readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderPointerToValue, sliderThumbCenterPercent, snapSliderToStep } from "@/components/core/Slider/sliderAPI";
 import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
+import { focusElement } from "@/components/core/utils/focusElement";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import { useControllableState } from "@/components/core/utils/useControllableState";
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 import { mergeMotionRootSiblings } from "@/components/core/utils/slotMotion";
@@ -27,7 +29,6 @@ import type {
   ColorSliderProps,
   ColorSliderTrackProps,
 } from "./colorSliderTypes";
-import { clampN } from "./colorUtils";
  
 export type {
   ColorChannel,
@@ -95,6 +96,7 @@ const ColorSliderTrackSurface = forwardRef<
     size = "base",
     orientation = "horizontal",
     disabled = false,
+    readOnly = false,
     className = "",
     forwardedRef,
     itemMotion,
@@ -107,14 +109,18 @@ const ColorSliderTrackSurface = forwardRef<
   _ref,
 ) {
     const { min, max, step } = CHANNEL_RANGE[channel];
+    const blocked = disabled || readOnly;
     const slotClassNames = useColorSliderClassNames();
-    const [value, setValueInternal] = useControllableState({
+    const [currentValue, setValueInternal] = useControllableState({
       value: valueProp,
-      defaultValue: defaultValue ?? CHANNEL_DEFAULT[channel],
+      defaultValue: snapSliderToStep(defaultValue ?? CHANNEL_DEFAULT[channel], min, max, step),
     });
     const dragging = useRef(false);
+    const activePointerIdRef = useRef<number | null>(null);
     const trackRef = useRef<HTMLDivElement>(null);
+    const thumbRef = useRef<HTMLButtonElement>(null);
     const [active, setActive] = useState(false);
+    const [isRtl, setIsRtl] = useState(false);
     const [trackSpanPx, setTrackSpanPx] = useState(0);
     const fallbackThumbPx = useMemo(
       () => resolveSliderFallbackThumbPx(undefined, size),
@@ -127,12 +133,14 @@ const ColorSliderTrackSurface = forwardRef<
       if (!el) return;
  
       const measure = () => {
+        const rtl = isRtlElement(el);
+        setIsRtl((prev) => (prev === rtl ? prev : rtl));
         const rect = el.getBoundingClientRect();
         const { trackSpanPx: spanPx, thumbSpanPx: thumbPx } = readSliderTrackMetrics(
           rect,
           orientation,
         );
-        setTrackSpanPx(spanPx);
+        setTrackSpanPx((prev) => (prev === spanPx ? prev : spanPx));
         if (thumbPx > 0) {
           setThumbSpanPx((prev) => (prev === thumbPx ? prev : thumbPx));
         }
@@ -147,11 +155,12 @@ const ColorSliderTrackSurface = forwardRef<
  
     const emit = useCallback(
       (raw: number) => {
-        const next = clampN(Math.round(raw / step) * step, min, max);
+        if (blocked) return;
+        const next = snapSliderToStep(raw, min, max, step);
         setValueInternal(next);
         onValueChange?.(next);
       },
-      [min, max, step, setValueInternal, onValueChange],
+      [blocked, min, max, step, setValueInternal, onValueChange],
     );
  
     const effectiveThumbPx = thumbSpanPx > 0 ? thumbSpanPx : fallbackThumbPx;
@@ -159,7 +168,9 @@ const ColorSliderTrackSurface = forwardRef<
     const updateFromPointer = useCallback(
       (clientX: number, clientY: number) => {
         const el = trackRef.current;
-        if (!el || disabled) return;
+        if (!el || blocked) return;
+        const rtl = isRtlElement(el);
+        setIsRtl((prev) => (prev === rtl ? prev : rtl));
         const rect = el.getBoundingClientRect();
         emit(
           sliderPointerToValue(
@@ -170,18 +181,32 @@ const ColorSliderTrackSurface = forwardRef<
             min,
             max,
             effectiveThumbPx,
+            rtl,
           ),
         );
       },
-      [disabled, effectiveThumbPx, emit, max, min, orientation],
+      [blocked, effectiveThumbPx, emit, max, min, orientation],
     );
+ 
+    const updateFromPointerRef = useRef(updateFromPointer);
+    useLayoutEffect(() => {
+      updateFromPointerRef.current = updateFromPointer;
+    }, [updateFromPointer]);
  
     useEffect(() => {
       const onMove = (e: globalThis.PointerEvent) => {
         if (!dragging.current) return;
-        updateFromPointer(e.clientX, e.clientY);
+        if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) {
+          return;
+        }
+        updateFromPointerRef.current(e.clientX, e.clientY);
       };
-      const onUp = () => {
+      const onUp = (e: globalThis.PointerEvent) => {
+        if (!dragging.current) return;
+        if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) {
+          return;
+        }
+        activePointerIdRef.current = null;
         dragging.current = false;
         setActive(false);
       };
@@ -193,75 +218,107 @@ const ColorSliderTrackSurface = forwardRef<
         window.removeEventListener("pointerup", onUp);
         window.removeEventListener("pointercancel", onUp);
       };
-    }, [updateFromPointer]);
+    }, []);
  
     const handleTrackDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
-        if (disabled || e.button !== 0) return;
+        if (blocked || e.button !== 0) return;
         e.preventDefault();
+        activePointerIdRef.current = e.pointerId;
         dragging.current = true;
         setActive(true);
+        focusElement(thumbRef.current);
         updateFromPointer(e.clientX, e.clientY);
       },
-      [disabled, updateFromPointer],
+      [blocked, updateFromPointer],
     );
  
     const part = useColorSliderTrackMotion({
       motion: itemMotion,
       forwardedRef,
-      valueIdentity: value,
+      valueIdentity: currentValue,
       onPointerOver,
       onPointerOut,
       onPointerDown: (e) => {
         onPointerDown?.(e);
-        handleTrackDown(e);
+        if (!e.defaultPrevented) handleTrackDown(e);
       },
       onPointerUp,
     });
  
+    const { setRef: setTrackPartRef } = part;
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
         trackRef.current = node;
-        part.setRef(node);
+        if (node) {
+          const rtl = isRtlElement(node);
+          setIsRtl((prev) => (prev === rtl ? prev : rtl));
+        }
+        setTrackPartRef(node);
       },
-      [part.setRef],
+      [setTrackPartRef],
     );
  
     const handleThumbDown = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
-        if (disabled || e.button !== 0) return;
+        if (blocked || e.button !== 0) return;
+        e.preventDefault();
         e.stopPropagation();
+        if (trackRef.current) {
+          const rtl = isRtlElement(trackRef.current);
+          setIsRtl((prev) => (prev === rtl ? prev : rtl));
+        }
+        activePointerIdRef.current = e.pointerId;
         dragging.current = true;
         setActive(true);
-        e.currentTarget.setPointerCapture(e.pointerId);
+        focusElement(e.currentTarget);
+        try {
+          e.currentTarget.setPointerCapture?.(e.pointerId);
+        } catch {
+          // Synthetic pointer events in unit tests may lack an active browser pointerId.
+        }
       },
-      [disabled],
+      [blocked],
     );
  
     const handleKeyDown = useCallback(
       (e: KeyboardEvent<HTMLButtonElement>) => {
-        if (disabled) return;
+        if (blocked) return;
+        const rtl = isRtlElement(trackRef.current ?? e.currentTarget);
+        const horizInc = rtl ? "ArrowLeft" : "ArrowRight";
+        const horizDec = rtl ? "ArrowRight" : "ArrowLeft";
         let delta = 0;
-        if (orientation === "horizontal") {
-          if (e.key === "ArrowRight") delta = step;
-          else if (e.key === "ArrowLeft") delta = -step;
-          else if (e.key === "PageUp")   delta = step * 10;
-          else if (e.key === "PageDown") delta = -step * 10;
-          else if (e.key === "Home")     { emit(min); return; }
-          else if (e.key === "End")      { emit(max); return; }
-        } else {
-          if (e.key === "ArrowUp")   delta = step;
-          else if (e.key === "ArrowDown") delta = -step;
-          else if (e.key === "Home")      { emit(min); return; }
-          else if (e.key === "End")       { emit(max); return; }
+        if (e.key === "Home") {
+          e.preventDefault();
+          emit(min);
+          return;
         }
-        if (delta !== 0) { e.preventDefault(); emit(value + delta); }
+        if (e.key === "End") {
+          e.preventDefault();
+          emit(max);
+          return;
+        }
+        if (e.key === "PageUp") {
+          delta = step * 10;
+        } else if (e.key === "PageDown") {
+          delta = -step * 10;
+        } else if (orientation === "horizontal") {
+          if (e.key === horizInc || e.key === "ArrowUp") delta = step;
+          else if (e.key === horizDec || e.key === "ArrowDown") delta = -step;
+        } else {
+          if (e.key === "ArrowUp" || e.key === "ArrowRight") delta = step;
+          else if (e.key === "ArrowDown" || e.key === "ArrowLeft") delta = -step;
+        }
+        if (delta !== 0) {
+          e.preventDefault();
+          emit(currentValue + delta);
+        }
       },
-      [disabled, orientation, step, min, max, value, emit],
+      [blocked, orientation, step, min, max, currentValue, emit],
     );
  
     const thumbPercent = sliderThumbCenterPercent(
-      value,
+      currentValue,
       min,
       max,
       trackSpanPx,
@@ -279,19 +336,25 @@ const ColorSliderTrackSurface = forwardRef<
           slotClass: slotClassNames.track,
           className,
         })}
-        style={colorSliderBackgroundStyle(channel, color, orientation)}
+        style={colorSliderBackgroundStyle(channel, color, orientation, isRtl)}
         {...rest}
         {...part.pointerHandlers}
         {...dataVariantProps({ size })}
+        data-orientation={orientation}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
       >
         <SliderThumbButton
+          ref={thumbRef}
           size={size}
           percent={thumbPercent}
           orientation={orientation}
           disabled={disabled}
+          readOnly={readOnly}
+          isRtl={isRtl}
           active={active}
           aria-label={CHANNEL_A11Y_LABEL[channel]}
-          ariaValueNow={value}
+          ariaValueNow={currentValue}
           ariaValueMin={min}
           ariaValueMax={max}
           className={slotClassNames.thumb}
@@ -405,6 +468,26 @@ function ColorSliderRootSurface({
 }) {
   const part = useColorSliderRootMotion({ forwardedRef });
   const slotClassNames = useColorSliderClassNames();
+  const { min, max, step } = CHANNEL_RANGE[channel];
+  const {
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    disabled,
+    readOnly,
+    ...trackRest
+  } = rest;
+  const [currentValue, setCurrentValue] = useControllableState({
+    value: valueProp,
+    defaultValue: snapSliderToStep(defaultValue ?? CHANNEL_DEFAULT[channel], min, max, step),
+  });
+  const handleSimpleValueChange = useCallback(
+    (next: number) => {
+      setCurrentValue(next);
+      onValueChange?.(next);
+    },
+    [onValueChange, setCurrentValue],
+  );
 
   if (!children) {
     return (
@@ -413,12 +496,15 @@ function ColorSliderRootSurface({
         className={cn(COLOR_SLIDER_ROOT_CLASS, slotClassNames.root, className)}
         {...part.pointerHandlers}
         {...dataVariantProps({ size })}
+        data-orientation={orientation}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
       >
         {label ? (
           <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
             <Text as="span" textStyle="small" className={cn(COLOR_SLIDER_LABEL_TEXT_CLASS, slotClassNames.label)}>{label}</Text>
             <Text as="span" textStyle="small" className={cn(COLOR_SLIDER_VALUE_TEXT_CLASS, slotClassNames.value)}>
-              {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
+              {currentValue}
             </Text>
           </div>
         ) : null}
@@ -427,11 +513,15 @@ function ColorSliderRootSurface({
           color={color}
           size={size}
           orientation={orientation}
+          value={currentValue}
+          onValueChange={handleSimpleValueChange}
+          disabled={disabled}
+          readOnly={readOnly}
           motionController={trackController}
           motionState={trackMotionState}
           motionPayload={trackMotionPayload}
           playInitialState={trackPlayInitialState}
-          {...rest}
+          {...trackRest}
         />
       </div>
     );
@@ -442,6 +532,9 @@ function ColorSliderRootSurface({
       className={cn(COLOR_SLIDER_ROOT_CLASS, slotClassNames.root, className)}
       {...part.pointerHandlers}
       {...dataVariantProps({ size })}
+      data-orientation={orientation}
+      data-disabled={dataFlag(disabled)}
+      data-readonly={dataFlag(readOnly)}
     >
       {children}
     </div>

@@ -67,26 +67,32 @@ export function collapsedHiddenItems(items: BreadcrumbItemData[]): BreadcrumbIte
 export function toCollapsedPieces(items: BreadcrumbItemData[]): DisplayPiece[] {
   const n = items.length;
   if (n === 0) return [];
+  const hasExplicitCurrent = items.some((item) => item.current === true);
   if (n <= 3) {
     return items.map((item, i) => ({
       kind: "segment" as const,
       item,
-      isLast: item.current ?? i === n - 1,
+      isLast: item.current ?? (!hasExplicitCurrent && i === n - 1),
     }));
   }
   return [
-    { kind: "segment", item: items[0]!, isLast: false },
+    { kind: "segment", item: items[0]!, isLast: items[0]!.current ?? false },
     { kind: "ellipsis", hiddenItems: collapsedHiddenItems(items) },
-    { kind: "segment", item: items[n - 2]!, isLast: false },
-    { kind: "segment", item: items[n - 1]!, isLast: true },
+    { kind: "segment", item: items[n - 2]!, isLast: items[n - 2]!.current ?? false },
+    {
+      kind: "segment",
+      item: items[n - 1]!,
+      isLast: items[n - 1]!.current ?? !hasExplicitCurrent,
+    },
   ];
 }
  
 export function toExpandedPieces(items: BreadcrumbItemData[]): DisplayPiece[] {
+  const hasExplicitCurrent = items.some((item) => item.current === true);
   return items.map((item, i) => ({
     kind: "segment" as const,
     item,
-    isLast: item.current ?? i === items.length - 1,
+    isLast: item.current ?? (!hasExplicitCurrent && i === items.length - 1),
   }));
 }
  

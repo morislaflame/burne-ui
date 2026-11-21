@@ -7,6 +7,7 @@ import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } 
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, isOwnNativeDialogEvent, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { OverlayLayerProvider } from "@/components/core/utils/overlayLayer";
 import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { focusElement } from "@/components/core/utils/focusElement";
 import { mergeSkinSurfaceStyle, useApplySkinPortal, useSkinRegistryRevision, useSkinSurfaceStyle, useSkinVariant } from "@/skins/skinContext";
@@ -454,7 +455,8 @@ DialogOverlay.displayName = "Dialog.Overlay";
 export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
   function DialogPanel({ motion, motionController, motionState, motionPayload, playInitialState, variant: variantProp, ...props }, forwardedRef) {
     const parentScope = useOptionalDialogMotionScope();
-    const variant = useSkinVariant(variantProp);
+    const { variant: rootVariant } = useDialog();
+    const variant = useSkinVariant(variantProp ?? rootVariant);
     const skinRevision = useSkinRegistryRevision();
     const motionDefaults = useMemo(() => {
       void skinRevision;
@@ -545,33 +547,36 @@ function DialogPanelHost({
   if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
  
   return createPortal(
-    <DialogPortalShell
-      className={className}
-      style={mergeSkinSurfaceStyle(surfaceStyle, style)}
-      variant={variant}
-      size={size}
-      sizePreset={sizePreset}
-      portalTheme={portalTheme}
-      lightUi={lightUi}
-      titleId={titleId}
-      descriptionId={descriptionId}
-      hasTitle={hasTitle}
-      hasDescription={hasDescription}
-      dialogRef={motion.dialogRef}
-      overlayRef={motion.overlayRef}
-      panelRef={motion.panelRef}
-      panelForwardedRef={forwardedRef}
-      panelRest={rest}
-      onBackdropMouseDown={motion.handleBackdropPointerDown}
-      onDialogClose={() => onOpenChange(false)}
-      onDialogCancel={(e) => {
-        e.preventDefault();
-        motion.handleDialogCancel(e);
-      }}
-      contained={contained}
-    >
-      {children}
-    </DialogPortalShell>,
+    <OverlayLayerProvider layerId={motion.layerId}>
+      <DialogPortalShell
+        open={open}
+        className={className}
+        style={mergeSkinSurfaceStyle(surfaceStyle, style)}
+        variant={variant}
+        size={size}
+        sizePreset={sizePreset}
+        portalTheme={portalTheme}
+        lightUi={lightUi}
+        titleId={titleId}
+        descriptionId={descriptionId}
+        hasTitle={hasTitle}
+        hasDescription={hasDescription}
+        dialogRef={motion.dialogRef}
+        overlayRef={motion.overlayRef}
+        panelRef={motion.panelRef}
+        panelForwardedRef={forwardedRef}
+        panelRest={rest}
+        onBackdropMouseDown={motion.handleBackdropPointerDown}
+        onDialogClose={() => onOpenChange(false)}
+        onDialogCancel={(e) => {
+          e.preventDefault();
+          motion.handleDialogCancel(e);
+        }}
+        contained={contained}
+      >
+        {children}
+      </DialogPortalShell>
+    </OverlayLayerProvider>,
     portalHost,
   );
 }
@@ -579,6 +584,7 @@ function DialogPanelHost({
 // ─── DialogPortalShell ───────────────────────────────────────────────────────
  
 export function DialogPortalShell({
+  open,
   children,
   className,
   style,
@@ -620,6 +626,7 @@ export function DialogPortalShell({
       aria-labelledby={hasTitle ? titleId : undefined}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={cn(dialogNativeClass(contained), slotClassNames.dialog)}
+      data-state={dataOpenState(open)}
     >
       <div
         ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}

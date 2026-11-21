@@ -86,7 +86,7 @@ export function LoadingDots({
     slot: "dots",
     pointerPhases: false,
   });
-  useLoadingDotsAnimation(scope);
+  useLoadingDotsAnimation(scope, size);
   useOptionalEnterOnMount(scope, "dots", part.targetRef);
  
   return (

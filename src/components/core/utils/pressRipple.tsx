@@ -48,6 +48,7 @@ function ConvergeRippleDot({
         autoAlpha: 0,
         duration: durationMs / 1000,
         ease: ensureRippleEase(easeCss),
+        force3D: false,
         onComplete: () => {
           if (!finished) onDoneRef.current(id);
         },
@@ -58,7 +59,7 @@ function ConvergeRippleDot({
       tween.kill();
       killMotion(el);
     };
-  }, [id, x, y, size, durationMs, opacityFrom, background, direction, easeCss]);
+  }, [id, x, y, size, durationMs, opacityFrom, direction, easeCss]);
  
   return (
     <span

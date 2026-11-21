@@ -69,8 +69,11 @@ export const TOAST_VIEWPORT_BASE_CLASS =
 export const TOAST_STACK_ITEM_CLASS =
   "col-start-1 row-start-1 [z-index:var(--toast-stack-z)] [pointer-events:var(--toast-stack-events)] [transform-origin:var(--toast-stack-origin)]";
  
-/** Height is `--toast-stack-height` (front card). Not a tween — layout. */
+/** Height is `--toast-stack-height` (front card or expanded stack). Not a tween — layout. */
 export const TOAST_STACK_CONTAINER_CLASS = "relative grid h-[var(--toast-stack-height,auto)]";
+
+/** Bridges gaps between expanded cards so moving the pointer across cards does not collapse hover. */
+export const TOAST_STACK_EXPANDED_CLASS = "pointer-events-auto";
  
 export const TOAST_SCRIM_BASE_CLASS = "pointer-events-none absolute";
  
@@ -129,8 +132,8 @@ export function toastViewportClass({
   );
 }
  
-export function toastStackClass(slotClass?: string) {
-  return cn(TOAST_STACK_CONTAINER_CLASS, slotClass);
+export function toastStackClass(slotClass?: string, expanded = false) {
+  return cn(TOAST_STACK_CONTAINER_CLASS, expanded && TOAST_STACK_EXPANDED_CLASS, slotClass);
 }
 
 export function toastStackItemClass(slotClass?: string) {

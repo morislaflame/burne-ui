@@ -7,7 +7,7 @@ export const RESIZABLE_ROOT_CLASS = "flex min-h-0 w-full min-w-0";
 
 export const RESIZABLE_ORIENTATION_CLASS = {
   horizontal: "flex-row",
-  vertical: "flex-col",
+  vertical: "h-full flex-col",
 } as const satisfies Record<ResizableOrientation, string>;
 
 export const RESIZABLE_PANEL_CLASS = "min-h-0 min-w-0 overflow-auto";
@@ -26,17 +26,19 @@ export const RESIZABLE_HANDLE_AXIS_CLASS = {
 
 export function resizableRootClass({
   orientation,
+  skinVariant,
   slotClass,
   className,
 }: {
   orientation: ResizableOrientation;
+  skinVariant?: string;
   slotClass?: string;
   className?: string;
 }): string {
   return cn(
     RESIZABLE_ROOT_CLASS,
     RESIZABLE_ORIENTATION_CLASS[orientation],
-    layoutTargetClass("resizable.root"),
+    layoutTargetClass("resizable.root", skinVariant),
     slotClass,
     className,
   );

@@ -48,7 +48,7 @@ function useResizableSlot(
   },
 ) {
   const scope = useResizableMotionScope();
-  const pointer = hasPointerPhases(motion);
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
   const part = useMotionPart<HTMLDivElement>({
     scope,
     slot: RESIZABLE_MOTION_SLOTS[slot].slot,

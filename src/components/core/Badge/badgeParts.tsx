@@ -119,6 +119,7 @@ export function BadgeIconOnlyView({
   className,
   rest,
   iconOnlyBody,
+  singleDigit = false,
 }: BadgeIconOnlyViewProps) {
   const slotClassNames = useBadgeClassNames();
   const iconInnerCls = badgeIconOnlyViewClass(
@@ -128,7 +129,7 @@ export function BadgeIconOnlyView({
   );
  
   return (
-    <BadgeShell {...shell} className={iconInnerCls} rest={rest} withA11y>
+    <BadgeShell {...shell} className={iconInnerCls} rest={rest} withA11y={!singleDigit}>
       {iconOnlyBody}
     </BadgeShell>
   );
@@ -170,6 +171,8 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     playInitialState,
     onPointerOver: onPointerOverFromProps,
     onPointerOut: onPointerOutFromProps,
+    onPointerDown: onPointerDownFromProps,
+    onPointerUp: onPointerUpFromProps,
     ...rest
   },
   ref,
@@ -206,7 +209,7 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
           hoverLift={hoverLift}
           onPointerOverFromProps={onPointerOverFromProps}
           onPointerOutFromProps={onPointerOutFromProps}
-          rest={rest}
+          rest={{ ...rest, onPointerDown: onPointerDownFromProps, onPointerUp: onPointerUpFromProps }}
           forwardedRef={ref}
         >
           {children}

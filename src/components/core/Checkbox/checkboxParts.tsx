@@ -1,16 +1,17 @@
-import { forwardRef, useEffect, useRef, type LabelHTMLAttributes, type Ref } from "react";
+import { forwardRef, useEffect, useRef, type HTMLAttributes, type LabelHTMLAttributes, type Ref } from "react";
  
 import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import { dataFlag } from "@/components/core/utils/dataContract";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
  
-import { checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
+import { checkboxVariantToIndicator, compoundContentHasExternalLabel, compoundHasCheckboxLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
 import { resolveCheckboxIndicatorMotion, useCheckboxChromeSlot, useCheckboxControlTrackAnimation, useCheckboxLabelSlot } from "./checkboxAnimations";
 import { useCheckboxClassNames, useCheckboxFieldContext, useCheckboxMotion, useOptionalCheckboxMotionScope } from "./checkboxContext";
-import { CHECKBOX_CONTENT_COMPOUND_CLASS, CHECKBOX_CONTENT_PASS_THROUGH_CLASS, CHECKBOX_CONTENT_POINTER_CLASS, CHECKBOX_CONTROL_CLASS, CHECKBOX_ERROR_DISABLED_CLASS, CHECKBOX_HINT_DISABLED_CLASS, CHECKBOX_INPUT_TRACK_OVERLAY_CLASS, CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS, CHECKBOX_LABEL_CLASS, CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS, CHECKBOX_LABEL_MOTION_CLASS, CHECKBOX_LABEL_TEXT_DANGER_CLASS, CHECKBOX_LABEL_TEXT_DISABLED_CLASS, CHECKBOX_REQUIRED_MARK_CLASS, CHECKBOX_SIMPLE_LABEL_TEXT_CLASS, CHECKBOX_SIMPLE_LABEL_WRAP_CLASS, CHECKBOX_SIZE_LAYOUT, checkboxControlCellClass, checkboxControlTrackClass, checkboxErrorRow, checkboxLabelCellClass, checkboxSecondaryCellClass } from "./checkboxStyles";
+import { CHECKBOX_CONTENT_COMPOUND_CLASS, CHECKBOX_CONTENT_PASS_THROUGH_CLASS, CHECKBOX_CONTENT_POINTER_CLASS, CHECKBOX_CONTROL_CLASS, CHECKBOX_ERROR_DISABLED_CLASS, CHECKBOX_HINT_DISABLED_CLASS, CHECKBOX_INPUT_TRACK_OVERLAY_CLASS, CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS, CHECKBOX_LABEL_CLASS, CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS, CHECKBOX_LABEL_MOTION_CLASS, CHECKBOX_LABEL_POINTER_CLASS, CHECKBOX_LABEL_TEXT_DANGER_CLASS, CHECKBOX_LABEL_TEXT_DISABLED_CLASS, CHECKBOX_REQUIRED_MARK_CLASS, CHECKBOX_SIMPLE_LABEL_TEXT_CLASS, CHECKBOX_SIMPLE_LABEL_WRAP_CLASS, CHECKBOX_SIZE_LAYOUT, checkboxControlCellClass, checkboxControlTrackClass, checkboxErrorRow, checkboxLabelCellClass, checkboxSecondaryCellClass } from "./checkboxStyles";
 import type {
   CheckboxContentProps,
   CheckboxControlProps,
@@ -80,7 +81,12 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
             readOnly={ctx.inputProps.readOnly}
             aria-readonly={ctx.inputProps.readOnly || undefined}
             onClick={(event) => {
-              if (ctx.inputProps.readOnly) event.preventDefault();
+              if (ctx.inputProps.readOnly) {
+                event.preventDefault();
+                if (indeterminateRef.current) {
+                  indeterminateRef.current.indeterminate = Boolean(ctx.indeterminate);
+                }
+              }
             }}
             onBlur={ctx.inputProps.onBlur}
             onFocus={ctx.inputProps.onFocus}
@@ -98,8 +104,10 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
                   defaultChecked: ctx.inputProps.defaultChecked,
                   onChange: ctx.onChange,
                 })}
-            data-invalid={ctx.inputProps.ariaInvalid ? "" : undefined}
-            data-readonly={ctx.inputProps.readOnly ? "" : undefined}
+            data-disabled={dataFlag(ctx.isDisabled)}
+            data-invalid={dataFlag(ctx.isInvalid)}
+            data-readonly={dataFlag(ctx.isReadOnly)}
+            data-required={dataFlag(Boolean(ctx.inputProps.required))}
           />
           {children ?? <CheckboxIndicator motionController={motionController}
                 motionState={motionState}
@@ -178,7 +186,9 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
     );
  
     const useNativeLabel =
-      ctx.isCompound && !compoundContentHasExternalLabel(children);
+      ctx.isCompound &&
+      !compoundHasCheckboxLabel(children) &&
+      !compoundContentHasExternalLabel(children);
  
     if (useNativeLabel) {
       return (
@@ -207,7 +217,7 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
  
 CheckboxContent.displayName = "CheckboxContent";
  
-export const CheckboxLabel = forwardRef<HTMLSpanElement, CheckboxLabelProps>(
+export const CheckboxLabel = forwardRef<HTMLElement, CheckboxLabelProps>(
   function CheckboxLabel({
   children,
   className,
@@ -222,27 +232,25 @@ export const CheckboxLabel = forwardRef<HTMLSpanElement, CheckboxLabelProps>(
   const required = requiredProp ?? labelCtx?.required ?? false;
   const sz = CHECKBOX_SIZE_LAYOUT[field.size];
   const { setRef } = useCheckboxLabelSlot(motion);
- 
-  return (
-    <span
-      id={idProp}
-      ref={mergeRefs(setRef, ref, (node) => {
-        if (field.isCompound && field.useInlineCompoundMotion) {
-          field.textMotionRef.current = node;
-        }
-      })}
-      className={cn(
-        CHECKBOX_LABEL_CLASS,
-        field.isCompound && checkboxLabelCellClass(field.labelPosition),
-        field.isCompound &&
-          (field.hasCompoundHint || field.hasCompoundError) &&
-          CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS,
-        field.isCompound && field.useInlineCompoundMotion && CHECKBOX_LABEL_MOTION_CLASS,
-        slotClassNames.label,
-        className,
-      )}
-      {...rest}
-    >
+  const resolvedId = idProp ?? field.labelId;
+  const mergedRef = mergeRefs(setRef, ref, (node) => {
+    if (field.isCompound && field.useInlineCompoundMotion) {
+      field.textMotionRef.current = node;
+    }
+  });
+  const labelClass = cn(
+    CHECKBOX_LABEL_CLASS,
+    field.isCompound && !field.isDisabled && CHECKBOX_LABEL_POINTER_CLASS,
+    field.isCompound && checkboxLabelCellClass(field.labelPosition),
+    field.isCompound &&
+      (field.hasCompoundHint || field.hasCompoundError) &&
+      CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS,
+    field.isCompound && field.useInlineCompoundMotion && CHECKBOX_LABEL_MOTION_CLASS,
+    slotClassNames.label,
+    className,
+  );
+  const content = (
+    <>
       <Text
         as="span"
         textStyle={sz.title}
@@ -266,6 +274,31 @@ export const CheckboxLabel = forwardRef<HTMLSpanElement, CheckboxLabelProps>(
           *
         </span>
       ) : null}
+    </>
+  );
+ 
+  if (field.isCompound) {
+    return (
+      <label
+        id={resolvedId}
+        htmlFor={field.inputId}
+        ref={mergedRef as Ref<HTMLLabelElement>}
+        className={labelClass}
+        {...(rest as LabelHTMLAttributes<HTMLLabelElement>)}
+      >
+        {content}
+      </label>
+    );
+  }
+ 
+  return (
+    <span
+      id={resolvedId}
+      ref={mergedRef as Ref<HTMLSpanElement>}
+      className={labelClass}
+      {...(rest as HTMLAttributes<HTMLSpanElement>)}
+    >
+      {content}
     </span>
   );
 });

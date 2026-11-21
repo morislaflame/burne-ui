@@ -50,20 +50,20 @@ export function useCalendarDayCellModels() {
 }
  
 export function useCalendarMonthCellModels() {
-  const { viewDate, selectedDates, locale, today } = useCalendar();
+  const { viewDate, selectedDates, locale, today, minDate, maxDate } = useCalendar();
  
   return useMemo(
-    () => buildMonthCellModels(viewDate, selectedDates, locale, today),
-    [viewDate, selectedDates, locale, today],
+    () => buildMonthCellModels(viewDate, selectedDates, locale, today, minDate, maxDate),
+    [viewDate, selectedDates, locale, today, minDate, maxDate],
   );
 }
  
 export function useCalendarYearCellModels() {
-  const { viewDate, selectedDates, today } = useCalendar();
+  const { viewDate, selectedDates, today, minDate, maxDate } = useCalendar();
  
   return useMemo(
-    () => buildYearCellModels(viewDate, selectedDates, today),
-    [viewDate, selectedDates, today],
+    () => buildYearCellModels(viewDate, selectedDates, today, minDate, maxDate),
+    [viewDate, selectedDates, today, minDate, maxDate],
   );
 }
  

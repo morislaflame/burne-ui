@@ -12,7 +12,7 @@
  *
  * Trigger open squeeze uses slot `pressIn` (`playOverlayTriggerOpenSqueeze`).
  */
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
  
 import { focusPanelOnOpen, isFocusVisibleElement } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
@@ -20,7 +20,7 @@ import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/cor
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { bindOverlayReflow } from "@/components/core/utils/bindOverlayReflow";
-import { applyFloatingPortalPosition, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { applyFloatingPortalPosition, resolveFloatingPortalContainer } from "@/components/core/utils/portalContainer";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 import {
   hideNestedEnterSlots,
@@ -51,6 +51,16 @@ export function resolvePopoverMotionDefaults(variant: PopoverVariant): PopoverMo
   return overlaySkinMotion(POPOVER_MOTION_DEFAULTS, variant, KIT_POPOVER_VARIANTS, "popover");
 }
  
+function pickPopoverDialogAnchor(
+  trigger: HTMLElement | null,
+  anchor: HTMLElement | null | undefined,
+): Element | null {
+  if (anchor && typeof anchor.closest === "function" && anchor.closest("dialog[open]:not(.portal-contained)")) {
+    return anchor;
+  }
+  return trigger ?? anchor ?? null;
+}
+
 export function usePopoverContentLifecycle({
   open,
   side,
@@ -70,12 +80,34 @@ export function usePopoverContentLifecycle({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [portalMounted, setPortalMounted] = useState(false);
   const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(() =>
+    resolveFloatingPortalContainer(portalContainer, null),
+  );
   const enterFrameRef = useRef(0);
   const enterGenRef = useRef(0);
  
   if (open && !portalMounted) {
     setPortalMounted(true);
   }
+
+  const syncPortalHost = useCallback(() => {
+    const nextHost = resolveFloatingPortalContainer(
+      portalContainer,
+      pickPopoverDialogAnchor(triggerRef.current, anchorRef?.current),
+    );
+    setPortalHost((prev) => (prev === nextHost ? prev : nextHost));
+    return nextHost;
+  }, [anchorRef, portalContainer, triggerRef]);
+
+  useLayoutEffect(() => {
+    if (!open && !portalMounted) return;
+    syncPortalHost();
+  }, [open, portalMounted, syncPortalHost]);
+
+  useEffect(() => {
+    if (!open) return;
+    syncPortalHost();
+  }, [open, syncPortalHost]);
  
   const setPanelRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -104,11 +136,13 @@ export function usePopoverContentLifecycle({
       offset,
       { align, collisionPadding, avoidCollisions },
     );
+
+    const activeHost = syncPortalHost() ?? portalHost;
  
     setResolvedSide(placement.resolvedSide);
-    applyFloatingPortalPosition(panel, placement, portalContainer);
+    applyFloatingPortalPosition(panel, placement, activeHost);
     panel.style.transform = "";
-  }, [align, anchorRef, avoidCollisions, collisionPadding, matchAnchorWidth, offset, portalContainer, side, triggerRef]);
+  }, [align, anchorRef, avoidCollisions, collisionPadding, matchAnchorWidth, offset, portalHost, side, syncPortalHost, triggerRef]);
  
   useLayoutEffect(() => {
     if (!open || !portalMounted) return;
@@ -117,21 +151,17 @@ export function usePopoverContentLifecycle({
     const unbindReflow = bindOverlayReflow(reposition);
  
     const panel = panelRef.current;
-    const host =
-      typeof document !== "undefined"
-        ? resolvePortalContainer(portalContainer)
-        : null;
     const ro =
       typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => reposition()) : null;
     if (panel && ro) ro.observe(panel);
-    if (host && host !== document.body && ro) ro.observe(host);
+    if (portalHost && portalHost !== document.body && ro) ro.observe(portalHost);
  
     return () => {
       window.cancelAnimationFrame(raf);
       unbindReflow();
       ro?.disconnect();
     };
-  }, [open, portalMounted, portalContainer, reposition, showArrow, offset, align, matchAnchorWidth]);
+  }, [open, portalMounted, portalHost, reposition, showArrow, offset, align, matchAnchorWidth]);
  
   useLayoutEffect(() => {
     if (!open || !portalMounted) return;
@@ -209,6 +239,7 @@ export function usePopoverContentLifecycle({
     panelRef,
     setPanelRef,
     portalMounted,
+    portalHost,
     resolvedSide,
   };
 }

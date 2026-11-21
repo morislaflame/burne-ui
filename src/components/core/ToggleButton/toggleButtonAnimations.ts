@@ -14,6 +14,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type Keyboard
 import {
   initElementShadow,
   isInteractivePressKey,
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
   shadowNone,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
@@ -98,13 +100,15 @@ export function useToggleButtonAnimations({
   onPointerOut,
   onPointerDown,
   onPointerUp,
+  onPointerCancel,
   onKeyDown,
+  onKeyUp,
+  onBlur,
 }: UseToggleButtonAnimationsProps) {
   const config = useMotionConfig();
   const fillRef = useRef<HTMLSpanElement>(null);
   const deferFillFromPressRef = useRef(false);
-  const pendingFillRef = useRef<boolean | null>(null);
-  const pressReleaseStartedRef = useRef(false);
+  const latestPressedRef = useRef(pressed);
  
   const scope = useToggleButtonMotionScope();
   const rootMotionRef = useRef(motion?.root);
@@ -140,27 +144,24 @@ export function useToggleButtonAnimations({
     },
   );
  
-  const clearPressFillCoordination = useCallback(() => {
-    deferFillFromPressRef.current = false;
-    pendingFillRef.current = null;
-    pressReleaseStartedRef.current = false;
-  }, []);
+  useLayoutEffect(() => {
+    latestPressedRef.current = pressed;
+  }, [pressed]);
  
-  const runPendingFill = useCallback(() => {
-    const next = pendingFillRef.current;
-    if (next === null) return;
-    pendingFillRef.current = null;
+  const releasePressFillCoordination = useCallback(() => {
+    if (!deferFillFromPressRef.current) return;
     deferFillFromPressRef.current = false;
-    animateTo(next);
+    animateTo(latestPressedRef.current);
   }, [animateTo]);
  
-  onReleaseStartRef.current = () => {
-    pressReleaseStartedRef.current = true;
-    runPendingFill();
-  };
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest callback for pressSqueeze params
+  onReleaseStartRef.current = releasePressFillCoordination;
  
   const reduceMotion = prefersReducedMotion();
-  const shouldCoordinateFill = !disabled && !reduceMotion;
+  const shouldCoordinateFill =
+    !disabled &&
+    !reduceMotion &&
+    isMotionFeatureEnabledFor(config, "enablePressSqueeze");
  
   const useContentRef = Boolean(groupSegment);
   const hasHoverShadow = usesKitElevation(variant, KIT_TOGGLE_BUTTON_VARIANTS) && !useContentRef;
@@ -188,12 +189,20 @@ export function useToggleButtonAnimations({
   );
  
   useLayoutEffect(() => {
-    if (!enabled || !btnShadow || useContentRef) return;
-    initElementShadow(btnRef.current, shadowNone());
-  }, [btnShadow, enabled, useContentRef]);
+    if (!enabled || useContentRef) return;
+    if (hoverPointerInsideRef.current) return;
+    const el = btnRef.current;
+    if (btnShadow) initElementShadow(el, shadowNone());
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(el, config);
+    }
+  }, [btnShadow, config, enabled, hoverPointerInsideRef, scope, useContentRef, variant]);
  
   useEffect(() => {
     if (enabled) return;
+    releasePressFillCoordination();
     hoverPointerInsideRef.current = false;
     const el = btnRef.current;
     const content = contentMotionRef.current;
@@ -207,7 +216,19 @@ export function useToggleButtonAnimations({
       killMotion(content);
       content.style.transform = "";
     }
-  }, [enabled, hoverPointerInsideRef]);
+  }, [enabled, hoverPointerInsideRef, releasePressFillCoordination]);
+ 
+  useEffect(() => {
+    const onGlobalRelease = () => {
+      releasePressFillCoordination();
+    };
+    window.addEventListener("pointerup", onGlobalRelease);
+    window.addEventListener("pointercancel", onGlobalRelease);
+    return () => {
+      window.removeEventListener("pointerup", onGlobalRelease);
+      window.removeEventListener("pointercancel", onGlobalRelease);
+    };
+  }, [releasePressFillCoordination]);
  
   useEffect(() => {
     const contentRef = contentMotionRef;
@@ -253,8 +274,6 @@ export function useToggleButtonAnimations({
   const beginPressFillCoordination = useCallback(() => {
     if (!shouldCoordinateFill) return;
     deferFillFromPressRef.current = true;
-    pressReleaseStartedRef.current = false;
-    pendingFillRef.current = null;
   }, [shouldCoordinateFill]);
  
   const handlePointerDown = useCallback(
@@ -273,10 +292,19 @@ export function useToggleButtonAnimations({
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerUp?.(e);
+      releasePressFillCoordination();
       if (!enabled || e.defaultPrevented) return;
       playRoot("pressOut");
     },
-    [enabled, onPointerUp, playRoot],
+    [enabled, onPointerUp, playRoot, releasePressFillCoordination],
+  );
+ 
+  const handlePointerCancel = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      onPointerCancel?.(e);
+      releasePressFillCoordination();
+    },
+    [onPointerCancel, releasePressFillCoordination],
   );
  
   const handlePointerEnter = useCallback(
@@ -289,9 +317,9 @@ export function useToggleButtonAnimations({
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
-      clearPressFillCoordination();
+      releasePressFillCoordination();
     },
-    [clearPressFillCoordination, onPointerLeave],
+    [onPointerLeave, releasePressFillCoordination],
   );
  
   const handleKeyDown = useCallback(
@@ -307,20 +335,20 @@ export function useToggleButtonAnimations({
     [beginPressFillCoordination, enabled, onKeyDown, playRoot, scope],
   );
  
-  const queueFillOnClick = useCallback(
-    (next: boolean) => {
-      if (!shouldCoordinateFill || !deferFillFromPressRef.current) {
-        animateTo(next);
-        return;
-      }
- 
-      pendingFillRef.current = next;
- 
-      if (pressReleaseStartedRef.current) {
-        runPendingFill();
-      }
+  const handleKeyUp = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      onKeyUp?.(e);
+      releasePressFillCoordination();
     },
-    [animateTo, runPendingFill, shouldCoordinateFill],
+    [onKeyUp, releasePressFillCoordination],
+  );
+ 
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLButtonElement>) => {
+      onBlur?.(e);
+      releasePressFillCoordination();
+    },
+    [onBlur, releasePressFillCoordination],
   );
  
   return {
@@ -330,10 +358,12 @@ export function useToggleButtonAnimations({
     handlePointerLeave,
     handlePointerDown,
     handlePointerUp,
+    handlePointerCancel,
     handleKeyDown,
+    handleKeyUp,
+    handleBlur,
     pointerHandlers: hoverHandlers,
     bindFillRef,
-    queueFillOnClick,
     displayPressed,
   };
 }

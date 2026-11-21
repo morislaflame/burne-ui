@@ -160,6 +160,8 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     children,
     onPointerOver,
     onPointerOut,
+    onPointerDown,
+    onPointerUp,
     "aria-labelledby": ariaLabelledByProp,
     "aria-describedby": ariaDescribedByProp,
     ...rest
@@ -236,7 +238,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
             action={action}
             onPointerOver={onPointerOver}
             onPointerOut={onPointerOut}
-            rest={rest}
+            rest={{ ...rest, onPointerDown, onPointerUp }}
           >
             {children}
           </AlertSurface>

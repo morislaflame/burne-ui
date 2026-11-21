@@ -28,9 +28,16 @@ Compound API нет.
 |------|--------------|----------|
 | `orientation` | `horizontal` | `horizontal` \| `vertical` |
 | `className` | — | Дополнительные классы |
+| `classNames` | — | Слоты кастомизации (`root`) |
 | `motion` | — | Per-slot (`root`). `events` — app-команды `MotionController` |
 | `motionController` | — | Handle с `createMotionController()` / `useMotionControllerHandle()`, не на DOM |
 | HTML props | — | Пробрасываются на root element |
+
+### `SeparatorClassNames`
+
+| Слот | Элемент |
+|------|---------|
+| `root` | Корневой разделитель (`<hr>` или `<div>`) |
 
 ## Ориентация и DOM
 

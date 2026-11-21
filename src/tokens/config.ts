@@ -142,6 +142,8 @@ export const burneSpacingScale = [
   "xlarge",
   "2xlarge",
   "3xlarge",
+  "4xlarge",
+  "5xlarge",
 ] as const;
  
 /** `--radius-*` steps → `rounded-*` utilities */
@@ -151,6 +153,9 @@ export const burneRadiusScale = [
   "base",
   "mid",
   "large",
+  "2xlarge",
+  "3xlarge",
+  "nested",
 ] as const;
  
 /**

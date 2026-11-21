@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ChangeEvent,
@@ -12,7 +13,8 @@ import {
  
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
-import { focusElement } from "@/components/core/utils/focusElement";
+import { isImeComposingEvent, useNativeFormReset } from "@/components/core/utils/fieldFormDom";
+import { focusElement, focusOnOpen } from "@/components/core/utils/focusElement";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useControllableState } from "@/components/core/utils/useControllableState";
@@ -63,8 +65,8 @@ export function useSearchInputRootState({
     readOnly,
   });
   const resolvedValue = formBinding.bound ? (formBinding.value as typeof valueProp) : valueProp;
-  const resolvedDisabled = formBinding.disabled ?? disabled;
-  const resolvedReadOnly = Boolean(formBinding.readOnly);
+  const resolvedDisabled = Boolean(formBinding.disabled ?? disabled);
+  const resolvedReadOnly = Boolean(formBinding.readOnly ?? readOnly);
   const labels = useBurneLabels();
   const placeholder = placeholderProp ?? labels.searchPlaceholder;
   const layoutCtx = useOptionalButtonGroupLayout();
@@ -102,18 +104,27 @@ export function useSearchInputRootState({
     ? String(resolvedValue ?? "").trim().length > 0
     : uncontrolledHasQuery;
  
+  const formRef = formBinding.ref;
   const setInputRef = useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
-      formBinding.ref(node);
+      formRef(node);
       if (inputRefProp) mergeForwardedRef(inputRefProp, node);
     },
-    [formBinding, inputRefProp],
+    [formRef, inputRefProp],
   );
  
-  const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
+  const blocked = resolvedDisabled;
   const layout = resolveSearchLayout(sizeProp);
   const targetW = expandedWidth ?? layout.defaultExpandedW;
+
+  useNativeFormReset(
+    rootRef,
+    () => {
+      setUncontrolledHasQuery(defaultValue != null && String(defaultValue).trim().length > 0);
+    },
+    !isValueControlled && !formBinding.bound,
+  );
  
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +140,7 @@ export function useSearchInputRootState({
     (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      if (blocked) return;
+      if (resolvedDisabled || resolvedReadOnly) return;
       const el = inputRef.current;
       if (!el) return;
       if (!isValueControlled) {
@@ -141,39 +152,49 @@ export function useSearchInputRootState({
       )?.set;
       nativeSet?.call(el, "");
       el.dispatchEvent(new Event("input", { bubbles: true }));
-      onChange?.({
-        target: el,
-        currentTarget: el,
-      } as ChangeEvent<HTMLInputElement>);
-      requestAnimationFrame(() => focusElement(el));
+      if (document.activeElement !== el) {
+        focusElement(el);
+      }
     },
-    [blocked, isValueControlled, onChange],
+    [isValueControlled, resolvedDisabled, resolvedReadOnly],
   );
  
-  const focusInput = useCallback(() => {
-    requestAnimationFrame(() => focusElement(inputRef.current));
-  }, []);
- 
-  const openFromInteraction = useCallback(async (awaitPressSqueeze: () => Promise<void>) => {
-    if (blocked || expanded) return;
-    await awaitPressSqueeze();
+  const pendingFocusOnExpandRef = useRef(false);
+
+  const expandFromUserGesture = useCallback(() => {
+    if (resolvedDisabled || expanded) return;
+    const el = inputRef.current;
+    const trigger = expandTriggerRef.current;
+    pendingFocusOnExpandRef.current = true;
     setExpanded(true);
-    focusInput();
-  }, [blocked, expanded, focusInput, setExpanded]);
+    if (el) {
+      el.tabIndex = 0;
+      focusOnOpen(el, { from: trigger });
+    }
+  }, [expanded, resolvedDisabled, setExpanded]);
+
+  useLayoutEffect(() => {
+    if (!expanded || !pendingFocusOnExpandRef.current) return;
+    pendingFocusOnExpandRef.current = false;
+    const el = inputRef.current;
+    if (el && document.activeElement !== el) {
+      focusElement(el);
+    }
+  }, [expanded]);
  
   const handleRootClick = useCallback(
-    (e: MouseEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
-      if (blocked) return;
+    (e: MouseEvent<HTMLButtonElement>) => {
+      if (resolvedDisabled) return;
       e.preventDefault();
-      void openFromInteraction(awaitPressSqueeze);
+      expandFromUserGesture();
     },
-    [blocked, openFromInteraction],
+    [expandFromUserGesture, resolvedDisabled],
   );
  
   const handleInputBlur = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
       formBinding.onBlur(e);
-      if (!collapseOnBlur || blocked) return;
+      if (!collapseOnBlur || resolvedDisabled) return;
       window.clearTimeout(blurTimerRef.current);
       blurTimerRef.current = window.setTimeout(() => {
         const root = rootRef.current;
@@ -184,7 +205,7 @@ export function useSearchInputRootState({
         }
       }, 0);
     },
-    [blocked, collapseOnBlur, formBinding, setExpanded],
+    [collapseOnBlur, formBinding, resolvedDisabled, setExpanded],
   );
 
   useEffect(() => {
@@ -194,20 +215,20 @@ export function useSearchInputRootState({
   }, []);
  
   const handleRootKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
-      if (blocked) return;
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      if (resolvedDisabled || isImeComposingEvent(e)) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        void openFromInteraction(awaitPressSqueeze);
+        expandFromUserGesture();
       }
     },
-    [blocked, openFromInteraction],
+    [expandFromUserGesture, resolvedDisabled],
   );
  
   const handleInputKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
-      if (e.defaultPrevented) return;
+      if (e.defaultPrevented || isImeComposingEvent(e)) return;
       if (
         e.key === "Escape" &&
         collapseOnBlur &&
@@ -224,7 +245,7 @@ export function useSearchInputRootState({
   );
  
   const paddingInputLeft = layout.padX + layout.iconBox + 6;
-  const showClear = expanded && hasQuery && !blocked;
+  const showClear = expanded && hasQuery && !resolvedDisabled && !resolvedReadOnly;
   const paddingInputRight =
     layout.padX + (showClear ? layout.clearTap + layout.textGapClear : 0);
  

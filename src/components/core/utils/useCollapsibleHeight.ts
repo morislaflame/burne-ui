@@ -132,24 +132,39 @@ export function useCollapsibleHeight(
     if (!shell || !inner) return;
  
     const reduceMotion = reduceMotionPreferred || !enabledRef.current();
- 
+
     if (prevOpenRef.current === undefined) {
       prevOpenRef.current = open;
       applyCollapsibleInstantState(shell, open);
-      return;
+      return () => {
+        stopCollapsibleRemeasure(shell);
+        cancelExpandedShellRelease(shell);
+      };
     }
- 
+
     if (skipAnimRef?.current) {
       skipAnimRef.current = false;
       prevOpenRef.current = open;
       applyCollapsibleInstantState(shell, open);
-      return;
+      return () => {
+        stopCollapsibleRemeasure(shell);
+        cancelExpandedShellRelease(shell);
+      };
     }
- 
-    if (prevOpenRef.current === open) return;
+
+    if (prevOpenRef.current === open) {
+      return () => {
+        stopCollapsibleRemeasure(shell);
+        cancelExpandedShellRelease(shell);
+      };
+    }
     prevOpenRef.current = open;
- 
+
     animateCollapsibleHeight(shell, inner, open, { reduced: reduceMotion, config });
+    return () => {
+      stopCollapsibleRemeasure(shell);
+      cancelExpandedShellRelease(shell);
+    };
   }, [config, open, shellRef, innerRef, skipAnimRef, reduceMotionPreferred]);
 }
  
@@ -217,6 +232,7 @@ export function animateCollapsibleHeight(
   };
  
   if (open) {
+    const fromHeight = Math.max(0, shell.getBoundingClientRect().height);
     const toHeight = measureCollapsibleContentHeight(inner);
     shell.style.overflow = "hidden";
     const finishOpen = () => {
@@ -225,7 +241,7 @@ export function animateCollapsibleHeight(
     };
     const tween = gsap.fromTo(
       shell,
-      { height: 0 },
+      { height: fromHeight },
       {
         height: toHeight,
         ...vars,

@@ -333,8 +333,8 @@ function applyShadowKnobs(
 function applyTextScale(root: HTMLElement, textScale: number) {
   for (const key of Object.keys(TEXT_SCALE_BASES) as TextScaleToken[]) {
     const { size, line } = TEXT_SCALE_BASES[key];
-    const scaledSize = size * textScale;
-    const scaledLine = line * textScale;
+    const scaledSize = formatCssNumber(size * textScale);
+    const scaledLine = formatCssNumber(line * textScale);
     root.style.setProperty(`--text-scale-${key}`, `${scaledSize}rem`);
     root.style.setProperty(
       `--text-scale-${key}--line-height`,
@@ -520,16 +520,17 @@ const INLINE_TOKEN_VARS = [
   ...Object.values(COLOR_CSS_VAR),
 ] as const;
  
+const lastCssMotionByRoot = new WeakMap<HTMLElement, string>();
+
 export function clearThemeInlineTokens(root?: HTMLElement) {
   if (typeof document === "undefined") return;
   const target = root ?? document.documentElement;
   for (const name of INLINE_TOKEN_VARS) {
     target.style.removeProperty(name as string);
   }
+  lastCssMotionByRoot.delete(target);
   delete target.dataset.theme;
 }
- 
-const lastCssMotionByRoot = new WeakMap<HTMLElement, string>();
  
 /**
  * GSAP overlay from a theme-token snapshot (playground / site editor).
@@ -608,6 +609,8 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
  
   if (state.theme === "light") {
     target.dataset.theme = "light";
+  } else if (target !== document.documentElement) {
+    target.dataset.theme = "dark";
   } else {
     delete target.dataset.theme;
   }

@@ -24,6 +24,7 @@ export type AvatarContextValue = {
   imageStatus: ImageStatus;
   onImageLoad: () => void;
   onImageError: () => void;
+  resetImageStatus: () => void;
 };
  
 export type AvatarClassNames = {

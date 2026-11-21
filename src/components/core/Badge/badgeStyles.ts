@@ -70,6 +70,7 @@ export const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
  
 /** Same tight line-box as panel titles (`Card.Title` → `leading-none`). */
 export const BADGE_TEXT_CLASS = "leading-none";
+export const BADGE_SINGLE_DIGIT_TEXT_CLASS = "leading-none tabular-nums";
  
 export const BADGE_ICON_SLOT_SIZE: Record<BadgeSize, string> = {
   small: iconSlotSizeClass("small"),

@@ -7,7 +7,7 @@ import { RADIO_ROOT_DISABLED_CLASS, radioGridClass } from "./radioStyles";
 import type { RadioProps } from "./radioTypes";
 import { useRadioRootState } from "./useRadioRootState";
  
-import { dataCheckedState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataCheckedState, dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 export type {
@@ -118,6 +118,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
           playInitialState={playInitialState}>
           <label
             ref={ref}
+            htmlFor={state.contextValue.inputId}
             className={gridClass}
             {...rest}
             onPointerDown={handlePointerDown}
@@ -128,6 +129,10 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
             })}
             data-selected={state.mergedChecked ? "true" : undefined}
             data-state={dataCheckedState(state.mergedChecked)}
+            data-disabled={dataFlag(state.isDisabled)}
+            data-readonly={dataFlag(state.isReadOnly)}
+            data-invalid={dataFlag(state.isInvalid)}
+            data-required={dataFlag(state.isRequired)}
           >
             {state.isCompound ? (
               children

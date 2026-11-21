@@ -34,6 +34,8 @@
   --color-muted-foreground: var(--color-muted-foreground);
   --color-surface: var(--color-surface);
   --color-border: var(--color-border);
+  --color-shadow: var(--color-shadow);
+  --color-shadow-secondary: var(--color-shadow-secondary);
 
   --color-primary: var(--color-primary);
   --color-primary-foreground: var(--color-primary-foreground);
@@ -107,12 +109,14 @@
   --radius-xsmall: var(--radius-xsmall);
   --radius-small: var(--radius-small);
   --radius-base: var(--radius-base);
+  --radius-mid: var(--radius-mid);
   --radius-large: var(--radius-large);
   --radius-2xlarge: var(--radius-2xlarge);
   --radius-3xlarge: var(--radius-3xlarge);
   --radius-full: var(--radius-full);
   --radius-nested: var(--radius-nested);
 
+  --shadow-token-small: var(--shadow-small);
   --shadow-token-base: var(--shadow-base);
   --shadow-token-mid: var(--shadow-mid);
   --shadow-token-large: var(--shadow-large);
@@ -136,6 +140,10 @@
 
 @utility shadow-token-mid {
   box-shadow: var(--shadow-mid);
+}
+
+@utility shadow-token-large {
+  box-shadow: var(--shadow-large);
 }
 
 @utility shadow-token-xlarge {

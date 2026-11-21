@@ -38,11 +38,12 @@ export function useTextAreaRootState({
       labelId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      errorMessage: error,
       invalid,
       required,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, invalid, required, labelId, size, textareaId],
+    [error, errorId, hasError, hasHint, hintId, invalid, required, labelId, size, textareaId],
   );
  
   const fieldLabelCtx = useMemo(

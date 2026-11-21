@@ -1,4 +1,4 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useMemo, useRef, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
  
 import { Field } from "@/components/core/Field";
@@ -6,7 +6,9 @@ import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { OverlayLayerProvider } from "@/components/core/utils/overlayLayer";
+import { resolveFloatingPortalContainer } from "@/components/core/utils/portalContainer";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
 import { useApplySkinPortal, useSkinRegistryRevision } from "@/skins/skinContext";
 import { useOverlayTriggerSlot } from "@/components/core/utils/overlayTriggerSqueeze";
 import { mergeMotionSlotMaps, mergeMotionRootSiblings, useMotionPart } from "@/components/core/utils/slotMotion";
@@ -60,18 +62,26 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       onPointerUp,
     });
  
+    const setPartRef = part.setRef;
     const mergedRef = useCallback(
       (node: HTMLButtonElement | null) => {
-        part.setRef(node);
+        setPartRef(node);
         triggerRef.current = node;
       },
-      [part.setRef, triggerRef],
+      [setPartRef, triggerRef],
     );
  
+    const openedFromPointerDownRef = useRef(false);
+
+    useEffect(() => {
+      if (!open) openedFromPointerDownRef.current = false;
+    }, [open]);
+
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
+        openedFromPointerDownRef.current = true;
         openAfterSqueeze(() => setOpen(true));
       },
       [open, openingRef, openAfterSqueeze, setOpen],
@@ -81,9 +91,14 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       (event: ReactMouseEvent<HTMLElement>) => {
         onClick?.(event as ReactMouseEvent<HTMLButtonElement>);
         if (event.defaultPrevented) return;
+        if (openedFromPointerDownRef.current) {
+          openedFromPointerDownRef.current = false;
+          return;
+        }
         if (open) setOpen(false);
+        else if (!openingRef.current) setOpen(true);
       },
-      [onClick, open, setOpen],
+      [onClick, open, openingRef, setOpen],
     );
  
     const handleKeyDown = useCallback(
@@ -127,6 +142,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
               handleKeyDown(event as ReactKeyboardEvent<HTMLButtonElement>);
             },
             ...triggerA11y,
+            "data-state": dataOpenState(open),
           },
           mergedRef,
           { runBeforeChild: ["onPointerDown", "onKeyDown"] },
@@ -153,6 +169,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
           part.pointerHandlers.onPointerDown(e);
           handlePointerDown(e);
         }}
+        data-state={dataOpenState(open)}
       >
         {children}
       </button>
@@ -403,6 +420,7 @@ function PopoverContentHost({
     triggerRef,
     anchorRef,
     contentRef,
+    layerId,
     portalContainer: portalContainerFromRoot,
   } = usePopoverContext("Popover.Content");
   const slotClassNames = usePopoverClassNames();
@@ -428,6 +446,7 @@ function PopoverContentHost({
   const {
     setPanelRef,
     portalMounted,
+    portalHost: lifecyclePortalHost,
     resolvedSide,
   } = usePopoverContentLifecycle({
     open,
@@ -454,18 +473,85 @@ function PopoverContentHost({
     },
     [setPanelRef],
   );
+
+  const [portalMeta, setPortalMeta] = useState<{
+    theme?: "light" | "dark";
+    dir?: "rtl" | "ltr";
+  }>({});
+
+  const syncPortalMeta = useCallback(() => {
+    const triggerThemeAncestor = triggerRef.current?.closest?.("[data-theme]");
+    const themeEl =
+      triggerThemeAncestor && triggerThemeAncestor !== document.documentElement
+        ? triggerRef.current
+        : (anchorRef?.current ?? triggerRef.current);
+    const nextTheme = burneLightThemePortalProps(themeEl)["data-theme"];
+
+    const dirEl = triggerRef.current ?? anchorRef?.current;
+    const dirAncestor = dirEl?.closest?.("[dir]");
+    const rawDir =
+      dirAncestor && dirAncestor !== document.documentElement
+        ? dirAncestor.getAttribute("dir")
+        : null;
+    const nextDir: "rtl" | "ltr" | undefined =
+      rawDir === "rtl" || rawDir === "ltr"
+        ? rawDir
+        : dirEl instanceof HTMLElement && isRtlElement(dirEl)
+          ? "rtl"
+          : undefined;
+
+    setPortalMeta((prev) =>
+      prev.theme === nextTheme && prev.dir === nextDir
+        ? prev
+        : { theme: nextTheme, dir: nextDir },
+    );
+  }, [anchorRef, triggerRef]);
+
+  useLayoutEffect(() => {
+    if (!open && !portalMounted) return;
+    syncPortalMeta();
+  }, [open, portalMounted, syncPortalMeta]);
+
+  useEffect(() => {
+    if (!open && !portalMounted) return;
+    syncPortalMeta();
+    const onSync = () => syncPortalMeta();
+    window.addEventListener("scroll", onSync, { capture: true, passive: true });
+    return () => window.removeEventListener("scroll", onSync, true);
+  }, [open, portalMounted, syncPortalMeta]);
  
   if (!portalMounted) return null;
   if (typeof document === "undefined") return null;
- 
-  const portalHost = resolvePortalContainer(
-    portalContainerProp ?? portalContainerFromRoot,
-  );
+
+  const effectiveContainer = portalContainerProp ?? portalContainerFromRoot;
+  const dialogAnchor =
+    anchorRef?.current?.closest?.("dialog[open]:not(.portal-contained)")
+      ? anchorRef.current
+      : (triggerRef.current ?? anchorRef?.current ?? null);
+  const portalHost =
+    resolveFloatingPortalContainer(effectiveContainer, dialogAnchor) ??
+    lifecyclePortalHost;
   if (!portalHost) return null;
- 
-  const portalTheme = burneLightThemePortalProps(
-    anchorRef?.current ?? triggerRef.current,
-  );
+
+  const triggerThemeAncestor = triggerRef.current?.closest?.("[data-theme]");
+  const themeAnchor =
+    triggerThemeAncestor && triggerThemeAncestor !== document.documentElement
+      ? triggerRef.current
+      : (anchorRef?.current ?? triggerRef.current);
+  const liveTheme = burneLightThemePortalProps(themeAnchor)["data-theme"] ?? portalMeta.theme;
+  const portalTheme = liveTheme ? { "data-theme": liveTheme } : {};
+
+  const dirSource = triggerRef.current ?? anchorRef?.current;
+  const dirAncestor = dirSource?.closest?.("[dir]");
+  const liveDirAttr =
+    dirAncestor && dirAncestor !== document.documentElement
+      ? dirAncestor.getAttribute("dir")
+      : null;
+  const portalDir =
+    liveDirAttr === "rtl" || liveDirAttr === "ltr"
+      ? liveDirAttr
+      : (portalMeta.dir ??
+          (dirSource instanceof HTMLElement && isRtlElement(dirSource) ? "rtl" : undefined));
  
   const describedBy = resolvePopoverDescribedBy({
     contentRole,
@@ -482,52 +568,56 @@ function PopoverContentHost({
   });
  
   const node = (
-    <PopoverResolvedSideProvider value={resolvedSide}>
-      <PopoverContentChromeProvider unstyled={unstyled}>
-        <div
-          ref={setSurfaceRef}
-          {...portalTheme}
-          id={popoverId}
-          role={contentRole}
-          aria-modal={contentRole === "dialog" ? false : undefined}
-          aria-labelledby={labelledBy}
-          aria-describedby={describedBy}
-          className={popoverContentClass({
-            resolvedSide,
-            showArrow,
-          })}
-          {...rest}
-          {...dataVariantProps({ size, variant })}
-          data-side={resolvedSide}
-          data-align={align}
-          data-state={dataOpenState(open)}
-        >
+    <OverlayLayerProvider layerId={layerId}>
+      <PopoverResolvedSideProvider value={resolvedSide}>
+        <PopoverContentChromeProvider unstyled={unstyled}>
           <div
-            className={cn(
-              POPOVER_PANEL_RELATIVE_CLASS,
-              slotClassNames.panelRelative,
-            )}
+            ref={setSurfaceRef}
+            tabIndex={-1}
+            dir={portalDir}
+            {...portalTheme}
+            id={popoverId}
+            role={contentRole}
+            aria-modal={contentRole === "dialog" ? false : undefined}
+            aria-labelledby={labelledBy}
+            aria-describedby={describedBy}
+            className={popoverContentClass({
+              resolvedSide,
+              showArrow,
+            })}
+            {...rest}
+            {...dataVariantProps({ size, variant })}
+            data-side={resolvedSide}
+            data-align={align}
+            data-state={dataOpenState(open)}
           >
-            {showArrow ? (customArrow ?? <PopoverArrow />) : null}
             <div
-              ref={mergePopoverRefs(setContentPartRef, forwardedRef)}
-              className={popoverDefaultPanelClass({
-                variant,
-                size,
-                unstyled,
-                contentGap,
-                gapPropSet,
-                slotClass: slotClassNames.panel,
-                contentSlot: slotClassNames.content,
-                className,
-              })}
+              className={cn(
+                POPOVER_PANEL_RELATIVE_CLASS,
+                slotClassNames.panelRelative,
+              )}
             >
-              {panelChildren}
+              {showArrow ? (customArrow ?? <PopoverArrow />) : null}
+              <div
+                ref={mergePopoverRefs(setContentPartRef, forwardedRef)}
+                className={popoverDefaultPanelClass({
+                  variant,
+                  size,
+                  unstyled,
+                  contentGap,
+                  gapPropSet,
+                  slotClass: slotClassNames.panel,
+                  contentSlot: slotClassNames.content,
+                  className,
+                })}
+              >
+                {panelChildren}
+              </div>
             </div>
           </div>
-        </div>
-      </PopoverContentChromeProvider>
-    </PopoverResolvedSideProvider>
+        </PopoverContentChromeProvider>
+      </PopoverResolvedSideProvider>
+    </OverlayLayerProvider>
   );
  
   return createPortal(node, portalHost);

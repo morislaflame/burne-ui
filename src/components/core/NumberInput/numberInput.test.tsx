@@ -1,6 +1,8 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
 import { describe, expect, it } from "vitest";
 
+import { Form } from "@/components/composite/Form";
 import { render } from "@/__tests__/helpers";
 
 import { NumberInput } from ".";
@@ -75,5 +77,66 @@ describe("NumberInput", () => {
     const input = screen.getByRole("spinbutton", { name: "Quantity" });
     expect(input).toHaveAttribute("name", "qty");
     expect(input).toHaveValue("2");
+  });
+
+  it("does not freeze displayed value on blurred stepper click when controlled value changes later", () => {
+    function Harness() {
+      const [val, setVal] = useState<number | null>(1000);
+      return (
+        <div>
+          <NumberInput
+            label="Price"
+            value={val}
+            onValueChange={setVal}
+            step={100}
+            formatOptions={{ useGrouping: true }}
+          />
+          <button type="button" onClick={() => setVal(5000)}>
+            Jump
+          </button>
+        </div>
+      );
+    }
+
+    render(<Harness />);
+    const input = screen.getByRole("spinbutton", { name: "Price" });
+    expect(input).toHaveValue("1,000");
+
+    fireEvent.click(screen.getByRole("button", { name: "Increase" }));
+    expect(input).toHaveValue("1,100");
+
+    fireEvent.click(screen.getByRole("button", { name: "Jump" }));
+    expect(input).toHaveValue("5,000");
+  });
+
+  it("marks compound NumberInput invalid from Form error and resets uncontrolled value on form reset", async () => {
+    const { user } = render(
+      <Form defaultValues={{ qty: "" }} rules={{ qty: { required: "Need qty" } }}>
+        <Form.Field name="qty">
+          <NumberInput name="qty">
+            <NumberInput.Label>Qty</NumberInput.Label>
+            <NumberInput.Control />
+          </NumberInput>
+        </Form.Field>
+        <button type="submit">Send</button>
+      </Form>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Send" }));
+    expect(screen.getByRole("spinbutton", { name: "Qty" })).toHaveAttribute("aria-invalid", "true");
+
+    const plain = render(
+      <form>
+        <NumberInput name="count" label="Count" defaultValue={4} />
+      </form>,
+    );
+    const countInput = plain.getByRole("spinbutton", { name: "Count" });
+    fireEvent.click(plain.getByRole("button", { name: "Increase" }));
+    expect(countInput).toHaveValue("5");
+
+    plain.container.querySelector("form")!.reset();
+    await waitFor(() => {
+      expect(countInput).toHaveValue("4");
+    });
   });
 });

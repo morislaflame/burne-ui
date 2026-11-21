@@ -132,15 +132,18 @@ export type DropdownContextValue = {
   setOpen: (next: boolean) => void;
   multiple: boolean;
   selected: Set<string>;
-  selectItem: (value: string) => void;
+  selectItem: (value: string, options?: { close?: boolean }) => void;
   indicatorMode: "radio" | "multi";
   closeOnSelect: boolean;
+  closeOnSelectProp?: boolean;
   size: ComponentSize;
   popoverVariant: PopoverVariant;
   triggerRef: React.RefObject<HTMLElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
   contentId: string;
   subPanelRootsRef: React.RefObject<Set<HTMLElement>>;
+  openInitialFocusRef: React.RefObject<"first" | "last">;
+  skipTriggerRestoreRef: React.RefObject<boolean>;
   /** Portal mount node from Root; Popover / SubContent may override. */
   portalContainer?: HTMLElement | null;
 };
@@ -262,7 +265,7 @@ export type DropdownItemData = {
   disabled?: boolean;
 };
 
-export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
+export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value" | "onSelect"> & {
   value?: string;
   href?: string;
   disabled?: boolean;
@@ -270,6 +273,10 @@ export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
   status?: DropdownItemStatus;
   /** Render selection indicator (same as `<Dropdown.ItemIndicator />`). */
   indicator?: boolean;
+  /** Override Root `closeOnSelect` for this item. */
+  closeOnSelect?: boolean;
+  /** Called when the menu item is activated. */
+  onSelect?: (event: React.MouseEvent<HTMLElement>) => void;
   motion?: Prettify<DropdownLifecycleMotion>;
 };
  
@@ -296,6 +303,7 @@ export type UseDropdownPopoverMenuProps = {
   setOpen: (next: boolean) => void;
   contentRef: React.RefObject<HTMLDivElement | null>;
   triggerRef: React.RefObject<HTMLElement | null>;
+  openInitialFocusRef?: React.RefObject<"first" | "last">;
 };
  
 export type UseDropdownSubPopoverPortalProps = {
@@ -315,5 +323,6 @@ export type UseDropdownSubmenuKeyboardProps = {
   panelRef: React.RefObject<HTMLDivElement | null>;
   triggerRef: React.RefObject<HTMLDivElement | null>;
   setOpen: (next: boolean) => void;
+  layerId: symbol;
 };
  

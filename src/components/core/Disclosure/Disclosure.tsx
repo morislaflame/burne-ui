@@ -1,7 +1,12 @@
 import { forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactNode } from "react";
  
 import { dataVariantProps } from "@/components/core/utils/dataContract";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import {
+  mergeMotionRootSiblings,
+  mergeMotionSlotMaps,
+  splitMotionRootMap,
+  useMotionPart,
+} from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 import { useSkinRegistryRevision } from "@/skins/skinContext";
@@ -79,10 +84,15 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       dragHandle,
     });
  
-    const mergedMotion = useMemo(
-      () => mergeMotionSlotMaps(groupCtx?.motion, motion),
-      [groupCtx?.motion, motion],
-    );
+    const mergedMotion = useMemo(() => {
+      const slots = mergeMotionSlotMaps(groupCtx?.motion, motion);
+      const siblings = mergeMotionRootSiblings(
+        splitMotionRootMap(groupCtx?.motion),
+        splitMotionRootMap(motion),
+      );
+      if (!slots && !siblings.events && !siblings.states) return undefined;
+      return { ...slots, ...siblings };
+    }, [groupCtx?.motion, motion]);
     const skinRevision = useSkinRegistryRevision();
     const defaults = useMemo(() => {
       void skinRevision;

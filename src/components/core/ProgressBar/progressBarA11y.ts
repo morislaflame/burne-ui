@@ -12,6 +12,7 @@ export function resolveProgressBarTrackAria({
   max,
   statusText,
   indeterminate,
+  labelConnected,
   labelId,
   ariaDescribedBy,
 }: ProgressBarTrackAriaProps): {
@@ -24,15 +25,16 @@ export function resolveProgressBarTrackAria({
   "aria-describedby"?: string;
   "aria-label"?: string;
 } {
+  const connectedLabelId = labelConnected ? labelId : undefined;
   return {
     "aria-valuenow": indeterminate ? undefined : clampedValue,
     "aria-valuemin": indeterminate ? undefined : min,
     "aria-valuemax": indeterminate ? undefined : max,
     "aria-valuetext": statusText,
     "aria-busy": indeterminate || undefined,
-    "aria-labelledby": labelId,
+    "aria-labelledby": connectedLabelId,
     "aria-describedby": ariaDescribedBy,
-    "aria-label": labelId == null ? statusText : undefined,
+    "aria-label": connectedLabelId == null ? statusText : undefined,
   };
 }
  

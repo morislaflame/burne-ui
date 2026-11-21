@@ -17,21 +17,32 @@ export function useFormFieldBinding({
   const explicitValue = valueProp !== undefined;
   const bound = form != null && name != null && !explicitValue;
  
+  const registerRef = form?.registerRef;
+  const setFormValue = form?.setValue;
+  const setTouched = form?.setTouched;
+  const validateField = form?.validateField;
+  const getFieldRules = form?.getFieldRules;
+  const validateMode = form?.validateMode;
+
+  const onChangeRef = useRef(onChangeProp);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest user onChange without recreating bound setter
+  onChangeRef.current = onChangeProp;
+
   const ref = useRef<HTMLElement | null>(null);
   const setRef = useCallback(
     (node: HTMLElement | null) => {
       ref.current = node;
-      if (bound && name) form.registerRef(name, node);
+      if (bound && name) registerRef?.(name, node);
     },
-    [bound, form, name],
+    [bound, name, registerRef],
   );
  
   const disabled = disabledProp ?? form?.disabled ?? false;
   const readOnly = readOnlyProp ?? form?.readOnly ?? false;
   const formError = bound && name ? form.getError(name) : undefined;
   const rules = useMemo(
-    () => mergeFormFieldRules(name ? form?.getFieldRules(name) : undefined, rulesProp),
-    [form, name, rulesProp],
+    () => mergeFormFieldRules(name ? getFieldRules?.(name) : undefined, rulesProp),
+    [getFieldRules, name, rulesProp],
   );
  
   const rawValue = bound && name ? form.getValue(name) : valueProp;
@@ -40,22 +51,22 @@ export function useFormFieldBinding({
  
   const setValue = useCallback(
     (next: unknown) => {
-      onChangeProp?.(next);
-      if (!bound || !name || !form) return;
-      form.setValue(name, next, {
-        shouldValidate: form.validateMode === "onChange",
+      onChangeRef.current?.(next);
+      if (!bound || !name || !setFormValue) return;
+      setFormValue(name, next, {
+        shouldValidate: validateMode === "onChange",
       });
     },
-    [bound, form, name, onChangeProp],
+    [bound, name, setFormValue, validateMode],
   );
  
   const onBlur = useCallback(() => {
-    if (!bound || !name || !form) return;
-    form.setTouched(name, true);
-    if (form.validateMode === "onBlur") {
-      form.validateField(name);
+    if (!bound || !name) return;
+    setTouched?.(name, true);
+    if (validateMode === "onBlur") {
+      validateField?.(name);
     }
-  }, [bound, form, name]);
+  }, [bound, name, setTouched, validateField, validateMode]);
  
   return {
     bound,

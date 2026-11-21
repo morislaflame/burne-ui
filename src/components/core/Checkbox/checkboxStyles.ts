@@ -32,6 +32,8 @@ export const CHECKBOX_CONTENT_COMPOUND_CLASS = "min-w-0";
  
 export const CHECKBOX_CONTENT_POINTER_CLASS = "cursor-pointer";
  
+export const CHECKBOX_LABEL_POINTER_CLASS = "cursor-pointer";
+ 
 export const CHECKBOX_LABEL_CLASS = "inline-flex flex-wrap items-center gap-x-xsmall gap-y-0 font-w-mid";
  
 export const CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS = "min-w-0";

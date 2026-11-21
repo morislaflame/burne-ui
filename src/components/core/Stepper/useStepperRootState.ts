@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
@@ -35,6 +35,18 @@ export function useStepperRootState({
     onChange: onValueChange,
   });
   const currentIndex = values.indexOf(current);
+  const [highestReached, setHighestReached] = useState(currentIndex);
+  const maxReachedIndex =
+    values.length > 0
+      ? Math.min(Math.max(highestReached, currentIndex), values.length - 1)
+      : -1;
+
+  useLayoutEffect(() => {
+    if (currentIndex > highestReached) {
+      setHighestReached(currentIndex);
+    }
+  }, [currentIndex, highestReached]);
+
   const select = useCallback(
     (next: string) => {
       if (next === current) return;
@@ -43,8 +55,8 @@ export function useStepperRootState({
     [current, setCurrent],
   );
   const context = useMemo<StepperContextValue>(
-    () => ({ orientation, size, currentIndex, linear, select }),
-    [currentIndex, linear, orientation, select, size],
+    () => ({ orientation, size, currentIndex, maxReachedIndex, linear, select }),
+    [currentIndex, linear, maxReachedIndex, orientation, select, size],
   );
 
   return {

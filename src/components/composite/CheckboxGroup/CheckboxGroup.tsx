@@ -1,7 +1,9 @@
 import { forwardRef, useMemo } from "react";
  
 import { Checkbox } from "@/components/core/Checkbox";
+import { dataFlag } from "@/components/core/utils/dataContract";
 import { FieldHiddenValues } from "@/components/core/utils/fieldFormDom";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
  
@@ -47,7 +49,7 @@ const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGr
     ref,
   ) {
     const slotClassNames = useCheckboxGroupClassNames();
-    const { selectedValue, selectedValues, selection, required, readOnly, name } = useCheckboxGroupContext();
+    const { selectedValue, selectedValues, selection, required, readOnly, disabled, name } = useCheckboxGroupContext();
     const part = useCheckboxGroupRootMotion({
       forwardedRef: ref,
       selectionIdentity: selection === "single" ? (selectedValue ?? "") : selectedValues.join("\u0000"),
@@ -65,7 +67,9 @@ const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGr
         {...part.pointerHandlers}
         aria-required={required || undefined}
         aria-readonly={readOnly || undefined}
-        data-readonly={readOnly ? "" : undefined}
+        data-disabled={dataFlag(disabled)}
+        data-readonly={dataFlag(readOnly)}
+        data-required={dataFlag(required)}
       >
         {props.children}
         <FieldHiddenValues
@@ -86,9 +90,11 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       size,
       label,
       hint,
-      error,
+      error: _error,
       items,
-      disabled = false,
+      disabled: _disabled,
+      invalid: invalidProp,
+      onBlur: _onBlur,
       name: _name,
       readOnly: _readOnly,
       required: _required,
@@ -108,7 +114,17 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       playInitialState,
       ...fieldsetProps
     } = props;
-    const { contextValue, fieldLabelCtx, hintId, errorId } = useCheckboxGroupRootState(props);
+    const {
+      contextValue,
+      fieldLabelCtx,
+      hintId,
+      errorId,
+      disabled,
+      formInvalid,
+      resolvedError,
+      bindFieldsetRef,
+      handleBlur,
+    } = useCheckboxGroupRootState(props);
     const motionDefaults = useMemo(() => resolveCheckboxGroupMotionDefaults(), []);
     const optionList =
       items && !itemsPartTaken("CheckboxGroup", children, "CheckboxRoot", "CheckboxGroup.List")
@@ -117,8 +133,10 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
  
     const fieldset = CHECKBOX_GROUP_USES_NATIVE_FIELDSET ? (
       <CheckboxGroupFieldsetShell
-        ref={ref}
+        ref={mergeRefs(ref, bindFieldsetRef)}
         disabled={disabled}
+        invalid={formInvalid ? true : invalidProp}
+        onBlur={handleBlur}
         hintId={hintId}
         errorId={errorId}
         size={size}
@@ -140,7 +158,7 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
           </CheckboxGroupList>
         ) : null}
         {hint != null ? <CheckboxGroupHint>{hint}</CheckboxGroupHint> : null}
-        {error != null ? <CheckboxGroupError>{error}</CheckboxGroupError> : null}
+        {resolvedError != null ? <CheckboxGroupError>{resolvedError}</CheckboxGroupError> : null}
         {children}
       </CheckboxGroupFieldsetShell>
     ) : null;

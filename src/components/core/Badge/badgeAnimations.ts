@@ -12,7 +12,13 @@ import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject } from "r
  
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
-import { initElementShadow, shadowBase, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  initElementShadow,
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
+  shadowBase,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { SHADOW_LIFT_MOTION_CLASS, useSecondLevelShadow, useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
  
@@ -78,10 +84,21 @@ export function useBadgeAnimations({
   const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && kitSurface);
   const selfLiftEnabled = hoverLift && !splitLift;
 
+  const config = useMotionConfig();
   const restShadow = kitSurface && !splitLift;
   const selfLiftShadow = useSecondLevelShadow(rootRef, restShadow, {
     interactive: false,
+    killMotionOnUnmount: false,
   });
+
+  useLayoutEffect(() => {
+    if (!restShadow || !selfLiftEnabled) return;
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(rootRef.current, config);
+    }
+  }, [config, restShadow, scope, selfLiftEnabled, variant]);
 
   const setMergedRef = useCallback(
     (node: HTMLSpanElement | null) => {
@@ -139,10 +156,15 @@ export function useBadgeAnimations({
   const { meaningChild, icon, dot, iconOnly, children } = syncDeps;
  
   useLayoutEffect(() => {
+    let active = true;
     syncDirectChild();
     queueMicrotask(() => {
+      if (!active || !rootRef.current) return;
       syncDirectChild();
     });
+    return () => {
+      active = false;
+    };
   }, [
     isDirectAnchorChild,
     liftCtx?.anchorCommitGen,

@@ -6,6 +6,7 @@ import { EN_LOCALE, resolveCalendarLocale } from "./calendarLocale";
 import {
   addCalendarMonths,
   addCalendarYears,
+  canCalendarNavigate,
   clampCalendarDate,
   createDefaultCalendarValue,
   createInitialViewDate,
@@ -13,6 +14,8 @@ import {
   isSameDay,
   calendarRangeHitsUnavailable,
   isCalendarDateDisabled,
+  isCalendarMonthDisabled,
+  isCalendarYearDisabled,
   navigateViewDate,
   resolveInitialFocusDate,
   resolveRangeEnd,
@@ -33,6 +36,8 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     selectionMode: mode = "single",
     variant: variantProp,
     size = "base",
+    disabled = false,
+    readOnly = false,
     defaultMonth,
     month,
     onMonthChange,
@@ -40,8 +45,8 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     defaultView = "days",
     onViewChange,
     locale: localeProp = EN_LOCALE,
-    minDate,
-    maxDate,
+    minDate: minDateProp,
+    maxDate: maxDateProp,
     isDateUnavailable,
     previousIcon,
     nextIcon,
@@ -59,6 +64,16 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
   const variant = useSkinVariant(variantProp);
   const locale = useMemo(() => resolveCalendarLocale(localeProp), [localeProp]);
   const today = useMemo(() => startOfDay(new Date()), []);
+  const minDateTime = minDateProp ? startOfDay(minDateProp).getTime() : undefined;
+  const maxDateTime = maxDateProp ? startOfDay(maxDateProp).getTime() : undefined;
+  const minDate = useMemo(
+    () => (minDateTime !== undefined ? new Date(minDateTime) : undefined),
+    [minDateTime],
+  );
+  const maxDate = useMemo(
+    () => (maxDateTime !== undefined ? new Date(maxDateTime) : undefined),
+    [maxDateTime],
+  );
   const isControlled = value !== undefined;
  
   const [internalValue, setInternalValue] = useState<unknown>(() =>
@@ -90,10 +105,11 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
   const view = viewControlled ? viewProp : viewInternal;
   const setView = useCallback(
     (next: CalendarView) => {
+      if (disabled) return;
       if (!viewControlled) setViewInternal(next);
       onViewChange?.(next);
     },
-    [onViewChange, viewControlled],
+    [disabled, onViewChange, viewControlled],
   );
 
   const monthControlled = month !== undefined;
@@ -126,6 +142,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     resolveInitialFocusDate({
       mode: mode as CalendarMode,
       resolvedValue,
+      initialMonth: month ?? defaultMonth,
       today,
       minDate,
       maxDate,
@@ -163,8 +180,20 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     [mode, rangePending, resolvedValue],
   );
  
+  const canNavigatePrev = useMemo(
+    () => canCalendarNavigate(view, viewDate, -1, minDate, maxDate),
+    [view, viewDate, minDate, maxDate],
+  );
+  const canNavigateNext = useMemo(
+    () => canCalendarNavigate(view, viewDate, 1, minDate, maxDate),
+    [view, viewDate, minDate, maxDate],
+  );
+
   const navigate = useCallback(
     (delta: number) => {
+      if (disabled || delta === 0) return;
+      const dir: -1 | 1 = delta < 0 ? -1 : 1;
+      if (!canCalendarNavigate(view, viewDateRef.current, dir, minDate, maxDate)) return;
       setViewDateRaw((prev) => navigateViewDate(prev, view, delta));
       setFocusedDateRaw((fd) => {
         if (view === "days") {
@@ -176,11 +205,12 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
         return clampCalendarDate(addCalendarYears(fd, delta * 10), minDate, maxDate);
       });
     },
-    [view, minDate, maxDate, setViewDateRaw],
+    [disabled, view, minDate, maxDate, setViewDateRaw],
   );
  
   const onDayPress = useCallback(
     (d: Date) => {
+      if (disabled || readOnly) return;
       const day = startOfDay(d);
       if (isCalendarDateDisabled(day, minDate, maxDate, isDateUnavailable)) return;
       setFocusedDateRaw(day);
@@ -211,54 +241,61 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
         }
       }
     },
-    [isDateUnavailable, maxDate, minDate, mode, rangePending, setValue],
+    [disabled, isDateUnavailable, maxDate, minDate, mode, rangePending, readOnly, setValue],
   );
  
   const onMonthPress = useCallback(
-    (month: number) => {
+    (monthIndex: number) => {
+      if (disabled || readOnly) return;
       const year = viewDate.getFullYear();
-      setViewDateRaw(new Date(year, month, 1));
+      if (isCalendarMonthDisabled(year, monthIndex, minDate, maxDate)) return;
+      setViewDateRaw(new Date(year, monthIndex, 1));
       setFocusedDateRaw((fd) => {
-        const maxDay = getDaysInMonth(year, month);
+        const maxDay = getDaysInMonth(year, monthIndex);
         return clampCalendarDate(
-          new Date(year, month, Math.min(fd.getDate(), maxDay)),
+          new Date(year, monthIndex, Math.min(fd.getDate(), maxDay)),
           minDate,
           maxDate,
         );
       });
       setView("days");
     },
-    [viewDate, minDate, maxDate, setView, setViewDateRaw],
+    [disabled, readOnly, viewDate, minDate, maxDate, setView, setViewDateRaw],
   );
  
   const onYearPress = useCallback(
     (year: number) => {
+      if (disabled || readOnly) return;
+      if (isCalendarYearDisabled(year, minDate, maxDate)) return;
       setViewDateRaw(new Date(year, viewDate.getMonth(), 1));
-      setFocusedDateRaw((fd) =>
-        clampCalendarDate(
-          new Date(year, fd.getMonth(), fd.getDate()),
+      setFocusedDateRaw((fd) => {
+        const maxDay = getDaysInMonth(year, fd.getMonth());
+        return clampCalendarDate(
+          new Date(year, fd.getMonth(), Math.min(fd.getDate(), maxDay)),
           minDate,
           maxDate,
-        ),
-      );
+        );
+      });
       setView("months");
     },
-    [viewDate, minDate, maxDate, setView, setViewDateRaw],
+    [disabled, readOnly, viewDate, minDate, maxDate, setView, setViewDateRaw],
   );
  
   const onClear = useCallback(() => {
+    if (disabled || readOnly) return;
     setRangePending(null);
     setHoverDate(null);
     if (mode === "single") setValue(null);
     else if (mode === "multiple") setValue([]);
     else setValue({ start: null, end: null } satisfies CalendarRangeValue);
-  }, [mode, setValue]);
+  }, [disabled, mode, readOnly, setValue]);
  
   const onToday = useCallback(() => {
+    if (disabled) return;
     setViewDateRaw(new Date(today.getFullYear(), today.getMonth(), 1));
     setFocusedDateRaw(clampCalendarDate(today, minDate, maxDate));
     setView("days");
-  }, [today, minDate, maxDate, setView, setViewDateRaw]);
+  }, [disabled, today, minDate, maxDate, setView, setViewDateRaw]);
  
   const contextValue: CalendarContextValue = useMemo(
     () => ({
@@ -282,6 +319,10 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       onToday,
       size,
       variant,
+      disabled,
+      readOnly,
+      canNavigatePrev,
+      canNavigateNext,
       locale,
       minDate,
       maxDate,
@@ -311,6 +352,10 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       onToday,
       size,
       variant,
+      disabled,
+      readOnly,
+      canNavigatePrev,
+      canNavigateNext,
       locale,
       minDate,
       maxDate,

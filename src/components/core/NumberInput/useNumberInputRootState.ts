@@ -1,10 +1,10 @@
 import { useCallback, useId, useMemo, useRef, useState, type ReactNode } from "react";
 
-import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import type { InputSize, InputVariant } from "@/components/core/Input";
+import { useNativeFormReset } from "@/components/core/utils/fieldFormDom";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 
 import { numberInputDescribedBy, numberInputFieldIds } from "./numberInputA11y";
@@ -70,47 +70,65 @@ export function useNumberInputRootState({
   locale: localeProp,
 }: UseNumberInputRootStateProps) {
   const locale = numberInputLocale(localeProp);
-  const form = useOptionalFormBindingContext();
+  const formBinding = useFormFieldBinding({
+    name,
+    value: valueProp,
+    disabled,
+    readOnly,
+  });
   const reactId = useId();
   const inputId = id ?? `number-input-${reactId}`;
   const ids = numberInputFieldIds(inputId);
   const isCompound = hasCompoundChildren(children);
   const step = numberInputStep(stepProp);
   const explicit = valueProp !== undefined;
-  const bound = form != null && name != null && !explicit;
-  const formRaw = bound && name ? form.getValue(name) : undefined;
-  const controlled = explicit ? valueProp : bound ? parseFormNumber(formRaw) : undefined;
+  const bound = formBinding.bound;
+  const controlled = explicit ? valueProp : bound ? parseFormNumber(formBinding.value) : undefined;
+  const isControlled = controlled !== undefined;
 
-  const [value, setValue] = useControllableState<number | null>({
-    value: controlled,
-    defaultValue,
-    onChange: (next) => {
-      onValueChange?.(next);
-      if (name && form) {
-        form.setValue(name, next ?? "", {
-          shouldValidate: form.validateMode === "onChange",
-        });
+  const [internalValue, setInternalValue] = useState<number | null>(defaultValue);
+  const value = isControlled ? controlled : internalValue;
+
+  const onValueChangeRef = useRef(onValueChange);
+  // react-doctor-disable-next-line react-doctor/no-ref-current-in-render -- latest callback without recreating setter
+  onValueChangeRef.current = onValueChange;
+
+  const setValue = useCallback(
+    (next: number | null) => {
+      if (!isControlled) setInternalValue(next);
+      onValueChangeRef.current?.(next);
+      if (bound) {
+        formBinding.setValue(next ?? "");
       }
     },
-  });
+    [bound, formBinding, isControlled],
+  );
 
   const [draft, setDraft] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const pointerInsideRef = useRef(false);
 
+  useNativeFormReset(
+    inputRef,
+    () => {
+      setDraft(null);
+      setInternalValue(defaultValue);
+    },
+    !isControlled,
+  );
+
+  const formRef = formBinding.ref;
   const setInputRef = useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
-      if (bound && name) form?.registerRef(name, node);
+      formRef(node);
     },
-    [bound, form, name],
+    [formRef],
   );
 
-  const formMessage = name ? form?.getError(name) : undefined;
-  const resolvedError = error ?? formMessage;
-  const resolvedDisabled = disabled || form?.disabled === true;
-  const resolvedReadOnly = readOnly || form?.readOnly === true;
-  const blocked = resolvedDisabled || form?.isSubmitting === true;
+  const resolvedError = error ?? formBinding.error;
+  const blocked = Boolean(formBinding.disabled);
+  const resolvedReadOnly = Boolean(formBinding.readOnly);
 
   const parsedDraft = draft != null ? parseNumberInputComplete(draft, locale) : undefined;
   const steppingFrom = parsedDraft === undefined ? value : parsedDraft;
@@ -136,6 +154,7 @@ export function useNumberInputRootState({
     setDraft(value == null ? "" : numberInputEditText(value, locale));
   }, [blocked, draft, locale, resolvedReadOnly, value]);
 
+  const formOnBlur = formBinding.onBlur;
   const commitBlur = useCallback(() => {
     const raw = draft;
     setDraft(null);
@@ -145,24 +164,25 @@ export function useNumberInputRootState({
         parsed == null || parsed === undefined ? null : snapNumberInput(parsed, step, min, max);
       if (next !== value) setValue(next);
     }
-    if (bound && name && form) {
-      form.setTouched(name, true);
-      if (form.validateMode === "onBlur") form.validateField(name);
-    }
-  }, [blocked, bound, draft, form, locale, max, min, name, resolvedReadOnly, setValue, step, value]);
+    formOnBlur();
+  }, [blocked, draft, formOnBlur, locale, max, min, resolvedReadOnly, setValue, step, value]);
 
   const nudge = useCallback(
     (direction: 1 | -1) => {
       if (blocked || resolvedReadOnly) return;
       if (!numberInputCanStep(steppingFrom, direction, min, max)) return;
       const next = stepNumberInput(steppingFrom, direction, step, min, max);
-      setDraft(numberInputEditText(next, locale));
+      if (draft !== null) {
+        setDraft(numberInputEditText(next, locale));
+      }
       setValue(next);
     },
-    [blocked, locale, max, min, resolvedReadOnly, setValue, step, steppingFrom],
+    [blocked, draft, locale, max, min, resolvedReadOnly, setValue, step, steppingFrom],
   );
 
-  const labelConnected = isCompound ? hasCompoundChild(children, "NumberInputLabel") : label != null;
+  const labelConnected = isCompound
+    ? hasCompoundChild(children, "NumberInputLabel") || hasCompoundChild(children, "Label")
+    : label != null;
   const hintConnected = isCompound ? hasCompoundChild(children, "NumberInputHint") : hint != null;
   const errorConnected = isCompound
     ? hasCompoundChild(children, "NumberInputError")
@@ -170,7 +190,7 @@ export function useNumberInputRootState({
   const isInvalid = useResolvedFieldInvalid({
     invalid,
     errorConnected: resolvedError != null || errorConnected,
-    formInvalid: false,
+    formInvalid: formBinding["aria-invalid"] === true,
   });
   const text = draft ?? formatNumberInput(value, formatOptions, locale);
   const valueText = value == null ? undefined : formatNumberInput(value, formatOptions, locale);

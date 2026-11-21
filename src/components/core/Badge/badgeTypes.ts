@@ -110,6 +110,7 @@ export type BadgeIconOnlyViewProps = {
   className: string;
   rest: HTMLAttributes<HTMLSpanElement>;
   iconOnlyBody: ReactNode;
+  singleDigit?: boolean;
 };
  
 export type BadgeTextViewProps = {
@@ -139,6 +140,7 @@ export type ResolvedBadgeBody = {
   bodyContent: ReactNode;
   iconOnlyBody: ReactNode;
   dataIcon: IconPosition | undefined;
+  singleDigit?: boolean;
 };
  
 export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {

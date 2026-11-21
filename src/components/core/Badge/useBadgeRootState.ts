@@ -68,6 +68,7 @@ export function useBadgeRootState({
     bodyContent: body.bodyContent,
     iconOnlyBody: body.iconOnlyBody,
     dataIcon: body.dataIcon,
+    singleDigit: body.singleDigit,
   };
 }
  

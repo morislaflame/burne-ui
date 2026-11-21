@@ -17,11 +17,18 @@ const configSrc = await readFile(
 const cssSrc = await readFile(path.join(root, "src/tokens/styles.css"), "utf8");
 const defaultsAt = configSrc.indexOf("export const MOTION_CONFIG_DEFAULTS");
 const defaults = defaultsAt === -1 ? "" : configSrc.slice(defaultsAt);
-const jsDuration = defaults.match(/surfaceTransitionDuration:\s*(\d+)/);
+const jsDuration = defaults.match(/interactiveDuration:\s*(\d+)/);
 const cssDuration = cssSrc.match(/--motion-surface-duration:\s*(\d+)ms/);
 if (!jsDuration || !cssDuration || jsDuration[1] !== cssDuration[1]) {
   errors.push(
-    `surfaceTransitionDuration ${jsDuration?.[1] ?? "?"} !== --motion-surface-duration ${cssDuration?.[1] ?? "?"}`,
+    `interactiveDuration ${jsDuration?.[1] ?? "?"} !== --motion-surface-duration ${cssDuration?.[1] ?? "?"}`,
+  );
+}
+const jsEase = configSrc.match(/export const HOVER_LIFT_EASE_CSS\s*=\s*"([^"]+)"/);
+const cssEase = cssSrc.match(/--motion-surface-ease:\s*([^;]+);/);
+if (!jsEase || !cssEase || jsEase[1] !== cssEase[1].trim()) {
+  errors.push(
+    `HOVER_LIFT_EASE_CSS ${jsEase?.[1] ?? "?"} !== --motion-surface-ease ${cssEase?.[1]?.trim() ?? "?"}`,
   );
 }
 

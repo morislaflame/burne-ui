@@ -1,3 +1,4 @@
+import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 
 import type { StepperOrientation, StepperSize } from "./stepperTypes";
@@ -86,6 +87,7 @@ export function stepperIndicatorClass(
 ): string {
   return cn(
     "relative z-[1] inline-flex shrink-0 items-center justify-center rounded-full border-token bg-surface font-w-mid text-foreground surface-color-transition",
+    SHADOW_LIFT_MOTION_CLASS,
     "group-data-[state=active]:border-transparent group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground",
     "group-data-[state=checked]:border-token-primary group-data-[state=checked]:text-primary",
     "group-data-[state=inactive]:text-muted-foreground",

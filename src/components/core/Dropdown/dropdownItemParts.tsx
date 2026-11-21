@@ -177,6 +177,8 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       selection: selectionProp,
       status = "default",
       indicator = false,
+      closeOnSelect: itemCloseOnSelect,
+      onSelect,
       motion,
       onClick,
       onPointerDown,
@@ -197,6 +199,8 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
     const {
       parts,
       selectItem,
+      multiple,
+      closeOnSelectProp,
       setOpen,
       hasItemIndicator,
       hasHint,
@@ -261,14 +265,31 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
         if (e.defaultPrevented || disabled) return;
-        if (!isSelectionItem) {
-          setOpen(false);
+        onSelect?.(e);
+        if (e.defaultPrevented) return;
+        const effectiveCloseOnSelect = itemCloseOnSelect ?? closeOnSelectProp;
+        const shouldClose =
+          effectiveCloseOnSelect ?? (!multiple || value === undefined || !isSelectionItem);
+        if (isSelectionItem && value !== undefined) {
+          selectItem(value, { close: shouldClose });
           return;
         }
-        if (value == null) return;
-        selectItem(value);
+        if (shouldClose) {
+          setOpen(false);
+        }
       },
-      [disabled, isSelectionItem, onClick, selectItem, setOpen, value],
+      [
+        closeOnSelectProp,
+        disabled,
+        isSelectionItem,
+        itemCloseOnSelect,
+        multiple,
+        onClick,
+        onSelect,
+        selectItem,
+        setOpen,
+        value,
+      ],
     );
  
     const itemBody = (

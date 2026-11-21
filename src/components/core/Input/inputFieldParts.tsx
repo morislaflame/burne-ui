@@ -125,7 +125,7 @@ export const InputError = forwardRef<HTMLElement, InputErrorProps>(
         {...rest}
         {...part.pointerHandlers}
       >
-        {children}
+        {children ?? field.errorMessage}
       </Field.Error>
     );
   },

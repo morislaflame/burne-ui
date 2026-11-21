@@ -2,7 +2,7 @@
  * Slot motion for AlertDialog — look here first.
  *
  * DOM slots: `overlay`, `panel`, `title`, `description`, `close`, `header`,
- * `headingBlock`, `footer`, `content`, `body`, `indicator`, plus `trigger` on Root.
+ * `footer`, `content`, `body`, `indicator`, plus `trigger` on Root (`headingBlock` is `display: contents`).
  * Host: `AlertDialog.Panel` (`useAlertDialogModalMotion`) plays `enter` / `leave`
  * and broadcasts nested slots. Root has no portal DOM — it passes the `motion` map
  * and trigger defaults. Overlay/panel defaults wrap the portal host (`ALERT_DIALOG_MOTION_DEFAULTS`
@@ -83,6 +83,7 @@ export function useAlertDialogModalMotion({
   return {
     mounted: motion.mounted,
     showPortal: motion.showPortal,
+    layerId: motion.layerId,
     dialogRef: motion.dialogRef,
     overlayRef: motion.overlayRef,
     panelRef: motion.panelRef,

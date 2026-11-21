@@ -138,7 +138,9 @@ export function useDisclosureContentDrag(
               shell.style.height = "0px";
               shell.style.overflow = "hidden";
             }
-            if (skipContentAnimRef) skipContentAnimRef.current = true;
+            if (skipContentAnimRef) {
+              skipContentAnimRef.current = snapOpen !== open;
+            }
             setOpen(snapOpen);
           },
         });

@@ -23,6 +23,11 @@ export const EXPANDABLE_MESSAGE_DISPLAY_NAMES = new Set([
   "Accordion.Message",
 ]);
  
+export const EXPANDABLE_PANEL_DISPLAY_NAMES = new Set([
+  "ExpandablePanel",
+  "Accordion.Panel",
+]);
+
 export const EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES = new Set([
   "ExpandableTrigger",
   "ExpandablePanel",

@@ -128,6 +128,7 @@ export type UseSearchInputAnimationsProps = {
   size: SearchInputSize;
   expanded: boolean;
   blocked: boolean;
+  readOnly?: boolean;
   variant: SearchInputVariant;
   groupSegment?: ButtonGroupSegment;
   layout: SearchSizeLayout;

@@ -151,7 +151,12 @@ export type TooltipContextValue = {
   /** Status glyph. `null` hides it. A node replaces the status icon. */
   icon?: ReactNode | null;
   triggerRef: React.RefObject<HTMLElement | null>;
+  contentRef: React.RefObject<HTMLDivElement | null>;
+  layerId: symbol;
   scheduleShow: () => void;
+  leaveTrigger: () => void;
+  holdContent: () => void;
+  leaveContent: () => void;
   hide: () => void;
   /** Portal mount node from Root; Content may override via its own prop. */
   portalContainer?: HTMLElement | null;

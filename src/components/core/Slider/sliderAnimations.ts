@@ -131,11 +131,11 @@ export function useSliderFillCleanup(fillRef: React.RefObject<HTMLSpanElement | 
  
 export function applySliderFillStyle(
   fill: HTMLSpanElement,
-  style: { left?: string; width?: string; bottom?: string; height?: string },
+  style: { insetInlineStart?: string; width?: string; bottom?: string; height?: string },
   orientation: "horizontal" | "vertical",
 ) {
   killMotion(fill);
-  fill.style.left = style.left ?? "";
+  fill.style.insetInlineStart = style.insetInlineStart ?? "";
   fill.style.width = style.width ?? "";
   fill.style.bottom = style.bottom ?? "";
   fill.style.height = style.height ?? "";
@@ -143,7 +143,7 @@ export function applySliderFillStyle(
     fill.style.bottom = "";
     fill.style.height = "";
   } else {
-    fill.style.left = "";
+    fill.style.insetInlineStart = "";
     fill.style.width = "";
   }
 }

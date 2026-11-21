@@ -9,7 +9,7 @@
  *
  * Defaults: `resolveSearchInputMotionDefaults`.
  */
-import { useCallback, useLayoutEffect, useMemo, useRef, type MutableRefObject } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, type MutableRefObject, type PointerEvent as ReactPointerEvent } from "react";
 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
  
@@ -43,16 +43,18 @@ bindSearchRecipes();
 export function resolveSearchInputMotionDefaults({
   variant,
   blocked,
+  readOnly = false,
   groupSegment,
   expanded,
 }: {
   variant: SearchInputVariant;
   blocked: boolean;
+  readOnly?: boolean;
   groupSegment?: unknown;
   expanded: boolean;
 }): SearchInputMotion {
   const hover = !blocked && groupSegment == null;
-  const press = !blocked && !expanded && groupSegment == null;
+  const press = !blocked && !readOnly && !expanded && groupSegment == null;
   return overlaySkinMotion(
     {
       root: {
@@ -109,6 +111,7 @@ export function useSearchInputAnimations({
   size,
   expanded,
   blocked,
+  readOnly = false,
   variant,
   groupSegment,
   layout,
@@ -245,23 +248,26 @@ export function useSearchInputAnimations({
     [motionPointer.onPointerOut, motionPointer.onPointerOver],
   );
  
-  const beginPressSqueeze = useCallback(() => {
-    if (blocked || expanded) return;
-    const shell = rootRef.current;
-    if (!shell || prefersReducedMotion()) {
-      squeezePromiseRef.current = Promise.resolve();
-      return;
-    }
-    const pressIn = scope.resolve("root", "pressIn", rootMotionRef.current);
-    if (pressIn === false || pressIn === undefined) {
-      squeezePromiseRef.current = Promise.resolve();
-      return;
-    }
-    squeezePromiseRef.current = scope.play("root", "pressIn", {
-      partMotion: rootMotionRef.current,
-      el: shell,
-    }).finished;
-  }, [blocked, expanded, rootRef, scope]);
+  const beginPressSqueeze = useCallback(
+    (e?: ReactPointerEvent<HTMLDivElement>) => {
+      if (blocked || readOnly || expanded || e?.pointerType === "touch") return;
+      const shell = rootRef.current;
+      if (!shell || prefersReducedMotion()) {
+        squeezePromiseRef.current = Promise.resolve();
+        return;
+      }
+      const pressIn = scope.resolve("root", "pressIn", rootMotionRef.current);
+      if (pressIn === false || pressIn === undefined) {
+        squeezePromiseRef.current = Promise.resolve();
+        return;
+      }
+      squeezePromiseRef.current = scope.play("root", "pressIn", {
+        partMotion: rootMotionRef.current,
+        el: shell,
+      }).finished;
+    },
+    [blocked, expanded, readOnly, rootRef, scope],
+  );
 
   const awaitPressSqueeze = useCallback(async () => {
     await (squeezePromiseRef.current ?? Promise.resolve());

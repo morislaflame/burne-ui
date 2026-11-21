@@ -1,9 +1,11 @@
 import type {
-  PointerEvent as ReactPointerEvent,
+  MouseEvent as ReactMouseEvent,
   ReactNode,
 } from "react";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
-import { dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataGroupSegment, dataOpenState, dataVariantProps } from "@/components/core/utils/dataContract";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { isInteractiveDescendantTarget } from "@/components/core/utils/fieldFormDom";
 import { ariaInvalidValue, fieldPaintStatus, useResolvedFieldInvalid } from "@/components/core/utils/fieldInvalid";
 import { KitChevronDown } from "@/components/core/utils/kitIcons";
  
@@ -22,8 +24,10 @@ import {
   resolveComboBoxMotionDefaults,
   resolveComboBoxMotionParams,
   resolveComboBoxPopoverPanelMotion,
+  useComboBoxOpenAfterSqueeze,
   useComboBoxShellAnimations,
 } from "./comboBoxAnimations";
+import { comboBoxFirstEnabledValue } from "./comboBoxAPI";
 import { comboBoxTriggerAriaLabel } from "./comboBoxA11y";
 import {
   ComboBoxMotionProvider,
@@ -63,7 +67,7 @@ export const ComboBoxShell = forwardRef<HTMLDivElement, ComboBoxShellProps>(
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
     const ctx = useComboBoxContext();
-    const { disabled, variant } = ctx;
+    const { disabled, readOnly, variant } = ctx;
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
@@ -72,8 +76,8 @@ export const ComboBoxShell = forwardRef<HTMLDivElement, ComboBoxShellProps>(
     const skinRevision = useSkinRegistryRevision();
     const motionDefaults = useMemo(() => {
       void skinRevision;
-      return resolveComboBoxMotionDefaults({ variant, disabled, groupSegment });
-    }, [disabled, groupSegment, skinRevision, variant]);
+      return resolveComboBoxMotionDefaults({ variant, disabled, readOnly, groupSegment });
+    }, [disabled, groupSegment, readOnly, skinRevision, variant]);
     const motionParams = useMemo(
       () =>
         resolveComboBoxMotionParams({
@@ -151,6 +155,9 @@ function ComboBoxShellSurface({
     | "onPointerLeave"
     | "motion"
     | "motionController"
+    | "motionState"
+    | "motionPayload"
+    | "playInitialState"
   >;
 }) {
   const slotClassNames = useComboBoxClassNames();
@@ -159,19 +166,25 @@ function ComboBoxShellSurface({
     open,
     setOpen,
     disabled,
+    readOnly,
     variant,
     invalid,
     errorConnected,
     formInvalid,
     size,
     anchorRef,
+    inputRef,
+    value,
+    filteredValues,
+    optionsByValue,
+    loading,
+    setActiveValue,
   } = ctx;
   const isInvalid = useResolvedFieldInvalid({ invalid, errorConnected, formInvalid });
   const visualStatus = fieldPaintStatus(isInvalid);
  
   const {
     bindShellRef,
-    squeezeThenOpen,
     shellPointerUp,
     shellPointerEnter,
     shellPointerLeave,
@@ -179,20 +192,48 @@ function ComboBoxShellSurface({
   } = useComboBoxShellAnimations({
     shellRef: anchorRef,
     disabled,
+    readOnly,
     variant,
     groupSegment,
     motion: shellPartMotion,
     pointerInsideRef,
   });
- 
-  const handlePointerDown = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
+
+  const handleMouseDown = useCallback(
+    (e: ReactMouseEvent<HTMLDivElement>) => {
       if (disabled) return;
-      if (open) return;
-      if (e.button !== 0) return;
-      squeezeThenOpen({ setOpen });
+      const inputEl = inputRef.current;
+      if (!inputEl) return;
+      if (!isInteractiveDescendantTarget(e.target, inputEl) && document.activeElement === inputEl) {
+        e.preventDefault();
+      }
     },
-    [disabled, open, setOpen, squeezeThenOpen],
+    [disabled, inputRef],
+  );
+
+  const handleClick = useCallback(
+    (e: ReactMouseEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      const inputEl = inputRef.current;
+      if (!inputEl) return;
+      if (isInteractiveDescendantTarget(e.target, inputEl)) return;
+      if (e.target === inputEl) return;
+      if (document.activeElement !== inputEl) {
+        inputEl.focus();
+      }
+      if (!readOnly && !open) {
+        setOpen(true);
+        if (loading) {
+          setActiveValue(null);
+        } else {
+          const selectedIdx = value ? filteredValues.indexOf(value) : -1;
+          setActiveValue(
+            selectedIdx >= 0 ? value : comboBoxFirstEnabledValue(filteredValues, optionsByValue),
+          );
+        }
+      }
+    },
+    [disabled, filteredValues, inputRef, loading, open, optionsByValue, readOnly, setActiveValue, setOpen, value],
   );
  
   return (
@@ -201,7 +242,9 @@ function ComboBoxShellSurface({
         mergeForwardedRef(forwardedRef, node);
         bindShellRef(node);
       }}
-      onPointerDown={handlePointerDown}
+      role="presentation"
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
       onPointerUp={shellPointerUp}
       onPointerEnter={(e) => {
         onPointerEnter?.(e);
@@ -233,7 +276,7 @@ function ComboBoxShellSurface({
 }
  
 export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
-  function ComboBoxInput({ className, onKeyDown, onChange, onBlur, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...rest }, ref) {
+  function ComboBoxInput({ className, onKeyDown, onChange, onBlur, onClick, motion, onPointerOver, onPointerOut, onPointerDown, onPointerUp, "aria-describedby": ariaDescribedByProp, ...rest }, ref) {
     const slotClassNames = useComboBoxClassNames();
     const {
       comboBoxId,
@@ -251,9 +294,10 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       isMuted,
       setRefs,
       handleChange,
+      handleClick,
       handleKeyDown,
       handleBlur,
-    } = useComboBoxInputState({ onKeyDown, onChange, onBlur }, ref);
+    } = useComboBoxInputState({ onKeyDown, onChange, onBlur, onClick }, ref);
  
     const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
       scope: useOptionalComboBoxMotionScope(),
@@ -280,7 +324,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         aria-activedescendant={activeOptionId}
         aria-required={required || undefined}
         aria-invalid={ariaInvalidValue(isInvalid)}
-        aria-describedby={ariaDescribedBy}
+        aria-describedby={joinFieldDescribedBy(ariaDescribedBy, ariaDescribedByProp)}
         disabled={disabled}
         readOnly={readOnly}
         aria-readonly={readOnly || undefined}
@@ -288,6 +332,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         placeholder={placeholder}
         value={inputValue}
         onChange={handleChange}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         className={comboBoxInputClass({
@@ -300,7 +345,9 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         {...pointerHandlers}
         data-state={dataOpenState(open)}
         data-invalid={isInvalid ? "" : undefined}
+        data-disabled={dataFlag(disabled)}
         data-readonly={readOnly ? "" : undefined}
+        data-required={dataFlag(required)}
       />
     );
   },
@@ -351,10 +398,42 @@ function ComboBoxTriggerIcon({
 }
  
 export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
-  function ComboBoxTrigger({ className, onPointerOver, onPointerOut, onPointerDown, onPointerUp, children, motion, ...rest }, ref) {
+  function ComboBoxTrigger({ className, onMouseDown, onPointerOver, onPointerOut, onPointerDown, onPointerUp, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useComboBoxClassNames();
-    const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
+    const {
+      open,
+      setOpen,
+      setFilterQuery,
+      setIsFiltering,
+      disabled,
+      readOnly,
+      size,
+      anchorRef,
+      inputRef,
+      value,
+      filteredValues,
+      optionsByValue,
+      loading,
+      setActiveValue,
+    } = useComboBoxContext();
+    const locked = disabled || readOnly;
+    const squeezeThenOpen = useComboBoxOpenAfterSqueeze({
+      triggerRef: anchorRef,
+      disabled: locked,
+    });
+    const finishChevronOpen = useCallback(() => {
+      if (loading) {
+        setActiveValue(null);
+      } else {
+        const selectedIdx = value ? filteredValues.indexOf(value) : -1;
+        setActiveValue(
+          selectedIdx >= 0 ? value : comboBoxFirstEnabledValue(filteredValues, optionsByValue),
+        );
+      }
+      focusElement(inputRef.current);
+    }, [filteredValues, inputRef, loading, optionsByValue, setActiveValue, value]);
+
     const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
       scope: useOptionalComboBoxMotionScope(),
       slot: "trigger",
@@ -367,15 +446,20 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
       onPointerDown: (e) => {
         onPointerDown?.(e);
         e.stopPropagation();
-        if (disabled) return;
+        if (e.defaultPrevented || locked) return;
         if (open) {
+          setIsFiltering(false);
           setOpen(false);
           setFilterQuery("");
           return;
         }
         if (e.button !== 0) return;
-        setOpen(true);
-        requestAnimationFrame(() => focusElement(inputRef.current));
+        if (e.pointerType === "touch") {
+          setOpen(true);
+          finishChevronOpen();
+          return;
+        }
+        squeezeThenOpen({ setOpen, onOpened: finishChevronOpen });
       },
     });
  
@@ -392,10 +476,14 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         type="button"
         ref={setTriggerRef}
         tabIndex={-1}
-        disabled={disabled}
+        disabled={locked}
         aria-label={comboBoxTriggerAriaLabel(open, labels)}
+        onMouseDown={(e) => {
+          onMouseDown?.(e);
+          if (!e.defaultPrevented) e.preventDefault();
+        }}
         className={comboBoxTriggerClass({
-          disabled,
+          disabled: locked,
           className,
           slotClass: slotClassNames.trigger,
         })}
@@ -437,7 +525,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       menuMaxHeight,
       virtualized,
       virtualItemSize,
-      items,
+      optionsByValue,
       filteredValues,
       value,
       setValue,
@@ -445,6 +533,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       activeValue,
       setActiveValue,
       setFilterQuery,
+      setIsFiltering,
       loading,
       variant,
       disabled,
@@ -472,11 +561,12 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
     const handleValueChange = useCallback(
       (next: string | null) => {
         cancelBlurCommit();
+        setIsFiltering(false);
         setValue(next ?? "");
         setFilterQuery("");
         setOpen(false);
       },
-      [cancelBlurCommit, setFilterQuery, setOpen, setValue],
+      [cancelBlurCommit, setFilterQuery, setIsFiltering, setOpen, setValue],
     );
  
     const labels = useBurneLabels();
@@ -490,7 +580,8 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
         <ListBox.Empty />
       ) : (
         filteredValues.map((v) => {
-          const opt = items.find((o) => o.value === v)!;
+          const opt = optionsByValue.get(v);
+          if (!opt) return null;
           return (
             <ListBox.Item
               key={v}
@@ -577,6 +668,7 @@ export function ComboBoxSimpleBody({
   hint,
   error,
   labelId,
+  inputProps,
   motionController,
   motionState,
   motionPayload,
@@ -586,6 +678,7 @@ export function ComboBoxSimpleBody({
   hint: React.ReactNode;
   error: React.ReactNode;
   labelId: string;
+  inputProps?: Pick<ComboBoxInputProps, "aria-label" | "aria-labelledby" | "aria-describedby">;
   motionController?: MotionController;
 } & MotionStateHostProps) {
   const slotClassNames = useComboBoxClassNames();
@@ -601,7 +694,7 @@ export function ComboBoxSimpleBody({
                 motionState={motionState}
                 motionPayload={motionPayload}
                 playInitialState={playInitialState}>
-        <ComboBoxInput />
+        <ComboBoxInput {...inputProps} />
         <ComboBoxTrigger />
       </ComboBoxShell>
       <ComboBoxPopover />

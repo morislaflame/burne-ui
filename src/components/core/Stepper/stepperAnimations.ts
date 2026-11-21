@@ -7,11 +7,26 @@
  * `indicator` hover/press: `hoverLiftFirstLevel` + `pressSqueeze`. The trigger
  * plays those phases on the mark so the label is part of the hit target.
  */
-import { useCallback, type ForwardedRef, type PointerEventHandler, type RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  type ForwardedRef,
+  type PointerEventHandler,
+  type RefObject,
+} from "react";
 
+import { clearMotionTransform } from "@/components/core/utils/gsapMotion";
+import {
+  initElementShadow,
+  shadowNone,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { bindLiftRecipes } from "@/components/core/utils/slotMotion/recipes/bindLift";
 import {
   hasPointerPhases,
+  killStoredMotion,
   useMotionPart,
   useOptionalEnterOnMount,
 } from "@/components/core/utils/slotMotion";
@@ -32,22 +47,55 @@ export function resolveStepperMotionDefaults(): StepperMotion {
   };
 }
 
+export function useStepperIndicatorShadow(
+  indicatorRef: RefObject<HTMLElement | null>,
+  enabled: boolean,
+) {
+  const scope = useOptionalStepperMotionScope();
+  const hasShadowRecipe =
+    scope != null &&
+    (scope.resolve("indicator", "hoverIn") === "hoverLiftFirstLevel" ||
+      scope.resolve("indicator", "hoverIn") === "hoverLiftSecondLevel");
+
+  useLayoutEffect(() => {
+    if (!enabled || !hasShadowRecipe) return;
+    initElementShadow(indicatorRef.current, shadowNone());
+  }, [enabled, hasShadowRecipe, indicatorRef]);
+
+  useEffect(() => {
+    if (enabled) return;
+    const el = indicatorRef.current;
+    if (!el) return;
+    killStoredMotion(el);
+    el.style.removeProperty("--el-shadow");
+    el.style.removeProperty("box-shadow");
+    clearMotionTransform(el);
+  }, [enabled, indicatorRef]);
+}
+
 /** Hover and press on the step mark, from the trigger that wraps the label. */
 export function useStepperIndicatorPointer(
   indicatorRef: RefObject<HTMLElement | null>,
   enabled: boolean,
 ) {
+  const config = useMotionConfig();
   const scope = useOptionalStepperMotionScope();
   const play = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn") => {
       if (!enabled) return;
+      if (
+        (phase === "hoverIn" || phase === "hoverOut") &&
+        shouldSkipInteractiveHoverLift(config)
+      ) {
+        return;
+      }
       const el = indicatorRef.current;
       if (!el || !scope) return;
       const value = scope.resolve("indicator", phase);
       if (value === undefined || value === false) return;
       scope.play("indicator", phase, { el });
     },
-    [enabled, indicatorRef, scope],
+    [config, enabled, indicatorRef, scope],
   );
 
   return {

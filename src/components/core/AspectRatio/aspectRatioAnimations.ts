@@ -47,7 +47,7 @@ function useAspectSlot(
   },
 ) {
   const scope = useAspectRatioMotionScope();
-  const pointer = hasPointerPhases(motion);
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
   const part = useMotionPart<HTMLDivElement>({
     scope,
     slot: ASPECT_RATIO_MOTION_SLOTS[slot].slot,

@@ -1,4 +1,5 @@
 import {
+  Fragment,
   cloneElement,
   forwardRef,
   isValidElement,
@@ -9,14 +10,19 @@ import {
   type ForwardedRef,
   type KeyboardEvent,
   type MouseEvent,
-  type PointerEvent,
   type ReactElement,
   type Ref,
 } from "react";
  
 import { Text } from "@/components/core/Text";
+import { dataFlag } from "@/components/core/utils/dataContract";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import {
+  mergeMotionRootSiblings,
+  mergeMotionSlotMaps,
+  useMotionPart,
+} from "@/components/core/utils/slotMotion";
  
 import { tabsPanelId, tabsTabA11y, tabsTabId } from "./tabsA11y";
 import {
@@ -30,12 +36,11 @@ import {
   useOptionalTabsMotionScope,
   useTabsClassNames,
   useTabsContext,
+  useTabsListFallbackValue,
   useTabsMotionScope,
 } from "./tabsContext";
 import { tabsTabClass, tabsTabTextClass, tabTextVariant } from "./tabsStyles";
 import type { TabsTabProps } from "./tabsTypes";
- 
-import { cn } from "@/utils/cn";
  
 export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
   { motion, motionController, motionState, motionPayload, playInitialState, ...rest },
@@ -56,10 +61,15 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     () => resolveTabsTabMotionDefaults({ selected: isSelected, disabled: !!isDisabled }),
     [isDisabled, isSelected],
   );
-  const mergedMotion = mergeMotionSlotMaps(
+  const mergedSlots = mergeMotionSlotMaps(
     parentScope?.getRootMotion(),
     motion ? { tab: motion } : undefined,
   );
+  const siblings = mergeMotionRootSiblings({
+    events: parentScope?.getEvents(),
+    states: parentScope?.getStates(),
+  });
+  const mergedMotion = { ...mergedSlots, ...siblings };
  
   return (
     <TabsMotionProvider motion={mergedMotion} defaults={motionDefaults} controller={motionController}
@@ -104,14 +114,30 @@ function TabsTabSurface({
   } = useTabsContext();
   const slotClassNames = useTabsClassNames();
   const scope = useTabsMotionScope();
+  const fallbackTabValue = useTabsListFallbackValue();
  
   const isSelected = value === tabValue;
-  const isDisabled = rootDisabled || tabDisabled;
+  const childElement =
+    asChild && isValidElement(children) && children.type !== Fragment
+      ? (children as ReactElement<
+          ButtonHTMLAttributes<HTMLButtonElement> & {
+            ref?: Ref<HTMLElement>;
+            "aria-disabled"?: boolean | "true" | "false";
+            "data-value"?: string;
+          }
+        >)
+      : null;
+  const childDisabled =
+    Boolean(childElement?.props.disabled) ||
+    childElement?.props["aria-disabled"] === true ||
+    childElement?.props["aria-disabled"] === "true";
+  const isDisabled = Boolean(rootDisabled || tabDisabled || childDisabled);
+  const isTabStop = isSelected || fallbackTabValue === tabValue;
   const tabId = tabsTabId(baseId, tabValue);
   const panelId = tabsPanelId(baseId, tabValue);
-  const a11y = tabsTabA11y({ isSelected, isDisabled, panelId });
+  const a11y = tabsTabA11y({ isSelected, isTabStop, isDisabled, panelId });
  
-  const { setRef: setTabRef, targetRef: tabTargetRef } = useMotionPart<HTMLButtonElement>({
+  const { setRef: setTabRef, targetRef: tabTargetRef } = useMotionPart<HTMLElement>({
     scope,
     slot: "tab",
     motion: itemMotion,
@@ -126,13 +152,12 @@ function TabsTabSurface({
   useTabsTabSelectionMotion(scope, isSelected, tabTargetRef, textPart.targetRef);
  
   const setRefs = useCallback(
-    (node: HTMLButtonElement | null) => {
+    (node: HTMLElement | null) => {
       setTabRef(node);
       if (node) tabElementsRef.current.set(tabValue, node);
       else tabElementsRef.current.delete(tabValue);
       notifyTabLayout();
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
+      mergeForwardedRef(forwardedRef, node as HTMLButtonElement | null);
     },
     [forwardedRef, notifyTabLayout, setTabRef, tabElementsRef, tabValue],
   );
@@ -173,58 +198,52 @@ function TabsTabSurface({
     className,
   });
  
-  if (asChild && isValidElement(children)) {
-    const child = children as ReactElement<
-      ButtonHTMLAttributes<HTMLButtonElement> & {
-        ref?: Ref<HTMLElement>;
-        "data-value"?: string;
-      }
-    >;
- 
-    return cloneElement(child, {
-      ...rest,
-      role: "tab",
-      id: tabId,
-      "data-value": tabValue,
-      "aria-selected": a11y["aria-selected"],
-      "aria-controls": a11y["aria-controls"],
-      tabIndex: a11y.tabIndex,
-      disabled: isDisabled || child.props.disabled,
-      ref: (node: HTMLElement | null) => {
-        setRefs(node as HTMLButtonElement | null);
-        if (child.props.ref) mergeForwardedRef(child.props.ref, node);
+  if (childElement) {
+    const mergedAsChild = mergeAsChildProps(
+      childElement,
+      {
+        ...rest,
+        role: "tab",
+        id: tabId,
+        "aria-selected": a11y["aria-selected"],
+        "aria-controls": a11y["aria-controls"],
+        ...(isDisabled ? { disabled: true, "aria-disabled": true } : {}),
+        tabIndex: a11y.tabIndex,
+        className: tabButtonClassName,
+        onClick: (e: MouseEvent<HTMLElement>) => {
+          handleClick(e as MouseEvent<HTMLButtonElement>);
+        },
+        onPointerEnter: pointer.handlePointerEnter,
+        onPointerLeave: pointer.handlePointerLeave,
+        onPointerDown: pointer.handlePointerDown,
+        onPointerUp: pointer.handlePointerUp,
+        onKeyDown: (e: KeyboardEvent<HTMLElement>) => {
+          pointer.handleKeyDown(e as KeyboardEvent<HTMLButtonElement>);
+          if (
+            !isDisabled &&
+            !e.defaultPrevented &&
+            !e.repeat &&
+            (e.key === "Enter" || e.key === " " || e.key === "Spacebar") &&
+            e.currentTarget.tagName !== "BUTTON"
+          ) {
+            e.preventDefault();
+            e.currentTarget.click();
+          }
+        },
+        "data-value": tabValue,
+        "data-disabled": dataFlag(isDisabled),
+        "data-state": a11y["aria-selected"] ? "active" : "inactive",
       },
-      className: cn(tabButtonClassName, child.props.className),
-      onClick: (e: MouseEvent<HTMLButtonElement>) => {
-        child.props.onClick?.(e);
-        handleClick(e);
-      },
-      onPointerEnter: (e: PointerEvent<HTMLButtonElement>) => {
-        child.props.onPointerEnter?.(e);
-        pointer.handlePointerEnter(e);
-      },
-      onPointerLeave: (e: PointerEvent<HTMLButtonElement>) => {
-        child.props.onPointerLeave?.(e);
-        pointer.handlePointerLeave(e);
-      },
-      onPointerDown: (e: PointerEvent<HTMLButtonElement>) => {
-        child.props.onPointerDown?.(e);
-        pointer.handlePointerDown(e);
-      },
-      onPointerUp: (e: PointerEvent<HTMLButtonElement>) => {
-        child.props.onPointerUp?.(e);
-        pointer.handlePointerUp(e);
-      },
-      onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
-        child.props.onKeyDown?.(e);
-        pointer.handleKeyDown(e);
-      },
-    });
+      setRefs,
+      { disabled: isDisabled },
+    );
+    if (isDisabled) mergedAsChild.href = undefined;
+    return cloneElement(childElement, mergedAsChild);
   }
  
   return (
     <button
-      ref={setRefs}
+      ref={setRefs as Ref<HTMLButtonElement>}
       type="button"
       role="tab"
       id={tabId}
@@ -235,13 +254,14 @@ function TabsTabSurface({
       className={tabButtonClassName}
       onClick={handleClick}
       {...rest}
-      data-value={tabValue}
-      data-state={a11y["aria-selected"] ? "active" : "inactive"}
       onPointerEnter={pointer.handlePointerEnter}
       onPointerLeave={pointer.handlePointerLeave}
       onPointerDown={pointer.handlePointerDown}
       onPointerUp={pointer.handlePointerUp}
       onKeyDown={pointer.handleKeyDown}
+      data-value={tabValue}
+      data-disabled={dataFlag(isDisabled)}
+      data-state={a11y["aria-selected"] ? "active" : "inactive"}
     >
       <Text
         as="span"

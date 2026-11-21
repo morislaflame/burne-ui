@@ -1,4 +1,4 @@
-import { useLayoutEffect, type RefObject } from "react";
+import { useLayoutEffect, useRef, type RefObject } from "react";
  
 import { gsap, killMotion, killMotionGeometry } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
@@ -56,17 +56,28 @@ export function useBarFillMotion({
     };
   }, [fillEnabled, fillRef, indeterminate, isHorizontal, reduceMotion, scope]);
  
+  const didInitialPaintRef = useRef(false);
+
   useLayoutEffect(() => {
     const fill = fillRef.current;
-    if (!fill || indeterminate) return;
+    if (!fill || indeterminate) {
+      didInitialPaintRef.current = false;
+      return;
+    }
     fill.style.width = "100%";
     fill.style.height = "100%";
     const enter = scope?.resolve("fill", "enter");
     const hasEnter = enter != null && enter !== false;
     const change = scope?.resolve("fill", "change");
-    if (change === false || reduceMotion || !fillEnabled || !hasEnter) {
+    if (
+      change === false ||
+      reduceMotion ||
+      !fillEnabled ||
+      (!hasEnter && !didInitialPaintRef.current)
+    ) {
       applyProgressFillInstant(fill, scale, isHorizontal);
     }
+    didInitialPaintRef.current = true;
   }, [fillEnabled, fillRef, indeterminate, isHorizontal, reduceMotion, scale, scope]);
  
   useLayoutEffect(() => {

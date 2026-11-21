@@ -29,8 +29,8 @@ export function resolveFallbackThumbPx(
 }
  
 export function measureSwitchTravel(trackEl: HTMLElement, thumbEl: HTMLElement): number {
-  const trackW = trackEl.getBoundingClientRect().width;
-  const thumbW = thumbEl.getBoundingClientRect().width;
+  const trackW = trackEl.clientWidth || trackEl.getBoundingClientRect().width;
+  const thumbW = thumbEl.offsetWidth || thumbEl.getBoundingClientRect().width;
   return Math.max(0, trackW - thumbW);
 }
  

@@ -64,13 +64,16 @@ export type ListBoxMotion = {
   separator?: ListBoxPartMotion;
 };
  
+export type ListBoxActiveSource = "keyboard" | "pointer";
+
 export type ListBoxContextValue = {
   listId: string;
   size: ListBoxSize;
   multiple: boolean;
   selected: Set<string>;
   selectItem: (value: string) => void;
-  setActiveValue: (value: string | null) => void;
+  setActiveValue: (value: string | null, source?: ListBoxActiveSource) => void;
+  activeChangeSourceRef: React.RefObject<ListBoxActiveSource>;
   indicatorMode: "radio" | "multi";
   disabled?: boolean;
   /**
@@ -98,6 +101,8 @@ export type ListBoxProps = Omit<
   values?: string[];
   defaultValues?: string[];
   onValuesChange?: (values: string[]) => void;
+  /** Prevent deselecting the last selected item on click/Enter. */
+  disallowEmptySelection?: boolean;
   disabled?: boolean;
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;

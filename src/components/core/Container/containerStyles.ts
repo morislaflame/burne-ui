@@ -29,11 +29,13 @@ export const CONTAINER_PADDING_CLASS = {
 export function containerRootClass({
   maxWidth,
   padding,
+  skinVariant,
   slotClass,
   className,
 }: {
   maxWidth: ContainerMaxWidth;
   padding: ContainerPadding;
+  skinVariant?: string;
   slotClass?: string;
   className?: string;
 }): string {
@@ -41,7 +43,7 @@ export function containerRootClass({
     CONTAINER_BASE_CLASS,
     CONTAINER_MAX_WIDTH_CLASS[maxWidth],
     CONTAINER_PADDING_CLASS[padding],
-    layoutTargetClass("container.root"),
+    layoutTargetClass("container.root", skinVariant),
     slotClass,
     className,
   );

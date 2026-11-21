@@ -3,7 +3,7 @@ import { useCallback, useRef, type ForwardedRef, type PointerEventHandler } from
 import { animateInteractivePressSqueeze } from "./hoverInteractiveLift";
 import type { MotionConfig } from "./motionConfig";
 import { useMotionConfig } from "./motionConfigContext";
-import { runOpenAfterSqueeze, useOpeningRef } from "./runOpenAfterSqueeze";
+import { groupSegmentMotionEl, runOpenAfterSqueeze, useOpeningRef } from "./runOpenAfterSqueeze";
 import {
   runMotionPhase,
   useMotionPart,
@@ -39,6 +39,7 @@ export async function playOverlayTriggerOpenSqueeze({
   // A skinned control (`<Button variant="skin">` under `asChild`) owns its press feel.
   // Run that recipe once here and open after it, instead of racing it with the kit squeeze.
   const skinPress = skinPressRecipeFor(el);
+  const motionEl = groupSegmentMotionEl(el);
   if (skinPress) {
     await runMotionPhase({
       el,
@@ -53,16 +54,16 @@ export async function playOverlayTriggerOpenSqueeze({
     return;
   }
   if (!scope) {
-    await animateInteractivePressSqueeze(el, { config });
+    await animateInteractivePressSqueeze(motionEl, { config });
     return;
   }
   const value = scope.resolve("trigger", "pressIn", partMotion);
   if (value === false) return;
   if (value === undefined) {
-    await animateInteractivePressSqueeze(el, { config });
+    await animateInteractivePressSqueeze(motionEl, { config });
     return;
   }
-  await scope.play("trigger", "pressIn", { el, partMotion }).finished;
+  await scope.play("trigger", "pressIn", { el: motionEl, partMotion }).finished;
 }
 
 /** `pressIn` recipe a skin declares for the control under this trigger, if any. */

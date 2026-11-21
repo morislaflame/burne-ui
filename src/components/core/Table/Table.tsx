@@ -51,6 +51,7 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
     motionPayload,
     playInitialState,
     selectionMode,
+    disallowEmptySelection,
     selectedKeys,
     defaultSelectedKeys,
     onSelectionChange,
@@ -67,6 +68,7 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
   const { variant } = useTableRootState({ variant: variantProp });
   const contentState = useTableContentState({
     selectionMode,
+    disallowEmptySelection,
     selectedKeys,
     defaultSelectedKeys,
     onSelectionChange,

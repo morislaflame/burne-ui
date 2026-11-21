@@ -2,6 +2,8 @@ import { alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertSty
 import type { AlertStatus, AlertVariant, KitAlertVariant } from "@/components/core/Alert/alertTypes";
 import { KIT_ALERT_VARIANTS } from "@/components/core/Alert/alertTypes";
 import { dialogOverlayClass, dialogOverlayEnterStyle } from "@/components/core/Dialog/dialogStyles";
+import type { TextVariant } from "@/components/core/Text";
+import { TEXT_VARIANT_CLASS } from "@/components/core/Text/textStyles";
 import {
   PANEL_SIZE_LAYOUT,
   panelSizeLayout,
@@ -45,7 +47,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
 };
  
 export const ALERT_DIALOG_NATIVE_CLASS =
-  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-large open:flex [&::backdrop]:bg-transparent";
+  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center overflow-hidden border-0 bg-transparent p-large open:flex [&::backdrop]:bg-transparent";
  
 export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
  
@@ -106,11 +108,16 @@ export function alertDialogOverlayEnterStyle() {
   return dialogOverlayEnterStyle();
 }
  
-export function alertDialogBodyClass(bodyPadding: string, className?: string): string {
+export function alertDialogBodyClass(
+  bodyPadding: string,
+  bodyVariant: TextVariant,
+  className?: string,
+): string {
   return cn(
     ALERT_DIALOG_BODY_BASE_CLASS,
+    TEXT_VARIANT_CLASS[bodyVariant],
+    "text-foreground text-start",
     bodyPadding,
-    "text-start",
     className,
   );
 }

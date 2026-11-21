@@ -10,7 +10,7 @@ import { SWITCH_COMPOUND_FIELDSET_CLASS, SWITCH_ROOT_DISABLED_CLASS, switchRootG
 import type { SwitchControlProps, SwitchProps } from "./switchTypes";
 import { useSwitchRootState } from "./useSwitchRootState";
  
-import { dataVariantProps } from "@/components/core/utils/dataContract";
+import { dataFlag, dataOnState, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
  
 export type {
@@ -120,6 +120,11 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
             {...dataVariantProps({ size: state.fieldCtx.size })}
+            data-state={dataOnState(state.isChecked)}
+            data-disabled={dataFlag(state.disabled)}
+            data-readonly={dataFlag(state.readOnly)}
+            data-invalid={dataFlag(state.fieldCtx.isInvalid)}
+            data-required={dataFlag(state.required)}
           >
             {injectSwitchControlProps(children, state.controlRest)}
           </fieldset>
@@ -135,6 +140,11 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
         onPointerDown={handlePointerDown}
         onKeyDown={handleKeyDown}
         {...dataVariantProps({ size: state.fieldCtx.size })}
+        data-state={dataOnState(state.isChecked)}
+        data-disabled={dataFlag(state.disabled)}
+        data-readonly={dataFlag(state.readOnly)}
+        data-invalid={dataFlag(state.fieldCtx.isInvalid)}
+        data-required={dataFlag(state.required)}
       >
         <SwitchSimpleBody
           label={state.label}
@@ -147,6 +157,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
           textColRef={state.textColRef}
           size={state.fieldCtx.size}
           disabled={state.disabled}
+          isInvalid={state.fieldCtx.isInvalid}
           labelPosition={state.labelPosition}
           hintId={state.hintId}
           errorId={state.errorId}

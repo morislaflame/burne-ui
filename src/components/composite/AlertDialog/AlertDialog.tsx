@@ -6,6 +6,7 @@ import { OVERLAY_TRIGGER_MOTION_DEFAULTS } from "@/components/core/utils/overlay
  
 export type {
   AlertDialogProps,
+  AlertDialogOverlayProps,
   AlertDialogPanelProps,
   AlertDialogTriggerProps,
   AlertDialogSize,
@@ -49,6 +50,7 @@ export function AlertDialogRoot({
     open,
     defaultOpen,
     onOpenChange,
+    children,
     status,
     variant,
     size,

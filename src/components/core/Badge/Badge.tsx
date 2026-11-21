@@ -42,6 +42,8 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     playInitialState,
     onPointerOver,
     onPointerOut,
+    onPointerDown,
+    onPointerUp,
     ...rest
   },
   forwardedRef,
@@ -59,6 +61,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     bodyContent,
     iconOnlyBody,
     dataIcon,
+    singleDigit,
   } = useBadgeRootState({
     variant,
     status,
@@ -116,9 +119,10 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           bodyContent={bodyContent}
           iconOnlyBody={iconOnlyBody}
           dataIcon={dataIcon}
+          singleDigit={singleDigit}
           surfaceClass={surfaceClass}
           className={className}
-          rest={rest}
+          rest={{ ...rest, onPointerDown, onPointerUp }}
         />
       </BadgeMotionProvider>
     </BadgeClassNamesProvider>
@@ -145,6 +149,7 @@ function BadgeSurface({
   bodyContent,
   iconOnlyBody,
   dataIcon,
+  singleDigit,
   surfaceClass,
   className,
   rest,
@@ -166,6 +171,7 @@ function BadgeSurface({
   bodyContent: ReactNode;
   iconOnlyBody: ReactNode;
   dataIcon: BadgeProps["iconPosition"] | undefined;
+  singleDigit?: boolean;
   surfaceClass: string;
   className: string;
   rest: HTMLAttributes<HTMLSpanElement>;
@@ -220,6 +226,7 @@ function BadgeSurface({
         className={className}
         rest={paintedRest}
         iconOnlyBody={iconOnlyBody}
+        singleDigit={singleDigit}
       />
     );
   }

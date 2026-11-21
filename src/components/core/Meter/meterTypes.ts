@@ -72,6 +72,7 @@ export type MeterFieldContextValue = {
   errorConnected: boolean;
   labelConnected: boolean;
   orientation: MeterOrientation;
+  status?: SemanticStatus;
   display: MeterDisplayState | null;
   setDisplay: (next: MeterDisplayState | null) => void;
 };

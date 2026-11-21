@@ -9,10 +9,16 @@
  * Defaults: `resolveCardMotionDefaults` (second-level lift + squeeze). A skin overlays its own recipes.
  */
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 
-import { isInteractivePressKey, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  isInteractivePressKey,
+  isKitHoverLiftRecipe,
+  primeInteractiveScaleRest,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
   mergeMotionPointerHandlers,
   useMotionPointerPhases,
@@ -21,6 +27,7 @@ import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
 import { overlaySkinMotion, usesKitElevation, usesKitElevationMember } from "@/skins/resolveVariantVisual";
 
+import { isInteractiveCardDescendant } from "./cardAPI";
 import { useCardMotionScope } from "./cardContext";
 import type { CardMotion, CardVariant, UseCardAnimationsProps } from "./cardTypes";
 import { KIT_CARD_VARIANTS } from "./cardTypes";
@@ -64,6 +71,7 @@ export function resolveCardMotionDefaults({
 
 export function useCardAnimations({
   pressable,
+  disabled = false,
   variant,
   shadow = "base",
   motion,
@@ -98,9 +106,20 @@ export function useCardAnimations({
     interactive: false,
     shadowSize: shadow,
     pointerInsideRef: hoverPointerInsideRef,
+    killMotionOnUnmount: false,
   });
 
-  const hoverEnabled = pressable || motion?.root != null;
+  const config = useMotionConfig();
+  const hoverEnabled = !disabled && (pressable || motion?.root != null);
+
+  useLayoutEffect(() => {
+    if (!pressable || disabled || hoverPointerInsideRef.current) return;
+    const enterValue = scope.resolve("root", "enter", rootMotionRef.current);
+    const hoverValue = scope.resolve("root", "hoverIn", rootMotionRef.current);
+    if ((enterValue == null || enterValue === false) && isKitHoverLiftRecipe(hoverValue)) {
+      primeInteractiveScaleRest(rootRef.current, config);
+    }
+  }, [config, disabled, hoverPointerInsideRef, pressable, scope, variant]);
 
   const playRoot = useCallback(
     (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
@@ -122,41 +141,59 @@ export function useCardAnimations({
   });
 
   useEffect(() => {
-    if (pressable) return;
+    if (pressable && !disabled) return;
     const el = rootRef.current;
     if (el) killMotion(el);
     hoverPointerInsideRef.current = false;
-  }, [hoverPointerInsideRef, pressable]);
+  }, [disabled, hoverPointerInsideRef, pressable]);
 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLElement>) => {
+      if (disabled) return;
       onPointerDownProp?.(e);
       if (!pressable || e.defaultPrevented) return;
+      if (isInteractiveCardDescendant(e.target, e.currentTarget)) return;
       playRoot("pressIn");
     },
-    [onPointerDownProp, playRoot, pressable]);
+    [disabled, onPointerDownProp, playRoot, pressable]);
 
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLElement>) => {
+      if (disabled) return;
       onPointerUpProp?.(e);
       if (!pressable || e.defaultPrevented) return;
+      if (isInteractiveCardDescendant(e.target, e.currentTarget)) return;
       playRoot("pressOut");
     },
-    [onPointerUpProp, playRoot, pressable]);
+    [disabled, onPointerUpProp, playRoot, pressable]);
 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLElement>) => {
+      if (disabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      if (isInteractiveCardDescendant(e.target, e.currentTarget)) return;
       onClickProp?.(e);
     },
-    [onClickProp]);
+    [disabled, onClickProp]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLElement>) => {
+      if (disabled) {
+        if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        return;
+      }
+      if (isInteractiveCardDescendant(e.target, e.currentTarget)) return;
       onKeyDownProp?.(e);
       if (!pressable || e.defaultPrevented || !isInteractivePressKey(e)) return;
       playRoot("pressIn");
     },
-    [onKeyDownProp, playRoot, pressable]);
+    [disabled, onKeyDownProp, playRoot, pressable]);
 
   const pointerHandlers = useMemo(
     () =>

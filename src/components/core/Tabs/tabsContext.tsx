@@ -10,6 +10,25 @@ import type {
  
 const TabsContext = createContext<TabsContextValue | null>(null);
 const TabsClassNamesContext = createContext<TabsClassNames>({});
+const TabsListFallbackContext = createContext<string | null>(null);
+
+export function TabsListFallbackProvider({
+  value,
+  children,
+}: {
+  value: string | null;
+  children: React.ReactNode;
+}) {
+  return (
+    <TabsListFallbackContext.Provider value={value}>
+      {children}
+    </TabsListFallbackContext.Provider>
+  );
+}
+
+export function useTabsListFallbackValue(): string | null {
+  return useContext(TabsListFallbackContext);
+}
  
 export function TabsClassNamesProvider({
   classNames,

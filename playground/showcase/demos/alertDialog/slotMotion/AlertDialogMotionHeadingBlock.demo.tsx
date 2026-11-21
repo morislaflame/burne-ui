@@ -11,7 +11,7 @@ export function AlertDialogMotionHeadingBlockDemo() {
       open={open}
       onOpenChange={setOpen}
       motion={{
-        headingBlock: {
+        header: {
           enter: (ctx) =>
             ctx.fromTo(
               { y: 10, opacity: 0 },

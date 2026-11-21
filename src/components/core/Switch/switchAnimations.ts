@@ -132,6 +132,7 @@ export function useSwitchTrackAnimations({
   const fallbackTravelPx = resolveFallbackThumbPx(thickness, size);
   const firstLayoutRef = useRef(true);
   const prevCheckedRef = useRef(checked);
+  const checkedRef = useRef(checked);
  
   const applyInstant = useCallback(
     (nextChecked: boolean, travelPx: number) => {
@@ -201,26 +202,48 @@ export function useSwitchTrackAnimations({
   useLayoutEffect(() => {
     const track = trackRef.current;
     const shell = thumbShellRef.current;
-    const measure = () => {
+    const readMetrics = () => {
       if (track && shell) {
-        travelPxRef.current = measureSwitchTravel(track, shell);
-      } else {
-        travelPxRef.current = fallbackTravelPx;
+        const trackW = track.clientWidth || track.getBoundingClientRect().width;
+        const thumbW = shell.offsetWidth || shell.getBoundingClientRect().width;
+        return { trackW, thumbW, travel: Math.max(0, trackW - thumbW) };
       }
+      return { trackW: 0, thumbW: 0, travel: fallbackTravelPx };
     };
  
-    measure();
-    syncThumbPosition(checked, travelPxRef.current, true);
+    const initial = readMetrics();
+    let lastTrackW = initial.trackW;
+    let lastThumbW = initial.thumbW;
+    travelPxRef.current = initial.travel;
+ 
+    if (firstLayoutRef.current) {
+      firstLayoutRef.current = false;
+      prevCheckedRef.current = checkedRef.current;
+    }
+    applyInstant(checkedRef.current, initial.travel);
  
     if (!track || !shell || typeof ResizeObserver === "undefined") return undefined;
     const ro = new ResizeObserver(() => {
-      measure();
-      syncThumbPosition(checked, travelPxRef.current, false);
+      const next = readMetrics();
+      if (next.trackW === lastTrackW && next.thumbW === lastThumbW) return;
+      lastTrackW = next.trackW;
+      lastThumbW = next.thumbW;
+      travelPxRef.current = next.travel;
+      applyInstant(checkedRef.current, next.travel);
     });
     ro.observe(track);
     ro.observe(shell);
     return () => ro.disconnect();
-  }, [checked, fallbackTravelPx, syncThumbPosition, thickness, size, trackRef, thumbShellRef, travelPxRef]);
+  }, [applyInstant, fallbackTravelPx, size, thickness, thumbShellRef, trackRef, travelPxRef]);
+ 
+  useLayoutEffect(() => {
+    checkedRef.current = checked;
+    const track = trackRef.current;
+    const shell = thumbShellRef.current;
+    const travelPx =
+      track && shell ? measureSwitchTravel(track, shell) : fallbackTravelPx;
+    syncThumbPosition(checked, travelPx, true);
+  }, [checked, fallbackTravelPx, syncThumbPosition, thumbShellRef, trackRef]);
  
   useEffect(() => {
     const nodes = [
