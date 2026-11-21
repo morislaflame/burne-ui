@@ -1,0 +1,100 @@
+import { SelectionIndicatorGalleryDemo } from "../demos/selectionIndicator/SelectionIndicatorGallery.demo";
+import selectionIndicatorGallerySource from "../demos/selectionIndicator/SelectionIndicatorGallery.demo.tsx?raw";
+import { SelectionIndicatorClassNamesDemo } from "../demos/selectionIndicator/SelectionIndicatorClassNames.demo";
+import selectionIndicatorClassNamesSource from "../demos/selectionIndicator/SelectionIndicatorClassNames.demo.tsx?raw";
+import { SelectionIndicatorShapeCompareDemo } from "../demos/selectionIndicator/SelectionIndicatorShapeCompare.demo";
+import selectionIndicatorShapeCompareSource from "../demos/selectionIndicator/SelectionIndicatorShapeCompare.demo.tsx?raw";
+import { SelectionIndicatorThumbGalleryDemo } from "../demos/selectionIndicator/SelectionIndicatorThumbGallery.demo";
+import selectionIndicatorThumbGallerySource from "../demos/selectionIndicator/SelectionIndicatorThumbGallery.demo.tsx?raw";
+import { SelectionIndicatorVariantMixDemo } from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo";
+import selectionIndicatorVariantMixSource from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo.tsx?raw";
+import { SelectionIndicatorMotionControllerGalleryDemo } from "../demos/selectionIndicator/motionController/gallery";
+import { SelectionIndicatorSlotMotionGalleryDemo } from "../demos/selectionIndicator/slotMotion/gallery";
+import { SelectionThumbClassNamesFullDemo } from "../demos/selectionThumb/SelectionThumbClassNamesFull.demo";
+import selectionThumbClassNamesFullSource from "../demos/selectionThumb/SelectionThumbClassNamesFull.demo.tsx?raw";
+import { SelectionThumbMotionControllerGalleryDemo } from "../demos/selectionThumb/motionController/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function SelectionIndicatorShowcase() {
+  return (
+    <ShowcasePage
+      title="SelectionIndicator"
+      description="Public selection indicator primitive for Radio, Checkbox and Slider thumb."
+      importPath='import { SelectionIndicator } from "@/components/core/SelectionIndicator";'
+      tags={["core", "forms"]}
+    >
+      <ShowcaseSection
+        title="Sizes and options"
+        description="Public selection indicator primitive (Radio, Checkbox, Slider thumb)."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGalleryDemo} source={selectionIndicatorGallerySource} />
+      </ShowcaseSection>
+      <ShowcaseSection
+        title="Slot motion"
+        description="Kit fill and mark, instant skip, root scale, spinning mark, fill-then-mark timeline, compound parts, classNames, stroke draw."
+      >
+        <SelectionIndicatorSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: play(check) on root, play vs playSlot, stagger, exclude fill, inside Fill, cancel, indicator events. Do not put the handle on Checkbox."
+      >
+        <SelectionIndicatorMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (SelectionThumb)"
+        description="Standalone thumb only — Switch/Slider do not forward this handle. play(root), icon slot, stagger, inside Icon, cancel, thumb events."
+      >
+        <SelectionThumbMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Slots root, fill and mark on SelectionIndicator."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SelectionIndicatorClassNamesDemo}
+          source={selectionIndicatorClassNamesSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="classNames (SelectionThumb)" description="Slots root on the thumb, root and icon on SelectionThumb.Icon.">
+        <ShowcaseDemoFromFile Demo={SelectionThumbClassNamesFullDemo} source={selectionThumbClassNamesFullSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Comparison of forms, grid of options and SelectionThumb — `demos/selectionIndicator/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorShapeCompareDemo} source={selectionIndicatorShapeCompareSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorVariantMixDemo} source={selectionIndicatorVariantMixSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorThumbGalleryDemo} source={selectionIndicatorThumbGallerySource} />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/SelectionIndicator" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="size, variant, selected, check on the root. Used inside Checkbox, Radio and SelectionThumb."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Related Components">
+          <p>
+            <code>SelectionThumb</code> and <code>SelectionThumb.Icon</code> — for sliders Slider. Dimensions:{" "}
+            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

@@ -1,5 +1,11 @@
-export {
-  SearchInput,
-  type SearchInputProps,
-  type SearchInputSize,
-} from "./SearchInput";
+export { SearchInput } from "./SearchInput";
+ 
+export type {
+  SearchInputProps,
+  SearchInputSize,
+  SearchInputVariant,
+  SearchInputClassNames,
+  SearchInputMotion,
+  SearchInputPartMotion,
+} from "./searchInputTypes";
+ 

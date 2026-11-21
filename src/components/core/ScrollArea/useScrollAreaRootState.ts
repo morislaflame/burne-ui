@@ -1,0 +1,256 @@
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+
+import { isRtlElement } from "@/components/core/utils/readingDirection";
+
+import {
+  EMPTY_SCROLL_METRICS,
+  SCROLL_AREA_HIDE_DELAY,
+  detectCompoundScrollAxes,
+  paintScrollThumb,
+  scrollAreaBarActive,
+  scrollAreaIsCompound,
+  scrollAxisMetrics,
+  readInlineScroll,
+} from "./scrollAreaAPI";
+import type {
+  ScrollAreaBarRegistration,
+  ScrollAreaContextValue,
+  ScrollAreaOrientation,
+  ScrollAreaProps,
+  ScrollAxis,
+} from "./scrollAreaTypes";
+
+export function useScrollAreaRootState({
+  children,
+  id,
+  visibility = "hover",
+  orientation: orientationProp,
+  scrollHideDelay = SCROLL_AREA_HIDE_DELAY,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+}: Pick<
+  ScrollAreaProps,
+  "children" | "id" | "visibility" | "orientation" | "scrollHideDelay" | "aria-label" | "aria-labelledby"
+>): {
+  contextValue: ScrollAreaContextValue;
+  isCompound: boolean;
+  setHovered: (hovered: boolean) => void;
+  setFocused: (focused: boolean) => void;
+} {
+  const reactId = useId();
+  const viewportId = id ?? `scroll-area-${reactId}`;
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const axesRef = useRef({ vertical: EMPTY_SCROLL_METRICS, horizontal: EMPTY_SCROLL_METRICS });
+  const barsRef = useRef(new Set<ScrollAreaBarRegistration>());
+  const hideTimer = useRef(0);
+  const draggingRef = useRef({ vertical: false, horizontal: false });
+  const [overflow, setOverflow] = useState({ vertical: false, horizontal: false });
+  const [hasBars, setHasBars] = useState({ vertical: false, horizontal: false });
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [scrolling, setScrolling] = useState(false);
+  const [dragging, setDraggingState] = useState({ vertical: false, horizontal: false });
+  const [aria, setAria] = useState({
+    vertical: { now: 0, max: 0 },
+    horizontal: { now: 0, max: 0 },
+  });
+
+  const isCompound = useMemo(() => scrollAreaIsCompound(children), [children]);
+  const compoundAxes = useMemo(
+    () => (isCompound ? detectCompoundScrollAxes(children) : { vertical: false, horizontal: false }),
+    [children, isCompound],
+  );
+  const orientation: ScrollAreaOrientation = useMemo(() => {
+    if (!isCompound) return orientationProp ?? "vertical";
+    const allowVertical =
+      (orientationProp ? orientationProp !== "horizontal" : false) ||
+      compoundAxes.vertical ||
+      hasBars.vertical ||
+      (!compoundAxes.horizontal && !hasBars.horizontal && orientationProp === undefined);
+    const allowHorizontal =
+      (orientationProp ? orientationProp !== "vertical" : false) ||
+      compoundAxes.horizontal ||
+      hasBars.horizontal;
+    if (allowVertical && allowHorizontal) return "both";
+    if (allowHorizontal) return "horizontal";
+    return "vertical";
+  }, [compoundAxes.horizontal, compoundAxes.vertical, hasBars.horizontal, hasBars.vertical, isCompound, orientationProp]);
+
+  const paint = useCallback(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const bars = [...barsRef.current];
+    const verticalBar = bars.find((bar) => bar.axis === "vertical")?.element;
+    const horizontalBar = bars.find((bar) => bar.axis === "horizontal")?.element;
+    const yOverflowGuess = viewport.scrollHeight - viewport.clientHeight > 1;
+    const xOverflowGuess = viewport.scrollWidth - viewport.clientWidth > 1;
+    const yBar = verticalBar && verticalBar.clientHeight > 0 ? verticalBar.clientHeight : viewport.clientHeight;
+    const xBar = horizontalBar && horizontalBar.clientWidth > 0 ? horizontalBar.clientWidth : viewport.clientWidth;
+    const yCross = xOverflowGuess && horizontalBar && horizontalBar.offsetHeight > 0 ? horizontalBar.offsetHeight : 0;
+    const xCross = yOverflowGuess && verticalBar && verticalBar.offsetWidth > 0 ? verticalBar.offsetWidth : 0;
+    const yTrack = Math.max(0, yBar - yCross);
+    const xTrack = Math.max(0, xBar - xCross);
+    const vertical = scrollAxisMetrics(
+      viewport.clientHeight,
+      viewport.scrollHeight,
+      viewport.scrollTop,
+      yTrack,
+    );
+    const horizontal = scrollAxisMetrics(
+      viewport.clientWidth,
+      viewport.scrollWidth,
+      readInlineScroll(viewport),
+      xTrack,
+    );
+    axesRef.current = { vertical, horizontal };
+    if (verticalBar) paintScrollThumb(verticalBar, vertical, false);
+    if (horizontalBar) paintScrollThumb(horizontalBar, horizontal, isRtlElement(viewport));
+    setOverflow((prev) =>
+      prev.vertical === vertical.overflowing && prev.horizontal === horizontal.overflowing
+        ? prev
+        : { vertical: vertical.overflowing, horizontal: horizontal.overflowing },
+    );
+    const nextAria = {
+      vertical: { now: Math.round(vertical.scroll), max: Math.round(vertical.maxScroll) },
+      horizontal: { now: Math.round(horizontal.scroll), max: Math.round(horizontal.maxScroll) },
+    };
+    setAria((prev) =>
+      prev.vertical.now === nextAria.vertical.now &&
+      prev.vertical.max === nextAria.vertical.max &&
+      prev.horizontal.now === nextAria.horizontal.now &&
+      prev.horizontal.max === nextAria.horizontal.max
+        ? prev
+        : nextAria,
+    );
+  }, []);
+
+  const markScrolling = useCallback(() => {
+    setScrolling(true);
+    window.clearTimeout(hideTimer.current);
+    hideTimer.current = window.setTimeout(() => setScrolling(false), scrollHideDelay);
+  }, [scrollHideDelay]);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return undefined;
+    const onScroll = () => {
+      markScrolling();
+      paint();
+    };
+    viewport.addEventListener("scroll", onScroll, { passive: true });
+    const content = viewport.firstElementChild;
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(() => {
+            paint();
+          });
+    observer?.observe(viewport);
+    if (content) observer?.observe(content);
+    paint();
+    return () => {
+      viewport.removeEventListener("scroll", onScroll);
+      observer?.disconnect();
+      window.clearTimeout(hideTimer.current);
+    };
+  }, [markScrolling, paint]);
+
+  useLayoutEffect(() => {
+    paint();
+  }, [overflow.vertical, overflow.horizontal, paint]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(hideTimer.current);
+      hideTimer.current = 0;
+    },
+    [],
+  );
+
+  const syncHasBars = useCallback(() => {
+    let v = false;
+    let h = false;
+    for (const item of barsRef.current) {
+      if (item.axis === "vertical") v = true;
+      if (item.axis === "horizontal") h = true;
+    }
+    setHasBars((prev) => (prev.vertical === v && prev.horizontal === h ? prev : { vertical: v, horizontal: h }));
+  }, []);
+
+  const registerBar = useCallback((bar: ScrollAreaBarRegistration) => {
+    barsRef.current.add(bar);
+    syncHasBars();
+    paint();
+    return () => {
+      barsRef.current.delete(bar);
+      syncHasBars();
+    };
+  }, [paint, syncHasBars]);
+
+  const setDragging = useCallback((axis: ScrollAxis, next: boolean) => {
+    draggingRef.current = { ...draggingRef.current, [axis]: next };
+    setDraggingState({ ...draggingRef.current });
+    if (next) {
+      window.clearTimeout(hideTimer.current);
+      setScrolling(true);
+    } else if (!draggingRef.current.vertical && !draggingRef.current.horizontal) {
+      markScrolling();
+    }
+  }, [markScrolling]);
+
+  const setHoveredStable = useCallback((next: boolean) => {
+    setHovered(next);
+  }, []);
+
+  const setFocusedStable = useCallback((next: boolean) => {
+    setFocused(next);
+  }, []);
+
+  const barActive = useMemo(
+    () => ({
+      vertical: scrollAreaBarActive({
+        overflowing: overflow.vertical,
+        visibility,
+        hovered,
+        focused,
+        scrolling,
+        dragging: dragging.vertical,
+      }),
+      horizontal: scrollAreaBarActive({
+        overflowing: overflow.horizontal,
+        visibility,
+        hovered,
+        focused,
+        scrolling,
+        dragging: dragging.horizontal,
+      }),
+    }),
+    [dragging.horizontal, dragging.vertical, focused, hovered, overflow.horizontal, overflow.vertical, scrolling, visibility],
+  );
+
+  const contextValue = useMemo<ScrollAreaContextValue>(
+    () => ({
+      viewportId,
+      visibility,
+      orientation,
+      ariaLabel,
+      ariaLabelledBy,
+      viewportRef,
+      axesRef,
+      overflow,
+      hasBars,
+      aria,
+      barActive,
+      registerBar,
+      setDragging,
+    }),
+    [aria, ariaLabel, ariaLabelledBy, barActive, hasBars, orientation, overflow, registerBar, setDragging, viewportId, visibility],
+  );
+
+  return {
+    contextValue,
+    isCompound,
+    setHovered: setHoveredStable,
+    setFocused: setFocusedStable,
+  };
+}

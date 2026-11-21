@@ -1,0 +1,359 @@
+# Checkbox
+
+Чекбокс с `SelectionIndicator`, simple API (`label` / `hint` / `error` на root) и compound (`Control` / `Content` / `Label`). Интеграция с `CheckboxGroup` и `Form`.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Checkbox, type CheckboxProps, type CheckboxVariant, type CheckboxSize, type CheckboxClassNames, type CheckboxMotion } from "burne-ui";
+```
+
+## API
+
+### Simple API
+
+```tsx
+<Checkbox
+  label="Согласие на обработку данных"
+  hint="Обязательно для регистрации"
+  defaultChecked
+  name="consent"
+  required
+/>
+```
+
+Root рендерится как `<label>` с grid: control + text column.
+
+### Compound API
+
+```tsx
+<Checkbox defaultChecked variant="outline">
+  <Checkbox.Control>
+    <Checkbox.Indicator />
+  </Checkbox.Control>
+  <Checkbox.Content>
+    <Checkbox.Label required>Email-рассылка</Checkbox.Label>
+    <Checkbox.Hint>Можно отписаться в любой момент</Checkbox.Hint>
+    <Checkbox.Error>Нужно согласие</Checkbox.Error>
+  </Checkbox.Content>
+</Checkbox>
+```
+
+Compound → `<fieldset>` + grid; `Checkbox.Content` может рендериться как nested `<label htmlFor={inputId}>`.
+
+### Root props (ключевые)
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `variant` | `default` | `default` \| `secondary` \| `outline` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `labelPosition` | `end` | `start` \| `end`. `start` ставит подпись слева от контрола |
+| `checked` / `defaultChecked` | — | Controlled / uncontrolled |
+| `indeterminate` | `false` | Смешанный выбор: `input.indeterminate`, `aria-checked="mixed"`, `data-state="indeterminate"`, черта вместо галочки |
+| `onChange` | — | Native change event |
+| `disabled` | `false` | + opacity track animation |
+| `invalid` | — | `true` — красный label, `aria-invalid` и `data-invalid=""`. `error` делает то же и показывает сообщение |
+| `icon` | — | Кастомная иконка отмеченного состояния (канон `icon`, как у `SelectionIndicator`; не путать с Switch `iconOn`/`iconOff`) |
+| `label` / `hint` / `error` | — | Simple API |
+| `name` / `value` | — | Form / CheckboxGroup |
+| `inputRef` | — | Нативный `<input>`. `ref` корня — `<label>` или compound `<fieldset>`. Сливается с ref поля Form |
+| `classNames` | — | см. стилизацию |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error` (`check` / `uncheck`). `events` — app-команды |
+| `motionController` | — | Simple API: форвардится на SelectionIndicator. Compound: Root chrome (`label` / `hint` / `error`); Indicator — второй handle |
+
+### `CheckboxClassNames`
+
+`root`, `control`, `controlTrack`, `indicator`, `indicatorFill`, `indicatorMark`, `content`, `label`, `labelText`, `requiredMark`, `hint`, `error`, `simpleLabelWrap`, `simpleLabelText`, `input`.
+
+### Compound-подчасти
+
+| Часть | Роль |
+|-------|------|
+| `Checkbox.Control` | Cell + hidden/overlay input + indicator |
+| `Checkbox.Indicator` | `SelectionIndicator` (`.Fill`, `.Mark`) |
+| `Checkbox.Content` | Label column / wrapper (`display: contents` — padding, border, background и width не рисуются) |
+| `Checkbox.Label` | Текст + required `*` |
+| `Checkbox.Hint` / `Error` | Вторичные строки grid |
+
+`Checkbox.Indicator` принимает `icon` (он побеждает `icon` корня). Прямой ребёнок, кроме `.Fill` и `.Mark`, иконкой не становится.
+
+## variant
+
+| variant | Indicator style |
+|---------|-----------------|
+| `default` | Filled primary tint |
+| `secondary` | Secondary surface |
+| `outline` | Border ring |
+
+Маппинг: `checkboxVariantToIndicator()` → `SelectionIndicator` variant.
+
+## Размеры
+
+`CHECKBOX_SIZE_LAYOUT` (= shared `OPTION_CONTROL_SIZE_LAYOUT`): grid gap, title/desc text variants per `size`.
+
+## Анимации
+
+`checkboxAnimations.ts` + `SelectionIndicator` + `usePressableElementTextMotion`.
+
+**DOM (simple):**
+
+```
+<label root onPointerDown>
+  <Checkbox.Control>
+    <span controlTrack ref=trackRef>   ← opacity anim
+      <input type=checkbox />
+      <SelectionIndicator />
+    </span>
+  </Checkbox.Control>
+  <span simpleLabelWrap ref=textMotionRef>  ← squeeze target
+    label + hint + error
+  </span>
+</label>
+```
+
+### 1. Control track opacity (disabled)
+
+`useCheckboxControlTrackAnimation`:
+
+- При смене `isDisabled`: GSAP `autoAlpha` → `0.48` disabled / `1` enabled
+- First layout: instant set без anim
+- Reduced motion: instant opacity, kill GSAP
+
+### 2. Label text press squeeze
+
+`useCheckboxTextMotion` → `usePressableElementTextMotion`:
+
+- **enabled:** simple always (на label root); compound — если `useInlineCompoundMotion` (нет внешнего label wrap)
+- **hoverLift: false** — только squeeze на `textMotionRef`
+- `onPointerDown` на root `<label>` / `<fieldset>`
+
+### 3. Check indicator
+
+`Checkbox.Indicator` → `SelectionIndicator` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Checkbox прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Checkbox.Indicator` / `.Fill` / `.Mark`.
+
+**Где в коде:** карта слотов — `checkboxAnimations.ts` (`CHECKBOX_MOTION_SLOT_MAP`, `resolveCheckboxIndicatorMotion`); scope chrome — `checkboxContext.tsx` (`label` / `hint` / `error`); host fill/mark — `selectionIndicatorAnimations.ts`.
+
+Simple API — `motionController` форвардится в SelectionIndicator: `play()` играет слот `root`, `playSlot("fill")`. Compound chrome — handle на Root (`playSlot("label")`); индикатор — отдельный handle на `Checkbox.Indicator`. Явный `<Checkbox.Indicator motionController>` побеждает форвард с корня.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`check:nudge`), не фазы. `createMotionEvents`. События на simple API играть через `playSlot("root", event)` (карта `events` с корня мержится в Indicator). playground / Storybook **MotionController**.
+
+Пропы есть на корне, на `Checkbox.Control` и на `Checkbox.Indicator`. У каждой части свой scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, Checkbox, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "check:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("root", "check:nudge")}>
+        Nudge
+      </Button>
+      <Checkbox label="Notify" defaultChecked motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+```tsx
+import gsap from "gsap";
+import { Checkbox } from "burne-ui";
+import { tweenCssColor } from "burne-ui/internal";
+
+<Checkbox
+  label="Custom fill"
+  motion={{
+    indicatorFill: {
+      check: (ctx) =>
+        gsap.fromTo(
+          ctx.el,
+          { scale: 0, autoAlpha: 0, transformOrigin: "top right" },
+          { scale: 1, autoAlpha: 1, duration: 0.4, ease: "power3.out", transformOrigin: "top right" },
+        ),
+      uncheck: (ctx) =>
+        gsap.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.22, transformOrigin: "top right" }),
+    },
+  }}
+/>
+```
+
+Цвет и таймлайн — только factory (`color` нет в `MotionVars`). Fill может оркестрировать `ctx.targets.mark`; чтобы не было двойного play, выключите рецепт mark: `indicatorMark: { check: false, uncheck: false }`.
+
+```tsx
+<Checkbox
+  label="Accent label"
+  motion={{
+    indicatorFill: {
+      check: (ctx) => {
+        const tl = ctx.timeline();
+        tl.fromTo(ctx.el, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.32 }, 0);
+        return tl;
+      },
+      uncheck: (ctx) => ctx.to({ scale: 0, autoAlpha: 0, duration: 0.2 }),
+    },
+    label: {
+      check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+      uncheck: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-foreground)", {
+          duration: 0.22,
+          clearOnComplete: true,
+        }),
+    },
+    hint: {
+      check: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)", { duration: 0.28 }),
+      uncheck: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-muted-foreground)", {
+          duration: 0.22,
+          clearOnComplete: true,
+        }),
+    },
+  }}
+/>
+
+<Checkbox.Indicator.Mark
+  motion={{
+    check: (ctx) =>
+      ctx.fromTo(
+        { rotate: -90, scale: 0.4, autoAlpha: 0 },
+        { rotate: 0, scale: 1, autoAlpha: 1, duration: 0.4, ease: "back.out(2.2)" },
+      ),
+    uncheck: (ctx) => ctx.to({ rotate: 45, autoAlpha: 0, duration: 0.18 }),
+  }}
+/>
+```
+
+ListBox в этом срезе публичный `motion` не получает, но идёт через тот же хук SelectionIndicator — дефолт совпадает. Radio — тот же embedder, что Checkbox (`indicator` / `indicatorFill` / `indicatorMark` / `label` / `hint` / `error`).
+
+См. [Motion](/docs/motion) и `SelectionIndicator`.
+
+### Сводка
+
+| Анимация | Утилита | `configureMotion` |
+|----------|---------|-------------------|
+| Track fade disabled | `useCheckboxControlTrackAnimation` | `interactiveDuration` |
+| Label squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` |
+| Check mark | `useSelectionIndicatorAnimation` | `selectionFillDuration` |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на root** — grid layout на `<label>` / `<fieldset>` (мерж с `classNames.root`).
+2. **`classNames`** — `CheckboxClassNamesProvider`.
+
+Подчасти принимают **`className`**; `Checkbox.Indicator` — вложенные `classNames` для fill/mark.
+
+### Слоты `CheckboxClassNames`
+
+| Слот | DOM | Назначение |
+|------|-----|------------|
+| `root` | `<label>` / `<fieldset>` | Grid gap, padding, border карточки |
+| `control` | Control cell | Alignment |
+| `controlTrack` | Track span | Border ring вокруг input |
+| `indicator` | SelectionIndicator shell | Size, rounded |
+| `indicatorFill` | Fill layer | Checked background |
+| `indicatorMark` | Check icon | Color |
+| `content` | Content column | Gap label/hint/error |
+| `label` | Label span | Cell typography wrapper |
+| `labelText` | `Text` в label | Font, status color |
+| `requiredMark` | `*` | Цвет asterisk |
+| `hint` / `error` | Field hint/error | Secondary lines |
+| `simpleLabelWrap` | Simple text column | Wrapper label+hint |
+| `simpleLabelText` | Simple primary text | Подпись simple API |
+| `input` | Hidden/overlay input | Rare — positioning |
+
+### Simple API
+
+```tsx
+<Checkbox
+  defaultChecked
+  label="Email-рассылка"
+  hint="classNames.label и labelText в simple API."
+  className="max-w-md"
+  classNames={{
+    root: "rounded-large border border-primary/20 p-base",
+    controlTrack: "border-primary/40",
+    label: "text-primary",
+    labelText: "font-semibold underline decoration-primary/30",
+    hint: "text-muted/80",
+  }}
+/>
+```
+
+### Compound API
+
+```tsx
+<Checkbox
+  defaultChecked
+  variant="outline"
+  classNames={{
+    root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-md",
+    control: "ring-primary/30",
+    controlTrack: "border-primary/50",
+    indicator: "rounded-large",
+    labelText: "text-primary font-semibold",
+    hint: "text-foreground/80",
+  }}
+>
+  <Checkbox.Control>
+    <Checkbox.Indicator />
+  </Checkbox.Control>
+  <Checkbox.Content>
+    <Checkbox.Label>Согласие на рассылку</Checkbox.Label>
+    <Checkbox.Hint>Все слоты через classNames.</Checkbox.Hint>
+  </Checkbox.Content>
+</Checkbox>
+```
+
+`Checkbox.Indicator classNames={{ indicatorMark: "text-primary" }}` мержится с root `classNames`.
+
+### Практические заметки
+
+- **Simple vs compound root:** simple — `<label>`; compound — `<fieldset>` (a11y group).
+- Ошибка валидации — `error` или `invalid`: красный `labelText`, `aria-invalid` и `data-invalid=""` на корне.
+- **CheckboxGroup:** `values` в `multiple`, `value` в `single`. Пункт с `value` следует группе. Стили на каждом `Checkbox` отдельно.
+- **Не ломайте grid:** `root` задаёт `checkboxGridClass` — осторожно с `display` override.
+- **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
+
+## Интеграция
+
+| Контекст | Поведение |
+|----------|-----------|
+| `Form` | `name`, `checked`, `error` → `aria-invalid` и danger-визуал |
+| `CheckboxGroup` | single/multi selection, `disabled`, `required` |
+
+## Доступность
+
+- Native `<input type="checkbox">` — focus, Space toggle
+- `aria-describedby` hint/error; `aria-labelledby` / `aria-label`
+- `aria-invalid` и `data-invalid=""` при `invalid` / `error` (и ошибке Form). Красный label — от того же признака
+- `aria-required` на input, когда рисуется `*` (`required`)
+- Compound fieldset: `aria-labelledby` от `Checkbox.Label`
+- Forced colors (Windows HCM): selected fill/mark через `Highlight` в `styles.css` (`data-checked` + `data-selection-fill` / `data-selection-mark`)
+
+## Структура файлов
+
+```
+Checkbox/
+├── Checkbox.tsx
+├── index.ts
+├── checkboxTypes.ts             # CheckboxMotion
+├── checkboxStyles.ts
+├── checkboxContext.tsx          # createMotionScope("Checkbox") + label; indicator embed
+├── checkboxAnimations.ts        # CHECKBOX_MOTION_SLOT_MAP + track/label motion
+├── checkboxParts.tsx
+├── useCheckboxRootState.ts
+├── checkboxAPI.ts
+├── checkboxA11y.ts
+└── Checkbox.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Checkbox` — simple/compound, variants, sizes, CheckboxGroup, `classNames`, invalid, slot motion gallery.

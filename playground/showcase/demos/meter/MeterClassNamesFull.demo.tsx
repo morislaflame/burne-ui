@@ -1,0 +1,20 @@
+import { Meter } from "@/components/core/Meter";
+
+export function MeterClassNamesFullDemo() {
+  return (
+    <Meter
+      label="Storage"
+      hint="Read-only occupancy scale"
+      showValue
+      value={68}
+      color="var(--color-primary)"
+      classNames={{
+        root: "rounded-large border border-primary/25 p-base",
+        value: "text-primary font-semibold",
+        track: "bg-primary/10",
+        fill: "opacity-95",
+        hint: "text-muted/80",
+      }}
+    />
+  );
+}

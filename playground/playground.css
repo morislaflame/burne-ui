@@ -1,0 +1,13 @@
+@import "../src/styles.css";
+
+/* Tailwind v4: with root=playground/ only this folder is scanned — explicitly include src. */
+@source "../src/**/*.{tsx,ts}";
+@source "./**/*.{tsx,ts}";
+
+html,
+body {
+  font-family: var(--font-family-sans);
+  letter-spacing: var(--letter-spacing);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

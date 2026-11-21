@@ -1,204 +1,229 @@
-import {
-  Children,
-  Fragment,
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  type ComponentPropsWithoutRef,
-  type HTMLAttributes,
-  type ReactElement,
-  type ReactNode,
-} from "react";
-
-import { Button, type ButtonProps, type ButtonSize } from "@/components/core/Button";
-import { Input, type InputProps, type InputSize } from "@/components/core/Input";
-
-/** `Input` не имеет `small`; при `buttonSize="small"` используем поле как `base`. */
-function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
-  return bs === "small" ? "base" : bs;
-}
-import { Text, type TextVariant } from "@/components/core/Text";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
-import { buttonGroupTextSurfaceClasses } from "@/components/core/utils/buttonGroupSegment";
+import { Fragment, cloneElement, forwardRef, useMemo, type ForwardedRef, type HTMLAttributes, type ReactElement, type ReactNode } from "react";
+ 
+import { dataFlag, dataVariantProps } from "@/components/core/utils/dataContract";
 import { cn } from "@/utils/cn";
-
-const BUTTON_GROUP_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
-  small: "small",
-  base: "base",
-  large: "mid",
-  xlarge: "mid",
-};
-
-const BUTTON_GROUP_TEXT_FRAME: Record<ButtonSize, string> = {
-  small: "min-h-7 px-base py-xsmall",
-  base: "min-h-8 px-plus py-small",
-  large: "min-h-10 px-mid py-base",
-  xlarge: "min-h-12 px-large py-base",
-};
-
-function flattenFragmentChildren(children: ReactNode): React.ReactElement[] {
-  const out: React.ReactElement[] = [];
-  Children.forEach(children, (node) => {
-    if (!isValidElement(node)) return;
-    if (node.type === Fragment) {
-      const { children: fragKids } = node.props as {
-        children?: ReactNode;
-      };
-      out.push(...flattenFragmentChildren(fragKids));
-      return;
-    }
-    out.push(node);
-  });
-  return out;
+import { useSkinVariant } from "@/skins/skinContext";
+import { isKitVariant } from "@/skins/resolveVariantVisual";
+import { KIT_BUTTON_VARIANTS } from "@/components/core/Button/buttonTypes";
+ 
+import { BUTTON_GROUP_ROLE, buttonGroupSeparatorA11yProps } from "./buttonGroupA11y";
+import { resolveButtonGroupMotionDefaults, useButtonGroupSlotMotion } from "./buttonGroupAnimations";
+import { buildButtonGroupSegment, isGroupSegmentSlot, isToggleButtonElement, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
+import { ButtonGroupClassNamesProvider, ButtonGroupLayoutProvider, ButtonGroupMotionProvider, ButtonGroupSegmentProvider, useButtonGroupClassNames } from "./buttonGroupContext";
+import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
+import type { ButtonGroupOrientation, ButtonGroupProps } from "./buttonGroupTypes";
+import { useButtonGroupRootState } from "./useButtonGroupRootState";
+ 
+export type {
+  ButtonGroupProps,
+  ButtonGroupTextProps,
+  ButtonGroupOrientation,
+  ButtonGroupSegment,
+  ButtonGroupClassNames,
+  ButtonGroupMotion,
+  ButtonGroupPartMotion,
+} from "./buttonGroupTypes";
+ 
+function ButtonGroupSeparator({ orientation }: { orientation: ButtonGroupOrientation }) {
+  const slotClassNames = useButtonGroupClassNames();
+  return <span {...buttonGroupSeparatorA11yProps()} className={buttonGroupSeparatorClass(orientation, slotClassNames.separator)} />;
 }
-
-export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
-  /**
-   * @internal Позиция в группе; выставляется из `<ButtonGroup>`.
-   */
-  groupSegment?: ButtonGroupSegment;
-  /** Высота/отступы в духу `Button` того же размера. По умолчанию `base`. */
-  buttonSize?: ButtonSize;
-};
-
-/**
- * Неактивная подпись внутри склеенной группы (`Button`, `SearchInput`-рядом и т.д.).
- */
-export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>(
-  function ButtonGroupText(
+ 
+export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
+  function ButtonGroupRoot(
     {
-      children,
+      children: _children,
       className = "",
-      buttonSize = "base",
-      groupSegment,
-      ...rest
-    },
-    ref,
-  ) {
-    return (
-      <span
-        ref={ref}
-        {...rest}
-        className={cn(
-          buttonGroupTextSurfaceClasses(groupSegment),
-          BUTTON_GROUP_TEXT_FRAME[buttonSize],
-          className,
-        )}
-      >
-        <Text
-          variant={BUTTON_GROUP_TEXT_VARIANT[buttonSize]}
-          inheritColor
-          as="span"
-          className="max-w-[12rem] truncate font-medium whitespace-nowrap md:max-w-[18rem]"
-        >
-          {children}
-        </Text>
-      </span>
-    );
-  },
-);
-
-ButtonGroupText.displayName = "ButtonGroupText";
-
-function isGroupSegmentSlot(child: ReactElement): boolean {
-  return child.type === Button || child.type === ButtonGroupText || child.type === Input;
-}
-
-export type ButtonGroupOrientation = "horizontal" | "vertical";
-
-export type ButtonGroupProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "role" | "children"
-> & {
-  /** Ряд или колонка. По умолчанию `horizontal`. */
-  orientation?: ButtonGroupOrientation;
-  /** Совпадает с `size` вложенных `Button`; влияет на `ButtonGroupText`. По умолчанию `base`. */
-  buttonSize?: ButtonSize;
-  children: ReactNode;
-};
-
-/**
- * Группа сегментов без зазоров: общий контур скругления только по внешним краям (`Button`, `Input`, `ButtonGroup.Text`).
- *
- * Скругления у `SearchInput` по-прежнему задаются инлайново — для тулбара используйте `Input` в группе или отдельный ряд.
- */
-export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
-  function ButtonGroup(
-    {
-      children,
-      className = "",
+      classNames,
       orientation = "horizontal",
-      buttonSize = "base",
+      segmented = false,
+      size = "base",
+      variant: variantProp,
+      disabled,
+      motion,
+      motionController,
+      motionState,
+      motionPayload,
+      playInitialState,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
       ...rest
     },
     ref,
   ) {
-    const flat = flattenFragmentChildren(children);
-    const segmentCount = flat.reduce(
-      (n, el) => n + (isGroupSegmentSlot(el) ? 1 : 0),
-      0,
-    );
-
+    const variant = useSkinVariant(variantProp);
+    const { flat, segmentCount, layoutValue } = useButtonGroupRootState({
+      children: _children,
+      orientation,
+      segmented,
+      size,
+      variant,
+    });
+    const motionDefaults = useMemo(() => resolveButtonGroupMotionDefaults(), []);
+ 
     let segmentIndex = -1;
-
+ 
     return (
-      <div
-        ref={ref}
-        role="group"
-        className={cn(
-          "inline-flex text-left",
-          orientation === "horizontal"
-            ? "flex-row flex-nowrap items-stretch"
-            : "flex-col flex-nowrap items-stretch",
-          className,
-        )}
-        {...rest}
-      >
-        {flat.map((child, i) => {
-          if (!isGroupSegmentSlot(child)) {
-            return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
-          }
+      <ButtonGroupLayoutProvider value={layoutValue}>
+        <ButtonGroupClassNamesProvider classNames={classNames}>
+          <ButtonGroupMotionProvider motion={motion} defaults={motionDefaults} controller={motionController}
+        motionState={motionState}
+        motionPayload={motionPayload}
+        playInitialState={playInitialState}>
+            <ButtonGroupRootSurface
+              forwardedRef={ref}
+              orientation={orientation}
+              segmented={segmented}
+              variant={variant}
+              disabled={disabled}
+              className={cn(classNames?.root, className)}
+              onPointerOver={onPointerOver}
+              onPointerOut={onPointerOut}
+              onPointerDown={onPointerDown}
+              onPointerUp={onPointerUp}
+              rest={rest}
+            >
+              <ButtonGroupSegmentProvider
+                segment={undefined}
+                size={size}
+                variant={variant}
+                disabled={disabled}
+              >
+                {flat.map((child, i) => {
+                  const childProps = child.props as {
+                    disabled?: boolean;
+                    variant?: string;
+                  };
+                  const extraToggleProps: Record<string, unknown> = {};
+                  if (disabled && childProps.disabled === undefined) {
+                    extraToggleProps.disabled = true;
+                  }
+                  if (
+                    isToggleButtonElement(child) &&
+                    variantProp != null &&
+                    childProps.variant === undefined &&
+                    (variantProp === "default" ||
+                      variantProp === "outline" ||
+                      variantProp === "ghost" ||
+                      !isKitVariant(variantProp, KIT_BUTTON_VARIANTS))
+                  ) {
+                    extraToggleProps.variant = variantProp;
+                  }
+                  const resolvedChild =
+                    Object.keys(extraToggleProps).length > 0
+                      ? cloneElement(child as ReactElement<Record<string, unknown>>, extraToggleProps)
+                      : child;
 
-          segmentIndex += 1;
-          const position =
-            segmentCount <= 1
-              ? ("only" as const)
-              : segmentIndex === 0
-                ? ("first" as const)
-                : segmentIndex === segmentCount - 1
-                  ? ("last" as const)
-                  : ("middle" as const);
-
-          const seg: ButtonGroupSegment = { orientation, position };
-
-          if (child.type === Button) {
-            const btn = child as ReactElement<ButtonProps>;
-            const next = cloneElement(btn, {
-              groupSegment: btn.props.groupSegment ?? seg,
-              size: btn.props.size ?? buttonSize,
-            });
-            return <Fragment key={child.key ?? `bg-btn-${i}`}>{next}</Fragment>;
-          }
-
-          if (child.type === Input) {
-            const inp = child as ReactElement<InputProps>;
-            const nextInp = cloneElement(inp, {
-              groupSegment: inp.props.groupSegment ?? seg,
-              size: inp.props.size ?? inputSizeFromButtonSize(buttonSize),
-            });
-            return <Fragment key={child.key ?? `bg-inp-${i}`}>{nextInp}</Fragment>;
-          }
-
-          const textEl = child as ReactElement<ButtonGroupTextProps>;
-          const nextText = cloneElement(textEl, {
-            groupSegment: textEl.props.groupSegment ?? seg,
-            buttonSize: textEl.props.buttonSize ?? buttonSize,
-          });
-          return <Fragment key={child.key ?? `bg-t-${i}`}>{nextText}</Fragment>;
-        })}
-      </div>
+                  if (!isGroupSegmentSlot(child)) {
+                    return <Fragment key={child.key ?? `bg-wrap-${i}`}>{resolvedChild}</Fragment>;
+                  }
+ 
+                  if (segmented) {
+                    return (
+                      <ButtonGroupSegmentProvider
+                        key={child.key ?? `bg-item-${i}`}
+                        segment={undefined}
+                        size={size}
+                        variant={variant}
+                        disabled={disabled}
+                      >
+                        {resolvedChild}
+                      </ButtonGroupSegmentProvider>
+                    );
+                  }
+ 
+                  segmentIndex += 1;
+                  const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
+                  const segment = buildButtonGroupSegment(orientation, position);
+ 
+                  return (
+                    <Fragment key={child.key ?? `bg-seg-${i}`}>
+                      <ButtonGroupSegmentProvider
+                        segment={segment}
+                        size={size}
+                        variant={variant}
+                        disabled={disabled}
+                      >
+                        {resolvedChild}
+                      </ButtonGroupSegmentProvider>
+                      {isKitVariant(variant, KIT_BUTTON_VARIANTS) &&
+                      position !== "last" &&
+                      position !== "only" ? (
+                        <ButtonGroupSeparator orientation={orientation} />
+                      ) : null}
+                    </Fragment>
+                  );
+                })}
+              </ButtonGroupSegmentProvider>
+            </ButtonGroupRootSurface>
+          </ButtonGroupMotionProvider>
+        </ButtonGroupClassNamesProvider>
+      </ButtonGroupLayoutProvider>
     );
   },
 );
-
-ButtonGroup.displayName = "ButtonGroup";
+ 
+ButtonGroupRoot.displayName = "ButtonGroup";
+ 
+function ButtonGroupRootSurface({
+  forwardedRef,
+  orientation,
+  segmented,
+  variant,
+  disabled,
+  className,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  rest,
+  children,
+}: {
+  forwardedRef: ForwardedRef<HTMLDivElement>;
+  orientation: ButtonGroupOrientation;
+  segmented: boolean;
+  variant: NonNullable<ButtonGroupProps["variant"]>;
+  disabled?: boolean;
+  className: string;
+  onPointerOver: ButtonGroupProps["onPointerOver"];
+  onPointerOut: ButtonGroupProps["onPointerOut"];
+  onPointerDown: ButtonGroupProps["onPointerDown"];
+  onPointerUp: ButtonGroupProps["onPointerUp"];
+  rest: Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "role" | "children" | "className" | "onPointerOver" | "onPointerOut" | "onPointerDown" | "onPointerUp"
+  >;
+  children: ReactNode;
+}) {
+  const part = useButtonGroupSlotMotion<HTMLDivElement>("root", {
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+ 
+  return (
+    <div
+      ref={part.setRef}
+      role={BUTTON_GROUP_ROLE}
+      aria-disabled={disabled || undefined}
+      className={buttonGroupRootClass({
+        orientation,
+        segmented,
+        variant,
+        className,
+      })}
+      {...rest}
+      {...part.pointerHandlers}
+      {...dataVariantProps({ variant })}
+      data-disabled={dataFlag(disabled)}
+    >
+      {children}
+    </div>
+  );
+}
+ 
+ 

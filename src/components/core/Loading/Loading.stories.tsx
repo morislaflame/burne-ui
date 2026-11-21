@@ -1,0 +1,197 @@
+import type { ComponentType } from "react";
+
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
+
+import { Text } from "@/components/core/Text";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
+
+import { Loading, type LoadingColor, type LoadingIndicator } from "./Loading";
+import { LoadingMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/loading/motionController/gallery";
+import { LoadingSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/loading/slotMotion/gallery";
+
+const framedDecorator = [
+  (Story: ComponentType) => (
+    <div
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <Story />
+    </div>
+  ),
+] as const;
+
+const COLORS: LoadingColor[] = ["primary", "foreground", "muted", "secondary"];
+
+const meta = {
+  title: "Core Components/Loading",
+  component: Loading,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Loading indicator: circular spinner (`indicator=\"spinner\"`) or three GSAP bouncing dots (`indicator=\"dots\"`). Semantic paint is `status`. `color` is a token (`primary`, `foreground`, `muted`, `secondary`) or a CSS color. Dot speed — `configureMotion({ loadingDotsDuration })` (wave step = duration / 3).",
+      },
+    },
+  },
+  decorators: [...framedDecorator],
+  args: {
+    indicator: "spinner",
+    size: "base",
+    color: "primary",
+  },
+  argTypes: {
+    indicator: { control: "select", options: ["spinner", "dots"] satisfies LoadingIndicator[] },
+    size: { control: "select", options: COMPONENT_SIZES },
+    color: { control: "select", options: COLORS },
+  },
+} satisfies Meta<typeof Loading>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("status", { name: "Loading" })).toBeVisible();
+  },
+};
+
+export const Dots: Story = {
+  name: "Bouncing dots",
+  args: {
+    indicator: "dots",
+    size: "mid",
+    color: "primary",
+  },
+};
+
+export const DotsColors: Story = {
+  name: "Dots — colors",
+  render: () => (
+    <div className="flex flex-wrap items-end justify-center gap-2xlarge">
+      {COLORS.map((color) => (
+        <div key={color} className="flex flex-col items-center gap-small">
+          <Loading indicator="dots" color={color} size="mid" />
+          <Text as="span" textStyle="small" className="capitalize text-muted">
+            {color}
+          </Text>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const DotsSizes: Story = {
+  name: "Dots — sizes",
+  render: () => (
+    <div className="flex flex-wrap items-end justify-center gap-2xlarge">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col items-center gap-small">
+          <Loading indicator="dots" size={size} />
+          <Text as="span" textStyle="small" className="capitalize text-muted">
+            {size}
+          </Text>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Sizes",
+  render: () => (
+    <div className="flex flex-wrap items-end justify-center gap-2xlarge">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col items-center gap-small">
+          <Loading size={size} />
+          <Text as="span" textStyle="small" className="capitalize text-muted">
+            {size}
+          </Text>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Colors: Story = {
+  name: "Colors",
+  render: () => (
+    <div className="flex flex-wrap items-center justify-center gap-2xlarge">
+      {COLORS.map((color) => (
+        <div key={color} className="flex flex-col items-center gap-small">
+          <Loading color={color} size="mid" />
+          <Text as="span" textStyle="small" className="capitalize text-muted">
+            {color}
+          </Text>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const WithLabel: Story = {
+  name: "With label",
+  render: () => (
+    <div className="inline-flex items-center gap-base">
+      <Loading size="small" />
+      <Text as="span" textStyle="base" className="text-muted">
+        Loading data…
+      </Text>
+    </div>
+  ),
+};
+
+export const Centered: Story = {
+  name: "Centered in block",
+  render: () => (
+    <div className="flex h-40 w-72 items-center justify-center rounded-large border-token bg-surface">
+      <Loading size="large" color="primary" aria-label="Loading content" />
+    </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2xlarge">
+      <Loading
+        indicator="spinner"
+        size="mid"
+        classNames={{
+          root: "rounded-large border border-primary/20 p-base",
+          spinner: "border-t-info",
+        }}
+      />
+      <Loading
+        indicator="dots"
+        size="mid"
+        classNames={{
+          root: "rounded-large border border-primary/20 p-base",
+          dots: "gap-small",
+          dot: "bg-info",
+        }}
+      />
+    </div>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <LoadingSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on root/spinner, cancel loop, AbortSignal, load events.",
+      },
+    },
+  },
+  render: () => <LoadingMotionControllerGalleryDemo />,
+};

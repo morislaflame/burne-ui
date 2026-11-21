@@ -1,0 +1,22 @@
+import { Button } from "@/components/core/Button";
+import { Popover } from "@/components/core/Popover";
+import { Text } from "@/components/core/Text";
+
+export function PopoverSimpleDemo() {
+  return (
+    <Popover>
+      <Popover.Trigger asChild>
+        <Button variant="outline" type="button">
+          Popover
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content>
+        <Popover.Body>
+          <Text as="p" textStyle="small">
+            Trigger click panel.
+          </Text>
+        </Popover.Body>
+      </Popover.Content>
+    </Popover>
+  );
+}

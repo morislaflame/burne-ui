@@ -1,0 +1,36 @@
+import { IoFolderOutline, IoSettingsOutline, IoTrashOutline } from "react-icons/io5";
+
+import { ButtonGroup } from "@/components/composite/ButtonGroup";
+import { Button } from "@/components/core/Button";
+import { Surface } from "@/components/core/Surface";
+
+export function ButtonGroupVerticalMenuDemo() {
+  return (
+    <Surface padding="small" className="w-full max-w-[10rem]">
+      <ButtonGroup aria-label="Actions with file" segmented size="small" orientation="vertical" className="w-full" >
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          icon={<IoFolderOutline aria-hidden />}
+        >
+          Open
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          icon={<IoSettingsOutline aria-hidden />}
+        >
+          Settings
+        </Button>
+        <Button
+          variant="ghost"
+          status="danger"
+          className="w-full justify-start"
+          icon={<IoTrashOutline aria-hidden />}
+        >
+          Delete
+        </Button>
+      </ButtonGroup>
+    </Surface>
+  );
+}

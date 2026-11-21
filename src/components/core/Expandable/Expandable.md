@@ -1,0 +1,463 @@
+# Expandable
+
+Раскрывающийся блок с кнопкой-триггером и анимированной панелью. Поддерживает **simple API** (props `title` / `description` / `icon`) и **compound API** (`Expandable.Trigger`, `Expandable.Panel`, …).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Expandable, type ExpandableProps, type ExpandableClassNames, type ExpandableMotion, type ExpandableVariant, type ExpandableSize } from "burne-ui";
+```
+
+## API
+
+### Root props (`Expandable`)
+
+| Prop | Тип | По умолчанию | Описание |
+|------|-----|--------------|----------|
+| `variant` | `default` \| `outline` \| `secondary` | `default` | Поверхность корня. Имя скина — строка |
+| `size` | `small` \| `base` \| `mid` \| `large` | `base` | Высота триггера, иконки, отступы панели |
+| `open` | `boolean` | — | Контролируемое состояние |
+| `defaultOpen` | `boolean` | `false` | Начальное (uncontrolled) |
+| `onOpenChange` | `(open: boolean) => void` | — | Колбэк смены состояния |
+| `disabled` | `boolean` | `false` | Блокирует toggle |
+| `title` | `ReactNode` | — | Simple API: заголовок триггера |
+| `description` | `ReactNode` | — | Simple API: подзаголовок |
+| `icon` | `ReactNode` | — | Simple API: иконка слева |
+| `className` | `string` | — | Классы на корневой `<div>` |
+| `classNames` | `ExpandableClassNames` | — | Слоты (см. ниже) |
+| `motion` | `ExpandableMotion` | — | Слоты `root` / `triggerLift` / `chevron` / `panelShell` / `title` / `icon` / `description` / `panel`. Ключ `events` — app-команды для `MotionController` |
+| `motionController` | `MotionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+
+### Compound-подчасти
+
+| Часть | Назначение |
+|-------|------------|
+| `Expandable.Trigger` | Кнопка заголовка; `hideChevron`, `asChild` |
+| `Expandable.Message` | Обёртка grid-слотов в триггере (`display: contents` — padding, border, background и width не рисуются) |
+| `Expandable.Icon` | Иконка-индикатор слева |
+| `Expandable.Content` | Группа title + description (`display: contents` — padding, border, background и width не рисуются) |
+| `Expandable.Title` | Заголовок |
+| `Expandable.Description` | Подзаголовок (`text-muted`) |
+| `Expandable.Chevron` | Кастомный шеврон (вместо дефолтного) |
+| `Expandable.Panel` | Раскрываемая секция (`<section>`); слот `panel` |
+
+### Compound-части и обёртка
+
+`Expandable.Trigger`, `Expandable.Panel` и остальные слоты кладутся прямо в `Expandable` (фрагмент и элемент, которому части переданы через `children`, обход видит). Компонент, который сам создаёт части и возвращает их из функции, скрывает `displayName`: корень остаётся в simple API и рисует свой триггер рядом с вложенным. Такая обёртка должна рендерить весь `Expandable`. В dev при монтировании `Expandable.Trigger` в простом режиме пишется `console.error`.
+
+### `ExpandableClassNames`
+
+```tsx
+type ExpandableClassNames = {
+  root?: string;
+  trigger?: string;
+  triggerLift?: string;
+  triggerRippleOverlay?: string;
+  message?: string;
+  icon?: string;
+  content?: string;
+  title?: string;
+  description?: string;
+  chevron?: string;
+  panelShell?: string;
+  contentWrap?: string;
+  panel?: string;
+};
+```
+
+### Simple API
+
+```tsx
+<Expandable title="FAQ" description="Частые вопросы" icon={<IoHelp aria-hidden />}>
+  <p>Ответ на вопрос…</p>
+</Expandable>
+```
+
+### Compound API
+
+```tsx
+<Expandable defaultOpen>
+  <Expandable.Trigger>
+    <Ripple color="neutralMuted" />
+    <Expandable.Icon><IoStar aria-hidden /></Expandable.Icon>
+    <Expandable.Content>
+      <Expandable.Title>Заголовок</Expandable.Title>
+      <Expandable.Description>Подзаголовок</Expandable.Description>
+    </Expandable.Content>
+  </Expandable.Trigger>
+  <Expandable.Panel>
+    Контент панели
+  </Expandable.Panel>
+</Expandable>
+```
+
+Compound определяется автоматически при наличии слотов (`Expandable.Trigger`, `Expandable.Panel`, …).
+
+## variant
+
+| variant | Стили корня |
+|---------|-------------|
+| `default` | `border-token bg-surface rounded-mid`. Тень только при наведении (`--shadow-lift`) |
+
+## Размеры
+
+Из `COLLAPSIBLE_SIZE_LAYOUT` (отступы в ритме panel header/body; chevron/icon — `CONTROL_SIZE_LAYOUT`):
+
+| size | trigger padding | content padding | title / desc |
+|------|-----------------|-----------------|--------------|
+| `small` | `px-mid pt-mid pb-base` | `p-mid` | `base` / `small` + `leading-none` |
+| `base` | `px-mid pt-mid pb-base` | `p-mid` | `mid` / `small` + `leading-none` |
+| `mid` | `px-large pt-large pb-mid` | `p-large` | `large` / `base` + `leading-none` |
+| `large` | `px-large pt-large pb-mid` | `p-large` | `large` / `base` + `leading-none` |
+
+## Анимации
+
+Все motion — **GSAP**. Раскрытие, шеврон и press на lift-span — **slot motion** (`expandableAnimations.ts`). Accordion / Disclosure пока на `useCollapsibleHeight` / `useChevronRotation` (та же `animateCollapsibleHeight` / `animateChevronRotation` внутри рецептов).
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel`, `params.liftScale` = 1. Масштаб панели не меняется, на hover появляется `--shadow-lift` |
+| `triggerLift` | `pressIn` (`pressOut` = `false`) | `pressSqueeze` на внутреннем lift-span, не на `<button>` |
+| `chevron` | `enter` / `leave` | `chevronRotate` (0° ↔ 180°) |
+| `panelShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target, не публичный слот) |
+| `title` / `icon` / `description` / `panel` | `enter` / `leave` | нет; Trigger **рассылает** при open |
+
+`false` на фазе → мгновенное состояние (height/rotation), без твина. Первый paint: `useCollapsibleShellRef` / `data-chevron-init`.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`faq:nudge`), не фазы. Слот `root` — оболочка (скин вешает `mount`). Остальные команды — `playSlot("title", …)`. См. [Motion](/docs/motion-events).
+
+```tsx
+import { Expandable, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "faq:nudge": { x: 8, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <Expandable
+      title="FAQ"
+      motionController={controller}
+      motion={{ events }}
+    >
+      …
+    </Expandable>
+  );
+}
+```
+
+`playAll` stagger по `icon` / `title` / `description` (`exclude` panel/chevron), factory `ctx.targets` и `waitForComplete` на `title` — playground / Storybook **MotionController**.
+
+Тройка на корне, тот же scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+Своё раскрытие — factory на `panelShell`. Закрытое состояние кита всё равно `height: 0`; factory должна вернуть tween 0 ↔ измеренная высота (снимок `offsetHeight` **до** `fromTo`, не `height: () => …` и не `scrollHeight` — `y` на `panel` раздувает overflow) и на `enter` complete снять inline `height` (`clearProps`), иначе панель залипнет.
+
+```tsx
+<Expandable
+  title="Bounce"
+  motion={{
+    panelShell: {
+      enter: (ctx) => {
+        ctx.el.style.overflow = "hidden";
+        const height = ctx.targets.panelInner?.offsetHeight ?? 0;
+        return gsap.fromTo(
+          ctx.el,
+          { height: 0 },
+          {
+            height,
+            duration: 0.55,
+            ease: "back.out(1.4)",
+            onComplete: () => {
+              gsap.set(ctx.el, { clearProps: "height" });
+              ctx.el.style.removeProperty("overflow");
+            },
+          },
+        );
+      },
+      leave: (ctx) => {
+        ctx.el.style.overflow = "hidden";
+        return gsap.to(ctx.el, {
+          height: 0,
+          duration: 0.28,
+          ease: "power2.in",
+          onComplete: () => {
+            ctx.el.style.height = "0px";
+          },
+        });
+      },
+    },
+  }}
+>
+  …
+</Expandable>
+```
+
+**Где в коде:** типы — `expandableTypes.ts`; scope — `expandableContext.tsx`; defaults + host play — `expandableAnimations.ts`; слоты — `expandableParts.tsx`; Provider — `Expandable.tsx`.
+
+```tsx
+<Expandable motion={{ panelShell: { enter: false, leave: false } }} title="Instant panel">
+  …
+</Expandable>
+
+<Expandable.Chevron
+  motion={{
+    enter: (ctx) => ctx.to({ rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => ctx.to({ rotation: 0, duration: 0.28 }),
+  }}
+/>
+```
+
+`classNames` / `className` на частях сочетаются с factory. `panel` — публичный слот на `<section>` панели (`motion.panel` / `playSlot("panel")`; тот же узел, что `classNames.panel`). `panelInner` — внутренний target рецепта высоты. Если `leave` ставит `autoAlpha: 0`, `enter` тоже должен снимать его через `autoAlpha` (не только `opacity`) — иначе после первого закрытия контент остаётся `visibility: hidden`. `delay: "expand"` (или `"expandDuration"`) на enter — старт после `collapsibleHeight`, иначе fade/`y` идут внутри `overflow: hidden` и их не видно. На `leave` delay не ставьте.
+
+```tsx
+<Expandable
+  title="FAQ"
+  motion={{
+    panel: {
+      enter: (ctx) =>
+        ctx.fromTo(
+          { y: 8, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.28, delay: "expand" },
+        ),
+      leave: { y: 6, autoAlpha: 0, duration: 0.16 },
+    },
+  }}
+>
+  …
+</Expandable>
+```
+
+```tsx
+<Expandable
+  title="FAQ"
+  classNames={{
+    root: "border-token-primary",
+    trigger: "bg-primary/5",
+    title: "text-primary font-w-strong",
+    chevron: "text-primary",
+    panel: "border-t border-primary/20 bg-primary/5",
+  }}
+  motion={{
+    chevron: {
+      enter: (ctx) => {
+        const tl = ctx.timeline();
+        tl.to(ctx.el, { rotation: 180, duration: 0.48, ease: "back.out(1.8)" }, 0);
+        if (ctx.targets.panelInner) {
+          tl.fromTo(ctx.targets.panelInner, { y: -8, autoAlpha: 0.25 }, { y: 0, autoAlpha: 1, duration: 0.32 }, 0.06);
+        }
+        return tl;
+      },
+      leave: (ctx) => {
+        const tl = ctx.timeline();
+        tl.to(ctx.el, { rotation: 0, duration: 0.28 }, 0);
+        if (ctx.targets.panelInner) tl.to(ctx.targets.panelInner, { y: -6, autoAlpha: 0.25, duration: 0.18 }, 0);
+        return tl;
+      },
+    },
+  }}
+>
+  …
+</Expandable>
+
+<Expandable classNames={{ root: "border-token-info", trigger: "bg-info/5" }}>
+  <Expandable.Trigger>
+    <Expandable.Title className="font-w-strong text-info">…</Expandable.Title>
+    <Expandable.Chevron
+      className="text-info"
+      motion={{
+        enter: (ctx) => {
+          const title = ctx.getTarget("title");
+          const tl = ctx.timeline();
+          tl.to(ctx.el, { rotation: 180, duration: 0.42, ease: "back.out(1.6)" }, 0);
+          if (title) tl.add(tweenCssColor(title, "var(--color-info)"), 0);
+          return tl;
+        },
+        leave: (ctx) => ctx.to({ rotation: 0, duration: 0.22 }),
+      }}
+    />
+  </Expandable.Trigger>
+  <Expandable.Panel className="border-t border-info/20 bg-info/5">…</Expandable.Panel>
+</Expandable>
+```
+
+### 1. Panel expand (height collapse)
+
+**DOM панели:**
+
+```
+panelShell (overflow-hidden, анимируемая height)
+  └── panelInner (внутренний target рецепта)
+        └── <section class=panel>     ← слот `panel` / classNames.panel
+              children
+```
+
+#### Кастомизация раскрытия
+
+```ts
+configureMotion({
+  expandDuration: 320,
+  expandOpenEase: "power2.inOut",
+  enableExpandable: true,
+});
+```
+
+**Reduced motion / `enableExpandable: false`:** мгновенный `applyCollapsibleInstantState` / `applyChevronRotationInstant`.
+
+Не задавайте фиксированную `height` на `panelShell` — ломает `collapsibleHeight`.
+
+### 2. Trigger — press squeeze
+
+`pressSqueeze` на внутреннем lift-span (`triggerLift`), не на весь `<button>`. Ripple overlay и chevron не «ломаются» на press. Токены: `interactiveDuration`, `pressSqueezeScale`, `enablePressSqueeze`. Disabled / reduced motion — skip.
+
+### 3. Chevron — rotation
+
+`chevronRotate` на слоте `chevron` (0° ↔ 180°). Кастом: `<Expandable.Chevron />` — тот же рецепт на своём ref. `enableExpandable: false` или reduced motion — instant.
+
+### Сводка: что настраивается где
+
+| Анимация | Рецепт / утилита | Ключи `configureMotion` |
+|----------|------------------|-------------------------|
+| Раскрытие панели | `collapsibleHeight` | `expandDuration`, `expandOpenEase`, `enableExpandable` |
+| Press squeeze | `pressSqueeze` на `triggerLift` | `interactiveDuration`, `pressSqueezeScale`, `enablePressSqueeze` |
+| Поворот шеврона | `chevronRotate` | `interactiveDuration`, `interactiveEase`, `enableExpandable` |
+| Контент панели | `panel` (broadcast на open) | `expandDuration` (через `delay: "expand"`) |
+| Ripple на триггере | `<Ripple />` | `rippleDefaultDuration`, `enableRipple` (см. Ripple.md) |
+
+## Ripple на триггере
+
+`partitionExpandableTriggerRipple` выносит дочерние `<Ripple />` в overlay (`EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS`) на всю площадь кнопки. Контент и шеврон остаются в `triggerLift` с `z-[1]`.
+
+## Grid-layout
+
+Триггер использует общую сетку `messageBannerGridLayout` (как Alert, Toast):
+
+- колонки: indicator | title+description | action (шеврон)
+- слоты определяются автоматически по наличию `Icon`, `Title`, `Description`, `Chevron`
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `--shadow-lift` | Тень корня только при наведении |
+| `border-token`, `bg-surface` | Поверхность |
+| `min-h-control-*`, `px-mid`, `py-base` | Размеры |
+| `focus-ring` + `rounded-[inherit]` | Focus на триггере (скругление как у root) |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на root** — мерж с `classNames.root`.
+2. **`classNames` на root** — слоты через `ExpandableClassNamesProvider`.
+
+В compound API подчасти (`Expandable.Trigger`, `Expandable.Title`, …) принимают **`className`** поверх слота.
+
+### Слоты `ExpandableClassNames`
+
+| Слот | DOM / элемент | Когда использовать |
+|------|---------------|-------------------|
+| `root` | Корневой div | Border, max-width, внешний padding |
+| `trigger` | `Expandable.Trigger` button | Фон, height, hover surface |
+| `triggerLift` | Motion target lift | Осторожно — GSAP shadow target |
+| `triggerRippleOverlay` | Ripple clip layer | Shape ripple на триггере |
+| `message` | `Expandable.Message` | Grid слотов в trigger |
+| `icon` | `Expandable.Icon` | Размер/цвет leading icon |
+| `content` | `Expandable.Content` | Title + description stack |
+| `title` | `Expandable.Title` | Заголовок |
+| `description` | `Expandable.Description` | Подзаголовок muted |
+| `chevron` | Chevron / `Expandable.Chevron` | Размер, rotate target |
+| `panelShell` | Обёртка panel height anim | Overflow clip |
+| `contentWrap` | Внутренняя обёртка внутри `panelShell` | Padding; height анимируется на shell |
+| `panel` | `Expandable.Panel` section | Padding контента, typography; motion-слот `panel` |
+
+`variant`, `size` — trigger/content padding и title из `COLLAPSIBLE_SIZE_LAYOUT`; иконки — `CONTROL_SIZE_LAYOUT`.
+
+### Simple API
+
+```tsx
+<Expandable
+  className="max-w-md"
+  classNames={{
+    root: "border border-primary/30 rounded-base",
+    trigger: "bg-primary/5 hover:bg-primary/10",
+    title: "text-primary font-semibold",
+    description: "text-muted",
+    panel: "bg-primary/5 text-small",
+  }}
+  title="FAQ"
+  description="Частые вопросы"
+  icon={<IoHelp aria-hidden />}
+>
+  <p>Ответ на вопрос…</p>
+</Expandable>
+```
+
+### Compound API
+
+```tsx
+<Expandable
+  classNames={{
+    root: "max-w-lg",
+    trigger: "px-xlarge",
+    panelShell: "border-t border-token",
+  }}
+>
+  <Expandable.Trigger className="gap-large">
+    <Expandable.Icon><IoSettings aria-hidden /></Expandable.Icon>
+    <Expandable.Content>
+      <Expandable.Title className="text-mid">Настройки</Expandable.Title>
+      <Expandable.Description>Расширенная компоновка</Expandable.Description>
+    </Expandable.Content>
+    <Expandable.Chevron className="text-muted" />
+  </Expandable.Trigger>
+  <Expandable.Panel className="p-xlarge">
+    Контент панели
+  </Expandable.Panel>
+</Expandable>
+```
+
+`hideChevron` на Trigger — кастомный chevron через `Expandable.Chevron` и слот `chevron`.
+
+### Практические заметки
+
+- **Panel height anim:** не задавайте фиксированную `height` на `panelShell` — ломает `collapsibleHeight`.
+- **Ripple:** `<Ripple />` внутри Trigger; стили clip — `triggerRippleOverlay`.
+- **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
+
+## Доступность
+
+- Триггер: `<button type="button">`.
+- `aria-expanded`, `aria-controls` — при наличии `Panel`.
+- `id` / `aria-labelledby` / `aria-hidden` / `inert` на панели.
+- Клавиатура: `Enter` / `Space` на триггере.
+- `asChild` на Trigger — клонирует props на дочерний элемент.
+
+## Контекст
+
+Состояние панели — проп `open` на корне. Внутренний контекст наружу не отдаётся.
+
+## Структура файлов
+
+```
+Expandable/
+├── Expandable.tsx              # Provider: motion + resolveExpandableMotionDefaults
+├── index.ts
+├── expandableTypes.ts          # ExpandableMotion
+├── expandableStyles.ts
+├── expandableAPI.ts
+├── expandableA11y.ts
+├── expandableContext.tsx       # createMotionScope("Expandable")
+├── expandableParts.tsx         # useMotionPart на слотах
+├── expandableAnimations.ts     # defaults, host play
+├── useExpandableRootState.ts
+└── Expandable.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Expandable` — simple/compound, ripple, размеры, controlled/uncontrolled.

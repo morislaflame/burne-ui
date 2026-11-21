@@ -1,0 +1,132 @@
+import { DropdownAsChildMergedPropsDemo } from "../demos/dropdown/DropdownAsChildMergedProps.demo";
+import dropdownAsChildMergedPropsSource from "../demos/dropdown/DropdownAsChildMergedProps.demo.tsx?raw";
+import { DropdownPortalContainerDemo } from "../demos/dropdown/DropdownPortalContainer.demo";
+import dropdownPortalContainerSource from "../demos/dropdown/DropdownPortalContainer.demo.tsx?raw";
+import { DropdownClassNamesFullDemo } from "../demos/dropdown/DropdownClassNamesFull.demo";
+import dropdownClassNamesFullSource from "../demos/dropdown/DropdownClassNamesFull.demo.tsx?raw";
+import { DropdownActionMenuDemo } from "../demos/dropdown/DropdownActionMenu.demo";
+import dropdownActionMenuSource from "../demos/dropdown/DropdownActionMenu.demo.tsx?raw";
+import { DropdownCustomSubTriggerIconDemo } from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo";
+import dropdownCustomSubTriggerIconSource from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo.tsx?raw";
+import { DropdownMultipleDemo } from "../demos/dropdown/DropdownMultiple.demo";
+import dropdownMultipleSource from "../demos/dropdown/DropdownMultiple.demo.tsx?raw";
+import { DropdownPopoverSideDemo } from "../demos/dropdown/DropdownPopoverSide.demo";
+import dropdownPopoverSideSource from "../demos/dropdown/DropdownPopoverSide.demo.tsx?raw";
+import { DropdownSingleSelectDemo } from "../demos/dropdown/DropdownSingleSelect.demo";
+import dropdownSingleSelectSource from "../demos/dropdown/DropdownSingleSelect.demo.tsx?raw";
+import { DropdownStatusPickerDemo } from "../demos/dropdown/DropdownStatusPicker.demo";
+import dropdownStatusPickerSource from "../demos/dropdown/DropdownStatusPicker.demo.tsx?raw";
+import { DropdownUserMenuDemo } from "../demos/dropdown/DropdownUserMenu.demo";
+import dropdownUserMenuSource from "../demos/dropdown/DropdownUserMenu.demo.tsx?raw";
+import { DropdownSlotMotionGalleryDemo } from "../demos/dropdown/slotMotion/gallery";
+import { DropdownMotionControllerGalleryDemo } from "../demos/dropdown/motionController/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function DropdownShowcase() {
+  return (
+    <ShowcasePage
+      title="Dropdown"
+      description="Dropdown menu with single and multiple selection of values."
+      importPath='import { Dropdown } from "@/components/core/Dropdown";'
+      tags={["core", "overlay"]}
+    >
+      <ShowcaseSection title="Single selection" description="Item indicator and grouping of items.">
+        <ShowcaseDemoFromFile Demo={DropdownSingleSelectDemo} source={dropdownSingleSelectSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Multi-select" description="multiple and array defaultValue.">
+        <ShowcaseDemoFromFile Demo={DropdownMultipleDemo} source={dropdownMultipleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="One gallery: custom trigger press, instant leave, body stagger, label + subTrigger, separator, submenu slide, origin scale.">
+        <DropdownSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="Handle on Dropdown.Popover (portal host). play() skips. playSlot(content / item). Root handle is trigger-only."
+      >
+        <DropdownMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom SubTrigger icon"
+        description="Dropdown.SubTrigger icon replaces the default chevron."
+      >
+        <ShowcaseDemoFromFile
+          Demo={DropdownCustomSubTriggerIconDemo}
+          source={dropdownCustomSubTriggerIconSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Popover side"
+        description="Dropdown.Popover side / align / offset — open the menu upward."
+      >
+        <ShowcaseDemoFromFile Demo={DropdownPopoverSideDemo} source={dropdownPopoverSideSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="portalContainer"
+        description="Custom portal host — menu mounts into the container."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={DropdownPortalContainerDemo} source={dropdownPortalContainerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="asChild — merged props"
+        description="Trigger asChild merges id, data-*, className, and ref onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={DropdownAsChildMergedPropsDemo} source={dropdownAsChildMergedPropsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Full customization of slots via classNames on Root."
+      >
+        <ShowcaseDemoFromFile
+          Demo={DropdownClassNamesFullDemo}
+          source={dropdownClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Account menu, line actions and status selection — `demos/dropdown/`."
+      >
+        <ShowcaseDemoFromFile Demo={DropdownUserMenuDemo} source={dropdownUserMenuSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DropdownActionMenuDemo} source={dropdownActionMenuSource} />
+        <ShowcaseDemoFromFile Demo={DropdownStatusPickerDemo} source={dropdownStatusPickerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/Dropdown" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Dropdown.Trigger, Dropdown.Popover (variant default), Group, Item, ItemLabel, ItemHint, ItemIcon, Sub."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Choice">
+          <p>
+            <code>defaultValue</code> / <code>value</code> + <code>onValueChange</code> for controlled mode.
+            <code>multiple</code> switches to an array of values.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization>
+          <p>
+            <code>variant=&quot;default&quot;</code> on <code>Dropdown.Popover</code>. Items with{" "}
+            <code>href</code> rendered as links with a role menuitem. Slot motion —{" "}
+            <code>motion.content</code> forwarded to Popover; <code>subPopover</code> on{" "}
+            <code>Dropdown.SubPopover</code>.
+          </p>
+        </ShowcaseDoc.Customization>
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

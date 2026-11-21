@@ -1,0 +1,97 @@
+import { SurfaceClassNamesFullDemo } from "../demos/surface/SurfaceClassNamesFull.demo";
+import surfaceClassNamesFullSource from "../demos/surface/SurfaceClassNamesFull.demo.tsx?raw";
+import { SurfaceDashboardWidgetDemo } from "../demos/surface/SurfaceDashboardWidget.demo";
+import surfaceDashboardWidgetSource from "../demos/surface/SurfaceDashboardWidget.demo.tsx?raw";
+import { SurfaceGlassStackDemo } from "../demos/surface/SurfaceGlassStack.demo";
+import surfaceGlassStackSource from "../demos/surface/SurfaceGlassStack.demo.tsx?raw";
+import { SurfaceNestedPanelsDemo } from "../demos/surface/SurfaceNestedPanels.demo";
+import surfaceNestedPanelsSource from "../demos/surface/SurfaceNestedPanels.demo.tsx?raw";
+import { SurfaceVariantsDemo } from "../demos/surface/SurfaceVariants.demo";
+import surfaceVariantsSource from "../demos/surface/SurfaceVariants.demo.tsx?raw";
+import { SurfaceMotionControllerGalleryDemo } from "../demos/surface/motionController/gallery";
+import { SurfaceSlotMotionGalleryDemo } from "../demos/surface/slotMotion/gallery";
+import { SeparatorClassNamesFullDemo } from "../demos/separator/SeparatorClassNamesFull.demo";
+import separatorClassNamesFullSource from "../demos/separator/SeparatorClassNamesFull.demo.tsx?raw";
+import { SeparatorDecorativeDemo } from "../demos/separator/SeparatorDecorative.demo";
+import separatorDecorativeSource from "../demos/separator/SeparatorDecorative.demo.tsx?raw";
+import { SeparatorSlotMotionGalleryDemo } from "../demos/separator/slotMotion/gallery";
+import { SeparatorMotionControllerGalleryDemo } from "../demos/separator/motionController/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function SurfaceShowcase() {
+  return (
+    <ShowcasePage
+      title="Surface"
+      description="Background surfaces for grouping content with customizable padding."
+      importPath='import { Surface } from "@/components/core/Surface";'
+      tags={["core", "layout"]}
+    >
+      <ShowcaseSection title="Options" description="default, secondary and tertiary.">
+        <ShowcaseDemoFromFile Demo={SurfaceVariantsDemo} source={surfaceVariantsSource} />
+      </ShowcaseSection>
+<ShowcaseSection title="classNames" description="Slot root via classNames.">
+        <ShowcaseDemoFromFile Demo={SurfaceClassNamesFullDemo} source={surfaceClassNamesFullSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Nested panels, dashboard widget and default-stack — `demos/surface/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SurfaceNestedPanelsDemo} source={surfaceNestedPanelsSource} />
+        <ShowcaseDemoFromFile Demo={SurfaceDashboardWidgetDemo} source={surfaceDashboardWidgetSource} />
+        <ShowcaseDemoFromFile Demo={SurfaceGlassStackDemo} source={surfaceGlassStackSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root timeline + hover, enter tint.">
+        <SurfaceSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot / set, cancel a looping run, ping, timeline, waitForComplete."
+      >
+        <SurfaceMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Decorative" description="decorative removes the separator role. The line stays on screen.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorDecorativeDemo} source={separatorDecorativeSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="className (Separator)" description="Separator is one node. className tints the line.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SeparatorClassNamesFullDemo} source={separatorClassNamesFullSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion (Separator)" description="Instant enter skip, scale-in timeline, enter tint.">
+        <SeparatorSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController (Separator)"
+        description="One gallery: play / set on root, cancel a looping run, ping, timeline, waitForComplete."
+      >
+        <SeparatorMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/Surface" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="variant and padding on the root - the main way to set the background and padding of the container."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Padding">
+          <p>
+            <code>mid</code>, <code>plus</code>, <code>large</code> — preset padding inside Surface.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

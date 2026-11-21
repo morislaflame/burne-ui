@@ -1,25 +1,22 @@
-import type { IconType } from "react-icons";
+import type { ComponentType } from "react";
 import {
-  IoCheckmarkCircleOutline,
-  IoCloseCircleOutline,
-  IoInformationCircleOutline,
-  IoWarning,
-} from "react-icons/io5";
-
-/** Семантические статусы с собственной иконкой и цветом (размер задаётся в компоненте через `className`). */
-export type SemanticStatus = "danger" | "success" | "info" | "warning";
-
-export const SEMANTIC_STATUS_ICONS: Record<SemanticStatus, IconType> = {
-  danger: IoCloseCircleOutline,
-  success: IoCheckmarkCircleOutline,
-  info: IoInformationCircleOutline,
-  warning: IoWarning,
+  KitCheckmarkCircleOutline,
+  KitCloseCircleOutline,
+  KitInformationCircleOutline,
+  KitWarning,
+  type KitIconProps,
+} from "@/components/core/utils/kitIcons";
+ 
+/** Shared semantic status scale (size is set by the consuming component). */
+export type SemanticStatus = "default" | "danger" | "success" | "info" | "warning";
+ 
+export const SEMANTIC_STATUS_ICONS: Record<
+  Exclude<SemanticStatus, "default">,
+  ComponentType<KitIconProps>
+> = {
+  danger: KitCloseCircleOutline,
+  success: KitCheckmarkCircleOutline,
+  info: KitInformationCircleOutline,
+  warning: KitWarning,
 };
-
-export const SEMANTIC_STATUS_ICON_TEXT_CLASS: Record<SemanticStatus, string> =
-  {
-    danger: "text-danger",
-    success: "text-success",
-    info: "text-info",
-    warning: "text-warning",
-  };
+ 

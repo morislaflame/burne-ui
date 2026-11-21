@@ -1,0 +1,23 @@
+{
+  "name": "__SKIN_NAME__",
+  "meta": {
+    "title": "__SKIN_TITLE__",
+    "description": "Tier 2: classes and a namespaced hover recipe."
+  },
+  "baseVariant": "default",
+  "tokens": {
+    "--color-surface": "#ffffff",
+    "--color-background": "#ffffff",
+    "--color-foreground": "#111111"
+  },
+  "targets": {
+    "button.root": "__SKIN_NAME__-surface"
+  },
+  "motion": {
+    "button.root": {
+      "hoverIn": "__SKIN_NAME__:hover",
+      "hoverOut": "__SKIN_NAME__:hover"
+    }
+  },
+  "styleUrl": "burne-ui-skin-__SKIN_NAME__/styles.css"
+}

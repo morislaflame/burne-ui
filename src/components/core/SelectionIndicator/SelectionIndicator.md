@@ -1,0 +1,299 @@
+# SelectionIndicator
+
+Визуальный индикатор выбора: круглая оболочка (shell), fill-слой и mark (галочка, точка или кастомная иконка). Низкоуровневый примитив для Checkbox, Radio, ListBox и других контролов. Не интерактивен сам по себе (`aria-hidden`).
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { SelectionIndicator, type SelectionIndicatorProps, type SelectionIndicatorSize, type SelectionIndicatorVariant, type SelectionIndicatorClassNames, type SelectionIndicatorMotion } from "burne-ui";
+import { selectionIndicatorFallbackPx, selectionIndicatorShellClass, useSelectionIndicatorAnimation } from "burne-ui/internal";
+```
+
+## API
+
+### Simple API (props)
+
+```tsx
+<SelectionIndicator
+  selected={checked}
+  size="base"
+  variant="outline"
+  check
+/>
+
+<SelectionIndicator selected={active} icon={<IoStar aria-hidden />} />
+```
+
+### Compound API (слоты Fill / Mark)
+
+```tsx
+<SelectionIndicator selected={checked} size="mid" variant="secondary">
+  <SelectionIndicator.Fill className="bg-primary/20" />
+  <SelectionIndicator.Mark>
+    <IoCheckmark aria-hidden />
+  </SelectionIndicator.Mark>
+</SelectionIndicator>
+```
+
+Если в `children` есть `SelectionIndicator.Fill` или `.Mark` — включается compound-режим разметки. Иконка отмеченного состояния — проп `icon`. Содержимое `Mark` остаётся mark. Другие `children` иконкой не становятся.
+
+### Props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `selected` | — | **Обязательный.** Активное состояние → анимация fill/mark |
+| `size` | `base` | `xsmall` \| `small` \| `base` \| `mid` \| `large` |
+| `variant` | `base` | `base` \| `secondary` \| `outline` |
+| `check` | `false` | Дефолтная галочка `IoCheckmarkSharp` |
+| `dot` | `false` | Radio-dot (круг внутри) |
+| `icon` | — | Кастомный mark (приоритет над check/dot). Прямые `children`, кроме `Fill` и `Mark`, иконкой не становятся |
+| `className` | — | Мержится в **root** |
+| `classNames` | — | `root`, `fill`, `mark` |
+| `motion` | — | `root` / `fill` / `mark` (`check` / `uncheck`). `events` — app-команды `MotionController` |
+| `motionController` | — | Handle на этом scope. Checkbox / Radio — embedder: **не** вешать handle на них |
+
+### `SelectionIndicatorClassNames`
+
+```tsx
+type SelectionIndicatorClassNames = {
+  root?: string;
+  fill?: string;
+  mark?: string;
+};
+```
+
+### Compound-подчасти
+
+| Часть | Роль |
+|-------|------|
+| `SelectionIndicator.Fill` | Fill-слой с ref для GSAP |
+| `SelectionIndicator.Mark` | Mark-слой (иконка/dot) с ref для GSAP |
+
+## variant
+
+| variant | Shell | Fill | Mark |
+|---------|-------|------|------|
+| `base` | `border-primary bg-surface` | `bg-indicator` | `text-indicator-foreground` |
+| `secondary` | `border-token bg-secondary` | `bg-secondary` | `text-secondary-foreground` |
+| `outline` | `border-primary bg-surface` | **нет fill** | dot/check цвет foreground |
+
+`outline` — только обводка; fill не рендерится (`selectionIndicatorShowsFill`).
+
+## Размеры
+
+CSS-переменные: `--selection-indicator-xsmall` … `--selection-indicator-large` (диаметр),
+`--selection-indicator-radius-*` = `--radius-nested`: шаг radius минус `--space-xsmall` (углы shell/dot — не `rounded-full`; fill — `rounded-[inherit]` + `-inset` под бордер, без отдельного радиуса в API). `xsmall` берёт `--radius-small`, `small` и `base` — `--radius-base`, `mid` — `--radius-mid`, `large` — `--radius-large`.
+
+| size | CSS class | Mark icon |
+|------|-----------|-----------|
+| `xsmall` | `selection-indicator-xsmall` | `--icon-size-xsmall` × 0.75 |
+| `small` | `selection-indicator-small` | `--icon-size-small` × 0.75 |
+| `base` | `selection-indicator-base` | `--icon-size-base` × 0.75 |
+| `mid` | `selection-indicator-mid` | `--icon-size-mid` × 0.75 |
+| `large` | `selection-indicator-large` | `--icon-size-large` × 0.75 |
+
+Утилита `selectionIndicatorFallbackPx(size)` — px для layout без DOM.
+
+## Анимации
+
+`selectionIndicatorAnimations.ts` — lifecycle `check` / `uncheck` через slot motion. Первый кадр instant (`firstLayoutRef`), чтобы не было FOUC. Галерея Slot motion — playground, сайт и Storybook.
+
+**Где в коде:** defaults + host — `selectionIndicatorAnimations.ts` (`SELECTION_INDICATOR_MOTION_DEFAULTS`, `useSelectionIndicatorAnimation`, `SelectionIndicatorMotionSync`); scope — `selectionIndicatorContext.tsx`; Fill/Mark — `selectionIndicatorParts.tsx`.
+
+**DOM-структура:**
+
+```
+<span root aria-hidden>              ← shell: size + radius token
+  <span fill ref=fillRef>             ← selectionFill
+  <span mark ref=markRef>             ← selectionMark
+</span>
+```
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `check` / `uncheck` | нет (shell зарегистрирован; Checkbox `indicator` → `root`) |
+| `fill` | `check` / `uncheck` | `selectionFill` |
+| `mark` | `check` / `uncheck` | `selectionMark` |
+
+Есть слот `root`: `play()` / `playSlot("fill")` / `playAll`. Фазы слотов — `check` / `uncheck`, не hover.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`indicator:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на этом scope. Checkbox и Radio её сюда форвардят в simple API. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, SelectionIndicator, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "indicator:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("indicator:nudge")}>
+        Nudge
+      </Button>
+      <SelectionIndicator selected check motionController={controller} motion={{ events }} />
+    </>
+  );
+}
+```
+
+Часть побеждает слот корня. `false` отключает дефолт. Factory: `(ctx) => gsap.to(ctx.el, …)`.
+
+```tsx
+<SelectionIndicator
+  selected={on}
+  check
+  motion={{ fill: { check: "selectionFill", uncheck: false } }}
+/>
+
+<SelectionIndicator.Fill motion={{ check: (ctx) => gsap.to(ctx.el, { scale: 1, duration: 0.4 }) }} />
+```
+
+**DOM-структура:**
+
+```
+<span root aria-hidden>              ← shell: size + radius token
+  <span fill ref=fillRef>             ← scale 0→1, z-0, -inset border, rounded-[inherit]
+  <span mark ref=markRef>             ← check/dot/icon, z-2
+</span>
+```
+
+### Pipeline (`selected` toggle)
+
+1. **First layout:** instant `applyInstant(selected)` — без GSAP
+2. **Reduced motion:** instant scale/opacity, `killMotion`
+3. **Fill (если variant ≠ outline):**
+   - select: `gsap.fromTo(fill, { scale:0, autoAlpha:0 }, { scale:1, autoAlpha:1, ...motionSelectionFill() })`
+   - deselect: `gsap.to(fill, { scale:0, autoAlpha:0, ... })`
+4. **Mark (если есть):**
+   - select: `fromTo mark { scale:0.88, autoAlpha:0 } → { scale:1, autoAlpha:1 }` — те же `motionSelectionFill()`
+   - deselect: `to { scale:0.92, autoAlpha:0 }`
+
+Initial inline style на Fill/Mark: `scale(0)`, `opacity: 0`.
+
+### Кастомизация
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  selectionFillDuration: 280,
+  selectionFillEase: "back.out(1.25)",
+  enableSelectionFill: true,
+});
+```
+
+### Сводка
+
+| Слой | Анимируется | `configureMotion` |
+|------|-------------|-------------------|
+| Fill | scale + autoAlpha | `selectionFillDuration`, `selectionFillEase`, `enableSelectionFill` |
+| Mark | scale + autoAlpha | те же |
+| Shell | CSS only | — |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className`** — мержится в **root** (вместе с `classNames.root`).
+2. **`classNames`** — `root`, `fill`, `mark`.
+
+В compound API `SelectionIndicator.Fill` / `.Mark` принимают свой **`className`** поверх слота.
+
+### Слоты
+
+| Слот | Элемент | Назначение |
+|------|---------|------------|
+| `root` | Внешний круг | Border, размер |
+| `fill` | Absolute inset fill | Цвет заливки checked |
+| `mark` | Check/dot/icon | Размер иконки, цвет mark |
+
+### Standalone
+
+```tsx
+<SelectionIndicator
+  selected={isSelected}
+  variant="outline"
+  check
+  className="ring-2 ring-primary/30"
+  classNames={{
+    root: "border-primary/50",
+    fill: "bg-primary/30",
+    mark: "text-primary",
+  }}
+/>
+```
+
+### Через родительские контролы
+
+Слоты прокидываются с root контрола:
+
+```tsx
+// Checkbox
+<Checkbox classNames={{ indicator: "…", indicatorFill: "…", indicatorMark: "…" }}>
+
+// Radio — то же
+// ListBox.ItemIndicator classNames={{ itemIndicatorShell, itemIndicatorFill, … }}
+```
+
+Маппинг: `indicator` → root, `indicatorFill` → fill, `indicatorMark` → mark.
+
+### Compound кастом mark
+
+### Практические заметки
+
+- **`check` vs `dot` vs `icon`:** взаимоисключающие приоритеты — `icon` > custom Mark child > `check` > `dot`.
+- **outline:** без fill — стилизуйте только root + mark.
+- **Кастомный radius shell:** достаточно `classNames.root` / `rounded-*` — fill подхватывает через `rounded-[inherit]`.
+- **Не интерактивен:** не вешайте pointer-events; клик на родителе.
+- **Порядок мержа:** variant classes → `classNames` → `className` (root).
+
+## Встроенное использование
+
+| Компонент | Режим |
+|-----------|-------|
+| `Checkbox` | `check`, variants mapped |
+| `Radio` | `dot` |
+| `ListBox.ItemIndicator` | `check` / radio dot по `indicatorMode` |
+| `Checkbox.Indicator` / `Radio.Indicator` | compound `.Fill` / `.Mark` |
+
+## Доступность
+
+- Root: `aria-hidden` — семантика на нативном input родителя
+- Mark/fill: decorative
+- Forced colors (Windows HCM): `data-selected` на root; Fill — `data-selection-fill` + `data-pressed`; Mark — `data-selection-mark`. Kit CSS показывает `Highlight` / `HighlightText`, когда GSAP прячет fill.
+
+## Экспортируемые утилиты
+
+```tsx
+selectionIndicatorShellClass(size, className?)
+selectionIndicatorVariantClass(variant, selected)
+selectionIndicatorFallbackPx(size)
+useSelectionIndicatorAnimation(active, fillRef?, iconRef?)
+```
+
+## Структура файлов
+
+```
+SelectionIndicator/
+├── SelectionIndicator.tsx              # Provider + defaults
+├── index.ts
+├── selectionIndicatorTypes.ts          # SelectionIndicatorMotion, size / variant
+├── selectionIndicatorStyles.ts         # размеры, variant CSS
+├── selectionIndicatorAPI.ts            # compound partition, mark resolve
+├── selectionIndicatorA11y.ts
+├── selectionIndicatorParts.tsx         # Fill, Mark + first-paint
+├── selectionIndicatorContext.tsx       # createMotionScope
+├── selectionIndicatorAnimations.ts     # defaults, host play, MotionSync
+└── useSelectionIndicatorRootState.ts
+```
+
+## Storybook
+
+`Core Components/SelectionIndicator` — playground, `classNames`, Slot motion gallery, MotionController gallery.

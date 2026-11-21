@@ -1,12 +1,58 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ChangeEvent } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
-import { Input } from "./Input";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
+
+import { Input } from "./index";
+import { InputSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/input/slotMotion/gallery";
+import { InputMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/input/motionController/gallery";
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function ValidatedEmailCompoundDemo({ initialValue = "bad@" }: { initialValue?: string }) {
+  const [value, setValue] = useState(initialValue);
+  const invalid = value.length > 0 && !isValidEmail(value);
+
+  return (
+    <Input required>
+      <Input.Label>Email</Input.Label>
+      <Input.Control
+        value={value}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+        autoComplete="email"
+      />
+      <Input.Hint>Format: name@domain.tld</Input.Hint>
+      {invalid ? <Input.Error>Enter a valid address.</Input.Error> : null}
+    </Input>
+  );
+}
+
+function ValidatedEmailSimpleDemo({ initialValue = "bad@" }: { initialValue?: string }) {
+  const [value, setValue] = useState(initialValue);
+  const invalid = value.length > 0 && !isValidEmail(value);
+
+  return (
+    <Input
+      label="Email"
+      hint="Format: name@domain.tld"
+      error={invalid ? "Enter a valid address." : undefined}
+      required
+      value={value}
+      onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+      autoComplete="email"
+    />
+  );
+}
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto min-w-sm">
@@ -20,7 +66,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto min-w-sm">
@@ -36,21 +82,14 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
-  },
-  decorators: [...darkThemeDecorator],
-  args: {
-    variant: "default" as const,
-    status: "default" as const,
-    size: "base" as const,
-    inputType: "text" as const,
-    placeholder: "Введите значение",
-  },
-  argTypes: {
-    size: {
-      control: "select",
-      options: ["base", "large", "xlarge"],
+    docs: {
+      description: {
+        component:
+          "Text field. **Simple** — `label`, `hint`, `error`, and control props on root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`.  **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` from `invalid` / `error`, `aria-required`.",
+      },
     },
   },
+  decorators: [...darkThemeDecorator],
 } satisfies Meta<typeof Input>;
 
 export default meta;
@@ -58,88 +97,223 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  name: "Simple and Compound",
+  ...dualApiStorySource,
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — props on &lt;Input&gt;">
+        <Input
+          label="Email"
+          hint="We do not share your address with third parties."
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — children">
+        <Input>
+          <Input.Label>Email</Input.Label>
+          <Input.Control placeholder="you@example.com" autoComplete="email" />
+          <Input.Hint>We do not share your address with third parties.</Input.Hint>
+        </Input>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
+
+export const TypeInteraction: Story = {
+  name: "Interaction: input",
+  render: () => (
+    <Input
+      label="Email"
+      placeholder="you@example.com"
+      autoComplete="email"
+    />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const field = canvas.getByRole("textbox", { name: "Email" });
+    await userEvent.type(field, "test@example.com");
+    await expect(field).toHaveValue("test@example.com");
+  },
 };
 
 export const Outline: Story = {
-  args: {
-    variant: "outline",
-    hint: "Вариант outline — прозрачный фон оболочки.",
-  },
+  render: () => (
+    <Input>
+      <Input.Label>Website</Input.Label>
+      <Input.Control variant="outline" placeholder="example.com" />
+      <Input.Hint>Outline variant — transparent shell background.</Input.Hint>
+    </Input>
+  ),
+};
+
+export const Secondary: Story = {
+  render: () => (
+    <Input>
+      <Input.Label>Display name</Input.Label>
+      <Input.Control variant="secondary" placeholder="Ivan" />
+      <Input.Hint>Secondary variant — bg-secondary shell, like Button.</Input.Hint>
+    </Input>
+  ),
 };
 
 export const WithAffixes: Story = {
-  args: {
-    prefix: "https://",
-    suffix: ".com",
-    placeholder: "example",
-    hint: "Префикс и суффикс с отдельным фоном и разделителем.",
-  },
+  render: () => (
+    <Input>
+      <Input.Label>Domain</Input.Label>
+      <Input.Control prefix="https://" suffix=".com" placeholder="example" />
+      <Input.Hint>Prefix and suffix with separate background and divider.</Input.Hint>
+    </Input>
+  ),
 };
 
-export const danger: Story = {
-  args: {
-    status: "danger",
-    defaultValue: "некорректно",
-    hint: "Исправьте значение перед отправкой формы.",
-  },
+export const Danger: Story = {
+  name: "Danger",
+  render: () => (
+    <Input>
+      <Input.Label>Email</Input.Label>
+      <Input.Control defaultValue="invalid" />
+      <Input.Error>Fix the value before submitting the form.</Input.Error>
+    </Input>
+  ),
 };
 
-export const Success: Story = {
-  args: {
-    status: "success",
-    defaultValue: "ok@example.com",
-    hint: "Адрес подтверждён.",
-  },
+export const Validation: Story = {
+  name: "Validation (hint + error)",
+  render: () => (
+    <div className="flex w-full flex-col gap-mid">
+      <p className="text-sm text-muted">
+        Hint — <code className="text-primary">Input.Hint</code> (muted); error message —{" "}
+        <code className="text-primary">Input.Error</code> (danger, <code className="text-primary">role=&quot;alert&quot;</code>
+        ). Both ids are included in the control's <code className="text-primary">aria-describedby</code>. The error
+        clears when a valid email is entered.
+      </p>
+      <ValidatedEmailCompoundDemo />
+      <ValidatedEmailSimpleDemo />
+    </div>
+  ),
 };
 
-export const Warning: Story = {
-  args: {
-    status: "warning",
-    defaultValue: "draft-v2",
-    hint: "Этот идентификатор уже занят в другом проекте.",
-  },
+export const Required: Story = {
+  render: () => (
+    <Input required>
+      <Input.Label>Name</Input.Label>
+      <Input.Control placeholder="Ivan" autoComplete="name" />
+    </Input>
+  ),
 };
 
 export const Password: Story = {
-  args: {
-    inputType: "password",
-    label: "Пароль",
-    placeholder: "••••••••",
-    hint: "Не менее 8 символов.",
-  },
+  render: () => (
+    <Input>
+      <Input.Label>Password</Input.Label>
+      <Input.Control type="password" placeholder="••••••••" autoComplete="current-password" />
+      <Input.Hint>At least 8 characters.</Input.Hint>
+    </Input>
+  ),
 };
 
-export const NumberField: Story = {
-  name: "Число",
-  args: {
-    inputType: "number",
-    label: "Количество",
-    placeholder: "0",
-    hint: "Только целые числа.",
-  },
+export const File: Story = {
+  render: () => (
+    <Input>
+      <Input.Label>Avatar</Input.Label>
+      <Input.Control type="file" accept="image/*" />
+    </Input>
+  ),
 };
 
-export const FileUpload: Story = {
-  name: "Файл",
-  args: {
-    inputType: "file",
-    label: "Вложение",
-    accept: "image/*,.pdf",
-    multiple: true,
-    placeholder: "Выберите изображение или PDF",
-    hint: "Несколько файлов — списком в столбик",
-  },
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex w-full flex-col gap-mid">
+      <Input size="small">
+        <Input.Label>Small</Input.Label>
+        <Input.Control placeholder="small" />
+      </Input>
+      <Input size="base">
+        <Input.Label>Base</Input.Label>
+        <Input.Control placeholder="base" />
+      </Input>
+      <Input size="mid">
+        <Input.Label>Mid</Input.Label>
+        <Input.Control placeholder="mid" />
+      </Input>
+      <Input size="large">
+        <Input.Label>Large</Input.Label>
+        <Input.Control placeholder="large" />
+      </Input>
+    </div>
+  ),
 };
 
-export const WithoutHint: Story = {
-  name: "Без примечания",
-  args: {
-    hint: undefined,
-  },
-};
-
-export const OnLightTheme: Story = {
-  name: "Светлая тема",
+export const LightTheme: Story = {
   decorators: [...lightThemeDecorator],
-  args: Default.args,
+  render: () => (
+    <Input>
+      <Input.Label>Email</Input.Label>
+      <Input.Control placeholder="you@example.com" />
+    </Input>
+  ),
+};
+
+export const Accessibility: Story = {
+  name: "Accessibility",
+  render: () => (
+    <div className="flex flex-col gap-mid text-left">
+      <p className="text-sm text-muted">
+        <code className="text-primary">&lt;Label htmlFor&gt;</code> via{" "}
+        <code className="text-primary">FieldLabelContext</code>. Hint and error — via{" "}
+        <code className="text-primary">aria-describedby</code> (both ids when set).{" "}
+        <code className="text-primary">error</code> or <code className="text-primary">invalid</code> set{" "}
+        <code className="text-primary">aria-invalid</code>, <code className="text-primary">data-invalid</code>, and the danger ring. The error is{" "}
+        <code className="text-primary">Input.Error</code>, not a tinted hint.
+      </p>
+      <ValidatedEmailCompoundDemo />
+    </div>
+  ),
+};
+
+
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Input",
+      },
+    },
+  },
+  render: () => (
+    <Input
+      className="max-w-sm"
+      classNames={{
+        root: "rounded-large border border-primary/20 p-base",
+        shell: "ring-1 ring-primary/15",
+        control: "text-primary placeholder:text-primary/50",
+        hint: "text-foreground/70",
+        error: "font-medium",
+      }}
+      label="Email"
+      placeholder="you@example.com"
+      hint="We do not share your address with third parties."
+      error="Enter a valid email."
+    />
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <InputSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on shell/prefix (no play: no root slot), chrome label on Root, cancel loop, input events.",
+      },
+    },
+  },
+  render: () => <InputMotionControllerGalleryDemo />,
 };

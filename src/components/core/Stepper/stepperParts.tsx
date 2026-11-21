@@ -1,0 +1,374 @@
+import {
+  Children,
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useRef,
+  type OlHTMLAttributes,
+  type PointerEventHandler,
+  type ReactNode,
+  type Ref,
+} from "react";
+
+import { dataFlag } from "@/components/core/utils/dataContract";
+import { focusKeyboard } from "@/components/core/utils/focusElement";
+import { KitCheckmarkSharp } from "@/components/core/utils/kitIcons";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { isRtlElement } from "@/components/core/utils/readingDirection";
+
+import { stepperKeyDelta, stepperCurrent } from "./stepperA11y";
+import {
+  useStepperIndicatorPointer,
+  useStepperIndicatorShadow,
+  useStepperSlotMotion,
+  useStepperRootMotion,
+} from "./stepperAnimations";
+import { isStepperItem, isStepperTrigger, stepperStepSelectable, stepperStepState } from "./stepperAPI";
+import {
+  StepperItemProvider,
+  useStepperClassNames,
+  useStepperContext,
+  useStepperItemContext,
+} from "./stepperContext";
+import {
+  stepperDescriptionClass,
+  stepperIconClass,
+  stepperIndicatorClass,
+  stepperItemClass,
+  stepperRootClass,
+  stepperSeparatorClass,
+  stepperTitleClass,
+  stepperTriggerClass,
+} from "./stepperStyles";
+import type {
+  StepperDescriptionProps,
+  StepperIndicatorProps,
+  StepperItemProps,
+  StepperStep,
+  StepperTitleProps,
+  StepperTriggerProps,
+} from "./stepperTypes";
+
+function pointerProps<T extends HTMLElement>(props: {
+  onPointerOver?: PointerEventHandler<T>;
+  onPointerOut?: PointerEventHandler<T>;
+  onPointerDown?: PointerEventHandler<T>;
+  onPointerUp?: PointerEventHandler<T>;
+}) {
+  return props;
+}
+
+export const StepperIndicator = forwardRef<HTMLSpanElement, StepperIndicatorProps>(
+  function StepperIndicator({ className, children, motion, ...rest }, ref) {
+    const { orientation, size } = useStepperContext();
+    const item = useStepperItemContext();
+    const slotClass = useStepperClassNames().indicator;
+    const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...dom } = rest;
+    const part = useStepperSlotMotion<HTMLSpanElement>({
+      slot: "indicator",
+      motion,
+      forwardedRef: ref,
+      ...pointerProps({ onPointerOver, onPointerOut, onPointerDown, onPointerUp }),
+    });
+    useStepperIndicatorShadow(item.indicatorRef, item.selectable);
+    const mark = children ?? (
+      item.state === "checked" ? (
+        <span className={stepperIconClass(size)}>
+          <KitCheckmarkSharp />
+        </span>
+      ) : (
+        item.index + 1
+      )
+    );
+
+    return (
+      <span
+        ref={mergeRefs(part.setRef, (node) => {
+          item.indicatorRef.current = node;
+        })}
+        {...dom}
+        {...part.pointerHandlers}
+        className={stepperIndicatorClass(orientation, size, slotClass, className)}
+      >
+        {mark}
+      </span>
+    );
+  },
+);
+StepperIndicator.displayName = "StepperIndicator";
+
+export const StepperTitle = forwardRef<HTMLSpanElement, StepperTitleProps>(
+  function StepperTitle({ className, motion, ...rest }, ref) {
+    const { orientation, size } = useStepperContext();
+    const slotClass = useStepperClassNames().title;
+    const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...dom } = rest;
+    const part = useStepperSlotMotion<HTMLSpanElement>({
+      slot: "title",
+      motion,
+      forwardedRef: ref,
+      ...pointerProps({ onPointerOver, onPointerOut, onPointerDown, onPointerUp }),
+    });
+
+    return (
+      <span
+        ref={part.setRef}
+        {...dom}
+        {...part.pointerHandlers}
+        className={stepperTitleClass(orientation, size, slotClass, className)}
+      />
+    );
+  },
+);
+StepperTitle.displayName = "StepperTitle";
+
+export const StepperDescription = forwardRef<HTMLSpanElement, StepperDescriptionProps>(
+  function StepperDescription({ className, motion, ...rest }, ref) {
+    const { orientation } = useStepperContext();
+    const slotClass = useStepperClassNames().description;
+    const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...dom } = rest;
+    const part = useStepperSlotMotion<HTMLSpanElement>({
+      slot: "description",
+      motion,
+      forwardedRef: ref,
+      ...pointerProps({ onPointerOver, onPointerOut, onPointerDown, onPointerUp }),
+    });
+
+    return (
+      <span
+        ref={part.setRef}
+        {...dom}
+        {...part.pointerHandlers}
+        className={stepperDescriptionClass(orientation, slotClass, className)}
+      />
+    );
+  },
+);
+StepperDescription.displayName = "StepperDescription";
+
+function StepperSeparator() {
+  const { orientation, size } = useStepperContext();
+  const slotClass = useStepperClassNames().separator;
+  const part = useStepperSlotMotion<HTMLSpanElement>({ slot: "separator" });
+
+  return (
+    <span
+      ref={part.setRef}
+      aria-hidden
+      {...part.pointerHandlers}
+      className={stepperSeparatorClass(orientation, size, slotClass)}
+    />
+  );
+}
+
+const STEPPER_TRIGGER_DATA_SLOT = "trigger";
+
+export const StepperTrigger = forwardRef<HTMLButtonElement, StepperTriggerProps>(
+  function StepperTrigger({
+    className,
+    children,
+    onClick,
+    onKeyDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  }, ref) {
+    const root = useStepperContext();
+    const item = useStepperItemContext();
+    const slotClass = useStepperClassNames().trigger;
+    const mark = useStepperIndicatorPointer(item.indicatorRef, item.selectable);
+    const tabStop =
+      item.selectable &&
+      (item.index === root.currentIndex || (root.currentIndex < 0 && item.index === 0));
+
+    return (
+      <button
+        type="button"
+        ref={ref}
+        disabled={!item.selectable}
+        tabIndex={item.selectable ? (tabStop ? 0 : -1) : undefined}
+        aria-current={stepperCurrent(item.state === "active")}
+        className={stepperTriggerClass(root.orientation, slotClass, className)}
+        {...rest}
+        onPointerEnter={(event) => {
+          onPointerEnter?.(event);
+          if (!event.defaultPrevented) mark.onPointerOver();
+        }}
+        onPointerLeave={(event) => {
+          onPointerLeave?.(event);
+          if (!event.defaultPrevented) mark.onPointerOut();
+        }}
+        onPointerDown={(event) => {
+          onPointerDown?.(event);
+          if (!event.defaultPrevented) mark.onPointerDown();
+        }}
+        onPointerUp={onPointerUp}
+        onClick={(event) => {
+          onClick?.(event);
+          if (event.defaultPrevented) return;
+          root.select(item.value);
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented) return;
+          const list = event.currentTarget.closest("ol");
+          if (!list) return;
+          const delta = stepperKeyDelta(
+            event.key,
+            root.orientation,
+            isRtlElement(list),
+          );
+          if (delta == null) return;
+          const buttons = [
+            ...list.querySelectorAll<HTMLButtonElement>(
+              `[data-slot="${STEPPER_TRIGGER_DATA_SLOT}"]:not(:disabled):not([aria-disabled="true"])`,
+            ),
+          ];
+          const current = buttons.indexOf(event.currentTarget);
+          if (current < 0) return;
+          const next = delta === "start" ? 0 : delta === "end" ? buttons.length - 1 : current + delta;
+          const button = buttons[next];
+          if (!button || next === current) return;
+          event.preventDefault();
+          focusKeyboard(button);
+          const nextValue = button.getAttribute("data-value");
+          if (nextValue) root.select(nextValue);
+        }}
+        data-slot={STEPPER_TRIGGER_DATA_SLOT}
+        data-value={item.value}
+        data-disabled={dataFlag(!item.selectable)}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+StepperTrigger.displayName = "StepperTrigger";
+
+export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
+  function StepperItem(
+    {
+      value,
+      title,
+      description,
+      className,
+      children,
+      motion,
+      index = 0,
+      isLast = false,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const root = useStepperContext();
+    const slotClass = useStepperClassNames().item;
+    const state = stepperStepState(index, root.currentIndex);
+    const selectable = stepperStepSelectable(
+      index,
+      root.currentIndex,
+      root.linear,
+      root.maxReachedIndex,
+    );
+    const indicatorRef = useRef<HTMLSpanElement | null>(null);
+    const part = useStepperSlotMotion<HTMLLIElement>({
+      slot: "item",
+      motion,
+      forwardedRef: ref,
+      ...pointerProps({ onPointerOver, onPointerOut, onPointerDown, onPointerUp }),
+    });
+
+    const body = children ?? (
+      <>
+        <StepperIndicator />
+        {title != null ? <StepperTitle>{title}</StepperTitle> : null}
+        {description != null ? <StepperDescription>{description}</StepperDescription> : null}
+      </>
+    );
+
+    return (
+      <li
+        ref={part.setRef}
+        className={stepperItemClass(root.orientation, isLast, slotClass, className)}
+        {...rest}
+        {...part.pointerHandlers}
+        data-state={state}
+      >
+        <StepperItemProvider value={{ index, value, state, selectable, isLast, indicatorRef }}>
+          {Children.toArray(children).some(isStepperTrigger) ? (
+            children
+          ) : (
+            <StepperTrigger>{body}</StepperTrigger>
+          )}
+          {isLast ? null : <StepperSeparator />}
+        </StepperItemProvider>
+      </li>
+    );
+  },
+);
+StepperItem.displayName = "StepperItem";
+
+function renderCompound(children: ReactNode) {
+  const items = Children.toArray(children);
+  const count = items.filter((child) => isStepperItem(child)).length;
+  let index = 0;
+  return items.map((child) => {
+    if (!isValidElement<StepperItemProps>(child) || !isStepperItem(child)) return child;
+    const current = index;
+    index += 1;
+    return cloneElement(child, {
+      index: current,
+      isLast: current === count - 1,
+    });
+  });
+}
+
+function renderSimple(steps: readonly StepperStep[]) {
+  return steps.map((step, index) => (
+    <StepperItem
+      key={step.value}
+      value={step.value}
+      index={index}
+      isLast={index === steps.length - 1}
+      title={step.title}
+      description={step.description}
+    />
+  ));
+}
+
+export const StepperList = forwardRef<
+  HTMLOListElement,
+  OlHTMLAttributes<HTMLOListElement> & {
+    compound: boolean;
+    steps?: readonly StepperStep[];
+    children?: ReactNode;
+  }
+>(function StepperList({ compound, steps, children, className, ...rest }, ref) {
+  const root = useStepperContext();
+  const slotClass = useStepperClassNames().root;
+  const { onPointerOver, onPointerOut, onPointerDown, onPointerUp, ...dom } = rest;
+  const part = useStepperRootMotion({
+    onPointerOver: onPointerOver as PointerEventHandler<HTMLOListElement>,
+    onPointerOut: onPointerOut as PointerEventHandler<HTMLOListElement>,
+    onPointerDown: onPointerDown as PointerEventHandler<HTMLOListElement>,
+    onPointerUp: onPointerUp as PointerEventHandler<HTMLOListElement>,
+  });
+  const setRef = mergeRefs(ref, part.setRef);
+
+  return (
+    <ol
+      ref={setRef as Ref<HTMLOListElement>}
+      {...dom}
+      {...part.pointerHandlers}
+      className={stepperRootClass(root.orientation, slotClass, className)}
+      data-orientation={root.orientation}
+      data-size={root.size}
+    >
+      {compound ? renderCompound(children) : renderSimple(steps ?? [])}
+    </ol>
+  );
+});

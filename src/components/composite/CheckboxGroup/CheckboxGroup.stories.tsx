@@ -1,15 +1,21 @@
-import type { ComponentType } from "react";
+import { useState, type ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Checkbox } from "@/components/core/Checkbox";
+import { Text } from "@/components/core/Text";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
-import { CheckboxGroup } from "./CheckboxGroup";
+import { CheckboxGroup } from ".";
+import { CheckboxGroupSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/checkboxGroup/slotMotion/gallery";
+import { CheckboxGroupMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/checkboxGroup/motionController/gallery";
+import { Label } from "@/components/core/Label";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -26,15 +32,18 @@ const meta = {
   parameters: { layout: "fullscreen" },
   decorators: [...darkThemeDecorator],
   args: {
-    title: "Способ доставки",
-    description: "Можно выбрать несколько вариантов.",
-    isRequired: false,
-    selection: "multiple" as const,
+    required: false,
+    selectionMode: "multiple" as const,
   },
   argTypes: {
-    selection: {
+    selectionMode: {
       control: "radio",
-      options: ["multiple", "single"],
+      items: ["multiple", "single"],
+    },
+    size: {
+      control: "select",
+      items: COMPONENT_SIZES,
+      table: { defaultValue: { summary: "small" } },
     },
   },
 } satisfies Meta<typeof CheckboxGroup>;
@@ -46,46 +55,197 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: (args) => (
     <CheckboxGroup {...args}>
-      <Checkbox name="ship" value="courier" label="Курьер" />
-      <Checkbox name="ship" value="pickup" label="Самовывоз" />
-      <Checkbox name="ship" value="post" label="Почта" />
+      <CheckboxGroup.Legend>
+        <Label>Delivery method</Label>
+        <CheckboxGroup.Hint>Multiple items can be selected.</CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="ship" value="courier" label="Courier" />
+        <Checkbox name="ship" value="pickup" label="Pickup" />
+        <Checkbox name="ship" value="post" label="Mail" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
 };
 
 export const SingleSelection: Story = {
-  name: "Один вариант",
+  name: "Single option",
   args: {
-    ...meta.args,
-    description: "Отмечен только один пункт; при смене выбора остальные снимаются.",
-    selection: "single" as const,
+    selectionMode: "single" as const,
   },
   render: (args) => (
     <CheckboxGroup {...args}>
-      <Checkbox name="ship" value="courier" label="Курьер" />
-      <Checkbox name="ship" value="pickup" label="Самовывоз" />
-      <Checkbox name="ship" value="post" label="Почта" />
+      <CheckboxGroup.Legend>
+        <Label>Delivery method</Label>
+        <CheckboxGroup.Hint>
+          Only one item is checked; changing selection clears the others.
+        </CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="ship" value="courier" label="Courier" />
+        <Checkbox name="ship" value="pickup" label="Pickup" />
+        <Checkbox name="ship" value="post" label="Mail" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
+  play: async ({ canvas, userEvent }) => {
+    const pickup = canvas.getByRole("checkbox", { name: "Pickup" });
+    await userEvent.click(pickup);
+    await expect(pickup).toBeChecked();
+  },
+};
+
+export const ControlledMultiple: Story = {
+  name: "Controlled multiple",
+  render: () => {
+    const [values, setValues] = useState<string[]>(["courier"]);
+    return (
+      <CheckboxGroup values={values} onValuesChange={setValues}>
+        <CheckboxGroup.Legend>
+          <Label>Delivery method</Label>
+          <CheckboxGroup.Hint>
+            {values.length > 0 ? values.join(", ") : "Nothing selected"}
+          </CheckboxGroup.Hint>
+        </CheckboxGroup.Legend>
+        <CheckboxGroup.List>
+          <Checkbox name="ship" value="courier" label="Courier" />
+          <Checkbox name="ship" value="pickup" label="Pickup" />
+          <Checkbox name="ship" value="post" label="Mail" />
+        </CheckboxGroup.List>
+      </CheckboxGroup>
+    );
+  },
 };
 
 export const Required: Story = {
-  name: "Обязательное поле",
-  args: { isRequired: true },
-  render: (args) => (
-    <CheckboxGroup {...args} title="Согласия">
-      <Checkbox name="terms" label="Пользовательское соглашение" />
-      <Checkbox name="marketing" label="Рассылка (необязательно)" />
+  name: "Required field",
+  render: () => (
+    <CheckboxGroup required>
+      <CheckboxGroup.Legend>
+        <Label>Consents</Label>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="terms" label="Terms of service" />
+        <Checkbox name="marketing" label="Newsletter (optional)" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
 };
 
 export const WithoutDescription: Story = {
-  name: "Без подзаголовка",
+  name: "Without subtitle",
   render: () => (
-    <CheckboxGroup title="Теги">
-      <Checkbox name="t1" label="Дизайн" />
-      <Checkbox name="t2" label="Разработка" />
+    <CheckboxGroup>
+      <CheckboxGroup.Legend>
+        <Label>Tags</Label>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="t1" label="Design" />
+        <Checkbox name="t2" label="Development" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
+};
+
+export const Horizontal: Story = {
+  name: "Horizontal",
+  render: () => (
+    <CheckboxGroup>
+      <CheckboxGroup.Legend>
+        <Label>Delivery method</Label>
+        <CheckboxGroup.Hint>Items in a row with wrap when space is tight.</CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List orientation="horizontal">
+        <Checkbox name="ship" value="courier" label="Courier" />
+        <Checkbox name="ship" value="pickup" label="Pickup" />
+        <Checkbox name="ship" value="post" label="Mail" />
+      </CheckboxGroup.List>
+    </CheckboxGroup>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for CheckboxGroup — root, legend, legendHeader, hint, error, list, group, actions.",
+      },
+    },
+  },
+  render: () => (
+    <CheckboxGroup
+      required
+      className="max-w-md"
+      classNames={{
+        root: "rounded-large border border-primary/20 p-base",
+        legend: "text-primary",
+        legendHeader: "gap-xsmall",
+        hint: "text-foreground/70",
+        error: "font-medium",
+        list: "gap-base",
+        group: "gap-large",
+        actions: "pt-small",
+      }}
+    >
+      <CheckboxGroup.Legend>
+        <Label>Consents</Label>
+        <CheckboxGroup.Hint>Slots via classNames.</CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.Group>
+        <CheckboxGroup.List>
+          <Checkbox name="terms" label="Terms of service" />
+          <Checkbox name="marketing" label="Newsletter (optional)" />
+        </CheckboxGroup.List>
+        <CheckboxGroup.Error>Accept the terms to continue.</CheckboxGroup.Error>
+      </CheckboxGroup.Group>
+      <CheckboxGroup.Actions>
+        <Text as="span" textStyle="small" className="text-muted">
+          Saved automatically
+        </Text>
+      </CheckboxGroup.Actions>
+    </CheckboxGroup>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Sizes small · base · mid · large",
+  render: () => (
+    <div className="grid w-full max-w-5xl gap-2xlarge md:grid-cols-2">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
+          <CheckboxGroup size={size}>
+            <CheckboxGroup.Legend>
+              <Label>Delivery method</Label>
+              <CheckboxGroup.Hint>size={size}</CheckboxGroup.Hint>
+            </CheckboxGroup.Legend>
+            <CheckboxGroup.List>
+              <Checkbox name={`ship-${size}`} value="courier" label="Courier" />
+              <Checkbox name={`ship-${size}`} value="pickup" label="Pickup" />
+              <Checkbox name={`ship-${size}`} value="post" label="Mail" />
+            </CheckboxGroup.List>
+          </CheckboxGroup>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <CheckboxGroupSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play vs playSlot on group chrome, cancel loop, checks events. Item Checkbox keeps its own scope.",
+      },
+    },
+  },
+  render: () => <CheckboxGroupMotionControllerGalleryDemo />,
 };

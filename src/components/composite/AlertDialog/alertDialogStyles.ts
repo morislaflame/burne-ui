@@ -1,0 +1,168 @@
+import { alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
+import type { AlertStatus, AlertVariant, KitAlertVariant } from "@/components/core/Alert/alertTypes";
+import { KIT_ALERT_VARIANTS } from "@/components/core/Alert/alertTypes";
+import { dialogOverlayClass, dialogOverlayEnterStyle } from "@/components/core/Dialog/dialogStyles";
+import type { TextVariant } from "@/components/core/Text";
+import { TEXT_VARIANT_CLASS } from "@/components/core/Text/textStyles";
+import {
+  PANEL_SIZE_LAYOUT,
+  panelSizeLayout,
+  type PanelSize,
+} from "@/components/core/utils/sizeLayout";
+import { resolveVariantVisual, skinVisualClass } from "@/skins/resolveVariantVisual";
+import { cn } from "@/utils/cn";
+ 
+import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";
+import type { ButtonSize } from "@/components/core/Button/buttonTypes";
+ 
+export const ALERT_DIALOG_CONTENT_CLASS =
+  "flex min-h-0 flex-1 flex-col text-start";
+ 
+function toAlertDialogSizePreset(size: PanelSize): AlertDialogSizePreset {
+  const panel = PANEL_SIZE_LAYOUT[size];
+  return {
+    rounded: panel.rounded,
+    panelMax: panel.panelMax,
+    maxHeight: panel.maxHeight,
+    headerGap: panel.alertHeaderGap,
+    headerPadding: panel.headerPadding,
+    bodyPadding: panel.bodyPadding,
+    footerPadding: panel.footerPadding,
+    iconClass: panel.iconClass,
+    titleVariant: panel.alertTitleVariant,
+    titleClassName: panel.titleClassName,
+    descVariant: panel.descVariant,
+    descClassName: panel.descClassName,
+    bodyVariant: panel.bodyVariant,
+    footerButtonSize: panel.footerButtonSize,
+    closeButtonSize: panel.closeButtonSize,
+  };
+}
+ 
+export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
+  small: toAlertDialogSizePreset("small"),
+  base: toAlertDialogSizePreset("base"),
+  mid: toAlertDialogSizePreset("mid"),
+  large: toAlertDialogSizePreset("large"),
+};
+ 
+export const ALERT_DIALOG_NATIVE_CLASS =
+  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center overflow-hidden border-0 bg-transparent p-large open:flex [&::backdrop]:bg-transparent";
+ 
+export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
+ 
+export const ALERT_DIALOG_NATIVE_POSITION_CONTAINED_CLASS =
+  "absolute inset-0 z-dialog portal-contained";
+ 
+export function alertDialogNativeClass(contained: boolean): string {
+  return cn(
+    contained
+      ? ALERT_DIALOG_NATIVE_POSITION_CONTAINED_CLASS
+      : ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS,
+    ALERT_DIALOG_NATIVE_CLASS,
+  );
+}
+ 
+export const ALERT_DIALOG_PANEL_SHELL_CLASS = "relative z-10 w-full outline-none";
+ 
+export const ALERT_DIALOG_PANEL_SURFACE_CLASS =
+  "flex min-h-0 flex-col overflow-hidden text-start text-foreground";
+
+export const ALERT_DIALOG_PANEL_SURFACE: Record<KitAlertVariant, string> = {
+  default: "border-token bg-surface shadow-token-large",
+  outline: "bg-background border-token-outline text-foreground shadow-token-large",
+  secondary: "bg-secondary border-token text-secondary-foreground shadow-token-large",
+};
+
+/** Fills the panel when `SkinShell` wraps children in a declarative content node. */
+export const ALERT_DIALOG_PANEL_LAYER_CONTENT_CLASS = "flex min-h-0 flex-1 flex-col";
+
+export const ALERT_DIALOG_CLOSE_CLASS = "shrink-0";
+ 
+export const ALERT_DIALOG_TRIGGER_BASE_CLASS = "outline-none focus-ring";
+ 
+export const ALERT_DIALOG_INDICATOR_CLASS = "shrink-0 [&_svg]:block";
+ 
+export const ALERT_DIALOG_HEADER_CLASS = "shrink-0";
+ 
+export const ALERT_DIALOG_HEADING_BLOCK_CLASS = "contents";
+ 
+export const ALERT_DIALOG_TITLE_CLASS = "font-w-mid";
+ 
+export const ALERT_DIALOG_BODY_BASE_CLASS =
+  "min-h-0 flex-1 overflow-y-auto overscroll-contain py-small";
+ 
+export const ALERT_DIALOG_FOOTER_CLASS =
+  "flex shrink-0 flex-wrap items-center justify-end gap-base";
+ 
+export function alertDialogPanelSurfaceClass(variant: AlertVariant): string {
+  const visual = resolveVariantVisual(variant, KIT_ALERT_VARIANTS, "alertDialog.panel");
+  return skinVisualClass(visual, ALERT_DIALOG_PANEL_SURFACE[visual.key]);
+}
+ 
+export function alertDialogOverlayClass(lightUi: boolean, slotClass?: string): string {
+  return dialogOverlayClass(lightUi, slotClass);
+}
+ 
+export function alertDialogOverlayEnterStyle() {
+  return dialogOverlayEnterStyle();
+}
+ 
+export function alertDialogBodyClass(
+  bodyPadding: string,
+  bodyVariant: TextVariant,
+  className?: string,
+): string {
+  return cn(
+    ALERT_DIALOG_BODY_BASE_CLASS,
+    TEXT_VARIANT_CLASS[bodyVariant],
+    "text-foreground text-start",
+    bodyPadding,
+    className,
+  );
+}
+ 
+export function alertDialogContentClass(className?: string): string {
+  return cn(ALERT_DIALOG_CONTENT_CLASS, className);
+}
+ 
+export function alertDialogPanelClass({
+  variant,
+  sizePreset,
+  className,
+  slotClass,
+}: {
+  variant: AlertVariant;
+  sizePreset: Pick<AlertDialogSizePreset, "panelMax" | "maxHeight" | "rounded">;
+  className?: string;
+  slotClass?: string;
+}): string {
+  const visual = resolveVariantVisual(variant, KIT_ALERT_VARIANTS, "alertDialog.panel");
+  return cn(
+    ALERT_DIALOG_PANEL_SHELL_CLASS,
+    sizePreset.panelMax,
+    sizePreset.rounded,
+    ALERT_DIALOG_PANEL_SURFACE_CLASS,
+    sizePreset.maxHeight,
+    skinVisualClass(visual, ALERT_DIALOG_PANEL_SURFACE[visual.key]),
+    slotClass,
+    className,
+  );
+}
+
+export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {
+  return alertIndicatorWrapperTextClass(status);
+}
+
+export function footerButtonSizeForAlertDialog(
+  dialogSize: AlertDialogSize,
+): ButtonSize {
+  return panelSizeLayout(dialogSize).footerButtonSize;
+}
+ 
+export function closeButtonSizeForAlertDialog(
+  dialogSize: AlertDialogSize,
+): ButtonSize {
+  return panelSizeLayout(dialogSize).closeButtonSize;
+}
+ 

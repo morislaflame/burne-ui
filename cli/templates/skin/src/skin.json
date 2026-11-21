@@ -1,0 +1,13 @@
+{
+  "name": "__SKIN_NAME__",
+  "meta": {
+    "title": "__SKIN_TITLE__",
+    "description": "Tier-1 skin. burne-ui skin validate reads this file."
+  },
+  "baseVariant": "default",
+  "tokens": {
+    "--color-surface": "#ffffff",
+    "--color-foreground": "#111111"
+  },
+  "styleUrl": "burne-ui-skin-__SKIN_NAME__/styles.css"
+}

@@ -1,23 +1,173 @@
 import { type ClassValue, clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
-
-const twMerge = extendTailwindMerge({
+ 
+import { burneRadiusScale, burneSpacingScale, burneTextScale } from "@/tokens/config";
+ 
+const twMerge = extendTailwindMerge<
+  "avatar-size" | "selection-indicator" | "focus-ring" | "icon-slot" | "color-transition"
+>({
   extend: {
     theme: {
-      /** Иначе `text-large` попадает в группу цвета и схлопывается с `text-foreground`. */
-      text: [
-        "small",
-        "mid",
-        "tools",
-        "accent-header",
-        "header-1",
-        "header-2",
-        "large",
+      spacing: [...burneSpacingScale],
+      radius: [...burneRadiusScale],
+      text: [...burneTextScale],
+    },
+    classGroups: {
+      "border-w": [
+        "border-token",
+        "border-token-outline",
+        "border-token-primary",
+        "border-token-danger",
+        "border-token-success",
+        "border-token-info",
+        "border-token-warning",
+      ],
+      "border-w-t": ["border-t-token", "button-group-joint-t"],
+      "border-w-b": ["border-b-token", "button-group-joint-b"],
+      "border-w-l": ["border-l-token"],
+      "border-w-r": ["border-r-token"],
+      "border-w-s": ["border-s-token", "button-group-joint-s"],
+      "border-w-e": ["border-e-token", "button-group-joint-e"],
+      "divide-x": ["divide-x-token"],
+      "divide-y": ["divide-y-token"],
+      shadow: [
+        "shadow-token-small",
+        "shadow-token-base",
+        "shadow-token-mid",
+        "shadow-token-large",
+        "shadow-token-xlarge",
+      ],
+      "min-h": [
+        "min-h-control-xsmall",
+        "min-h-control-small",
+        "min-h-control-base",
+        "min-h-control-mid",
+        "min-h-control-large",
+      ],
+      "min-w": [
+        "min-w-control-xsmall",
+        "min-w-control-small",
+        "min-w-control-base",
+        "min-w-control-mid",
+        "min-w-control-large",
+        "min-w-button-small",
+        "min-w-button-base",
+        "min-w-button-mid",
+        "min-w-button-large",
+        "min-w-component-xsmall",
+        "min-w-component-small",
+        "min-w-component-base",
+        "min-w-component-mid",
+        "min-w-component-large",
+        "min-w-component-xlarge",
+        "min-w-component-2xlarge",
+      ],
+      "max-w": [
+        "max-w-control-xsmall",
+        "max-w-control-small",
+        "max-w-control-base",
+        "max-w-control-mid",
+        "max-w-control-large",
+        "max-w-component-xsmall",
+        "max-w-component-small",
+        "max-w-component-base",
+        "max-w-component-mid",
+        "max-w-component-large",
+        "max-w-component-xlarge",
+        "max-w-component-2xlarge",
+        "max-w-page-xsmall",
+        "max-w-page-small",
+        "max-w-page-base",
+        "max-w-page-mid",
+        "max-w-page-large",
+        "max-w-page-xlarge",
+        "max-w-page-2xlarge",
+      ],
+      w: [
+        "w-control-xsmall",
+        "w-control-small",
+        "w-control-base",
+        "w-control-mid",
+        "w-control-large",
+        "w-page-xsmall",
+        "w-page-small",
+        "w-page-base",
+        "w-page-mid",
+        "w-page-large",
+        "w-page-xlarge",
+        "w-page-2xlarge",
+      ],
+      basis: ["basis-component-xsmall"],
+      "font-weight": [
+        "font-w-small",
+        "font-w-base",
+        "font-w-mid",
+        "font-w-strong",
+        "font-w-bold",
+      ],
+      size: [
+        "icon-xsmall",
+        "icon-small",
+        "icon-base",
+        "icon-mid",
+        "icon-large",
+        "icon-xlarge",
+        "icon-2xlarge",
+        "icon-3xlarge",
+        "icon-16",
+        "icon-18",
+        "icon-24",
+      ],
+      z: [
+        "z-sticky",
+        "z-dialog",
+        "z-dropdown",
+        "z-dropdown-sub",
+        "z-popover",
+        "z-toast",
+        "z-tooltip",
+      ],
+      "avatar-size": [
+        "avatar-size-small",
+        "avatar-size-base",
+        "avatar-size-mid",
+        "avatar-size-large",
+      ],
+      "selection-indicator": [
+        "selection-indicator-xsmall",
+        "selection-indicator-small",
+        "selection-indicator-base",
+        "selection-indicator-mid",
+        "selection-indicator-large",
+      ],
+      "focus-ring": [
+        "focus-ring",
+        "focus-within-ring",
+        "focus-ring-inset",
+        "has-focus-ring",
+      ],
+      "color-transition": [
+        "text-color-transition",
+        "surface-color-transition",
+        "field-shell-transition",
+      ],
+      "icon-slot": [
+        "icon-slot-xsmall",
+        "icon-slot-small",
+        "icon-slot-base",
+        "icon-slot-mid",
+        "icon-slot-large",
+        "icon-slot-xlarge",
+        "icon-slot-2xlarge",
+        "icon-slot-3xlarge",
+        "icon-slot-16",
+        "icon-slot-24",
       ],
     },
   },
 });
-
+ 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+ 

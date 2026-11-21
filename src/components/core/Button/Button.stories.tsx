@@ -1,15 +1,34 @@
 import type { ComponentType } from "react";
-import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { IoAdd } from "react-icons/io5";
+import { expect, fn } from "storybook/test";
+import { IoAdd, IoSave } from "react-icons/io5";
 
-import { Button, type ButtonAsyncState } from "./Button";
+import { Button, type ButtonStatus, type ButtonVariant } from ".";
+import { ButtonSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/button/slotMotion/gallery";
+import { ButtonMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/button/motionController/gallery";
+import { ButtonMotionStateSaveDemo } from "../../../../playground/showcase/demos/button/ButtonMotionStateSave.demo";
 
-/** Тёмная тема — токены из `:root`, явный фон под сторисы. */
+const BUTTON_VARIANTS: ButtonVariant[] = [
+  "default",
+  "primary",
+  "outline",
+  "secondary",
+  "ghost",
+];
+
+const BUTTON_STATUSES: ButtonStatus[] = [
+  "default",
+  "danger",
+  "success",
+  "info",
+  "warning",
+];
+
+/** Dark theme — tokens from `:root`, explicit background for stories. */
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -21,7 +40,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -38,10 +57,10 @@ const meta = {
   },
   decorators: [...darkThemeDecorator],
   args: {
-    children: "Кнопка",
+    children: "Button",
     variant: "default",
+    status: "default",
     size: "base",
-    animated: true,
     disabled: false,
     iconOnly: false,
   },
@@ -50,28 +69,32 @@ const meta = {
       control: "select",
       options: [
         "default",
+        "primary",
         "outline",
         "secondary",
         "ghost",
-        "danger",
-        "success",
-        "info",
-        "warning",
       ],
+    },
+    status: {
+      control: "select",
+      options: ["default", "danger", "success", "info", "warning"] satisfies ButtonStatus[],
     },
     size: {
       control: "select",
-      options: ["small", "base", "large", "xlarge"],
+      options: ["small", "base", "mid", "large"],
     },
-    animated: { control: "boolean" },
     iconOnly: {
       control: "boolean",
-      description: "Только иконка: `min-w-fit` вместо `min-w-button-*`. Задайте `aria-label`.",
+      description: "Icon only: `min-w-fit` instead of `min-w-button-*`. Set `aria-label`.",
     },
     ripple: {
       control: "boolean",
       description:
-        "Встроенный `<Ripple />` с тоном под variant. По умолчанию в сторибуке включён для демо.",
+        "Built-in `<Ripple />` with tone matching variant. Enabled by default in Storybook for demo.",
+    },
+    motionController: {
+      control: false,
+      description: "Deferred MotionController handle. Not config.motion and not the motion map.",
     },
   },
   render: (args) => <Button {...args} />,
@@ -83,40 +106,52 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const ClickInteraction: Story = {
+  name: "Interaction: click",
+  args: {
+    children: "Button",
+    onClick: fn(),
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Button" }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+
 export const Sizes: Story = {
-  name: "Размеры (small — xlarge)",
+  name: "Sizes (small — large)",
   render: () => (
-    <div className="flex items-start gap-plus">
+    <div className="flex items-start gap-mid">
       <Button size="small">
         Small
       </Button>
       <Button size="base">
         Base
       </Button>
+      <Button size="mid">
+        Mid
+      </Button>
       <Button size="large">
         Large
-      </Button>
-      <Button size="xlarge">
-        Extra large
       </Button>
     </div>
   ),
 };
 
 export const IconOnlySizes: Story = {
-  name: "Только иконка (iconOnly)",
+  name: "Icon only (iconOnly)",
   render: () => (
-    <div className="flex flex-wrap items-center gap-plus">
-      <Button size="small" variant="outline" iconOnly aria-label="Добавить">
+    <div className="flex flex-wrap items-center gap-mid">
+      <Button size="small" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-small" />
       </Button>
-      <Button size="base" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="base" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-base" />
       </Button>
-      <Button size="large" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="mid" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-large" />
       </Button>
-      <Button size="xlarge" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="large" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-large" />
       </Button>
     </div>
@@ -124,11 +159,14 @@ export const IconOnlySizes: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
-    <div className="flex flex-wrap items-start gap-plus">
-      <Button variant="default">
+    <div className="flex flex-wrap items-start gap-mid">
+      <Button>
         Default
+      </Button>
+      <Button variant="primary">
+        Primary
       </Button>
       <Button variant="outline">
         Outline
@@ -138,30 +176,21 @@ export const Variants: Story = {
       </Button>
       <Button variant="ghost" ripple>
         Ghost
-      </Button>
-      <Button variant="danger" ripple>
-        Удалить
-      </Button>
-      <Button variant="success" ripple>
-        Готово
-      </Button>
-      <Button variant="info" ripple>
-        Сведения
-      </Button>
-      <Button variant="warning" ripple>
-        Внимание
       </Button>
     </div>
   ),
 };
 
 export const VariantsOnLightTheme: Story = {
-  name: "Варианты — светлая тема",
+  name: "Variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-wrap items-start gap-plus">
-      <Button variant="default">
+    <div className="flex flex-wrap items-start gap-mid">
+      <Button>
         Default
+      </Button>
+      <Button variant="primary">
+        Primary
       </Button>
       <Button variant="outline">
         Outline
@@ -172,34 +201,77 @@ export const VariantsOnLightTheme: Story = {
       <Button variant="ghost" ripple>
         Ghost
       </Button>
-      <Button variant="danger" ripple>
-        Удалить
+    </div>
+  ),
+};
+
+function StatusVariantsDemo() {
+  return (
+    <div className="flex w-full max-w-4xl flex-col gap-2xlarge py-large">
+      {BUTTON_STATUSES.map((status) => (
+        <div key={status} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">
+            status: {status}
+          </span>
+          <div className="flex flex-wrap items-center gap-base">
+            {BUTTON_VARIANTS.map((variant) => (
+              <Button
+                key={`${status}-${variant}`}
+                variant={variant}
+                status={status}
+                className="min-w-[7.5rem] capitalize"
+              >
+                {variant}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export const StatusVariants: Story = {
+  name: "Statuses × variants (dark theme)",
+  render: () => <StatusVariantsDemo />,
+};
+
+export const StatusVariantsOnLightTheme: Story = {
+  name: "Statuses × variants (light theme)",
+  decorators: [...lightThemeDecorator],
+  render: () => <StatusVariantsDemo />,
+};
+
+export const WithIcon: Story = {
+  name: "With icon",
+  render: () => (
+    <div className="flex flex-wrap items-center gap-mid">
+      <Button size="small" icon={<IoAdd aria-hidden />}>
+        Add
       </Button>
-      <Button variant="success" ripple>
-        Готово
+      <Button size="base" variant="outline" icon={<IoAdd aria-hidden />} iconPosition="end">
+        Create
       </Button>
-      <Button variant="info" ripple>
-        Сведения
-      </Button>
-      <Button variant="warning" ripple>
-        Внимание
+      <Button size="large" variant="ghost" icon={<IoAdd aria-hidden />}>
+        More
       </Button>
     </div>
   ),
 };
 
-export const WithLeftIcon: Story = {
-  name: "С иконкой слева",
+export const OverrideIconSize: Story = {
+  name: "Override icon size",
   render: () => (
-    <div className="flex flex-wrap items-center gap-plus">
-      <Button size="small" leftIcon={<IoAdd aria-hidden />}>
-        Добавить
+    <div className="flex flex-wrap items-center gap-mid">
+      <Button size="base" icon={<IoAdd aria-hidden />}>
+        Default
       </Button>
-      <Button size="base" variant="outline" leftIcon={<IoAdd aria-hidden />}>
-        Создать
-      </Button>
-      <Button size="large" variant="ghost" leftIcon={<IoAdd aria-hidden />}>
-        Ещё
+      <Button
+        size="base"
+        icon={<IoAdd aria-hidden />}
+        classNames={{ icon: "icon-slot-large" }}
+      >
+        Large icon
       </Button>
     </div>
   ),
@@ -209,72 +281,115 @@ export const Disabled: Story = {
   args: { disabled: true },
 };
 
-export const WithoutAnimation: Story = {
-  args: { animated: false },
-};
-
 export const WithoutRipple: Story = {
-  name: "С рипплом",
+  name: "With ripple",
   args: { ripple: true },
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-theme)",
+  name: "Light theme (data-theme)",
   decorators: [...lightThemeDecorator],
 };
 
-export const AsyncSuccess: Story = {
-  name: "Async → успех",
-  args: {
-    children: "Сохранить",
-    ripple: true,
-    onAsyncClick: () =>
-      new Promise<boolean>((resolve) => {
-        window.setTimeout(() => resolve(true), 1400);
-      }),
-  },
+export const MotionStateSave: Story = {
+  name: "motionState save",
+  render: () => <ButtonMotionStateSaveDemo />,
 };
 
-export const AsyncError: Story = {
-  name: "Async → ошибка",
-  args: {
-    children: "Отправить",
-    ripple: true,
-    onAsyncClick: () =>
-      new Promise<boolean>((resolve) => {
-        window.setTimeout(() => resolve(false), 1400);
-      }),
-  },
+export const LabelLayout: Story = {
+  name: "Label + shortcut layout",
+  render: () => (
+    <Button
+      variant="default"
+      type="button"
+      className="w-full max-w-xs"
+      classNames={{ label: "justify-between gap-mid" }}
+    >
+      <span>Command palette</span>
+      <span className="inline-flex gap-xsmall">
+        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">⌘</span>
+        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">K</span>
+      </span>
+    </Button>
+  ),
 };
 
-function ControlledAsyncDemo() {
-  const [state, setState] = useState<ButtonAsyncState>("idle");
+export const CompoundLayout: Story = {
+  name: "Compound API",
+  render: () => (
+    <Button variant="outline" type="button" className="w-full max-w-xs">
+      <Button.Label className="justify-between gap-mid">
+        <Button.Text>Command palette</Button.Text>
+        <span className="inline-flex gap-xsmall font-mono text-xsmall">
+          <span>⌘</span>
+          <span>K</span>
+        </span>
+      </Button.Label>
+    </Button>
+  ),
+};
 
-  const run = useCallback(() => {
-    if (state !== "idle") return;
-    setState("loading");
-    window.setTimeout(() => {
-      setState(Math.random() > 0.5 ? "success" : "error");
-    }, 1200);
-  }, [state]);
-
-  return (
-    <div className="flex flex-col items-center gap-plus">
-      <Button asyncState={state} onClick={run} disabled={state !== "idle"} ripple>
-        Контролируемая
+/** Review 3.8: Button as link via asChild. */
+export const AsChildLink: Story = {
+  name: "asChild — link",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`asChild` merges Button styles and motion onto a single child (e.g. `<a>`, Next.js `<Link>`). Child text becomes the label.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-wrap items-center gap-large">
+      <Button asChild variant="primary">
+        <a href="#docs">Primary link</a>
       </Button>
-      <button
-        type="button"
-        className="text-muted text-sm underline"
-        onClick={() => setState("idle")}
-      >
-        Сбросить в idle
-      </button>
+      <Button asChild variant="outline" icon={<IoAdd aria-hidden />} iconPosition="end">
+        <a href="#new">New page</a>
+      </Button>
+      <Button asChild variant="ghost" size="small">
+        <a href="#ghost">Ghost link</a>
+      </Button>
     </div>
-  );
-}
+  ),
+};
 
-export const ControlledAsync: Story = {
-  name: "Контроль asyncState",
-  render: () => <ControlledAsyncDemo />,
+export const CustomClassNames: Story = {
+  name: "Custom classNames",
+  render: () => (
+    <Button
+      variant="outline"
+      status="info"
+      icon={<IoSave aria-hidden />}
+      className="px-xlarge"
+      classNames={{
+        root: "rounded-large border-token-info",
+        content: "gap-small",
+        label: "gap-small",
+        icon: "icon-slot-large text-info",
+        text: "font-w-strong text-info",
+      }}
+    >
+      Save draft
+    </Button>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ButtonSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot, playAll stagger, set/cancel, stacked timelines, async events, waitForComplete.",
+      },
+    },
+  },
+  render: () => <ButtonMotionControllerGalleryDemo />,
 };

@@ -1,6 +1,6 @@
 /**
- * Одна связная Geometry: поверхность тора + внутренний «стакан» (бок + крышки).
- * Процедурная сборка (merge в один index buffer), без внешнего CSG.
+ * One liaison Geometry: torus surface + inner “glass” (side + lids).
+ * Procedural assembly (merge in one index buffer), without external CSG.
  */
 import { Geometry, type Renderer } from "ogl";
 
@@ -78,7 +78,7 @@ function addTorusShell(
   return vc;
 }
 
-/** Цилиндр вдоль Z: два кольца (z = ±halfZ), бок, крышки — кольца не дублируются. */
+/** Cylinder along Z: two rings (z = ±halfZ), side, lids - rings are not duplicated. */
 function addInnerPlug(
   ir: number,
   sq: number,

@@ -1,0 +1,474 @@
+# Dialog
+
+Модальное окно на нативном `<dialog>` с порталом в `document.body`, GSAP enter/leave и compound-компоновкой. Controlled / uncontrolled: `open` / `defaultOpen` / `onOpenChange`.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Dialog, type DialogProps, type DialogVariant, type DialogClassNames, type DialogPanelProps, type DialogTriggerProps, type DialogMotion, type DialogPartMotion } from "burne-ui";
+```
+
+## API
+
+### Root (`Dialog`)
+
+| Prop | Тип | Обязательный | Описание |
+|------|-----|--------------|----------|
+| `open` | `boolean` | нет | Controlled: открыт ли диалог |
+| `defaultOpen` | `false` | нет | Uncontrolled начальное состояние |
+| `onOpenChange` | `(open: boolean) => void` | нет | Смена состояния |
+| `children` | `ReactNode` | — | `Dialog.Panel`, `Dialog.Trigger`, … |
+| `classNames` | `DialogClassNames` | — | Слоты всех подчастей |
+| `motion` | `DialogMotion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`; у `title` / `description` ещё `hoverIn` / `hoverOut`). Root без DOM — как `classNames`. `events` / `states` — не слоты |
+| `motionController` | `MotionController` | — | Handle Root-scope (`trigger`). Портальные слоты — отдельный handle на `Dialog.Panel` |
+| `motionState` / `motionPayload` / `playInitialState` | — | — | Trigger scope. Панель — те же пропы на `Dialog.Panel`. Не DOM. Снимок — `createMotionFactory` / `MotionPayload` |
+
+Root **не рендерит DOM** — только контекст и `classNames` provider.
+
+### Compound-подчасти
+
+| Часть | Назначение |
+|-------|------------|
+| `Dialog.Trigger` | Открытие после press-squeeze; `asChild` |
+| `Dialog.Panel` | Портал + overlay + анимации; props ниже |
+| `Dialog.Content` | Обёртка контента (`p-xlarge`, `gap-large`) |
+| `Dialog.Header` | Шапка: heading + close |
+| `Dialog.HeadingBlock` | Блок title + description |
+| `Dialog.Title` | `<h2>`, `Text` mid |
+| `Dialog.Description` | `<p>`, `text-muted` |
+| `Dialog.Close` | `CloseButton` secondary; size из `PANEL_SIZE_LAYOUT.closeButtonSize` |
+| `Dialog.Body` | Скроллируемая область |
+| `Dialog.Footer` | Кнопки, `justify-end` |
+
+### `Dialog.Panel` props
+
+| Prop | Тип | По умолчанию | Описание |
+|------|-----|--------------|----------|
+| `variant` | `default` \| `outline` \| `secondary` | `default` | Поверхность панели. Имя скина — строка |
+| `closeOnInteractOutside` | `boolean` | `true` | Закрытие по клику на overlay |
+| `onInteractOutside` | `(event) => void` | — | Клик по overlay. `event.preventDefault()` оставляет диалог открытым. `return false` **не** отменяет закрытие |
+| `className` | `string` | — | На focusable panel wrapper |
+| `themeAnchor` | `HTMLElement` | auto | Якорь для светлой темы портала |
+| `motionController` | `MotionController` | — | Handle портального хоста (`panel` / `overlay` / chrome). `play()` skip — нет `root`. `playSlot("panel")` |
+| `motionState` / `motionPayload` / `playInitialState` | — | — | Playback `motion.states` на портальном scope. Карта `states` с Root мержится в Panel. Снимок — `createMotionFactory` / `MotionPayload` |
+
+### `DialogClassNames`
+
+```tsx
+type DialogClassNames = {
+  trigger?: string;
+  dialog?: string;       // <dialog>
+  overlay?: string;
+  panel?: string;
+  content?: string;
+  header?: string;
+  headingBlock?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  footer?: string;
+  close?: string;
+};
+```
+
+### Базовый пример
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Dialog open={open} onOpenChange={setOpen}>
+  <Dialog.Panel>
+    <Dialog.Header>
+      <Dialog.HeadingBlock>
+        <Dialog.Title>Заголовок</Dialog.Title>
+        <Dialog.Description>Описание</Dialog.Description>
+      </Dialog.HeadingBlock>
+      <Dialog.Close />
+    </Dialog.Header>
+    <Dialog.Body>Контент</Dialog.Body>
+    <Dialog.Footer>
+      <Button variant="ghost" onClick={() => setOpen(false)}>Отмена</Button>
+      <Button variant="primary" onClick={() => setOpen(false)}>OK</Button>
+    </Dialog.Footer>
+  </Dialog.Panel>
+</Dialog>
+```
+
+### С `Dialog.Trigger`
+
+```tsx
+<Dialog open={open} onOpenChange={setOpen}>
+  <Dialog.Trigger asChild>
+    <Button>Открыть</Button>
+  </Dialog.Trigger>
+  <Dialog.Panel>…</Dialog.Panel>
+</Dialog>
+```
+
+Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы подавить собственную анимацию `Button`, затем `runOpenAfterSqueeze` открывает диалог после `motion.trigger.pressIn` (дефолт `pressSqueeze`; другой рецепт или factory — на карте `trigger`).
+
+Грязная форма — не выключайте `closeOnInteractOutside` целиком, а отмените конкретный клик:
+
+```tsx
+<Dialog.Panel
+  onInteractOutside={(event) => {
+    if (dirty) event.preventDefault();
+  }}
+>
+```
+
+## variant
+
+| variant | Панель |
+|---------|--------|
+| `default` | `bg-surface border-token shadow-token-xlarge` + radius из `PANEL_SIZE_LAYOUT` |
+
+Размеры (`size`) — общий пресет `PANEL_SIZE_LAYOUT` (вместе с AlertDialog / Popover / Card): max-width, max-height, section padding, title/desc/body, radius.
+
+| size | max-width | title / body | close |
+|------|-----------|--------------|-------|
+| `small` | `max-w-component-base` | `small` / `small` | `small` |
+| `base` | `max-w-component-large` | `base` / `base` | `small` |
+| `mid` | `max-w-component-xlarge` | `mid` / `base` | `base` |
+| `large` | `max-w-component-2xlarge` | `large` / `mid` | `base` |
+
+## Анимации
+
+Портал + нативный `<dialog>`. Хост — `Dialog.Panel` (`useDialogModalMotion` → `useModalMotion` + slot motion). AlertDialog — тот же паттерн на `AlertDialog.Panel` (backdrop не закрывает). Drawer — свой slot motion (`drawerSlideEnter` / `Leave`).
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
+| `panel` | `enter` / `leave` | `modalPanelEnter` / `modalPanelLeave` |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
+| `close`, `header`, `headingBlock`, `footer`, `content`, `body` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+| `trigger` | `pressIn` / `pressOut` (+ hover если задать) | `pressSqueeze` (`pressOut: false`); Root scope, не Panel |
+
+`body` — `Dialog.Body` (скролл), не слот `content`.
+
+Nested `enter` — следующий кадр после host, без layout flush на overlay. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
+
+`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется (dev warn + ~500ms fallback). Promise не отменяем: перед delayed DOM проверяйте `ctx.signal` / `isMotionRunActive(ctx)`. Прерывание leave (повторный open / новый play) отменяет `MotionRun` и **не** вызывает `complete` — портал не зависает и не размонтируется во время enter. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0` или полный slide) — иначе после твина `dialog.close()` выглядит как рывок.
+
+`leave: false` на хосте (`overlay` / `panel`) — хост сразу ставит закрытое состояние (панель не висит, пока фейдится сосед). `enter: false` — сразу открытое.
+
+```tsx
+<Dialog motion={{ panel: { enter: false, leave: false } }}>…</Dialog>
+
+<Dialog
+  motion={{
+    panel: {
+      enter: (ctx) =>
+        ctx.fromTo(
+          { y: 28, scale: 0.92, autoAlpha: 0 },
+          { y: 0, scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(1.4)" },
+        ),
+      leave: (ctx) =>
+        ctx.to({
+          y: 24,
+          scale: 0.94,
+          autoAlpha: 0,
+          duration: 0.22,
+          ease: "power2.in",
+        }),
+    },
+  }}
+>
+```
+
+**Где в коде:** типы — `dialogTypes.ts`; scope — `dialogContext.tsx`; defaults + host play — `dialogAnimations.ts` (`DIALOG_MOTION_DEFAULTS`, `useDialogModalMotion`); слоты и Panel-provider — `dialogParts.tsx`; карта `motion` на корне — `Dialog.tsx`.
+
+Проп `motionController` на **`Dialog.Panel`** (портальный хост). Root handle — только `trigger`. `play()` skip — нет `root`; `playSlot("panel")`. `events` / `states` на Panel (или на Root — мерж в Panel). `motionState` тоже на Panel, если режимы играют слоты панели. См. [Motion](/docs/motion-controller).
+
+```tsx
+import { Button, Dialog, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "dialog:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.playSlot("panel", "dialog:nudge")}>
+        Nudge
+      </Button>
+      <Dialog open>
+        <Dialog.Panel motionController={controller} motion={{ events }}>
+          <Dialog.Title>Title</Dialog.Title>
+        </Dialog.Panel>
+      </Dialog>
+    </>
+  );
+}
+```
+
+```tsx
+import { Dialog } from "burne-ui";
+import { tweenCssColor } from "burne-ui/internal";
+
+<Dialog
+  open={open}
+  onOpenChange={setOpen}
+  motion={{
+    title: {
+      enter: (ctx) =>
+        ctx.fromTo({ y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35 }),
+      leave: (ctx) => ctx.to({ y: -8, autoAlpha: 0, duration: 0.2 }),
+    },
+  }}
+>
+  <Dialog.Panel>…</Dialog.Panel>
+</Dialog>
+```
+
+Цвет — factory и токены, не `MotionVars`. Nested `enter` стартует на следующем кадре после host enter, без `offsetHeight` flush на overlay. После `showModal()` хост один раз читает layout (`flushDialogOpenLayout`) — UA `display: none` → `[open]`. `leave: false` на части, если хост (`panel`) оркестрирует `ctx.targets` одним таймлайном.
+
+```tsx
+<Dialog
+  motion={{
+    title: {
+      hoverIn: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)"),
+      hoverOut: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-foreground)", { clearOnComplete: true }),
+    },
+  }}
+>
+  …
+</Dialog>
+
+<Dialog
+  motion={{
+    panel: {
+      leave: (ctx) => {
+        const tl = ctx.timeline();
+        if (ctx.targets.title) tl.to(ctx.targets.title, { x: -12, autoAlpha: 0, duration: 0.16 }, 0);
+        tl.to(ctx.el, { scale: 0.94, autoAlpha: 0, duration: 0.22 }, 0.08);
+        return tl;
+      },
+    },
+    title: { leave: false },
+  }}
+>
+```
+
+См. [Motion](/docs/motion).
+
+**DOM-структура (портал):**
+
+```
+<dialog>
+  <div overlayRef>              ← opacity 0→1
+  <div panelRef tabIndex={-1}>  ← scale enter/exit
+    <Dialog.Content>            ← layout, без отдельной motion
+      Header / Body / Footer
+```
+
+### 1. Open — overlay fade + panel scale
+
+При `open=true`, `mounted=true`:
+
+1. `dialog.showModal()`
+2. `animateModalOpen({ overlay, panel, vars: motionInteractive() })`:
+   - **overlay:** `opacity: 0 → 1`
+   - **panel:** `scale: 0.97` (`MODAL_PANEL_SCALE_FROM`) → `scale: 1`
+3. `focusPanelOnOpen` — первый focusable (иначе panel); ring если trigger был `:focus-visible`
+
+**Scroll lock:** синглтон `bodyScrollLock` на время `showPortal` (`open || mounted`). Первая блокировка ставит `position: fixed; top: -scrollY` (iOS), `overflow: hidden` и компенсирует ширину скроллбара; вложенные Dialog / Drawer / AlertDialog держат счётчик и не снимают lock, пока открыт хотя бы один. `contained` не блокирует. `Dialog.Body` — `overscroll-contain`, чтобы touch-скролл не цеплялся к фону.
+
+#### Кастомизация open/close
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  modalDuration: 280,          // overlay + panel scale
+  interactiveEase: "power2.out",
+  enableModalMotion: true,
+});
+```
+
+`MODAL_PANEL_SCALE_FROM = 0.97` — константа в `modalSurfaceMotion.ts`, не в config.
+
+### 2. Close — overlay fade + panel fade + scale
+
+При `open=false`:
+
+1. `animateModalClose`:
+   - **overlay:** `opacity → 0`
+   - **panel:** `autoAlpha: 0`, `scale: 0.97` (default `panelExit`)
+2. `onComplete` → `setMounted(false)` — unmount портала
+3. Нативный `onClose` на `<dialog>` → `onOpenChange(false)`
+
+Kill tweens при unmount через `killMotion(overlay, panel)` (снимает и inline `will-change`). Nested enter rAF отменяется на unmount / leave (`invalidateEnterFrame`).
+
+### 3. Reduced motion
+
+`isReducedModalMotion()` (= `prefers-reduced-motion`):
+
+- `applyReducedModalMotion(overlay, panel, { focusPanel: true })` — мгновенно, без GSAP
+- Close — мгновенный unmount
+
+### 4. Dialog.Trigger — open после squeeze
+
+`runOpenAfterSqueeze({ triggerRef, openingRef, setOpen })` ждёт `motion.trigger.pressIn` (Root scope):
+
+1. `pointerdown` на Trigger → `e.preventDefault()` **до** child Button (подавляет дублирующий squeeze)
+2. `scope.play("trigger", "pressIn")` — дефолт `pressSqueeze`; другой рецепт / factory на `motion.trigger.pressIn`; `false` — без squeeze
+3. `setOpen(true)` после complete
+
+При reduced motion — `setOpen(true)` сразу. Keyboard click (без pointerdown) — open немедленно в `handleClick`.
+
+```tsx
+<Dialog motion={{ trigger: { pressIn: (ctx) => ctx.to({ scale: 0.9, duration: 0.16, yoyo: true, repeat: 1 }) } }}>
+  <Dialog.Trigger asChild>
+    <Button>Открыть</Button>
+  </Dialog.Trigger>
+</Dialog>
+```
+
+### Сводка: что настраивается где
+
+| Анимация | Утилита | Ключи `configureMotion` | Примечание |
+|----------|---------|---------------------------|------------|
+| Open overlay | `animateModalOpen` | `modalDuration`, `interactiveEase`, `enableModalMotion` | opacity fade |
+| Open panel | `animateModalOpen` | те же | scale 0.97→1 |
+| Close | `animateModalClose` | те же | autoAlpha + scale out |
+| Trigger squeeze | слот `trigger` → `pressIn` | `pressSqueezeScale`, `enablePressSqueeze` | `motion.trigger.pressIn` |
+| Reduced motion | `isReducedModalMotion` | `enableModalMotion` / `enableAnimations` | системная настройка + флаги |
+| Scale from | `MODAL_PANEL_SCALE_FROM` | — | константа 0.97 |
+
+## Overlay и тема
+
+| Тема UI | Overlay |
+|---------|---------|
+| Light | `overlay-backdrop` → `--overlay-backdrop-color` + blur/saturate |
+| Dark | `overlay-backdrop-scrim` → `--overlay-backdrop-scrim` |
+
+Тема портала: `usePortalThemeAnchor`, `useBurneLightTheme`, `burneLightThemePortalProps` — overlay подстраивается под якорь (например, `[data-theme="light"]` в приложении).
+
+Переопределение:
+
+```css
+:root {
+  --overlay-backdrop-color: color-mix(in oklab, var(--color-foreground) 20%, transparent);
+  --overlay-backdrop-blur: 20px;
+}
+```
+
+## Layout
+
+Из `modalPanelLayout`:
+
+- `Dialog.Content` — `MODAL_CONTENT_CLASS` (`p-xlarge`, `gap-large` между Header/Body/Footer)
+- `Dialog.Body` — `MODAL_BODY_SCROLL_CLASS` (скролл только в body)
+
+## Токены и CSS
+
+| Класс | Назначение |
+|-------|------------|
+| `shadow-token-xlarge` | Тень панели |
+| `border-token`, `bg-surface` | Default surface |
+| `max-w-component-*` | Ширина панели (`PANEL_SIZE_LAYOUT`) |
+| `rounded-*` | Скругление по `size` (как Button / Card) |
+| `z-dialog` | Stacking dialog (`--z-dialog`) |
+| `overlay-backdrop` / `overlay-backdrop-scrim` | Подложка (light frosted / dark solid) |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`classNames` на `<Dialog>`** — слоты портала и разметки через `DialogClassNamesProvider` (доступны внутри `Dialog.Panel` через портал-контекст).
+**`className` на `Dialog.Panel`** — дополнительные классы на surface панели.
+
+Подчасти (`Dialog.Title`, `Dialog.Body`, …) принимают **`className`** поверх слота из `classNames`.
+
+### Слоты `DialogClassNames`
+
+| Слот | DOM / элемент | Когда использовать |
+|------|---------------|-------------------|
+| `trigger` | `Dialog.Trigger` | Слот на кнопке / asChild |
+| `dialog` | Нативный `<dialog>` | Редко — глобальные правки dialog-элемента |
+| `overlay` | Backdrop | Blur, opacity, цвет затемнения |
+| `panel` | Surface панели | Max-width, border, shadow/default |
+| `content` | `Dialog.Content` | Padding/gap внутри панели |
+| `header` | `Dialog.Header` | Раскладка title + close |
+| `headingBlock` | `Dialog.HeadingBlock` | Title + description stack |
+| `title` | `Dialog.Title` | Типографика заголовка |
+| `description` | `Dialog.Description` | Подзаголовок |
+| `body` | `Dialog.Body` | Scroll area, padding контента |
+| `footer` | `Dialog.Footer` | Кнопки, border-top |
+| `close` | `Dialog.Close` | Стили close-кнопки (прокидывается в CloseButton) |
+
+`Dialog.Panel` prop `variant`: `default`.
+
+### Compound API (основной способ)
+
+```tsx
+<Dialog
+  open={open}
+  onOpenChange={setOpen}
+  classNames={{
+    overlay: "backdrop-blur-xl",
+    panel: "max-w-lg border-primary/40 bg-primary/5 shadow-token-lg",
+    title: "text-primary font-semibold",
+    description: "text-foreground/80",
+    body: "px-xlarge",
+    footer: "border-t border-primary/20 pt-small",
+    close: "opacity-80",
+  }}
+>
+</Dialog>
+```
+
+`Dialog.Trigger` — стилизуется своим `className` (обычно это `Button` с `asChild`).
+
+### Практические заметки
+
+- **Panel vs Dialog:** `classNames` задаются на `<Dialog>`, рендерятся в портале внутри `Dialog.Panel`.
+- **Close:** `Dialog.Close` — обёртка `CloseButton`; `size` по умолчанию из `PANEL_SIZE_LAYOUT.closeButtonSize` (можно переопределить пропом).
+- **Scroll:** только `Dialog.Body` скроллится — min-height/max-height задавайте на `body` слот. У Body есть `py-xsmall`, чтобы focus-ring / hover-shadow полей не обрезались футером и краем scrollport.
+- **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти / `Dialog.Panel`.
+
+## Доступность
+
+- Нативный `<dialog>` + `showModal()` — focus trap, Esc закрытие.
+- `aria-labelledby` — только при наличии `Dialog.Title`; иначе задайте `aria-label` на `Panel`.
+- `aria-describedby` — при наличии `Dialog.Description`.
+- `Dialog.Trigger`: `aria-haspopup="dialog"`, `aria-expanded={open}`.
+- `Dialog.Close`: дефолтный `aria-label="Закрыть"`.
+- Backdrop: `aria-hidden`, закрытие по `mousedown` на overlay (не на panel).
+
+## Контекст
+
+Внутренний `useDialog()`:
+
+- `open`, `onOpenChange`, `titleId`, `descriptionId`, `hasDescription`, `setHasDescription`
+
+Контекст React течёт через портал (не через DOM) — `DialogClassNamesProvider` доступен в `Dialog.Panel`.
+
+## Структура файлов
+
+```
+Dialog/
+├── Dialog.tsx               # карта motion в context (Root без DOM)
+├── index.ts
+├── dialogTypes.ts           # DialogMotion / DialogLifecycleMotion / DialogPartMotion
+├── dialogStyles.ts
+├── dialogAPI.ts
+├── dialogContext.tsx        # createMotionScope("Dialog")
+├── dialogParts.tsx          # Panel-хост + useMotionPart
+├── dialogAnimations.ts      # DIALOG_MOTION_DEFAULTS, useDialogModalMotion
+├── useDialogRootState.ts
+├── useDialogFooterState.ts
+└── Dialog.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Dialog` — default, `Dialog.Trigger`, `classNames`, форма в body, светлая/тёмная тема, `closeOnInteractOutside={false}`, `onInteractOutside` + `preventDefault`, slot motion gallery, `motionController`.

@@ -1,0 +1,121 @@
+import type { ClassValue } from "clsx";
+import { Children, createElement, isValidElement, type ReactElement, type ReactNode } from "react";
+import { KitCheckmarkSharp } from "@/components/core/utils/kitIcons";
+import type { Prettify } from "@/utils/prettify";
+ 
+import { cn } from "@/utils/cn";
+ 
+import { SELECTION_INDICATOR_DASH_CLASS, SELECTION_INDICATOR_DOT_CLASS, selectionIndicatorDotInnerClass } from "./selectionIndicatorStyles";
+import type { SelectionIndicatorSize, SelectionIndicatorVariant } from "./selectionIndicatorTypes";
+ 
+import type {
+  ResolvedSelectionIndicatorClassNames,
+  SelectionIndicatorClassNames,
+  SelectionIndicatorFillProps,
+  SelectionIndicatorMarkProps,
+} from "./selectionIndicatorTypes";
+ 
+export const SELECTION_INDICATOR_FILL_DISPLAY_NAME = "SelectionIndicatorFill";
+export const SELECTION_INDICATOR_MARK_DISPLAY_NAME = "SelectionIndicatorMark";
+ 
+export function isSelectionIndicatorFillElement(
+  el: ReactElement,
+): el is ReactElement<SelectionIndicatorFillProps> {
+  return (el.type as { displayName?: string }).displayName === SELECTION_INDICATOR_FILL_DISPLAY_NAME;
+}
+ 
+export function isSelectionIndicatorMarkElement(
+  el: ReactElement,
+): el is ReactElement<SelectionIndicatorMarkProps> {
+  return (el.type as { displayName?: string }).displayName === SELECTION_INDICATOR_MARK_DISPLAY_NAME;
+}
+ 
+export type PartitionedSelectionIndicatorChildren = {
+  fillSlot?: ReactElement<SelectionIndicatorFillProps>;
+  markSlot?: ReactElement<SelectionIndicatorMarkProps>;
+};
+ 
+export function resolveSelectionIndicatorMarkContent({
+  resolvedIcon,
+  showCheck,
+  showDash,
+  showDot,
+  size,
+  variant,
+}: {
+  resolvedIcon?: ReactNode;
+  showCheck: boolean;
+  showDash: boolean;
+  showDot: boolean;
+  size: SelectionIndicatorSize;
+  variant: SelectionIndicatorVariant;
+}): ReactNode {
+  if (resolvedIcon != null) return resolvedIcon;
+  if (showDash) {
+    return createElement("span", {
+      "aria-hidden": true,
+      className: SELECTION_INDICATOR_DASH_CLASS,
+    });
+  }
+  if (showCheck) {
+    return createElement(KitCheckmarkSharp, { "aria-hidden": true, className: "size-full" });
+  }
+  if (showDot) {
+    return createElement("span", {
+      "aria-hidden": true,
+      className: cn(
+        SELECTION_INDICATOR_DOT_CLASS[size],
+        selectionIndicatorDotInnerClass(variant),
+      ),
+    });
+  }
+  return undefined;
+}
+ 
+export function usesCompoundSelectionIndicatorChildren(children: ReactNode): boolean {
+  return Children.toArray(children).some(
+    (child) =>
+      isValidElement(child) &&
+      (isSelectionIndicatorFillElement(child) || isSelectionIndicatorMarkElement(child)),
+  );
+}
+ 
+export function partitionSelectionIndicatorChildren(
+  children: ReactNode,
+): PartitionedSelectionIndicatorChildren {
+  let fillSlot: ReactElement<SelectionIndicatorFillProps> | undefined;
+  let markSlot: ReactElement<SelectionIndicatorMarkProps> | undefined;
+
+  for (const child of Children.toArray(children)) {
+    if (isValidElement(child) && isSelectionIndicatorFillElement(child)) {
+      fillSlot = child;
+      continue;
+    }
+    if (isValidElement(child) && isSelectionIndicatorMarkElement(child)) {
+      markSlot = child;
+    }
+  }
+
+  return { fillSlot, markSlot };
+}
+ 
+export function resolveSelectionIndicatorClassNames({
+  root,
+  fill,
+  mark,
+  classNames,
+  className,
+}: {
+  root?: ClassValue;
+  fill?: ClassValue;
+  mark?: ClassValue;
+  classNames?: Prettify<SelectionIndicatorClassNames>;
+  className?: string;
+}): ResolvedSelectionIndicatorClassNames {
+  return {
+    root: cn(root, classNames?.root, className),
+    fill: cn(fill, classNames?.fill),
+    mark: cn(mark, classNames?.mark),
+  };
+}
+ 

@@ -1,0 +1,99 @@
+import { InputAuthPanelDemo } from "../demos/input/InputAuthPanel.demo";
+import inputAuthPanelSource from "../demos/input/InputAuthPanel.demo.tsx?raw";
+import { InputClassNamesCompoundDemo, InputClassNamesFullDemo } from "../demos/input/InputClassNamesFull.demo";
+import inputClassNamesFullSource from "../demos/input/InputClassNamesFull.demo.tsx?raw";
+import { LabelPartsDemo } from "../demos/label/LabelParts.demo";
+import labelPartsSource from "../demos/label/LabelParts.demo.tsx?raw";
+import { LabelClassNamesFullDemo } from "../demos/label/LabelClassNamesFull.demo";
+import labelClassNamesFullSource from "../demos/label/LabelClassNamesFull.demo.tsx?raw";
+import { InputCompoundDemo } from "../demos/input/InputCompound.demo";
+import inputCompoundSource from "../demos/input/InputCompound.demo.tsx?raw";
+import { InputInlinePairDemo } from "../demos/input/InputInlinePair.demo";
+import inputInlinePairSource from "../demos/input/InputInlinePair.demo.tsx?raw";
+import { InputUrlAffixesDemo } from "../demos/input/InputUrlAffixes.demo";
+import inputUrlAffixesSource from "../demos/input/InputUrlAffixes.demo.tsx?raw";
+import { InputSizesDemo } from "../demos/input/InputSizes.demo";
+import inputSizesSource from "../demos/input/InputSizes.demo.tsx?raw";
+import { InputVariantsDemo } from "../demos/input/InputVariants.demo";
+import inputVariantsSource from "../demos/input/InputVariants.demo.tsx?raw";
+import { InputSlotMotionGalleryDemo } from "../demos/input/slotMotion/gallery";
+import { InputMotionControllerGalleryDemo } from "../demos/input/motionController/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function InputShowcase() {
+  return (
+    <ShowcasePage
+      title="Input"
+      description="Text field with Simple and Compound API — label, hint and error on the root or through slots."
+      importPath='import { Input } from "@/components/core/Input";'
+      tags={["core", "forms"]}
+    >
+      <ShowcaseSection title="Variants" description="default, outline, secondary and default — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={InputVariantsDemo} source={inputVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={InputSizesDemo} source={inputSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Compound API" description="Input.Label, Input.Control, Input.Hint — explicit markup.">
+        <ShowcaseDemoFromFile align="center" Demo={InputCompoundDemo} source={inputCompoundSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Slots root, shell, control, prefix, suffix, hint and error — through prop classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesFullDemo} source={inputClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesCompoundDemo} source={inputClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={LabelClassNamesFullDemo} source={labelClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={LabelPartsDemo} source={labelPartsSource} />
+      </ShowcaseSection>
+<ShowcaseSection title="Slot motion" description="One gallery: instant hover, affix orbit timeline, file-row leave factory, password toggle + press tint.">
+        <InputSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on shell (no play: no root slot), chrome label on Root, cancel loop, input events."
+      >
+        <InputMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Affixes, auth-panel and inline-pair — demo-files in `demos/input/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={InputUrlAffixesDemo} source={inputUrlAffixesSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={InputAuthPanelDemo} source={inputAuthPanelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={InputInlinePairDemo} source={inputInlinePairSource} />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/Input" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="label, hint, error, placeholder, variant and status — props on the root Input."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Input.Label, Input.Control, Input.Hint, Input.Error — for custom markup."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Options">
+          <p>
+            <code>variant</code>: default, outline, secondary, default. <code>status</code>: default, danger,
+            success, warning, info. Field tips — prop <code>hint</code>, not <code>description</code>.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

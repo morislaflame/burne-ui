@@ -1,13 +1,20 @@
 import type { ComponentType } from "react";
 import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
-import { ProgressBar } from "./ProgressBar";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
+
+import { Button } from "@/components/core/Button";
+import { ProgressBar } from "@/components/core/ProgressBar";
+import { ProgressBarMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/progressBar/motionController/gallery";
+import { ProgressBarSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/progressBar/slotMotion/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -21,7 +28,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -40,191 +47,229 @@ const meta = {
     docs: {
       description: {
         component:
-          "Полоса прогресса (read-only): determinate — заливка до текущего значения; indeterminate — бегущая анимация. Подпись и статус сверху, размеры, `color` и `thickness` как у `Meter` / `Slider`.",
+          "Progress bar (read-only). **Simple** — props on root; **Compound** — `<ProgressBar.Header>` + `<ProgressBar.Track>` + `<ProgressBar.Hint>`.",
       },
     },
   },
   decorators: [...darkThemeDecorator],
-  args: {
-    min: 0,
-    max: 100,
-    size: "base" as const,
-    orientation: "horizontal" as const,
-    value: 42,
-    label: "Загрузка файла",
-    showValue: true,
-  },
-  argTypes: {
-    size: { control: "select", options: ["small", "base", "medium", "large"] },
-    orientation: { control: "select", options: ["horizontal", "vertical"] },
-  },
 } satisfies Meta<typeof ProgressBar>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {};
+export const Default: Story = {
+  name: "Simple and Compound",
+  ...dualApiStorySource,
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — props on &lt;ProgressBar&gt;">
+        <ProgressBar
+          label="Loading"
+          hint="Estimated time to completion"
+          showValue
+          value={65}
+          min={0}
+          max={100}
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — children">
+        <ProgressBar>
+          <ProgressBar.Header>
+            <ProgressBar.Label>File upload</ProgressBar.Label>
+            <ProgressBar.Value />
+          </ProgressBar.Header>
+          <ProgressBar.Track value={42} min={0} max={100} />
+          <ProgressBar.Hint>Estimated time to completion</ProgressBar.Hint>
+        </ProgressBar>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
 
 export const Indeterminate: Story = {
   name: "Indeterminate",
-  args: {
-    indeterminate: true,
-    label: "Обработка",
-    showValue: false,
-  },
-};
-
-export const Sizes: Story = {
-  name: "Размеры",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
-      {(["small", "base", "medium", "large"] as const).map((size) => (
-        <ProgressBar
-          key={size}
-          size={size}
-          label={`Размер ${size}`}
-          showValue
-          value={20 + (size === "large" ? 55 : size === "medium" ? 40 : size === "base" ? 25 : 10)}
-        />
-      ))}
-    </div>
+    <ProgressBar label="Processing" indeterminate showValue={false} />
   ),
 };
 
-export const CustomColor: Story = {
-  name: "Свой цвет",
+export const Colors: Story = {
+  name: "Colors",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-mid">
-      <ProgressBar label="Accent" showValue value={65} />
+    <div className="flex flex-col gap-large">
+      <ProgressBar label="Accent (default)" showValue value={65} />
+      <ProgressBar label="Success" showValue value={80} color="var(--color-success)" />
+      <ProgressBar label="Danger" showValue value={35} color="var(--color-danger)" />
+      <ProgressBar label="Warning" showValue value={55} color="var(--color-warning)" />
+      <ProgressBar label="Hex" showValue value={70} color="#7c3aed" />
       <ProgressBar
-        label="Success"
+        label="Gradient"
         showValue
-        value={100}
-        color="var(--color-success)"
-      />
-      <ProgressBar
-        label="Danger"
-        showValue
-        value={40}
-        color="var(--color-danger)"
-      />
-      <ProgressBar
-        label="Градиент"
-        showValue
-        value={78}
-        color="linear-gradient(90deg, var(--color-accent) 0%, var(--color-info) 100%)"
-      />
-      <ProgressBar
-        label="Indeterminate"
-        indeterminate
-        color="var(--color-info)"
+        value={60}
+        color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-info) 100%)"
       />
     </div>
   ),
 };
 
-export const CustomThickness: Story = {
-  name: "Своя толщина",
+export const Thickness: Story = {
+  name: "Thickness",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex flex-col gap-large">
       <ProgressBar label="6px" showValue thickness={6} value={40} />
       <ProgressBar label="1rem" showValue thickness="1rem" value={60} />
-      <ProgressBar
-        label="size=small + thickness=16"
-        showValue
-        size="small"
-        thickness={16}
-        value={75}
-      />
+      <ProgressBar label="size=small + thickness=16" showValue size="small" thickness={16} value={75} />
     </div>
   ),
 };
 
-export const StatusText: Story = {
-  name: "Текст состояния",
+export const CustomValueText: Story = {
+  name: "Custom value text",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-mid">
-      <ProgressBar label="Экспорт" valueText="3 из 12 файлов" value={25} />
+    <div className="flex flex-col gap-large">
+      <ProgressBar label="Battery" valueText="Charging" value={72} />
+      <ProgressBar label="Network" valueText="Excellent connection" value={92} color="var(--color-success)" />
       <ProgressBar
-        label="Синхронизация"
-        indeterminate
-        valueText="Подключение…"
-      />
-      <ProgressBar
-        label="Установка"
-        value={66}
-        showValue
-        formatValue={(v) => `${v}%`}
+        label="Disk"
+        valueText="High load"
+        value={88}
+        color="var(--color-warning)"
       />
     </div>
   ),
 };
 
 export const Vertical: Story = {
-  name: "Вертикальный",
+  name: "Vertical",
   render: () => (
-    <div className="flex h-64 items-end gap-xlarge">
-      <ProgressBar orientation="vertical" label="Шаг 1" showValue value={100} />
-      <ProgressBar orientation="vertical" label="Шаг 2" showValue value={55} />
-      <ProgressBar orientation="vertical" label="Шаг 3" indeterminate />
+    <div className="flex gap-2xlarge">
+      <ProgressBar orientation="vertical" label="CPU" showValue value={45} />
+      <ProgressBar orientation="vertical" label="RAM" showValue value={72} color="var(--color-info)" />
+      <ProgressBar orientation="vertical" label="Disk" valueText="High" value={88} color="var(--color-warning)" />
     </div>
   ),
 };
 
-export const WithoutLabel: Story = {
-  name: "Без подписи",
-  args: {
-    label: undefined,
-    showValue: true,
-    value: 30,
-  },
-};
-
-function UploadDemo() {
-  const [value, setValue] = useState(0);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (done) return;
-    const id = window.setInterval(() => {
-      setValue((v) => {
-        if (v >= 100) {
-          setDone(true);
-          return 100;
-        }
-        return v + 4;
-      });
-    }, 120);
-    return () => window.clearInterval(id);
-  }, [done]);
-
-  return (
-    <ProgressBar
-      label="Загрузка"
-      showValue
-      value={value}
-      valueText={done ? "Готово" : undefined}
-      color={
-        done
-          ? "var(--color-success)"
-          : "linear-gradient(90deg, var(--color-accent) 0%, var(--color-info) 100%)"
-      }
-    />
-  );
-}
-
 export const Animated: Story = {
-  name: "Анимация",
-  render: () => <UploadDemo />,
+  name: "Animation",
+  render: function Animated() {
+    const [value, setValue] = useState(0);
+
+    useEffect(() => {
+      const id = window.setInterval(() => {
+        setValue((v) => (v >= 100 ? 0 : v + 5));
+      }, 400);
+      return () => window.clearInterval(id);
+    }, []);
+
+    return (
+      <ProgressBar label="Download" min={0} max={100} value={value} showValue color="var(--color-primary)" />
+    );
+  },
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
-  args: {
-    label: "Светлая тема",
-    showValue: true,
-    value: 58,
+  render: () => <ProgressBar label="Progress" showValue value={55} />,
+};
+
+export const ValueChange: Story = {
+  name: "Motion contract: value change",
+  render: function ProgressBarValueChange() {
+    const [value, setValue] = useState(20);
+    return (
+      <div className="flex flex-col items-stretch gap-base">
+        <ProgressBar label="Download" showValue value={value} min={0} max={100} />
+        <Button type="button" onClick={() => setValue(80)}>
+          Set 80
+        </Button>
+      </div>
+    );
   },
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
+      "aria-valuenow",
+      "20");
+    await userEvent.click(canvas.getByRole("button", { name: "Set 80" }));
+    await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
+      "aria-valuenow",
+      "80");
+  },
+};
+
+export const Accessibility: Story = {
+  name: "Accessibility",
+  render: () => (
+    <div className="flex flex-col gap-mid text-left">
+      <p className="text-sm text-muted">
+        Scale — <code className="text-primary">role=&quot;progressbar&quot;</code> with{" "}
+        <code className="text-primary">aria-valuenow</code> /{" "}
+        <code className="text-primary">aria-valuemin</code> /{" "}
+        <code className="text-primary">aria-valuemax</code> (or{" "}
+        <code className="text-primary">aria-busy</code> when indeterminate). Label —{" "}
+        <code className="text-primary">aria-labelledby</code>, hint —{" "}
+        <code className="text-primary">aria-describedby</code>.
+      </p>
+      <ProgressBar
+        label="Download"
+        hint="Remaining time depends on network speed"
+        showValue
+        value={48}
+        min={0}
+        max={100}
+      />
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
+      "aria-valuenow",
+      "48");
+  },
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "Slots root, value, track, fill, hint, and error via classNames prop.",
+      },
+    },
+  },
+  render: () => (
+    <ProgressBar
+      label="Loading"
+      hint="Remaining time depends on network speed"
+      showValue
+      value={62}
+      color="var(--color-info)"
+      classNames={{
+        root: "rounded-large border border-primary/20 p-base",
+        value: "text-info font-semibold",
+        track: "bg-primary/10",
+        fill: "opacity-95",
+        hint: "text-muted/80",
+      }}
+    />
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ProgressBarSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on track/fill (no play: no root slot), chrome value on Root, cancel loop, progress events.",
+      },
+    },
+  },
+  render: () => <ProgressBarMotionControllerGalleryDemo />,
 };

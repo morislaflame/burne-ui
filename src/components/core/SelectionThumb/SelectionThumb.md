@@ -1,0 +1,170 @@
+# SelectionThumb
+
+Упрощённый thumb-индикатор для **Switch** и **Slider**: shell с `--selection-indicator-radius-*` (без внутреннего fill). Опционально `SelectionThumb.Icon` — цвет стабильный (`text-primary`; скин может перекрасить через `selectionThumbIcon.root`). Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
+
+## Импорт
+
+```tsx
+import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps } from "burne-ui";
+```
+
+## API
+
+### `SelectionThumb`
+
+```tsx
+<SelectionThumb
+  size="base"
+  variant="default"
+  className="shadow-token-sm"
+/>
+```
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `size` | `base` | `SelectionThumbSize` = `SelectionIndicatorSize`: `xsmall` \| `small` \| `base` \| `mid` \| `large`. `xsmall` — доменный размер вне `ComponentSize` |
+| `variant` | `default` | Kit `default` или имя скина (`selectionIndicator.root`) |
+| `shellRef` | — | Ref на shell (для parent slide anim — Switch) |
+| `className` | — | На shell |
+| `children` | — | Обычно `SelectionThumb.Icon` |
+| `motion` | — | Слоты `root` / `icon`. `events` — app-команды `MotionController` |
+| `motionController` | — | Standalone only. Switch/Slider **не** форвардят свой handle сюда |
+
+### `SelectionThumb.Icon`
+
+```tsx
+<SelectionThumb.Icon size="base" variant="default">
+  <IoMoon aria-hidden />
+</SelectionThumb.Icon>
+```
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `variant` | `default` | Kit `text-primary`; скин — `selectionThumbIcon.root` |
+| `iconRef` | — | Ref для parent icon crossfade (Switch) |
+| `className` | — | На wrapper иконки |
+| `size` | `base` | Размер SVG через `SELECTION_INDICATOR_ICON_CLASS` |
+
+## variant / surface
+
+| `variant` | Shell | Icon |
+|-----------|-------|------|
+| `default` | `border border-primary bg-surface` | `text-primary` |
+| skin name | `resolveVariantVisual` → `selectionIndicator.root` | `selectionThumbIcon.root` |
+
+## Анимации
+
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `icon` | `enter` / hover / press (opt-in) | empty |
+
+Switch/Slider не передают `motion` — pointer-фазы выключены. Standalone: есть слот `root`, `play()` работает.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`thumb:nudge`), не фазы. `createMotionEvents`. `waitForComplete` / `cancel` — playground / Storybook **MotionController**.
+
+Тройка на этом scope. `motionState`, `motionPayload` и `playInitialState` не попадают на DOM. Смена `motionState` играет `motion.states[имя]`; то же имя ещё раз — тишина. `motionPayload` — снимок для фабрики (`ctx.payload`, `createMotionFactory`); без смены режима не переигрывает. `playInitialState` по умолчанию выключен: на маунте режим не играет.
+
+```tsx
+import { Button, SelectionThumb, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+import { IoMoon } from "react-icons/io5";
+
+const events = createMotionEvents({
+  "thumb:nudge": { y: -6, duration: 0.16, yoyo: true, repeat: 1 },
+});
+
+function Nudge() {
+  const controller = useMotionControllerHandle();
+  return (
+    <>
+      <Button size="small" variant="outline" onClick={() => controller.play("thumb:nudge")}>
+        Nudge
+      </Button>
+      <SelectionThumb motionController={controller} motion={{ events }}>
+        <SelectionThumb.Icon><IoMoon aria-hidden /></SelectionThumb.Icon>
+      </SelectionThumb>
+    </>
+  );
+}
+```
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
+Внутри SelectionThumb motion нет (fill убран).
+
+**DOM:**
+
+```
+<span shell ref=shellRef>           ← parent may animate position (Switch/Slider)
+  {children}                        ← SelectionThumb.Icon (opacity from parent)
+</span>
+```
+
+### Parent animations (не в SelectionThumb)
+
+| Родитель | Доп. motion |
+|----------|-------------|
+| `Switch` | thumb slide по track, icon opacity, shell ref |
+| `Slider` | thumb position по `percent`, press squeeze на button |
+
+## Стилизация и кастомизация
+
+### `SelectionThumbClassNames`
+
+`root`.
+
+### `SelectionThumbIconClassNames`
+
+`root`, `icon`.
+
+`className` мержится в `root`.
+
+### В Switch / Slider
+
+```tsx
+<Switch
+  classNames={{
+    thumb: "…",
+    thumbShell: "border-primary/30",
+    icon: "text-warning",
+  }}
+/>
+```
+
+SelectionThumb получает `className={slotClassNames.thumbShell}` из Switch internals.
+
+Track/rail скругление — тот же `--selection-indicator-radius-*`, что и у thumb.
+
+### Практические заметки
+
+- **Не standalone control** — нет role, label, keyboard; оборачивайте в Switch/Slider.
+- **shellRef** — для координации GSAP в Switch track animations.
+
+## Доступность
+
+- `aria-hidden` на shell
+- Иконки: `aria-hidden` на SVG
+- A11y — на родительском `Switch` / `role="slider"`
+
+## Встроенное использование
+
+| Компонент | Использование |
+|-----------|---------------|
+| `Switch.Thumb` | `SelectionThumb` + optional `Switch.Icon` |
+| `Slider` thumb button | `SelectionThumb` + `SelectionThumb.Icon` |
+
+## Структура файлов
+
+```
+SelectionThumb/
+├── SelectionThumb.tsx    # SelectionThumb + SelectionThumb.Icon
+└── index.ts
+```
+
+Токены shell/radius: `../SelectionIndicator/selectionIndicatorStyles.ts`
+
+## Storybook
+
+Отдельной story нет — см. `Switch`, `Slider` stories.

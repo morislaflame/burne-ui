@@ -1,14 +1,20 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoVolumeHigh } from "react-icons/io5";
 
-import { Slider } from "./Slider";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
+
+import { Slider } from ".";
+import { SliderSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/slider/slotMotion/gallery";
+import { SliderMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/slider/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -22,7 +28,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -41,24 +47,13 @@ const meta = {
     docs: {
       description: {
         component:
-          "Слайдер с кружком в стиле `Checkbox`: при захвате — заливка accent и squeeze, при отпускании заливка исчезает. Опциональная иконка в кружке: accent в покое, accent-foreground при захвате. Поддерживает range, деления (`marks`), disabled и вертикальную ориентацию.",
+          "Slider with a circle in the style of `Checkbox`. **Simple** — props on root; **Compound** — `<Slider.Header>` + `<Slider.Track>` + `<Slider.Hint>`. **a11y:** `role=\"slider\"` on thumb, label — `aria-labelledby`, hint — `aria-describedby`.",
       },
     },
   },
   decorators: [...darkThemeDecorator],
-  args: {
-    min: 0,
-    max: 100,
-    step: 1,
-    size: "base" as const,
-    orientation: "horizontal" as const,
-    disabled: false,
-    showValue: true,
-    label: "Громкость",
-    defaultValue: 40,
-  },
   argTypes: {
-    size: { control: "select", options: ["small", "base", "medium", "large"] },
+    size: { control: "select", options: ["small", "base", "mid", "large"] },
     orientation: { control: "select", options: ["horizontal", "vertical"] },
   },
 } satisfies Meta<typeof Slider>;
@@ -67,19 +62,47 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {};
+export const Default: Story = {
+  name: "Simple and Compound",
+  ...dualApiStorySource,
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — props on &lt;Slider&gt;">
+        <Slider
+          label="Volume"
+          hint="Hint below track"
+          showValue
+          defaultValue={40}
+          min={0}
+          max={100}
+          step={1}
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — children">
+        <Slider>
+          <Slider.Header>
+            <Slider.Label>Volume</Slider.Label>
+            <Slider.Value />
+          </Slider.Header>
+          <Slider.Track defaultValue={55} min={0} max={100} step={1} />
+          <Slider.Hint>Hint below track</Slider.Hint>
+        </Slider>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
-      {(["small", "base", "medium", "large"] as const).map((size) => (
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
+      {(["small", "base", "mid", "large"] as const).map((size) => (
         <Slider
           key={size}
           size={size}
-          label={`Размер ${size}`}
+          label={`Size ${size}`}
           showValue
-          defaultValue={30 + (size === "large" ? 40 : size === "medium" ? 25 : 15)}
+          defaultValue={30 + (size === "large" ? 40 : size === "mid" ? 25 : 15)}
         />
       ))}
     </div>
@@ -87,11 +110,11 @@ export const Sizes: Story = {
 };
 
 export const Range: Story = {
-  name: "Диапазон",
+  name: "Range",
   render: () => (
     <Slider
-      range
-      label="Цена"
+      range={true}
+      label="Price"
       showValue
       min={0}
       max={1000}
@@ -103,10 +126,10 @@ export const Range: Story = {
 };
 
 export const WithMarks: Story = {
-  name: "Деления",
+  name: "Ticks",
   render: () => (
     <Slider
-      label="Уровень"
+      label="Level"
       showValue
       min={0}
       max={100}
@@ -117,18 +140,18 @@ export const WithMarks: Story = {
 };
 
 export const WithIcon: Story = {
-  name: "С иконкой",
+  name: "With icon",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       <Slider
-        label="Громкость"
+        label="Volume"
         showValue
         defaultValue={45}
         icon={<IoVolumeHigh aria-hidden className="size-full" />}
       />
       <Slider
-        range
-        label="Диапазон"
+        range={true}
+        label="Range"
         showValue
         defaultValue={[25, 70]}
         icon={<IoVolumeHigh aria-hidden className="size-full" />}
@@ -137,84 +160,149 @@ export const WithIcon: Story = {
   ),
 };
 
-export const CustomThickness: Story = {
-  name: "Своя толщина",
+export const CompoundTrack: Story = {
+  name: "Compound Track",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <Slider>
+      <Slider.Header>
+        <Slider.Label>Volume</Slider.Label>
+        <Slider.Value />
+      </Slider.Header>
+      <Slider.Track defaultValue={55} min={0} max={100} step={1}>
+        <Slider.Rail>
+          <Slider.Fill />
+        </Slider.Rail>
+        <Slider.Thumb>
+          <Slider.Icon>
+            <IoVolumeHigh aria-hidden className="size-full" />
+          </Slider.Icon>
+        </Slider.Thumb>
+      </Slider.Track>
+      <Slider.Hint>Slider.Rail + Fill + Thumb + Icon</Slider.Hint>
+    </Slider>
+  ),
+};
+
+export const CustomThickness: Story = {
+  name: "Custom thickness",
+  render: () => (
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       <Slider label="10px" showValue thickness={10} defaultValue={35} />
       <Slider label="1.25rem" showValue thickness="1.25rem" defaultValue={55} />
-      <Slider
-        label="size=small + thickness=20"
-        showValue
-        size="small"
-        thickness={20}
-        defaultValue={70}
-      />
+      <Slider label="size=small + thickness=20" showValue size="small" thickness={20} defaultValue={70} />
     </div>
   ),
 };
 
 export const Disabled: Story = {
-  name: "Отключён",
-  args: {
-    disabled: true,
-    defaultValue: 60,
-    label: "Недоступно",
-  },
+  name: "Disabled",
+  render: () => (
+    <Slider disabled defaultValue={60} label="Unavailable" showValue />
+  ),
 };
 
 export const Vertical: Story = {
-  name: "Вертикальный",
+  name: "Vertical",
   render: () => (
-    <div className="flex h-64 items-center gap-xlarge">
-      <Slider
-        orientation="vertical"
-        label="Яркость"
-        showValue
-        defaultValue={65}
-      />
-      <Slider
-        orientation="vertical"
-        range
-        label="Диапазон"
-        showValue
-        defaultValue={[20, 80]}
-      />
+    <div className="flex h-64 items-center gap-2xlarge">
+      <Slider orientation="vertical" label="Brightness" showValue defaultValue={65} />
+      <Slider orientation="vertical" range={true} label="Range" showValue defaultValue={[20, 80]} />
     </div>
   ),
 };
 
 export const WithoutLabel: Story = {
-  name: "Без подписи",
-  args: {
-    label: undefined,
-    showValue: false,
-    defaultValue: 25,
-  },
+  name: "Without label",
+  render: () => <Slider showValue={false} defaultValue={25} />,
 };
 
-function ControlledDemo() {
-  const [value, setValue] = useState(35);
-  return (
-    <Slider
-      label="Контролируемый"
-      showValue
-      value={value}
-      onValueChange={setValue}
-    />
-  );
-}
-
 export const Controlled: Story = {
-  name: "Контролируемый",
-  render: () => <ControlledDemo />,
+  name: "Controlled",
+  render: function Controlled() {
+    const [value, setValue] = useState(35);
+    return (
+      <Slider label="Controlled" showValue value={value} onValueChange={setValue} />
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const slider = canvas.getByRole("slider", { name: /Controlled/ });
+    slider.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(slider).toHaveAttribute("aria-valuenow", "36");
+  },
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
-  args: {
-    label: "Светлая тема",
-    defaultValue: 55,
+  render: () => <Slider label="Light theme" showValue defaultValue={55} />,
+};
+
+export const Accessibility: Story = {
+  name: "Accessibility",
+  render: () => (
+    <div className="flex flex-col gap-mid text-left">
+      <p className="text-sm text-muted">
+        Slider — <code className="text-primary">role=&quot;slider&quot;</code> on{" "}
+        <code className="text-primary">&lt;button&gt;</code> with{" "}
+        <code className="text-primary">aria-valuenow</code> / min / max. Label —{" "}
+        <code className="text-primary">aria-labelledby</code> from <code className="text-primary">Slider.Label</code>
+         , hint — <code className="text-primary">aria-describedby</code>. Without label — fallback{" "}
+        <code className="text-primary">aria-label=&quot;Value&quot;</code>.
+      </p>
+      <Slider label="Volume" hint="Hint linked via aria-describedby" showValue defaultValue={48} />
+    </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Slider (compound API)",
+      },
+    },
   },
+  render: () => (
+    <Slider
+      defaultValue={55}
+      min={0}
+      max={100}
+      classNames={{
+        root: "rounded-large border border-primary/25 p-base",
+        header: "text-primary",
+        value: "font-semibold text-primary",
+        track: "ring-1 ring-primary/20",
+        rail: "bg-primary/10",
+        fill: "bg-primary/80",
+        hint: "text-muted/80",
+      }}
+    >
+      <Slider.Header>
+        <Slider.Label>Volume</Slider.Label>
+        <Slider.Value />
+      </Slider.Header>
+      <Slider.Track />
+      <Slider.Hint>All slots configured via classNames.</Slider.Hint>
+    </Slider>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SliderSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — playSlot on track/thumb (no play: no root slot), chrome label on Root, range thumb stagger, slider events.",
+      },
+    },
+  },
+  render: () => <SliderMotionControllerGalleryDemo />,
 };

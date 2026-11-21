@@ -1,0 +1,100 @@
+import type { CSSProperties } from "react";
+ 
+import type { SkeletonAnimation, SkeletonRadius } from "./skeletonTypes";
+ 
+export const SKELETON_BASE_CLASS = "relative overflow-hidden bg-primary-tint skeleton-animate";
+ 
+export const SKELETON_WAVE_OVERLAY_CLASS =
+  "pointer-events-none absolute inset-0 -translate-x-full skeleton-animate skeleton-wave";
+ 
+export const SKELETON_CIRCLE_RADIUS_CLASS = "rounded-full";
+ 
+export const SKELETON_CIRCLE_SIZE_DEFAULT = "min-h-control-base w-control-base";
+
+export const SKELETON_CIRCLE_SIZE_TOKENS = {
+  small: "min-h-control-small w-control-small",
+  base: SKELETON_CIRCLE_SIZE_DEFAULT,
+  mid: "min-h-control-mid w-control-mid",
+  large: "min-h-control-large w-control-large",
+} as const;
+
+export function resolveSkeletonCircleSize(size: string): {
+  sizeClass: string;
+  dataSize?: string;
+} {
+  if (size in SKELETON_CIRCLE_SIZE_TOKENS) {
+    return {
+      sizeClass: SKELETON_CIRCLE_SIZE_TOKENS[size as keyof typeof SKELETON_CIRCLE_SIZE_TOKENS],
+      dataSize: size,
+    };
+  }
+  if (size === SKELETON_CIRCLE_SIZE_DEFAULT) {
+    return { sizeClass: size, dataSize: "base" };
+  }
+  return { sizeClass: size, dataSize: undefined };
+}
+ 
+export const SKELETON_TEXT_ROOT_CLASS = "flex flex-col gap-small";
+ 
+export const SKELETON_TEXT_LINE_CLASS = "h-[1em] rounded-small";
+ 
+export const SKELETON_TEXT_LINE_LAST_SHORT_CLASS = "w-3/5";
+ 
+export const SKELETON_TEXT_LINE_FULL_CLASS = "w-full";
+ 
+export const SKELETON_BLOCK_CLASS = "rounded-mid px-large py-mid";
+ 
+export const SKELETON_RADIUS_CLASS: Record<SkeletonRadius, string> = {
+  none: "rounded-none",
+  small: "rounded-small",
+  mid: "rounded-mid",
+  full: "rounded-full",
+};
+ 
+export const SKELETON_PULSE_ANIMATION = "skeleton-pulse 1.6s ease-in-out infinite";
+ 
+export const SKELETON_WAVE_ANIMATION = "skeleton-wave-slide 2s linear 0.2s infinite";
+ 
+export const SKELETON_SHIMMER_ANIMATION = "skeleton-shimmer 2s linear infinite";
+ 
+export const SKELETON_WAVE_GRADIENT =
+  "linear-gradient(90deg, transparent 0%, var(--color-primary-tint-strong) 50%, transparent 100%)";
+ 
+export const SKELETON_SHIMMER_GRADIENT =
+  "linear-gradient(90deg, var(--color-primary-tint) 0%, var(--color-primary-tint-strong) 50%, var(--color-primary-tint) 100%)";
+ 
+export function skeletonPulseStyle(): CSSProperties {
+  return { animation: SKELETON_PULSE_ANIMATION };
+}
+ 
+export function skeletonShimmerStyle(): CSSProperties {
+  return {
+    backgroundImage: SKELETON_SHIMMER_GRADIENT,
+    backgroundSize: "400% 100%",
+    animation: SKELETON_SHIMMER_ANIMATION,
+  };
+}
+ 
+export function skeletonVariantClass(variant: SkeletonAnimation): string {
+  if (variant === "pulse") return "skeleton-pulse";
+  if (variant === "shimmer") return "skeleton-shimmer";
+  return "";
+}
+
+export function skeletonVariantStyle(_variant: SkeletonAnimation): CSSProperties {
+  return {};
+}
+ 
+export function skeletonWaveOverlayStyle(): CSSProperties {
+  return {};
+}
+ 
+export function skeletonRadiusClass(radius: SkeletonRadius): string {
+  return SKELETON_RADIUS_CLASS[radius];
+}
+ 
+export function skeletonLineAnimationDelay(index: number): string {
+  return `${index * 0.06}s`;
+}
+ 
+ 

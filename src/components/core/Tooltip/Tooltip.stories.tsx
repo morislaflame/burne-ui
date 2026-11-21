@@ -1,26 +1,26 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 
-import { Tooltip, type TooltipVariant } from "./Tooltip";
+import { Tooltip, type TooltipVariant } from ".";
+import { TooltipSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/tooltip/slotMotion/gallery";
+import { TooltipMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/tooltip/motionController/gallery";
 
 const VARIANTS: TooltipVariant[] = [
   "default",
   "outline",
   "secondary",
-  "danger",
-  "info",
-  "warning",
-  "success",
 ];
 
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -28,12 +28,12 @@ const framedDecorator = [
   ),
 ] as const;
 
-/** Фон страницы и `data-theme="light"`, как у `Alert.stories` («Варианты (светлая тема)»). */
+/** Page background and `data-theme="light"`, like `Alert.stories` («Variants (light theme)»). */
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-xlarge text-foreground"
+      className="box-border w-full p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -49,6 +49,12 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Tooltip on **hover** and **focus**. Compound: `<Tooltip.Trigger>` + `<Tooltip.Content>`; optional `<Tooltip.Arrow />`. With a single trigger child, handlers and `aria-describedby` are forwarded to it.",
+      },
+    },
   },
   decorators: [...framedDecorator],
 } satisfies Meta<typeof Tooltip>;
@@ -57,33 +63,124 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const TOOLTIP_VARIANT_ITEMS: Array<{
+  variant?: TooltipVariant;
+  status?: "danger" | "success" | "info" | "warning";
+  title: string;
+  description?: string;
+  icon?: ReactNode | null;
+}> = [
+  {
+    variant: "default",
+    title: "Default",
+    description: "Neutral tooltip without a status icon.",
+  },
+  {
+    variant: "outline",
+    title: "Outline",
+    description: "Semi-transparent background with border.",
+  },
+  {
+    variant: "secondary",
+    title: "Secondary",
+    description: "Same background as secondary components.",
+  },
+  {
+    status: "success",
+    title: "Profile updated successfully",
+    description: "Changes saved and synced.",
+  },
+  {
+    status: "danger",
+    title: "Unable to connect to server",
+    description: "We're experiencing connection issues.",
+  },
+  {
+    status: "info",
+    title: "Help",
+    description: "Additional information in a neutral informational tone.",
+  },
+  {
+    status: "warning",
+    title: "Scheduled maintenance",
+    description: "Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.",
+  },
+  {
+    variant: "default",
+    title: "Custom icon",
+    description: "Icon via the `icon` prop on Panel.",
+    icon: <IoHelpCircleOutline aria-hidden className="text-primary" />,
+  },
+  {
+    status: "danger",
+    title: "Semantic without icon",
+    description: "icon={null} hides the status icon.",
+    icon: null,
+  },
+  {
+    status: "success",
+    title: "Title only",
+  },
+];
+
+function TooltipVariantsDemo() {
+  return (
+    <div className="mx-auto flex w-full max-w-md flex-col gap-mid">
+      {TOOLTIP_VARIANT_ITEMS.map((item) => (
+        <Tooltip.Panel
+          key={`${item.variant}-${item.title}`}
+          variant={item.variant}
+          status={item.status}
+          size="base"
+          title={item.title}
+          description={item.description}
+          icon={item.icon}
+        />
+      ))}
+    </div>
+  );
+}
+
+export const Variants: Story = {
+  name: "Variants",
+  render: () => <TooltipVariantsDemo />,
+};
+
 export const OnButtonSizes: Story = {
-  name: "Размеры на кнопке",
+  name: "Sizes on button",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-mid">
+    <div className="flex flex-wrap items-center justify-center gap-large">
       <Tooltip size="small" variant="default">
         <Tooltip.Trigger>
-          <Button size="base" variant="outline" type="button">
+          <Button size="small" variant="outline" type="button">
             Hover (small)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Компактный тултип</Tooltip.Content>
+        <Tooltip.Content>Compact tooltip</Tooltip.Content>
       </Tooltip>
       <Tooltip size="base" variant="default">
         <Tooltip.Trigger>
-          <Button size="large" variant="outline" type="button">
+          <Button size="base" variant="outline" type="button">
             Hover (base)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Стандартный размер подсказки</Tooltip.Content>
+        <Tooltip.Content>Standard tooltip size</Tooltip.Content>
+      </Tooltip>
+      <Tooltip size="mid" variant="default">
+        <Tooltip.Trigger>
+          <Button size="mid" variant="outline" type="button">
+            Hover (mid)
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Medium tooltip size</Tooltip.Content>
       </Tooltip>
       <Tooltip size="large" variant="default">
         <Tooltip.Trigger>
-          <Button size="xlarge" variant="outline" type="button">
+          <Button size="large" variant="outline" type="button">
             Hover (large)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Более широкий отступ для длинной подсказки</Tooltip.Content>
+        <Tooltip.Content>Wider padding for a long tooltip</Tooltip.Content>
       </Tooltip>
     </div>
   ),
@@ -91,7 +188,7 @@ export const OnButtonSizes: Story = {
 
 function SemanticVariantsDemo() {
   return (
-    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-mid py-xlarge">
+    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-large py-2xlarge">
       {VARIANTS.map((variant) => (
         <Tooltip key={variant} variant={variant}>
           <Tooltip.Trigger>
@@ -99,7 +196,7 @@ function SemanticVariantsDemo() {
               {variant}
             </Button>
           </Tooltip.Trigger>
-          <Tooltip.Content>{`Вариант «${variant}»`}</Tooltip.Content>
+          <Tooltip.Content>{`Variant «${variant}»`}</Tooltip.Content>
         </Tooltip>
       ))}
     </div>
@@ -107,43 +204,341 @@ function SemanticVariantsDemo() {
 }
 
 export const SemanticVariants: Story = {
-  name: "Варианты как у Alert — semantic (тёмная тема)",
+  name: "Variants like Alert — semantic (dark theme)",
   render: () => <SemanticVariantsDemo />,
 };
 
 export const SemanticVariantsOnLightTheme: Story = {
-  name: "Варианты как у Alert — semantic (светлая тема)",
+  name: "Variants like Alert — semantic (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <SemanticVariantsDemo />,
 };
 
 export const DefaultWithOptionalIcon: Story = {
-  name: "Опциональная иконка на default",
+  name: "Optional icon on default",
   render: () => (
     <Tooltip
       variant="default"
-      icon={<IoHelpCircleOutline aria-hidden className="text-accent" />}
+      icon={<IoHelpCircleOutline aria-hidden className="text-primary" />}
     >
       <Tooltip.Trigger>
         <Button size="large" variant="outline" type="button">
           Hover
         </Button>
       </Tooltip.Trigger>
-      <Tooltip.Content>Своя иконка только через prop `icon`</Tooltip.Content>
+      <Tooltip.Content>Custom icon only via prop `icon`</Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const SemanticIconHidden: Story = {
-  name: "Semantic без иконки",
+  name: "Semantic without icon",
   render: () => (
-    <Tooltip variant="danger" showIcon={false}>
+    <Tooltip status="danger" icon={null}>
       <Tooltip.Trigger>
         <Button size="large" variant="outline" type="button">
           Hover
         </Button>
       </Tooltip.Trigger>
-      <Tooltip.Content>Без стандартной иконки</Tooltip.Content>
+      <Tooltip.Content>Without default icon</Tooltip.Content>
     </Tooltip>
   ),
+};
+
+export const WithArrow: Story = {
+  name: "With arrow",
+  render: () => (
+    <div className="flex flex-wrap items-center justify-center gap-large">
+      <Tooltip openDelay={0} side="top">
+        <Tooltip.Trigger>
+          <Button variant="secondary" type="button">
+            With arrow
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content showArrow>
+          <Tooltip.Arrow />
+          Tooltip with arrow on top
+        </Tooltip.Content>
+      </Tooltip>
+      <Tooltip openDelay={0} side="bottom">
+        <Tooltip.Trigger>
+          <Button variant="outline" type="button">
+            Bottom
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content showArrow>
+          <Tooltip.Arrow />
+          Tooltip below
+        </Tooltip.Content>
+      </Tooltip>
+    </div>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.hover(canvas.getByRole("button", { name: "With arrow" }));
+    await expect(screen.getByRole("tooltip")).toHaveTextContent("Tooltip with arrow on top");
+    await userEvent.unhover(canvas.getByRole("button", { name: "With arrow" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    });
+  },
+};
+
+export const CustomOffset: Story = {
+  name: "Custom offset",
+  render: () => (
+    <Tooltip openDelay={0} side="top">
+      <Tooltip.Trigger>
+        <Button variant="primary" type="button">
+          offset=12
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content showArrow offset={12}>
+        <Tooltip.Arrow />
+        Larger offset from trigger
+      </Tooltip.Content>
+    </Tooltip>
+  ),
+};
+
+export const Placements: Story = {
+  name: "Placement (4 sides)",
+  render: () => (
+    <div className="grid grid-cols-2 gap-2xlarge py-2xlarge">
+      {(["top", "right", "bottom", "left"] as const).map((side) => (
+        <div key={side} className="flex items-center justify-center">
+          <Tooltip openDelay={0} side={side}>
+            <Tooltip.Trigger>
+              <Button variant="outline" type="button" className="capitalize">
+                {side}
+              </Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content showArrow>
+              <Tooltip.Arrow />
+              {`Tooltip ${side}`}
+            </Tooltip.Content>
+          </Tooltip>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const KeyboardFocus: Story = {
+  name: "Focus (keyboard)",
+  render: () => (
+    <Tooltip openDelay={0}>
+      <Tooltip.Trigger>
+        <Button variant="outline" type="button">
+          Tab here
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>Tooltip on focus and hover</Tooltip.Content>
+    </Tooltip>
+  ),
+};
+
+export const Accessibility: Story = {
+  name: "Accessibility",
+  render: () => (
+    <div className="flex max-w-md flex-col gap-large text-left">
+      <p className="text-sm text-muted">
+        Content: <code className="text-primary">role=&quot;tooltip&quot;</code>. Link to trigger —{" "}
+        <code className="text-primary">aria-describedby</code> only while the tooltip is open. Hover and
+        focus; <kbd className="rounded-small border-token px-xsmall py-0.5 text-xsmall">Escape</kbd>{" "}
+        closes. A single <code className="text-primary">Trigger</code> child receives handlers without
+        an extra tab stop.
+      </p>
+      <Tooltip openDelay={0}>
+        <Tooltip.Trigger>
+          <Button variant="outline" type="button">
+            Button with tooltip
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Additional description for AT</Tooltip.Content>
+      </Tooltip>
+      <Tooltip openDelay={0} status="info">
+        <Tooltip.Trigger>
+          <Button variant="ghost" type="button" aria-label="Field help">
+            ?
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Trigger without visible label — set aria-label</Tooltip.Content>
+      </Tooltip>
+    </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Slots trigger, content, panelRelative, arrow, panel, message, indicator, title, and description via classNames prop.",
+      },
+    },
+  },
+  render: () => (
+    <Tooltip
+      openDelay={0}
+      status="info"
+      classNames={{
+        trigger: "rounded-large ring-2 ring-primary/35",
+        content: "ring-1 ring-primary/25",
+        panelRelative: "isolate",
+        panel: "border-primary/30",
+        indicator: "icon-slot-large text-info",
+        title: "text-primary font-semibold",
+        description: "text-muted/80",
+      }}
+    >
+      <Tooltip.Trigger>
+        <Button variant="outline" type="button">
+          Custom slots
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content showArrow>
+        <Tooltip.Arrow />
+        <Tooltip.Indicator />
+        <Tooltip.Title>Title</Tooltip.Title>
+        <Tooltip.Description>Description with custom classes</Tooltip.Description>
+      </Tooltip.Content>
+    </Tooltip>
+  ),
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`portalContainer` mounts the tooltip into a custom host instead of `document.body`.",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-large">
+        <p className="text-sm text-muted">
+          Tooltip portals into the box below (not <code className="text-foreground">document.body</code>).
+        </p>
+        <div
+          ref={setContainer}
+          className="relative flex h-48 items-center justify-center overflow-hidden rounded-large border-2 border-dashed border-primary/40 bg-surface/40 p-large"
+          style={{ transform: "translateZ(0)" }}
+        >
+          <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Tooltip openDelay={0} portalContainer={container}>
+              <Tooltip.Trigger>
+                <Button variant="outline" type="button">
+                  Hover in host
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <Tooltip.Title>Inside host</Tooltip.Title>
+                <Tooltip.Description>Portaled into the dashed container.</Tooltip.Description>
+              </Tooltip.Content>
+            </Tooltip>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Tooltip.Trigger` (default `asChild`) merges host `id`, `data-*`, `className`, and `ref` onto the child via `mergeAsChildProps`.",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-large">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <Tooltip openDelay={0}>
+          <Tooltip.Trigger
+            ref={triggerRef}
+            id="story-tooltip-trigger"
+            data-testid="story-tooltip-trigger"
+            data-analytics="hover-tooltip"
+            className="ring-2 ring-primary/30"
+          >
+            <Button variant="outline" type="button">
+              Hover (merged props)
+            </Button>
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            <Tooltip.Title>Merged trigger</Tooltip.Title>
+            <Tooltip.Description>
+              Host props from Trigger land on the Button child.
+            </Tooltip.Description>
+          </Tooltip.Content>
+        </Tooltip>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-tooltip-trigger");
+    await expect(btn).toHaveAttribute("id", "story-tooltip-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "hover-tooltip");
+  },
+};
+
+export const CompoundCustomIcon: Story = {
+  name: "Compound — custom icon",
+  render: () => (
+    <Tooltip openDelay={0} variant="default">
+      <Tooltip.Trigger>
+        <Button variant="outline" type="button">
+          Custom icon
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <Tooltip.Indicator>
+          <IoHelpCircleOutline aria-hidden className="text-primary" />
+        </Tooltip.Indicator>
+        <Tooltip.Title>Hint</Tooltip.Title>
+        <Tooltip.Description>Icon is set via Tooltip.Indicator in compound API</Tooltip.Description>
+      </Tooltip.Content>
+    </Tooltip>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TooltipSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` on `Tooltip.Content` — `playSlot(\"content\")`. `play()` skips (no `root`). Controlled `open` keeps the panel live.",
+      },
+    },
+  },
+  render: () => <TooltipMotionControllerGalleryDemo />,
 };

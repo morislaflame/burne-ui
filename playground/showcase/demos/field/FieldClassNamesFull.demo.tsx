@@ -1,0 +1,54 @@
+import { Button } from "@/components/core/Button";
+import { Field } from "@/components/core/Field";
+import { Input } from "@/components/core/Input";
+
+export function FieldClassNamesFullDemo() {
+  return (
+    <Field
+      className="max-w-sm"
+      classNames={{
+        root: "rounded-large border border-primary/20 p-base",
+        label: "text-primary",
+        hint: "text-foreground/70",
+        error: "font-medium",
+      }}
+    >
+      <Field.Label htmlFor="field-demo-email">Email</Field.Label>
+      <Input.Control id="field-demo-email" placeholder="you@example.com" />
+      <Field.Hint>We do not share the address with third parties.</Field.Hint>
+      <Field.Error>Please enter correct email.</Field.Error>
+    </Field>
+  );
+}
+
+export function FieldSetClassNamesFullDemo() {
+  return (
+    <Field.Set
+      className="max-w-md"
+      classNames={{
+        legend: "text-primary",
+        stack: "gap-2xlarge",
+        group: "gap-large",
+        actions: "justify-start pt-small",
+      }}
+    >
+      <Field.Legend>
+        <Field.LegendHeader>
+          <Field.Label>Contact details</Field.Label>
+          <Field.Hint as="span">classNames on Field.Set</Field.Hint>
+        </Field.LegendHeader>
+      </Field.Legend>
+      <Field.Group>
+        <Input>
+          <Input.Label>Telephone</Input.Label>
+          <Input.Control placeholder="+7 …" />
+        </Input>
+      </Field.Group>
+      <Field.Actions>
+        <Button type="button" size="base">
+          Save
+        </Button>
+      </Field.Actions>
+    </Field.Set>
+  );
+}

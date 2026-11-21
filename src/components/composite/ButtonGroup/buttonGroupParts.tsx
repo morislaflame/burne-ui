@@ -1,0 +1,72 @@
+import { forwardRef } from "react";
+ 
+import { Text } from "@/components/core/Text";
+import { dataGroupSegment } from "@/components/core/utils/dataContract";
+import { cn } from "@/utils/cn";
+ 
+import { useButtonGroupSlotMotion } from "./buttonGroupAnimations";
+import { useButtonGroupClassNames, useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "./buttonGroupContext";
+import { BUTTON_GROUP_TEXT_LABEL_CLASS, BUTTON_GROUP_TEXT_VARIANT, buttonGroupTextClass } from "./buttonGroupStyles";
+import type { ButtonGroupTextProps } from "./buttonGroupTypes";
+ 
+export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>(
+  function ButtonGroupText(
+    {
+      children,
+      className = "",
+      size: buttonSizeProp,
+      groupSegment: groupSegmentProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
+    const layoutCtx = useOptionalButtonGroupLayout();
+    const groupCtx = useOptionalButtonGroupSegment();
+    const slotClassNames = useButtonGroupClassNames();
+    const size = buttonSizeProp ?? groupCtx?.size ?? "base";
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
+    const groupVariant = groupCtx?.variant;
+    const part = useButtonGroupSlotMotion<HTMLSpanElement>("text", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
+ 
+    return (
+      <span
+        ref={part.setRef}
+        {...rest}
+        className={buttonGroupTextClass({
+          groupSegment,
+          groupVariant,
+          size,
+          className: cn(slotClassNames.text, className),
+        })}
+        {...part.pointerHandlers}
+        data-group-segment={dataGroupSegment(groupSegment != null)}
+      >
+        <Text
+          textStyle={BUTTON_GROUP_TEXT_VARIANT[size]}
+          inheritColor
+          as="span"
+          className={cn(BUTTON_GROUP_TEXT_LABEL_CLASS, slotClassNames.textLabel)}
+        >
+          {children}
+        </Text>
+      </span>
+    );
+  },
+);
+ 
+ButtonGroupText.displayName = "ButtonGroupText";
+ 

@@ -1,13 +1,16 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Text } from "./Text";
+import { TextMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/text/motionController/gallery";
+import { TextSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/text/slotMotion/gallery";
 
-/** Тёмная тема — токены из `:root`, явный фон под сторисы. */
+/** Dark theme — tokens from `:root`, explicit background for stories. */
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -19,7 +22,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -36,11 +39,11 @@ const meta = {
   },
   decorators: [...darkThemeDecorator],
   args: {
-    variant: "base" as const,
-    children: "Пример текста дизайн-системы Burne UI",
+    textStyle: "base" as const,
+    children: "Burne UI design system sample text",
   },
   argTypes: {
-    variant: {
+    textStyle: {
       control: "select",
       options: [
         "accent-header",
@@ -50,7 +53,7 @@ const meta = {
         "mid",
         "base",
         "small",
-        "tools",
+        "xsmall",
       ],
     },
   },
@@ -60,44 +63,68 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("Burne UI design system sample text")).toBeVisible();
+  },
+};
+
+export const AllVariants: Story = {
+  name: "All variants",
+  render: () => (
+    <div className="flex flex-col gap-mid">
+      <Text textStyle="accent-header">accent-header</Text>
+      <Text textStyle="header-1">header-1</Text>
+      <Text textStyle="header-2">header-2</Text>
+      <Text textStyle="large">text-large</Text>
+      <Text textStyle="mid">text-mid</Text>
+      <Text textStyle="base">text-base</Text>
+      <Text textStyle="small" className="text-muted">
+        text-small
+      </Text>
+      <Text textStyle="xsmall" className="text-muted">
+        text-xsmall
+      </Text>
+    </div>
+  ),
+};
 
 export const AsSpanWithWrap: Story = {
-  name: "Как span + перенос",
+  name: "As span + wrap",
   render: () => (
     <div
       className="w-[140px]"
     >
     <Text
-      variant="header-2"
+      textStyle="header-2"
       as="span"
       className="break-words break-all"
     >
-      Очень_длинное_имя_файла_без_пробелов_для_проверки_break_all.tsx
+      very_long_filename_without_spaces_for_break_all_test.tsx
     </Text>
     </div>
   ),
 };
 
 export const OnSurface: Story = {
-  name: "На панели surface",
+  name: "On surface panel",
   render: () => (
     <div
-      className="box-border w-full max-w-xl rounded-base border border-base p-mid text-foreground"
+      className="box-border w-full max-w-xl rounded-base border-token p-large text-foreground"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
-      <div className="flex flex-col gap-plus">
-        <Text variant="accent-header">accent-header</Text>
-        <Text variant="header-1">header-1</Text>
-        <Text variant="header-2">header-2</Text>
-        <Text variant="large">text-large</Text>
-        <Text variant="mid">text-mid</Text>
-        <Text variant="base">text-base</Text>
-        <Text variant="small" className="text-muted">
+      <div className="flex flex-col gap-mid">
+        <Text textStyle="accent-header">accent-header</Text>
+        <Text textStyle="header-1">header-1</Text>
+        <Text textStyle="header-2">header-2</Text>
+        <Text textStyle="large">text-large</Text>
+        <Text textStyle="mid">text-mid</Text>
+        <Text textStyle="base">text-base</Text>
+        <Text textStyle="small" className="text-muted">
           text-small
         </Text>
-        <Text variant="tools" className="text-muted">
-          tools
+        <Text textStyle="xsmall" className="text-muted">
+          text-xsmall
         </Text>
       </div>
     </div>
@@ -105,6 +132,38 @@ export const OnSurface: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-theme)",
+  name: "Light theme (data-theme)",
   decorators: [...lightThemeDecorator],
+};
+
+export const CustomClassNames: Story = {
+  name: "Custom className",
+  render: () => (
+    <div className="flex max-w-sm flex-col items-start gap-small">
+      <Text textStyle="header-2" className="text-primary">
+        Primary heading
+      </Text>
+      <Text textStyle="base" className="text-muted">
+        Text is one node. Color comes from className.
+      </Text>
+    </div>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TextSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`useMotionControllerHandle()` — play / set on root, cancel loop, text events. Slot motion also has SplitText words and TextPlugin typewriter.",
+      },
+    },
+  },
+  render: () => <TextMotionControllerGalleryDemo />,
 };

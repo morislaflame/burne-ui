@@ -1,0 +1,24 @@
+import { Switch } from "@/components/core/Switch";
+
+export function SwitchClassNamesFullDemo() {
+  return (
+    <Switch
+      defaultChecked
+      color="var(--color-primary)"
+      classNames={{
+        root: "max-w-md rounded-large border border-info/25 p-base",
+        track: "ring-1 ring-info/20",
+        fill: "opacity-95",
+        thumbShell: "ring-info/30",
+        labelText: "text-info font-semibold",
+        hint: "text-muted/80",
+      }}
+    >
+      <Switch.Control />
+      <Switch.Content>
+        <Switch.Label>Notifications</Switch.Label>
+        <Switch.Hint>Setting up slots via classNames on root.</Switch.Hint>
+      </Switch.Content>
+    </Switch>
+  );
+}

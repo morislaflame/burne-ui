@@ -1,16 +1,16 @@
 import { useCallback, useRef, useState } from "react";
 import type { PointerEvent } from "react";
-
-import { createConvergeRippleAtPointer, type ConvergeRipple } from "./pressRipple";
-
+ 
+import { createConvergeRippleAtPointer, type ConvergeRipple } from "./convergeRippleGeometry";
+ 
 /**
- * Состояние и пуш новых рипплов от pointer; геометрию читаем **синхронно** в обработчике —
- * в deferred-апдейтере `setState` у React `e.currentTarget` уже может быть `null`.
+ * State and push new ripples from pointer; read geometry **synchronously** in handler —
+ * in deferred `setState` updater React `e.currentTarget` may already be `null`.
  */
 export function useConvergeRipples(): {
   ripples: ConvergeRipple[];
   pushFromPointer: (e: PointerEvent<HTMLElement>) => void;
-  /** Геометрия относительно `target` (обычно корень интерактива: кнопка, карточка). */
+  /** Geometry relative to `target` (usually interactive root: button, card). */
   pushAtClientCoords: (
     target: HTMLElement,
     clientX: number,
@@ -20,10 +20,12 @@ export function useConvergeRipples(): {
 } {
   const idRef = useRef(0);
   const [ripples, setRipples] = useState<ConvergeRipple[]>([]);
-
+ 
   const dismiss = useCallback((id: number) => {
     setRipples((prev) => prev.filter((rp) => rp.id !== id));
   }, []);
+ 
+const MAX_CONCURRENT_RIPPLES = 8;
 
   const pushAtClientCoords = useCallback(
     (target: HTMLElement, clientX: number, clientY: number) => {
@@ -34,16 +36,21 @@ export function useConvergeRipples(): {
         clientY,
         id,
       );
-      setRipples((prev) => [...prev, ripple]);
+      setRipples((prev) =>
+        prev.length >= MAX_CONCURRENT_RIPPLES
+          ? [...prev.slice(prev.length - MAX_CONCURRENT_RIPPLES + 1), ripple]
+          : [...prev, ripple],
+      );
     },
     [],
   );
-
+ 
   const pushFromPointer = useCallback((e: PointerEvent<HTMLElement>) => {
     const target = e.currentTarget;
     if (!target) return;
     pushAtClientCoords(target, e.clientX, e.clientY);
   }, [pushAtClientCoords]);
-
+ 
   return { ripples, pushFromPointer, pushAtClientCoords, dismiss };
 }
+ 

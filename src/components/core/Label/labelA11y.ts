@@ -1,0 +1,2 @@
+export const LABEL_REQUIRED_MARKER_ARIA_HIDDEN = true;
+ 

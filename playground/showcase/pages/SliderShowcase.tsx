@@ -1,0 +1,110 @@
+import { SliderBudgetPanelDemo } from "../demos/slider/SliderBudgetPanel.demo";
+import sliderBudgetPanelSource from "../demos/slider/SliderBudgetPanel.demo.tsx?raw";
+import { SliderClassNamesFullDemo } from "../demos/slider/SliderClassNamesFull.demo";
+import sliderClassNamesFullSource from "../demos/slider/SliderClassNamesFull.demo.tsx?raw";
+import { SliderOpacityStripDemo } from "../demos/slider/SliderOpacityStrip.demo";
+import sliderOpacityStripSource from "../demos/slider/SliderOpacityStrip.demo.tsx?raw";
+import { SliderPriceRangeDemo } from "../demos/slider/SliderPriceRange.demo";
+import sliderPriceRangeSource from "../demos/slider/SliderPriceRange.demo.tsx?raw";
+import { SliderSizesDemo } from "../demos/slider/SliderSizes.demo";
+import sliderSizesSource from "../demos/slider/SliderSizes.demo.tsx?raw";
+import { SliderThumbShapeDemo } from "../demos/slider/SliderThumbShape.demo";
+import sliderThumbShapeSource from "../demos/slider/SliderThumbShape.demo.tsx?raw";
+import { SliderVariantsDemo } from "../demos/slider/SliderVariants.demo";
+import sliderVariantsSource from "../demos/slider/SliderVariants.demo.tsx?raw";
+import { SliderVolumeCardDemo } from "../demos/slider/SliderVolumeCard.demo";
+import sliderVolumeCardSource from "../demos/slider/SliderVolumeCard.demo.tsx?raw";
+import { SliderVolumeDemo } from "../demos/slider/SliderVolume.demo";
+import sliderVolumeSource from "../demos/slider/SliderVolume.demo.tsx?raw";
+import { SliderSlotMotionGalleryDemo } from "../demos/slider/slotMotion/gallery";
+import { SliderMotionControllerGalleryDemo } from "../demos/slider/motionController/gallery";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
+
+export function SliderShowcase() {
+  return (
+    <ShowcasePage
+      title="Slider"
+      description="Slider for a single value or range with labels and formatting."
+      importPath='import { Slider } from "@/components/core/Slider";'
+      tags={["core", "forms"]}
+    >
+      <ShowcaseSection title="Single" description="showValue and marks for scale with labels.">
+        <ShowcaseDemoFromFile align="center" Demo={SliderVolumeDemo} source={sliderVolumeSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={SliderSizesDemo} source={sliderSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Range" description="range + formatValue for two sliders.">
+        <ShowcaseDemoFromFile align="center" Demo={SliderPriceRangeDemo} source={sliderPriceRangeSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Disabled and vertical" description="orientation vertical and disabled state.">
+        <ShowcaseDemoFromFile align="center" Demo={SliderVariantsDemo} source={sliderVariantsSource} />
+      </ShowcaseSection>
+<ShowcaseSection title="Slot motion" description="Instant thumb press, change-phase pulse, inertia bubble (quickTo, not change), value pop timeline, range thumbs with different part motion, track hover glow, chrome enter on label / hint / error.">
+        <SliderSlotMotionGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="MotionController"
+        description="One gallery: playSlot on track/thumb (no play: no root slot), chrome label on Root, range thumb stagger, slider events."
+      >
+        <SliderMotionControllerGalleryDemo />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Full customization of slots via classNames on root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SliderClassNamesFullDemo}
+          source={sliderClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Variations"
+        description="Form thumb, compound Track and gradient range — demo-files in `demos/slider/`."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderThumbShapeDemo} source={sliderThumbShapeSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderVolumeCardDemo} source={sliderVolumeCardSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderBudgetPanelDemo} source={sliderBudgetPanelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderOpacityStripDemo} source={sliderOpacityStripSource} />
+      </ShowcaseSection>
+
+      <ShowcaseDoc>
+        <ShowcaseDoc.Block title="Import">
+          <ShowcaseDoc.Import path="@/components/core/Slider" />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="value, onValueChange, min, max, step, range, marks, showValue, formatValue, orientation, default."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Slider.Track, Slider.Rail, Slider.Fill, Slider.Thumb — custom rail markings."
+          />
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Range">
+          <p>
+            At <code>range</code> value — motorcade <code>[number, number]</code>, onValueChange gets the same
+            type. <code>formatValue</code> formats the displayed value.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization>
+          <p>
+            Boolean prop <code>default</code> on the root - glass thumb. Filling during change value —{" "}
+            <code>configureMotion()</code> not applicable; thumb drag uses interactive tokens.
+          </p>
+        </ShowcaseDoc.Customization>
+      </ShowcaseDoc>
+    </ShowcasePage>
+  );
+}

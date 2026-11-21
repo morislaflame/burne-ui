@@ -3,10 +3,11 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-/** Отдельный Vite-конфиг для Storybook (без vite-plugin-dts и library mode). */
+/** Separate Vite config for Storybook (without vite-plugin-dts and library mode). */
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "src"),
     },

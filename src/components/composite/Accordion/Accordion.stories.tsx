@@ -1,14 +1,17 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Ripple } from "@/components/core/Ripple";
 
-import { Accordion } from "./Accordion";
+import { Accordion } from ".";
+import { AccordionSlotMotionGalleryDemo } from "../../../../playground/showcase/demos/accordion/slotMotion/gallery";
+import { AccordionMotionControllerGalleryDemo } from "../../../../playground/showcase/demos/accordion/motionController/gallery";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-2xl">
@@ -33,12 +36,62 @@ const infoIcon = (
   </svg>
 );
 
+const items = [
+  {
+    content:
+      "Delivery within Russia in 2–5 days. International shipping is calculated separately.",
+    icon: infoIcon,
+    title: "How to place an order?",
+  },
+  {
+    content: "Returns are available within 14 days if the product is in resalable condition.",
+    title: "Under what conditions can the product be returned?",
+  },
+  {
+    content: "Avoid abrasives and harsh chemicals. Store in a dry place.",
+    title: "How to care for the product?",
+  },
+] as const;
+
+function AccordionItemDemo({
+  item,
+}: {
+  item: (typeof items)[number];
+}) {
+  return (
+    <Accordion.Item>
+      <Accordion.Heading>
+        <Accordion.Trigger>
+          <Accordion.Message>
+            {"icon" in item && item.icon ? (
+              <Accordion.Icon>{item.icon}</Accordion.Icon>
+            ) : null}
+            <Accordion.Content>
+              <Accordion.Title>{item.title}</Accordion.Title>
+            </Accordion.Content>
+            <Accordion.Chevron />
+          </Accordion.Message>
+        </Accordion.Trigger>
+      </Accordion.Heading>
+      <Accordion.Panel>
+        <Accordion.Body>{item.content}</Accordion.Body>
+      </Accordion.Panel>
+    </Accordion.Item>
+  );
+}
+
 const meta = {
   title: "Composite Components/Accordion",
   component: Accordion,
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Group of expandable items based on `Expandable`. Slots `Message`, `Icon`, `Content`, `Title`, `Indicator` — same styles as Expandable.",
+      },
+    },
   },
   decorators: [...darkThemeDecorator],
 } satisfies Meta<typeof Accordion>;
@@ -47,57 +100,100 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const DEMO_ITEMS = [
-  {
-    id: "delivery",
-    title: "Как оформить заказ?",
-    icon: infoIcon,
-    content: (
-      <p className="text-sm text-muted">
-        Доставка по РФ 2-5 дней. Международная доставка рассчитывается отдельно.
-      </p>
-    ),
-  },
-  {
-    id: "returns",
-    title: "При каких условиях можно вернуть товар?",
-    content: (
-      <p className="text-sm text-muted">
-        Возврат возможен в течение 14 дней при сохранении товарного вида.
-      </p>
-    ),
-  },
-  {
-    id: "care",
-    title: "Как ухаживать за товаром?",
-    content: (
-      <p className="text-sm text-muted">
-        Избегайте абразивов и агрессивной химии. Хранить в сухом месте.
-      </p>
-    ),
-  },
-] as const;
-
 export const Default: Story = {
-  args: {
-    items: DEMO_ITEMS,
-    defaultOpenId: "delivery",
+  render: () => (
+    <Accordion className="max-w-2xl" defaultValue="0">
+      {items.map((item) => (
+        <AccordionItemDemo key={item.title} item={item} />
+      ))}
+    </Accordion>
+  ),
+};
+
+export const ExpandInteraction: Story = {
+  name: "Interaction: expand",
+  render: () => (
+    <Accordion className="max-w-2xl" defaultValue="0">
+      {items.map((item) => (
+        <AccordionItemDemo key={item.title} item={item} />
+      ))}
+    </Accordion>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const first = canvas.getByRole("button", { name: /How to place an order/ });
+    const second = canvas.getByRole("button", { name: /Under what conditions/ });
+    await expect(first).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(second);
+    await expect(second).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByText(/Returns are available/)).toBeVisible();
   },
 };
 
-export const PressRipple: Story = {
-  name: "Риппл по нажатию в триггере",
-  args: {
-    items: DEMO_ITEMS,
-    defaultOpenId: "delivery",
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Accordion — root, item, heading and Expandable slots.",
+      },
+    },
   },
-  render: ({ items: _items, ...args }) => (
+  render: () => (
     <Accordion
-      {...args}
-      items={DEMO_ITEMS.map((item) => ({
-        ...item,
-        triggerBefore: <Ripple color="accentMuted" />,
-      }))}
-    />
+      className="max-w-2xl"
+      defaultValue="0"
+      classNames={{
+        root: "gap-px",
+        item: "border-primary/30",
+        heading: "text-primary",
+        trigger: "bg-primary/5",
+        title: "text-primary font-semibold",
+        chevron: "text-primary",
+        panel: "bg-primary/5",
+      }}
+    >
+      {items.map((item) => (
+        <AccordionItemDemo key={item.title} item={item} />
+      ))}
+    </Accordion>
   ),
+};
+
+export const PressRipple: Story = {
+  name: "Ripple on press in trigger",
+  render: () => (
+    <Accordion className="max-w-md" defaultValue="0">
+      {items.map((item) => (
+        <Accordion.Item key={item.title}>
+          <Accordion.Heading>
+            <Accordion.Trigger>
+              <Ripple color="neutralMuted" />
+              <Accordion.Message>
+                {"icon" in item && item.icon ? (
+                  <Accordion.Icon>{item.icon}</Accordion.Icon>
+                ) : null}
+                <Accordion.Content>
+                  <Accordion.Title>{item.title}</Accordion.Title>
+                </Accordion.Content>
+                <Accordion.Chevron />
+              </Accordion.Message>
+            </Accordion.Trigger>
+          </Accordion.Heading>
+          <Accordion.Panel>
+            <Accordion.Body>{item.content}</Accordion.Body>
+          </Accordion.Panel>
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, chevron, bounce)",
+  render: () => <AccordionSlotMotionGalleryDemo />,
+};
+
+export const MotionControllerGallery: Story = {
+  name: "MotionController gallery (Item host, repeated)",
+  render: () => <AccordionMotionControllerGalleryDemo />,
 };

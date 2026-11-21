@@ -1,0 +1,330 @@
+# Card
+
+Контейнер с compound-разметкой: `Header`, `Title`, `Description`, `Body`, `Footer`. Поддерживает `variant`, статическую тень (passive) и **pressable** режим с hover-lift / squeeze как у кнопки второго уровня.
+
+Стекло — пакет `burne-ui-skin-gloss`, не вариант кита. Подключение и классы — [docs/SKINS.md](../../../../docs/SKINS.md).
+
+## Импорт
+
+```tsx
+import { Card, type CardProps, type CardVariant, type CardSize, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps, type CardMotion, type CardPartMotion } from "burne-ui";
+```
+
+## API
+
+### Compound API
+
+```tsx
+<Card variant="default">
+  <Card.Header>
+    <Card.Title>Релиз 0.12</Card.Title>
+    <Card.Description>Краткое описание карточки</Card.Description>
+  </Card.Header>
+  <Card.Body>Основной контент</Card.Body>
+  <Card.Footer>
+    <Button size="small">Детали</Button>
+  </Card.Footer>
+</Card>
+```
+
+### Pressable card
+
+```tsx
+<Card pressable onClick={(e) => console.log(e)}>
+  <Card.Header>
+    <Card.Title>Открыть</Card.Title>
+  </Card.Header>
+  <Card.Body>Клик по всей карточке</Card.Body>
+</Card>
+```
+
+### Pressable + Ripple
+
+```tsx
+<Card pressable variant="outline" onClick={handlePress}>
+  <Ripple color="neutral" />
+  <div className="relative z-[1] flex flex-col">
+    <Card.Header>...</Card.Header>
+    <Card.Body>...</Card.Body>
+  </div>
+</Card>
+```
+
+Simple API (props `title` на root) нет — только compound children.
+
+### Root props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `variant` | `default` | `default` \| `outline` \| `secondary` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` — radius (как у Button), padding секций, type scale Title/Description |
+| `shadow` | `base` | `small` \| `base` \| `mid` \| `large` — rest elevation (passive CSS или pressable family) |
+| `pressable` | `false` | Интерактивная карточка (`<button>` root) |
+| `onClick` | — | Активация click / Enter / Space |
+| `onKeyDown` / `onPointerDown` | — | Дополнительные handlers. Любой из них или `onClick` рисует корень как `<button>` |
+| `className` | — | — |
+| `classNames` | — | Слоты |
+| `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer`. Ключ `events` — app-команды для `MotionController`. `states` — режимы для `motionState` |
+| `motionController` | — | Handle: `play` / `playSlot` / `playAll` / `set` / `cancel` |
+| `motionState` | — | Режим (`idle` / `paying` / `paid`). Тот же ещё раз — тишина |
+| `motionPayload` | — | Снимок для фабрики (`ctx.payload`). Типизация — `createMotionFactory` / `MotionPayload`. Не замыкать `useState`. Объекты копируются и freeze; без смены `motionState` не переигрывает |
+| `playInitialState` | `false` | Играть `states[motionState]` на маунте |
+
+### `CardClassNames`
+
+`root`, `content`, `header`, `headingBlock`, `title`, `description`, `body`, `footer`.
+
+### Compound-подчасти
+
+| Часть | Назначение |
+|-------|------------|
+| `Card.Header` | Верхний блок (title + description) |
+| `Card.HeadingBlock` | Группа заголовка внутри header |
+| `Card.Title` | `Text` as `h3` |
+| `Card.Description` | Muted subtitle |
+| `Card.Body` | Основной контент |
+| `Card.Footer` | Нижняя зона с border-top |
+
+## Size
+
+Радиус / padding / title+description — общий `PANEL_SIZE_LAYOUT` (Dialog / AlertDialog / Popover / Card).
+
+| size | Radius | Header | Body | Footer | Title | Description |
+|------|--------|--------|------|--------|-------|-------------|
+| `small` | `rounded-small` | `px-mid pt-base` + `gap-xsmall` | `px-mid py-small` | `px-mid pb-base` | `small` | `xsmall` |
+| `base` | `rounded-base` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `base` | `small` |
+| `mid` | `rounded-large` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `mid` | `base` |
+| `large` | `rounded-large` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `large` | `base` |
+
+```tsx
+<Card size="mid">
+  <Card.Header>
+    <Card.Title>Mid card</Card.Title>
+    <Card.Description>Matches Button mid radius</Card.Description>
+  </Card.Header>
+  <Card.Body>Content</Card.Body>
+</Card>
+```
+
+## Variant
+
+| Variant | Поверхность |
+|---------|-------------|
+| `default` | `bg-surface border-token` |
+| `outline` | transparent + border |
+| `secondary` | `bg-secondary border-token` |
+
+### Тени
+
+| Режим | Тень |
+|-------|------|
+| Passive (`pressable={false}`) | `shadow-token-{shadow}` всегда |
+| Pressable `default/outline/secondary` | rest → `{shadow}-hover` на hover; press → `{shadow}-press` |
+
+## Анимации
+
+`cardAnimations.ts` — публичный slot motion. Pressable — 2-й уровень (rest-тень + hover/press на `root`). Passive — без дефолтного hover.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | при `pressable`: `hoverLiftSecondLevel`; `pressSqueeze` (`pressOut: false`) |
+| `title` / `description` / `header` / `headingBlock` / `body` / `footer` | `hoverIn` / `hoverOut` | нет |
+
+`content` — layout-обёртка, не публичный motion-слот.
+
+Сырой follow мыши (`gsap.quickTo` на `x`/`y`, не фаза `hoverIn`) — слайд **Mouse follow** в галерее Slot motion.
+
+Проп `motionController` + ключ `events` на `motion` — app-команды (`checkout:saving`), не фазы. `createMotionEvents`. `play` / `playAll` принимают `MotionPlayEvent` (фазы и namespaced events без дженерика). Хореография Alert + Card — `MotionGroup`. Задержки в factory — `ctx.wait` / `sequence`. См. [Motion](/docs/motion-events), [MotionGroup](/docs/motion-group) и [async helpers](/docs/motion-async).
+
+Режимы checkout — `motionState` + `motion.states` (`createMotionStates`). Тот же `paying` ещё раз не переигрывает. Не класть `idle` в `MOTION_PHASE_NAMES`. См. [Motion and state managers](/docs/motion-state).
+
+```tsx
+import { Card, createMotionFactory, createMotionStates, type MotionPayload } from "burne-ui";
+
+type CheckoutPayload = MotionPayload & { tries: number };
+
+const failedShake = createMotionFactory<CheckoutPayload>((ctx) => {
+  const n = ctx.payload?.tries ?? 1;
+  return ctx.fromRest({ x: n > 1 ? 9 : 7, duration: 0.07, yoyo: true, repeat: 5 });
+});
+
+const states = createMotionStates({
+  idle: { root: { y: 0, duration: 0.2 } },
+  paying: { root: { y: -4, duration: 0.32, yoyo: true, repeat: -1 } },
+  paid: { root: { y: 0, duration: 0.25 } },
+  failed: { root: failedShake },
+});
+
+<Card motionState={status} motionPayload={{ tries }} motion={{ states }}>
+  <Card.Title>Checkout</Card.Title>
+</Card>
+```
+
+```tsx
+import { Card, Button, createMotionEvents, useMotionControllerHandle } from "burne-ui";
+
+const events = createMotionEvents({
+  "checkout:saving": { y: -4, duration: 0.3, yoyo: true, repeat: -1 },
+  "checkout:success": { y: 0, duration: 0.25 },
+});
+
+function Pay() {
+  const controller = useMotionControllerHandle();
+  return (
+    <Card motionController={controller} motion={{ events }}>
+      <Card.Title>Checkout</Card.Title>
+      <Card.Footer>
+        <Button size="small" onClick={() => controller.play("checkout:saving")}>
+          Pay
+        </Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+```
+
+**Где в коде:** типы — `cardTypes.ts`; scope — `cardContext.tsx`; defaults + host — `cardAnimations.ts`; слоты — `cardParts.tsx`; Provider — `Card.tsx`.
+
+```tsx
+<Card pressable motion={{ root: { hoverIn: false, hoverOut: false } }}>
+  <Card.Title>Instant hover</Card.Title>
+</Card>
+
+<Card.Title motion={{ hoverIn: { scale: 1.06, y: -2 }, hoverOut: { scale: 1, y: 0 } }} />
+```
+
+### Отключение
+
+```ts
+configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
+```
+
+Ripple **не встроен** — передайте `<Ripple />` первым ребёнком и оберните контент в слой `relative z-[1]`. Squeeze анимирует pressable shell.
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `CARD_ROOT_BASE_CLASS` | `flex-col` (+ size `rounded-*`). `overflow-hidden` на корне только у passive; у pressable клип на внутренней оболочке |
+| `PANEL_SIZE_LAYOUT` | Radius / padding / title+description (shared panel grid) |
+| `CARD_STATIC_SHADOW_CLASS` | Map `shadow` → `shadow-token-*` |
+| `CARD_PRESSABLE_ROOT_CLASS` | `cursor-pointer focus-ring` |
+| `CARD_BUTTON_SHELL_CLASS` | `w-full border-0 p-0 text-left` на `<button>` |
+| `cardHeaderClass` / `cardBodyClass` / `cardFooterClass` | Padding из size layout; footer + `border-t-token` |
+| `SHADOW_LIFT_MOTION_CLASS` | GSAP shadow transition |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+2. **`classNames` на root** — все внутренние слоты через provider.
+
+Compound-подчасти не принимают отдельный `classNames` — только root.
+
+### Слоты `CardClassNames`
+
+| Слот | DOM | Когда использовать |
+|------|-----|-------------------|
+| `root` | `<div>` или `<button>` shell | Border, radius, outer shadow override |
+| `content` | Pressable inner wrapper | z-index для Ripple + children |
+| `header` | Header block | Top bg strip, extra padding |
+| `headingBlock` | Title group flex | Gap title/description |
+| `title` | `h3` Text | Heading color/weight |
+| `description` | Muted `p` | Subtitle typography |
+| `body` | Body section | Main content padding |
+| `footer` | Footer bar | Actions row, border-top tint |
+
+### Декоративная карточка (passive)
+
+```tsx
+<Card
+  variant="outline"
+  classNames={{
+    root: "rounded-large border-primary/40 bg-primary/5 shadow-token-md",
+    header: "bg-primary/5",
+    title: "text-primary font-semibold",
+    description: "text-foreground/80",
+    body: "text-small",
+    footer: "border-primary/20 bg-primary/5",
+  }}
+>
+  <Card.Header>
+    <Card.Title>Профиль</Card.Title>
+    <Card.Description>Все слоты через classNames</Card.Description>
+  </Card.Header>
+  <Card.Body>Контент</Card.Body>
+  <Card.Footer>
+    <Button size="small">Сохранить</Button>
+  </Card.Footer>
+</Card>
+```
+
+### Pressable + Ripple (compound)
+
+```tsx
+<Card
+  pressable
+  variant="outline"
+  onClick={handleOpen}
+  classNames={{ root: "rounded-large", content: "gap-0" }}
+>
+  <Ripple color="neutral" />
+  <div className="relative z-[1] flex flex-col">
+    <Card.Header>
+      <Card.Title>Открыть</Card.Title>
+    </Card.Header>
+    <Card.Body>Клик по всей карточке</Card.Body>
+  </div>
+</Card>
+```
+
+`enableAnimations: false` — отключить motion глобально через `enableAnimations`.
+
+### Практические заметки
+
+- Внутри pressable card не кладите кнопки/ссылки без `stopPropagation` — сработает `onClick` root.
+- Ripple не встроен: первый child `<Ripple />`, контент в `relative z-[1]` внутри `content`.
+- `Card.Title` всегда `h3` — не меняйте heading level через classNames без замены семантики.
+- Passive: `pressable={false}` → постоянная `shadow-token-{shadow}`, без hover lift.
+- **Не задавайте `transform` на root при `pressable`** — конфликт с lift/squeeze GSAP.
+- **Порядок мержа:** variant surface → motionClass → `classNames.slot` → `className` root.
+
+## Интеграции
+
+| Компонент | Сценарий |
+|-----------|----------|
+| `Badge.Anchor` | Overlay badge на карточке |
+| `Ripple` | Press feedback в pressable card |
+| `Form` | Card как layout wrapper формы |
+| `Button` | Actions в `Card.Footer` |
+
+## Доступность
+
+- `href` рисует `<a>`. `asChild` подставляет одного ребёнка (`<a>` или `next/link`) вместо кнопки; заголовок и описание остаются внутри ссылки.
+- `pressable={true}`: root `<button type="button">`, `focus-ring`
+- `onClick` на click и keyboard activation
+- `Card.Title`: semantic `h3`
+- Вложенные интерактивные элементы — осторожно с event bubbling
+
+## Структура файлов
+
+```
+Card/
+├── Card.tsx
+├── index.ts
+├── cardTypes.ts
+├── cardStyles.ts
+├── cardAnimations.ts              # defaults + host play
+├── cardParts.tsx                  # useMotionPart
+├── useCardRootState.ts
+├── cardContext.tsx                # createMotionScope
+├── cardAPI.ts
+├── cardA11y.ts
+└── Card.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Card` — variants, pressable, ripple, form layout, light theme, `classNames`.
